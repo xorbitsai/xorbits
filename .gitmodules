@@ -1,0 +1,3 @@
+[submodule "python/_mars"]
+	path = python/_mars
+	url = git@github.com:xprobe/mars.git
