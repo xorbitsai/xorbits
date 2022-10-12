@@ -132,3 +132,6 @@ dmypy.json
 .idea
 .vscode
 *.iml
+
+# soft link
+python/_mars

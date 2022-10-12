@@ -1,0 +1,26 @@
+[build-system]
+requires = [
+    "setuptools<64",
+    "wheel",
+    "cython>=0.29",
+    "oldest-supported-numpy",
+    "scipy>=1.0.0",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+include = '\.pyi?$'
+extend-exclude = '''
+^/xorbits/(_version.py|lib/tblib/.*)
+'''
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "cuda: mark a test as a cuda case.",
+    "hadoop: mark test as a hadoop case.",
+    "ray: mark test as a ray case.",
+    "pd_compat: mark test as a pandas-compatibility test.",
+    "ray_dag: marks tests for ray backend.",
+    "skip_ray_dag: marks tests that not execute in ray backend.",
+]
