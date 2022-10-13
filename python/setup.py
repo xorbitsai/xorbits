@@ -1,3 +1,17 @@
+# Copyright 2022 XProbe Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import platform
 import shutil
@@ -46,8 +60,9 @@ if sys.platform == "darwin":
 repo_root = os.path.dirname(os.path.abspath(__file__))
 
 # create symlink for mars
-if not os.path.exists('_mars'):
-    os.symlink('../third_party/_mars/mars', '_mars', target_is_directory=True)
+absolute_path = os.path.join(repo_root, 'xorbits/_mars')
+if not os.path.exists(absolute_path):
+    os.symlink('../../third_party/_mars/mars', absolute_path, target_is_directory=True)
 
 
 cythonize_kw = dict(language_level=sys.version_info[0])
@@ -72,13 +87,13 @@ else:
 
 # The pyx with C sources.
 ext_include_source_map = {
-    "_mars/_utils.pyx": [["_mars/lib/mmh3_src"], ["_mars/lib/mmh3_src/MurmurHash3.cpp"]],
+    "xorbits/_mars/_utils.pyx": [["xorbits/_mars/lib/mmh3_src"], ["xorbits/_mars/lib/mmh3_src/MurmurHash3.cpp"]],
 }
 
 
 def _discover_pyx():
     exts = dict()
-    for root, _, files in os.walk(os.path.join(repo_root, "_mars")):
+    for root, _, files in os.walk(os.path.join(repo_root, "xorbits"), followlinks=True):
         for fn in files:
             if not fn.endswith(".pyx"):
                 continue
@@ -101,8 +116,8 @@ cy_extensions = list(extensions_dict.values())
 
 extensions = cythonize(cy_extensions, **cythonize_kw) + [
     Extension(
-        "_mars.lib.mmh3",
-        ["_mars/lib/mmh3_src/mmh3module.cpp", "_mars/lib/mmh3_src/MurmurHash3.cpp"],
+        "xorbits._mars.lib.mmh3",
+        ["xorbits/_mars/lib/mmh3_src/mmh3module.cpp", "xorbits/_mars/lib/mmh3_src/MurmurHash3.cpp"],
     )
 ]
 
@@ -135,8 +150,8 @@ class BuildWeb(Command):
     """build_web command"""
 
     user_options = []
-    _web_src_path = "_mars/services/web/ui"
-    _web_dest_path = "_mars/services/web/static/bundle.js"
+    _web_src_path = "xorbits/_mars/services/web/ui"
+    _web_dest_path = "xorbits/_mars/services/web/static/bundle.js"
     _commands = [
         ["npm", "install"],
         ["npm", "run", "bundle"],
