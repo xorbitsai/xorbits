@@ -13,9 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
-from .deploy import init, shutdown
+from ..adapter.mars import MarsDataFrameLoc
+from ..core.data import register_converter, wrap_mars_callable
 
-__version__ = _version.get_versions()["version"]
 
-__all__ = ["init", "shutdown"]
+@register_converter(from_cls=MarsDataFrameLoc)
+class DataFrameLoc:
+    def __init__(self, proxied: "MarsDataFrameLoc"):
+        self._proxied = proxied
+
+    def __getitem__(self, item):
+        return wrap_mars_callable(self._proxied.__getitem__)(item)

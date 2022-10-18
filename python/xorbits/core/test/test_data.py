@@ -13,9 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
-from .deploy import init, shutdown
 
-__version__ = _version.get_versions()["version"]
+def test_to_mars():
+    # TODO: implement
+    pass
 
-__all__ = ["init", "shutdown"]
+
+def test_to_xorbits():
+    # TODO: implement
+    pass
+
+
+def test_wrap_mars_cls():
+    # TODO: implement
+    pass
+
+
+def test_wrap_mars_function():
+    # TODO: implement
+    pass

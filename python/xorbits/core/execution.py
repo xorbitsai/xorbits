@@ -13,9 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
-from .deploy import init, shutdown
+from typing import TYPE_CHECKING
 
-__version__ = _version.get_versions()["version"]
+from ..adapter.mars import mars_execute
 
-__all__ = ["init", "shutdown"]
+if TYPE_CHECKING:
+    from ..adapter.mars import MarsEntity
+
+
+def execute(mars_entity: "MarsEntity"):
+    if need_to_execute(mars_entity):
+        mars_execute(mars_entity)
+
+
+def need_to_execute(mars_entity: "MarsEntity"):
+    return (
+        hasattr(mars_entity, "_executed_sessions")
+        and len(getattr(mars_entity, "_executed_sessions")) == 0
+    )
