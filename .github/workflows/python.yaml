@@ -1,0 +1,59 @@
+name: Mars CI Core
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        submodules: recursive
+
+    - name: Set up conda ${{ matrix.python-version }}
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python-version }}
+      env:
+        PYTHON: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        conda install --file conda-spec.txt
+        pip install -e ".[dev,extra]"
+      working-directory: ./python
+
+    - name: Test with pytest
+      run: |
+        pytest --ignore xorbits/_mars/ --log-level=DEBUG --timeout=1500 \
+          -W ignore::PendingDeprecationWarning \
+          --cov-config=setup.cfg --cov-report= --cov=xorbits xorbits
+        coverage xml
+      working-directory: ./python
+
+    - name: Report coverage data
+      shell: bash
+      run: |
+        bash <(curl -s https://codecov.io/bash)
+      working-directory: ./python
