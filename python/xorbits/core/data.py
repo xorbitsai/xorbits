@@ -32,27 +32,12 @@ class Proxy:
 
 class XorbitsData(Proxy):
 
-    _mars_entity_type_to_execution_condition: Dict[
-        str, List[Callable[["MarsEntity"], bool]]
-    ] = defaultdict(list)
-
-    _mars_type_to_converters: Dict[str, Callable] = {}
-
     # TODO: use registered methods for better performance and code completion.
     # _mars_entity_type_to_methods: Dict[str, Dict[str, Callable]] = defaultdict(dict)
 
     def __init__(self, mars_entity: MarsEntity):
         super().__init__(mars_entity)
         self._mars_entity_type = type(mars_entity).__name__
-
-        # TODO
-        # trigger execution
-        conditions = self._mars_entity_type_to_execution_condition[
-            type(self._proxied).__name__
-        ]
-        for cond in conditions:
-            if cond(self._proxied):
-                execute(self._proxied)
 
     def __getattr__(self, item):
         # TODO: use registered methods for better performance and code completion.
@@ -63,9 +48,9 @@ class XorbitsData(Proxy):
         if isinstance(attr, MarsEntity):
             # e.g. DataFrameTranspose
             return from_mars(attr)
-        elif type(attr).__name__ in self._mars_type_to_converters:
+        elif type(attr).__name__ in _mars_type_to_converters:
             # e.g. DataFrameLoc
-            return self._mars_type_to_converters[type(attr).__name__](attr)
+            return _mars_type_to_converters[type(attr).__name__](attr)
         elif hasattr(attr, "__call__"):
             return wrap_mars_callable(attr)
         else:
@@ -79,17 +64,6 @@ class XorbitsData(Proxy):
     def __repr__(self):
         execute(self._proxied)
         return self._proxied.__repr__()
-
-    @classmethod
-    def register_execution_condition(
-        cls, mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
-    ):
-        cls._mars_entity_type_to_execution_condition[mars_entity_type].append(condition)
-
-    @classmethod
-    def register_converter(cls, class_name: str, converter: Callable):
-        assert class_name not in cls._mars_type_to_converters
-        cls._mars_type_to_converters[class_name] = converter
 
     # TODO: use registered methods for better performance and code completion.
     # @classmethod
@@ -115,10 +89,18 @@ class XorbitsDataRef(Proxy):
 
 def to_mars(inp: Union["XorbitsDataRef", Tuple, List, Dict]):
     """
-    Convert xorbits data references to mars entities.
+    Convert xorbits data references to mars entities and execute them if needed.
     """
 
     if isinstance(inp, XorbitsDataRef):
+        mars_entity = inp.proxied.proxied
+        # trigger execution
+        conditions = _mars_entity_type_to_execution_condition[
+            type(mars_entity).__name__
+        ]
+        for cond in conditions:
+            if cond(mars_entity):
+                execute(mars_entity)
         return inp.proxied.proxied
     elif isinstance(inp, tuple):
         return tuple(to_mars(i) for i in inp)
@@ -161,13 +143,28 @@ def wrap_mars_callable(c):
     return wrapped
 
 
+_mars_entity_type_to_execution_condition: Dict[
+    str, List[Callable[["MarsEntity"], bool]]
+] = defaultdict(list)
+
+
+def register_execution_condition(
+    mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
+):
+    _mars_entity_type_to_execution_condition[mars_entity_type].append(condition)
+
+
+_mars_type_to_converters: Dict[str, Callable] = {}
+
+
 def register_converter(from_cls: Type):
     """
     A decorator for convenience of registering a class converter.
     """
 
     def decorate(cls: Type):
-        XorbitsData.register_converter(from_cls.__name__, lambda x: cls(x))
+        assert from_cls.__name__ not in _mars_type_to_converters
+        _mars_type_to_converters[from_cls.__name__] = cls
         return cls
 
     return decorate

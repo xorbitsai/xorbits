@@ -27,7 +27,7 @@ from pandas import (  # noqa: F401
 )
 
 from ..adapter.mars import MarsDataFrameDataSource, mars_dataframe
-from ..core.data import XorbitsData, wrap_mars_callable
+from ..core.data import register_execution_condition, wrap_mars_callable
 from .loc import DataFrameLoc
 
 try:
@@ -100,7 +100,7 @@ def _register_execution_conditions() -> None:
             return True
         return False
 
-    XorbitsData.register_execution_condition(
+    register_execution_condition(
         mars_dataframe.DataFrame.__name__, _on_dtypes_being_none
     )
 
