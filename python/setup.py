@@ -60,7 +60,7 @@ if sys.platform == "darwin":
 repo_root = os.path.dirname(os.path.abspath(__file__))
 
 # create symlink for mars
-absolute_path = os.path.join(repo_root, 'xorbits/_mars')
+absolute_path = os.path.join(repo_root, os.path.join('xorbits', '_mars'))
 if not os.path.exists(absolute_path):
     os.symlink('../../third_party/_mars/mars', absolute_path, target_is_directory=True)
 
