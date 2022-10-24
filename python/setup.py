@@ -27,6 +27,7 @@ from setuptools import setup, Extension, Command
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
+
 try:
     import distutils.ccompiler
 
@@ -60,9 +61,10 @@ if sys.platform == "darwin":
 repo_root = os.path.dirname(os.path.abspath(__file__))
 
 # create symlink for mars
-absolute_path = os.path.join(repo_root, 'xorbits/_mars')
+absolute_path = os.path.join(repo_root, os.path.join("xorbits", "_mars"))
+source_path = os.path.join("..", "..", "third_party", "_mars", "mars")
 if not os.path.exists(absolute_path):
-    os.symlink('../../third_party/_mars/mars', absolute_path, target_is_directory=True)
+    os.symlink(source_path, absolute_path, target_is_directory=True)
 
 
 cythonize_kw = dict(language_level=sys.version_info[0])
@@ -87,7 +89,10 @@ else:
 
 # The pyx with C sources.
 ext_include_source_map = {
-    "xorbits/_mars/_utils.pyx": [["xorbits/_mars/lib/mmh3_src"], ["xorbits/_mars/lib/mmh3_src/MurmurHash3.cpp"]],
+    "xorbits/_mars/_utils.pyx": [
+        ["xorbits/_mars/lib/mmh3_src"],
+        ["xorbits/_mars/lib/mmh3_src/MurmurHash3.cpp"],
+    ],
 }
 
 
@@ -117,7 +122,10 @@ cy_extensions = list(extensions_dict.values())
 extensions = cythonize(cy_extensions, **cythonize_kw) + [
     Extension(
         "xorbits._mars.lib.mmh3",
-        ["xorbits/_mars/lib/mmh3_src/mmh3module.cpp", "xorbits/_mars/lib/mmh3_src/MurmurHash3.cpp"],
+        [
+            "xorbits/_mars/lib/mmh3_src/mmh3module.cpp",
+            "xorbits/_mars/lib/mmh3_src/MurmurHash3.cpp",
+        ],
     )
 ]
 
@@ -169,8 +177,12 @@ class BuildWeb(Command):
             return
 
         npm_path = shutil.which("npm")
-        web_src_path = os.path.join(repo_root, *cls._web_src_path.split("/"))
-        web_dest_path = os.path.join(repo_root, *cls._web_dest_path.split("/"))
+        if sys.platform == "win32":
+            build_path = os.path.realpath(os.path.join("..", ".."))
+        else:
+            build_path = repo_root
+        web_src_path = os.path.join(build_path, *cls._web_src_path.split("/"))
+        web_dest_path = os.path.join(build_path, *cls._web_dest_path.split("/"))
 
         if not os.path.exists(web_src_path):
             return

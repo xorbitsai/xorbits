@@ -1,0 +1,40 @@
+name: test
+channels:
+  - defaults
+dependencies:
+  - numpy
+  - pyarrow
+  - cloudpickle
+  - cython
+  - mock
+  - pyarrow
+  - pytest
+  - pytest-asyncio
+  - pytest-cov
+  - pytest-timeout
+  - pytest-forked
+  - scipy
+  - pandas
+  - numexpr
+  - scikit-learn
+  - psutil
+  - tornado
+  - defusedxml
+  - pyyaml
+  - black
+  - tqdm
+  - fsspec
+  - sqlalchemy
+  - flake8
+  - pillow
+  - lz4
+  - pip
+
+  - pip:
+    - coverage
+    - tqdm
+    - fsspec
+    - sqlalchemy
+    - pickle5; python_version<"3.8"
+    - shared-memory38>=0.1.1; python_version<"3.8"
+    - uvloop>=0.14.0; sys.platform!="win32"
