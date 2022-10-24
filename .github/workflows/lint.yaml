@@ -36,6 +36,7 @@ jobs:
       uses: py-actions/flake8@v2
       with:
         path: "python"
+        args: "--config python/setup.cfg"
 
     - name: black
       uses: psf/black@stable
