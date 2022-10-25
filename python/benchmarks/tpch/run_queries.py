@@ -1226,7 +1226,7 @@ def run_queries(
     for query in queries:
         loaders = query_to_loaders[query]
         for loader in loaders:
-            loader(root, storage_options, dataset)
+            loader(root, storage_options, dataset, use_arrow_dtype=use_arrow_dtype)
     print(f"Data loading time (s): {time.time() - total_start}")
 
     total_start = time.time()
@@ -1248,6 +1248,7 @@ def main():
     parser.add_argument(
         "--data_set",
         type=str,
+        required=True,
         help="Path to the TPC-H dataset.",
     )
     parser.add_argument(
@@ -1266,7 +1267,7 @@ def main():
     parser.add_argument(
         "--use-arrow-dtype",
         type=bool,
-        default=False,
+        default=True,
         help="Use arrow dtype to read parquet",
     )
 

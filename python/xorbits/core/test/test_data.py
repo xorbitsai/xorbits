@@ -14,65 +14,64 @@
 # limitations under the License.
 
 from ...adapter.mars import MarsEntity, mars_dataframe
-from ...dataframe import DataFrame, get_dummies
-from ..data import XorbitsDataRef, from_mars, to_mars
-from ..execution import need_to_execute
+from ...dataframe import DataFrame
+from ..data import XorbitsDataRef
+from ..mars_adaption import from_mars, to_mars
 
 
-def test_to_mars():
-    xdf = DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
-    assert isinstance(to_mars(xdf), MarsEntity)
+def test_to_mars(dummy_xdf):
+    assert isinstance(to_mars(dummy_xdf), MarsEntity)
 
     # tuple.
-    ins = (xdf, "foo")
+    ins = (dummy_xdf, "foo")
     assert isinstance(to_mars(ins)[0], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
     # nested tuple.
-    ins = ((xdf, "foo"), "bar")
+    ins = ((dummy_xdf, "foo"), "bar")
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = ([xdf, "foo"], "bar")
+    ins = ([dummy_xdf, "foo"], "bar")
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = ({"foo": xdf, "bar": "baz"}, "bar")
+    ins = ({"foo": dummy_xdf, "bar": "baz"}, "bar")
     assert isinstance(to_mars(ins)[0]["foo"], MarsEntity)
     assert not isinstance(to_mars(ins)[0]["bar"], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
 
     # list.
-    ins = [xdf, "foo"]
+    ins = [dummy_xdf, "foo"]
     assert isinstance(to_mars(ins)[0], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
     # nested list.
-    ins = [(xdf, "foo"), "bar"]
+    ins = [(dummy_xdf, "foo"), "bar"]
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = [[xdf, "foo"], "bar"]
+    ins = [[dummy_xdf, "foo"], "bar"]
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = [{"foo": xdf, "bar": "baz"}, "bar"]
+    ins = [{"foo": dummy_xdf, "bar": "baz"}, "bar"]
     assert isinstance(to_mars(ins)[0]["foo"], MarsEntity)
     assert not isinstance(to_mars(ins)[0]["bar"], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
 
     # dict.
-    ins = {"foo": xdf, "bar": "baz"}
+    ins = {"foo": dummy_xdf, "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
     # nested dict.
-    ins = {"foo": (xdf, "foo"), "bar": "baz"}
+    ins = {"foo": (dummy_xdf, "foo"), "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"][0], MarsEntity)
     assert not isinstance(to_mars(ins)["foo"][1], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
-    ins = {"foo": [xdf, "foo"], "bar": "baz"}
+    ins = {"foo": [dummy_xdf, "foo"], "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"][0], MarsEntity)
     assert not isinstance(to_mars(ins)["foo"][1], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
-    ins = {"foo": {"bar": xdf}, "bar": "baz"}
+    ins = {"foo": {"bar": dummy_xdf}, "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"]["bar"], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
 
@@ -135,38 +134,7 @@ def test_from_mars():
     assert not isinstance(from_mars(ins)["bar"], XorbitsDataRef)
 
 
-def test_deferred_execution():
-    # print.
+def test_loc():
     xdf = DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
-    assert need_to_execute(xdf.proxied.proxied)
-    print(xdf)
-    assert not need_to_execute(xdf.proxied.proxied)
 
-    # iterrows.
-    xdf = DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
-    assert need_to_execute(xdf.proxied.proxied)
-    count = 0
-    for (_, _) in xdf.iterrows():
-        count += 1
-    assert not need_to_execute(xdf.proxied.proxied)
-
-    # transpose.
-    xdf = DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
-    xdf = xdf.transpose()
-    assert need_to_execute(xdf.proxied.proxied)
-    print(xdf)
-    assert not need_to_execute(xdf.proxied.proxied)
-
-    # get dummies.
-    xdf = DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
-    xdf = get_dummies(xdf)
-    assert need_to_execute(xdf.proxied.proxied)
-    print(xdf)
-    assert not need_to_execute(xdf.proxied.proxied)
-
-    # groupby apply
-    xdf = DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
-    xdf = xdf.groupby("foo").apply(lambda df: df.sum())
-    assert need_to_execute(xdf.proxied.proxied)
-    print(xdf)
-    assert not need_to_execute(xdf.proxied.proxied)
+    print(xdf.loc[:, ["foo"]])

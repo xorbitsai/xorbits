@@ -22,6 +22,10 @@ from .._mars import execute as mars_execute
 from .._mars import new_session as mars_new_session
 from .._mars import stop_server as mars_stop_server
 from .._mars.core import Entity as MarsEntity
+from .._mars.dataframe.core import DataFrame as MarsDataFrame
+from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
+from .._mars.dataframe.core import Index as MarsIndex
+from .._mars.dataframe.core import Series as MarsSeries
 from .._mars.dataframe.datasource.dataframe import (
     DataFrameDataSource as MarsDataFrameDataSource,
 )
@@ -32,7 +36,11 @@ __all__ = [
     "mars_execute",
     "mars_new_session",
     "mars_stop_server",
-    "MarsEntity",
+    "MarsDataFrame",
     "MarsDataFrameDataSource",
+    "MarsDataFrameGroupBy",
     "MarsDataFrameLoc",
+    "MarsEntity",
+    "MarsIndex",
+    "MarsSeries",
 ]

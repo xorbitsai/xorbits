@@ -16,18 +16,31 @@
 from typing import TYPE_CHECKING
 
 from ..adapter.mars import mars_execute
+from . import mars_adaption
 
 if TYPE_CHECKING:
-    from ..adapter.mars import MarsEntity
+    from .data import XorbitsDataRef
 
 
-def execute(mars_entity: "MarsEntity"):
-    if need_to_execute(mars_entity):
-        mars_execute(mars_entity)
+def execute(ref: "XorbitsDataRef"):
+    if need_to_execute(ref):
+        if isinstance(ref, mars_adaption.XorbitsDataRefMarsImpl):
+            print(f"executing {ref.data.mars_entity}")
+            mars_execute(ref.data.mars_entity)
+        else:
+            raise NotImplementedError(
+                f"Unable to execute an instance of {type(ref).__name__} "
+            )
 
 
-def need_to_execute(mars_entity: "MarsEntity"):
-    return (
-        hasattr(mars_entity, "_executed_sessions")
-        and len(getattr(mars_entity, "_executed_sessions")) == 0
-    )
+def need_to_execute(ref: "XorbitsDataRef"):
+    if isinstance(ref, mars_adaption.XorbitsDataRefMarsImpl):
+        mars_entity = ref.data.mars_entity
+        return (
+            hasattr(mars_entity, "_executed_sessions")
+            and len(getattr(mars_entity, "_executed_sessions")) == 0
+        )
+    else:
+        raise NotImplementedError(
+            f"Unable to execute an instance of {type(ref).__name__} "
+        )

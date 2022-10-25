@@ -13,158 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import functools
-from collections import defaultdict
-from typing import Any, Callable, Dict, List, Tuple, Type, Union
-
-from ..adapter.mars import MarsEntity
-from .execution import execute
+from . import execution
 
 
-class Proxy:
-    def __init__(self, proxied: Any):
-        self._proxied = proxied
+class XorbitsData:
+    pass
+
+
+class XorbitsDataRef:
+    def __init__(self, data: "XorbitsData"):
+        self._data = data
+
+    def __getattr__(self, item):
+        return getattr(self._data, item)
+
+    def __str__(self):
+        execution.execute(self)
+        return self._data.__str__()
+
+    def __repr__(self):
+        execution.execute(self)
+        return self._data.__repr__()
+
+    # TODO: How to define the execution conditions that works for mars, pandas and xorbits?
 
     @property
-    def proxied(self):
-        return self._proxied
-
-
-class XorbitsData(Proxy):
-
-    # TODO: use registered methods for better performance and code completion.
-    # _mars_entity_type_to_methods: Dict[str, Dict[str, Callable]] = defaultdict(dict)
-
-    def __init__(self, mars_entity: MarsEntity):
-        super().__init__(mars_entity)
-        self._mars_entity_type = type(mars_entity).__name__
-
-    def __getattr__(self, item):
-        # TODO: use registered methods for better performance and code completion.
-        # if item in self._mars_entity_type_to_methods[self._mars_entity_type]:
-        #     return self._mars_entity_type_to_methods[self._mars_entity_type][item]
-
-        attr = getattr(self._proxied, item)
-        if isinstance(attr, MarsEntity):
-            # e.g. DataFrameTranspose
-            return from_mars(attr)
-        elif type(attr).__name__ in _mars_type_to_converters:
-            # e.g. DataFrameLoc
-            return _mars_type_to_converters[type(attr).__name__](attr)
-        elif hasattr(attr, "__call__"):
-            return wrap_mars_callable(attr)
-        else:
-            # e.g. string accessor
-            return attr
-
-    def __str__(self):
-        execute(self._proxied)
-        return self._proxied.__str__()
-
-    def __repr__(self):
-        execute(self._proxied)
-        return self._proxied.__repr__()
-
-    # TODO: use registered methods for better performance and code completion.
-    # @classmethod
-    # def register_method(cls, mars_entity_type: str, method_name: str, method: Callable):
-    #     cls._mars_entity_type_to_methods[mars_entity_type][
-    #         method_name
-    #     ] = wrap_mars_callable(method)
-
-
-class XorbitsDataRef(Proxy):
-    def __init__(self, data: XorbitsData):
-        super().__init__(data)
-
-    def __getattr__(self, item):
-        return getattr(self._proxied, item)
-
-    def __str__(self):
-        return self._proxied.__str__()
-
-    def __repr__(self):
-        return self._proxied.__repr__()
-
-
-def to_mars(inp: Union["XorbitsDataRef", Tuple, List, Dict]):
-    """
-    Convert xorbits data references to mars entities and execute them if needed.
-    """
-
-    if isinstance(inp, XorbitsDataRef):
-        mars_entity = inp.proxied.proxied
-        # trigger execution
-        conditions = _mars_entity_type_to_execution_condition[
-            type(mars_entity).__name__
-        ]
-        for cond in conditions:
-            if cond(mars_entity):
-                execute(mars_entity)
-        return inp.proxied.proxied
-    elif isinstance(inp, tuple):
-        return tuple(to_mars(i) for i in inp)
-    elif isinstance(inp, list):
-        return list(to_mars(i) for i in inp)
-    elif isinstance(inp, dict):
-        return dict((k, to_mars(v)) for k, v in inp.items())
-    else:
-        return inp
-
-
-def from_mars(inp: Union[MarsEntity, tuple, list, dict]):
-    """
-    Convert mars entities to xorbits data references.
-    """
-
-    if isinstance(inp, MarsEntity):
-        return XorbitsDataRef(data=XorbitsData(mars_entity=inp))
-    elif isinstance(inp, tuple):
-        return tuple(from_mars(i) for i in inp)
-    elif isinstance(inp, list):
-        return list(from_mars(i) for i in inp)
-    elif isinstance(inp, dict):
-        return dict((k, from_mars(v)) for k, v in inp.items())
-    else:
-        return inp
-
-
-def wrap_mars_callable(c):
-    """
-    A function wrapper that makes arguments of the wrapped method be mars compatible type and
-    return value be xorbits compatible type.
-    """
-
-    @functools.wraps(c)
-    def wrapped(*args, **kwargs):
-
-        return from_mars(c(*to_mars(args), **to_mars(kwargs)))
-
-    return wrapped
-
-
-_mars_entity_type_to_execution_condition: Dict[
-    str, List[Callable[["MarsEntity"], bool]]
-] = defaultdict(list)
-
-
-def register_execution_condition(
-    mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
-):
-    _mars_entity_type_to_execution_condition[mars_entity_type].append(condition)
-
-
-_mars_type_to_converters: Dict[str, Callable] = {}
-
-
-def register_converter(from_cls: Type):
-    """
-    A decorator for convenience of registering a class converter.
-    """
-
-    def decorate(cls: Type):
-        assert from_cls.__name__ not in _mars_type_to_converters
-        _mars_type_to_converters[from_cls.__name__] = cls
-        return cls
-
-    return decorate
+    def data(self):
+        return self._data

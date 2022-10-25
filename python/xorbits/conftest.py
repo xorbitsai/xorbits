@@ -13,14 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..adapter.mars import MarsDataFrameLoc
-from ..core.data import register_converter, wrap_mars_callable
+import pytest
+
+from .dataframe import DataFrame
 
 
-@register_converter(from_cls=MarsDataFrameLoc)
-class DataFrameLoc:
-    def __init__(self, proxied: "MarsDataFrameLoc"):
-        self._proxied = proxied
-
-    def __getitem__(self, item):
-        return wrap_mars_callable(self._proxied.__getitem__)(item)
+@pytest.fixture
+def dummy_xdf():
+    return DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
