@@ -14,6 +14,8 @@ concurrency:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      CONDA_ENV: xorbits-test
     defaults:
       run:
         shell: bash -l {0}
@@ -30,28 +32,42 @@ jobs:
         fetch-depth: 0
         submodules: recursive
 
-    - name: Cache conda
+    - name: Set up conda ${{ matrix.python-version }}
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: ${{ env.CONDA_ENV }}
+        use-only-tar-bz2: true
+
+    - name: Get Date
+      id: get-date
+      run: echo "::set-output name=today::$(/bin/date -u '+%Y%m%d')"
+      shell: bash
+
+    - name: Get conda prefix
+      id: get-conda-prefix
+      run: echo "::set-output name=conda_prefix::$(conda info --base)"
+
+    - name: Cache conda env
+      id: conda
       uses: actions/cache@v2
       env:
         # Increase this value to reset cache if python/CI/conda-environment.yml has not changed
         CACHE_NUMBER: 0
       with:
-        path: ~/conda_pkgs_dir
+        path: |
+          ${{ steps.get-conda-prefix.outputs.conda_prefix }}/envs/${{ env.CONDA_ENV }}
         key:
+          # using date to refresh the cache every 24 hours
           ${{ runner.os }}-conda-${{ matrix.python-version }}-${{ env.CACHE_NUMBER }}-${{
-          hashFiles('python/CI/conda-environment.yml') }}
+          hashFiles('python/CI/conda-environment.yml') }}-${{ steps.get-date.outputs.today }}
 
-    - name: Set up conda ${{ matrix.python-version }}
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        auto-update-conda: true
-        python-version: ${{ matrix.python-version }}
-        environment-file: python/CI/conda-environment.yml
-        use-only-tar-bz2: true
-      env:
-        PYTHON: ${{ matrix.python-version }}
+    - name: Install dependencies
+      # Only need to run install when deps have been changed
+      if: steps.conda.outputs.cache-hit != 'true'
+      run: |
+          conda env update -f python/CI/conda-environment.yml
 
-    - name: Install
+    - name: Install xorbits
       run: |
         pip install -e ".[dev,extra]"
       working-directory: ./python
