@@ -15,7 +15,7 @@
 
 from ...adapter.mars import MarsEntity, mars_dataframe
 from ...dataframe import DataFrame
-from ..data import XorbitsDataRef
+from ..data import DataRef
 from ..mars_adaption import from_mars, to_mars
 
 
@@ -78,60 +78,60 @@ def test_to_mars(dummy_xdf):
 
 def test_from_mars():
     mdf = mars_dataframe.DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
-    assert isinstance(from_mars(mdf), XorbitsDataRef)
+    assert isinstance(from_mars(mdf), DataRef)
 
     # tuple.
     ins = (mdf, "foo")
-    assert isinstance(from_mars(ins)[0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
     # nested tuple.
     ins = ((mdf, "foo"), "bar")
-    assert isinstance(from_mars(ins)[0][0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[0][1], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0][0], DataRef)
+    assert not isinstance(from_mars(ins)[0][1], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
     ins = ([mdf, "foo"], "bar")
-    assert isinstance(from_mars(ins)[0][0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[0][1], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0][0], DataRef)
+    assert not isinstance(from_mars(ins)[0][1], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
     ins = ({"foo": mdf, "bar": "baz"}, "bar")
-    assert isinstance(from_mars(ins)[0]["foo"], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[0]["bar"], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0]["foo"], DataRef)
+    assert not isinstance(from_mars(ins)[0]["bar"], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
 
     # list.
     ins = [mdf, "foo"]
-    assert isinstance(from_mars(ins)[0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
     # nested list.
     ins = [(mdf, "foo"), "bar"]
-    assert isinstance(from_mars(ins)[0][0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[0][1], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0][0], DataRef)
+    assert not isinstance(from_mars(ins)[0][1], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
     ins = [[mdf, "foo"], "bar"]
-    assert isinstance(from_mars(ins)[0][0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[0][1], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0][0], DataRef)
+    assert not isinstance(from_mars(ins)[0][1], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
     ins = [{"foo": mdf, "bar": "baz"}, "bar"]
-    assert isinstance(from_mars(ins)[0]["foo"], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[0]["bar"], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)[1], XorbitsDataRef)
+    assert isinstance(from_mars(ins)[0]["foo"], DataRef)
+    assert not isinstance(from_mars(ins)[0]["bar"], DataRef)
+    assert not isinstance(from_mars(ins)[1], DataRef)
 
     # dict.
     ins = {"foo": mdf, "bar": "baz"}
-    assert isinstance(from_mars(ins)["foo"], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)["bar"], XorbitsDataRef)
+    assert isinstance(from_mars(ins)["foo"], DataRef)
+    assert not isinstance(from_mars(ins)["bar"], DataRef)
     # nested dict.
     ins = {"foo": (mdf, "foo"), "bar": "baz"}
-    assert isinstance(from_mars(ins)["foo"][0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)["foo"][1], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)["bar"], XorbitsDataRef)
+    assert isinstance(from_mars(ins)["foo"][0], DataRef)
+    assert not isinstance(from_mars(ins)["foo"][1], DataRef)
+    assert not isinstance(from_mars(ins)["bar"], DataRef)
     ins = {"foo": [mdf, "foo"], "bar": "baz"}
-    assert isinstance(from_mars(ins)["foo"][0], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)["foo"][1], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)["bar"], XorbitsDataRef)
+    assert isinstance(from_mars(ins)["foo"][0], DataRef)
+    assert not isinstance(from_mars(ins)["foo"][1], DataRef)
+    assert not isinstance(from_mars(ins)["bar"], DataRef)
     ins = {"foo": {"bar": mdf}, "bar": "baz"}
-    assert isinstance(from_mars(ins)["foo"]["bar"], XorbitsDataRef)
-    assert not isinstance(from_mars(ins)["bar"], XorbitsDataRef)
+    assert isinstance(from_mars(ins)["foo"]["bar"], DataRef)
+    assert not isinstance(from_mars(ins)["bar"], DataRef)
 
 
 def test_loc():

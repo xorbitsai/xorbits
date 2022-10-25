@@ -22,8 +22,8 @@ from ...adapter.mars import (
     mars_dataframe,
 )
 from ...core.mars_adaption import (
-    XorbitsDataMarsImpl,
-    XorbitsDataRefMarsImpl,
+    DataMarsImpl,
+    DataRefMarsImpl,
     register_execution_condition,
     to_mars,
     wrap_mars_callable,
@@ -74,9 +74,9 @@ def _install_magic_methods() -> None:
             if name.startswith("_"):
                 object.__setattr__(self, name, value)
             else:
-                if issubclass(owner, XorbitsDataRefMarsImpl):
+                if issubclass(owner, DataRefMarsImpl):
                     getattr(self.data, "__setattr__")(name, value)
-                elif issubclass(owner, XorbitsDataMarsImpl):
+                elif issubclass(owner, DataMarsImpl):
                     if type(getattr(type(self.mars_entity), name)) is property:
                         # call the setter of the specified property.
                         getattr(type(self.mars_entity), name).fset(
@@ -92,13 +92,13 @@ def _install_magic_methods() -> None:
     def wrap_magic_method(method_name: str, owner: Type) -> Callable[[Any], Any]:
         def wrapped(self: Any, *args, **kwargs):
             # print(f"{method_name} was called on {type(self)}")
-            if issubclass(owner, XorbitsDataRefMarsImpl):
+            if issubclass(owner, DataRefMarsImpl):
                 if not hasattr(self.data, method_name):
                     raise AttributeError(
                         f"'{type(self)}' object has no attribute '{method_name}'"
                     )
                 return getattr(self.data, method_name)(*args, **kwargs)
-            elif issubclass(owner, XorbitsDataMarsImpl):
+            elif issubclass(owner, DataMarsImpl):
                 if not hasattr(self.mars_entity, method_name):
                     raise AttributeError(
                         f"'{type(self)}' object has no attribute '{method_name}'"

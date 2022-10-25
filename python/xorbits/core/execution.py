@@ -19,12 +19,12 @@ from ..adapter.mars import mars_execute
 from . import mars_adaption
 
 if TYPE_CHECKING:
-    from .data import XorbitsDataRef
+    from .data import DataRef
 
 
-def execute(ref: "XorbitsDataRef"):
+def execute(ref: "DataRef"):
     if need_to_execute(ref):
-        if isinstance(ref, mars_adaption.XorbitsDataRefMarsImpl):
+        if isinstance(ref, mars_adaption.DataRefMarsImpl):
             print(f"executing {ref.data.mars_entity}")
             mars_execute(ref.data.mars_entity)
         else:
@@ -33,8 +33,8 @@ def execute(ref: "XorbitsDataRef"):
             )
 
 
-def need_to_execute(ref: "XorbitsDataRef"):
-    if isinstance(ref, mars_adaption.XorbitsDataRefMarsImpl):
+def need_to_execute(ref: "DataRef"):
+    if isinstance(ref, mars_adaption.DataRefMarsImpl):
         mars_entity = ref.data.mars_entity
         return (
             hasattr(mars_entity, "_executed_sessions")

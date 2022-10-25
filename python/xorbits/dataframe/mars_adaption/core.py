@@ -21,50 +21,50 @@ from ...adapter.mars import (
     MarsSeries,
 )
 from ...core.mars_adaption import (
-    XorbitsDataMarsImpl,
-    XorbitsDataRefMarsImpl,
+    DataMarsImpl,
+    DataRefMarsImpl,
     register_converter,
     wrap_mars_callable,
 )
 
 
 @register_converter(from_cls=MarsDataFrame)
-class DataFrame(XorbitsDataRefMarsImpl):
+class DataFrame(DataRefMarsImpl):
     def __init__(self, mars_entity: "MarsDataFrame"):
         super().__init__(data=DataFrameData(mars_entity))
 
 
-class DataFrameData(XorbitsDataMarsImpl):
+class DataFrameData(DataMarsImpl):
     pass
 
 
 @register_converter(from_cls=MarsSeries)
-class Series(XorbitsDataRefMarsImpl):
+class Series(DataRefMarsImpl):
     def __init__(self, mars_entity: "MarsSeries"):
         super().__init__(data=SeriesData(mars_entity))
 
 
-class SeriesData(XorbitsDataMarsImpl):
+class SeriesData(DataMarsImpl):
     pass
 
 
 @register_converter(from_cls=MarsIndex)
-class Index(XorbitsDataRefMarsImpl):
+class Index(DataRefMarsImpl):
     def __init__(self, mars_entity: "MarsIndex"):
         super().__init__(data=IndexData(mars_entity))
 
 
-class IndexData(XorbitsDataMarsImpl):
+class IndexData(DataMarsImpl):
     pass
 
 
 @register_converter(from_cls=MarsDataFrameGroupBy)
-class DataFrameGroupBy(XorbitsDataRefMarsImpl):
+class DataFrameGroupBy(DataRefMarsImpl):
     def __init__(self, mars_entity: "MarsDataFrameGroupBy"):
         super().__init__(data=DataFrameGroupByData(mars_entity))
 
 
-class DataFrameGroupByData(XorbitsDataMarsImpl):
+class DataFrameGroupByData(DataMarsImpl):
     pass
 
 

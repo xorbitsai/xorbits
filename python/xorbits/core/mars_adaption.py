@@ -18,14 +18,14 @@ from collections import defaultdict
 from typing import Callable, Dict, List, Tuple, Type, Union
 
 from ..adapter.mars import MarsEntity
-from .data import XorbitsData, XorbitsDataRef
+from .data import Data, DataRef
 
 
-class XorbitsDataRefMarsImpl(XorbitsDataRef):
+class DataRefMarsImpl(DataRef):
     pass
 
 
-class XorbitsDataMarsImpl(XorbitsData):
+class DataMarsImpl(Data):
     """
     A proxy of a mars entity.
     """
@@ -53,12 +53,12 @@ class XorbitsDataMarsImpl(XorbitsData):
         return self._mars_entity
 
 
-def to_mars(inp: Union["XorbitsDataRefMarsImpl", Tuple, List, Dict]):
+def to_mars(inp: Union["DataRefMarsImpl", Tuple, List, Dict]):
     """
     Convert xorbits data references to mars entities and execute them if needed.
     """
 
-    if isinstance(inp, XorbitsDataRefMarsImpl):
+    if isinstance(inp, DataRefMarsImpl):
         mars_entity = inp.data.mars_entity
         # trigger execution
         conditions = _mars_entity_type_to_execution_condition[

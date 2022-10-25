@@ -16,12 +16,12 @@
 from . import execution
 
 
-class XorbitsData:
+class Data:
     pass
 
 
-class XorbitsDataRef:
-    def __init__(self, data: "XorbitsData"):
+class DataRef:
+    def __init__(self, data: "Data"):
         self._data = data
 
     def __getattr__(self, item):
