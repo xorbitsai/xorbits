@@ -20,9 +20,47 @@ from typing import Callable, Dict, List, Tuple, Type, Union
 from ..adapter.mars import MarsEntity
 from .data import Data, DataRef
 
+_mars_entity_type_to_execution_condition: Dict[
+    str, List[Callable[["MarsEntity"], bool]]
+] = defaultdict(list)
 
+
+def register_execution_condition(
+    mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
+):
+    _mars_entity_type_to_execution_condition[mars_entity_type].append(condition)
+
+
+_mars_type_to_converters: Dict[Type, Callable] = {}
+
+
+def _get_converter(from_cls: Type):
+    if from_cls in _mars_type_to_converters:
+        return _mars_type_to_converters[from_cls]
+    for k, v in _mars_type_to_converters.items():
+        if issubclass(from_cls, k):
+            _mars_type_to_converters[from_cls] = v
+            return v
+    return None
+
+
+def register_converter(from_cls: Type):
+    """
+    A decorator for convenience of registering a class converter.
+    """
+
+    def decorate(cls: Type):
+        assert from_cls not in _mars_type_to_converters
+        _mars_type_to_converters[from_cls] = cls
+        return cls
+
+    return decorate
+
+
+@register_converter(from_cls=MarsEntity)
 class DataRefMarsImpl(DataRef):
-    pass
+    def __init__(self, mars_entity: "MarsEntity"):
+        super().__init__(data=DataMarsImpl(mars_entity))
 
 
 class DataMarsImpl(Data):
@@ -68,7 +106,7 @@ def to_mars(inp: Union["DataRefMarsImpl", Tuple, List, Dict]):
             if cond(mars_entity):
                 from .execution import execute
 
-                execute(mars_entity)
+                execute(inp)
         return mars_entity
     elif isinstance(inp, tuple):
         return tuple(to_mars(i) for i in inp)
@@ -108,40 +146,3 @@ def wrap_mars_callable(c):
         return from_mars(c(*to_mars(args), **to_mars(kwargs)))
 
     return wrapped
-
-
-_mars_entity_type_to_execution_condition: Dict[
-    str, List[Callable[["MarsEntity"], bool]]
-] = defaultdict(list)
-
-
-def register_execution_condition(
-    mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
-):
-    _mars_entity_type_to_execution_condition[mars_entity_type].append(condition)
-
-
-_mars_type_to_converters: Dict[Type, Callable] = {}
-
-
-def _get_converter(from_cls: Type):
-    if from_cls in _mars_type_to_converters:
-        return _mars_type_to_converters[from_cls]
-    for k, v in _mars_type_to_converters.items():
-        if issubclass(from_cls, k):
-            _mars_type_to_converters[from_cls] = v
-            return v
-    return None
-
-
-def register_converter(from_cls: Type):
-    """
-    A decorator for convenience of registering a class converter.
-    """
-
-    def decorate(cls: Type):
-        assert from_cls not in _mars_type_to_converters
-        _mars_type_to_converters[from_cls] = cls
-        return cls
-
-    return decorate

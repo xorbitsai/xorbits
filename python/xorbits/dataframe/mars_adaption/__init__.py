@@ -28,16 +28,7 @@ from ...core.mars_adaption import (
     to_mars,
     wrap_mars_callable,
 )
-from .core import (
-    DataFrame,
-    DataFrameData,
-    DataFrameGroupBy,
-    DataFrameGroupByData,
-    Index,
-    IndexData,
-    Series,
-    SeriesData,
-)
+from . import loc
 
 if TYPE_CHECKING:
     from ...adapter.mars import MarsEntity
@@ -141,17 +132,17 @@ def _install_magic_methods() -> None:
     }
 
     # dataframe.
-    install_magic_methods(mars_dataframe.DataFrame, DataFrame)
-    install_magic_methods(mars_dataframe.DataFrame, DataFrameData)
+    install_magic_methods(mars_dataframe.DataFrame, DataRefMarsImpl)
+    install_magic_methods(mars_dataframe.DataFrame, DataMarsImpl)
     # dataframe groupby.
-    install_magic_methods(MarsDataFrameGroupBy, DataFrameGroupBy)
-    install_magic_methods(MarsDataFrameGroupBy, DataFrameGroupByData)
+    install_magic_methods(MarsDataFrameGroupBy, DataRefMarsImpl)
+    install_magic_methods(MarsDataFrameGroupBy, DataMarsImpl)
     # series.
-    install_magic_methods(mars_dataframe.Series, Series)
-    install_magic_methods(mars_dataframe.Series, SeriesData)
+    install_magic_methods(mars_dataframe.Series, DataRefMarsImpl)
+    install_magic_methods(mars_dataframe.Series, DataMarsImpl)
     # index.
-    install_magic_methods(mars_dataframe.Index, Index)
-    install_magic_methods(mars_dataframe.Index, IndexData)
+    install_magic_methods(mars_dataframe.Index, DataRefMarsImpl)
+    install_magic_methods(mars_dataframe.Index, DataMarsImpl)
 
 
 _install_magic_methods()
