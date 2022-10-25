@@ -161,7 +161,7 @@ def load_partsupp(
     dataset["partsupp"] = df
 
 
-def tpc_query(q: Callable):
+def timethis(q: Callable):
     @functools.wraps(q)
     def wrapped(*args, **kwargs):
         t = time.time()
@@ -171,7 +171,7 @@ def tpc_query(q: Callable):
     return wrapped
 
 
-@tpc_query
+@timethis
 def q01(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
 
@@ -201,7 +201,8 @@ def q01(dataset: Dict[str, "XorbitsDataRef"]):
         * (1 - lineitem_filtered.L_DISCOUNT)
         * (1 + lineitem_filtered.L_TAX)
     )
-    gb = lineitem_filtered.groupby(["L_RETURNFLAG", "L_LINESTATUS"], as_index=False)[
+    gb = lineitem_filtered.groupby(["L_RETURNFLAG", "L_LINESTATUS"], as_index=False)
+    gb = gb[
         [
             "L_QUANTITY",
             "L_EXTENDEDPRICE",
@@ -230,7 +231,7 @@ def q01(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q02(dataset: Dict[str, "XorbitsDataRef"]):
     part = dataset["part"]
     partsupp = dataset["partsupp"]
@@ -342,7 +343,7 @@ def q02(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q03(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -376,7 +377,7 @@ def q03(dataset: Dict[str, "XorbitsDataRef"]):
     print(res.head(10))
 
 
-@tpc_query
+@timethis
 def q04(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -396,7 +397,7 @@ def q04(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q05(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -424,7 +425,7 @@ def q05(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q06(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
 
@@ -445,7 +446,7 @@ def q06(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q07(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -540,7 +541,7 @@ def q07(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q08(dataset: Dict[str, "XorbitsDataRef"]):
     part = dataset["part"]
     lineitem = dataset["lineitem"]
@@ -611,7 +612,7 @@ def q08(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q09(dataset: Dict[str, "XorbitsDataRef"]):
     part = dataset["part"]
     partsupp = dataset["partsupp"]
@@ -638,7 +639,7 @@ def q09(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q10(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -672,7 +673,7 @@ def q10(dataset: Dict[str, "XorbitsDataRef"]):
     print(total.head(20))
 
 
-@tpc_query
+@timethis
 def q11(dataset: Dict[str, "XorbitsDataRef"]):
     partsupp = dataset["partsupp"]
     supplier = dataset["supplier"]
@@ -702,7 +703,7 @@ def q11(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q12(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -734,7 +735,7 @@ def q12(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q13(dataset: Dict[str, "XorbitsDataRef"]):
     customer = dataset["customer"]
     orders = dataset["orders"]
@@ -757,7 +758,7 @@ def q13(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q14(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     part = dataset["part"]
@@ -779,7 +780,7 @@ def q14(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q15(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     supplier = dataset["supplier"]
@@ -812,7 +813,7 @@ def q15(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q16(dataset: Dict[str, "XorbitsDataRef"]):
     part = dataset["part"]
     partsupp = dataset["partsupp"]
@@ -850,7 +851,7 @@ def q16(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q17(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     part = dataset["part"]
@@ -878,7 +879,7 @@ def q17(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q18(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -897,7 +898,7 @@ def q18(dataset: Dict[str, "XorbitsDataRef"]):
     print(total.head(100))
 
 
-@tpc_query
+@timethis
 def q19(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     part = dataset["part"]
@@ -1000,7 +1001,7 @@ def q19(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q20(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     part = dataset["part"]
@@ -1034,7 +1035,7 @@ def q20(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q21(dataset: Dict[str, "XorbitsDataRef"]):
     lineitem = dataset["lineitem"]
     orders = dataset["orders"]
@@ -1104,7 +1105,7 @@ def q21(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-@tpc_query
+@timethis
 def q22(dataset: Dict[str, "XorbitsDataRef"]):
     customer = dataset["customer"]
     orders = dataset["orders"]
