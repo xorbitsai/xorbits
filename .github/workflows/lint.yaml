@@ -1,4 +1,4 @@
-name: Xortbits lint CI
+name: Lint CI
 
 on:
   push:
