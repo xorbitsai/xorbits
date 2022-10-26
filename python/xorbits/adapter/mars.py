@@ -22,6 +22,9 @@ from .._mars import execute as mars_execute
 from .._mars import new_session as mars_new_session
 from .._mars import stop_server as mars_stop_server
 from .._mars.core import Entity as MarsEntity
+from .._mars.dataframe.base.accessor import CachedAccessor as MarsCachedAccessor
+from .._mars.dataframe.base.accessor import DatetimeAccessor as MarsDatetimeAccessor
+from .._mars.dataframe.base.accessor import StringAccessor as MarsStringAccessor
 from .._mars.dataframe.core import DataFrame as MarsDataFrame
 from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
 from .._mars.dataframe.core import Index as MarsIndex
@@ -43,4 +46,7 @@ __all__ = [
     "MarsEntity",
     "MarsIndex",
     "MarsSeries",
+    "MarsStringAccessor",
+    "MarsDatetimeAccessor",
+    "MarsCachedAccessor",
 ]

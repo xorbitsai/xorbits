@@ -17,56 +17,56 @@ from ...pandas import get_dummies
 from ..execution import need_to_execute
 
 
-def test_deferred_execution_repr(dummy_xdf):
-    assert need_to_execute(dummy_xdf)
-    repr(dummy_xdf)
-    assert not need_to_execute(dummy_xdf)
+def test_deferred_execution_repr(dummy_df):
+    assert need_to_execute(dummy_df)
+    repr(dummy_df)
+    assert not need_to_execute(dummy_df)
 
 
-def test_deferred_execution_print(dummy_xdf):
-    assert need_to_execute(dummy_xdf)
-    print(dummy_xdf)
-    assert not need_to_execute(dummy_xdf)
+def test_deferred_execution_print(dummy_df):
+    assert need_to_execute(dummy_df)
+    print(dummy_df)
+    assert not need_to_execute(dummy_df)
 
 
-def test_deferred_execution_iterrows(dummy_xdf):
-    assert need_to_execute(dummy_xdf)
-    for (_, _) in dummy_xdf.iterrows():
+def test_deferred_execution_iterrows(dummy_df):
+    assert need_to_execute(dummy_df)
+    for (_, _) in dummy_df.iterrows():
         pass
-    assert not need_to_execute(dummy_xdf)
+    assert not need_to_execute(dummy_df)
 
 
-def test_deferred_execution_itertuples(dummy_xdf):
-    assert need_to_execute(dummy_xdf)
-    for _ in dummy_xdf.itertuples():
+def test_deferred_execution_itertuples(dummy_df):
+    assert need_to_execute(dummy_df)
+    for _ in dummy_df.itertuples():
         pass
-    assert not need_to_execute(dummy_xdf)
+    assert not need_to_execute(dummy_df)
 
 
-def test_deferred_execution_transpose_1(dummy_xdf):
+def test_deferred_execution_transpose_1(dummy_df):
     # transpose.
-    transposed = dummy_xdf.transpose()
+    transposed = dummy_df.transpose()
     assert need_to_execute(transposed)
     print(transposed)
     assert not need_to_execute(transposed)
 
 
-def test_deferred_execution_transpose_2(dummy_xdf):
-    transposed = dummy_xdf.T
+def test_deferred_execution_transpose_2(dummy_df):
+    transposed = dummy_df.T
     assert need_to_execute(transposed)
     print(transposed)
     assert not need_to_execute(transposed)
 
 
-def test_deferred_execution_get_dummies(dummy_xdf):
-    dummy_encoded = get_dummies(dummy_xdf)
+def test_deferred_execution_get_dummies(dummy_df):
+    dummy_encoded = get_dummies(dummy_df)
     assert need_to_execute(dummy_encoded)
     print(dummy_encoded)
     assert not need_to_execute(dummy_encoded)
 
 
-def test_deferred_execution_groupby_apply(dummy_xdf):
-    groupby_applied = dummy_xdf.groupby("foo").apply(lambda df: df.sum())
+def test_deferred_execution_groupby_apply(dummy_df):
+    groupby_applied = dummy_df.groupby("foo").apply(lambda df: df.sum())
     assert need_to_execute(groupby_applied)
     print(groupby_applied)
     assert not need_to_execute(groupby_applied)

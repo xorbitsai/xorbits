@@ -15,9 +15,19 @@
 
 import pytest
 
-from .pandas import DataFrame
+from .pandas import DataFrame, Series, date_range
 
 
 @pytest.fixture
-def dummy_xdf():
-    return DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
+def dummy_df():
+    return DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
+
+
+@pytest.fixture
+def dummy_str_series():
+    return Series(["foo", "bar", "baz"])
+
+
+@pytest.fixture
+def dummy_dt_series():
+    return Series(date_range("2000-01-01", periods=3, freq="s"))

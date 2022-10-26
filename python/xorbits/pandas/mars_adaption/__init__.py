@@ -28,9 +28,9 @@ from ...core.mars_adaption import (
     to_mars,
     wrap_mars_callable,
 )
-from . import loc
+from . import accssor, loc
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ...adapter.mars import MarsEntity
 
 
@@ -61,7 +61,6 @@ del _install_functions
 def _install_magic_methods() -> None:
     def wrap_setattr(owner: Type) -> Callable[[Any, str, Any], None]:
         def wrapped(self: Any, name: str, value: Any) -> None:
-            # print(f"__setattr__ was called with ({name}, {value})")
             if name.startswith("_"):
                 object.__setattr__(self, name, value)
             else:
@@ -73,31 +72,30 @@ def _install_magic_methods() -> None:
                         getattr(type(self.mars_entity), name).fset(
                             self.mars_entity, to_mars(value)
                         )
-                    else:
+                    else:  # pragma: no cover
                         getattr(self.mars_entity, "__setattr__")(name, value)
-                else:
+                else:  # pragma: no cover
                     raise NotImplementedError(f"Unsupported type: {owner}")
 
         return wrapped
 
     def wrap_magic_method(method_name: str, owner: Type) -> Callable[[Any], Any]:
         def wrapped(self: Any, *args, **kwargs):
-            # print(f"{method_name} was called on {type(self)}")
             if issubclass(owner, DataRefMarsImpl):
-                if not hasattr(self.data, method_name):
+                if not hasattr(self.data, method_name):  # pragma: no cover
                     raise AttributeError(
                         f"'{type(self)}' object has no attribute '{method_name}'"
                     )
                 return getattr(self.data, method_name)(*args, **kwargs)
             elif issubclass(owner, DataMarsImpl):
-                if not hasattr(self.mars_entity, method_name):
+                if not hasattr(self.mars_entity, method_name):  # pragma: no cover
                     raise AttributeError(
                         f"'{type(self)}' object has no attribute '{method_name}'"
                     )
                 return wrap_mars_callable(getattr(self.mars_entity, method_name))(
                     *args, **kwargs
                 )
-            else:
+            else:  # pragma: no cover
                 raise NotImplementedError(f"Unsupported type: {owner}")
 
         return wrapped

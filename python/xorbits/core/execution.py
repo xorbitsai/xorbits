@@ -25,9 +25,8 @@ if TYPE_CHECKING:
 def execute(ref: "DataRef"):
     if need_to_execute(ref):
         if isinstance(ref, mars_adaption.DataRefMarsImpl):
-            print(f"executing {ref.data.mars_entity}")
             mars_execute(ref.data.mars_entity)
-        else:
+        else:  # pragma: no cover
             raise NotImplementedError(
                 f"Unable to execute an instance of {type(ref).__name__} "
             )
@@ -40,7 +39,7 @@ def need_to_execute(ref: "DataRef"):
             hasattr(mars_entity, "_executed_sessions")
             and len(getattr(mars_entity, "_executed_sessions")) == 0
         )
-    else:
+    else:  # pragma: no cover
         raise NotImplementedError(
             f"Unable to execute an instance of {type(ref).__name__} "
         )

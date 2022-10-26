@@ -18,59 +18,59 @@ from ..data import DataRef
 from ..mars_adaption import from_mars, to_mars
 
 
-def test_to_mars(dummy_xdf):
-    assert isinstance(to_mars(dummy_xdf), MarsEntity)
+def test_to_mars(dummy_df):
+    assert isinstance(to_mars(dummy_df), MarsEntity)
 
     # tuple.
-    ins = (dummy_xdf, "foo")
+    ins = (dummy_df, "foo")
     assert isinstance(to_mars(ins)[0], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
     # nested tuple.
-    ins = ((dummy_xdf, "foo"), "bar")
+    ins = ((dummy_df, "foo"), "bar")
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = ([dummy_xdf, "foo"], "bar")
+    ins = ([dummy_df, "foo"], "bar")
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = ({"foo": dummy_xdf, "bar": "baz"}, "bar")
+    ins = ({"foo": dummy_df, "bar": "baz"}, "bar")
     assert isinstance(to_mars(ins)[0]["foo"], MarsEntity)
     assert not isinstance(to_mars(ins)[0]["bar"], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
 
     # list.
-    ins = [dummy_xdf, "foo"]
+    ins = [dummy_df, "foo"]
     assert isinstance(to_mars(ins)[0], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
     # nested list.
-    ins = [(dummy_xdf, "foo"), "bar"]
+    ins = [(dummy_df, "foo"), "bar"]
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = [[dummy_xdf, "foo"], "bar"]
+    ins = [[dummy_df, "foo"], "bar"]
     assert isinstance(to_mars(ins)[0][0], MarsEntity)
     assert not isinstance(to_mars(ins)[0][1], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
-    ins = [{"foo": dummy_xdf, "bar": "baz"}, "bar"]
+    ins = [{"foo": dummy_df, "bar": "baz"}, "bar"]
     assert isinstance(to_mars(ins)[0]["foo"], MarsEntity)
     assert not isinstance(to_mars(ins)[0]["bar"], MarsEntity)
     assert not isinstance(to_mars(ins)[1], MarsEntity)
 
     # dict.
-    ins = {"foo": dummy_xdf, "bar": "baz"}
+    ins = {"foo": dummy_df, "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
     # nested dict.
-    ins = {"foo": (dummy_xdf, "foo"), "bar": "baz"}
+    ins = {"foo": (dummy_df, "foo"), "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"][0], MarsEntity)
     assert not isinstance(to_mars(ins)["foo"][1], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
-    ins = {"foo": [dummy_xdf, "foo"], "bar": "baz"}
+    ins = {"foo": [dummy_df, "foo"], "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"][0], MarsEntity)
     assert not isinstance(to_mars(ins)["foo"][1], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
-    ins = {"foo": {"bar": dummy_xdf}, "bar": "baz"}
+    ins = {"foo": {"bar": dummy_df}, "bar": "baz"}
     assert isinstance(to_mars(ins)["foo"]["bar"], MarsEntity)
     assert not isinstance(to_mars(ins)["bar"], MarsEntity)
 
