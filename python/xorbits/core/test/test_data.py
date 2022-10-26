@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import pandas as pd
 
 from ...adapter.mars import MarsEntity, mars_dataframe
 from ..data import DataRef
@@ -132,13 +131,3 @@ def test_from_mars():
     ins = {"foo": {"bar": mdf}, "bar": "baz"}
     assert isinstance(from_mars(ins)["foo"]["bar"], DataRef)
     assert not isinstance(from_mars(ins)["bar"], DataRef)
-
-
-def test_loc(dummy_xdf):
-    xdf = dummy_xdf.loc[[0], ["foo"]]
-    rows = list(xdf.iterrows())
-    assert 1 == len(rows)
-    row = rows[0]
-    assert 2 == len(row)
-    assert 0 == row[0]
-    assert row[1].equals(pd.Series({"foo": 1}, name=0))
