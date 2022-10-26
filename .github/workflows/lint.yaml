@@ -35,16 +35,16 @@ jobs:
     - name: flake8 Lint
       uses: py-actions/flake8@v2
       with:
-        path: "python"
+        path: "python/xorbits"
         args: "--config python/setup.cfg"
 
     - name: black
       uses: psf/black@stable
       with:
-        src: "python"
+        src: "python/xorbits"
         options: "--exclude xorbits/_mars/"
 
     - uses: isort/isort-action@master
       with:
-        sortPaths: "python"
-        configuration: "--skip-glob xorbits/_mars/"
+        sortPaths: "python/xorbits"
+        configuration: "--check-only --diff --skip-glob xorbits/_mars/"
