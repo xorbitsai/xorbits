@@ -2,7 +2,7 @@ name: Python CI
 
 on:
   workflow_run:
-    workflows: [Lint CI]
+    workflows: ["Lint CI"]
     types: [completed]
 
 concurrency:
