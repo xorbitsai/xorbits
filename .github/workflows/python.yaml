@@ -120,14 +120,14 @@ jobs:
 
     - name: Coverage comment
       id: coverage_comment
-      if: ${{ matrix.os }} == "ubuntu-latest" && ${{ matrix.python-version }} == "3.9"
+      if: ${{ matrix.os == 'ubuntu-latest' }}  && ${{ matrix.python-version == '3.9' }}
       uses: py-cov-action/python-coverage-comment-action@v3
       with:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Store Pull Request comment to be posted
       uses: actions/upload-artifact@v3
-      if: steps.coverage_comment.outputs.COMMENT_FILE_WRITTEN == 'true'
+      if: ${{ matrix.os == 'ubuntu-latest' }}  && ${{ matrix.python-version == '3.9' }}
       with:
         # If you use a different name, update COMMENT_ARTIFACT_NAME accordingly
         name: python-coverage-comment-action
