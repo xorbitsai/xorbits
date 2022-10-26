@@ -43,7 +43,7 @@ jobs:
       - uses: isort/isort-action@master
         with:
           sortPaths: "python/xorbits"
-          configuration: "--check-only --diff --skip-glob xorbits/_mars/"
+          configuration: "--check-only --profile black --diff --skip-glob xorbits/_mars/"
 
   build_test_job:
     runs-on: ${{ matrix.os }}
