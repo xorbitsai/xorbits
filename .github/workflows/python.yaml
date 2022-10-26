@@ -1,19 +1,53 @@
 name: Python CI
 
 on:
-  workflow_run:
-    workflows: ["Lint CI"]
-    types: [completed]
-    branches: '*'
+  push:
+    branches:
+      - '*'
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  lint:
     runs-on: ${{ matrix.os }}
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "ubuntu-latest" ]
+        python-version: [ "3.10" ]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2
+        with:
+          path: "python/xorbits"
+          args: "--config python/setup.cfg"
+      - name: black
+        uses: psf/black@stable
+        with:
+          src: "python/xorbits"
+          options: "--check --verbose --exclude xorbits/_mars/"
+      - uses: isort/isort-action@master
+        with:
+          sortPaths: "python/xorbits"
+          configuration: "--check-only --diff --skip-glob xorbits/_mars/"
+
+  build_test_job:
+    runs-on: ${{ matrix.os }}
+    needs: lint
     env:
       CONDA_ENV: xorbits-test
     defaults:
@@ -25,8 +59,10 @@ jobs:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
         exclude:
-          - os: ["macos-latest", "windows-latest"]
-          - python-version: ["3.8", "3.9"]
+          - { os: macos-latest, python-version: 3.8}
+          - { os: macos-latest, python-version: 3.9}
+          - { os: windows-latest, python-version: 3.8}
+          - { os: windows-latest, python-version: 3.9}
 
     steps:
     - name: Check out code
