@@ -45,7 +45,7 @@ jobs:
           sortPaths: "python/xorbits"
           configuration: "--check-only --diff --skip-glob xorbits/_mars/"
 
-  build and test:
+  build_test_job:
     runs-on: ${{ matrix.os }}
     needs: lint
     env:
