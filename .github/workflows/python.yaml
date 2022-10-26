@@ -5,6 +5,8 @@ on:
     workflows: ["Lint CI"]
     types: [completed]
     branches: '*'
+    pull_request:
+      types: [ 'opened', 'reopened', 'synchronize' ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
