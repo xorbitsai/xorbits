@@ -15,7 +15,7 @@
 
 import pytest
 
-from .dataframe import DataFrame
+from .pandas import DataFrame
 
 
 @pytest.fixture

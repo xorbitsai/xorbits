@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ...dataframe import get_dummies
+from ...pandas import get_dummies
 from ..execution import need_to_execute
 
 

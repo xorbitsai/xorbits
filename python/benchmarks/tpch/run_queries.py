@@ -21,7 +21,7 @@ import time
 from typing import Callable, List, Dict, TYPE_CHECKING
 
 import xorbits
-import xorbits.dataframe as xd
+import xorbits.pandas as xd
 
 if TYPE_CHECKING:
     from xorbits.core import XorbitsDataRef
