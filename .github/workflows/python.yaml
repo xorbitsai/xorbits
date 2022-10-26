@@ -39,7 +39,7 @@ jobs:
         uses: psf/black@stable
         with:
           src: "python/xorbits"
-          options: "--exclude xorbits/_mars/"
+          options: "--check --verbose --exclude xorbits/_mars/"
       - uses: isort/isort-action@master
         with:
           sortPaths: "python/xorbits"
