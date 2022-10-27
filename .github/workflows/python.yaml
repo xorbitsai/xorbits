@@ -57,8 +57,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-#        python-version: ["3.7", "3.8", "3.9", "3.10"]
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
         exclude:
           - { os: macos-latest, python-version: 3.8}
           - { os: macos-latest, python-version: 3.9}
@@ -120,6 +119,7 @@ jobs:
       working-directory: ./python
 
     - name: Comment coverage
+      if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.9') }}
       uses: orgoro/coverage@v3
       with:
         coverageFile: python/coverage.xml
