@@ -15,6 +15,7 @@
 
 import pytest
 
+from .deploy import init, shutdown
 from .pandas import DataFrame, Series, date_range
 
 
@@ -31,3 +32,18 @@ def dummy_str_series():
 @pytest.fixture
 def dummy_dt_series():
     return Series(date_range("2000-01-01", periods=3, freq="s"))
+
+
+@pytest.fixture(scope="module")
+def setup():
+    try:
+        init(
+            address="test://127.0.0.1",
+            backend="mars",
+            init_local=True,
+            default=True,
+            timeout=300,
+        )
+        yield
+    finally:
+        shutdown()

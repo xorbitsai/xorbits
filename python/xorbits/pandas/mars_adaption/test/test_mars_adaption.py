@@ -20,7 +20,7 @@ from ..accssor import DatetimeAccessor, StringAccessor
 from ..loc import DataFrameLoc
 
 
-def test_dataframe_loc(dummy_df):
+def test_dataframe_loc(setup, dummy_df):
     assert isinstance(dummy_df.loc, DataFrameLoc)
 
     xdf = dummy_df.loc[[0], ["foo"]]
@@ -34,7 +34,7 @@ def test_dataframe_loc(dummy_df):
     assert pd.Series({"foo": 0}, name=0).equals(row[1])
 
 
-def test_string_accessor(dummy_str_series):
+def test_string_accessor(setup, dummy_str_series):
     assert isinstance(dummy_str_series.str, StringAccessor)
     s = dummy_str_series.str.fullmatch("foo")
 
@@ -43,7 +43,7 @@ def test_string_accessor(dummy_str_series):
         assert val == (str(dummy_str_series[i]) == "foo")
 
 
-def test_datetime_accessor(dummy_dt_series):
+def test_datetime_accessor(setup, dummy_dt_series):
     assert isinstance(dummy_dt_series.dt, DatetimeAccessor)
     s = dummy_dt_series.dt.second
 
@@ -52,7 +52,7 @@ def test_datetime_accessor(dummy_dt_series):
         assert val == i
 
 
-def test_dataframe_getitem(dummy_df):
+def test_dataframe_getitem(setup, dummy_df):
     foo = dummy_df["foo"]
     assert isinstance(foo, DataRefMarsImpl)
 
@@ -63,7 +63,7 @@ def test_dataframe_getitem(dummy_df):
         idx += 1
 
 
-def test_dataframe_setitem(dummy_df):
+def test_dataframe_setitem(setup, dummy_df):
     dummy_df["baz"] = (0.0, 1.0, 2.0)
     baz = dummy_df.baz
     assert isinstance(baz, DataRefMarsImpl)
@@ -75,7 +75,7 @@ def test_dataframe_setitem(dummy_df):
         idx += 1
 
 
-def test_dataframe_getattr(dummy_df):
+def test_dataframe_getattr(setup, dummy_df):
     foo = dummy_df.foo
     assert isinstance(foo, DataRefMarsImpl)
 
@@ -86,7 +86,7 @@ def test_dataframe_getattr(dummy_df):
         idx += 1
 
 
-def test_dataframe_setattr(dummy_df):
+def test_dataframe_setattr(setup, dummy_df):
     assert isinstance(dummy_df.columns, DataRefMarsImpl)
     assert ["foo", "bar"] == list(dummy_df.dtypes.index)
 

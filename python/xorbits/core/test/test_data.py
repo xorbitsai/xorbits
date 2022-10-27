@@ -18,7 +18,7 @@ from ..data import DataRef
 from ..mars_adaption import from_mars, to_mars
 
 
-def test_to_mars(dummy_df):
+def test_to_mars(setup, dummy_df):
     assert isinstance(to_mars(dummy_df), MarsEntity)
 
     # tuple.
