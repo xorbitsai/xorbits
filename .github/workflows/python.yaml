@@ -117,7 +117,7 @@ jobs:
         pytest --ignore xorbits/_mars/ --log-level=DEBUG --timeout=1500 \
           -W ignore::PendingDeprecationWarning \
           --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
-        ls xorbits
+        cp .coverage ..
       working-directory: ./python
 
     - name: Coverage comment
