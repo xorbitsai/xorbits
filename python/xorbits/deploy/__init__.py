@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..adapter.mars import mars_new_session, mars_stop_server
+from ..core.adapter import mars_new_session, mars_stop_server
 
 
 def init(*args, **kwargs) -> None:

@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ...adapter.mars import MarsDataFrameLoc
-from ...core.mars_adaption import register_converter, wrap_mars_callable
+from ...core.adapter import MarsDataFrameLoc, register_converter, wrap_mars_callable
 
 
 @register_converter(from_cls=MarsDataFrameLoc)

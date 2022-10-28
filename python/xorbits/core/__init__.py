@@ -12,3 +12,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from .data import Data, DataRef
+
+
+def _register_magic_methods():
+    from ..pandas import MARS_DATAFRAME_MAGIC_METHODS
+    from .adapter import wrap_magic_method
+
+    for method in MARS_DATAFRAME_MAGIC_METHODS:
+        setattr(DataRef, method, wrap_magic_method(method))
+
+
+_register_magic_methods()
+del _register_magic_methods

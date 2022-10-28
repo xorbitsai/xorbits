@@ -13,9 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ...adapter.mars import MarsEntity, mars_dataframe
+from ..adapter import MarsEntity, from_mars, mars_dataframe, to_mars
 from ..data import DataRef
-from ..mars_adaption import from_mars, to_mars
 
 
 def test_to_mars(setup, dummy_df):

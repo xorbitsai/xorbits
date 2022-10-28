@@ -13,11 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# To avoid possible naming conflict, mars functions and classes should be renamed.
+# Functions should be renamed by adding a prefix 'mars_', and classes should be renamed
+# by adding a prefix 'Mars'.
+
 import functools
 from collections import defaultdict
-from typing import Callable, Dict, List, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Tuple, Type, Union
 
-from ..adapter.mars import MarsEntity
+# For maintenance, any module want to import from mars, it should import from here.
+from .._mars import dataframe as mars_dataframe
+from .._mars import execute as mars_execute
+from .._mars import new_session as mars_new_session
+from .._mars import stop_server as mars_stop_server
+from .._mars.core import Entity as MarsEntity
+from .._mars.dataframe.base.accessor import CachedAccessor as MarsCachedAccessor
+from .._mars.dataframe.base.accessor import DatetimeAccessor as MarsDatetimeAccessor
+from .._mars.dataframe.base.accessor import StringAccessor as MarsStringAccessor
+from .._mars.dataframe.core import DATAFRAME_GROUPBY_TYPE as MARS_DATAFRAME_GROUPBY_TYPE
+from .._mars.dataframe.core import DATAFRAME_TYPE as MARS_DATAFRAME_TYPE
+from .._mars.dataframe.core import INDEX_TYPE as MARS_INDEX_TYPE
+from .._mars.dataframe.core import SERIES_GROUPBY_TYPE as MARS_SERIES_GROUPBY_TYPE
+from .._mars.dataframe.core import SERIES_TYPE as MARS_SERIES_TYPE
+from .._mars.dataframe.core import DataFrame as MarsDataFrame
+from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
+from .._mars.dataframe.core import Index as MarsIndex
+from .._mars.dataframe.core import Series as MarsSeries
+from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
+from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .data import Data, DataRef
 
 _mars_entity_type_to_execution_condition: Dict[
@@ -57,47 +80,51 @@ def register_converter(from_cls: Type):
     return decorate
 
 
-@register_converter(from_cls=MarsEntity)
-class DataRefMarsImpl(DataRef):
-    def __init__(self, mars_entity: "MarsEntity"):
-        super().__init__(data=DataMarsImpl(mars_entity))
+def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
+    def wrapped(self: DataRef, *args, **kwargs):
+        if not hasattr(self.data, method_name):  # pragma: no cover
+            raise AttributeError(
+                f"'{type(self)}' object has no attribute '{method_name}'"
+            )
+        else:
+            return wrap_mars_callable(getattr(self.data, method_name))(*args, **kwargs)
+
+    return wrapped
 
 
-class DataMarsImpl(Data):
-    """
-    A proxy of a mars entity.
-    """
+class MarsProxy:
+    @classmethod
+    def getattr(cls, mars_entity: MarsEntity, item: str):
+        attr = getattr(mars_entity, item, None)
 
-    def __init__(self, mars_entity: "MarsEntity"):
-        self._mars_entity = mars_entity
-
-    def __getattr__(self, item):
-        attr = getattr(self._mars_entity, item)
-
-        if callable(attr):
+        if attr is None:
+            # TODO: pandas implementation
+            raise AttributeError(
+                f"'{mars_entity.data_type}' object has no attribute '{item}'"
+            )
+        elif callable(attr):
             return wrap_mars_callable(attr)
         else:
             # e.g. string accessor
             return from_mars(attr)
 
-    def __str__(self):
-        return self._mars_entity.__str__()
-
-    def __repr__(self):
-        return self._mars_entity.__repr__()
-
-    @property
-    def mars_entity(self):
-        return self._mars_entity
+    @classmethod
+    def setattr(cls, mars_entity: MarsEntity, key: str, value: Any):
+        if type(getattr(type(mars_entity), key)) is property:
+            # call the setter of the specified property.
+            getattr(type(mars_entity), key).fset(mars_entity, to_mars(value))
+        else:
+            getattr(mars_entity, "__setattr__")(key, value)
 
 
-def to_mars(inp: Union["DataRefMarsImpl", Tuple, List, Dict]):
+def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     """
     Convert xorbits data references to mars entities and execute them if needed.
     """
 
-    if isinstance(inp, DataRefMarsImpl):
-        mars_entity = inp.data.mars_entity
+    if isinstance(inp, DataRef):
+        if (mars_entity := getattr(inp.data, "_mars_entity", None)) is None:
+            raise TypeError(f"Can't covert {inp} to mars entity")
         # trigger execution
         conditions = _mars_entity_type_to_execution_condition[
             type(mars_entity).__name__
@@ -118,13 +145,15 @@ def to_mars(inp: Union["DataRefMarsImpl", Tuple, List, Dict]):
         return inp
 
 
-def from_mars(inp: Union["MarsEntity", tuple, list, dict]):
+def from_mars(inp: Union[MarsEntity, tuple, list, dict]):
     """
     Convert mars entities to xorbits data references.
     """
     converter = _get_converter(type(inp))
     if converter is not None:
         return converter(inp)
+    elif isinstance(inp, MarsEntity):
+        return DataRef(Data.from_mars(inp))
     elif isinstance(inp, tuple):
         return tuple(from_mars(i) for i in inp)
     elif isinstance(inp, list):

@@ -14,16 +14,10 @@
 # limitations under the License.
 
 # noinspection PyUnresolvedReferences
-from pandas import (  # noqa: F401
-    DateOffset,
-    Interval,
-    NaT,
-    Timedelta,
-    Timestamp,
-    offsets,
-)
+from pandas import Timedelta  # noqa: F401
+from pandas import DateOffset, Interval, NaT, Timestamp, offsets
 
-from .mars_adaption import MARS_DATAFRAME_CALLABLES
+from .mars_adaption import MARS_DATAFRAME_CALLABLES, MARS_DATAFRAME_MAGIC_METHODS
 
 try:
     from pandas import NA, NamedAgg  # noqa: F401

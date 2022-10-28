@@ -15,7 +15,7 @@
 
 import pandas as pd
 
-from ....core.mars_adaption import DataRefMarsImpl
+from ....core import DataRef
 from ..accssor import DatetimeAccessor, StringAccessor
 from ..loc import DataFrameLoc
 
@@ -24,7 +24,7 @@ def test_dataframe_loc(setup, dummy_df):
     assert isinstance(dummy_df.loc, DataFrameLoc)
 
     xdf = dummy_df.loc[[0], ["foo"]]
-    assert isinstance(xdf, DataRefMarsImpl)
+    assert isinstance(xdf, DataRef)
 
     rows = list(xdf.iterrows())
     assert 1 == len(rows)
@@ -38,7 +38,7 @@ def test_string_accessor(setup, dummy_str_series):
     assert isinstance(dummy_str_series.str, StringAccessor)
     s = dummy_str_series.str.fullmatch("foo")
 
-    assert isinstance(s, DataRefMarsImpl)
+    assert isinstance(s, DataRef)
     for i, val in s.iteritems():
         assert val == (str(dummy_str_series[i]) == "foo")
 
@@ -47,14 +47,14 @@ def test_datetime_accessor(setup, dummy_dt_series):
     assert isinstance(dummy_dt_series.dt, DatetimeAccessor)
     s = dummy_dt_series.dt.second
 
-    assert isinstance(s, DataRefMarsImpl)
+    assert isinstance(s, DataRef)
     for i, val in s.iteritems():
         assert val == i
 
 
 def test_dataframe_getitem(setup, dummy_df):
     foo = dummy_df["foo"]
-    assert isinstance(foo, DataRefMarsImpl)
+    assert isinstance(foo, DataRef)
 
     idx = 0
     for i, val in foo.iteritems():
@@ -66,7 +66,7 @@ def test_dataframe_getitem(setup, dummy_df):
 def test_dataframe_setitem(setup, dummy_df):
     dummy_df["baz"] = (0.0, 1.0, 2.0)
     baz = dummy_df.baz
-    assert isinstance(baz, DataRefMarsImpl)
+    assert isinstance(baz, DataRef)
 
     idx = 0
     for i, val in baz.iteritems():
@@ -77,7 +77,7 @@ def test_dataframe_setitem(setup, dummy_df):
 
 def test_dataframe_getattr(setup, dummy_df):
     foo = dummy_df.foo
-    assert isinstance(foo, DataRefMarsImpl)
+    assert isinstance(foo, DataRef)
 
     idx = 0
     for i, val in foo.iteritems():
@@ -87,7 +87,7 @@ def test_dataframe_getattr(setup, dummy_df):
 
 
 def test_dataframe_setattr(setup, dummy_df):
-    assert isinstance(dummy_df.columns, DataRefMarsImpl)
+    assert isinstance(dummy_df.columns, DataRef)
     assert ["foo", "bar"] == list(dummy_df.dtypes.index)
 
     dummy_df.columns = ["c1", "c2"]

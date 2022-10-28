@@ -12,9 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from xorbits.core.mars_adaption import from_mars, register_converter, wrap_mars_callable
 
-from ...adapter.mars import MarsCachedAccessor, MarsDatetimeAccessor, MarsStringAccessor
+from ...core.adapter import (
+    MarsCachedAccessor,
+    MarsDatetimeAccessor,
+    MarsStringAccessor,
+    from_mars,
+    register_converter,
+    wrap_mars_callable,
+)
 
 
 class Accessor:

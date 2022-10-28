@@ -13,28 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import TYPE_CHECKING
-
-from ..adapter.mars import mars_execute
-from . import mars_adaption
-
-if TYPE_CHECKING:
-    from .data import DataRef
+from .adapter import mars_execute
+from .data import DataRef
 
 
-def execute(ref: "DataRef"):
+def execute(ref: DataRef):
     if need_to_execute(ref):
-        if isinstance(ref, mars_adaption.DataRefMarsImpl):
-            mars_execute(ref.data.mars_entity)
+        if (mars_entity := getattr(ref.data, "_mars_entity", None)) is not None:
+            mars_execute(mars_entity)
         else:  # pragma: no cover
             raise NotImplementedError(
                 f"Unable to execute an instance of {type(ref).__name__} "
             )
 
 
-def need_to_execute(ref: "DataRef"):
-    if isinstance(ref, mars_adaption.DataRefMarsImpl):
-        mars_entity = ref.data.mars_entity
+def need_to_execute(ref: DataRef):
+    if (mars_entity := getattr(ref.data, "_mars_entity", None)) is not None:
         return (
             hasattr(mars_entity, "_executed_sessions")
             and len(getattr(mars_entity, "_executed_sessions")) == 0
