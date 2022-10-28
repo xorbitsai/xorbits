@@ -135,3 +135,7 @@ dmypy.json
 
 # soft link
 python/xorbits/_mars
+
+# web staff
+node_modules/
+static/
