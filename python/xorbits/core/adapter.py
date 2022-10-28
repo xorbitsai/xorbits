@@ -82,12 +82,17 @@ def register_converter(from_cls: Type):
 
 def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
     def wrapped(self: DataRef, *args, **kwargs):
-        if not hasattr(self.data, method_name):  # pragma: no cover
+        mars_entity = getattr(self.data, "_mars_entity", None)
+        if (mars_entity is None) or (
+            not hasattr(mars_entity, method_name)
+        ):  # pragma: no cover
             raise AttributeError(
                 f"'{type(self)}' object has no attribute '{method_name}'"
             )
         else:
-            return wrap_mars_callable(getattr(self.data, method_name))(*args, **kwargs)
+            return wrap_mars_callable(getattr(mars_entity, method_name))(
+                *args, **kwargs
+            )
 
     return wrapped
 
