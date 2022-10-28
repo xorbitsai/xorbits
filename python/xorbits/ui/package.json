@@ -1,9 +1,9 @@
 {
-  "name": "mars-ui",
+  "name": "xorbits-ui",
   "varsion": "0.1.0",
-  "description": "Mars frontend UI",
-  "author": "Wenjun Si",
-  "repository": "https://github.com/mars-project/mars",
+  "description": "Xorbits frontend UI",
+  "author": "XProbe Inc",
+  "repository": "https://github.com/xprobe/xorbits",
   "license": "Apache-2.0",
   "babel": {
     "presets": [

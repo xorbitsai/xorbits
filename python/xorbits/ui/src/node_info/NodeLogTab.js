@@ -83,7 +83,7 @@ export default class NodeLogTab extends React.Component {
 
   downloadLogs() {
     const filename = ''.concat(
-      'mars_',
+      'xorbits_',
       this.props.role, '_',
       this.props.endpoint, '_',
       this.getTimestamp().toString(), '_',
