@@ -118,7 +118,9 @@ jobs:
           --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
       working-directory: ./python
 
-    - name: Report coverage data
-      uses: codecov/codecov-action@v3
+    - name: Comment coverage
+      if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.9') }}
+      uses: orgoro/coverage@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+        coverageFile: python/coverage.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
