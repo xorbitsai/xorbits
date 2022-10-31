@@ -21,7 +21,7 @@ import functools
 from collections import defaultdict
 from typing import Any, Callable, Dict, List, Tuple, Type, Union
 
-# For maintenance, any module want to import from mars, it should import from here.
+# For maintenance, any module wants to import from mars, it should import from here.
 from .._mars import dataframe as mars_dataframe
 from .._mars import execute as mars_execute
 from .._mars import new_session as mars_new_session
@@ -119,7 +119,7 @@ class MarsProxy:
             # call the setter of the specified property.
             getattr(type(mars_entity), key).fset(mars_entity, to_mars(value))
         else:
-            getattr(mars_entity, "__setattr__")(key, value)
+            mars_entity.__setattr__(key, value)
 
 
 def to_mars(inp: Union[DataRef, Tuple, List, Dict]):

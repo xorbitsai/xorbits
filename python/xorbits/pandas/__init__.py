@@ -17,7 +17,7 @@
 from pandas import Timedelta  # noqa: F401
 from pandas import DateOffset, Interval, NaT, Timestamp, offsets
 
-from .mars_adaption import MARS_DATAFRAME_CALLABLES, MARS_DATAFRAME_MAGIC_METHODS
+from .mars_adapters import MARS_DATAFRAME_CALLABLES, MARS_DATAFRAME_MAGIC_METHODS
 
 try:
     from pandas import NA, NamedAgg  # noqa: F401

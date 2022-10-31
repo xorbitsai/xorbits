@@ -16,149 +16,105 @@
 
 import argparse
 import functools
+import inspect
 import json
 import time
-from typing import Callable, List, Dict, TYPE_CHECKING
+from typing import Callable, List, Dict
 
 import xorbits
 import xorbits.pandas as xd
 
-if TYPE_CHECKING:
-    from xorbits.core import XorbitsDataRef
 
-
+@functools.lru_cache
 def load_lineitem(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-
-    if "lineitem" in dataset:
-        return
-
-    data_path = root + "/lineitem"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/lineitem.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
     df["L_SHIPDATE"] = xd.to_datetime(df.L_SHIPDATE, format="%Y-%m-%d")
     df["L_RECEIPTDATE"] = xd.to_datetime(df.L_RECEIPTDATE, format="%Y-%m-%d")
     df["L_COMMITDATE"] = xd.to_datetime(df.L_COMMITDATE, format="%Y-%m-%d")
-    dataset["lineitem"] = df
+    return df.execute()
 
 
+@functools.lru_cache
 def load_part(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-
-    if "part" in dataset:
-        return
-
-    data_path = root + "/part"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/part.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    dataset["part"] = df
+    return df.execute()
 
 
+@functools.lru_cache
 def load_orders(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-
-    if "orders" in dataset:
-        return
-    data_path = root + "/orders"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/orders.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
     df["O_ORDERDATE"] = xd.to_datetime(df.O_ORDERDATE, format="%Y-%m-%d")
-    dataset["orders"] = df
+    return df.execute()
 
 
+@functools.lru_cache
 def load_customer(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-
-    if "customer" in dataset:
-        return
-
-    data_path = root + "/customer"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/customer.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    dataset["customer"] = df
+    return df.execute()
 
 
+@functools.lru_cache
 def load_nation(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-    if "nation" in dataset:
-        return
-
-    data_path = root + "/nation.pq"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/nation.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    dataset["nation"] = df
+    return df.execute()
 
 
+@functools.lru_cache
 def load_region(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-    if "region" in dataset:
-        return
-
-    data_path = root + "/region.pq"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/region.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    dataset["region"] = df
+    return df.execute()
 
 
+@functools.lru_cache
 def load_supplier(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-    if "supplier" in dataset:
-        return
-
-    data_path = root + "/supplier.pq"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/supplier.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    dataset["supplier"] = df
+    return df.execute()
 
 
+@functools.lru_cache
 def load_partsupp(
-    root: str,
-    storage_options: Dict[str, str],
-    dataset: Dict[str, "XorbitsDataRef"],
-    use_arrow_dtype: bool = None,
-) -> None:
-    if "partsupp" in dataset:
-        return
-    data_path = root + "/partsupp"
+    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+) -> xd.DataFrame:
+    data_path = data_folder + "/partsupp.pq"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    dataset["partsupp"] = df
+    return df.execute()
 
 
 def timethis(q: Callable):
@@ -171,10 +127,17 @@ def timethis(q: Callable):
     return wrapped
 
 
-@timethis
-def q01(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
+query_to_datasets = dict()
 
+
+def collect_datasets(func: Callable):
+    query_to_datasets[int(func.__name__[1:])] = list(inspect.signature(func).parameters)
+    return func
+
+
+@timethis
+@collect_datasets
+def q01(lineitem: xd.DataFrame):
     date = xd.Timestamp("1998-09-02")
     lineitem_filtered = lineitem.loc[
         :,
@@ -201,8 +164,7 @@ def q01(dataset: Dict[str, "XorbitsDataRef"]):
         * (1 - lineitem_filtered.L_DISCOUNT)
         * (1 + lineitem_filtered.L_TAX)
     )
-    gb = lineitem_filtered.groupby(["L_RETURNFLAG", "L_LINESTATUS"], as_index=False)
-    gb = gb[
+    gb = lineitem_filtered.groupby(["L_RETURNFLAG", "L_LINESTATUS"], as_index=False)[
         [
             "L_QUANTITY",
             "L_EXTENDEDPRICE",
@@ -232,13 +194,8 @@ def q01(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q02(dataset: Dict[str, "XorbitsDataRef"]):
-    part = dataset["part"]
-    partsupp = dataset["partsupp"]
-    supplier = dataset["supplier"]
-    nation = dataset["nation"]
-    region = dataset["region"]
-
+@collect_datasets
+def q02(part, partsupp, supplier, nation, region):
     nation_filtered = nation.loc[:, ["N_NATIONKEY", "N_NAME", "N_REGIONKEY"]]
     region_filtered = region[(region["R_NAME"] == "EUROPE")]
     region_filtered = region_filtered.loc[:, ["R_REGIONKEY"]]
@@ -344,11 +301,8 @@ def q02(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q03(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    customer = dataset["customer"]
-
+@collect_datasets
+def q03(lineitem, orders, customer):
     date = xd.Timestamp("1995-03-04")
     lineitem_filtered = lineitem.loc[
         :, ["L_ORDERKEY", "L_EXTENDEDPRICE", "L_DISCOUNT", "L_SHIPDATE"]
@@ -378,10 +332,8 @@ def q03(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q04(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-
+@collect_datasets
+def q04(lineitem, orders):
     date1 = xd.Timestamp("1993-11-01")
     date2 = xd.Timestamp("1993-08-01")
     lsel = lineitem.L_COMMITDATE < lineitem.L_RECEIPTDATE
@@ -398,14 +350,8 @@ def q04(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q05(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    customer = dataset["customer"]
-    supplier = dataset["supplier"]
-    nation = dataset["nation"]
-    region = dataset["region"]
-
+@collect_datasets
+def q05(lineitem, orders, customer, nation, region, supplier):
     date1 = xd.Timestamp("1996-01-01")
     date2 = xd.Timestamp("1997-01-01")
     rsel = region.R_NAME == "ASIA"
@@ -426,9 +372,8 @@ def q05(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q06(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-
+@collect_datasets
+def q06(lineitem):
     date1 = xd.Timestamp("1996-01-01")
     date2 = xd.Timestamp("1997-01-01")
     lineitem_filtered = lineitem.loc[
@@ -447,13 +392,8 @@ def q06(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q07(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    customer = dataset["customer"]
-    supplier = dataset["supplier"]
-    nation = dataset["nation"]
-
+@collect_datasets
+def q07(lineitem, supplier, orders, customer, nation):
     """This version is faster than q07_old. Keeping the old one for reference"""
     lineitem_filtered = lineitem[
         (lineitem["L_SHIPDATE"] >= xd.Timestamp("1995-01-01"))
@@ -542,15 +482,8 @@ def q07(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q08(dataset: Dict[str, "XorbitsDataRef"]):
-    part = dataset["part"]
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    customer = dataset["customer"]
-    supplier = dataset["supplier"]
-    nation = dataset["nation"]
-    region = dataset["region"]
-
+@collect_datasets
+def q08(part, lineitem, supplier, orders, customer, nation, region):
     part_filtered = part[(part["P_TYPE"] == "ECONOMY ANODIZED STEEL")]
     part_filtered = part_filtered.loc[:, ["P_PARTKEY"]]
     lineitem_filtered = lineitem.loc[:, ["L_PARTKEY", "L_SUPPKEY", "L_ORDERKEY"]]
@@ -613,14 +546,8 @@ def q08(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q09(dataset: Dict[str, "XorbitsDataRef"]):
-    part = dataset["part"]
-    partsupp = dataset["partsupp"]
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    supplier = dataset["supplier"]
-    nation = dataset["nation"]
-
+@collect_datasets
+def q09(lineitem, orders, part, nation, partsupp, supplier):
     psel = part.P_NAME.str.contains("ghost")
     fpart = part[psel]
     jn1 = lineitem.merge(fpart, left_on="L_PARTKEY", right_on="P_PARTKEY")
@@ -640,12 +567,8 @@ def q09(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q10(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    nation = dataset["nation"]
-    customer = dataset["customer"]
-
+@collect_datasets
+def q10(lineitem, orders, customer, nation):
     date1 = xd.Timestamp("1994-11-01")
     date2 = xd.Timestamp("1995-02-01")
     osel = (orders.O_ORDERDATE >= date1) & (orders.O_ORDERDATE < date2)
@@ -674,11 +597,8 @@ def q10(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q11(dataset: Dict[str, "XorbitsDataRef"]):
-    partsupp = dataset["partsupp"]
-    supplier = dataset["supplier"]
-    nation = dataset["nation"]
-
+@collect_datasets
+def q11(partsupp, supplier, nation):
     partsupp_filtered = partsupp.loc[:, ["PS_PARTKEY", "PS_SUPPKEY"]]
     partsupp_filtered["TOTAL_COST"] = (
         partsupp["PS_SUPPLYCOST"] * partsupp["PS_AVAILQTY"]
@@ -704,10 +624,8 @@ def q11(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q12(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-
+@collect_datasets
+def q12(lineitem, orders):
     date1 = xd.Timestamp("1994-01-01")
     date2 = xd.Timestamp("1995-01-01")
     sel = (
@@ -736,10 +654,8 @@ def q12(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q13(dataset: Dict[str, "XorbitsDataRef"]):
-    customer = dataset["customer"]
-    orders = dataset["orders"]
-
+@collect_datasets
+def q13(customer, orders):
     customer_filtered = customer.loc[:, ["C_CUSTKEY"]]
     orders_filtered = orders[
         ~orders["O_COMMENT"].str.contains(r"special[\S|\s]*requests")
@@ -759,10 +675,8 @@ def q13(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q14(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    part = dataset["part"]
-
+@collect_datasets
+def q14(lineitem, part):
     startDate = xd.Timestamp("1994-03-01")
     endDate = xd.Timestamp("1994-04-01")
     p_type_like = "PROMO"
@@ -781,10 +695,8 @@ def q14(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q15(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    supplier = dataset["supplier"]
-
+@collect_datasets
+def q15(lineitem, supplier):
     lineitem_filtered = lineitem[
         (lineitem["L_SHIPDATE"] >= xd.Timestamp("1996-01-01"))
         & (
@@ -814,11 +726,8 @@ def q15(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q16(dataset: Dict[str, "XorbitsDataRef"]):
-    part = dataset["part"]
-    partsupp = dataset["partsupp"]
-    supplier = dataset["supplier"]
-
+@collect_datasets
+def q16(part, partsupp, supplier):
     part_filtered = part[
         (part["P_BRAND"] != "Brand#45")
         & (~part["P_TYPE"].str.contains("^MEDIUM POLISHED"))
@@ -852,10 +761,8 @@ def q16(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q17(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    part = dataset["part"]
-
+@collect_datasets
+def q17(lineitem, part):
     left = lineitem.loc[:, ["L_PARTKEY", "L_QUANTITY", "L_EXTENDEDPRICE"]]
     right = part[((part["P_BRAND"] == "Brand#23") & (part["P_CONTAINER"] == "MED BOX"))]
     right = right.loc[:, ["P_PARTKEY"]]
@@ -880,11 +787,8 @@ def q17(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q18(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    customer = dataset["customer"]
-
+@collect_datasets
+def q18(lineitem, orders, customer):
     gb1 = lineitem.groupby("L_ORDERKEY", as_index=False, sort=False)["L_QUANTITY"].sum()
     fgb1 = gb1[gb1.L_QUANTITY > 300]
     jn1 = fgb1.merge(orders, left_on="L_ORDERKEY", right_on="O_ORDERKEY")
@@ -899,10 +803,8 @@ def q18(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q19(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    part = dataset["part"]
-
+@collect_datasets
+def q19(lineitem, part):
     Brand31 = "Brand#31"
     Brand43 = "Brand#43"
     SMBOX = "SM BOX"
@@ -1002,13 +904,8 @@ def q19(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q20(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    part = dataset["part"]
-    nation = dataset["nation"]
-    partsupp = dataset["partsupp"]
-    supplier = dataset["supplier"]
-
+@collect_datasets
+def q20(lineitem, part, nation, partsupp, supplier):
     date1 = xd.Timestamp("1996-01-01")
     date2 = xd.Timestamp("1997-01-01")
     psel = part.P_NAME.str.startswith("azure")
@@ -1036,12 +933,8 @@ def q20(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q21(dataset: Dict[str, "XorbitsDataRef"]):
-    lineitem = dataset["lineitem"]
-    orders = dataset["orders"]
-    supplier = dataset["supplier"]
-    nation = dataset["nation"]
-
+@collect_datasets
+def q21(lineitem, orders, supplier, nation):
     lineitem_filtered = lineitem.loc[
         :, ["L_ORDERKEY", "L_SUPPKEY", "L_RECEIPTDATE", "L_COMMITDATE"]
     ]
@@ -1106,10 +999,8 @@ def q21(dataset: Dict[str, "XorbitsDataRef"]):
 
 
 @timethis
-def q22(dataset: Dict[str, "XorbitsDataRef"]):
-    customer = dataset["customer"]
-    orders = dataset["orders"]
-
+@collect_datasets
+def q22(customer, orders):
     customer_filtered = customer.loc[:, ["C_ACCTBAL", "C_CUSTKEY"]]
     customer_filtered["CNTRYCODE"] = customer["C_PHONE"].str.slice(0, 2)
     customer_filtered = customer_filtered[
@@ -1142,79 +1033,6 @@ def q22(dataset: Dict[str, "XorbitsDataRef"]):
     print(total)
 
 
-query_to_loaders = {
-    1: [load_lineitem],
-    2: [load_part, load_partsupp, load_supplier, load_nation, load_region],
-    3: [load_lineitem, load_orders, load_customer],
-    4: [load_lineitem, load_orders],
-    5: [
-        load_lineitem,
-        load_orders,
-        load_customer,
-        load_nation,
-        load_region,
-        load_supplier,
-    ],
-    6: [load_lineitem],
-    7: [load_lineitem, load_supplier, load_orders, load_customer, load_nation],
-    8: [
-        load_part,
-        load_lineitem,
-        load_supplier,
-        load_orders,
-        load_customer,
-        load_nation,
-        load_region,
-    ],
-    9: [
-        load_lineitem,
-        load_orders,
-        load_part,
-        load_nation,
-        load_partsupp,
-        load_supplier,
-    ],
-    10: [load_lineitem, load_orders, load_nation, load_customer],
-    11: [load_partsupp, load_supplier, load_nation],
-    12: [load_lineitem, load_orders],
-    13: [load_customer, load_orders],
-    14: [load_lineitem, load_part],
-    15: [load_lineitem, load_supplier],
-    16: [load_part, load_partsupp, load_supplier],
-    17: [load_lineitem, load_part],
-    18: [load_lineitem, load_orders, load_customer],
-    19: [load_lineitem, load_part],
-    20: [load_lineitem, load_part, load_nation, load_partsupp, load_supplier],
-    21: [load_lineitem, load_orders, load_supplier, load_nation],
-    22: [load_customer, load_orders],
-}
-
-query_to_runner = {
-    1: q01,
-    2: q02,
-    3: q03,
-    4: q04,
-    5: q05,
-    6: q06,
-    7: q07,
-    8: q08,
-    9: q09,
-    10: q10,
-    11: q11,
-    12: q12,
-    13: q13,
-    14: q14,
-    15: q15,
-    16: q16,
-    17: q17,
-    18: q18,
-    19: q19,
-    20: q20,
-    21: q21,
-    22: q22,
-}
-
-
 def run_queries(
     root: str,
     storage_options: Dict[str, str],
@@ -1222,25 +1040,20 @@ def run_queries(
     use_arrow_dtype: bool = None,
 ):
     total_start = time.time()
-    dataset = {}
     print("Start data loading")
+    queries_to_args = dict()
     for query in queries:
-        loaders = query_to_loaders[query]
-        for loader in loaders:
-            loader(root, storage_options, dataset, use_arrow_dtype=use_arrow_dtype)
+        args = []
+        for dataset in query_to_datasets[query]:
+            args.append(
+                globals()[f"load_{dataset}"](root, use_arrow_dtype, **storage_options)
+            )
+        queries_to_args[query] = args
     print(f"Data loading time (s): {time.time() - total_start}")
 
     total_start = time.time()
-    print("Start data persisting")
-    for table_name in dataset:
-        start = time.time()
-        dataset[table_name].execute()
-        print(f"{table_name} persisting time (s): {time.time() - start}")
-    print(f"Total data persisting time (s): {time.time() - total_start}")
-
-    total_start = time.time()
     for query in queries:
-        query_to_runner[query](dataset)
+        globals()[f"q{query:02}"](*queries_to_args[query])
     print(f"Total query execution time (s): {time.time() - total_start}")
 
 
@@ -1303,4 +1116,3 @@ def main():
 if __name__ == "__main__":
     print(xorbits.__version__)
     main()
-

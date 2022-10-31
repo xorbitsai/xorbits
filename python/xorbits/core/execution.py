@@ -19,7 +19,8 @@ from .data import DataRef
 
 def execute(ref: DataRef):
     if need_to_execute(ref):
-        if (mars_entity := getattr(ref.data, "_mars_entity", None)) is not None:
+        mars_entity = getattr(ref.data, "_mars_entity", None)
+        if mars_entity is not None:
             mars_execute(mars_entity)
         else:  # pragma: no cover
             raise NotImplementedError(
@@ -28,7 +29,8 @@ def execute(ref: DataRef):
 
 
 def need_to_execute(ref: DataRef):
-    if (mars_entity := getattr(ref.data, "_mars_entity", None)) is not None:
+    mars_entity = getattr(ref.data, "_mars_entity", None)
+    if mars_entity is not None:
         return (
             hasattr(mars_entity, "_executed_sessions")
             and len(getattr(mars_entity, "_executed_sessions")) == 0

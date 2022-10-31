@@ -74,6 +74,7 @@ jobs:
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:
+        python-version: ${{ matrix.python-version }}
         activate-environment: ${{ env.CONDA_ENV }}
         use-only-tar-bz2: true
 
