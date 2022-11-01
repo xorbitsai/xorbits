@@ -206,7 +206,9 @@ class BuildWeb(Command):
             assert os.path.exists(cls._web_dest_path)
 
         static_bundle_path = os.path.join(web_src_path, "static")
-        shutil.copytree(static_bundle_path, mars_web_path, dirs_exist_ok=True)
+        if os.path.exists(mars_web_path):
+            shutil.rmtree(mars_web_path)
+        shutil.copytree(static_bundle_path, mars_web_path)
 
 
 CustomInstall.register_pre_command("build_web")

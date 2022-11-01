@@ -13,9 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
-from .deploy import init, shutdown
+from .data import Data, DataRef
 
-__version__ = _version.get_versions()["version"]
 
-__all__ = ["init", "shutdown"]
+def _register_magic_methods():
+    from ..pandas.mars_adapters import MARS_DATAFRAME_MAGIC_METHODS
+    from .adapter import wrap_magic_method
+
+    for method in MARS_DATAFRAME_MAGIC_METHODS:
+        setattr(DataRef, method, wrap_magic_method(method))
+
+
+_register_magic_methods()
+del _register_magic_methods

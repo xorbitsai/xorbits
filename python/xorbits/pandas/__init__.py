@@ -13,9 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
-from .deploy import init, shutdown
+# noinspection PyUnresolvedReferences
+from pandas import Timedelta  # noqa: F401
+from pandas import DateOffset, Interval, NaT, Timestamp, offsets
 
-__version__ = _version.get_versions()["version"]
+try:
+    from pandas import NA, NamedAgg  # noqa: F401
+except ImportError:  # pragma: no cover
+    pass
 
-__all__ = ["init", "shutdown"]
+
+def __getattr__(name: str):
+    from .mars_adapters import MARS_DATAFRAME_CALLABLES
+
+    if name in MARS_DATAFRAME_CALLABLES:
+        return MARS_DATAFRAME_CALLABLES[name]
+    else:
+        # TODO  for functions not implemented fallback to pandas
+        raise NotImplementedError

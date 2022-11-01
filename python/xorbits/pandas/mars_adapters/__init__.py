@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
-from .deploy import init, shutdown
-
-__version__ = _version.get_versions()["version"]
-
-__all__ = ["init", "shutdown"]
+from .accssor import Accessor
+from .core import MARS_DATAFRAME_CALLABLES, MARS_DATAFRAME_MAGIC_METHODS
+from .loc import DataFrameLoc

@@ -13,9 +13,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
+import pytest
+
 from .deploy import init, shutdown
+from .pandas import DataFrame, Series, date_range
 
-__version__ = _version.get_versions()["version"]
 
-__all__ = ["init", "shutdown"]
+@pytest.fixture
+def dummy_df():
+    return DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
+
+
+@pytest.fixture
+def dummy_str_series():
+    return Series(["foo", "bar", "baz"])
+
+
+@pytest.fixture
+def dummy_dt_series():
+    return Series(date_range("2000-01-01", periods=3, freq="s"))
+
+
+@pytest.fixture(scope="module")
+def setup():
+    try:
+        init(
+            address="test://127.0.0.1",
+            backend="mars",
+            init_local=True,
+            default=True,
+            timeout=300,
+        )
+        yield
+    finally:
+        shutdown()

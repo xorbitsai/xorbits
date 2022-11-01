@@ -13,9 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import _version
-from .deploy import init, shutdown
+from ..core.adapter import mars_new_session, mars_stop_server
 
-__version__ = _version.get_versions()["version"]
 
-__all__ = ["init", "shutdown"]
+def init(*args, **kwargs) -> None:
+    mars_new_session(*args, **kwargs)
+
+
+def shutdown(*args, **kwargs) -> None:
+    mars_stop_server(*args, **kwargs)
+
+
+__all__ = [
+    "init",
+    "shutdown",
+]

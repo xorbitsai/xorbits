@@ -74,6 +74,7 @@ jobs:
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:
+        python-version: ${{ matrix.python-version }}
         activate-environment: ${{ env.CONDA_ENV }}
         use-only-tar-bz2: true
 
@@ -91,7 +92,7 @@ jobs:
       uses: actions/cache@v2
       env:
         # Increase this value to reset cache if python/CI/conda-environment.yml has not changed
-        CACHE_NUMBER: 0
+        CACHE_NUMBER: 1
       with:
         path: |
           ${{ steps.get-conda-prefix.outputs.conda_prefix }}/envs/${{ env.CONDA_ENV }}
