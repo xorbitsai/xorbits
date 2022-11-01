@@ -17,8 +17,6 @@
 from pandas import Timedelta  # noqa: F401
 from pandas import DateOffset, Interval, NaT, Timestamp, offsets
 
-from .mars_adapters import MARS_DATAFRAME_CALLABLES, MARS_DATAFRAME_MAGIC_METHODS
-
 try:
     from pandas import NA, NamedAgg  # noqa: F401
 except ImportError:  # pragma: no cover
@@ -26,6 +24,8 @@ except ImportError:  # pragma: no cover
 
 
 def __getattr__(name: str):
+    from .mars_adapters import MARS_DATAFRAME_CALLABLES
+
     if name in MARS_DATAFRAME_CALLABLES:
         return MARS_DATAFRAME_CALLABLES[name]
     else:

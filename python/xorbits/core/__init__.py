@@ -17,7 +17,7 @@ from .data import Data, DataRef
 
 
 def _register_magic_methods():
-    from ..pandas import MARS_DATAFRAME_MAGIC_METHODS
+    from ..pandas.mars_adapters import MARS_DATAFRAME_MAGIC_METHODS
     from .adapter import wrap_magic_method
 
     for method in MARS_DATAFRAME_MAGIC_METHODS:

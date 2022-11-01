@@ -128,7 +128,8 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     """
 
     if isinstance(inp, DataRef):
-        if (mars_entity := getattr(inp.data, "_mars_entity", None)) is None:
+        mars_entity = getattr(inp.data, "_mars_entity", None)
+        if mars_entity is None:
             raise TypeError(f"Can't covert {inp} to mars entity")
         # trigger execution
         conditions = _mars_entity_type_to_execution_condition[
