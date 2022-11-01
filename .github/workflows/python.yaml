@@ -92,7 +92,7 @@ jobs:
       uses: actions/cache@v2
       env:
         # Increase this value to reset cache if python/CI/conda-environment.yml has not changed
-        CACHE_NUMBER: 0
+        CACHE_NUMBER: 1
       with:
         path: |
           ${{ steps.get-conda-prefix.outputs.conda_prefix }}/envs/${{ env.CONDA_ENV }}
