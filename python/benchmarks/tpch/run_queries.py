@@ -127,11 +127,11 @@ def timethis(q: Callable):
     return wrapped
 
 
-query_to_datasets = dict()
+_query_to_datasets: Dict[int, List[str]] = dict()
 
 
 def collect_datasets(func: Callable):
-    query_to_datasets[int(func.__name__[1:])] = list(inspect.signature(func).parameters)
+    _query_to_datasets[int(func.__name__[1:])] = list(inspect.signature(func).parameters)
     return func
 
 
@@ -1044,7 +1044,7 @@ def run_queries(
     queries_to_args = dict()
     for query in queries:
         args = []
-        for dataset in query_to_datasets[query]:
+        for dataset in _query_to_datasets[query]:
             args.append(
                 globals()[f"load_{dataset}"](root, use_arrow_dtype, **storage_options)
             )
