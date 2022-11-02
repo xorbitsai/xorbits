@@ -30,6 +30,7 @@ from .._mars.core import Entity as MarsEntity
 from .._mars.dataframe.base.accessor import CachedAccessor as MarsCachedAccessor
 from .._mars.dataframe.base.accessor import DatetimeAccessor as MarsDatetimeAccessor
 from .._mars.dataframe.base.accessor import StringAccessor as MarsStringAccessor
+from .._mars.dataframe.core import CATEGORICAL_TYPE as MARS_CATEGORICAL_TYPE
 from .._mars.dataframe.core import DATAFRAME_GROUPBY_TYPE as MARS_DATAFRAME_GROUPBY_TYPE
 from .._mars.dataframe.core import DATAFRAME_TYPE as MARS_DATAFRAME_TYPE
 from .._mars.dataframe.core import INDEX_TYPE as MARS_INDEX_TYPE
