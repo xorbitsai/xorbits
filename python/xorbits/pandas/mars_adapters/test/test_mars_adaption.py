@@ -15,9 +15,16 @@
 
 import pandas as pd
 
+from .... import pandas as xpd
 from ....core import DataRef
 from ..accssor import DatetimeAccessor, StringAccessor
 from ..loc import DataFrameLoc
+
+
+def test_dataframe_categorical(setup):
+    c = xpd.qcut(range(5), 4)
+    assert isinstance(c, DataRef)
+    assert isinstance(c.dtype, pd.CategoricalDtype)
 
 
 def test_dataframe_loc(setup, dummy_df):
