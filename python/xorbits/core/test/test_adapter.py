@@ -145,4 +145,4 @@ def test_on_nonexistent_magic_method(dummy_df):
     try:
         dummy_df.index + dummy_df.index
     except AttributeError as e:
-        raise "'index' object has no attribute '__add__'" == str(e)
+        assert "'index' object has no attribute '__add__'" == str(e)
