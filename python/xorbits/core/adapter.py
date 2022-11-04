@@ -42,7 +42,7 @@ from .._mars.dataframe.core import Index as MarsIndex
 from .._mars.dataframe.core import Series as MarsSeries
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
-from .data import Data, DataRef
+from .data import Data, DataRef, DataType
 
 _mars_entity_type_to_execution_condition: Dict[
     str, List[Callable[["MarsEntity"], bool]]
@@ -88,7 +88,7 @@ def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
             not hasattr(mars_entity, method_name)
         ):  # pragma: no cover
             raise AttributeError(
-                f"'{type(self)}' object has no attribute '{method_name}'"
+                f"'{self.data.data_type.name}' object has no attribute '{method_name}'"
             )
         else:
             return wrap_mars_callable(getattr(mars_entity, method_name))(
@@ -100,14 +100,12 @@ def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
 
 class MarsProxy:
     @classmethod
-    def getattr(cls, mars_entity: MarsEntity, item: str):
+    def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
         attr = getattr(mars_entity, item, None)
 
         if attr is None:
             # TODO: pandas implementation
-            raise AttributeError(
-                f"'{mars_entity.data_type}' object has no attribute '{item}'"
-            )
+            raise AttributeError(f"'{data_type.name}' object has no attribute '{item}'")
         elif callable(attr):
             return wrap_mars_callable(attr)
         else:
