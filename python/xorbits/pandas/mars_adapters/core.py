@@ -21,7 +21,15 @@ from ...core.adapter import (
     MARS_DATAFRAME_TYPE,
     MARS_SERIES_GROUPBY_TYPE,
     MARS_SERIES_TYPE,
+    MarsCachedAccessor,
+    MarsDatetimeAccessor,
+    MarsEWM,
+    MarsExpanding,
+    MarsRolling,
+    MarsStringAccessor,
+    from_mars,
     mars_dataframe,
+    register_converter,
     register_execution_condition,
     wrap_mars_callable,
 )
@@ -99,3 +107,21 @@ def _register_execution_conditions() -> None:
 
 
 _register_execution_conditions()
+
+
+@register_converter(from_cls=MarsStringAccessor)
+@register_converter(from_cls=MarsDatetimeAccessor)
+@register_converter(from_cls=MarsCachedAccessor)
+@register_converter(from_cls=MarsEWM)
+@register_converter(from_cls=MarsExpanding)
+@register_converter(from_cls=MarsRolling)
+class MarsGetAttrProxy:
+    def __init__(self, mars_obj):
+        self._mars_obj = mars_obj
+
+    def __getattr__(self, item):
+        attr = getattr(self._mars_obj, item)
+        if callable(attr):
+            return wrap_mars_callable(attr)
+        else:
+            return from_mars(attr)
