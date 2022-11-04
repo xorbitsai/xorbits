@@ -41,6 +41,7 @@ from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
 from .._mars.dataframe.core import Index as MarsIndex
 from .._mars.dataframe.core import Series as MarsSeries
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
+from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .data import Data, DataRef
 

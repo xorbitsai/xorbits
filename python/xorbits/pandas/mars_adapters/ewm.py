@@ -13,7 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .accssor import Accessor
-from .core import MARS_DATAFRAME_CALLABLES, MARS_DATAFRAME_MAGIC_METHODS
-from .ewm import EWM
-from .loc import DataFrameLoc
+from ...core.adapter import MarsEWM, from_mars, register_converter, wrap_mars_callable
+
+
+@register_converter(from_cls=MarsEWM)
+class EWM:
+    def __init__(self, mars_obj: "MarsEWM"):
+        self._mars_obj = mars_obj
+
+    def __getattr__(self, item):
+        attr = getattr(self._mars_obj, item)
+        if callable(attr):
+            return wrap_mars_callable(attr)
+        else:
+            return from_mars(attr)

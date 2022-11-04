@@ -17,6 +17,7 @@ import pandas as pd
 
 from .... import pandas as xpd
 from ....core import DataRef
+from .. import EWM
 from ..accssor import DatetimeAccessor, StringAccessor
 from ..loc import DataFrameLoc
 
@@ -25,6 +26,13 @@ def test_dataframe_categorical(setup):
     c = xpd.qcut(range(5), 4)
     assert isinstance(c, DataRef)
     assert isinstance(c.dtype, pd.CategoricalDtype)
+
+
+def test_dataframe_ewm(setup, dummy_df):
+    assert isinstance(dummy_df.ewm, EWM)
+
+    df = dummy_df.foo.ewm(com=0.5).mean()
+    assert isinstance(df, DataRef)
 
 
 def test_dataframe_loc(setup, dummy_df):
