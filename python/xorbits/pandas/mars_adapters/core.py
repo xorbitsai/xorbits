@@ -109,12 +109,16 @@ def _register_execution_conditions() -> None:
 _register_execution_conditions()
 
 
-@register_converter(from_cls=MarsStringAccessor)
-@register_converter(from_cls=MarsDatetimeAccessor)
-@register_converter(from_cls=MarsCachedAccessor)
-@register_converter(from_cls=MarsEWM)
-@register_converter(from_cls=MarsExpanding)
-@register_converter(from_cls=MarsRolling)
+@register_converter(
+    from_cls_list=[
+        MarsStringAccessor,
+        MarsDatetimeAccessor,
+        MarsCachedAccessor,
+        MarsEWM,
+        MarsExpanding,
+        MarsRolling,
+    ]
+)
 class MarsGetAttrProxy:
     def __init__(self, mars_obj):
         self._mars_obj = mars_obj

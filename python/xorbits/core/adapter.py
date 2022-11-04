@@ -71,14 +71,15 @@ def _get_converter(from_cls: Type):
     return None
 
 
-def register_converter(from_cls: Type):
+def register_converter(from_cls_list: List[Type]):
     """
     A decorator for convenience of registering a class converter.
     """
 
     def decorate(cls: Type):
-        assert from_cls not in _mars_type_to_converters
-        _mars_type_to_converters[from_cls] = cls
+        for from_cls in from_cls_list:
+            assert from_cls not in _mars_type_to_converters
+            _mars_type_to_converters[from_cls] = cls
         return cls
 
     return decorate
