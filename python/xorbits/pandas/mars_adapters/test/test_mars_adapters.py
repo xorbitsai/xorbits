@@ -29,9 +29,9 @@ def test_dataframe_categorical(setup):
 
 
 def test_dataframe_ewm(setup, dummy_df):
-    assert isinstance(dummy_df.ewm, EWM)
-
-    df = dummy_df.foo.ewm(com=0.5).mean()
+    e = dummy_df.foo.ewm(com=0.5)
+    assert isinstance(e, EWM)
+    df = e.mean()
     assert isinstance(df, DataRef)
 
 
