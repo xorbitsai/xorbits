@@ -134,15 +134,14 @@ def test_from_mars():
 
 
 def test_on_nonexistent_attr(dummy_df):
-    try:
-        print(dummy_df.nonexistent_attr)
-        pytest.fail("Expecting an attribute error.")
-    except AttributeError as e:
-        assert "'dataframe' object has no attribute 'nonexistent_attr'" == str(e)
+    with pytest.raises(
+        AttributeError, match="'dataframe' object has no attribute 'nonexistent_attr'"
+    ):
+        dummy_df.nonexistent_attr
 
 
 def test_on_nonexistent_magic_method(dummy_df):
-    try:
+    with pytest.raises(
+        AttributeError, match="'index' object has no attribute '__add__'"
+    ):
         dummy_df.index + dummy_df.index
-    except AttributeError as e:
-        assert "'index' object has no attribute '__add__'" == str(e)
