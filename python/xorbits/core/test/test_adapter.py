@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import pytest
 
 from ..adapter import MarsEntity, from_mars, mars_dataframe, to_mars
 from ..data import DataRef
@@ -130,3 +131,18 @@ def test_from_mars():
     ins = {"foo": {"bar": mdf}, "bar": "baz"}
     assert isinstance(from_mars(ins)["foo"]["bar"], DataRef)
     assert not isinstance(from_mars(ins)["bar"], DataRef)
+
+
+def test_on_nonexistent_attr(dummy_df):
+    try:
+        print(dummy_df.nonexistent_attr)
+        pytest.fail("Expecting an attribute error.")
+    except AttributeError as e:
+        assert "'dataframe' object has no attribute 'nonexistent_attr'" == str(e)
+
+
+def test_on_nonexistent_magic_method(dummy_df):
+    try:
+        dummy_df.index + dummy_df.index
+    except AttributeError as e:
+        raise "'index' object has no attribute '__add__'" == str(e)

@@ -76,7 +76,7 @@ class Data:
     def __getattr__(self, item: str):
         from .adapter import MarsProxy
 
-        return MarsProxy.getattr(self._mars_entity, item)
+        return MarsProxy.getattr(self.data_type, self._mars_entity, item)
 
     def __setattr__(self, key: str, value: Any):
         from .adapter import MarsProxy
