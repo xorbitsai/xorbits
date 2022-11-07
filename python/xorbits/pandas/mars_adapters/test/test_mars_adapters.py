@@ -17,7 +17,7 @@ import pandas as pd
 
 from .... import pandas as xpd
 from ....core import DataRef
-from ..accssor import DatetimeAccessor, StringAccessor
+from ..core import MarsGetAttrProxy
 from ..loc import DataFrameLoc
 
 
@@ -25,6 +25,27 @@ def test_dataframe_categorical(setup):
     c = xpd.qcut(range(5), 4)
     assert isinstance(c, DataRef)
     assert isinstance(c.dtype, pd.CategoricalDtype)
+
+
+def test_dataframe_ewm(setup, dummy_df):
+    e = dummy_df.foo.ewm(com=0.5)
+    assert isinstance(e, MarsGetAttrProxy)
+    df = e.mean()
+    assert isinstance(df, DataRef)
+
+
+def test_dataframe_expanding(setup, dummy_df):
+    e = dummy_df.foo.expanding(1)
+    assert isinstance(e, MarsGetAttrProxy)
+    df = e.sum()
+    assert isinstance(df, DataRef)
+
+
+def test_dataframe_rolling(setup, dummy_df):
+    r = dummy_df.foo.rolling(2)
+    assert isinstance(r, MarsGetAttrProxy)
+    df = r.sum()
+    assert isinstance(df, DataRef)
 
 
 def test_dataframe_loc(setup, dummy_df):
@@ -42,7 +63,7 @@ def test_dataframe_loc(setup, dummy_df):
 
 
 def test_string_accessor(setup, dummy_str_series):
-    assert isinstance(dummy_str_series.str, StringAccessor)
+    assert isinstance(dummy_str_series.str, MarsGetAttrProxy)
     s = dummy_str_series.str.fullmatch("foo")
 
     assert isinstance(s, DataRef)
@@ -51,7 +72,7 @@ def test_string_accessor(setup, dummy_str_series):
 
 
 def test_datetime_accessor(setup, dummy_dt_series):
-    assert isinstance(dummy_dt_series.dt, DatetimeAccessor)
+    assert isinstance(dummy_dt_series.dt, MarsGetAttrProxy)
     s = dummy_dt_series.dt.second
 
     assert isinstance(s, DataRef)

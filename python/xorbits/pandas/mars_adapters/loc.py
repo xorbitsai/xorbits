@@ -16,7 +16,7 @@
 from ...core.adapter import MarsDataFrameLoc, register_converter, wrap_mars_callable
 
 
-@register_converter(from_cls=MarsDataFrameLoc)
+@register_converter(from_cls_list=[MarsDataFrameLoc])
 class DataFrameLoc:
     def __init__(self, mars_obj: "MarsDataFrameLoc"):
         self._mars_obj = mars_obj

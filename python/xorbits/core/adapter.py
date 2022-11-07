@@ -41,6 +41,9 @@ from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
 from .._mars.dataframe.core import Index as MarsIndex
 from .._mars.dataframe.core import Series as MarsSeries
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
+from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
+from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
+from .._mars.dataframe.window.rolling.core import Rolling as MarsRolling
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .data import Data, DataRef, DataType
 
@@ -68,14 +71,15 @@ def _get_converter(from_cls: Type):
     return None
 
 
-def register_converter(from_cls: Type):
+def register_converter(from_cls_list: List[Type]):
     """
     A decorator for convenience of registering a class converter.
     """
 
     def decorate(cls: Type):
-        assert from_cls not in _mars_type_to_converters
-        _mars_type_to_converters[from_cls] = cls
+        for from_cls in from_cls_list:
+            assert from_cls not in _mars_type_to_converters
+            _mars_type_to_converters[from_cls] = cls
         return cls
 
     return decorate
