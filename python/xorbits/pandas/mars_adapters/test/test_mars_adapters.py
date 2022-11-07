@@ -120,3 +120,8 @@ def test_dataframe_setattr(setup, dummy_df):
 
     dummy_df.columns = ["c1", "c2"]
     assert ["c1", "c2"] == list(dummy_df.dtypes.index)
+
+
+def test_dataframe_items(setup, dummy_df):
+    for label, content in dummy_df.items():
+        assert isinstance(content, DataRef)
