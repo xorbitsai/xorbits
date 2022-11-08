@@ -120,7 +120,7 @@ jobs:
       working-directory: ./python
 
     - name: Comment coverage
-      if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.9') }}
+      if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.9') && (github.event_name == 'pull_request')}}
       uses: orgoro/coverage@v3
       with:
         coverageFile: python/coverage.xml
