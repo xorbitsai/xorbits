@@ -19,7 +19,7 @@
 
 import functools
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Tuple, Type, Union
+from typing import Any, Callable, Dict, Generator, List, Tuple, Type, Union
 
 # For maintenance, any module wants to import from mars, it should import from here.
 from .._mars import dataframe as mars_dataframe
@@ -102,6 +102,11 @@ def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
     return wrapped
 
 
+def wrap_generator(wrapped: Generator):
+    for item in wrapped:
+        yield from_mars(item)
+
+
 class MarsProxy:
     @classmethod
     def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
@@ -169,6 +174,8 @@ def from_mars(inp: Union[MarsEntity, tuple, list, dict]):
         return list(from_mars(i) for i in inp)
     elif isinstance(inp, dict):
         return dict((k, from_mars(v)) for k, v in inp.items())
+    elif isinstance(inp, Generator):
+        return wrap_generator(inp)
     else:
         return inp
 
