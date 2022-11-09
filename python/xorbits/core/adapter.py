@@ -26,6 +26,7 @@ from .._mars import dataframe as mars_dataframe
 from .._mars import execute as mars_execute
 from .._mars import new_session as mars_new_session
 from .._mars import stop_server as mars_stop_server
+from .._mars import tensor as mars_tensor
 from .._mars.core import Entity as MarsEntity
 from .._mars.dataframe.base.accessor import CachedAccessor as MarsCachedAccessor
 from .._mars.dataframe.base.accessor import DatetimeAccessor as MarsDatetimeAccessor
