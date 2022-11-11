@@ -15,23 +15,29 @@
 
 import pytest
 
+from . import numpy as np
+from . import pandas as pd
 from .deploy import init, shutdown
-from .pandas import DataFrame, Series, date_range
 
 
 @pytest.fixture
 def dummy_df():
-    return DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
+    return pd.DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
 
 
 @pytest.fixture
 def dummy_str_series():
-    return Series(["foo", "bar", "baz"])
+    return pd.Series(["foo", "bar", "baz"])
 
 
 @pytest.fixture
 def dummy_dt_series():
-    return Series(date_range("2000-01-01", periods=3, freq="s"))
+    return pd.Series(pd.date_range("2000-01-01", periods=3, freq="s"))
+
+
+@pytest.fixture
+def dummy_int_1d_array():
+    return np.array([1, 2, 3, 4])
 
 
 @pytest.fixture(scope="module")
