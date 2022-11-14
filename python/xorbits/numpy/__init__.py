@@ -82,6 +82,9 @@ finally:
     del warnings
 
 
+from . import fft, linalg, random
+
+
 def __dir__():
     from .mars_adapters import MARS_TENSOR_CALLABLES
 

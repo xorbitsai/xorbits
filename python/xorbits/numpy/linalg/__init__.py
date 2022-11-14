@@ -13,10 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import (
-    MARS_TENSOR_CALLABLES,
-    MARS_TENSOR_FFT_CALLABLES,
-    MARS_TENSOR_LINALG_CALLABLES,
-    MARS_TENSOR_MAGIC_METHODS,
-    MARS_TENSOR_RANDOM_CALLABLES,
-)
+
+def __dir__():
+    from .mars_adapters import MARS_TENSOR_LINALG_CALLABLES
+
+    return list(MARS_TENSOR_LINALG_CALLABLES.keys())
+
+
+def __getattr__(name: str):
+    from ..mars_adapters import MARS_TENSOR_LINALG_CALLABLES
+
+    if name in MARS_TENSOR_LINALG_CALLABLES:
+        return MARS_TENSOR_LINALG_CALLABLES[name]
+    else:
+        # TODO: fallback to numpy
+        raise AttributeError(name)

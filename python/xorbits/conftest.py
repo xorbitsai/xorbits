@@ -37,7 +37,12 @@ def dummy_dt_series():
 
 @pytest.fixture
 def dummy_int_1d_array():
-    return np.array([1, 2, 3, 4])
+    return np.array([0, 1, 2])
+
+
+@pytest.fixture
+def dummy_int_2d_array():
+    return np.arange(9).reshape(3, 3)
 
 
 @pytest.fixture(scope="module")

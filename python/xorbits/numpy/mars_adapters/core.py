@@ -13,21 +13,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import inspect
+from types import ModuleType
 from typing import Callable, Dict, Set
 
 from ...core.adapter import MARS_TENSOR_TYPE, mars_tensor, wrap_mars_callable
 
 
-def _collect_module_callables() -> Dict[str, Callable]:
+def _collect_module_callables(m: ModuleType) -> Dict[str, Callable]:
     mars_tensor_callables: Dict[str, Callable] = dict()
 
     # incall module functions.
-    for name, func in inspect.getmembers(mars_tensor, inspect.isfunction):
+    for name, func in inspect.getmembers(m, callable):
         mars_tensor_callables[name] = wrap_mars_callable(func)
     return mars_tensor_callables
 
 
-MARS_TENSOR_CALLABLES: Dict[str, Callable] = _collect_module_callables()
+MARS_TENSOR_CALLABLES: Dict[str, Callable] = _collect_module_callables(mars_tensor)
+MARS_TENSOR_RANDOM_CALLABLES: Dict[str, Callable] = _collect_module_callables(
+    mars_tensor.random
+)
+MARS_TENSOR_FFT_CALLABLES: Dict[str, Callable] = _collect_module_callables(
+    mars_tensor.fft
+)
+MARS_TENSOR_LINALG_CALLABLES: Dict[str, Callable] = _collect_module_callables(
+    mars_tensor.linalg
+)
 
 
 def _collect_tensor_magic_methods() -> Set[str]:

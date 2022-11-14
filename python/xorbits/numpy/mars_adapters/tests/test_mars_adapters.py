@@ -49,3 +49,16 @@ def test_comparison_op(dummy_int_1d_array):
     assert isinstance(dummy_int_1d_array > 0, DataRef)
     assert isinstance(dummy_int_1d_array == 0, DataRef)
     assert isinstance(dummy_int_1d_array < 0, DataRef)
+
+
+def test_fft(dummy_int_1d_array):
+    assert isinstance(np.fft.fft(dummy_int_1d_array), DataRef)
+
+
+def test_linalg(dummy_int_2d_array):
+    for a in np.linalg.svd(dummy_int_2d_array):
+        assert isinstance(a, DataRef)
+
+
+def test_random():
+    assert isinstance(np.random.standard_normal(10), DataRef)
