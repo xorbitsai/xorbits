@@ -42,6 +42,7 @@ if TYPE_CHECKING:
 
 
 def _collect_module_callables() -> Dict:
+    # TODO: add typing hints.
     mars_dataframe_callables = dict()
 
     # install class constructors.
@@ -65,6 +66,7 @@ MARS_DATAFRAME_CALLABLES = _collect_module_callables()
 
 
 def _collect_dataframe_magic_methods() -> Set:
+    # TODO: add typing hints.
     magic_methods = set()
 
     magic_methods_to_skip: Set[str] = {
