@@ -16,27 +16,42 @@ import inspect
 from types import ModuleType
 from typing import Callable, Dict, Set
 
-from ...core.adapter import MARS_TENSOR_TYPE, mars_tensor, wrap_mars_callable
+import numpy
+
+from ...core.adapter import (
+    MARS_TENSOR_TYPE,
+    attach_docstring,
+    mars_tensor,
+    wrap_mars_callable,
+)
 
 
-def _collect_module_callables(m: ModuleType) -> Dict[str, Callable]:
-    mars_tensor_callables: Dict[str, Callable] = dict()
+def _collect_module_callables(
+    m: ModuleType, docstring_src_module: ModuleType
+) -> Dict[str, Callable]:
+    module_callables: Dict[str, Callable] = dict()
 
     # incall module functions.
     for name, func in inspect.getmembers(m, callable):
-        mars_tensor_callables[name] = wrap_mars_callable(func)
-    return mars_tensor_callables
+        module_callables[name] = attach_docstring(
+            docstring_src_module,
+            getattr(docstring_src_module, name, None),
+            wrap_mars_callable(func),
+        )
+    return module_callables
 
 
-MARS_TENSOR_CALLABLES: Dict[str, Callable] = _collect_module_callables(mars_tensor)
+MARS_TENSOR_CALLABLES: Dict[str, Callable] = _collect_module_callables(
+    mars_tensor, numpy
+)
 MARS_TENSOR_RANDOM_CALLABLES: Dict[str, Callable] = _collect_module_callables(
-    mars_tensor.random
+    mars_tensor.random, numpy.random
 )
 MARS_TENSOR_FFT_CALLABLES: Dict[str, Callable] = _collect_module_callables(
-    mars_tensor.fft
+    mars_tensor.fft, numpy.fft
 )
 MARS_TENSOR_LINALG_CALLABLES: Dict[str, Callable] = _collect_module_callables(
-    mars_tensor.linalg
+    mars_tensor.linalg, numpy.linalg
 )
 
 

@@ -17,6 +17,7 @@ from enum import Enum
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type
 
+import numpy
 import pandas
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -54,6 +55,7 @@ class Data:
             pandas.core.groupby.generic.DataFrameGroupBy,
         ),
         DataType.series_groupby: (pandas, pandas.core.groupby.generic.SeriesGroupBy),
+        DataType.tensor: (numpy, numpy.ndarray),
     }
 
     def __dir__(self) -> Iterable[str]:
