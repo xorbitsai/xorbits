@@ -21,6 +21,11 @@ from .deploy import init, shutdown
 
 
 @pytest.fixture
+def doctest_namespace():
+    return {"pd": pd, "np": np}
+
+
+@pytest.fixture
 def dummy_df():
     return pd.DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
 

@@ -16,6 +16,8 @@
 import inspect
 from typing import TYPE_CHECKING, Dict, Set
 
+import pandas
+
 from ...core.adapter import (
     MARS_DATAFRAME_GROUPBY_TYPE,
     MARS_DATAFRAME_TYPE,
@@ -27,6 +29,7 @@ from ...core.adapter import (
     MarsExpanding,
     MarsRolling,
     MarsStringAccessor,
+    attach_docstring,
     from_mars,
     mars_dataframe,
     register_converter,
@@ -46,18 +49,21 @@ def _collect_module_callables() -> Dict:
     mars_dataframe_callables = dict()
 
     # install class constructors.
-    mars_dataframe_callables[mars_dataframe.DataFrame.__name__] = wrap_mars_callable(
-        mars_dataframe.DataFrame
+    mars_dataframe_callables[mars_dataframe.DataFrame.__name__] = attach_docstring(
+        pandas, pandas.DataFrame, wrap_mars_callable(mars_dataframe.DataFrame)
     )
-    mars_dataframe_callables[mars_dataframe.Series.__name__] = wrap_mars_callable(
-        mars_dataframe.Series
+
+    mars_dataframe_callables[mars_dataframe.Series.__name__] = attach_docstring(
+        pandas, pandas.Series, wrap_mars_callable(mars_dataframe.Series)
     )
-    mars_dataframe_callables[mars_dataframe.Index.__name__] = wrap_mars_callable(
-        mars_dataframe.Index
+    mars_dataframe_callables[mars_dataframe.Index.__name__] = attach_docstring(
+        pandas, pandas.Index, wrap_mars_callable(mars_dataframe.Index)
     )
     # install module functions
     for name, func in inspect.getmembers(mars_dataframe, inspect.isfunction):
-        mars_dataframe_callables[name] = wrap_mars_callable(func)
+        mars_dataframe_callables[name] = attach_docstring(
+            pandas, getattr(pandas, name, None), wrap_mars_callable(func)
+        )
 
     return mars_dataframe_callables
 

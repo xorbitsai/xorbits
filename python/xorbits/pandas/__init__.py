@@ -23,6 +23,12 @@ except ImportError:  # pragma: no cover
     pass
 
 
+def __dir__():
+    from .mars_adapters import MARS_DATAFRAME_CALLABLES
+
+    return list(MARS_DATAFRAME_CALLABLES.keys())
+
+
 def __getattr__(name: str):
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
 
@@ -30,4 +36,4 @@ def __getattr__(name: str):
         return MARS_DATAFRAME_CALLABLES[name]
     else:
         # TODO  for functions not implemented fallback to pandas
-        raise NotImplementedError
+        raise AttributeError(name)
