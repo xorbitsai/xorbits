@@ -205,7 +205,7 @@ def add_docstring_disclaimer(
     if (
         docstring_src is not None
         and hasattr(docstring_src, "__module__")
-        and not docstring_src.__module__
+        and docstring_src.__module__
     ):
         return (
             doc
@@ -245,7 +245,7 @@ def add_arg_disclaimer(
 ) -> Optional[str]:
     import re
 
-    def get_named_args(func: Callable) -> list[str]:
+    def get_named_args(func: Callable) -> List[str]:
         s = inspect.signature(func)
         return [
             n
@@ -253,7 +253,7 @@ def add_arg_disclaimer(
             if p.kind in [p.POSITIONAL_OR_KEYWORD, p.POSITIONAL_ONLY, p.KEYWORD_ONLY]
         ]
 
-    def mark_unsupported_args(doc: str, args: list[str]) -> str:
+    def mark_unsupported_args(doc: str, args: List[str]) -> str:
         import re
 
         lines = doc.split("\n")
@@ -268,7 +268,7 @@ def add_arg_disclaimer(
                 lines[i] = line + "  (Not supported yet)"
         return "\n".join(lines)
 
-    def add_extra_args(doc: str, original_doc: Optional[Any], args: list[str]) -> str:
+    def add_extra_args(doc: str, original_doc: Optional[Any], args: List[str]) -> str:
         def count_leading_spaces(s: str):
             return len(s) - len(s.lstrip(" "))
 
