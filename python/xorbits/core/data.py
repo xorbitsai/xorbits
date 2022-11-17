@@ -108,7 +108,7 @@ class Data:
 
         ret = MarsProxy.getattr(self.data_type, self._mars_entity, item)
         if callable(ret):
-            from .adapter import (
+            from .utils.docstring import (
                 add_arg_disclaimer,
                 add_docstring_disclaimer,
                 gen_docstring,

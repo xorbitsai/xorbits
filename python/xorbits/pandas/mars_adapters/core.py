@@ -29,13 +29,13 @@ from ...core.adapter import (
     MarsExpanding,
     MarsRolling,
     MarsStringAccessor,
-    attach_docstring,
     from_mars,
     mars_dataframe,
     register_converter,
     register_execution_condition,
     wrap_mars_callable,
 )
+from ...core.utils.docstring import attach_docstring
 
 if TYPE_CHECKING:
     from ...core.adapter import MarsEntity

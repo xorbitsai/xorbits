@@ -18,12 +18,8 @@ from typing import Callable, Dict, Set
 
 import numpy
 
-from ...core.adapter import (
-    MARS_TENSOR_TYPE,
-    attach_docstring,
-    mars_tensor,
-    wrap_mars_callable,
-)
+from ...core.adapter import MARS_TENSOR_TYPE, mars_tensor, wrap_mars_callable
+from ...core.utils.docstring import attach_docstring
 
 
 def _collect_module_callables(

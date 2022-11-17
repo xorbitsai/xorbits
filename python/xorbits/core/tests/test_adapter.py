@@ -15,15 +15,7 @@
 
 import pytest
 
-from ..adapter import (
-    MarsEntity,
-    add_arg_disclaimer,
-    add_docstring_disclaimer,
-    from_mars,
-    mars_dataframe,
-    skip_doctest,
-    to_mars,
-)
+from ..adapter import MarsEntity, from_mars, mars_dataframe, to_mars
 from ..data import DataRef
 
 
@@ -154,78 +146,3 @@ def test_on_nonexistent_magic_method(dummy_df):
         AttributeError, match="'index' object has no attribute '__add__'"
     ):
         dummy_df.index + dummy_df.index
-
-
-def test_add_docstring_disclaimer():
-    import pandas as pd
-
-    assert "foo" == add_docstring_disclaimer(None, None, "foo")
-    assert add_docstring_disclaimer(None, pd.DataFrame, None) is None
-    assert add_docstring_disclaimer(None, pd.DataFrame, "").endswith(
-        "This docstring was copied from pandas.core.frame.DataFrame"
-    )
-
-
-def test_skip_doctest():
-    doc = ">>> a = 0"
-    assert doc + "  # doctest: +SKIP" == skip_doctest(doc)
-    doc = ">>> a = 0  # doctest: +FOO"
-    assert doc + ", +SKIP" == skip_doctest(doc)
-    doc = ">>> a = 0  # doctest: +SKIP"
-    assert doc == skip_doctest(doc)
-
-
-def test_add_arg_disclaimer():
-    def src(a: str, b: str, e: str):
-        """
-        Parameters
-        ----------
-        a : str
-            foo
-        b : str
-            bar
-        e : str
-
-        Returns
-        -------
-        """
-        pass
-
-    def dest(b: str, c: str, d: str):
-        """
-        Parameters
-        ----------
-        b : str
-            bar
-        c : str
-            baz
-        d : str
-
-        Returns
-        -------
-        """
-        pass
-
-    expected = (
-        """
-        Parameters
-        ----------
-        a : str  (Not supported yet)
-            foo
-        b : str
-            bar
-        e : str  (Not supported yet)
-
-        Returns
-        -------
-        """
-        + """
-        Extra Parameters
-        ----------------
-        c : str
-            baz
-        d : str
-        """
-    )
-
-    assert add_arg_disclaimer(src, dest, src.__doc__) == expected
