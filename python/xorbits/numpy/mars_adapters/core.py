@@ -19,7 +19,6 @@ from typing import Callable, Dict, Set
 import numpy
 
 from ...core.adapter import MARS_TENSOR_TYPE, mars_tensor, wrap_mars_callable
-from ...core.utils.docstring import attach_docstring
 
 
 def _collect_module_callables(
@@ -27,13 +26,16 @@ def _collect_module_callables(
 ) -> Dict[str, Callable]:
     module_callables: Dict[str, Callable] = dict()
 
-    # incall module functions.
+    # install module functions.
     for name, func in inspect.getmembers(m, callable):
-        module_callables[name] = attach_docstring(
-            docstring_src_module,
-            getattr(docstring_src_module, name, None),
-            wrap_mars_callable(func),
+        module_callables[name] = wrap_mars_callable(
+            func,
+            attach_docstring=True,
+            is_method=False,
+            docstring_src_module=docstring_src_module,
+            docstring_src=getattr(docstring_src_module, name, None),
         )
+
     return module_callables
 
 

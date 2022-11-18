@@ -81,7 +81,7 @@ parameters.extend(
 
 
 @pytest.mark.parametrize("obj,name", parameters)
-def test_docstrings(obj, name, doctest_namespace):
+def test_docstrings(setup, doctest_namespace, obj, name):
     results = run_docstring(
         getattr(obj, name),
         doctest_namespace,

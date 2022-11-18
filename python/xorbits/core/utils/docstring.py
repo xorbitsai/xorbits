@@ -15,29 +15,61 @@
 
 import inspect
 from types import ModuleType
-from typing import Any, Callable, List, Optional, Type
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type
+
+import numpy
+import pandas
+
+from xorbits.core.data import DataType
+
+_DATA_TYPE_TO_DOCSTRING_SRC: Dict[DataType, Tuple[ModuleType, Type]] = {
+    DataType.dataframe: (pandas, pandas.DataFrame),
+    DataType.series: (pandas, pandas.Series),
+    DataType.index: (pandas, pandas.Index),
+    DataType.categorical: (pandas, pandas.Categorical),
+    DataType.dataframe_groupby: (
+        pandas,
+        pandas.core.groupby.generic.DataFrameGroupBy,
+    ),
+    DataType.series_groupby: (pandas, pandas.core.groupby.generic.SeriesGroupBy),
+    DataType.tensor: (numpy, numpy.ndarray),
+}
+
+
+def get_base_indentation(doc: str) -> Optional[str]:
+    lines = doc.splitlines()
+    if len(lines) > 2:
+        # the first line of a docstring is always an empty string.
+        return " " * (len(lines[1]) - len(lines[1].lstrip(" ")))
+    else:
+        return None
 
 
 def add_docstring_disclaimer(
     docstring_src_module: Optional[ModuleType],
-    docstring_src: Optional[Callable],
+    docstring_src_cls: Optional[Callable],
     doc: Optional[str],
 ) -> Optional[str]:
     if doc is None:
         return None
 
+    base_indentation = get_base_indentation(doc)
+    if base_indentation is None:
+        return doc
+
     if (
-        docstring_src is not None
-        and hasattr(docstring_src, "__module__")
-        and docstring_src.__module__
+        docstring_src_cls is not None
+        and hasattr(docstring_src_cls, "__module__")
+        and docstring_src_cls.__module__
     ):
         return (
             doc
-            + f"\n\nThis docstring was copied from {docstring_src.__module__}.{docstring_src.__name__}"
+            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_cls.__module__}.{docstring_src_cls.__name__}"
         )
     elif docstring_src_module is not None:
         return (
-            doc + f"\n\nThis docstring was copied from {docstring_src_module.__name__}"
+            doc
+            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_module.__name__}"
         )
     else:
         return doc
@@ -104,50 +136,58 @@ def add_arg_disclaimer(
                 return m.group(1)
             return None
 
-        def is_param_description(s: str, num_leading_spaces: int) -> bool:
+        def is_param_description(s: str, base_indentation: str) -> bool:
             if s.strip():
-                return count_leading_spaces(s) == num_leading_spaces + 4
+                return count_leading_spaces(s) == len(base_indentation) + 4
             else:
                 return True
 
         if original_doc is None:
             return doc
 
-        new_section = [""]
+        # the indentation of generated docstring must be consistent.
+        base_indentation = get_base_indentation(doc)
+        original_base_indentation = get_base_indentation(original_doc)
+        if base_indentation is None or original_base_indentation is None:
+            return doc
+        param_description_indentation = base_indentation + " " * 4
 
+        new_section: List[str] = []
         lines = original_doc.splitlines()
         idx = 0
         parameter_pattern = re.compile(r"\s+Parameters")
         while idx < len(lines):
             if re.match(parameter_pattern, lines[idx]):
-                num_leading_spaces = count_leading_spaces(lines[idx])
-                new_section.append(" " * num_leading_spaces + "Extra Parameters")
-                new_section.append(
-                    " " * num_leading_spaces + "-" * len("Extra Parameters")
-                )
                 idx += 2
                 while idx < len(lines) and get_param_name(lines[idx]) is not None:
                     param_name = get_param_name(lines[idx])
                     if param_name in args:
-                        new_section.append(
-                            " " * num_leading_spaces + lines[idx].strip()
-                        )
+                        if not new_section:
+                            # init new section only if the original docstring has description of
+                            # any extra parameter.
+                            new_section.append("")
+                            new_section.append(base_indentation + "Extra Parameters")
+                            new_section.append(
+                                base_indentation + "-" * len("Extra Parameters")
+                            )
+                        new_section.append(base_indentation + lines[idx].strip())
                         idx += 1
                         while idx < len(lines) and is_param_description(
-                            lines[idx], num_leading_spaces
+                            lines[idx], original_base_indentation
                         ):
                             if lines[idx].strip():
                                 new_section.append(
-                                    " " * (num_leading_spaces + 4) + lines[idx].strip()
+                                    param_description_indentation + lines[idx].strip()
                                 )
                             idx += 1
                     else:
+                        # skip the parameter description.
                         idx += 1
                         while idx < len(lines) and is_param_description(
-                            lines[idx], num_leading_spaces
+                            lines[idx], original_base_indentation
                         ):
                             idx += 1
-                new_section.append(" " * num_leading_spaces)
+                new_section.append(base_indentation)
                 break
             idx += 1
 
@@ -173,14 +213,14 @@ def add_arg_disclaimer(
     return doc
 
 
-def gen_docstring(
-    docstring_src: Optional[Type],
+def gen_method_docstring(
+    docstring_src_cls: Optional[Type],
     method_name: str,
 ) -> Optional[str]:
-    if docstring_src is None:
+    if docstring_src_cls is None:
         return None
 
-    src_method = getattr(docstring_src, method_name, None)
+    src_method = getattr(docstring_src_cls, method_name, None)
     if src_method is None:
         return None
 
@@ -192,24 +232,46 @@ def gen_docstring(
             doc = getattr(src_method, "__doc__", None)
 
     # pandas DataFrame/Series sometimes override methods without setting __doc__.
-    if doc is None and docstring_src.__name__ in {"DataFrame", "Series"}:
-        for cls in docstring_src.mro():
+    if doc is None and docstring_src_cls.__name__ in {"DataFrame", "Series"}:
+        for cls in docstring_src_cls.mro():
             src_method = getattr(cls, method_name, None)
             if src_method is not None and hasattr(src_method, "__doc__"):
                 doc = src_method.__doc__
     return doc
 
 
-def attach_docstring(
-    docstring_src_module: ModuleType, docstring_src: Optional[Callable], func: Callable
+def attach_module_callable_docstring(
+    c: Callable,
+    docstring_src_module: ModuleType,
+    docstring_src: Optional[Callable],
 ) -> Callable:
+    """
+    Attach docstring to functions and constructors.
+    """
+
     if docstring_src is None:
-        func.__doc__ = ""
-        return func
+        c.__doc__ = ""
+        return c
 
     doc = getattr(docstring_src, "__doc__", None)
     doc = skip_doctest(doc)
-    doc = add_arg_disclaimer(docstring_src, func, doc)
-    doc = add_docstring_disclaimer(docstring_src_module, docstring_src, doc)
-    func.__doc__ = "" if doc is None else doc
-    return func
+    doc = add_arg_disclaimer(docstring_src, c, doc)
+    doc = add_docstring_disclaimer(docstring_src_module, None, doc)
+    c.__doc__ = "" if doc is None else doc
+    return c
+
+
+def attach_method_docstring(
+    method: Callable, method_name: str, data_type: DataType
+) -> Callable:
+    """
+    Attach docstring to class methods.
+    """
+
+    docstring_src_module, docstring_src_cls = _DATA_TYPE_TO_DOCSTRING_SRC[data_type]
+    doc = gen_method_docstring(docstring_src_cls, method_name)
+    doc = skip_doctest(doc)
+    doc = add_arg_disclaimer(getattr(docstring_src_cls, method_name, None), method, doc)
+    doc = add_docstring_disclaimer(docstring_src_module, docstring_src_cls, doc)
+    method.__doc__ = "" if doc is None else doc
+    return method

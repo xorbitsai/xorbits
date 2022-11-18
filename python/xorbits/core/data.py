@@ -14,11 +14,7 @@
 # limitations under the License.
 
 from enum import Enum
-from types import ModuleType
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type
-
-import numpy
-import pandas
+from typing import TYPE_CHECKING, Any, Iterable, List
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
@@ -41,22 +37,8 @@ class Data:
 
     __fields: List[str] = [
         "data_type",
-        "_docstring_src",
-        "_docstring_src_module",
         "_mars_entity",
     ]
-    __data_type_to_docstring_src: Dict[DataType, Tuple[ModuleType, Type]] = {
-        DataType.dataframe: (pandas, pandas.DataFrame),
-        DataType.series: (pandas, pandas.Series),
-        DataType.index: (pandas, pandas.Index),
-        DataType.categorical: (pandas, pandas.Categorical),
-        DataType.dataframe_groupby: (
-            pandas,
-            pandas.core.groupby.generic.DataFrameGroupBy,
-        ),
-        DataType.series_groupby: (pandas, pandas.core.groupby.generic.SeriesGroupBy),
-        DataType.tensor: (numpy, numpy.ndarray),
-    }
 
     def __dir__(self) -> Iterable[str]:
         return dir(self._mars_entity)
@@ -64,12 +46,6 @@ class Data:
     def __init__(self, *args, **kwargs):
         self.data_type: DataType = kwargs.pop("data_type")
         self._mars_entity = kwargs.pop("mars_entity", None)
-        self._docstring_src: Optional[Type]
-        self._docstring_src_module: Optional[ModuleType]
-        (
-            self._docstring_src_module,
-            self._docstring_src,
-        ) = self.__data_type_to_docstring_src.get(self.data_type, (None, None))
         if len(args) > 0 or len(kwargs) > 0:
             raise TypeError(f"Unexpected args {args} or kwargs {kwargs}.")
 
@@ -107,21 +83,6 @@ class Data:
         from .adapter import MarsProxy
 
         ret = MarsProxy.getattr(self.data_type, self._mars_entity, item)
-        if callable(ret):
-            from .utils.docstring import (
-                add_arg_disclaimer,
-                add_docstring_disclaimer,
-                gen_docstring,
-                skip_doctest,
-            )
-
-            doc = gen_docstring(self._docstring_src, item)
-            doc = skip_doctest(doc)
-            doc = add_arg_disclaimer(getattr(self._docstring_src, item, None), ret, doc)
-            doc = add_docstring_disclaimer(
-                self._docstring_src_module, self._docstring_src, doc
-            )
-            ret.__doc__ = "" if doc is None else doc
         return ret
 
     def __setattr__(self, key: str, value: Any):

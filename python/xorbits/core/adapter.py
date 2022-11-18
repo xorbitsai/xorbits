@@ -109,9 +109,11 @@ def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
                 f"'{self.data.data_type.name}' object has no attribute '{method_name}'"
             )
         else:
-            return wrap_mars_callable(getattr(mars_entity, method_name))(
-                *args, **kwargs
-            )
+            return wrap_mars_callable(
+                getattr(mars_entity, method_name),
+                attach_docstring=False,
+                is_method=True,
+            )(*args, **kwargs)
 
     return wrapped
 
@@ -130,7 +132,13 @@ class MarsProxy:
             # TODO: pandas implementation
             raise AttributeError(f"'{data_type.name}' object has no attribute '{item}'")
         elif callable(attr):
-            return wrap_mars_callable(attr)
+            return wrap_mars_callable(
+                attr,
+                attach_docstring=True,
+                is_method=True,
+                method_name=item,
+                data_type=data_type,
+            )
         else:
             # e.g. string accessor
             return from_mars(attr)
@@ -194,14 +202,26 @@ def from_mars(inp: Union[MarsEntity, tuple, list, dict]):
         return inp
 
 
-def wrap_mars_callable(c):
+def wrap_mars_callable(
+    c: Callable, attach_docstring: bool, is_method: bool, **kwargs
+) -> Callable:
     """
-    A function wrapper that makes arguments of the wrapped method be mars compatible type and
-    return value be xorbits compatible type.
+    A function wrapper that makes arguments of the wrapped callable be mars compatible types and
+    return value be xorbits compatible types.
     """
 
     @functools.wraps(c)
     def wrapped(*args, **kwargs):
         return from_mars(c(*to_mars(args), **to_mars(kwargs)))
 
-    return wrapped
+    if attach_docstring:
+        if is_method:
+            from .utils.docstring import attach_method_docstring
+
+            return attach_method_docstring(wrapped, **kwargs)
+        else:
+            from .utils.docstring import attach_module_callable_docstring
+
+            return attach_module_callable_docstring(wrapped, **kwargs)
+    else:
+        return wrapped
