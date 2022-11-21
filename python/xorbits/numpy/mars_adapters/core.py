@@ -14,11 +14,23 @@
 # limitations under the License.
 import inspect
 from types import ModuleType
-from typing import Callable, Dict, Set
+from typing import Any, Callable, Dict, Set
 
 import numpy
 
-from ...core.adapter import MARS_TENSOR_TYPE, mars_tensor, wrap_mars_callable
+from ...core.adapter import (
+    MARS_TENSOR_TYPE,
+    MarsAxisConcatenator,
+    from_mars,
+    mars_c_,
+    mars_mgrid,
+    mars_ogrid,
+    mars_r_,
+    mars_tensor,
+    register_converter,
+    to_mars,
+    wrap_mars_callable,
+)
 
 
 def _collect_module_callables(
@@ -51,6 +63,27 @@ MARS_TENSOR_FFT_CALLABLES: Dict[str, Callable] = _collect_module_callables(
 MARS_TENSOR_LINALG_CALLABLES: Dict[str, Callable] = _collect_module_callables(
     mars_tensor.linalg, numpy.linalg
 )
+
+
+@register_converter(from_cls_list=[MarsAxisConcatenator])
+class MarsGetItemProxy:
+    def __init__(self, mars_obj):
+        self._mars_obj = mars_obj
+
+    def __getitem__(self, item):
+        return from_mars(self._mars_obj[to_mars(item)])
+
+
+def _collect_tensor_objects():
+    mars_tensor_objects: Dict[str, Any] = dict()
+    mars_tensor_objects["mgrid"] = MarsGetItemProxy(mars_mgrid)
+    mars_tensor_objects["ogrid"] = MarsGetItemProxy(mars_ogrid)
+    mars_tensor_objects["c_"] = MarsGetItemProxy(mars_c_)
+    mars_tensor_objects["r_"] = MarsGetItemProxy(mars_r_)
+    return mars_tensor_objects
+
+
+MARS_TENSOR_OBJECTS = _collect_tensor_objects()
 
 
 def _collect_tensor_magic_methods() -> Set[str]:

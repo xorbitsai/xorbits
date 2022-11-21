@@ -65,6 +65,7 @@ from numpy import (
     unsignedinteger,
     void,
 )
+from numpy.lib.index_tricks import ndindex
 
 try:
     import warnings
@@ -90,10 +91,12 @@ def __dir__():
 
 
 def __getattr__(name: str):
-    from .mars_adapters import MARS_TENSOR_CALLABLES
+    from .mars_adapters import MARS_TENSOR_CALLABLES, MARS_TENSOR_OBJECTS
 
     if name in MARS_TENSOR_CALLABLES:
         return MARS_TENSOR_CALLABLES[name]
+    elif name in MARS_TENSOR_OBJECTS:
+        return MARS_TENSOR_OBJECTS[name]
     else:
         # TODO: fallback to numpy
         raise AttributeError(name)
