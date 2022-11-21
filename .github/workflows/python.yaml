@@ -48,6 +48,7 @@ jobs:
         uses: jpetrucciani/mypy-check@master
         with:
           path: 'python/xorbits'
+          mypy_flags: '--config-file python/xorbits/setup.cfg'
 
   build_test_job:
     runs-on: ${{ matrix.os }}
