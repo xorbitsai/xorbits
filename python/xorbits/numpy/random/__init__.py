@@ -15,7 +15,7 @@
 
 
 def __dir__():
-    from .mars_adapters import MARS_TENSOR_RANDOM_CALLABLES
+    from ..mars_adapters import MARS_TENSOR_RANDOM_CALLABLES
 
     return list(MARS_TENSOR_RANDOM_CALLABLES.keys())
 
