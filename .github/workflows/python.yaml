@@ -44,6 +44,11 @@ jobs:
         with:
           sortPaths: "python/xorbits"
           configuration: "--check-only --profile black --diff --skip-glob xorbits/_mars/"
+      - name: mypy
+        uses: jpetrucciani/mypy-check@master
+        with:
+          path: 'python/xorbits'
+          mypy_flags: '--config-file python/setup.cfg'
 
   build_test_job:
     runs-on: ${{ matrix.os }}

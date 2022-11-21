@@ -24,3 +24,4 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [tokenize-rt==3.2.0]
+        args: [--config-file, python/setup.cfg]

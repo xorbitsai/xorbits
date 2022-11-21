@@ -75,7 +75,7 @@ try:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)
         # noinspection PyUnresolvedReferences
-        from numpy import bool, float, int, object
+        from numpy import bool, float, int, object  # type: ignore[attr-defined]
 except ImportError:  # pragma: no cover
     pass
 finally:
