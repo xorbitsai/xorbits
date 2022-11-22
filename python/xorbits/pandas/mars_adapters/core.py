@@ -16,6 +16,8 @@
 import inspect
 from typing import TYPE_CHECKING, Dict, Set
 
+import pandas
+
 from ...core.adapter import (
     MARS_DATAFRAME_GROUPBY_TYPE,
     MARS_DATAFRAME_TYPE,
@@ -47,17 +49,35 @@ def _collect_module_callables() -> Dict:
 
     # install class constructors.
     mars_dataframe_callables[mars_dataframe.DataFrame.__name__] = wrap_mars_callable(
-        mars_dataframe.DataFrame
+        mars_dataframe.DataFrame,
+        attach_docstring=True,
+        is_method=False,
+        docstring_src_module=pandas,
+        docstring_src=pandas.DataFrame,
     )
     mars_dataframe_callables[mars_dataframe.Series.__name__] = wrap_mars_callable(
-        mars_dataframe.Series
+        mars_dataframe.Series,
+        attach_docstring=True,
+        is_method=False,
+        docstring_src_module=pandas,
+        docstring_src=pandas.Series,
     )
     mars_dataframe_callables[mars_dataframe.Index.__name__] = wrap_mars_callable(
-        mars_dataframe.Index
+        mars_dataframe.Index,
+        attach_docstring=True,
+        is_method=False,
+        docstring_src_module=pandas,
+        docstring_src=pandas.Index,
     )
     # install module functions
     for name, func in inspect.getmembers(mars_dataframe, inspect.isfunction):
-        mars_dataframe_callables[name] = wrap_mars_callable(func)
+        mars_dataframe_callables[name] = wrap_mars_callable(
+            func,
+            attach_docstring=True,
+            is_method=False,
+            docstring_src_module=pandas,
+            docstring_src=getattr(pandas, name, None),
+        )
 
     return mars_dataframe_callables
 
@@ -128,6 +148,6 @@ class MarsGetAttrProxy:
     def __getattr__(self, item):
         attr = getattr(self._mars_obj, item)
         if callable(attr):
-            return wrap_mars_callable(attr)
+            return wrap_mars_callable(attr, attach_docstring=False, is_method=True)
         else:
             return from_mars(attr)

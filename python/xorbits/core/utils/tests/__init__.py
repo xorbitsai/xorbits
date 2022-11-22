@@ -12,16 +12,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from ...core.adapter import MarsDataFrameLoc, register_converter, wrap_mars_callable
-
-
-@register_converter(from_cls_list=[MarsDataFrameLoc])
-class DataFrameLoc:
-    def __init__(self, mars_obj: "MarsDataFrameLoc"):
-        self._mars_obj = mars_obj
-
-    def __getitem__(self, item):
-        return wrap_mars_callable(
-            self._mars_obj.__getitem__, attach_docstring=False, is_method=True
-        )(item)

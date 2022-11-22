@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Iterable, List
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
@@ -35,10 +35,16 @@ class DataType(Enum):
 class Data:
     data_type: DataType
 
-    __fields = ["data_type", "_mars_entity"]
+    __fields: List[str] = [
+        "data_type",
+        "_mars_entity",
+    ]
+
+    def __dir__(self) -> Iterable[str]:
+        return dir(self._mars_entity)
 
     def __init__(self, *args, **kwargs):
-        self.data_type = kwargs.pop("data_type")
+        self.data_type: DataType = kwargs.pop("data_type")
         self._mars_entity = kwargs.pop("mars_entity", None)
         if len(args) > 0 or len(kwargs) > 0:
             raise TypeError(f"Unexpected args {args} or kwargs {kwargs}.")
@@ -104,6 +110,9 @@ class DataRef:
 
     __fields = ["data"]
 
+    def __dir__(self) -> Iterable[str]:
+        return dir(self.data)
+
     def __init__(self, data: Data):
         self.data = data
 
@@ -126,4 +135,4 @@ class DataRef:
         from .execution import execute
 
         execute(self)
-        return self._data.__repr__()
+        return self.data.__repr__()
