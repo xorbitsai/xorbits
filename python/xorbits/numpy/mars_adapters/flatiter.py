@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import flatiter
-from .core import (
-    MARS_TENSOR_CALLABLES,
-    MARS_TENSOR_FFT_CALLABLES,
-    MARS_TENSOR_LINALG_CALLABLES,
-    MARS_TENSOR_MAGIC_METHODS,
-    MARS_TENSOR_OBJECTS,
-    MARS_TENSOR_RANDOM_CALLABLES,
+from xorbits.core.adapter import (
+    mars_flatiter,
+    register_converter,
+    to_mars,
+    wrap_mars_callable,
 )
+
+
+@register_converter(from_cls_list=[mars_flatiter])
+class FlatIter:
+    def __init__(self, mars_obj: "mars_flatiter"):
+        self._mars_obj = mars_obj
+
+    def __getitem__(self, item):
+        return wrap_mars_callable(
+            self._mars_obj.__getitem__, attach_docstring=False, is_method=True
+        )(item)
+
+    def __setitem__(self, key, value):
+        self._mars_obj[key] = to_mars(value)

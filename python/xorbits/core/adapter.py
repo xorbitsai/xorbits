@@ -58,7 +58,14 @@ from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
 from .._mars.dataframe.window.rolling.core import Rolling as MarsRolling
+from .._mars.tensor import c_ as mars_c_
+from .._mars.tensor import mgrid as mars_mgrid
+from .._mars.tensor import ogrid as mars_ogrid
+from .._mars.tensor import r_ as mars_r_
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
+from .._mars.tensor.core import flatiter as mars_flatiter
+from .._mars.tensor.lib import nd_grid
+from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
 from .data import Data, DataRef, DataType
 
 _mars_entity_type_to_execution_condition: Dict[

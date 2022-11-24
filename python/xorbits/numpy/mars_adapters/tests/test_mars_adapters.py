@@ -62,3 +62,12 @@ def test_linalg(dummy_int_2d_array):
 
 def test_random():
     assert isinstance(np.random.standard_normal(10), DataRef)
+
+
+def test_objects():
+    assert isinstance(np.c_[np.array([1, 2, 3]), np.array([4, 5, 6])], DataRef)
+
+
+def test_flatiter(dummy_int_1d_array):
+    for item in dummy_int_1d_array.flat:
+        assert isinstance(item, DataRef)
