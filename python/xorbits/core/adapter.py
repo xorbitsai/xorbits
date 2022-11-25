@@ -27,9 +27,11 @@ from typing import Any, Callable, Dict, Generator, List, Tuple, Type, Union
 from .._mars import dataframe as mars_dataframe
 from .._mars import execute as mars_execute
 from .._mars import new_session as mars_new_session
+from .._mars import remote as mars_remote
 from .._mars import stop_server as mars_stop_server
 from .._mars import tensor as mars_tensor
 from .._mars.core import Entity as MarsEntity
+from .._mars.core.entity.objects import OBJECT_TYPE as MARS_OBJECT_TYPE
 from .._mars.dataframe.base.accessor import CachedAccessor as MarsCachedAccessor
 from .._mars.dataframe.base.accessor import DatetimeAccessor as MarsDatetimeAccessor
 from .._mars.dataframe.base.accessor import StringAccessor as MarsStringAccessor
@@ -225,6 +227,7 @@ def wrap_mars_callable(
 
             return attach_module_callable_docstring(wrapped, **kwargs)
     else:
+        wrapped.__doc__ = ""
         return wrapped
 
 
