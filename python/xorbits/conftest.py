@@ -58,6 +58,7 @@ def setup():
             backend="mars",
             init_local=True,
             default=True,
+            web=False,
             timeout=300,
         )
         yield

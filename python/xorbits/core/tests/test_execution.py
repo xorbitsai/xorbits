@@ -19,14 +19,16 @@ from ..execution import need_to_execute
 
 def test_deferred_execution_repr(setup, dummy_df):
     assert need_to_execute(dummy_df)
-    repr(dummy_df)
+    s = repr(dummy_df)
     assert not need_to_execute(dummy_df)
+    assert s == repr(dummy_df.to_pandas())
 
 
 def test_deferred_execution_print(setup, dummy_df):
     assert need_to_execute(dummy_df)
-    print(dummy_df)
+    s = str(dummy_df)
     assert not need_to_execute(dummy_df)
+    assert s == str(dummy_df.to_pandas())
 
 
 def test_deferred_execution_iterrows(setup, dummy_df):
@@ -47,26 +49,30 @@ def test_deferred_execution_transpose_1(setup, dummy_df):
     # transpose.
     transposed = dummy_df.transpose()
     assert need_to_execute(transposed)
-    print(transposed)
+    s = str(transposed)
     assert not need_to_execute(transposed)
+    assert s == str(transposed.to_pandas())
 
 
 def test_deferred_execution_transpose_2(setup, dummy_df):
     transposed = dummy_df.T
     assert need_to_execute(transposed)
-    print(transposed)
+    s = str(transposed)
     assert not need_to_execute(transposed)
+    assert s == str(transposed.to_pandas())
 
 
 def test_deferred_execution_get_dummies(setup, dummy_df):
     dummy_encoded = get_dummies(dummy_df)
     assert need_to_execute(dummy_encoded)
-    print(dummy_encoded)
+    s = str(dummy_encoded)
     assert not need_to_execute(dummy_encoded)
+    assert s == str(dummy_encoded.to_pandas())
 
 
 def test_deferred_execution_groupby_apply(setup, dummy_df):
     groupby_applied = dummy_df.groupby("foo").apply(lambda df: df.sum())
     assert need_to_execute(groupby_applied)
-    print(groupby_applied)
+    s = str(groupby_applied)
     assert not need_to_execute(groupby_applied)
+    assert s == str(groupby_applied.to_pandas())
