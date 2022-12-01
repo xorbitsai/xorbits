@@ -134,11 +134,11 @@ def wrap_generator(wrapped: Generator):
 class MarsProxy:
     @classmethod
     def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
-        if item in DATA_TYPE_TO_CLS_MEMBERS[data_type] and callable(
-            DATA_TYPE_TO_CLS_MEMBERS[data_type]
+        if item in _DATA_TYPE_TO_CLS_MEMBERS[data_type] and callable(
+            _DATA_TYPE_TO_CLS_MEMBERS[data_type]
         ):
-            ret = partial(DATA_TYPE_TO_CLS_MEMBERS[data_type][item], mars_entity)
-            ret.__doc__ = DATA_TYPE_TO_CLS_MEMBERS[data_type][item].__doc__
+            ret = partial(_DATA_TYPE_TO_CLS_MEMBERS[data_type][item], mars_entity)
+            ret.__doc__ = _DATA_TYPE_TO_CLS_MEMBERS[data_type][item].__doc__
 
         attr = getattr(mars_entity, item, None)
         if attr is None:
@@ -270,6 +270,42 @@ def _collect_cls_members(data_type: DataType) -> Dict[str, Any]:
     return cls_members
 
 
-DATA_TYPE_TO_CLS_MEMBERS: Dict[DataType, Dict[str, Any]] = {}
+_DATA_TYPE_TO_CLS_MEMBERS: Dict[DataType, Dict[str, Any]] = {}
 for data_type in DataType:
-    DATA_TYPE_TO_CLS_MEMBERS[data_type] = _collect_cls_members(data_type)
+    _DATA_TYPE_TO_CLS_MEMBERS[data_type] = _collect_cls_members(data_type)
+
+
+_XORBITS_CLS_TO_DATA_TYPE: Dict[Type, DataType] = {}
+
+
+def bind_xorbits_cls_to_data_type(xorbits_cls: Type, data_type: DataType) -> None:
+    if xorbits_cls in _XORBITS_CLS_TO_DATA_TYPE:
+        raise ValueError(
+            f"{xorbits_cls.__name__} has already been bound to "
+            f"{_XORBITS_CLS_TO_DATA_TYPE[xorbits_cls]}."
+        )
+
+    if data_type in _XORBITS_CLS_TO_DATA_TYPE.values():
+        cls = [
+            c
+            for c in _XORBITS_CLS_TO_DATA_TYPE
+            if _XORBITS_CLS_TO_DATA_TYPE[c] == data_type
+        ]
+        assert len(cls) == 1
+        raise ValueError(f"{data_type} has already been bound to {cls[0]}.")
+
+    _XORBITS_CLS_TO_DATA_TYPE[xorbits_cls] = data_type
+
+
+def get_cls_members(xorbits_cls: Type) -> Dict[str, Any]:
+    if xorbits_cls not in _XORBITS_CLS_TO_DATA_TYPE:
+        raise ValueError(
+            f"{xorbits_cls.__name__} has not been bound with any data type."
+        )
+
+    data_type: DataType = _XORBITS_CLS_TO_DATA_TYPE[xorbits_cls]
+
+    if data_type not in _DATA_TYPE_TO_CLS_MEMBERS:
+        raise ValueError(f"{data_type} do not have any bound class member.")
+
+    return _DATA_TYPE_TO_CLS_MEMBERS[data_type]

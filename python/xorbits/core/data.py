@@ -113,6 +113,16 @@ class DataRefMeta(type):
     def __new__(mcs, name, bases, dct):
         return super().__new__(mcs, name, bases, dct)
 
+    def __getattr__(self, item: str):
+        from .adapter import get_cls_members
+
+        cls_members = get_cls_members(self)
+
+        if item not in cls_members:
+            raise AttributeError(item)
+        else:
+            return cls_members[item]
+
 
 class DataRef(metaclass=DataRefMeta):
     data: Data
