@@ -29,7 +29,7 @@ import xorbits.pandas as xd
 def load_lineitem(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/lineitem.pq"
+    data_path = data_folder + "/lineitem"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
@@ -43,7 +43,7 @@ def load_lineitem(
 def load_part(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/part.pq"
+    data_path = data_folder + "/part"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
@@ -54,7 +54,7 @@ def load_part(
 def load_orders(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/orders.pq"
+    data_path = data_folder + "/orders"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
@@ -66,7 +66,7 @@ def load_orders(
 def load_customer(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/customer.pq"
+    data_path = data_folder + "/customer"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
@@ -77,7 +77,7 @@ def load_customer(
 def load_nation(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/nation.pq"
+    data_path = data_folder + "/nation"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
@@ -88,7 +88,7 @@ def load_nation(
 def load_region(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/region.pq"
+    data_path = data_folder + "/region"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
@@ -99,7 +99,7 @@ def load_region(
 def load_supplier(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/supplier.pq"
+    data_path = data_folder + "/supplier"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
@@ -110,7 +110,7 @@ def load_supplier(
 def load_partsupp(
     data_folder: str, use_arrow_dtype: bool = None, **storage_options
 ) -> xd.DataFrame:
-    data_path = data_folder + "/partsupp.pq"
+    data_path = data_folder + "/partsupp"
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
