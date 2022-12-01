@@ -23,5 +23,5 @@ class DataFrameLoc:
 
     def __getitem__(self, item):
         return wrap_mars_callable(
-            self._mars_obj.__getitem__, attach_docstring=False, is_method=True
+            self._mars_obj.__getitem__, attach_docstring=False, is_cls_member=True
         )(item)

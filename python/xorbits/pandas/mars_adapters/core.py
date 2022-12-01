@@ -14,7 +14,7 @@
 # limitations under the License.
 
 import inspect
-from typing import TYPE_CHECKING, Dict, Set
+from typing import TYPE_CHECKING, Callable, Dict, Set
 
 import pandas
 
@@ -43,29 +43,28 @@ if TYPE_CHECKING:
 # functions and class constructors defined by mars dataframe
 
 
-def _collect_module_callables() -> Dict:
-    # TODO: add typing hints.
+def _collect_module_callables() -> Dict[str, Callable]:
     mars_dataframe_callables = dict()
 
     # install class constructors.
     mars_dataframe_callables[mars_dataframe.DataFrame.__name__] = wrap_mars_callable(
         mars_dataframe.DataFrame,
         attach_docstring=True,
-        is_method=False,
+        is_cls_member=False,
         docstring_src_module=pandas,
         docstring_src=pandas.DataFrame,
     )
     mars_dataframe_callables[mars_dataframe.Series.__name__] = wrap_mars_callable(
         mars_dataframe.Series,
         attach_docstring=True,
-        is_method=False,
+        is_cls_member=False,
         docstring_src_module=pandas,
         docstring_src=pandas.Series,
     )
     mars_dataframe_callables[mars_dataframe.Index.__name__] = wrap_mars_callable(
         mars_dataframe.Index,
         attach_docstring=True,
-        is_method=False,
+        is_cls_member=False,
         docstring_src_module=pandas,
         docstring_src=pandas.Index,
     )
@@ -74,7 +73,7 @@ def _collect_module_callables() -> Dict:
         mars_dataframe_callables[name] = wrap_mars_callable(
             func,
             attach_docstring=True,
-            is_method=False,
+            is_cls_member=False,
             docstring_src_module=pandas,
             docstring_src=getattr(pandas, name, None),
         )
@@ -82,11 +81,10 @@ def _collect_module_callables() -> Dict:
     return mars_dataframe_callables
 
 
-MARS_DATAFRAME_CALLABLES = _collect_module_callables()
+MARS_DATAFRAME_CALLABLES: Dict[str, Callable] = _collect_module_callables()
 
 
-def _collect_dataframe_magic_methods() -> Set:
-    # TODO: add typing hints.
+def _collect_dataframe_magic_methods() -> Set[str]:
     magic_methods = set()
 
     magic_methods_to_skip: Set[str] = {
@@ -114,7 +112,7 @@ def _collect_dataframe_magic_methods() -> Set:
     return magic_methods
 
 
-MARS_DATAFRAME_MAGIC_METHODS = _collect_dataframe_magic_methods()
+MARS_DATAFRAME_MAGIC_METHODS: Set[str] = _collect_dataframe_magic_methods()
 
 
 def _register_execution_conditions() -> None:
@@ -148,6 +146,6 @@ class MarsGetAttrProxy:
     def __getattr__(self, item):
         attr = getattr(self._mars_obj, item)
         if callable(attr):
-            return wrap_mars_callable(attr, attach_docstring=False, is_method=True)
+            return wrap_mars_callable(attr, attach_docstring=False, is_cls_member=True)
         else:
             return from_mars(attr)

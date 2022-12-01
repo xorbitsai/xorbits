@@ -64,12 +64,12 @@ def add_docstring_disclaimer(
     ):
         return (
             doc
-            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_cls.__module__}.{docstring_src_cls.__name__}"
+            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_cls.__module__}.{docstring_src_cls.__name__}."
         )
     elif docstring_src_module is not None:
         return (
             doc
-            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_module.__name__}"
+            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_module.__name__}."
         )
     else:
         return doc
@@ -195,7 +195,7 @@ def add_arg_disclaimer(
 
     if doc is None:
         return None
-    if src is None or dest is None:
+    if src is None or not callable(src) or dest is None or not callable(dest):
         return doc
 
     try:
@@ -213,30 +213,30 @@ def add_arg_disclaimer(
     return doc
 
 
-def gen_method_docstring(
+def gen_member_docstring(
     docstring_src_cls: Optional[Type],
-    method_name: str,
+    member_name: str,
 ) -> Optional[str]:
     if docstring_src_cls is None:
         return None
 
-    src_method = getattr(docstring_src_cls, method_name, None)
-    if src_method is None:
+    src = getattr(docstring_src_cls, member_name, None)
+    if src is None:
         return None
 
-    doc = getattr(src_method, "__doc__", None)
-    if isinstance(src_method, property):
+    doc = getattr(src, "__doc__", None)
+    if isinstance(src, property):
         # some things like SeriesGroupBy.unique are generated.
-        src_method = src_method.fget
+        src = src.fget
         if not doc:
-            doc = getattr(src_method, "__doc__", None)
+            doc = getattr(src, "__doc__", None)
 
     # pandas DataFrame/Series sometimes override methods without setting __doc__.
     if doc is None and docstring_src_cls.__name__ in {"DataFrame", "Series"}:
         for cls in docstring_src_cls.mro():
-            src_method = getattr(cls, method_name, None)
-            if src_method is not None and hasattr(src_method, "__doc__"):
-                doc = src_method.__doc__
+            src = getattr(cls, member_name, None)
+            if src is not None and hasattr(src, "__doc__"):
+                doc = src.__doc__
     return doc
 
 
@@ -261,17 +261,20 @@ def attach_module_callable_docstring(
     return c
 
 
-def attach_method_docstring(
-    method: Callable, method_name: str, data_type: DataType
-) -> Callable:
+def attach_class_member_docstring(
+    member: Any, member_name: str, data_type: DataType
+) -> Any:
     """
-    Attach docstring to class methods.
+    Attach docstring to class members.
     """
 
-    docstring_src_module, docstring_src_cls = _DATA_TYPE_TO_DOCSTRING_SRC[data_type]
-    doc = gen_method_docstring(docstring_src_cls, method_name)
+    docstring_src_module, docstring_src_cls = _DATA_TYPE_TO_DOCSTRING_SRC.get(
+        data_type, (None, None)
+    )
+    doc = gen_member_docstring(docstring_src_cls, member_name)
     doc = skip_doctest(doc)
-    doc = add_arg_disclaimer(getattr(docstring_src_cls, method_name, None), method, doc)
+    docstring_src = getattr(docstring_src_cls, member_name, None)
+    doc = add_arg_disclaimer(docstring_src, member, doc)
     doc = add_docstring_disclaimer(docstring_src_module, docstring_src_cls, doc)
-    method.__doc__ = "" if doc is None else doc
-    return method
+    member.__doc__ = "" if doc is None else doc
+    return member

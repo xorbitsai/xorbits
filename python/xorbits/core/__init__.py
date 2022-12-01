@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .data import Data, DataRef
+from .data import Data, DataRef, DataRefMeta, DataType
 
 
 def _register_magic_methods():

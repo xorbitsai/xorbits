@@ -105,7 +105,16 @@ class Data:
             return super().__repr__()
 
 
-class DataRef:
+class DataRefMeta(type):
+    """
+    Used to bind methods to subclasses of DataRef according to their data type.
+    """
+
+    def __new__(mcs, name, bases, dct):
+        return super().__new__(mcs, name, bases, dct)
+
+
+class DataRef(metaclass=DataRefMeta):
     data: Data
 
     __fields = ["data"]
