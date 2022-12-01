@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { withRouter } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Divider from '@material-ui/core/Divider';
+
 import Title from '../Title';
 import TaskTileableGraph from './TaskTileableGraph';
 import TileableDetail from './TileableDetail';

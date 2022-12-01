@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import React, { lazy, Suspense } from 'react';
+import Tab from '@mui/material/Tab';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import React, { lazy, Suspense } from 'react';
 const SubtaskGraph = lazy(() => {
   return import('./SubtaskGraph');
 });

@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
-import TabPanel from './TabPanel';
+import React from 'react';
+
+import {useStyles} from '../Style';
 import Title from '../Title';
-import { useStyles } from '../Style';
 import NodeEnvTab from './NodeEnvTab';
+import NodeLogTab from './NodeLogTab';
 import NodeResourceTab from './NodeResourceTab';
 import NodeStackTab from './NodeStackTab';
-import NodeLogTab from './NodeLogTab';
+import TabPanel from './TabPanel';
 
 
 export default function SupervisorDetailPage(props) {

@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import cytoscape from 'cytoscape';
-import { select as d3Select } from 'd3-selection';
 import dagre from 'cytoscape-dagre';
+import { select as d3Select } from 'd3-selection';
 import PropTypes from 'prop-types';
+import React from 'react';
+
 import {
-  nodeType,
-  nodesStatusType,
-  dependencyType,
   dagType,
+  dependencyType,
+  nodesStatusType,
+  nodeType,
 } from './DAGPropTypes';
 
 export default class DAGCanvasChart extends React.Component {

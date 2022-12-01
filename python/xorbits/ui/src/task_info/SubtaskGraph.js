@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import PropTypes from 'prop-types';
 import { select as d3Select } from 'd3-selection';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import DAGCanvasChart from './charts/DAGCanvasChart';
 
 export default class SubtaskGraph extends React.Component {

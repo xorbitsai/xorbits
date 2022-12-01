@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { select as d3Select } from 'd3-selection';
 import {
   zoom as d3Zoom,
@@ -25,11 +24,13 @@ import {
   render as DagRender
 } from 'dagre-d3';
 import PropTypes from 'prop-types';
+import React from 'react';
+
 import {
-  nodeType,
-  nodesStatusType,
-  dependencyType,
   dagType,
+  dependencyType,
+  nodesStatusType,
+  nodeType,
 } from './DAGPropTypes';
 
 

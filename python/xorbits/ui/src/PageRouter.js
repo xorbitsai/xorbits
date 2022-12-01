@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+import PropTypes from 'prop-types';
 import React, { lazy, Suspense } from 'react';
 import {
-  Switch,
   Route,
+  Switch,
   useParams,
 } from 'react-router-dom';
-import PropTypes from 'prop-types';
+
 import Dashboard from './Dashboard';
 import NodeListPage from './node_info/NodeListPage';
 import SupervisorDetailPage from './node_info/SupervisorDetailPage';

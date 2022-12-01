@@ -14,38 +14,16 @@
  * limitations under the License.
  */
 
-import { makeStyles } from '@material-ui/core/styles';
-
-const drawerWidth = 240;
+import {createTheme, tableCellClasses} from '@mui/material';
+import Paper from '@mui/material/Paper';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import {makeStyles, styled} from '@mui/styles';
+export const theme = createTheme();
 
 export const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
   },
   menuButton: {
     marginRight: 36,
@@ -55,31 +33,6 @@ export const useStyles = makeStyles((theme) => ({
   },
   menuButtonNested: {
     paddingLeft: theme.spacing(4),
-  },
-  title: {
-    flexGrow: 1,
-    fontWeight: 'bolder',
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
   },
   leftMenu: {
     height: '100%',
@@ -111,4 +64,34 @@ export const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
+  logo: {
+    maxWidth: 200,
+    marginRight: 2,
+    padding: 0
+  }
 }));
+
+export const StyledTableCell = styled(TableCell)(() => ({
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+export const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+export const StyledPaper = styled(Paper)(
+  {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  }
+);

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import join from 'lodash/join';
-import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import TableBody from '@material-ui/core/TableBody';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 
 export default class NodeEnvTab extends React.Component {

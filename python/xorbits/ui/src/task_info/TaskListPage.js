@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import TableBody from '@material-ui/core/TableBody';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
-import Title from '../Title';
-import {useStyles} from '../Style';
-import {formatTime, getTaskStatusText} from '../Utils';
+import React from 'react';
 import { Link } from 'react-router-dom';
+
+import {useStyles} from '../Style';
+import Title from '../Title';
+import {formatTime, getDuration, getTaskStatusText} from '../Utils';
 
 
 class TaskList extends React.Component {
@@ -76,6 +77,7 @@ class TaskList extends React.Component {
             <TableCell style={{ fontWeight: 'bolder' }}>Task ID</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>Start Time</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>End Time</TableCell>
+            <TableCell style={{ fontWeight: 'bolder' }}>Duration (s)</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>Progress</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>Status</TableCell>
           </TableRow>
@@ -90,6 +92,7 @@ class TaskList extends React.Component {
               </TableCell>
               <TableCell>{formatTime(task.start_time)}</TableCell>
               <TableCell>{task.end_time ? formatTime(task.end_time) : 'N/A'}</TableCell>
+              <TableCell>{task.end_time ? getDuration(task.start_time, task.end_time) : 'N/A'}</TableCell>
               <TableCell>{`${Math.floor(task.progress * 100).toString()}%`}</TableCell>
               <TableCell>{this.formatTaskStatus(task)}</TableCell>
             </TableRow>

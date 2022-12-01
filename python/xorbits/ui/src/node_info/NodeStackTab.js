@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
+import Select from '@mui/material/Select';
+import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
 import join from 'lodash/join';
-import React from 'react';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Select from '@material-ui/core/Select';
-import Switch from '@material-ui/core/Switch';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import PropTypes from 'prop-types';
+import React from 'react';
+
 import Title from '../Title';
 import {formatTime} from '../Utils';
 

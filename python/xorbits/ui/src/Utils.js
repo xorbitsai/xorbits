@@ -54,6 +54,12 @@ export function formatTime(time) {
   }.${formatDigits(date.getMilliseconds(), 3)}`;
 }
 
+export function getDuration(time1, time2) {
+  const t1 = new Date(time1 * 1000).getTime();
+  const t2 = new Date(time2 * 1000).getTime();
+  return (t2 - t1) / 1000;
+}
+
 export function getTaskStatusText(statusCode) {
   const mapping = {
     0: 'pending',
