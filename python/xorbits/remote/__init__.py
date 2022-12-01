@@ -13,17 +13,3 @@
 # limitations under the License.
 
 from .mars_adapters import spawn
-
-# def __dir__():
-#     from .mars_adapters import MARS_REMOTE_CALLABLES
-#
-#     return list(MARS_REMOTE_CALLABLES.keys())
-
-
-# def __getattr__(name):
-#     from .mars_adapters import MARS_REMOTE_CALLABLES
-#
-#     if name in MARS_REMOTE_CALLABLES:
-#         return MARS_REMOTE_CALLABLES[name]
-#     else:
-#         raise AttributeError(name)
