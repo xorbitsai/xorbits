@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { select as d3Select } from 'd3-selection';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { select as d3Select } from 'd3-selection'
+import PropTypes from 'prop-types'
+import React from 'react'
 
-import DAGCanvasChart from './charts/DAGCanvasChart';
+import DAGCanvasChart from './charts/DAGCanvasChart'
 
 export default class SubtaskGraph extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       subtasks: [],
       dependencies: [],
@@ -45,7 +45,7 @@ export default class SubtaskGraph extends React.Component {
           legendTextYLoc: '21',
         },
       ],
-    };
+    }
   }
 
   /**
@@ -65,7 +65,7 @@ export default class SubtaskGraph extends React.Component {
       .attr('cx', dotX)
       .attr('cy', dotY)
       .attr('r', 6)
-      .style('fill', color);
+      .style('fill', color)
 
     svgContainer
       .append('text')
@@ -73,104 +73,112 @@ export default class SubtaskGraph extends React.Component {
       .attr('y', textY)
       .text(text)
       .style('font-size', '15px')
-      .attr('alignment-baseline', 'middle');
+      .attr('alignment-baseline', 'middle')
   }
 
   fetchGraphDetail() {
-    const { sessionId, taskId, tileableId } = this.props;
+    const { sessionId, taskId, tileableId } = this.props
 
-    if (sessionId === undefined || taskId === undefined || tileableId === undefined) {
-      return;
+    if (
+      sessionId === undefined ||
+      taskId === undefined ||
+      tileableId === undefined
+    ) {
+      return
     }
 
-    fetch(`api/session/${sessionId}/task/${taskId
-    }/${tileableId}/subtask?with_input_output=true`)
-      .then(res => res.json())
+    fetch(
+      `api/session/${sessionId}/task/${taskId}/${tileableId}/subtask?with_input_output=true`
+    )
+      .then((res) => res.json())
       .then((res) => {
-        let subtaskList = [];
-        let dependencyList = [];
+        let subtaskList = []
+        let dependencyList = []
 
         if (Object.keys(res).length > 0) {
           subtaskList = Object.keys(res).map((subtaskId) => {
-            return (
-              {
-                id: subtaskId,
-                name: res[subtaskId].name
-              }
-            );
-          });
+            return {
+              id: subtaskId,
+              name: res[subtaskId].name,
+            }
+          })
 
-          Object.keys(res).filter(
-            subtaskId => res[subtaskId].fromSubtaskIds.length > 0
-          ).forEach((subtaskId) => {
-            let fromNodeIds = res[subtaskId].fromSubtaskIds;
+          Object.keys(res)
+            .filter((subtaskId) => res[subtaskId].fromSubtaskIds.length > 0)
+            .forEach((subtaskId) => {
+              let fromNodeIds = res[subtaskId].fromSubtaskIds
 
-            fromNodeIds.forEach((fromNodeId) => {
-              dependencyList.push(
-                {
+              fromNodeIds.forEach((fromNodeId) => {
+                dependencyList.push({
                   fromNodeId,
                   toNodeId: subtaskId,
-                }
-              );
-            });
-          });
+                })
+              })
+            })
         }
 
         this.setState({
           subtasks: subtaskList,
           dependencies: dependencyList,
-        });
-      });
+        })
+      })
   }
 
   fetchSubtaskDetail() {
-    const { sessionId, taskId, tileableId } = this.props;
+    const { sessionId, taskId, tileableId } = this.props
 
-    if (sessionId === undefined || taskId === undefined || tileableId === undefined) {
-      return;
+    if (
+      sessionId === undefined ||
+      taskId === undefined ||
+      tileableId === undefined
+    ) {
+      return
     }
 
-    fetch(`api/session/${sessionId}/task/${taskId
-    }/${tileableId}/subtask?with_input_output=true`)
-      .then(res => res.json())
+    fetch(
+      `api/session/${sessionId}/task/${taskId}/${tileableId}/subtask?with_input_output=true`
+    )
+      .then((res) => res.json())
       .then((res) => {
         this.setState({
-          subtaskDetails: res
-        });
-      });
+          subtaskDetails: res,
+        })
+      })
   }
 
   componentDidMount() {
     if (this.interval !== undefined) {
-      clearInterval(this.interval);
+      clearInterval(this.interval)
     }
-    this.interval = setInterval(() => this.fetchSubtaskDetail(), 1000);
-    this.fetchSubtaskDetail();
-    this.fetchGraphDetail();
+    this.interval = setInterval(() => this.fetchSubtaskDetail(), 1000)
+    this.fetchSubtaskDetail()
+    this.fetchGraphDetail()
 
     // Create the legend for DAG
-    const legendSVG = d3Select('#subtasks-legend');
-    this.state.subtaskStatus.forEach((status) => this.generateGraphLegendItem(
-      legendSVG,
-      status.legendDotXLoc,
-      status.legendDotYLoc,
-      status.legendTextXLoc,
-      status.legendTextYLoc,
-      status.color,
-      status.text
-    ));
+    const legendSVG = d3Select('#subtasks-legend')
+    this.state.subtaskStatus.forEach((status) =>
+      this.generateGraphLegendItem(
+        legendSVG,
+        status.legendDotXLoc,
+        status.legendDotYLoc,
+        status.legendTextXLoc,
+        status.legendTextYLoc,
+        status.color,
+        status.text
+      )
+    )
   }
 
   /* eslint no-unused-vars: ["error", { "args": "none" }] */
   componentDidUpdate(prevProps, prevStates, snapshot) {
     if (prevProps.tileableId !== this.props.tileableId) {
-      this.fetchSubtaskDetail();
-      this.fetchGraphDetail();
+      this.fetchSubtaskDetail()
+      this.fetchGraphDetail()
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.interval)
   }
 
   render() {
@@ -179,40 +187,40 @@ export default class SubtaskGraph extends React.Component {
       width: '90%',
       height: '80%',
       minHeight: 200,
-    };
+    }
 
-    if (this.state === undefined ||
-        this.state.subtasks === undefined ||
-        this.state.dependencies === undefined ||
-        this.state.subtaskDetails === undefined) {
-      return (
-        <div>Loading</div>
-      );
+    if (
+      this.state === undefined ||
+      this.state.subtasks === undefined ||
+      this.state.dependencies === undefined ||
+      this.state.subtaskDetails === undefined
+    ) {
+      return <div>Loading</div>
     }
 
     return (
       <React.Fragment>
         <h2>Subtask Graph Info:</h2>
-        {
-          this.state.subtasks.length + this.state.dependencies.length > 2000 &&
-            <div>
-              Warning: this subtask graph contains a lot of elements and may take some time to load
-            </div>
-        }
+        {this.state.subtasks.length + this.state.dependencies.length > 2000 && (
+          <div>
+            Warning: this subtask graph contains a lot of elements and may take
+            some time to load
+          </div>
+        )}
         <svg
-          id='subtasks-legend'
+          id="subtasks-legend"
           style={{ marginLeft: '6%', width: '90%', height: 50 }}
         />
         <DAGCanvasChart
-          graphName='subtaskGraph'
+          graphName="subtaskGraph"
           dagStyle={dagStyle}
           nodes={this.state.subtasks}
-          nodeShape='circle'
+          nodeShape="circle"
           nodesStatus={this.state.subtaskDetails}
           dependencies={this.state.dependencies}
         />
       </React.Fragment>
-    );
+    )
   }
 }
 
@@ -220,4 +228,4 @@ SubtaskGraph.propTypes = {
   sessionId: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
   tileableId: PropTypes.string.isRequired,
-};
+}

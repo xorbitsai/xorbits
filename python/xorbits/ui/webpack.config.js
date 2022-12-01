@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   entry: './src/App.js',
@@ -25,19 +25,19 @@ module.exports = {
     path: path.resolve(__dirname, './static'),
     filename: 'bundle.js',
     publicPath: 'static/',
-    assetModuleFilename: 'resources/assets/images/[name].[ext]'
+    assetModuleFilename: 'resources/assets/images/[name].[ext]',
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
-        type: 'asset/resource'
-      }
-    ]
-  }
-};
+        type: 'asset/resource',
+      },
+    ],
+  },
+}

@@ -14,46 +14,51 @@
  * limitations under the License.
  */
 
-import {ExpandLess, ExpandMore} from '@mui/icons-material';
-import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
-import DeveloperBoardRoundedIcon from '@mui/icons-material/DeveloperBoardRounded';
-import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
-import LabelImportantRoundedIcon from '@mui/icons-material/LabelImportantRounded';
-import WorkspacesRoundedIcon from '@mui/icons-material/WorkspacesRounded';
-import {Collapse} from '@mui/material';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded'
+import DeveloperBoardRoundedIcon from '@mui/icons-material/DeveloperBoardRounded'
+import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded'
+import LabelImportantRoundedIcon from '@mui/icons-material/LabelImportantRounded'
+import WorkspacesRoundedIcon from '@mui/icons-material/WorkspacesRounded'
+import { Collapse } from '@mui/material'
+import List from '@mui/material/List'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Typography from '@mui/material/Typography'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-import {useStyles} from './Style';
+import { useStyles } from './Style'
 
 export default function LeftMenu() {
-  const classes = useStyles();
-  const getHashPath = () => (window.location.hash.substring(1));
-  const [hash, setHash] = React.useState(getHashPath());
+  const classes = useStyles()
+  const getHashPath = () => window.location.hash.substring(1)
+  const [hash, setHash] = React.useState(getHashPath())
 
-  window.addEventListener('hashchange', () => {
-    setHash(getHashPath());
-  }, false);
+  window.addEventListener(
+    'hashchange',
+    () => {
+      setHash(getHashPath())
+    },
+    false
+  )
 
   const typographyText = (content) => {
-    return (
-      <Typography variant="h6">{content}</Typography>
-    );
-  };
+    return <Typography variant="h6">{content}</Typography>
+  }
 
   const genNodeSubMenu = (nodeRole) => {
-    const match = hash.match(/^\/(supervisor|worker)\/([^/]+)/, 1);
+    const match = hash.match(/^\/(supervisor|worker)\/([^/]+)/, 1)
     return (
-      match && nodeRole === match[1] &&
+      match &&
+      nodeRole === match[1] && (
         <Collapse in={match} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 4 }}
-              component={Link} to={`/${match[1]}/${match[2]}`}
+            <ListItemButton
+              sx={{ pl: 4 }}
+              component={Link}
+              to={`/${match[1]}/${match[2]}`}
               selected={true}
             >
               <ListItemIcon>
@@ -63,30 +68,36 @@ export default function LeftMenu() {
             </ListItemButton>
           </List>
         </Collapse>
-    );
-  };
+      )
+    )
+  }
 
   const getExpend = (match) => {
-    return (match ? <ExpandLess /> : <ExpandMore />);
-  };
+    return match ? <ExpandLess /> : <ExpandMore />
+  }
 
   const genSessionSubMenu = () => {
-    const match = hash.match(/^\/session\/([^/]+)\/task/, 1);
+    const match = hash.match(/^\/session\/([^/]+)\/task/, 1)
     return (
-      match &&
-      <Collapse in={match} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }} component={Link} to={`/session/${match[1]}/task`}
-            selected={true}>
-            <ListItemIcon>
-              <LabelImportantRoundedIcon />
-            </ListItemIcon>
-            <ListItemText primary={match[1].substring(0, 10)} />
-          </ListItemButton>
-        </List>
-      </Collapse>
-    );
-  };
+      match && (
+        <Collapse in={match} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              component={Link}
+              to={`/session/${match[1]}/task`}
+              selected={true}
+            >
+              <ListItemIcon>
+                <LabelImportantRoundedIcon />
+              </ListItemIcon>
+              <ListItemText primary={match[1].substring(0, 10)} />
+            </ListItemButton>
+          </List>
+        </Collapse>
+      )
+    )
+  }
 
   return (
     <List className={classes.leftMenu}>
@@ -95,9 +106,11 @@ export default function LeftMenu() {
           <ListItemIcon>
             <GridViewRoundedIcon />
           </ListItemIcon>
-          <ListItemText primary={typographyText('Dashboard')}/>
+          <ListItemText primary={typographyText('Dashboard')} />
         </ListItemButton>
-        <ListItemButton component={Link} to="/supervisor"
+        <ListItemButton
+          component={Link}
+          to="/supervisor"
           selected={hash.startsWith('/supervisor')}
         >
           <ListItemIcon>
@@ -107,7 +120,9 @@ export default function LeftMenu() {
           {getExpend(hash.match(/^\/supervisor\/([^/]+)/, 1))}
         </ListItemButton>
         {genNodeSubMenu('supervisor')}
-        <ListItemButton component={Link} to="/worker"
+        <ListItemButton
+          component={Link}
+          to="/worker"
           selected={hash.startsWith('/worker')}
         >
           <ListItemIcon>
@@ -117,7 +132,9 @@ export default function LeftMenu() {
           {getExpend(hash.match(/^\/worker\/([^/]+)/, 1))}
         </ListItemButton>
         {genNodeSubMenu('worker')}
-        <ListItemButton component={Link} to="/session"
+        <ListItemButton
+          component={Link}
+          to="/session"
           selected={hash === '/session'}
         >
           <ListItemIcon>
@@ -129,5 +146,5 @@ export default function LeftMenu() {
         {genSessionSubMenu()}
       </div>
     </List>
-  );
+  )
 }

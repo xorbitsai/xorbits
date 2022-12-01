@@ -14,50 +14,48 @@
  * limitations under the License.
  */
 
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-import {useStyles} from './Style';
-import Title from './Title';
+import { useStyles } from './Style'
+import Title from './Title'
 
 class SessionList extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = {};
+    super(props)
+    this.state = {}
   }
 
   refreshInfo() {
     fetch('api/session')
       .then((res) => res.json())
       .then((res) => {
-        this.setState(res);
-      });
+        this.setState(res)
+      })
   }
 
   componentDidMount() {
     if (this.interval !== undefined) {
-      clearInterval(this.interval);
+      clearInterval(this.interval)
     }
-    this.interval = setInterval(() => this.refreshInfo(), 5000);
-    this.refreshInfo();
+    this.interval = setInterval(() => this.refreshInfo(), 5000)
+    this.refreshInfo()
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.interval)
   }
 
   render() {
     if (this.state === undefined || this.state.sessions === undefined) {
-      return (
-        <div>Loading</div>
-      );
+      return <div>Loading</div>
     }
 
     return (
@@ -71,18 +69,20 @@ class SessionList extends React.Component {
           {this.state.sessions.map((session) => (
             <TableRow key={`session_row_${session.session_id}`}>
               <TableCell>
-                <Link to={`/session/${session.session_id}/task`}>{session.session_id}</Link>
+                <Link to={`/session/${session.session_id}/task`}>
+                  {session.session_id}
+                </Link>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    );
+    )
   }
 }
 
 export default function SessionListPage() {
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -94,5 +94,5 @@ export default function SessionListPage() {
         </Paper>
       </Grid>
     </Grid>
-  );
+  )
 }

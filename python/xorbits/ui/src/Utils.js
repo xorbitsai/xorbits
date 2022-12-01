@@ -15,49 +15,52 @@
  */
 
 export function toReadableSize(size, trunc) {
-  let res_size = size;
-  let size_unit = '';
+  let res_size = size
+  let size_unit = ''
 
   if (size === null) {
-    return 'NA';
+    return 'NA'
   }
   if (size >= 1024 && size < 1024 ** 2) {
-    res_size = size / 1024.0;
-    size_unit = 'K';
+    res_size = size / 1024.0
+    size_unit = 'K'
   } else if (size >= 1024 ** 2 && size < 1024 ** 3) {
-    res_size = size / 1024.0 ** 2;
-    size_unit = 'M';
+    res_size = size / 1024.0 ** 2
+    size_unit = 'M'
   } else if (size >= 1024 ** 3 && size < 1024 ** 4) {
-    res_size = size / 1024.0 ** 3;
-    size_unit = 'G';
+    res_size = size / 1024.0 ** 3
+    size_unit = 'G'
   } else if (size >= 1024 ** 4) {
-    res_size = size / 1024.0 ** 4;
-    size_unit = 'T';
+    res_size = size / 1024.0 ** 4
+    size_unit = 'T'
   }
 
   if (trunc === undefined) {
-    return res_size.toFixed(2) + size_unit;
+    return res_size.toFixed(2) + size_unit
   }
-  return Math.floor(res_size) + size_unit;
+  return Math.floor(res_size) + size_unit
 }
 
 export function formatTime(time) {
-  const date = new Date(time * 1000);
-  const formatDigits = (n, d) => (`0${n}`).slice(-d);
+  const date = new Date(time * 1000)
+  const formatDigits = (n, d) => `0${n}`.slice(-d)
 
-  return `${date.getFullYear()
-  }-${formatDigits(date.getMonth() + 1, 2)
-  }-${formatDigits(date.getDate(), 2)
-  } ${formatDigits(date.getHours(), 2)
-  }:${formatDigits(date.getMinutes(), 2)
-  }:${formatDigits(date.getSeconds(), 2)
-  }.${formatDigits(date.getMilliseconds(), 3)}`;
+  return `${date.getFullYear()}-${formatDigits(
+    date.getMonth() + 1,
+    2
+  )}-${formatDigits(date.getDate(), 2)} ${formatDigits(
+    date.getHours(),
+    2
+  )}:${formatDigits(date.getMinutes(), 2)}:${formatDigits(
+    date.getSeconds(),
+    2
+  )}.${formatDigits(date.getMilliseconds(), 3)}`
 }
 
 export function getDuration(time1, time2) {
-  const t1 = new Date(time1 * 1000).getTime();
-  const t2 = new Date(time2 * 1000).getTime();
-  return (t2 - t1) / 1000;
+  const t1 = new Date(time1 * 1000).getTime()
+  const t2 = new Date(time2 * 1000).getTime()
+  return (t2 - t1) / 1000
 }
 
 export function getTaskStatusText(statusCode) {
@@ -65,8 +68,8 @@ export function getTaskStatusText(statusCode) {
     0: 'pending',
     1: 'running',
     2: 'terminated',
-  };
-  return mapping[statusCode];
+  }
+  return mapping[statusCode]
 }
 
 export function getNodeStatusText(statusCode) {
@@ -76,6 +79,6 @@ export function getNodeStatusText(statusCode) {
     1: 'ready',
     2: 'degenerated',
     3: 'stopping',
-  };
-  return mapping[statusCode];
+  }
+  return mapping[statusCode]
 }

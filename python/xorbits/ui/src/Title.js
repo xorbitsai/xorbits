@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import Typography from '@mui/material/Typography';
-import PropTypes from 'prop-types';
-import React from 'react';
+import Typography from '@mui/material/Typography'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 export default function Title(props) {
   return (
@@ -28,10 +28,10 @@ export default function Title(props) {
     >
       {props.children}
     </Typography>
-  );
+  )
 }
 
 Title.propTypes = {
   component: PropTypes.elementType,
   children: PropTypes.node,
-};
+}

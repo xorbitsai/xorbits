@@ -14,85 +14,94 @@
  * limitations under the License.
  */
 
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Grid from '@mui/material/Unstable_Grid2';
-import sum from 'lodash/sum';
-import uniq from 'lodash/uniq';
-import without from 'lodash/without';
-import PropTypes from 'prop-types';
-import React from 'react';
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Grid from '@mui/material/Unstable_Grid2'
+import sum from 'lodash/sum'
+import uniq from 'lodash/uniq'
+import without from 'lodash/without'
+import PropTypes from 'prop-types'
+import React from 'react'
 
-import {StyledTableCell, StyledTableRow, useStyles} from './Style';
-import Title from './Title';
-import {toReadableSize} from './Utils';
+import { StyledTableCell, StyledTableRow, useStyles } from './Style'
+import Title from './Title'
+import { toReadableSize } from './Utils'
 
 class NodeInfo extends React.Component {
   constructor(props) {
-    super(props);
-    this.nodeRole = props.nodeRole.toLowerCase();
-    this.state = {};
+    super(props)
+    this.nodeRole = props.nodeRole.toLowerCase()
+    this.state = {}
   }
 
   refreshInfo() {
-    const roleId = (this.nodeRole === 'supervisor' ? 0 : 1);
-    fetch(`api/cluster/nodes?role=${roleId}&env=1&resource=1&exclude_statuses=-1`)
+    const roleId = this.nodeRole === 'supervisor' ? 0 : 1
+    fetch(
+      `api/cluster/nodes?role=${roleId}&env=1&resource=1&exclude_statuses=-1`
+    )
       .then((res) => res.json())
       .then((res) => {
-        const {state} = this;
-        state[this.nodeRole] = res.nodes;
-        this.setState(state);
-      });
+        const { state } = this
+        state[this.nodeRole] = res.nodes
+        this.setState(state)
+      })
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refreshInfo(), 5000);
-    this.refreshInfo();
+    this.interval = setInterval(() => this.refreshInfo(), 5000)
+    this.refreshInfo()
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.interval)
   }
 
   render() {
     if (this.state === undefined || this.state[this.nodeRole] === undefined) {
-      return (
-        <div>Loading</div>
-      );
+      return <div>Loading</div>
     }
 
-    const roleData = this.state[this.nodeRole];
+    const roleData = this.state[this.nodeRole]
 
-    const gatherResourceStats = (prop) => sum(
-      Object.values(roleData).map(
-        (val) => sum(Object.values(val.resource).map((a) => a[prop])),
-      ),
-    );
+    const gatherResourceStats = (prop) =>
+      sum(
+        Object.values(roleData).map((val) =>
+          sum(Object.values(val.resource).map((a) => a[prop]))
+        )
+      )
 
     const resourceStats = {
       cpu_total: gatherResourceStats('cpu_total'),
       cpu_avail: gatherResourceStats('cpu_avail'),
       memory_total: gatherResourceStats('memory_total'),
       memory_avail: gatherResourceStats('memory_avail'),
-      git_branches: uniq(without(Object.values(roleData).map(
-        (val) => {
-          const {git_info} = val.env;
-          return git_info === undefined ? undefined : (`${git_info.hash} ${git_info.ref}`);
-        },
-      ), undefined)),
-    };
-    resourceStats.cpu_used = resourceStats.cpu_total - resourceStats.cpu_avail;
-    resourceStats.memory_used = resourceStats.memory_total - resourceStats.memory_avail;
+      git_branches: uniq(
+        without(
+          Object.values(roleData).map((val) => {
+            const { git_info } = val.env
+            return git_info === undefined
+              ? undefined
+              : `${git_info.hash} ${git_info.ref}`
+          }),
+          undefined
+        )
+      ),
+    }
+    resourceStats.cpu_used = resourceStats.cpu_total - resourceStats.cpu_avail
+    resourceStats.memory_used =
+      resourceStats.memory_total - resourceStats.memory_avail
 
     return (
       <Table size="small">
         <TableHead>
           <TableRow>
-            <StyledTableCell style={{fontWeight: 'bolder'}}>Item</StyledTableCell>
-            <StyledTableCell style={{fontWeight: 'bolder'}}>
+            <StyledTableCell style={{ fontWeight: 'bolder' }}>
+              Item
+            </StyledTableCell>
+            <StyledTableCell style={{ fontWeight: 'bolder' }}>
               <Grid container>
                 <Grid>Value</Grid>
               </Grid>
@@ -104,9 +113,7 @@ class NodeInfo extends React.Component {
             <StyledTableCell>Count</StyledTableCell>
             <StyledTableCell>
               <Grid container>
-                <Grid>
-                  {Object.keys(this.state[this.nodeRole]).length}
-                </Grid>
+                <Grid>{Object.keys(this.state[this.nodeRole]).length}</Grid>
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
@@ -114,12 +121,8 @@ class NodeInfo extends React.Component {
             <StyledTableCell>CPU Info</StyledTableCell>
             <StyledTableCell>
               <Grid container>
-                <Grid xs={4}>
-                  Usage: {resourceStats.cpu_used.toFixed(2)}
-                </Grid>
-                <Grid xs={8}>
-                  Total: {resourceStats.cpu_total.toFixed(2)}
-                </Grid>
+                <Grid xs={4}>Usage: {resourceStats.cpu_used.toFixed(2)}</Grid>
+                <Grid xs={8}>Total: {resourceStats.cpu_total.toFixed(2)}</Grid>
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
@@ -142,7 +145,9 @@ class NodeInfo extends React.Component {
               <Grid container>
                 <Grid>
                   {resourceStats.git_branches.map((branch, idx) => (
-                    <div key={`${this.nodeRole}_git_branch_${idx.toString()}`}>{branch}</div>
+                    <div key={`${this.nodeRole}_git_branch_${idx.toString()}`}>
+                      {branch}
+                    </div>
                   ))}
                 </Grid>
               </Grid>
@@ -150,30 +155,30 @@ class NodeInfo extends React.Component {
           </StyledTableRow>
         </TableBody>
       </Table>
-    );
+    )
   }
 }
 
 NodeInfo.propTypes = {
   nodeRole: PropTypes.string,
-};
+}
 
 export default function Dashboard() {
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           <Title>Supervisors</Title>
-          <NodeInfo nodeRole="supervisor"/>
+          <NodeInfo nodeRole="supervisor" />
         </Paper>
       </Grid>
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           <Title>Workers</Title>
-          <NodeInfo nodeRole="worker"/>
+          <NodeInfo nodeRole="worker" />
         </Paper>
       </Grid>
     </Grid>
-  );
+  )
 }

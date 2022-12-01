@@ -14,35 +14,34 @@
  * limitations under the License.
  */
 
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { withRouter } from 'react-router-dom';
+import Divider from '@mui/material/Divider'
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { withRouter } from 'react-router-dom'
 
-import Title from '../Title';
-import TaskTileableGraph from './TaskTileableGraph';
-import TileableDetail from './TileableDetail';
-
+import Title from '../Title'
+import TaskTileableGraph from './TaskTileableGraph'
+import TileableDetail from './TileableDetail'
 
 class TaskDetail extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       selectedTileable: null,
-    };
+    }
   }
 
   render() {
     if (this.props === undefined) {
-      return null;
+      return null
     }
     const tileableClick = (e, tileable) => {
       this.setState({
-        selectedTileable: tileable
-      });
-    };
+        selectedTileable: tileable,
+      })
+    }
     return (
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -59,8 +58,9 @@ class TaskDetail extends React.Component {
                 />
               </Grid>
               <Divider
-                orientation='vertical' flexItem
-                style={{marginRight:'-1px'}}
+                orientation="vertical"
+                flexItem
+                style={{ marginRight: '-1px' }}
               />
               <Grid item xs={12} sm={6}>
                 <Grid item xs={12}>
@@ -75,7 +75,7 @@ class TaskDetail extends React.Component {
           </Paper>
         </Grid>
       </Grid>
-    );
+    )
   }
 }
 
@@ -84,8 +84,8 @@ TaskDetail.propTypes = {
     params: PropTypes.shape({
       session_id: PropTypes.string.isRequired,
       task_id: PropTypes.string.isRequired,
-    })
+    }),
   }),
-};
+}
 
-export default withRouter(TaskDetail);
+export default withRouter(TaskDetail)

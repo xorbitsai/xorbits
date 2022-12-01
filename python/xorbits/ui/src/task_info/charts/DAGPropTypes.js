@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
 export const nodeType = PropTypes.arrayOf(
   PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string,
   })
-);
+)
 
 export const nodesStatusType = PropTypes.shape({
   id: PropTypes.shape({
@@ -31,8 +31,8 @@ export const nodesStatusType = PropTypes.shape({
     properties: PropTypes.shape({
       id: PropTypes.string,
     }),
-  })
-});
+  }),
+})
 
 export const dependencyType = PropTypes.arrayOf(
   PropTypes.shape({
@@ -40,23 +40,11 @@ export const dependencyType = PropTypes.arrayOf(
     toNodeId: PropTypes.string.isRequired,
     linkType: PropTypes.number,
   })
-);
+)
 
 export const dagType = PropTypes.shape({
-  margin: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-  padding: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-  width: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-  height: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-});
+  margin: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  padding: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+})

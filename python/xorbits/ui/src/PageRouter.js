@@ -14,67 +14,82 @@
  * limitations under the License.
  */
 
-import PropTypes from 'prop-types';
-import React, { lazy, Suspense } from 'react';
-import {
-  Route,
-  Switch,
-  useParams,
-} from 'react-router-dom';
+import PropTypes from 'prop-types'
+import React, { lazy, Suspense } from 'react'
+import { Route, Switch, useParams } from 'react-router-dom'
 
-import Dashboard from './Dashboard';
-import NodeListPage from './node_info/NodeListPage';
-import SupervisorDetailPage from './node_info/SupervisorDetailPage';
-import WorkerDetailPage from './node_info/WorkerDetailPage';
-import SessionListPage from './SessionListPage';
-import TaskListPage from './task_info/TaskListPage';
+import Dashboard from './Dashboard'
+import NodeListPage from './node_info/NodeListPage'
+import SupervisorDetailPage from './node_info/SupervisorDetailPage'
+import WorkerDetailPage from './node_info/WorkerDetailPage'
+import SessionListPage from './SessionListPage'
+import TaskListPage from './task_info/TaskListPage'
 const TaskDetail = lazy(() => {
-  return import('./task_info/TaskDetail');
-});
+  return import('./task_info/TaskDetail')
+})
 
 function NodePageWrapper(props) {
-  const { endpoint } = useParams();
-  const { nodeRole, component, ...other } = props;
-  const ComponentTag = component;
+  const { endpoint } = useParams()
+  const { nodeRole, component, ...other } = props
+  const ComponentTag = component
 
-  return (
-    <ComponentTag endpoint={endpoint} nodeRole={nodeRole} {...other} />
-  );
+  return <ComponentTag endpoint={endpoint} nodeRole={nodeRole} {...other} />
 }
 
 NodePageWrapper.propTypes = {
   nodeRole: PropTypes.string,
   component: PropTypes.elementType,
-};
+}
 
 function TaskPageWrapper() {
-  const { session_id } = useParams();
-  return (
-    <TaskListPage sessionId={session_id} />
-  );
+  const { session_id } = useParams()
+  return <TaskListPage sessionId={session_id} />
 }
 
 export default function PageRouter() {
   return (
     <Switch>
-      <Route exact path="/supervisor" render={() => (<NodeListPage nodeRole="supervisor" />)} />
-      <Route exact path="/worker" render={() => (<NodeListPage nodeRole="worker" />)} />
-      <Route exact path="/session" render={() => (<SessionListPage />)} />
+      <Route
+        exact
+        path="/supervisor"
+        render={() => <NodeListPage nodeRole="supervisor" />}
+      />
+      <Route
+        exact
+        path="/worker"
+        render={() => <NodeListPage nodeRole="worker" />}
+      />
+      <Route exact path="/session" render={() => <SessionListPage />} />
       <Route
         exact
         path="/supervisor/:endpoint"
-        render={() => (<NodePageWrapper component={SupervisorDetailPage} nodeRole="supervisor" />)}
+        render={() => (
+          <NodePageWrapper
+            component={SupervisorDetailPage}
+            nodeRole="supervisor"
+          />
+        )}
       />
       <Route
         exact
         path="/worker/:endpoint"
-        render={() => (<NodePageWrapper component={WorkerDetailPage} nodeRole="worker" />)}
+        render={() => (
+          <NodePageWrapper component={WorkerDetailPage} nodeRole="worker" />
+        )}
       />
-      <Route exact path="/session/:session_id/task" render={() => (<TaskPageWrapper />)} />
+      <Route
+        exact
+        path="/session/:session_id/task"
+        render={() => <TaskPageWrapper />}
+      />
       <Route exact path="/" component={Dashboard} />
       <Suspense fallback={<div>Loading...</div>}>
-        <Route exact path="/session/:session_id/task/:task_id" component={TaskDetail} />
+        <Route
+          exact
+          path="/session/:session_id/task/:task_id"
+          component={TaskDetail}
+        />
       </Suspense>
     </Switch>
-  );
+  )
 }

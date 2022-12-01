@@ -14,167 +14,165 @@
  * limitations under the License.
  */
 
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Paper from '@mui/material/Paper';
-import Select from '@mui/material/Select';
-import Switch from '@mui/material/Switch';
-import Typography from '@mui/material/Typography';
-import join from 'lodash/join';
-import PropTypes from 'prop-types';
-import React from 'react';
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Paper from '@mui/material/Paper'
+import Select from '@mui/material/Select'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
+import join from 'lodash/join'
+import PropTypes from 'prop-types'
+import React from 'react'
 
-import Title from '../Title';
-import {formatTime} from '../Utils';
-
+import Title from '../Title'
+import { formatTime } from '../Utils'
 
 export default class NodeStackTab extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       loaded: false,
-    };
-    this.interval = undefined;
+    }
+    this.interval = undefined
   }
 
   componentDidMount() {
-    this.loadProcesses();
-    this.refreshStack();
+    this.loadProcesses()
+    this.refreshStack()
   }
 
   loadProcesses() {
     fetch(`api/cluster/pools?address=${this.props.endpoint}`)
       .then((res) => res.json())
       .then((res) => {
-        const pools = res.pools;
-        const {state} = this;
-        let poolToName = [];
+        const pools = res.pools
+        const { state } = this
+        let poolToName = []
 
         for (let i = 0; i < pools.length; i++) {
-          let label = pools[i].label;
-          if (label)
-            poolToName.push(`${i}: ${pools[i].label}`);
-          else
-            poolToName.push(`${i}`);
+          let label = pools[i].label
+          if (label) poolToName.push(`${i}: ${pools[i].label}`)
+          else poolToName.push(`${i}`)
         }
-        state.loaded = true;
-        state.selectedIndex = 0;
-        state.pools = poolToName;
-        this.setState(state);
-      });
+        state.loaded = true
+        state.selectedIndex = 0
+        state.pools = poolToName
+        this.setState(state)
+      })
   }
 
   refreshStack() {
     fetch(`api/cluster/stacks?address=${this.props.endpoint}`)
       .then((res) => res.json())
       .then((res) => {
-        const stacks = res.stacks;
-        const {state} = this;
-        let resultStacks = [];
+        const stacks = res.stacks
+        const { state } = this
+        let resultStacks = []
 
         for (let i = 0; i < stacks.length; i++) {
-          const inStacks = stacks[i];
-          let stackObj = {};
+          const inStacks = stacks[i]
+          let stackObj = {}
           if (!inStacks) {
-            resultStacks.push(undefined);
-            continue;
+            resultStacks.push(undefined)
+            continue
           }
           Object.keys(inStacks).forEach((threadKey) => {
-            stackObj[threadKey] = join(inStacks[threadKey], '');
-          });
-          resultStacks.push(stackObj);
+            stackObj[threadKey] = join(inStacks[threadKey], '')
+          })
+          resultStacks.push(stackObj)
         }
-        state.loaded = true;
-        state.generateTime = res.generate_time;
-        state.stacks = resultStacks;
-        this.setState(state);
-      });
+        state.loaded = true
+        state.generateTime = res.generate_time
+        state.stacks = resultStacks
+        this.setState(state)
+      })
   }
 
   renderStack() {
     if (!this.state.stacks || !this.state.stacks[this.state.selectedIndex])
-      return <React.Fragment />;
-    const stacksObj = this.state.stacks[this.state.selectedIndex];
+      return <React.Fragment />
+    const stacksObj = this.state.stacks[this.state.selectedIndex]
     return (
       <div>
-        <Title component="h3">Generate Time: {formatTime(this.state.generateTime)}</Title>
+        <Title component="h3">
+          Generate Time: {formatTime(this.state.generateTime)}
+        </Title>
         {Object.keys(stacksObj).map((threadKey) => (
           <div key={`block-${threadKey}`}>
             <Title component="h3">{threadKey}</Title>
-            <Paper style={{width: '100%', overflow: 'auto'}}>
-              <pre style={{fontSize: 'smaller'}}>{stacksObj[threadKey]}</pre>
+            <Paper style={{ width: '100%', overflow: 'auto' }}>
+              <pre style={{ fontSize: 'smaller' }}>{stacksObj[threadKey]}</pre>
             </Paper>
           </div>
         ))}
       </div>
-    );
+    )
   }
 
   render() {
     if (!this.state.loaded) {
-      return (
-        <div>Loading</div>
-      );
+      return <div>Loading</div>
     }
 
     const onSelectProcess = (event) => {
-      const {state} = this;
-      console.log(event);
-      state.selectedIndex = parseInt(event.target.value);
-      this.setState(state);
-    };
+      const { state } = this
+      console.log(event)
+      state.selectedIndex = parseInt(event.target.value)
+      this.setState(state)
+    }
 
     const onRefreshChange = (event) => {
       if (event.target.checked) {
-        this.interval = setInterval(() => this.refreshStack(), 5000);
-        this.refreshStack();
+        this.interval = setInterval(() => this.refreshStack(), 5000)
+        this.refreshStack()
       } else {
-        clearInterval(this.interval);
+        clearInterval(this.interval)
       }
-    };
+    }
 
     return (
       <div>
-        <div style={{display: 'flex'}}>
+        <div style={{ display: 'flex' }}>
           <FormControl fullWidth>
             <InputLabel id="process-index-select-label">Process</InputLabel>
             <Select
               labelId="process-index-select-label"
               id="process-index-select"
               label="Process"
-              style={{width: '100%'}}
+              style={{ width: '100%' }}
               value={`${this.state.selectedIndex}`}
               onChange={onSelectProcess}
             >
               {this.state.pools.map((s, idx) => (
-                <MenuItem key={`item-${idx}`} value={idx}>{s}</MenuItem>
+                <MenuItem key={`item-${idx}`} value={idx}>
+                  {s}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
           <FormControl>
             <FormControlLabel
-              style={{display: 'flex',
+              style={{
+                display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-end',
               }}
-              control={
-                <Switch onChange={onRefreshChange} />
+              control={<Switch onChange={onRefreshChange} />}
+              label={
+                <Typography style={{ fontSize: 'smaller' }}>Refresh</Typography>
               }
-              label={<Typography style={{fontSize: 'smaller'}}>Refresh</Typography>}
               labelPlacement="top"
             />
           </FormControl>
         </div>
-        <div>
-          {this.renderStack()}
-        </div>
+        <div>{this.renderStack()}</div>
       </div>
-    );
+    )
   }
 }
 
 NodeStackTab.propTypes = {
   endpoint: PropTypes.string,
-};
+}

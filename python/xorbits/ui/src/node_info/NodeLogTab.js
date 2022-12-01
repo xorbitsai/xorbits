@@ -13,74 +13,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import PropTypes from 'prop-types';
-import React from 'react';
-import streamSaver from 'streamsaver';
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import PropTypes from 'prop-types'
+import React from 'react'
+import streamSaver from 'streamsaver'
 
-import Title from '../Title';
-import {formatTime} from '../Utils';
-
+import Title from '../Title'
+import { formatTime } from '../Utils'
 
 export default class NodeLogTab extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       loaded: false,
       content: null,
       interval: null,
-      endpoint: null
-    };
+      endpoint: null,
+    }
   }
 
   componentDidMount() {
-    const intervalId = setInterval(() => this.loadLogs(), 10000);
+    const intervalId = setInterval(() => this.loadLogs(), 10000)
     // store intervalId in the state, so it can be accessed later
     this.setState({
-      interval: intervalId
-    });
-    this.loadLogs();
+      interval: intervalId,
+    })
+    this.loadLogs()
   }
 
   componentWillUnmount() {
     if (this.state.interval != null) {
-      clearInterval(this.state.interval);
+      clearInterval(this.state.interval)
     }
   }
 
   render() {
     if (!this.state.loaded) {
-      return (
-        <div>Loading</div>
-      );
+      return <div>Loading</div>
     }
     return (
       <div>
         <Grid container spacing={2}>
           <Grid item xs={8}>
-            <Title component="h3">Generate Time: {formatTime(this.getTimestamp() / 1000)}</Title>
+            <Title component="h3">
+              Generate Time: {formatTime(this.getTimestamp() / 1000)}
+            </Title>
           </Grid>
           <Grid item xs>
             <Button
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<SaveAltIcon/>}
+              startIcon={<SaveAltIcon />}
               onClick={() => this.downloadLogs()}
-            >Save
+            >
+              Save
             </Button>
           </Grid>
         </Grid>
         <div>
-          <Paper style={{width: '100%', overflow: 'auto'}}>
-            <pre style={{fontSize: 'smaller'}}>{this.state.content}</pre>
+          <Paper style={{ width: '100%', overflow: 'auto' }}>
+            <pre style={{ fontSize: 'smaller' }}>{this.state.content}</pre>
           </Paper>
         </div>
       </div>
-    );
+    )
   }
 
   loadLogs() {
@@ -89,46 +89,53 @@ export default class NodeLogTab extends React.Component {
       .then((res) => {
         this.setState({
           loaded: true,
-          content: res.content
-        });
-      });
+          content: res.content,
+        })
+      })
   }
 
   getTimestamp() {
-    return new Date().getTime();
+    return new Date().getTime()
   }
 
   downloadLogs() {
     const filename = ''.concat(
       'Xorbits_',
-      this.props.role, '_',
-      this.props.endpoint, '_',
-      this.getTimestamp().toString(), '_',
-      'log.txt');
-    fetch(`api/cluster/logs?address=${this.props.endpoint}&&size=-1`)
-      .then(response => {
-        const fileStream = streamSaver.createWriteStream(filename);
-        const readableStream = response.body;
+      this.props.role,
+      '_',
+      this.props.endpoint,
+      '_',
+      this.getTimestamp().toString(),
+      '_',
+      'log.txt'
+    )
+    fetch(`api/cluster/logs?address=${this.props.endpoint}&&size=-1`).then(
+      (response) => {
+        const fileStream = streamSaver.createWriteStream(filename)
+        const readableStream = response.body
         // more optimized pipe version
         // (Safari may have pipeTo, but it's useless without the WritableStream)
         if (window.WritableStream && readableStream.pipeTo) {
-          return readableStream.pipeTo(fileStream);
+          return readableStream.pipeTo(fileStream)
         }
         // Write (pipe) manually
-        window.writer = fileStream.getWriter();
-        let writer = window.writer;
+        window.writer = fileStream.getWriter()
+        let writer = window.writer
 
-        const reader = readableStream.getReader();
-        const pump = () => reader.read()
-          .then(res => res.done
-            ? writer.close()
-            : writer.write(res.value).then(pump));
-        pump();
-      });
+        const reader = readableStream.getReader()
+        const pump = () =>
+          reader
+            .read()
+            .then((res) =>
+              res.done ? writer.close() : writer.write(res.value).then(pump)
+            )
+        pump()
+      }
+    )
   }
 }
 
 NodeLogTab.propTypes = {
   endpoint: PropTypes.string,
-  role: PropTypes.string
-};
+  role: PropTypes.string,
+}

@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-import { select as d3Select } from 'd3-selection';
-import {
-  graphlib as dagGraphLib,
-} from 'dagre-d3';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { select as d3Select } from 'd3-selection'
+import { graphlib as dagGraphLib } from 'dagre-d3'
+import PropTypes from 'prop-types'
+import React from 'react'
 
-import DAGChart from './charts/DAGChart';
-
+import DAGChart from './charts/DAGChart'
 
 export default class TaskTileableGraph extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       selectedTileable: null,
       tileables: [],
@@ -73,8 +70,8 @@ export default class TaskTileableGraph extends React.Component {
           legendTextXLoc: '235',
           legendTextYLoc: '21',
         },
-      ]
-    };
+      ],
+    }
   }
 
   /**
@@ -98,14 +95,14 @@ export default class TaskTileableGraph extends React.Component {
         .attr('cy', dotY)
         .attr('r', 6)
         .attr('stroke', '#333')
-        .style('fill', color);
+        .style('fill', color)
     } else {
       svgContainer
         .append('circle')
         .attr('cx', dotX)
         .attr('cy', dotY)
         .attr('r', 6)
-        .style('fill', color);
+        .style('fill', color)
     }
 
     svgContainer
@@ -114,75 +111,75 @@ export default class TaskTileableGraph extends React.Component {
       .attr('y', textY)
       .text(text)
       .style('font-size', '15px')
-      .attr('alignment-baseline', 'middle');
+      .attr('alignment-baseline', 'middle')
   }
 
   fetchGraphDetail() {
-    const { sessionId, taskId } = this.props;
+    const { sessionId, taskId } = this.props
 
-    fetch(`api/session/${sessionId}/task/${taskId
-    }/tileable_graph?action=get_tileable_graph_as_json`)
-      .then(res => res.json())
+    fetch(
+      `api/session/${sessionId}/task/${taskId}/tileable_graph?action=get_tileable_graph_as_json`
+    )
+      .then((res) => res.json())
       .then((res) => {
         this.setState({
-          tileables: res.tileables.map(({tileableId, tileableName}) => {
-            return (
-              {
-                id: tileableId,
-                name: tileableName,
-              }
-            );
+          tileables: res.tileables.map(({ tileableId, tileableName }) => {
+            return {
+              id: tileableId,
+              name: tileableName,
+            }
           }),
-          dependencies: res.dependencies.map(({fromTileableId, toTileableId}) => {
-            return (
-              {
+          dependencies: res.dependencies.map(
+            ({ fromTileableId, toTileableId }) => {
+              return {
                 fromNodeId: fromTileableId,
                 toNodeId: toTileableId,
               }
-            );
-          }),
-        });
-      });
+            }
+          ),
+        })
+      })
   }
 
   fetchTileableDetail() {
-    const { sessionId, taskId } = this.props;
+    const { sessionId, taskId } = this.props
 
-    fetch(`api/session/${sessionId}/task/${taskId
-    }/tileable_detail`)
-      .then(res => res.json())
+    fetch(`api/session/${sessionId}/task/${taskId}/tileable_detail`)
+      .then((res) => res.json())
       .then((res) => {
         this.setState({
           tileableDetails: res,
-        });
-      });
+        })
+      })
   }
 
   componentDidMount() {
-    this.g = new dagGraphLib.Graph().setGraph({});
+    this.g = new dagGraphLib.Graph().setGraph({})
 
     if (this.interval !== undefined) {
-      clearInterval(this.interval);
+      clearInterval(this.interval)
     }
-    this.interval = setInterval(() => this.fetchTileableDetail(), 1000);
-    this.fetchTileableDetail();
-    this.fetchGraphDetail();
+    this.interval = setInterval(() => this.fetchTileableDetail(), 1000)
+    this.fetchTileableDetail()
+    this.fetchGraphDetail()
 
     // Create the legend for DAG
-    const legendSVG = d3Select('#tileables-legend');
-    this.state.tileableStatus.forEach((status) => this.generateGraphLegendItem(
-      legendSVG,
-      status.legendDotXLoc,
-      status.legendDotYLoc,
-      status.legendTextXLoc,
-      status.legendTextYLoc,
-      status.color,
-      status.text
-    ));
+    const legendSVG = d3Select('#tileables-legend')
+    this.state.tileableStatus.forEach((status) =>
+      this.generateGraphLegendItem(
+        legendSVG,
+        status.legendDotXLoc,
+        status.legendDotYLoc,
+        status.legendTextXLoc,
+        status.legendTextYLoc,
+        status.color,
+        status.text
+      )
+    )
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.interval)
   }
 
   render() {
@@ -190,34 +187,34 @@ export default class TaskTileableGraph extends React.Component {
       margin: 30,
       width: '90%',
       height: '80%',
-    };
+    }
 
-    if (this.state === undefined ||
-            this.state.tileables === undefined ||
-            this.state.dependencies === undefined ||
-            this.state.tileableDetails === undefined) {
-      return (
-        <div>Loading</div>
-      );
+    if (
+      this.state === undefined ||
+      this.state.tileables === undefined ||
+      this.state.dependencies === undefined ||
+      this.state.tileableDetails === undefined
+    ) {
+      return <div>Loading</div>
     }
 
     return (
       <React.Fragment>
         <svg
-          id='tileables-legend'
+          id="tileables-legend"
           style={{ marginLeft: '6%', width: '90%', height: '10%' }}
         />
         <DAGChart
-          graphName='tileableGraph'
+          graphName="tileableGraph"
           dagStyle={dagStyle}
           nodes={this.state.tileables}
-          nodeShape='rect'
+          nodeShape="rect"
           nodesStatus={this.state.tileableDetails}
           dependencies={this.state.dependencies}
           onNodeClick={this.props.onTileableClick}
         />
       </React.Fragment>
-    );
+    )
   }
 }
 
@@ -225,4 +222,4 @@ TaskTileableGraph.propTypes = {
   sessionId: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
   onTileableClick: PropTypes.func,
-};
+}

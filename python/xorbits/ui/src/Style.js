@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {createTheme, tableCellClasses} from '@mui/material';
-import Paper from '@mui/material/Paper';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
-import {makeStyles, styled} from '@mui/styles';
-export const theme = createTheme();
+import { createTheme, tableCellClasses } from '@mui/material'
+import Paper from '@mui/material/Paper'
+import TableCell from '@mui/material/TableCell'
+import TableRow from '@mui/material/TableRow'
+import { makeStyles, styled } from '@mui/styles'
+export const theme = createTheme()
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,15 +67,15 @@ export const useStyles = makeStyles((theme) => ({
   logo: {
     maxWidth: 200,
     marginRight: 2,
-    padding: 0
-  }
-}));
+    padding: 0,
+  },
+}))
 
 export const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
-}));
+}))
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -85,13 +85,11 @@ export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:last-child td, &:last-child th': {
     border: 0,
   },
-}));
+}))
 
-export const StyledPaper = styled(Paper)(
-  {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  }
-);
+export const StyledPaper = styled(Paper)({
+  padding: theme.spacing(2),
+  display: 'flex',
+  overflow: 'auto',
+  flexDirection: 'column',
+})
