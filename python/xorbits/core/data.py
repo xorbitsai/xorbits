@@ -116,6 +116,7 @@ class DataRefMeta(type):
     def __getattr__(self, item: str):
         from .adapter import get_cls_members
 
+        # to avoid circular import
         cls_members = get_cls_members(self)
 
         if item not in cls_members:

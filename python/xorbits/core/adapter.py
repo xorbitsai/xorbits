@@ -21,19 +21,7 @@ import functools
 import inspect
 from collections import defaultdict
 from functools import partial
-from types import ModuleType
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generator,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import Any, Callable, Dict, Generator, List, Tuple, Type, Union
 
 # For maintenance, any module wants to import from mars, it should import from here.
 from .._mars import dataframe as mars_dataframe
@@ -64,6 +52,7 @@ from .._mars.tensor import mgrid as mars_mgrid
 from .._mars.tensor import ogrid as mars_ogrid
 from .._mars.tensor import r_ as mars_r_
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
+from .._mars.tensor.core import Tensor as MarsTensor
 from .._mars.tensor.core import flatiter as mars_flatiter
 from .._mars.tensor.lib import nd_grid
 from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
@@ -139,6 +128,7 @@ class MarsProxy:
         ):
             ret = partial(_DATA_TYPE_TO_CLS_MEMBERS[data_type][item], mars_entity)
             ret.__doc__ = _DATA_TYPE_TO_CLS_MEMBERS[data_type][item].__doc__
+            return ret
 
         attr = getattr(mars_entity, item, None)
         if attr is None:
@@ -239,10 +229,10 @@ def wrap_mars_callable(
 
 
 _DATA_TYPE_TO_MARS_CLS: Dict[DataType, Type] = {
-    DataType.tensor: MARS_TENSOR_TYPE[0],
-    DataType.dataframe: MARS_DATAFRAME_TYPE[0],
-    DataType.series: MARS_SERIES_TYPE[0],
-    DataType.index: MARS_INDEX_TYPE[0],
+    DataType.tensor: MarsTensor,
+    DataType.dataframe: MarsDataFrame,
+    DataType.series: MarsSeries,
+    DataType.index: MarsIndex,
 }
 
 
