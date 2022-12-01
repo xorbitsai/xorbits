@@ -32,7 +32,8 @@
   },
   "scripts": {
     "build": "webpack",
-    "lint": "prettier --write ."
+    "lint": "npx eslint . && prettier --check .",
+    "fix": "prettier --write ."
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
