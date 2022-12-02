@@ -43,7 +43,7 @@ def _collect_module_callables(
         module_callables[name] = wrap_mars_callable(
             func,
             attach_docstring=True,
-            is_method=False,
+            is_cls_member=False,
             docstring_src_module=docstring_src_module,
             docstring_src=getattr(docstring_src_module, name, None),
         )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +21,15 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
+from .core import DataFrame
+
+
+def unimplemented_func():
+    """
+    Not implemented yet.
+    """
+    raise NotImplementedError(f"This function is not implemented yet.")
+
 
 def __dir__():
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
@@ -35,5 +43,10 @@ def __getattr__(name: str):
     if name in MARS_DATAFRAME_CALLABLES:
         return MARS_DATAFRAME_CALLABLES[name]
     else:
-        # TODO  for functions not implemented fallback to pandas
-        raise AttributeError(name)
+        # TODO fallback to pandas
+        import pandas
+
+        if not hasattr(pandas, name):
+            raise AttributeError(name)
+        else:
+            return unimplemented_func

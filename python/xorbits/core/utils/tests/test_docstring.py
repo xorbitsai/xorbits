@@ -26,7 +26,7 @@ def test_add_docstring_disclaimer():
     assert "foo" == add_docstring_disclaimer(None, None, "foo")
     assert add_docstring_disclaimer(None, pd.DataFrame, None) is None
     assert add_docstring_disclaimer(None, pd.DataFrame, "\n\n\n").endswith(
-        "This docstring was copied from pandas.core.frame.DataFrame"
+        "This docstring was copied from pandas.core.frame.DataFrame."
     )
 
 

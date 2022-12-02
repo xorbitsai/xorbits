@@ -20,19 +20,8 @@
 import functools
 import inspect
 from collections import defaultdict
-from types import ModuleType
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generator,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from functools import partial
+from typing import Any, Callable, Dict, Generator, List, Tuple, Type, Union
 
 # For maintenance, any module wants to import from mars, it should import from here.
 from .._mars import dataframe as mars_dataframe
@@ -63,12 +52,13 @@ from .._mars.tensor import mgrid as mars_mgrid
 from .._mars.tensor import ogrid as mars_ogrid
 from .._mars.tensor import r_ as mars_r_
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
+from .._mars.tensor.core import Tensor as MarsTensor
 from .._mars.tensor.core import flatiter as mars_flatiter
 from .._mars.tensor.lib import nd_grid
 from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
-from .data import Data, DataRef, DataType
+from .data import Data, DataRef, DataRefMeta, DataType
 
-_mars_entity_type_to_execution_condition: Dict[
+_MARS_CLS_TO_EXECUTION_CONDITION: Dict[
     str, List[Callable[["MarsEntity"], bool]]
 ] = defaultdict(list)
 
@@ -76,18 +66,18 @@ _mars_entity_type_to_execution_condition: Dict[
 def register_execution_condition(
     mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
 ):
-    _mars_entity_type_to_execution_condition[mars_entity_type].append(condition)
+    _MARS_CLS_TO_EXECUTION_CONDITION[mars_entity_type].append(condition)
 
 
-_mars_type_to_converters: Dict[Type, Callable] = {}
+_MARS_CLS_TO_CONVERTER: Dict[Type, Callable] = {}
 
 
 def _get_converter(from_cls: Type):
-    if from_cls in _mars_type_to_converters:
-        return _mars_type_to_converters[from_cls]
-    for k, v in _mars_type_to_converters.items():
+    if from_cls in _MARS_CLS_TO_CONVERTER:
+        return _MARS_CLS_TO_CONVERTER[from_cls]
+    for k, v in _MARS_CLS_TO_CONVERTER.items():
         if issubclass(from_cls, k):
-            _mars_type_to_converters[from_cls] = v
+            _MARS_CLS_TO_CONVERTER[from_cls] = v
             return v
     return None
 
@@ -99,8 +89,8 @@ def register_converter(from_cls_list: List[Type]):
 
     def decorate(cls: Type):
         for from_cls in from_cls_list:
-            assert from_cls not in _mars_type_to_converters
-            _mars_type_to_converters[from_cls] = cls
+            assert from_cls not in _MARS_CLS_TO_CONVERTER
+            _MARS_CLS_TO_CONVERTER[from_cls] = cls
         return cls
 
     return decorate
@@ -119,7 +109,7 @@ def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
             return wrap_mars_callable(
                 getattr(mars_entity, method_name),
                 attach_docstring=False,
-                is_method=True,
+                is_cls_member=True,
             )(*args, **kwargs)
 
     return wrapped
@@ -133,8 +123,14 @@ def wrap_generator(wrapped: Generator):
 class MarsProxy:
     @classmethod
     def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
-        attr = getattr(mars_entity, item, None)
+        if item in _DATA_TYPE_TO_CLS_MEMBERS[data_type] and callable(
+            _DATA_TYPE_TO_CLS_MEMBERS[data_type]
+        ):
+            ret = partial(_DATA_TYPE_TO_CLS_MEMBERS[data_type][item], mars_entity)
+            ret.__doc__ = _DATA_TYPE_TO_CLS_MEMBERS[data_type][item].__doc__
+            return ret
 
+        attr = getattr(mars_entity, item, None)
         if attr is None:
             # TODO: pandas implementation
             raise AttributeError(f"'{data_type.name}' object has no attribute '{item}'")
@@ -142,8 +138,8 @@ class MarsProxy:
             return wrap_mars_callable(
                 attr,
                 attach_docstring=True,
-                is_method=True,
-                method_name=item,
+                is_cls_member=True,
+                member_name=item,
                 data_type=data_type,
             )
         else:
@@ -152,7 +148,7 @@ class MarsProxy:
 
     @classmethod
     def setattr(cls, mars_entity: MarsEntity, key: str, value: Any):
-        if type(getattr(type(mars_entity), key)) is property:
+        if isinstance(getattr(type(mars_entity), key), property):
             # call the setter of the specified property.
             getattr(type(mars_entity), key).fset(mars_entity, to_mars(value))
         else:
@@ -169,9 +165,7 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
         if mars_entity is None:
             raise TypeError(f"Can't covert {inp} to mars entity")
         # trigger execution
-        conditions = _mars_entity_type_to_execution_condition[
-            type(mars_entity).__name__
-        ]
+        conditions = _MARS_CLS_TO_EXECUTION_CONDITION[type(mars_entity).__name__]
         for cond in conditions:
             if cond(mars_entity):
                 from .execution import execute
@@ -210,7 +204,7 @@ def from_mars(inp: Union[MarsEntity, tuple, list, dict]):
 
 
 def wrap_mars_callable(
-    c: Callable, attach_docstring: bool, is_method: bool, **kwargs
+    c: Callable, attach_docstring: bool, is_cls_member: bool, **kwargs
 ) -> Callable:
     """
     A function wrapper that makes arguments of the wrapped callable be mars compatible types and
@@ -222,13 +216,86 @@ def wrap_mars_callable(
         return from_mars(c(*to_mars(args), **to_mars(kwargs)))
 
     if attach_docstring:
-        if is_method:
-            from .utils.docstring import attach_method_docstring
+        if is_cls_member:
+            from .utils.docstring import attach_class_member_docstring
 
-            return attach_method_docstring(wrapped, **kwargs)
+            return attach_class_member_docstring(wrapped, **kwargs)
         else:
             from .utils.docstring import attach_module_callable_docstring
 
             return attach_module_callable_docstring(wrapped, **kwargs)
     else:
         return wrapped
+
+
+_DATA_TYPE_TO_MARS_CLS: Dict[DataType, Type] = {
+    DataType.tensor: MarsTensor,
+    DataType.dataframe: MarsDataFrame,
+    DataType.series: MarsSeries,
+    DataType.index: MarsIndex,
+}
+
+
+def _collect_cls_members(data_type: DataType) -> Dict[str, Any]:
+    if data_type not in _DATA_TYPE_TO_MARS_CLS:
+        return {}
+
+    cls_members: Dict[str, Any] = {}
+    mars_cls: Type = _DATA_TYPE_TO_MARS_CLS[data_type]
+    for name, cls_member in inspect.getmembers(mars_cls):
+        if inspect.isfunction(cls_member):
+            cls_members[name] = wrap_mars_callable(
+                cls_member,
+                attach_docstring=True,
+                is_cls_member=True,
+                member_name=name,
+                data_type=data_type,
+            )
+        elif isinstance(cls_member, property):
+            from .utils.docstring import attach_class_member_docstring
+
+            attach_class_member_docstring(cls_member, name, data_type)
+            cls_members[name] = cls_member
+
+    return cls_members
+
+
+_DATA_TYPE_TO_CLS_MEMBERS: Dict[DataType, Dict[str, Any]] = {}
+for data_type in DataType:
+    _DATA_TYPE_TO_CLS_MEMBERS[data_type] = _collect_cls_members(data_type)
+
+
+_XORBITS_CLS_TO_DATA_TYPE: Dict[Type, DataType] = {}
+
+
+def bind_xorbits_cls_to_data_type(xorbits_cls: Type, data_type: DataType) -> None:
+    if xorbits_cls in _XORBITS_CLS_TO_DATA_TYPE:
+        raise ValueError(
+            f"{xorbits_cls.__name__} has already been bound to "
+            f"{_XORBITS_CLS_TO_DATA_TYPE[xorbits_cls]}."
+        )
+
+    if data_type in _XORBITS_CLS_TO_DATA_TYPE.values():
+        cls = [
+            c
+            for c in _XORBITS_CLS_TO_DATA_TYPE
+            if _XORBITS_CLS_TO_DATA_TYPE[c] == data_type
+        ]
+        assert len(cls) == 1
+        raise ValueError(f"{data_type} has already been bound to {cls[0]}.")
+
+    _XORBITS_CLS_TO_DATA_TYPE[xorbits_cls] = data_type
+
+
+def get_cls_members(xorbits_cls: Type) -> Dict[str, Any]:
+    if xorbits_cls not in _XORBITS_CLS_TO_DATA_TYPE:
+        raise ValueError(
+            f"{xorbits_cls.__name__} has not been bound with any data type."
+        )
+
+    data_type: DataType = _XORBITS_CLS_TO_DATA_TYPE[xorbits_cls]
+
+    if data_type not in _DATA_TYPE_TO_CLS_MEMBERS:
+        raise ValueError(f"{data_type} do not have any bound class member.")
+
+    return _DATA_TYPE_TO_CLS_MEMBERS[data_type]

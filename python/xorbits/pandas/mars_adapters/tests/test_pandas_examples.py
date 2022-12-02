@@ -16,7 +16,7 @@
 import doctest
 import inspect
 from doctest import DocTestFinder, DocTestRunner, TestResults
-from typing import List
+from typing import Any, List, Tuple
 
 import pytest
 
@@ -41,7 +41,7 @@ def run_docstring(
     return results
 
 
-parameters = []
+parameters: List[Tuple[Any, Any]] = []
 parameters.extend(
     [
         (xpd, name)
