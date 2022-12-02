@@ -69,12 +69,12 @@ def spawn(
     ...     return x + 1
     >>>
     >>> result = xr.spawn(inc, args=(0,))
-    >>> result.fetch()
+    >>> result.to_object()
     1
 
 
     >>> results = [xr.spawn(inc, args=(i,)) for i in range(10)]
-    >>> [r.fetch() for r in results]
+    >>> [r.to_object() for r in results]
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     Xorbits objects returned by :meth:`xorbits.remote.spawn` can be used as arguments when spawning
@@ -82,15 +82,15 @@ def spawn(
 
     >>> def sum_all(xs):
     ...     return sum(xs)
-    >>> xr.spawn(sum_all, args=(results,)).fetch()
+    >>> xr.spawn(sum_all, args=(results,)).to_object()
     55
 
     functions can be spawned recursively.
 
     >>> def driver():
     ...     results = [xr.spawn(inc, args=(i,)) for i in range(10)]
-    ...     return [r.fetch() for r in results]
-    >>> xr.spawn(driver).fetch()
+    ...     return [r.to_object() for r in results]
+    >>> xr.spawn(driver).to_object()
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     Xorbits objects can also be used in spawned functions.
@@ -99,7 +99,7 @@ def spawn(
     >>> def driver2():
     ...     t = np.ones((10, 10))
     ...     return t.sum().to_numpy()
-    >>> xr.spawn(driver2).fetch()
+    >>> xr.spawn(driver2).to_object()
     100.0
 
     The argument `n_output` indicates that the function to spawn has multiple outputs.
@@ -121,7 +121,7 @@ def spawn(
     >>>
     >>> sa = xr.spawn(sum_all, args=(la,))
     >>> sb = xr.spawn(sum_all, args=(lb,))
-    >>> [sa.fetch(), sb.fetch()]
+    >>> [sa.to_object(), sb.to_object()]
     [0.6000000000000001, 1.5]
     """
 

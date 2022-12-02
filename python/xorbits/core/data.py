@@ -159,9 +159,3 @@ class DataRef(metaclass=DataRefMeta):
 
         execute(self)
         return self.data.__repr__()
-
-    def fetch(self):
-        from .execution import execute
-
-        execute(self)
-        return self.data.fetch()
