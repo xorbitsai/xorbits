@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   entry: './src/App.js',
-  mode: process.env.NODE_ENV || "development",
+  mode: 'production',
   resolve: {
     extensions: ['*', '.js', '.jsx'],
   },
@@ -25,6 +25,7 @@ module.exports = {
     path: path.resolve(__dirname, './static'),
     filename: 'bundle.js',
     publicPath: 'static/',
+    assetModuleFilename: 'resources/assets/images/[name].[ext]',
   },
   module: {
     rules: [
@@ -34,30 +35,9 @@ module.exports = {
         loader: 'babel-loader',
       },
       {
-        test: /\.(woff|woff2)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'webfonts/'
-          }
-        },
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        type: 'asset/resource',
       },
-      {
-        test: /\.(sass|less|css)$/,
-        use: ['style-loader', 'css-loader', 'less-loader']
-      }
-    ]
+    ],
   },
-  plugins: [
-    {
-       apply: (compiler) => {
-         compiler.hooks.done.tap('DonePlugin', (stats) => {
-           setTimeout(() => {
-             process.exit(0)
-           })
-         });
-       }
-    }
-  ]
-};
+}

@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 export default function Title(props) {
   return (
     <Typography
       component={props.component === undefined ? 'h2' : props.component}
       variant="h6"
-      color="primary"
-      style={{ fontWeight: 'bolder' }}
+      style={{ fontWeight: 'bolder', color: '#781FF5' }}
       gutterBottom
     >
       {props.children}
     </Typography>
-  );
+  )
 }
 
 Title.propTypes = {
   component: PropTypes.elementType,
   children: PropTypes.node,
-};
+}

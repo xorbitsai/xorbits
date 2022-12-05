@@ -14,30 +14,32 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
-import PropTypes from 'prop-types';
-import TabPanel from './TabPanel';
-import Title from '../Title';
-import { useStyles } from '../Style';
-import NodeEnvTab from './NodeEnvTab';
-import NodeResourceTab from './NodeResourceTab';
-import NodeStackTab from './NodeStackTab';
-import NodeLogTab from './NodeLogTab';
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import PropTypes from 'prop-types'
+import React from 'react'
 
+import { useStyles } from '../Style'
+import Title from '../Title'
+import NodeEnvTab from './NodeEnvTab'
+import NodeLogTab from './NodeLogTab'
+import NodeResourceTab from './NodeResourceTab'
+import NodeStackTab from './NodeStackTab'
+import TabPanel from './TabPanel'
 
 export default function WorkerDetailPage(props) {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const classes = useStyles()
+  const [value, setValue] = React.useState(0)
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+    setValue(newValue)
+  }
 
-  const title_text = `${props.nodeRole.replace(/\w/, (first) => first.toUpperCase())}: ${props.endpoint}`;
+  const title_text = `${props.nodeRole.replace(/\w/, (first) =>
+    first.toUpperCase()
+  )}: ${props.endpoint}`
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -61,15 +63,15 @@ export default function WorkerDetailPage(props) {
             <NodeStackTab endpoint={props.endpoint} />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <NodeLogTab endpoint={props.endpoint} role="worker"/>
+            <NodeLogTab endpoint={props.endpoint} role="worker" />
           </TabPanel>
         </Paper>
       </Grid>
     </Grid>
-  );
+  )
 }
 
 WorkerDetailPage.propTypes = {
   nodeRole: PropTypes.string,
   endpoint: PropTypes.string,
-};
+}

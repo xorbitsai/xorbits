@@ -14,40 +14,38 @@
  * limitations under the License.
  */
 
-import join from 'lodash/join';
-import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import TableBody from '@material-ui/core/TableBody';
-import PropTypes from 'prop-types';
-
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import join from 'lodash/join'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 export default class NodeEnvTab extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       loaded: false,
-    };
+    }
   }
 
   componentDidMount() {
-    fetch(`api/cluster/nodes?nodes=${this.props.endpoint
-    }&env=1&exclude_statuses=-1`)
+    fetch(
+      `api/cluster/nodes?nodes=${this.props.endpoint}&env=1&exclude_statuses=-1`
+    )
       .then((res) => res.json())
       .then((res) => {
-        const state = res.nodes[this.props.endpoint].env;
-        state.loaded = true;
-        this.setState(state);
-      });
+        const state = res.nodes[this.props.endpoint].env
+        state.loaded = true
+        this.setState(state)
+      })
   }
 
   render() {
     if (!this.state.loaded) {
-      return (
-        <div>Loading</div>
-      );
+      return <div>Loading</div>
     }
     return (
       <Table>
@@ -62,38 +60,36 @@ export default class NodeEnvTab extends React.Component {
             <TableCell>Endpoint</TableCell>
             <TableCell>{this.props.endpoint}</TableCell>
           </TableRow>
-          {Boolean(this.state.k8s_pod_name) &&
+          {Boolean(this.state.k8s_pod_name) && (
             <TableRow>
               <TableCell>Kubernetes Pod</TableCell>
               <TableCell>{this.state.k8s_pod_name}</TableCell>
             </TableRow>
-          }
-          {Boolean(this.state.yarn_container_id) &&
+          )}
+          {Boolean(this.state.yarn_container_id) && (
             <TableRow>
               <TableCell>Yarn Container ID</TableCell>
               <TableCell>{this.state.yarn_container_id}</TableCell>
             </TableRow>
-          }
+          )}
           <TableRow>
             <TableCell>Platform</TableCell>
             <TableCell>{this.state.platform}</TableCell>
           </TableRow>
-          {Boolean(this.state.cuda_info) &&
+          {Boolean(this.state.cuda_info) && (
             <TableRow>
               <TableCell>CUDA</TableCell>
               <TableCell>
-                <div key='cuda'>
-                  CUDA Version: {this.state.cuda_info.cuda}
-                </div>
-                <div key='driver'>
+                <div key="cuda">CUDA Version: {this.state.cuda_info.cuda}</div>
+                <div key="driver">
                   Driver Version: {this.state.cuda_info.driver}
                 </div>
-                <div key='products'>
+                <div key="products">
                   Devices: {join(this.state.cuda_info.products, ',')}
                 </div>
               </TableCell>
             </TableRow>
-          }
+          )}
           <TableRow>
             <TableCell>Git Branch</TableCell>
             <TableCell>{`${this.state.git_info.hash} ${this.state.git_info.ref}`}</TableCell>
@@ -118,10 +114,10 @@ export default class NodeEnvTab extends React.Component {
           </TableRow>
         </TableBody>
       </Table>
-    );
+    )
   }
 }
 
 NodeEnvTab.propTypes = {
   endpoint: PropTypes.string,
-};
+}

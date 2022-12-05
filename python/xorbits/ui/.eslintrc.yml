@@ -1,9 +1,11 @@
 env:
   browser: true
   es2021: true
+  node: true
 extends:
   - 'eslint:recommended'
   - 'plugin:react/recommended'
+  - 'prettier'
 parserOptions:
   ecmaFeatures:
     jsx: true
@@ -11,12 +13,12 @@ parserOptions:
   sourceType: module
 plugins:
   - react
+  - simple-import-sort
 rules:
-  indent: ['error', 2]
   new-cap: 'error'
-  semi: ['error', 'always']
-  quotes: ['error', 'single']
   no-var: 'error'
+  simple-import-sort/imports: 'error'
+  simple-import-sort/exports: 'error'
 settings:
   react:
     version: 'detect'

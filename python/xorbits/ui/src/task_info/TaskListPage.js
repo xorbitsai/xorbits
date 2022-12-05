@@ -14,60 +14,58 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import TableBody from '@material-ui/core/TableBody';
-import PropTypes from 'prop-types';
-import Title from '../Title';
-import {useStyles} from '../Style';
-import {formatTime, getTaskStatusText} from '../Utils';
-import { Link } from 'react-router-dom';
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
+import { useStyles } from '../Style'
+import Title from '../Title'
+import { formatTime, getDuration, getTaskStatusText } from '../Utils'
 
 class TaskList extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = {};
+    super(props)
+    this.state = {}
   }
 
   refreshInfo() {
     fetch(`api/session/${this.props.sessionId}/task?progress=1`)
       .then((res) => res.json())
       .then((res) => {
-        this.setState(res);
-      });
+        this.setState(res)
+      })
   }
 
   componentDidMount() {
     if (this.interval !== undefined) {
-      clearInterval(this.interval);
+      clearInterval(this.interval)
     }
-    this.interval = setInterval(() => this.refreshInfo(), 5000);
-    this.refreshInfo();
+    this.interval = setInterval(() => this.refreshInfo(), 5000)
+    this.refreshInfo()
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.interval)
   }
 
   formatTaskStatus(task) {
-    let status = getTaskStatusText(task.status);
+    let status = getTaskStatusText(task.status)
     if (status === 'terminated') {
-      status = task.error ? 'failed' : 'succeeded';
+      status = task.error ? 'failed' : 'succeeded'
     }
-    return status;
+    return status
   }
 
   render() {
     if (this.state === undefined || this.state.tasks === undefined) {
-      return (
-        <div>Loading</div>
-      );
+      return <div>Loading</div>
     }
     return (
       <Table size="small">
@@ -76,6 +74,7 @@ class TaskList extends React.Component {
             <TableCell style={{ fontWeight: 'bolder' }}>Task ID</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>Start Time</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>End Time</TableCell>
+            <TableCell style={{ fontWeight: 'bolder' }}>Duration (s)</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>Progress</TableCell>
             <TableCell style={{ fontWeight: 'bolder' }}>Status</TableCell>
           </TableRow>
@@ -84,34 +83,43 @@ class TaskList extends React.Component {
           {this.state.tasks.map((task) => (
             <TableRow key={`task_row_${task.task_id}`}>
               <TableCell>
-                <Link to={`/session/${this.props.sessionId}/task/${task.task_id}`}>
+                <Link
+                  to={`/session/${this.props.sessionId}/task/${task.task_id}`}
+                >
                   {task.task_id}
                 </Link>
               </TableCell>
               <TableCell>{formatTime(task.start_time)}</TableCell>
-              <TableCell>{task.end_time ? formatTime(task.end_time) : 'N/A'}</TableCell>
-              <TableCell>{`${Math.floor(task.progress * 100).toString()}%`}</TableCell>
+              <TableCell>
+                {task.end_time ? formatTime(task.end_time) : 'N/A'}
+              </TableCell>
+              <TableCell>
+                {task.end_time
+                  ? getDuration(task.start_time, task.end_time)
+                  : 'N/A'}
+              </TableCell>
+              <TableCell>{`${Math.floor(
+                task.progress * 100
+              ).toString()}%`}</TableCell>
               <TableCell>{this.formatTaskStatus(task)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    );
+    )
   }
 }
 
 TaskList.propTypes = {
   sessionId: PropTypes.string,
-};
+}
 
 export default function TaskListPage(props) {
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <Title>
-                    Session {props.sessionId}
-        </Title>
+        <Title>Session {props.sessionId}</Title>
       </Grid>
       <Grid item xs={12}>
         <Paper className={classes.paper}>
@@ -119,9 +127,9 @@ export default function TaskListPage(props) {
         </Paper>
       </Grid>
     </Grid>
-  );
+  )
 }
 
 TaskListPage.propTypes = {
   sessionId: PropTypes.string,
-};
+}

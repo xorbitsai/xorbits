@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import MainFrame from './MainFrame';
+import { ThemeProvider } from '@mui/styles'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-ReactDOM.render(<MainFrame />, document.getElementById('root'));
+import MainFrame from './MainFrame'
+import { theme } from './Style'
+
+ReactDOM.render(
+  <ThemeProvider theme={theme}>
+    <MainFrame />
+  </ThemeProvider>,
+  document.getElementById('root')
+)

@@ -14,58 +14,83 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import {
-  HashRouter,
-} from 'react-router-dom';
-import clsx from 'clsx';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Container from '@material-ui/core/Container';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import LeftMenu from './LeftMenu';
-import PageRouter from './PageRouter';
-import { useStyles } from './Style';
+import DescriptionIcon from '@mui/icons-material/Description'
+import GithubIcon from '@mui/icons-material/GitHub'
+import AppBar from '@mui/material/AppBar'
+import Container from '@mui/material/Container'
+import CssBaseline from '@mui/material/CssBaseline'
+import Drawer from '@mui/material/Drawer'
+import Link from '@mui/material/Link'
+import Toolbar from '@mui/material/Toolbar'
+import React from 'react'
+import { HashRouter } from 'react-router-dom'
+
+import mainImage from '../resources/xorbits.svg'
+import LeftMenu from './LeftMenu'
+import PageRouter from './PageRouter'
+import { useStyles } from './Style'
+
+const drawerWidth = 240
 
 export default function MainFrame() {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const handleDrawerStateChange = () => {
-    setOpen(!open);
-  };
+  const classes = useStyles()
 
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={classes.appBar}>
-        <Toolbar className={classes.toolbar}>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Xorbits UI
-          </Typography>
+      <AppBar
+        elevation={0}
+        position="fixed"
+        color="transparent"
+        sx={{
+          backdropFilter: 'blur(20px)',
+          borderBottom: 1,
+          borderColor: 'grey.300',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+      >
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <img src={mainImage} alt="logo" className={classes.logo} />
+          <Toolbar sx={{ justifyContent: 'space-between' }}>
+            <GithubIcon fontSize="large" />
+            <Link
+              align="center"
+              href="https://github.com/xprobe-inc/xorbits"
+              underline="none"
+              color="inherit"
+              fontSize="large"
+              sx={{ marginLeft: 1 }}
+            >
+              Repository
+            </Link>
+            <DescriptionIcon fontSize="large" sx={{ marginLeft: 3 }} />
+            <Link
+              align="center"
+              href="https://docs.pymars.org"
+              underline="none"
+              color="inherit"
+              fontSize="large"
+              sx={{ marginLeft: 1 }}
+            >
+              Documentation
+            </Link>
+          </Toolbar>
         </Toolbar>
       </AppBar>
       <HashRouter>
         <Drawer
           variant="permanent"
-          classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            ['& .MuiDrawer-paper']: {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+            },
           }}
-          open={open}
         >
-          <div className={classes.toolbarIcon} />
+          <Toolbar />
           <LeftMenu />
-          <Divider className={classes.leftMenuBottomItem} />
-          <div className={`${classes.toolbarIcon} ${classes.leftMenuBottomItem}`}>
-            <IconButton onClick={handleDrawerStateChange}>
-              {open? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </div>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
@@ -75,5 +100,5 @@ export default function MainFrame() {
         </main>
       </HashRouter>
     </div>
-  );
+  )
 }

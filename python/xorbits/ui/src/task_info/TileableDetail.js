@@ -14,104 +14,95 @@
  * limitations under the License.
  */
 
-import React, { lazy, Suspense } from 'react';
-import PropTypes from 'prop-types';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Tab from '@mui/material/Tab'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableRow from '@mui/material/TableRow'
+import Tabs from '@mui/material/Tabs'
+import PropTypes from 'prop-types'
+import React, { lazy, Suspense } from 'react'
 const SubtaskGraph = lazy(() => {
-  return import('./SubtaskGraph');
-});
-
+  return import('./SubtaskGraph')
+})
 
 class TileableDetail extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       displayedTileableDetail: 0,
-    };
+    }
 
-    this.handleDetailTabChange = this.handleDetailTabChange.bind(this);
+    this.handleDetailTabChange = this.handleDetailTabChange.bind(this)
   }
 
   handleDetailTabChange(e, newDetailKey) {
     this.setState({
-      displayedTileableDetail: newDetailKey
-    });
+      displayedTileableDetail: newDetailKey,
+    })
   }
 
   render() {
     if (this.props === undefined) {
-      return null;
+      return null
     }
 
-    return (
-      this.props.tileable
-        ?
-        <React.Fragment>
-          <Tabs value={this.state.displayedTileableDetail} onChange={this.handleDetailTabChange}>
-            <Tab label='Tileable Info' />
-            <Tab label='Subtask Info' />
-          </Tabs><br />
-          <div>
-            {
-              this.state.displayedTileableDetail === 0
-                ?
-                <React.Fragment>
-                  <Table size="small" style={{ height: '100%' }}>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell variant='head'>
-                          <b>Tileable ID</b>
+    return this.props.tileable ? (
+      <React.Fragment>
+        <Tabs
+          value={this.state.displayedTileableDetail}
+          onChange={this.handleDetailTabChange}
+        >
+          <Tab label="Tileable Info" />
+          <Tab label="Subtask Info" />
+        </Tabs>
+        <br />
+        <div>
+          {this.state.displayedTileableDetail === 0 ? (
+            <React.Fragment>
+              <Table size="small" style={{ height: '100%' }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell variant="head">
+                      <b>Tileable ID</b>
+                    </TableCell>
+                    <TableCell>{this.props.tileable.id}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell variant="head">
+                      <b>Tileable Name</b>
+                    </TableCell>
+                    <TableCell>{this.props.tileable.name}</TableCell>
+                  </TableRow>
+                  {Object.keys(this.props.tileable.properties).map((key) => {
+                    return (
+                      <TableRow key={key}>
+                        <TableCell variant="head">
+                          <b>{key}</b>
                         </TableCell>
                         <TableCell>
-                          {this.props.tileable.id}
+                          {this.props.tileable.properties[key]}
                         </TableCell>
                       </TableRow>
-                      <TableRow>
-                        <TableCell variant='head'>
-                          <b>Tileable Name</b>
-                        </TableCell>
-                        <TableCell>
-                          {this.props.tileable.name}
-                        </TableCell>
-                      </TableRow>
-                      {
-                        Object.keys(this.props.tileable.properties).map((key) => {
-                          return (
-                            <TableRow key={key}>
-                              <TableCell variant='head'>
-                                <b>{key}</b>
-                              </TableCell>
-                              <TableCell>
-                                {this.props.tileable.properties[key]}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
-                      }
-                    </TableBody>
-                  </Table>
-                </React.Fragment>
-                :
-                <Suspense fallback={<div>Loading...</div>}>
-                  <SubtaskGraph
-                    sessionId={this.props.sessionId}
-                    taskId={this.props.taskId}
-                    id={this.props.tileable.id}
-                  />
-                </Suspense>
-            }
-          </div>
-        </React.Fragment>
-        :
-        <React.Fragment>
-          Select a tileable to view its detail
-        </React.Fragment>
-    );
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </React.Fragment>
+          ) : (
+            <Suspense fallback={<div>Loading...</div>}>
+              <SubtaskGraph
+                sessionId={this.props.sessionId}
+                taskId={this.props.taskId}
+                id={this.props.tileable.id}
+              />
+            </Suspense>
+          )}
+        </div>
+      </React.Fragment>
+    ) : (
+      <React.Fragment>Select a tileable to view its detail</React.Fragment>
+    )
   }
 }
 
@@ -125,6 +116,6 @@ TileableDetail.propTypes = {
   }),
   sessionId: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
-};
+}
 
-export default TileableDetail;
+export default TileableDetail

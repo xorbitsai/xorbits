@@ -161,9 +161,10 @@ class BuildWeb(Command):
     _web_src_path = "xorbits/ui"
     _web_dest_path = "xorbits/ui/static/bundle.js"
     _mars_web_path = "../third_party/_mars/mars/services/web/static"
+    _mars_index_html_path = "../third_party/_mars/mars/services/web/index.html"
     _commands = [
         ["npm", "install"],
-        ["npm", "run", "bundle"],
+        ["npm", "run", "build"],
     ]
 
     def initialize_options(self):
@@ -185,6 +186,7 @@ class BuildWeb(Command):
         web_src_path = os.path.join(build_path, *cls._web_src_path.split("/"))
         web_dest_path = os.path.join(build_path, *cls._web_dest_path.split("/"))
         mars_web_path = os.path.join(build_path, *cls._mars_web_path.split("/"))
+        mars_index_html_path = os.path.join(build_path, *cls._mars_index_html_path.split("/"))
 
         if not os.path.exists(web_src_path):
             return
@@ -206,9 +208,11 @@ class BuildWeb(Command):
             assert os.path.exists(cls._web_dest_path)
 
         static_bundle_path = os.path.join(web_src_path, "static")
+        index_html_path = os.path.join(web_src_path, "index.html")
         if os.path.exists(mars_web_path):
             shutil.rmtree(mars_web_path)
         shutil.copytree(static_bundle_path, mars_web_path)
+        shutil.copyfile(index_html_path, mars_index_html_path)
 
 
 CustomInstall.register_pre_command("build_web")
