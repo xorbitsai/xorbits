@@ -107,7 +107,7 @@ jobs:
       id: conda
       uses: actions/cache@v2
       env:
-        # Increase this value to reset cache if python/CI/conda-environment.yml has not changed
+        # Increase this value to reset cache if CI/conda-environment.yml has not changed
         CACHE_NUMBER: 1
       with:
         path: |
@@ -115,13 +115,13 @@ jobs:
         key:
           # using date to refresh the cache every 24 hours
           ${{ runner.os }}-conda-${{ matrix.python-version }}-${{ env.CACHE_NUMBER }}-${{
-          hashFiles('python/CI/conda-environment.yml') }}-${{ steps.get-date.outputs.today }}
+          hashFiles('CI/conda-environment.yml') }}-${{ steps.get-date.outputs.today }}
 
     - name: Install dependencies
       # Only need to run install when deps have been changed
       if: steps.conda.outputs.cache-hit != 'true'
       run: |
-          conda env update -f python/CI/conda-environment.yml
+          conda env update -f CI/conda-environment.yml
 
     - name: Install xorbits
       run: |
