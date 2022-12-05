@@ -56,6 +56,7 @@ class Data:
             MARS_DATAFRAME_GROUPBY_TYPE,
             MARS_DATAFRAME_TYPE,
             MARS_INDEX_TYPE,
+            MARS_OBJECT_TYPE,
             MARS_SERIES_GROUPBY_TYPE,
             MARS_SERIES_TYPE,
             MARS_TENSOR_TYPE,
@@ -75,6 +76,8 @@ class Data:
             data_type = DataType.index
         elif isinstance(mars_entity, MARS_CATEGORICAL_TYPE):
             data_type = DataType.categorical
+        elif isinstance(mars_entity, MARS_OBJECT_TYPE):
+            data_type = DataType.object_
         else:
             raise NotImplementedError(f"Unsupported mars type {type(mars_entity)}")
         return Data(mars_entity=mars_entity, data_type=data_type)
