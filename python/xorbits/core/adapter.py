@@ -227,6 +227,8 @@ def wrap_mars_callable(
 
             return attach_module_callable_docstring(wrapped, **kwargs)
     else:
+        # for methods that do not need a docstring, like methods from mars, we need to reset the
+        # docstring to prevent users from seeing a mars docstring.
         wrapped.__doc__ = ""
         return wrapped
 
