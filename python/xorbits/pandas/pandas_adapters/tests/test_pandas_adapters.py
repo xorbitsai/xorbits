@@ -31,7 +31,8 @@ def test_dataframe_pivot(setup):
     )
     df = xpd.DataFrame(raw)
     with warnings.catch_warnings(record=True) as w:
-        r = df.pivot("foo", columns="bar", values="baz")
+        r = df.pivot(index="foo", columns="bar", values="baz")
+        assert len(w) == 1
         assert "fallback to Pandas" in str(w[0].message)
 
     expected = raw.pivot(index="foo", columns="bar", values="baz")

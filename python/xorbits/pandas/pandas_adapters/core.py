@@ -35,14 +35,14 @@ def wrap_pandas_dataframe_method(func_name):
             ret = one_chunk_data.map_chunk(
                 lambda x, *args, **kwargs: getattr(x, func_name)(*args, **kwargs),
                 args=args,
-                **kwargs,
+                kwargs=kwargs,
             )
         except TypeError:
             # skip_infer = True to avoid TypeError raised by inferring
             ret = one_chunk_data.map_chunk(
                 lambda x, *args, **kwargs: getattr(x, func_name)(*args, **kwargs),
                 args=args,
-                **kwargs,
+                kwargs=kwargs,
                 skip_infer=True,
             )
             ret = ret.ensure_data()
