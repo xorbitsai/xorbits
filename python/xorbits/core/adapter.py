@@ -58,7 +58,7 @@ from .._mars.tensor.core import Tensor as MarsTensor
 from .._mars.tensor.core import flatiter as mars_flatiter
 from .._mars.tensor.lib import nd_grid
 from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
-from .data import Data, DataRef, DataRefMeta, DataType
+from .data import DATA_MEMBERS, Data, DataRef, DataType
 
 _MARS_CLS_TO_EXECUTION_CONDITION: Dict[
     str, List[Callable[["MarsEntity"], bool]]
@@ -125,11 +125,9 @@ def wrap_generator(wrapped: Generator):
 class MarsProxy:
     @classmethod
     def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
-        if item in _DATA_TYPE_TO_CLS_MEMBERS[data_type] and callable(
-            _DATA_TYPE_TO_CLS_MEMBERS[data_type]
-        ):
-            ret = partial(_DATA_TYPE_TO_CLS_MEMBERS[data_type][item], mars_entity)
-            ret.__doc__ = _DATA_TYPE_TO_CLS_MEMBERS[data_type][item].__doc__
+        if item in DATA_MEMBERS[data_type] and callable(DATA_MEMBERS[data_type]):
+            ret = partial(DATA_MEMBERS[data_type][item], mars_entity)
+            ret.__doc__ = DATA_MEMBERS[data_type][item].__doc__
             return ret
 
         attr = getattr(mars_entity, item, None)
@@ -265,42 +263,12 @@ def _collect_cls_members(data_type: DataType) -> Dict[str, Any]:
     return cls_members
 
 
-_DATA_TYPE_TO_CLS_MEMBERS: Dict[DataType, Dict[str, Any]] = {}
-for data_type in DataType:
-    _DATA_TYPE_TO_CLS_MEMBERS[data_type] = _collect_cls_members(data_type)
+for _data_type in DataType:
+    DATA_MEMBERS[_data_type] = _collect_cls_members(_data_type)
 
 
-_XORBITS_CLS_TO_DATA_TYPE: Dict[Type, DataType] = {}
-
-
-def bind_xorbits_cls_to_data_type(xorbits_cls: Type, data_type: DataType) -> None:
-    if xorbits_cls in _XORBITS_CLS_TO_DATA_TYPE:
-        raise ValueError(
-            f"{xorbits_cls.__name__} has already been bound to "
-            f"{_XORBITS_CLS_TO_DATA_TYPE[xorbits_cls]}."
-        )
-
-    if data_type in _XORBITS_CLS_TO_DATA_TYPE.values():
-        cls = [
-            c
-            for c in _XORBITS_CLS_TO_DATA_TYPE
-            if _XORBITS_CLS_TO_DATA_TYPE[c] == data_type
-        ]
-        assert len(cls) == 1
-        raise ValueError(f"{data_type} has already been bound to {cls[0]}.")
-
-    _XORBITS_CLS_TO_DATA_TYPE[xorbits_cls] = data_type
-
-
-def get_cls_members(xorbits_cls: Type) -> Dict[str, Any]:
-    if xorbits_cls not in _XORBITS_CLS_TO_DATA_TYPE:
-        raise ValueError(
-            f"{xorbits_cls.__name__} has not been bound with any data type."
-        )
-
-    data_type: DataType = _XORBITS_CLS_TO_DATA_TYPE[xorbits_cls]
-
-    if data_type not in _DATA_TYPE_TO_CLS_MEMBERS:
+def get_cls_members(data_type: DataType) -> Dict[str, Any]:
+    if data_type not in DATA_MEMBERS:
         raise ValueError(f"{data_type} do not have any bound class member.")
 
-    return _DATA_TYPE_TO_CLS_MEMBERS[data_type]
+    return DATA_MEMBERS[data_type]

@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Iterable, List
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
@@ -30,6 +30,9 @@ class DataType(Enum):
     categorical = 7
     dataframe_groupby = 8
     series_groupby = 9
+
+
+DATA_MEMBERS: Dict[DataType, Dict[str, Any]] = dict()
 
 
 class Data:
@@ -113,19 +116,19 @@ class DataRefMeta(type):
     Used to bind methods to subclasses of DataRef according to their data type.
     """
 
+    __cls_members: Dict[str, Any]
+
     def __new__(mcs, name, bases, dct):
-        return super().__new__(mcs, name, bases, dct)
+        cls = super().__new__(mcs, name, bases, dct)
+        if name == "DataFrame":
+            cls.__cls_members = DATA_MEMBERS[DataType.dataframe]
+        return cls
 
     def __getattr__(self, item: str):
-        from .adapter import get_cls_members
-
-        # to avoid circular import
-        cls_members = get_cls_members(self)
-
-        if item not in cls_members:
+        if item not in self.__cls_members:
             raise AttributeError(item)
         else:
-            return cls_members[item]
+            return self.__cls_members[item]
 
 
 class DataRef(metaclass=DataRefMeta):
