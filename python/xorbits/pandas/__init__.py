@@ -31,6 +31,17 @@ def unimplemented_func():
     raise NotImplementedError(f"This function is not implemented yet.")
 
 
+def _install():
+    from .pandas_adapters import install as install_pandas_methods
+
+    install_pandas_methods()
+
+
+_install()
+
+del _install
+
+
 def __dir__():
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
 

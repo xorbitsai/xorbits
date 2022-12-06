@@ -42,9 +42,12 @@ from .._mars.dataframe.core import INDEX_TYPE as MARS_INDEX_TYPE
 from .._mars.dataframe.core import SERIES_GROUPBY_TYPE as MARS_SERIES_GROUPBY_TYPE
 from .._mars.dataframe.core import SERIES_TYPE as MARS_SERIES_TYPE
 from .._mars.dataframe.core import DataFrame as MarsDataFrame
+from .._mars.dataframe.core import DataFrameData as MarsDataFrameData
 from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
 from .._mars.dataframe.core import Index as MarsIndex
+from .._mars.dataframe.core import IndexData as MarsIndexData
 from .._mars.dataframe.core import Series as MarsSeries
+from .._mars.dataframe.core import SeriesData as MarsSeriesData
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
@@ -55,6 +58,7 @@ from .._mars.tensor import ogrid as mars_ogrid
 from .._mars.tensor import r_ as mars_r_
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .._mars.tensor.core import Tensor as MarsTensor
+from .._mars.tensor.core import TensorData as MarsTensorData
 from .._mars.tensor.core import flatiter as mars_flatiter
 from .._mars.tensor.lib import nd_grid
 from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
@@ -232,11 +236,11 @@ def wrap_mars_callable(
         return wrapped
 
 
-_DATA_TYPE_TO_MARS_CLS: Dict[DataType, Type] = {
-    DataType.tensor: MarsTensor,
-    DataType.dataframe: MarsDataFrame,
-    DataType.series: MarsSeries,
-    DataType.index: MarsIndex,
+_DATA_TYPE_TO_MARS_CLS: Dict[DataType, List[Type]] = {
+    DataType.tensor: [MarsTensorData, MarsTensor],
+    DataType.dataframe: [MarsDataFrame, MarsDataFrameData],
+    DataType.series: [MarsSeriesData, MarsSeries],
+    DataType.index: [MarsIndexData, MarsIndex],
 }
 
 
@@ -245,21 +249,21 @@ def _collect_cls_members(data_type: DataType) -> Dict[str, Any]:
         return {}
 
     cls_members: Dict[str, Any] = {}
-    mars_cls: Type = _DATA_TYPE_TO_MARS_CLS[data_type]
-    for name, cls_member in inspect.getmembers(mars_cls):
-        if inspect.isfunction(cls_member):
-            cls_members[name] = wrap_mars_callable(
-                cls_member,
-                attach_docstring=True,
-                is_cls_member=True,
-                member_name=name,
-                data_type=data_type,
-            )
-        elif isinstance(cls_member, property):
-            from .utils.docstring import attach_class_member_docstring
+    for mars_cls in _DATA_TYPE_TO_MARS_CLS[data_type]:
+        for name, cls_member in inspect.getmembers(mars_cls):
+            if inspect.isfunction(cls_member):
+                cls_members[name] = wrap_mars_callable(
+                    cls_member,
+                    attach_docstring=True,
+                    is_cls_member=True,
+                    member_name=name,
+                    data_type=data_type,
+                )
+            elif isinstance(cls_member, property):
+                from .utils.docstring import attach_class_member_docstring
 
-            attach_class_member_docstring(cls_member, name, data_type)
-            cls_members[name] = cls_member
+                attach_class_member_docstring(cls_member, name, data_type)
+                cls_members[name] = cls_member
 
     return cls_members
 
