@@ -21,7 +21,8 @@ import re
 from ..._mars import __version__ as mars_version
 from ..._mars.utils import parse_readable_size, calc_size_by_str
 
-DEFAULT_IMAGE = "marsproject/mars:v" + mars_version
+# TODO
+DEFAULT_IMAGE = "marsproject/mars:" + "nightly-master"
 DEFAULT_WORKER_CACHE_MEM = "40%"
 
 

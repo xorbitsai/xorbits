@@ -1,0 +1,7 @@
+.github
+.mypy_cache
+.idea
+*/.mypy_cache
+*/.pytest_cache
+*/build
+**/node_modules
