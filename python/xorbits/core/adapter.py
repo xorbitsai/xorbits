@@ -122,12 +122,13 @@ def wrap_generator(wrapped: Generator):
         yield from_mars(item)
 
 
-class MarsProxy:
+class MemberProxy:
     @classmethod
     def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
-        if item in DATA_MEMBERS[data_type] and callable(DATA_MEMBERS[data_type]):
-            ret = partial(DATA_MEMBERS[data_type][item], mars_entity)
-            ret.__doc__ = DATA_MEMBERS[data_type][item].__doc__
+        member = DATA_MEMBERS[data_type].get(item, None)
+        if member is not None and callable(member):
+            ret = partial(member, mars_entity)
+            ret.__doc__ = member.__doc__
             return ret
 
         attr = getattr(mars_entity, item, None)

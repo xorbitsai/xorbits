@@ -86,17 +86,17 @@ class Data:
         return Data(mars_entity=mars_entity, data_type=data_type)
 
     def __getattr__(self, item: str):
-        from .adapter import MarsProxy
+        from .adapter import MemberProxy
 
-        return MarsProxy.getattr(self.data_type, self._mars_entity, item)
+        return MemberProxy.getattr(self.data_type, self._mars_entity, item)
 
     def __setattr__(self, key: str, value: Any):
-        from .adapter import MarsProxy
+        from .adapter import MemberProxy
 
         if key in self.__fields:
             object.__setattr__(self, key, value)
         else:
-            return MarsProxy.setattr(self._mars_entity, key, value)
+            return MemberProxy.setattr(self._mars_entity, key, value)
 
     def __str__(self):
         if self._mars_entity is not None:
@@ -121,14 +121,15 @@ class DataRefMeta(type):
     def __new__(mcs, name, bases, dct):
         cls = super().__new__(mcs, name, bases, dct)
         if name == "DataFrame":
-            cls.__cls_members = DATA_MEMBERS[DataType.dataframe]
+            setattr(cls, "__cls_members", DATA_MEMBERS[DataType.dataframe])
         return cls
 
-    def __getattr__(self, item: str):
-        if item not in self.__cls_members:
+    def __getattr__(cls, item: str):
+        members = object.__getattribute__(cls, "__cls_members")
+        if item not in members:
             raise AttributeError(item)
         else:
-            return self.__cls_members[item]
+            return members[item]
 
 
 class DataRef(metaclass=DataRefMeta):
