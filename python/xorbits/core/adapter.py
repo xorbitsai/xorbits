@@ -49,6 +49,7 @@ from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
 from .._mars.dataframe.window.rolling.core import Rolling as MarsRolling
+from .._mars.deploy.oscar import session
 from .._mars.tensor import c_ as mars_c_
 from .._mars.tensor import mgrid as mars_mgrid
 from .._mars.tensor import ogrid as mars_ogrid
@@ -272,3 +273,12 @@ def get_cls_members(data_type: DataType) -> Dict[str, Any]:
         raise ValueError(f"{data_type} do not have any bound class member.")
 
     return DATA_MEMBERS[data_type]
+
+
+def replace_warning_msg_on_no_session():
+    session.warning_msg = (
+        """No existing session found, creating a new local session now."""
+    )
+
+
+replace_warning_msg_on_no_session()
