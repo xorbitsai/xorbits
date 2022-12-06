@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..core import DataRef, DataType
-from ..core.adapter import bind_xorbits_cls_to_data_type
+from ..core import DataRef
 
 
 class DataFrame(DataRef):
@@ -22,9 +21,6 @@ class DataFrame(DataRef):
 
         ref = MARS_DATAFRAME_CALLABLES["DataFrame"](*args, **kwargs)
         super().__init__(ref.data)
-
-
-bind_xorbits_cls_to_data_type(DataFrame, DataType.dataframe)
 
 
 def _install_dataframe_docstring():
