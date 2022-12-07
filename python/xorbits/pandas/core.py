@@ -12,23 +12,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..core import DataRef
+import pandas
+from pandas.core.accessor import CachedAccessor
+
+from ..core import Data, DataRef, DataType
+from ..core.adapter import MarsDataFrame, MarsIndex, MarsSeries, to_mars
+from ..core.utils.docstring import attach_module_callable_docstring
+from .accessors import DatetimeAccessor, StringAccessor
+from .plotting import PlotAccessor
 
 
 class DataFrame(DataRef):
+
+    plot = CachedAccessor("plot", PlotAccessor)
+
     def __init__(self, *args, **kwargs):
-        from .mars_adapters import MARS_DATAFRAME_CALLABLES
-
-        ref = MARS_DATAFRAME_CALLABLES["DataFrame"](*args, **kwargs)
-        super().__init__(ref.data)
-
-
-def _install_dataframe_docstring():
-    import pandas
-
-    from ..core.utils.docstring import attach_module_callable_docstring
-
-    attach_module_callable_docstring(DataFrame, pandas, pandas.DataFrame)
+        data = Data(
+            data_type=DataType.dataframe,
+            mars_entity=MarsDataFrame(*to_mars(args), **to_mars(kwargs)),
+        )
+        super().__init__(data)
 
 
-_install_dataframe_docstring()
+attach_module_callable_docstring(DataFrame, pandas, pandas.DataFrame)
+
+
+class Series(DataRef):
+
+    str = CachedAccessor("str", StringAccessor)
+    dt = CachedAccessor("dt", DatetimeAccessor)
+    plot = CachedAccessor("plot", PlotAccessor)
+
+    def __init__(self, *args, **kwargs):
+        data = Data(
+            data_type=DataType.series,
+            mars_entity=MarsSeries(*to_mars(args), **to_mars(kwargs)),
+        )
+        super().__init__(data)
+
+
+attach_module_callable_docstring(Series, pandas, pandas.Series)
+
+
+class Index(DataRef):
+    def __init__(self, *args, **kwargs):
+        data = Data(
+            data_type=DataType.index,
+            mars_entity=MarsIndex(*to_mars(args), **to_mars(kwargs)),
+        )
+        super().__init__(data)
+
+
+attach_module_callable_docstring(Index, pandas, pandas.Index)

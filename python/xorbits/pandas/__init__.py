@@ -21,7 +21,8 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
-from .core import DataFrame
+from . import accessors, core, groupby, plotting, window
+from .core import DataFrame, Index, Series
 
 
 def unimplemented_func():
