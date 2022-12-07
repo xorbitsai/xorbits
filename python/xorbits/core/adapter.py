@@ -44,7 +44,6 @@ from .._mars.dataframe.core import INDEX_TYPE as MARS_INDEX_TYPE
 from .._mars.dataframe.core import SERIES_GROUPBY_TYPE as MARS_SERIES_GROUPBY_TYPE
 from .._mars.dataframe.core import SERIES_TYPE as MARS_SERIES_TYPE
 from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
-from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
 from .._mars.dataframe.core import SeriesGroupBy as MarsSeriesGroupBy
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.plotting.core import PlotAccessor as MarsPlotAccessor
@@ -295,7 +294,9 @@ for _data_type in DataType:
     DATA_MEMBERS[_data_type] = {}
     for mars_cls in _DATA_TYPE_TO_MARS_CLS.get(_data_type, ()):
         if mars_cls is not None:
-            DATA_MEMBERS[_data_type].update(collect_cls_members(mars_cls, data_type=_data_type))
+            DATA_MEMBERS[_data_type].update(
+                collect_cls_members(mars_cls, data_type=_data_type)
+            )
 
 
 def get_cls_members(data_type: DataType) -> Dict[str, Any]:
