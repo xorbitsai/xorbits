@@ -26,6 +26,7 @@ from ..._mars.services.cluster.api import WebClusterAPI
 from ..._mars.session import new_session
 from ..._mars.utils import calc_size_by_str
 from ..._mars.deploy.utils import wait_services_ready
+from ... import init
 from .config import (
     NamespaceConfig,
     RoleConfig,
@@ -65,6 +66,7 @@ class KubernetesClusterClient:
         try:
             self._endpoint = self._cluster.start()
             self._session = new_session(self._endpoint)
+            init(self._endpoint)
         except:  # noqa: E722  # nosec  # pylint: disable=bare-except
             self.stop()
             raise
@@ -113,7 +115,7 @@ class KubernetesCluster:
         self._namespace = namespace
         self._image = image
         self._timeout = timeout
-        self._service_name = service_name or "marsservice"
+        self._service_name = service_name or "xorbits-service"
         self._service_type = service_type or "NodePort"
         self._extra_volumes = kwargs.pop("extra_volumes", ())
         self._pre_stop_command = kwargs.pop("pre_stop_command", None)
@@ -188,7 +190,7 @@ class KubernetesCluster:
 
     def _get_free_namespace(self):
         while True:
-            namespace = "mars-ns-" + str(uuid.uuid4().hex)
+            namespace = "xorbits-ns-" + str(uuid.uuid4().hex)
             try:
                 self._core_api.read_namespace(namespace)
             except K8SApiException as ex:
@@ -319,7 +321,7 @@ class KubernetesCluster:
 
     def _get_web_address(self):
         svc_data = self._core_api.read_namespaced_service(
-            "marsservice", self._namespace
+            "xorbits-service", self._namespace
         ).to_dict()
         node_port = svc_data["spec"]["ports"][0]["node_port"]
 

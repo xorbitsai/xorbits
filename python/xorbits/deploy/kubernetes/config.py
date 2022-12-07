@@ -22,7 +22,7 @@ from ..._mars import __version__ as mars_version
 from ..._mars.utils import parse_readable_size, calc_size_by_str
 
 # TODO
-DEFAULT_IMAGE = "marsproject/mars:" + "nightly-master"
+DEFAULT_IMAGE = "xprobe/xorbits:" + "v0.1"
 DEFAULT_WORKER_CACHE_MEM = "40%"
 
 
@@ -451,6 +451,7 @@ class ReplicationConfig(KubeConfig):
                 if self._readiness_probe
                 else None,
                 "lifecycle": lifecycle_dict or None,
+                "imagePullPolicy": "Always"
             }
         )
 
@@ -554,8 +555,8 @@ class MarsReplicationConfig(ReplicationConfig, abc.ABC):
         if self._cpu:
             self.add_env("MKL_NUM_THREADS", str(self._cpu))
             self.add_env("MARS_CPU_TOTAL", str(self._cpu))
-            if getattr(self, "stat_type", "cgroup") == "cgroup":
-                self.add_env("MARS_USE_CGROUP_STAT", "1")
+            # if getattr(self, "stat_type", "cgroup") == "cgroup":
+            #     self.add_env("MARS_USE_CGROUP_STAT", "1")
 
         if self._memory:
             self.add_env("MARS_MEMORY_TOTAL", str(int(self._memory)))

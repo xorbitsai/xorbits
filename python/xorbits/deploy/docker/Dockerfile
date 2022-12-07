@@ -6,23 +6,18 @@ COPY . /opt/xorbits/
 
 RUN cd /opt/xorbits/python && \
     python setup.py build_ext -i && \
-    python setup.py build_web
+    npm cache clean --force && \
+    python setup.py build_web && \
+    rm -rf /opt/xorbits/python/xorbits/ui/node_modules
 
-#RUN apt-get -yq update --allow-releaseinfo-change \
-#  && apt-get -yq install gcc g++ \
-#  && curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash - \
-#  && sudo apt-get install -y nodejs \
-#  && /opt/conda/bin/pip install -e /opt/mars \
-#  && apt-get -yq remove gcc g++ nodejs \
-#  && apt-get -yq autoremove \
-#  && apt-get -yq clean \
-#  && rm -rf /var/lib/apt/lists/* \
-#  && rm -rf /usr/local/lib/node_modules
-#RUN mkdir -p /srv
-#WORKDIR /srv
-#
-#RUN cp /opt/mars/mars/deploy/oscar/file-logging.conf /srv/logging.conf \
-#  && cp /opt/mars/mars/deploy/kubernetes/docker/entrypoint.sh /srv/entrypoint.sh \
-#  && chmod a+x /srv/*.sh
-#
-#ENTRYPOINT [ "/srv/entrypoint.sh" ]
+RUN mkdir -p /srv
+
+WORKDIR /srv
+
+RUN cp /opt/xorbits/third_party/_mars/mars/deploy/oscar/file-logging.conf /srv/logging.conf && \
+    cp /opt/xorbits/python/xorbits/deploy/docker/entrypoint.sh /srv/entrypoint.sh && \
+    chmod a+x /srv/*.sh
+
+ENV PYTHONPATH "${PYTHONPATH}:/opt/xorbits:/opt/xorbits/python"
+
+ENTRYPOINT [ "/srv/entrypoint.sh" ]
