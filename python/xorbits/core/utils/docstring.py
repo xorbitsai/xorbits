@@ -36,10 +36,16 @@ _DATA_TYPE_TO_DOCSTRING_SRC: Dict[DataType, Tuple[ModuleType, Type]] = {
 
 
 def get_base_indentation(doc: str) -> Optional[str]:
-    lines = doc.splitlines()
-    if len(lines) > 2:
-        # the first line of a docstring is always an empty string.
-        return " " * (len(lines[1]) - len(lines[1].lstrip(" ")))
+    # the layout of a pandas docstring is:
+    # \n<base indentation><line>\n\n<base indentation><line>...
+    # the layout of a numpy docstring is:
+    # <line>\n\n<base indentation><line>...
+    # thus, we need to find a line that starts with '\n\n' and the number of its leading
+    # spaces would be the base indentation.
+    idx = doc.find("\n\n")
+    if idx + 2 < len(doc):
+        doc = doc[idx + 2 :]
+        return " " * (len(doc) - len(doc.lstrip(" ")))
     else:
         return None
 
