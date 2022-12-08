@@ -121,6 +121,14 @@ class DataRefMeta(type):
         cls = super().__new__(mcs, name, bases, dct)
         if name == "DataFrame":
             setattr(cls, "__cls_members", DATA_MEMBERS[DataType.dataframe])
+        elif name == "Series":
+            setattr(cls, "__cls_members", DATA_MEMBERS[DataType.series])
+        elif name == "Index":
+            setattr(cls, "__cls_members", DATA_MEMBERS[DataType.index])
+        elif name == "DataFrameGroupBy":
+            setattr(cls, "__cls_members", DATA_MEMBERS[DataType.dataframe_groupby])
+        elif name == "SeriesGroupBy":
+            setattr(cls, "__cls_members", DATA_MEMBERS[DataType.series_groupby])
         return cls
 
     def __getattr__(cls, item: str):

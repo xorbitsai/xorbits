@@ -30,6 +30,11 @@ def dummy_df():
 
 
 @pytest.fixture
+def dummy_int_series():
+    return pd.Series([1, 2, 3, 4, 5])
+
+
+@pytest.fixture
 def dummy_str_series():
     return pd.Series(["foo", "bar", "baz"])
 

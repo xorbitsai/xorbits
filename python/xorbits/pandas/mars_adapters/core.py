@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import inspect
-from typing import TYPE_CHECKING, Callable, Dict, Set
+from types import ModuleType
+from typing import TYPE_CHECKING, Any, Callable, Dict, Set, Type
 
 import pandas
 
@@ -22,16 +23,11 @@ from ...core.adapter import (
     MARS_DATAFRAME_TYPE,
     MARS_SERIES_GROUPBY_TYPE,
     MARS_SERIES_TYPE,
-    MarsCachedAccessor,
-    MarsDatetimeAccessor,
-    MarsEWM,
-    MarsExpanding,
-    MarsRolling,
-    MarsStringAccessor,
+    collect_cls_members,
     from_mars,
     mars_dataframe,
-    register_converter,
     register_execution_condition,
+    to_mars,
     wrap_mars_callable,
 )
 
@@ -128,23 +124,27 @@ def _register_execution_conditions() -> None:
 _register_execution_conditions()
 
 
-@register_converter(
-    from_cls_list=[
-        MarsStringAccessor,
-        MarsDatetimeAccessor,
-        MarsCachedAccessor,
-        MarsEWM,
-        MarsExpanding,
-        MarsRolling,
-    ]
-)
 class MarsGetAttrProxy:
-    def __init__(self, mars_obj):
-        self._mars_obj = mars_obj
+    def __init__(self, obj: Any):
+        self._mars_obj = to_mars(obj)
 
     def __getattr__(self, item):
         attr = getattr(self._mars_obj, item)
-        if callable(attr):
+        if attr is None:
+            raise AttributeError(f"no attribute '{item}'")
+        elif callable(attr):
             return wrap_mars_callable(attr, attach_docstring=False, is_cls_member=True)
         else:
             return from_mars(attr)
+
+
+def install_members(
+    cls: Type, mars_cls: Type, docstring_src_module: ModuleType, docstring_src_cls: Type
+):
+    members = collect_cls_members(
+        mars_cls,
+        docstring_src_module=docstring_src_module,
+        docstring_src_cls=docstring_src_cls,
+    )
+    for name in members:
+        setattr(cls, name, members[name])

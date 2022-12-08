@@ -19,7 +19,8 @@
 import functools
 import inspect
 from collections import defaultdict
-from typing import Any, Callable, Dict, Generator, List, Tuple, Type, Union
+from types import ModuleType
+from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Type, Union
 
 # For maintenance, any module wants to import from mars, it should import from here.
 from .._mars import dataframe as mars_dataframe
@@ -30,6 +31,9 @@ from .._mars import stop_server as mars_stop_server
 from .._mars import tensor as mars_tensor
 from .._mars.core import Entity as MarsEntity
 from .._mars.core.entity.objects import OBJECT_TYPE as MARS_OBJECT_TYPE
+from .._mars.dataframe import DataFrame as MarsDataFrame
+from .._mars.dataframe import Index as MarsIndex
+from .._mars.dataframe import Series as MarsSeries
 from .._mars.dataframe.base.accessor import CachedAccessor as MarsCachedAccessor
 from .._mars.dataframe.base.accessor import DatetimeAccessor as MarsDatetimeAccessor
 from .._mars.dataframe.base.accessor import StringAccessor as MarsStringAccessor
@@ -39,14 +43,10 @@ from .._mars.dataframe.core import DATAFRAME_TYPE as MARS_DATAFRAME_TYPE
 from .._mars.dataframe.core import INDEX_TYPE as MARS_INDEX_TYPE
 from .._mars.dataframe.core import SERIES_GROUPBY_TYPE as MARS_SERIES_GROUPBY_TYPE
 from .._mars.dataframe.core import SERIES_TYPE as MARS_SERIES_TYPE
-from .._mars.dataframe.core import DataFrame as MarsDataFrame
-from .._mars.dataframe.core import DataFrameData as MarsDataFrameData
 from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
-from .._mars.dataframe.core import Index as MarsIndex
-from .._mars.dataframe.core import IndexData as MarsIndexData
-from .._mars.dataframe.core import Series as MarsSeries
-from .._mars.dataframe.core import SeriesData as MarsSeriesData
+from .._mars.dataframe.core import SeriesGroupBy as MarsSeriesGroupBy
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
+from .._mars.dataframe.plotting.core import PlotAccessor as MarsPlotAccessor
 from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
 from .._mars.dataframe.window.rolling.core import Rolling as MarsRolling
@@ -57,7 +57,6 @@ from .._mars.tensor import ogrid as mars_ogrid
 from .._mars.tensor import r_ as mars_r_
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .._mars.tensor.core import Tensor as MarsTensor
-from .._mars.tensor.core import TensorData as MarsTensorData
 from .._mars.tensor.core import flatiter as mars_flatiter
 from .._mars.tensor.lib import nd_grid
 from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
@@ -184,6 +183,9 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
 
                 execute(inp)
         return mars_entity
+    elif hasattr(inp, "_mars_obj"):
+        # converters.
+        return getattr(inp, "_mars_obj")
     elif isinstance(inp, tuple):
         return tuple(to_mars(i) for i in inp)
     elif isinstance(inp, list):
@@ -243,40 +245,58 @@ def wrap_mars_callable(
         return wrapped
 
 
-_DATA_TYPE_TO_MARS_CLS: Dict[DataType, List[Type]] = {
-    DataType.tensor: [MarsTensorData, MarsTensor],
-    DataType.dataframe: [MarsDataFrame, MarsDataFrameData],
-    DataType.series: [MarsSeriesData, MarsSeries],
-    DataType.index: [MarsIndexData, MarsIndex],
+_DATA_TYPE_TO_MARS_CLS: Dict[DataType, Tuple[Type]] = {
+    DataType.tensor: MARS_TENSOR_TYPE,
+    DataType.dataframe: MARS_DATAFRAME_TYPE,
+    DataType.series: MARS_SERIES_TYPE,
+    DataType.index: MARS_INDEX_TYPE,
+    DataType.dataframe_groupby: MARS_DATAFRAME_GROUPBY_TYPE,
+    DataType.series_groupby: MARS_SERIES_GROUPBY_TYPE,
 }
 
 
-def _collect_cls_members(data_type: DataType) -> Dict[str, Any]:
-    if data_type not in _DATA_TYPE_TO_MARS_CLS:
-        return {}
-
+def collect_cls_members(
+    cls: Type,
+    data_type: Optional[DataType] = None,
+    docstring_src_module: Optional[ModuleType] = None,
+    docstring_src_cls: Optional[Type] = None,
+) -> Dict[str, Any]:
     cls_members: Dict[str, Any] = {}
-    for mars_cls in _DATA_TYPE_TO_MARS_CLS[data_type]:
-        for name, cls_member in inspect.getmembers(mars_cls):
-            if inspect.isfunction(cls_member):
-                cls_members[name] = wrap_mars_callable(
-                    cls_member,
-                    attach_docstring=True,
-                    is_cls_member=True,
-                    member_name=name,
-                    data_type=data_type,
-                )
-            elif isinstance(cls_member, property):
-                from .utils.docstring import attach_class_member_docstring
+    for name, cls_member in inspect.getmembers(cls):
+        if inspect.isfunction(cls_member) and not name.startswith("_"):
+            cls_members[name] = wrap_mars_callable(
+                cls_member,
+                attach_docstring=True,
+                is_cls_member=True,
+                member_name=name,
+                data_type=data_type,
+                docstring_src_module=docstring_src_module,
+                docstring_src_cls=docstring_src_cls,
+            )
+        elif isinstance(cls_member, property):
+            from .utils.docstring import attach_class_member_docstring
 
-                attach_class_member_docstring(cls_member, name, data_type)
-                cls_members[name] = cls_member
+            # no need to wrap the fget/fset method since this class member is purly for the doc
+            # generation.
+            attach_class_member_docstring(
+                cls_member,
+                name,
+                data_type,
+                docstring_src_module=docstring_src_module,
+                docstring_src_cls=docstring_src_cls,
+            )
+            cls_members[name] = cls_member
 
     return cls_members
 
 
 for _data_type in DataType:
-    DATA_MEMBERS[_data_type] = _collect_cls_members(_data_type)
+    DATA_MEMBERS[_data_type] = {}
+    for mars_cls in _DATA_TYPE_TO_MARS_CLS.get(_data_type, ()):
+        if mars_cls is not None:
+            DATA_MEMBERS[_data_type].update(
+                collect_cls_members(mars_cls, data_type=_data_type)
+            )
 
 
 def get_cls_members(data_type: DataType) -> Dict[str, Any]:

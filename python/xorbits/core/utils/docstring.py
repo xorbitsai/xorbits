@@ -261,15 +261,24 @@ def attach_module_callable_docstring(
 
 
 def attach_class_member_docstring(
-    member: Any, member_name: str, data_type: DataType
+    member: Any,
+    member_name: str,
+    data_type: Optional[DataType] = None,
+    docstring_src_module: Optional[ModuleType] = None,
+    docstring_src_cls: Optional[Type] = None,
 ) -> Any:
     """
     Attach docstring to class members.
     """
 
-    docstring_src_module, docstring_src_cls = _DATA_TYPE_TO_DOCSTRING_SRC.get(
-        data_type, (None, None)
-    )
+    if (
+        docstring_src_module is None
+        and docstring_src_cls is None
+        and data_type is not None
+    ):
+        docstring_src_module, docstring_src_cls = _DATA_TYPE_TO_DOCSTRING_SRC.get(
+            data_type, (None, None)
+        )
     doc = gen_member_docstring(docstring_src_cls, member_name)
     doc = skip_doctest(doc)
     docstring_src = getattr(docstring_src_cls, member_name, None)
