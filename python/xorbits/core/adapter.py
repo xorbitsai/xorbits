@@ -30,6 +30,7 @@ from .._mars import remote as mars_remote
 from .._mars import stop_server as mars_stop_server
 from .._mars import tensor as mars_tensor
 from .._mars.core import Entity as MarsEntity
+from .._mars.core import OutputType as MarsOutputType
 from .._mars.core.entity.objects import OBJECT_TYPE as MARS_OBJECT_TYPE
 from .._mars.dataframe import DataFrame as MarsDataFrame
 from .._mars.dataframe import Index as MarsIndex

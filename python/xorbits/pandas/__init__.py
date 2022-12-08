@@ -51,14 +51,14 @@ def __dir__():
 
 def __getattr__(name: str):
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
+    from .pandas_adapters import PANDAS_MODULE_METHODS
 
     if name in MARS_DATAFRAME_CALLABLES:
         return MARS_DATAFRAME_CALLABLES[name]
     else:
-        # TODO fallback to pandas
         import pandas
 
         if not hasattr(pandas, name):
             raise AttributeError(name)
         else:
-            return unimplemented_func
+            return PANDAS_MODULE_METHODS[name]
