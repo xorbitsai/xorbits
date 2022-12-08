@@ -1,6 +1,6 @@
 {{ fullname }}
 {{ underline }}
 
-.. currentmodule:: {{ module.split('.')[0] }}
+.. currentmodule:: {{ module }}
 
-.. autoaccessormethod:: {{ (module.split('.')[1:] + [objname]) | join('.') }}
+.. autoaccessormethod:: {{ objname }}
