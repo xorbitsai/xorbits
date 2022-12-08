@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +25,8 @@ from ...core.utils.docstring import attach_class_member_docstring
 def wrap_pandas_dataframe_method(func_name):
     def _wrapped(entity: MarsEntity, *args, **kwargs):
         warnings.warn(
-            f"{MarsEntity.__name__}.{func_name} will fallback to Pandas", RuntimeWarning
+            f"{type(entity).__name__}.{func_name} will fallback to Pandas",
+            RuntimeWarning,
         )
         # rechunk mars tileable as one chunk
         one_chunk_data = entity.rechunk(max(entity.shape))

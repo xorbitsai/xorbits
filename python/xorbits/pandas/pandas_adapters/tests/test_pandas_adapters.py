@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import warnings
-
 import pandas as pd
+import pytest
 
 from .... import pandas as xpd
+from ....core.data import DataRef
 
 
 def test_dataframe_pivot(setup):
@@ -30,21 +29,22 @@ def test_dataframe_pivot(setup):
         }
     )
     df = xpd.DataFrame(raw)
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(Warning) as w:
         r = df.pivot(index="foo", columns="bar", values="baz")
         assert len(w) == 1
-        assert "fallback to Pandas" in str(w[0].message)
+        assert "DataFrame.pivot will fallback to Pandas" == str(w[0].message)
 
     expected = raw.pivot(index="foo", columns="bar", values="baz")
     assert expected.shape == r.shape
     assert str(expected) == str(r)
+    assert isinstance(r, DataRef)
     pd.testing.assert_frame_equal(expected, r.to_pandas())
 
     # multi chunk and follow other operations
     df = xpd.DataFrame(raw, chunk_size=3)
-    with warnings.catch_warnings(record=True) as w:
+    with pytest.warns(Warning) as w:
         r = df.pivot(index="foo", columns="bar", values="baz").max(axis=0)
-        assert "fallback to Pandas" in str(w[0].message)
+        assert "DataFrame.pivot will fallback to Pandas" == str(w[0].message)
 
     expected = raw.pivot("foo", columns="bar", values="baz").max(axis=0)
     assert expected.shape == r.shape

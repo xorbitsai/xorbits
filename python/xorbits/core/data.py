@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +43,7 @@ class Data:
     ]
 
     def __dir__(self) -> Iterable[str]:
-        return dir(self._mars_entity)
+        return list(DATA_MEMBERS[self.data_type])
 
     def __init__(self, *args, **kwargs):
         self.data_type: DataType = kwargs.pop("data_type")

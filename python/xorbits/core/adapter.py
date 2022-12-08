@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +19,6 @@
 import functools
 import inspect
 from collections import defaultdict
-from functools import partial
 from typing import Any, Callable, Dict, Generator, List, Tuple, Type, Union
 
 # For maintenance, any module wants to import from mars, it should import from here.
@@ -126,12 +124,20 @@ def wrap_generator(wrapped: Generator):
         yield from_mars(item)
 
 
+def wrap_member_func(member_func: Callable, mars_entity: MarsEntity):
+    @functools.wraps(member_func)
+    def _wrapped(*args, **kwargs):
+        return member_func(mars_entity, *args, **kwargs)
+
+    return _wrapped
+
+
 class MemberProxy:
     @classmethod
     def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
         member = DATA_MEMBERS[data_type].get(item, None)
         if member is not None and callable(member):
-            ret = partial(member, mars_entity)
+            ret = wrap_member_func(member, mars_entity)
             ret.__doc__ = member.__doc__
             return ret
 
