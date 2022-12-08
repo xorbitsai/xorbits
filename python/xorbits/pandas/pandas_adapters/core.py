@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
 import inspect
 import warnings
 
@@ -23,6 +24,7 @@ from ...core.utils.docstring import attach_class_member_docstring
 
 
 def wrap_pandas_dataframe_method(func_name):
+    @functools.wraps(getattr(pd.DataFrame, func_name))
     def _wrapped(entity: MarsEntity, *args, **kwargs):
         warnings.warn(
             f"{type(entity).__name__}.{func_name} will fallback to Pandas",
