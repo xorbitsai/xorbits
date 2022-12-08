@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +19,6 @@
 import functools
 import inspect
 from collections import defaultdict
-from functools import partial
 from typing import Any, Callable, Dict, Generator, List, Tuple, Type, Union
 
 # For maintenance, any module wants to import from mars, it should import from here.
@@ -42,9 +40,12 @@ from .._mars.dataframe.core import INDEX_TYPE as MARS_INDEX_TYPE
 from .._mars.dataframe.core import SERIES_GROUPBY_TYPE as MARS_SERIES_GROUPBY_TYPE
 from .._mars.dataframe.core import SERIES_TYPE as MARS_SERIES_TYPE
 from .._mars.dataframe.core import DataFrame as MarsDataFrame
+from .._mars.dataframe.core import DataFrameData as MarsDataFrameData
 from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
 from .._mars.dataframe.core import Index as MarsIndex
+from .._mars.dataframe.core import IndexData as MarsIndexData
 from .._mars.dataframe.core import Series as MarsSeries
+from .._mars.dataframe.core import SeriesData as MarsSeriesData
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
@@ -56,6 +57,7 @@ from .._mars.tensor import ogrid as mars_ogrid
 from .._mars.tensor import r_ as mars_r_
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .._mars.tensor.core import Tensor as MarsTensor
+from .._mars.tensor.core import TensorData as MarsTensorData
 from .._mars.tensor.core import flatiter as mars_flatiter
 from .._mars.tensor.lib import nd_grid
 from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
@@ -123,12 +125,20 @@ def wrap_generator(wrapped: Generator):
         yield from_mars(item)
 
 
+def wrap_member_func(member_func: Callable, mars_entity: MarsEntity):
+    @functools.wraps(member_func)
+    def _wrapped(*args, **kwargs):
+        return member_func(mars_entity, *args, **kwargs)
+
+    return _wrapped
+
+
 class MemberProxy:
     @classmethod
     def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
         member = DATA_MEMBERS[data_type].get(item, None)
         if member is not None and callable(member):
-            ret = partial(member, mars_entity)
+            ret = wrap_member_func(member, mars_entity)
             ret.__doc__ = member.__doc__
             return ret
 
@@ -233,11 +243,11 @@ def wrap_mars_callable(
         return wrapped
 
 
-_DATA_TYPE_TO_MARS_CLS: Dict[DataType, Type] = {
-    DataType.tensor: MarsTensor,
-    DataType.dataframe: MarsDataFrame,
-    DataType.series: MarsSeries,
-    DataType.index: MarsIndex,
+_DATA_TYPE_TO_MARS_CLS: Dict[DataType, List[Type]] = {
+    DataType.tensor: [MarsTensorData, MarsTensor],
+    DataType.dataframe: [MarsDataFrame, MarsDataFrameData],
+    DataType.series: [MarsSeriesData, MarsSeries],
+    DataType.index: [MarsIndexData, MarsIndex],
 }
 
 
@@ -246,21 +256,21 @@ def _collect_cls_members(data_type: DataType) -> Dict[str, Any]:
         return {}
 
     cls_members: Dict[str, Any] = {}
-    mars_cls: Type = _DATA_TYPE_TO_MARS_CLS[data_type]
-    for name, cls_member in inspect.getmembers(mars_cls):
-        if inspect.isfunction(cls_member):
-            cls_members[name] = wrap_mars_callable(
-                cls_member,
-                attach_docstring=True,
-                is_cls_member=True,
-                member_name=name,
-                data_type=data_type,
-            )
-        elif isinstance(cls_member, property):
-            from .utils.docstring import attach_class_member_docstring
+    for mars_cls in _DATA_TYPE_TO_MARS_CLS[data_type]:
+        for name, cls_member in inspect.getmembers(mars_cls):
+            if inspect.isfunction(cls_member):
+                cls_members[name] = wrap_mars_callable(
+                    cls_member,
+                    attach_docstring=True,
+                    is_cls_member=True,
+                    member_name=name,
+                    data_type=data_type,
+                )
+            elif isinstance(cls_member, property):
+                from .utils.docstring import attach_class_member_docstring
 
-            attach_class_member_docstring(cls_member, name, data_type)
-            cls_members[name] = cls_member
+                attach_class_member_docstring(cls_member, name, data_type)
+                cls_members[name] = cls_member
 
     return cls_members
 
