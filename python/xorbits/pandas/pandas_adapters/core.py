@@ -20,7 +20,7 @@ import pandas as pd
 
 from ...core.adapter import MarsEntity, from_mars, get_cls_members
 from ...core.data import DataType
-from ...core.utils.docstring import attach_class_member_docstring
+from ...core.utils.docstring import attach_cls_member_docstring
 
 
 def wrap_pandas_dataframe_method(func_name):
@@ -50,7 +50,7 @@ def wrap_pandas_dataframe_method(func_name):
             ret = ret.ensure_data()
         return from_mars(ret)
 
-    attach_class_member_docstring(_wrapped, func_name, DataType.dataframe)
+    attach_cls_member_docstring(_wrapped, func_name, DataType.dataframe)
     return _wrapped
 
 

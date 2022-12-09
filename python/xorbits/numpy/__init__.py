@@ -81,12 +81,13 @@ finally:
 
 
 from . import fft, linalg, random
+from .core import ndarray
 
 
 def __dir__():
-    from .mars_adapters import MARS_TENSOR_CALLABLES
+    from .mars_adapters import MARS_TENSOR_CALLABLES, MARS_TENSOR_OBJECTS
 
-    return list(MARS_TENSOR_CALLABLES.keys())
+    return list(MARS_TENSOR_CALLABLES.keys()) + list((MARS_TENSOR_OBJECTS.keys()))
 
 
 def __getattr__(name: str):

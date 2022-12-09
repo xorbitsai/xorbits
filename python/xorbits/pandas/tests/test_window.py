@@ -57,7 +57,7 @@ def test_expanding(setup):
     pd.testing.assert_frame_equal(expected, actual)
 
 
-def test_class_docstring():
+def test_cls_docstring():
     docstring = xpd.window.Rolling.__doc__
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from pandas."

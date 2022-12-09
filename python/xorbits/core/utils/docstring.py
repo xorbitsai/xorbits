@@ -266,7 +266,7 @@ def attach_module_callable_docstring(
     return c
 
 
-def attach_class_member_docstring(
+def attach_cls_member_docstring(
     member: Any,
     member_name: str,
     data_type: Optional[DataType] = None,

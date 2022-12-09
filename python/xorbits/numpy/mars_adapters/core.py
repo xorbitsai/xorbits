@@ -19,14 +19,8 @@ import numpy
 
 from ...core.adapter import (
     MARS_TENSOR_TYPE,
-    MarsAxisConcatenator,
     from_mars,
-    mars_c_,
-    mars_mgrid,
-    mars_ogrid,
-    mars_r_,
     mars_tensor,
-    register_converter,
     to_mars,
     wrap_mars_callable,
 )
@@ -64,7 +58,6 @@ MARS_TENSOR_LINALG_CALLABLES: Dict[str, Callable] = _collect_module_callables(
 )
 
 
-@register_converter(from_cls_list=[MarsAxisConcatenator])
 class MarsGetItemProxy:
     def __init__(self, mars_obj):
         self._mars_obj = mars_obj
@@ -74,15 +67,17 @@ class MarsGetItemProxy:
 
 
 def _collect_tensor_objects():
+    from ..lib.index_tricks import c_, mgrid, ogrid, r_
+
     mars_tensor_objects: Dict[str, Any] = dict()
-    mars_tensor_objects["mgrid"] = MarsGetItemProxy(mars_mgrid)
-    mars_tensor_objects["ogrid"] = MarsGetItemProxy(mars_ogrid)
-    mars_tensor_objects["c_"] = MarsGetItemProxy(mars_c_)
-    mars_tensor_objects["r_"] = MarsGetItemProxy(mars_r_)
+    mars_tensor_objects["mgrid"] = mgrid
+    mars_tensor_objects["ogrid"] = ogrid
+    mars_tensor_objects["c_"] = c_
+    mars_tensor_objects["r_"] = r_
     return mars_tensor_objects
 
 
-MARS_TENSOR_OBJECTS = _collect_tensor_objects()
+MARS_TENSOR_OBJECTS: Dict[str, Any] = _collect_tensor_objects()
 
 
 def _collect_tensor_magic_methods() -> Set[str]:
@@ -108,4 +103,4 @@ def _collect_tensor_magic_methods() -> Set[str]:
     return magic_methods
 
 
-MARS_TENSOR_MAGIC_METHODS = _collect_tensor_magic_methods()
+MARS_TENSOR_MAGIC_METHODS: Set[str] = _collect_tensor_magic_methods()
