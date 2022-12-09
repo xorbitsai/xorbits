@@ -33,7 +33,6 @@ from ...core.utils.docstring import attach_class_member_docstring
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
     pd.read_pickle: MarsOutputType.dataframe,
     pd.crosstab: MarsOutputType.dataframe,
-    pd.from_dummies: MarsOutputType.dataframe,
     pd.infer_freq: MarsOutputType.object,
     pd.interval_range: MarsOutputType.index,
     pd.json_normalize: MarsOutputType.dataframe,
