@@ -10,4 +10,4 @@ API reference
    :maxdepth: 2
 
    pandas/index
-   .. numpy/index
+   numpy/index

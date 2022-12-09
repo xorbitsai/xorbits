@@ -8,7 +8,7 @@ Series
 Constructor
 -----------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series
 
@@ -17,7 +17,7 @@ Attributes
 **Axes**
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.index
    Series.array
@@ -39,7 +39,7 @@ Attributes
 Conversion
 ----------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.astype
    Series.convert_dtypes
@@ -55,7 +55,7 @@ Conversion
 Indexing, iteration
 -------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.get
    Series.at
@@ -76,7 +76,7 @@ For more information on ``.at``, ``.iat``, ``.loc``, and
 Binary operator functions
 -------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.add
    Series.sub
@@ -109,7 +109,7 @@ Binary operator functions
 Function application, GroupBy & window
 --------------------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.apply
    Series.agg
@@ -127,7 +127,7 @@ Function application, GroupBy & window
 Computations / descriptive stats
 --------------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.abs
    Series.all
@@ -175,7 +175,7 @@ Computations / descriptive stats
 Reindexing / selection / label manipulation
 -------------------------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.align
    Series.drop
@@ -208,7 +208,7 @@ Reindexing / selection / label manipulation
 Missing data handling
 ---------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.backfill
    Series.bfill
@@ -226,7 +226,7 @@ Missing data handling
 Reshaping, sorting
 ------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.argsort
    Series.argmin
@@ -246,7 +246,7 @@ Reshaping, sorting
 Combining / comparing / joining / merging
 -----------------------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.append
    Series.compare
@@ -255,7 +255,7 @@ Combining / comparing / joining / merging
 Time Series-related
 -------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.asfreq
    Series.asof
@@ -299,7 +299,7 @@ Datetime properties
 ^^^^^^^^^^^^^^^^^^^
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_attribute.rst
 
    Series.dt.date
@@ -337,7 +337,7 @@ Datetime methods
 ^^^^^^^^^^^^^^^^
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_method.rst
 
    Series.dt.isocalendar
@@ -357,7 +357,7 @@ Period properties
 ^^^^^^^^^^^^^^^^^
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_attribute.rst
 
    Series.dt.qyear
@@ -368,7 +368,7 @@ Timedelta properties
 ^^^^^^^^^^^^^^^^^^^^
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_attribute.rst
 
    Series.dt.days
@@ -381,7 +381,7 @@ Timedelta methods
 ^^^^^^^^^^^^^^^^^
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_method.rst
 
    Series.dt.to_pytimedelta
@@ -398,7 +398,7 @@ strings and apply several methods to it. These can be accessed like
 ``Series.str.<function/property>``.
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_method.rst
 
    Series.str.capitalize
@@ -464,7 +464,7 @@ strings and apply several methods to it. These can be accessed like
 
 ..
     .. autosummary::
-       :toctree: api/
+       :toctree: generated/
        :template: autosummary/accessor.rst
 
        Series.str
@@ -474,19 +474,102 @@ strings and apply several methods to it. These can be accessed like
        DataFrame.sparse
        Index.str
 
+.. _api.series.cat:
+
+Categorical accessor
+~~~~~~~~~~~~~~~~~~~~
+
+Categorical-dtype specific methods and attributes are available under
+the ``Series.cat`` accessor.
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_attribute.rst
+
+   Series.cat.categories
+   Series.cat.ordered
+   Series.cat.codes
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   Series.cat.rename_categories
+   Series.cat.reorder_categories
+   Series.cat.add_categories
+   Series.cat.remove_categories
+   Series.cat.remove_unused_categories
+   Series.cat.set_categories
+   Series.cat.as_ordered
+   Series.cat.as_unordered
+
+
+.. _api.series.sparse:
+
+Sparse accessor
+~~~~~~~~~~~~~~~
+
+Sparse-dtype specific methods and attributes are provided under the
+``Series.sparse`` accessor.
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_attribute.rst
+
+   Series.sparse.npoints
+   Series.sparse.density
+   Series.sparse.fill_value
+   Series.sparse.sp_values
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   Series.sparse.from_coo
+   Series.sparse.to_coo
+
+.. _api.series.flags:
+
+Flags
+~~~~~
+
+Flags refer to attributes of the xorbits.pandas object. Properties of the dataset (like
+the date is was recorded, the URL it was accessed from, etc.) should be stored
+in :attr:`Series.attrs`.
+
+.. autosummary::
+   :toctree: generated/
+
+   Flags
+
+.. _api.series.metadata:
+
+Metadata
+~~~~~~~~
+
+:attr:`Series.attrs` is a dictionary for storing global metadata for this Series.
+
+.. warning:: ``Series.attrs`` is considered experimental and may change without warning.
+
+.. autosummary::
+   :toctree: generated/
+
+   Series.attrs
+
+
 Plotting
 --------
 ``Series.plot`` is both a callable method and a namespace attribute for
 specific plotting methods of the form ``Series.plot.<kind>``.
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_callable.rst
 
    Series.plot
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_method.rst
 
    Series.plot.area
@@ -500,14 +583,14 @@ specific plotting methods of the form ``Series.plot.<kind>``.
    Series.plot.pie
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.hist
 
 Serialization / IO / conversion
 -------------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Series.to_pickle
    Series.to_csv

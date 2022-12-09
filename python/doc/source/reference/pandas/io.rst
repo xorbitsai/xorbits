@@ -8,7 +8,7 @@ Input/output
 Pickling
 ~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_pickle
    DataFrame.to_pickle
@@ -16,7 +16,7 @@ Pickling
 Flat file
 ~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_table
    read_csv
@@ -26,7 +26,7 @@ Flat file
 Clipboard
 ~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_clipboard
    DataFrame.to_clipboard
@@ -34,7 +34,7 @@ Clipboard
 Excel
 ~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_excel
    DataFrame.to_excel
@@ -43,14 +43,14 @@ Excel
 .. currentmodule:: xorbits.pandas.io.formats.style
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Styler.to_excel
 
 .. currentmodule:: xorbits.pandas
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    ExcelWriter
 
@@ -59,7 +59,7 @@ Excel
 JSON
 ~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_json
    json_normalize
@@ -68,7 +68,7 @@ JSON
 .. currentmodule:: xorbits.pandas.io.json
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    build_table_schema
 
@@ -77,7 +77,7 @@ JSON
 HTML
 ~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_html
    DataFrame.to_html
@@ -85,7 +85,7 @@ HTML
 .. currentmodule:: xorbits.pandas.io.formats.style
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Styler.to_html
 
@@ -94,7 +94,7 @@ HTML
 XML
 ~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_xml
    DataFrame.to_xml
@@ -102,14 +102,14 @@ XML
 Latex
 ~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.to_latex
 
 .. currentmodule:: xorbits.pandas.io.formats.style
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Styler.to_latex
 
@@ -118,7 +118,7 @@ Latex
 HDFStore: PyTables (HDF5)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_hdf
    HDFStore.put
@@ -138,7 +138,7 @@ HDFStore: PyTables (HDF5)
 Feather
 ~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_feather
    DataFrame.to_feather
@@ -146,7 +146,7 @@ Feather
 Parquet
 ~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_parquet
    DataFrame.to_parquet
@@ -154,7 +154,7 @@ Parquet
 ORC
 ~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_orc
    DataFrame.to_orc
@@ -162,21 +162,21 @@ ORC
 SAS
 ~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_sas
 
 SPSS
 ~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_spss
 
 SQL
 ~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_sql_table
    read_sql_query
@@ -186,14 +186,14 @@ SQL
 Google BigQuery
 ~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_gbq
 
 STATA
 ~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    read_stata
    DataFrame.to_stata
@@ -201,7 +201,7 @@ STATA
 .. currentmodule:: xorbits.pandas.io.stata
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    StataReader.data_label
    StataReader.value_labels

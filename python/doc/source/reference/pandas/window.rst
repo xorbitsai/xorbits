@@ -4,9 +4,11 @@
 Window
 ======
 
-Rolling objects are returned by ``.rolling`` calls: :func:`xorbits.pandas.DataFrame.rolling`, :func:`xorbits.pandas.Series.rolling`, etc.
-Expanding objects are returned by ``.expanding`` calls: :func:`xorbits.pandas.DataFrame.expanding`, :func:`xorbits.pandas.Series.expanding`, etc.
-ExponentialMovingWindow objects are returned by ``.ewm`` calls: :func:`xorbits.pandas.DataFrame.ewm`, :func:`xorbits.pandas.Series.ewm`, etc.
+Rolling objects are returned by ``.rolling`` calls: :func:`xorbits.pandas.DataFrame.rolling`,
+:func:`xorbits.pandas.Series.rolling`, etc. Expanding objects are returned by ``.expanding`` calls:
+:func:`xorbits.pandas.DataFrame.expanding`, :func:`xorbits.pandas.Series.expanding`, etc.
+ExponentialMovingWindow objects are returned by ``.ewm`` calls: :func:`xorbits.pandas.DataFrame.ewm`
+, :func:`xorbits.pandas.Series.ewm`, etc.
 
 .. _api.functions_rolling:
 
@@ -15,7 +17,7 @@ Rolling window functions
 .. currentmodule:: xorbits.pandas.window
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Rolling.count
    Rolling.sum
@@ -35,6 +37,20 @@ Rolling window functions
    Rolling.sem
    Rolling.rank
 
+.. _api.functions_window:
+
+Weighted window functions
+-------------------------
+.. currentmodule:: xorbits.pandas.window
+
+.. autosummary::
+   :toctree: generated/
+
+   Window.mean
+   Window.sum
+   Window.var
+   Window.std
+
 .. _api.functions_expanding:
 
 Expanding window functions
@@ -42,7 +58,7 @@ Expanding window functions
 .. currentmodule:: xorbits.pandas.window
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    Expanding.count
    Expanding.sum
@@ -69,7 +85,7 @@ Exponentially-weighted window functions
 .. currentmodule:: xorbits.pandas.window
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    ExponentialMovingWindow.mean
    ExponentialMovingWindow.sum
@@ -77,3 +93,18 @@ Exponentially-weighted window functions
    ExponentialMovingWindow.var
    ExponentialMovingWindow.corr
    ExponentialMovingWindow.cov
+
+.. _api.indexers_window:
+
+Window indexer
+--------------
+.. currentmodule:: xorbits.pandas
+
+Base class for defining custom window boundaries.
+
+.. autosummary::
+   :toctree: generated/
+
+   api.indexers.BaseIndexer
+   api.indexers.FixedForwardWindowIndexer
+   api.indexers.VariableOffsetWindowIndexer

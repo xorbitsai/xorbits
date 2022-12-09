@@ -8,7 +8,7 @@ DataFrame
 Constructor
 ~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame
 
@@ -17,13 +17,13 @@ Attributes and underlying data
 **Axes**
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.index
    DataFrame.columns
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.dtypes
    DataFrame.info
@@ -40,7 +40,7 @@ Attributes and underlying data
 Conversion
 ~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.astype
    DataFrame.convert_dtypes
@@ -51,7 +51,7 @@ Conversion
 Indexing, iteration
 ~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.head
    DataFrame.at
@@ -81,7 +81,7 @@ For more information on ``.at``, ``.iat``, ``.loc``, and
 Binary operator functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.add
    DataFrame.sub
@@ -112,7 +112,7 @@ Binary operator functions
 Function application, GroupBy & window
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.apply
    DataFrame.applymap
@@ -130,7 +130,7 @@ Function application, GroupBy & window
 Computations / descriptive stats
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.abs
    DataFrame.all
@@ -172,7 +172,7 @@ Computations / descriptive stats
 Reindexing / selection / label manipulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.add_prefix
    DataFrame.add_suffix
@@ -206,7 +206,7 @@ Reindexing / selection / label manipulation
 Missing data handling
 ~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.backfill
    DataFrame.bfill
@@ -224,7 +224,7 @@ Missing data handling
 Reshaping, sorting, transposing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.droplevel
    DataFrame.pivot
@@ -248,7 +248,7 @@ Reshaping, sorting, transposing
 Combining / comparing / joining / merging
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.append
    DataFrame.assign
@@ -260,7 +260,7 @@ Combining / comparing / joining / merging
 Time Series-related
 ~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.asfreq
    DataFrame.asof
@@ -275,6 +275,35 @@ Time Series-related
    DataFrame.tz_convert
    DataFrame.tz_localize
 
+.. _api.frame.flags:
+
+Flags
+~~~~~
+
+Flags refer to attributes of the pandas object. Properties of the dataset (like
+the date is was recorded, the URL it was accessed from, etc.) should be stored
+in :attr:`DataFrame.attrs`.
+
+.. autosummary::
+   :toctree: generated/
+
+   Flags
+
+
+.. _api.frame.metadata:
+
+Metadata
+~~~~~~~~
+
+:attr:`DataFrame.attrs` is a dictionary for storing global metadata for this DataFrame.
+
+.. warning:: ``DataFrame.attrs`` is considered experimental and may change without warning.
+
+.. autosummary::
+   :toctree: generated/
+
+   DataFrame.attrs
+
 
 .. _api.dataframe.plotting:
 
@@ -284,13 +313,13 @@ Plotting
 specific plotting methods of the form ``DataFrame.plot.<kind>``.
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_callable.rst
 
    DataFrame.plot
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
    :template: autosummary/accessor_method.rst
 
    DataFrame.plot.area
@@ -306,16 +335,39 @@ specific plotting methods of the form ``DataFrame.plot.<kind>``.
    DataFrame.plot.scatter
 
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.boxplot
    DataFrame.hist
 
 
+.. _api.frame.sparse:
+
+Sparse accessor
+~~~~~~~~~~~~~~~
+
+Sparse-dtype specific methods and attributes are provided under the
+``DataFrame.sparse`` accessor.
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_attribute.rst
+
+   DataFrame.sparse.density
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   DataFrame.sparse.from_spmatrix
+   DataFrame.sparse.to_coo
+   DataFrame.sparse.to_dense
+
+
 Serialization / IO / conversion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrame.from_dict
    DataFrame.from_records

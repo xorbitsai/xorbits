@@ -5,14 +5,44 @@ GroupBy
 =======
 .. currentmodule:: xorbits.pandas.groupby
 
-GroupBy objects are returned by groupby calls: :func:`xorbits.pandas.DataFrame.groupby`, :func:`xorbits.pandas.Series.groupby`, etc.
+GroupBy objects are returned by groupby calls: :func:`xorbits.pandas.DataFrame.groupby`,
+:func:`xorbits.pandas.Series.groupby`, etc.
+
+Indexing, iteration
+-------------------
+.. autosummary::
+   :toctree: generated/
+
+   DataFrameGroupBy.__iter__
+   SeriesGroupBy.__iter__
+   DataFrameGroupBy.groups
+   SeriesGroupBy.groups
+   DataFrameGroupBy.indices
+   SeriesGroupBy.indices
+   DataFrameGroupBy.get_group
+   SeriesGroupBy.get_group
+
+.. currentmodule:: xorbits.pandas
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/class_without_autosummary.rst
+
+   Grouper
+
+Function application helper
+---------------------------
+.. autosummary::
+   :toctree: generated/
+
+   NamedAgg
 
 .. currentmodule:: xorbits.pandas.groupby
 
 Function application
 --------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    SeriesGroupBy.apply
    DataFrameGroupBy.apply
@@ -30,7 +60,7 @@ Function application
 ``DataFrameGroupBy`` computations / descriptive stats
 -----------------------------------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrameGroupBy.all
    DataFrameGroupBy.any
@@ -85,7 +115,7 @@ Function application
 ``SeriesGroupBy`` computations / descriptive stats
 --------------------------------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    SeriesGroupBy.all
    SeriesGroupBy.any
@@ -144,7 +174,7 @@ Function application
 Plotting and visualization
 --------------------------
 .. autosummary::
-   :toctree: api/
+   :toctree: generated/
 
    DataFrameGroupBy.boxplot
    DataFrameGroupBy.hist

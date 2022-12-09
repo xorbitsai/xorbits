@@ -12,7 +12,18 @@ from xorbits import __version__
 release = __version__
 
 # -- General configuration ---------------------------------------------------
-extensions = ['sphinx.ext.autosummary', 'sphinx_autosummary_accessors']
+extensions = [
+    'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.githubpages',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.napoleon',
+    'IPython.sphinxext.ipython_directive',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'matplotlib.sphinxext.plot_directive',
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
