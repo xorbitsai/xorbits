@@ -31,13 +31,38 @@ from ...core.data import DataType
 from ...core.utils.docstring import attach_class_member_docstring
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
-    pd.read_pickle: MarsOutputType.dataframe
+    pd.read_pickle: MarsOutputType.dataframe,
+    pd.crosstab: MarsOutputType.dataframe,
+    pd.from_dummies: MarsOutputType.dataframe,
+    pd.infer_freq: MarsOutputType.object,
+    pd.interval_range: MarsOutputType.index,
+    pd.json_normalize: MarsOutputType.dataframe,
+    pd.lreshape: MarsOutputType.dataframe,
+    pd.merge_asof: MarsOutputType.dataframe,
+    pd.merge_ordered: MarsOutputType.dataframe,
+    pd.period_range: MarsOutputType.index,
+    pd.pivot: MarsOutputType.dataframe,
+    pd.pivot_table: MarsOutputType.dataframe,
+    pd.read_excel: MarsOutputType.dataframe,
+    pd.read_fwf: MarsOutputType.dataframe,
+    pd.read_gbq: MarsOutputType.dataframe,
+    pd.read_hdf: MarsOutputType.object,
+    pd.read_html: MarsOutputType.object,
+    pd.read_json: MarsOutputType.df_or_series,
+    pd.read_orc: MarsOutputType.dataframe,
+    pd.read_sas: MarsOutputType.dataframe,
+    pd.read_spss: MarsOutputType.dataframe,
+    pd.read_stata: MarsOutputType.dataframe,
+    pd.read_table: MarsOutputType.dataframe,
+    pd.read_xml: MarsOutputType.dataframe,
+    pd.wide_to_long: MarsOutputType.dataframe,
 }
 
 
 def _get_output_type(func: Callable) -> MarsOutputType:
     return_annotation = inspect.signature(func).return_annotation
     if return_annotation is inspect.Signature.empty:
+        # mostly for python3.7 whose return_annotation is always empty
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
     all_types = [t.strip() for t in return_annotation.split("|")]
     has_df = "DataFrame" in all_types
@@ -65,7 +90,6 @@ def wrap_pandas_dataframe_method(func_name):
             f"{type(entity).__name__}.{func_name} will fallback to Pandas",
             RuntimeWarning,
         )
-        output_type = _get_output_type(getattr(pd.DataFrame, func_name))
         # rechunk mars tileable as one chunk
         one_chunk_data = entity.rechunk(max(entity.shape))
 
@@ -77,6 +101,9 @@ def wrap_pandas_dataframe_method(func_name):
                 kwargs=kwargs,
             )
         except TypeError:
+            # when infer failed in map_chunk, we would use remote to execute
+            # or skip inferring
+            output_type = _get_output_type(getattr(pd.DataFrame, func_name))
             if output_type == MarsOutputType.object:
                 # for object type, use remote to execute
                 def execute_func(mars_entity, f_name: str, *args, **kwargs):
@@ -174,7 +201,6 @@ def _collect_pandas_module_members() -> Dict[str, Any]:
             and inspect.isfunction(cls_member)
             and not name.startswith("_")
         ):
-            print(name)
             module_methods[name] = wrap_mars_callable(
                 wrap_pandas_module_method(name),
                 attach_docstring=True,
