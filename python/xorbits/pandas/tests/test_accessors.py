@@ -25,7 +25,7 @@ def test_str_split(setup):
     pd.testing.assert_series_equal(s.str.split("_"), xs.str.split("_").to_pandas())
 
 
-def test_class_docstring():
+def test_cls_docstring():
     docstring = xpd.Series.str.__doc__
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from pandas."

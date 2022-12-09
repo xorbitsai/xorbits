@@ -129,6 +129,8 @@ class DataRefMeta(type):
             setattr(cls, "__cls_members", DATA_MEMBERS[DataType.dataframe_groupby])
         elif name == "SeriesGroupBy":
             setattr(cls, "__cls_members", DATA_MEMBERS[DataType.series_groupby])
+        elif name == "ndarray":
+            setattr(cls, "__cls_members", DATA_MEMBERS[DataType.tensor])
         return cls
 
     def __getattr__(cls, item: str):

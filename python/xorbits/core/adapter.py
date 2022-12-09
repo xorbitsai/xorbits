@@ -51,15 +51,13 @@ from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
 from .._mars.dataframe.window.rolling.core import Rolling as MarsRolling
 from .._mars.deploy.oscar import session
-from .._mars.tensor import c_ as mars_c_
-from .._mars.tensor import mgrid as mars_mgrid
-from .._mars.tensor import ogrid as mars_ogrid
-from .._mars.tensor import r_ as mars_r_
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .._mars.tensor.core import Tensor as MarsTensor
 from .._mars.tensor.core import flatiter as mars_flatiter
-from .._mars.tensor.lib import nd_grid
-from .._mars.tensor.lib.index_tricks import AxisConcatenator as MarsAxisConcatenator
+from .._mars.tensor.lib.index_tricks import CClass as MarsCClass
+from .._mars.tensor.lib.index_tricks import MGridClass as MarsMGridClass
+from .._mars.tensor.lib.index_tricks import OGridClass as MarsOGridClass
+from .._mars.tensor.lib.index_tricks import RClass as MarsRClass
 from .data import DATA_MEMBERS, Data, DataRef, DataType
 
 _MARS_CLS_TO_EXECUTION_CONDITION: Dict[
@@ -231,9 +229,9 @@ def wrap_mars_callable(
 
     if attach_docstring:
         if is_cls_member:
-            from .utils.docstring import attach_class_member_docstring
+            from .utils.docstring import attach_cls_member_docstring
 
-            return attach_class_member_docstring(wrapped, **kwargs)
+            return attach_cls_member_docstring(wrapped, **kwargs)
         else:
             from .utils.docstring import attach_module_callable_docstring
 
@@ -274,11 +272,11 @@ def collect_cls_members(
                 docstring_src_cls=docstring_src_cls,
             )
         elif isinstance(cls_member, property):
-            from .utils.docstring import attach_class_member_docstring
+            from .utils.docstring import attach_cls_member_docstring
 
             # no need to wrap the fget/fset method since this class member is purly for the doc
             # generation.
-            attach_class_member_docstring(
+            attach_cls_member_docstring(
                 cls_member,
                 name,
                 data_type,

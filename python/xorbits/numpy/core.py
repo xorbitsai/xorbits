@@ -12,21 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO: optimize import ordering.
-from . import adapter
-from .data import Data, DataRef, DataRefMeta, DataType
+import numpy
+
+from xorbits.core import DataRef
+from xorbits.core.utils.docstring import attach_module_callable_docstring
 
 
-def _register_magic_methods():
-    from ..numpy.mars_adapters import MARS_TENSOR_MAGIC_METHODS
-    from ..pandas.mars_adapters import MARS_DATAFRAME_MAGIC_METHODS
-    from .adapter import wrap_magic_method
-
-    magic_methods = MARS_TENSOR_MAGIC_METHODS.union(MARS_DATAFRAME_MAGIC_METHODS)
-
-    for method in magic_methods:
-        setattr(DataRef, method, wrap_magic_method(method))
+class ndarray(DataRef):
+    pass
 
 
-_register_magic_methods()
-del _register_magic_methods
+attach_module_callable_docstring(ndarray, numpy, numpy.ndarray)

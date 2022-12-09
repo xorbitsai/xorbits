@@ -16,7 +16,7 @@
 from ... import pandas as xpd
 
 
-def test_class_docstring():
+def test_cls_docstring():
     docstring = xpd.DataFrame.plot.__doc__
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from pandas."
