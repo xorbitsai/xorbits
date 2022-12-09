@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -1082,7 +1080,13 @@ def main():
         "--use-arrow-dtype",
         type=bool,
         default=True,
-        help="Use arrow dtype to read parquet",
+        help="Use arrow dtype.",
+    )
+    parser.add_argument(
+        "--endpoint",
+        type=str,
+        required=False,
+        help="The endpoint of existing Xorbits cluster."
     )
 
     args = parser.parse_args()
@@ -1101,7 +1105,7 @@ def main():
         queries = args.queries
     print(f"Queries to run: {queries}")
 
-    xorbits.init()
+    xorbits.init(address=args.endpoint)
     try:
         run_queries(
             data_set,
@@ -1114,5 +1118,5 @@ def main():
 
 
 if __name__ == "__main__":
-    print(xorbits.__version__)
+    print(f"Running TPC-H against Xorbits v{xorbits.__version__}")
     main()
