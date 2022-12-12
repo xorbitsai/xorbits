@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .core import PANDAS_MODULE_METHODS
+
 
 def install():
     from .core import _collect_pandas_dataframe_members

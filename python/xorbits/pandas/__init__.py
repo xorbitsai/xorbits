@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import inspect
 
 # noinspection PyUnresolvedReferences
 from pandas import Timedelta  # noqa: F401
@@ -51,14 +52,19 @@ def __dir__():
 
 def __getattr__(name: str):
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
+    from .pandas_adapters import PANDAS_MODULE_METHODS
 
     if name in MARS_DATAFRAME_CALLABLES:
         return MARS_DATAFRAME_CALLABLES[name]
     else:
-        # TODO fallback to pandas
         import pandas
 
         if not hasattr(pandas, name):
             raise AttributeError(name)
+        elif name in PANDAS_MODULE_METHODS:
+            return PANDAS_MODULE_METHODS[name]
         else:
-            return unimplemented_func
+            if inspect.ismethod(getattr(pandas, name)):
+                return unimplemented_func
+            else:
+                raise AttributeError(name)
