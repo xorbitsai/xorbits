@@ -16,4 +16,5 @@ python:
       path: python
 
 submodules:
+  include: all
   recursive: true
