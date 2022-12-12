@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
@@ -140,6 +140,20 @@ class DataRefMeta(type):
         else:
             return members[item]
 
+    def __instancecheck__(cls: Type, instance: Any) -> bool:
+        if not issubclass(instance.__class__, DataRef):
+            # not a DataRef instance
+            return False
+
+        if cls is DataRef:
+            # isintance(x, DataRef)
+            return cls in instance.__class__.__mro__
+        else:
+            # for subclass like isintance(x, DataFrame),
+            # check its data_type if match with cls
+            data_type = instance.data_type
+            return data_type == SUB_CLASS_TO_DATA_TYPE[cls]
+
 
 class DataRef(metaclass=DataRefMeta):
     data: Data
@@ -172,3 +186,14 @@ class DataRef(metaclass=DataRefMeta):
 
         execute(self)
         return self.data.__repr__()
+
+
+SUB_CLASS_TO_DATA_TYPE: Dict[Type[DataRef], DataType] = dict()
+
+
+def register_cls_to_type(data_type: DataType) -> Callable:
+    def _wrap_cls(cls: Type[DataRef]):
+        SUB_CLASS_TO_DATA_TYPE[cls] = data_type
+        return cls
+
+    return _wrap_cls

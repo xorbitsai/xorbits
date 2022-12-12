@@ -17,11 +17,13 @@ from pandas.core.accessor import CachedAccessor
 
 from ..core import Data, DataRef, DataType
 from ..core.adapter import MarsDataFrame, MarsIndex, MarsSeries, to_mars
+from ..core.data import register_cls_to_type
 from ..core.utils.docstring import attach_module_callable_docstring
 from .accessors import DatetimeAccessor, StringAccessor
 from .plotting import PlotAccessor
 
 
+@register_cls_to_type(data_type=DataType.dataframe)
 class DataFrame(DataRef):
 
     plot = CachedAccessor("plot", PlotAccessor)
@@ -37,6 +39,7 @@ class DataFrame(DataRef):
 attach_module_callable_docstring(DataFrame, pandas, pandas.DataFrame)
 
 
+@register_cls_to_type(data_type=DataType.series)
 class Series(DataRef):
 
     str = CachedAccessor("str", StringAccessor)
@@ -54,6 +57,7 @@ class Series(DataRef):
 attach_module_callable_docstring(Series, pandas, pandas.Series)
 
 
+@register_cls_to_type(data_type=DataType.index)
 class Index(DataRef):
     def __init__(self, *args, **kwargs):
         data = Data(

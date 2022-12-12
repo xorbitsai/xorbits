@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 import numpy
 import pandas
 
-from xorbits.core.data import DataType
+from ...core.data import DataType
 
 _DATA_TYPE_TO_DOCSTRING_SRC: Dict[DataType, Tuple[ModuleType, Type]] = {
     DataType.dataframe: (pandas, pandas.DataFrame),

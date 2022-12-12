@@ -13,11 +13,15 @@
 # limitations under the License.
 import numpy
 
-from xorbits.core.adapter import register_converter
-from xorbits.core.utils.docstring import attach_module_callable_docstring
-from xorbits.numpy.mars_adapters.core import MarsGetItemProxy
-
-from ...core.adapter import MarsCClass, MarsMGridClass, MarsOGridClass, MarsRClass
+from ...core.adapter import (
+    MarsCClass,
+    MarsMGridClass,
+    MarsOGridClass,
+    MarsRClass,
+    register_converter,
+)
+from ...core.utils.docstring import attach_module_callable_docstring
+from ...numpy.mars_adapters.core import MarsGetItemProxy
 
 
 @register_converter(from_cls_list=[MarsCClass])

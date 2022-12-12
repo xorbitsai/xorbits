@@ -19,7 +19,7 @@ from typing import Any, List, Tuple
 
 import pytest
 
-from xorbits import pandas as xpd
+from .... import pandas as xpd
 
 
 def run_docstring(

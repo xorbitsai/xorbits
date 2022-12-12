@@ -14,10 +14,12 @@
 
 import numpy
 
-from xorbits.core import DataRef
-from xorbits.core.utils.docstring import attach_module_callable_docstring
+from ..core import DataRef, DataType
+from ..core.data import register_cls_to_type
+from ..core.utils.docstring import attach_module_callable_docstring
 
 
+@register_cls_to_type(DataType.tensor)
 class ndarray(DataRef):
     pass
 
