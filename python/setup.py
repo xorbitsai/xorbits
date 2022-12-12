@@ -63,8 +63,11 @@ repo_root = os.path.dirname(os.path.abspath(__file__))
 # create symlink for mars
 absolute_path = os.path.join(repo_root, os.path.join("xorbits", "_mars"))
 source_path = os.path.join("..", "..", "third_party", "_mars", "mars")
-if not os.path.exists(absolute_path):
+try:
     os.symlink(source_path, absolute_path, target_is_directory=True)
+except FileExistsError:
+    # symlink exists already, skip
+    pass
 
 
 cythonize_kw = dict(language_level=sys.version_info[0])
