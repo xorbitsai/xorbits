@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import inspect
 
 # noinspection PyUnresolvedReferences
 from pandas import Timedelta  # noqa: F401
@@ -60,5 +61,10 @@ def __getattr__(name: str):
 
         if not hasattr(pandas, name):
             raise AttributeError(name)
-        else:
+        elif name in PANDAS_MODULE_METHODS:
             return PANDAS_MODULE_METHODS[name]
+        else:
+            if inspect.ismethod(getattr(pandas, name)):
+                return unimplemented_func
+            else:
+                raise AttributeError(name)
