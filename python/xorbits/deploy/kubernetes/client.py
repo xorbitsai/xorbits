@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,14 +26,14 @@ from ..._mars.services.cluster.api import WebClusterAPI
 from ..._mars.session import new_session
 from ..._mars.utils import calc_size_by_str
 from ..._mars.deploy.utils import wait_services_ready
-from ... import init
 from .config import (
     NamespaceConfig,
     RoleConfig,
     RoleBindingConfig,
     ServiceConfig,
     MarsSupervisorsConfig,
-    MarsWorkersConfig, IngressConfig,
+    MarsWorkersConfig,
+    IngressConfig,
 )
 
 try:
@@ -66,7 +66,6 @@ class KubernetesClusterClient:
         try:
             self._endpoint = self._cluster.start()
             self._session = new_session(self._endpoint)
-            # init(self._endpoint)
         except:  # noqa: E722  # nosec  # pylint: disable=bare-except
             self.stop()
             raise
@@ -214,7 +213,7 @@ class KubernetesCluster:
             self._service_name,
             service_type="NodePort",
             port=self._web_port,
-            selector={"mars/service-type": MarsSupervisorsConfig.rc_name},
+            selector={"xorbits/service-type": MarsSupervisorsConfig.rc_name},
         )
         self._core_api.create_namespaced_service(
             self._namespace, service_config.build()
@@ -224,6 +223,7 @@ class KubernetesCluster:
         query = self._core_api.list_namespaced_pod(
             namespace=self._namespace, label_selector=label_selector
         ).to_dict()
+        print(query)
         cnt = 0
         for el in query["items"]:
             if el["status"]["phase"] in ("Error", "Failed"):
@@ -251,7 +251,7 @@ class KubernetesCluster:
     def _create_roles_and_bindings(self):
         # create role and binding
         role_config = RoleConfig(
-            "mars-pod-operator",
+            "xorbits-pod-operator",
             self._namespace,
             api_groups="",
             resources="pods,endpoints,services",
@@ -259,7 +259,7 @@ class KubernetesCluster:
         )
         role_config.create_namespaced(self._api_client, self._namespace)
         role_binding_config = RoleBindingConfig(
-            "mars-pod-operator-binding", self._namespace, "mars-pod-operator", "default"
+            "xorbits-pod-operator-binding", self._namespace, "xorbits-pod-operator", "default"
         )
         role_binding_config.create_namespaced(self._api_client, self._namespace)
 
@@ -279,6 +279,7 @@ class KubernetesCluster:
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
+        print(f'Extra labels: {self._supervisor_extra_labels}')
         supervisors_config.create_namespaced(self._api_client, self._namespace)
 
     def _create_workers(self):
@@ -310,8 +311,8 @@ class KubernetesCluster:
         min_worker_num = int(self._min_worker_num or self._worker_num)
         limits = [self._supervisor_num, min_worker_num]
         selectors = [
-            "mars/service-type=" + MarsSupervisorsConfig.rc_name,
-            "mars/service-type=" + MarsWorkersConfig.rc_name,
+            "xorbits/service-type=" + MarsSupervisorsConfig.rc_name,
+            "xorbits/service-type=" + MarsWorkersConfig.rc_name,
         ]
         start_time = time.time()
         logger.debug("Start waiting pods to be ready")
@@ -333,26 +334,29 @@ class KubernetesCluster:
                 self._ingress_name,
                 self._service_name,
                 self._web_port,
-                self._cluster_type
-            ).build()
+                self._cluster_type,
+            ).build(),
         )
 
     def _get_ingress_address(self):
         from kubernetes import watch
+
         w = watch.Watch()
         for event in w.stream(
-                func=self._networking_api.list_namespaced_ingress, namespace=self._namespace):
-            if event["object"].kind == "Ingress" and \
-                    event["object"].status.load_balancer.ingress is not None and \
-                    len(event["object"].status.load_balancer.ingress) > 0:
-                ip = event["object"].status.load_balancer.ingress[0].ip
-                return f"http://{ip}:80"
-        # ingress = self._networking_api.read_namespaced_ingress(
-        #     self._ingress_name, self._namespace
-        # )
-        # print(ingress.to_dict())
-        # ingress = ingress.status.load_balancer.ingress[0]
-        # return f"http://{ingress.ip}:{ingress.port}"
+            func=self._networking_api.list_namespaced_ingress, namespace=self._namespace
+        ):
+            if (
+                event["object"].kind == "Ingress"
+                and event["object"].status.load_balancer.ingress is not None
+                and len(event["object"].status.load_balancer.ingress) > 0
+            ):
+                ingress = event["object"].status.load_balancer.ingress[0]
+                ip = ingress.ip
+                host = ingress.hostname if hasattr(ingress, "hostname") else None
+                address = ip or host
+                print(f"Ip: {ip}, Host: {host}, Address: {address}")
+                if address is not None:
+                    return f"http://{address}:80"
 
     def _get_web_address(self):
         svc_data = self._core_api.read_namespaced_service(
@@ -372,7 +376,7 @@ class KubernetesCluster:
         else:
             web_pods = self._core_api.list_namespaced_pod(
                 self._namespace,
-                label_selector="mars/service-type=" + MarsSupervisorsConfig.rc_name,
+                label_selector="xorbits/service-type=" + MarsSupervisorsConfig.rc_name,
             ).to_dict()
             host_ip = random.choice(web_pods["items"])["status"]["host_ip"]
         return f"http://{host_ip}:{node_port}"
@@ -417,6 +421,7 @@ class KubernetesCluster:
 
             self._create_services()
             self._create_kube_service()
+            print(f'Create Service!')
 
             self._wait_services_ready()
 
@@ -425,6 +430,7 @@ class KubernetesCluster:
             self._external_web_endpoint = self._get_ingress_address()
             print(self._external_web_endpoint)
             self._wait_web_ready()
+            print(f"Endpoint {self._external_web_endpoint} ready!")
             return self._external_web_endpoint
         except:  # noqa: E722
             if self._log_when_fail:  # pargma: no cover
@@ -481,7 +487,7 @@ def new_cluster(
 ):
     """
     :param kube_api_client: Kubernetes API client, can be created with ``new_client_from_config``
-    :param image: Docker image to use, ``marsproject/mars:<mars version>`` by default
+    :param image: Docker image to use, ``xprobe/xorbits:<xorbits version>`` by default
     :param supervisor_num: Number of supervisors in the cluster, 1 by default
     :param supervisor_cpu: Number of CPUs for every supervisor
     :param supervisor_mem: Memory size for every supervisor

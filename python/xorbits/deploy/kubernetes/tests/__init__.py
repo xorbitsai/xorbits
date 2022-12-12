@@ -12,22 +12,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from ..._mars.deploy.oscar.supervisor import SupervisorCommandRunner
-from .core import K8SServiceMixin
-
-
-class K8SSupervisorCommandRunner(K8SServiceMixin, SupervisorCommandRunner):
-    async def start_services(self):
-        await super().start_services()
-        await self.start_readiness_server()
-
-    async def stop_services(self):
-        await self.stop_readiness_server()
-        await super().stop_services()
-
-
-main = K8SSupervisorCommandRunner()
-
-if __name__ == "__main__":  # pragma: no branch
-    main()

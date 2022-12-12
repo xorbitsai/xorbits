@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ class KubeConfig(abc.ABC):
     def create_namespaced(self, k8s_api_client, namespace):
         api = _get_k8s_api(self.api_version, k8s_api_client)
         config = self.build()
+        print(f'Config: {config}')
         method_name = f'create_namespaced_{_camel_to_underline(config["kind"])}'
         return getattr(api, method_name)(namespace, config)
 
@@ -165,7 +166,7 @@ class ServiceConfig(KubeConfig):
             "metadata": {
                 "name": self._name,
                 "labels": {
-                    "mars/service-name": self._name,
+                    "xorbits/service-name": self._name,
                 },
             },
             "spec": _remove_nones(
@@ -189,7 +190,14 @@ class ServiceConfig(KubeConfig):
 class IngressConfig(KubeConfig):
     api_version = "networking.k8s.io/v1"
 
-    def __init__(self, namespace: str, name: str, service_name: str, service_port: int, cluster_type: str):
+    def __init__(
+        self,
+        namespace: str,
+        name: str,
+        service_name: str,
+        service_port: int,
+        cluster_type: str,
+    ):
         self._namespace = namespace
         self._name = name
         self._service_name = service_name
@@ -197,34 +205,6 @@ class IngressConfig(KubeConfig):
         self._cluster_type = cluster_type
 
     def build(self):
-        # metadata = {
-        #     "name": self._name,
-        #     "namespace": self._namespace
-        # }
-        # spec = {}
-        # if self._cluster_type == "eks":
-        #     metadata["annotations"] = {
-        #         "alb.ingress.kubernetes.io/scheme": "internet-facing",
-        #         "alb.ingress.kubernetes.io/target-type": "ip"
-        #     }
-        #     spec["ingressClassName"] = "alb"
-        #
-        # spec["rules"] = [{
-        #     "http": {
-        #         "paths": [{
-        #             "path": "/",
-        #             "pathType": "Prefix",
-        #             "backend": {
-        #                 "service": {
-        #                     "name": self._service_name,
-        #                     "port": {
-        #                         "number": str(self._service_port)
-        #                     }
-        #                 }
-        #             }
-        #         }]
-        #     }
-        # }]
         from kubernetes import client
 
         annotations = None
@@ -232,7 +212,7 @@ class IngressConfig(KubeConfig):
         if self._cluster_type == "eks":
             annotations = {
                 "alb.ingress.kubernetes.io/scheme": "internet-facing",
-                "alb.ingress.kubernetes.io/target-type": "ip"
+                "alb.ingress.kubernetes.io/target-type": "ip",
             }
             ingress_cls_name = "alb"
 
@@ -240,39 +220,33 @@ class IngressConfig(KubeConfig):
             api_version="networking.k8s.io/v1",
             kind="Ingress",
             metadata=client.V1ObjectMeta(
-                name=self._name,
-                namespace=self._namespace,
-                annotations=annotations
+                name=self._name, namespace=self._namespace, annotations=annotations
             ),
             spec=client.V1IngressSpec(
                 rules=[
                     client.V1IngressRule(
                         http=client.V1HTTPIngressRuleValue(
-                            paths=[client.V1HTTPIngressPath(
-                                path="/",
-                                path_type="Prefix",
-                                backend=client.V1IngressBackend(
-                                    service=client.V1IngressServiceBackend(
-                                        name=self._service_name,
-                                        port=client.V1ServiceBackendPort(
-                                            number=self._service_port
+                            paths=[
+                                client.V1HTTPIngressPath(
+                                    path="/",
+                                    path_type="Prefix",
+                                    backend=client.V1IngressBackend(
+                                        service=client.V1IngressServiceBackend(
+                                            name=self._service_name,
+                                            port=client.V1ServiceBackendPort(
+                                                number=self._service_port
+                                            ),
                                         )
-                                    )
+                                    ),
                                 )
-                            )]
+                            ]
                         )
                     )
                 ],
-                ingress_class_name=ingress_cls_name
-            )
+                ingress_class_name=ingress_cls_name,
+            ),
         )
 
-        # return {
-        #     "apiVersion": "networking.k8s.io/v1",
-        #     "kind": "Ingress",
-        #     "metadata": metadata,
-        #     "spec": spec
-        # }
         return body
 
 
@@ -541,7 +515,7 @@ class ReplicationConfig(KubeConfig):
                 if self._readiness_probe
                 else None,
                 "lifecycle": lifecycle_dict or None,
-                "imagePullPolicy": "Always"
+                "imagePullPolicy": "Always",
             }
         )
 
@@ -628,7 +602,7 @@ class MarsReplicationConfig(ReplicationConfig, abc.ABC):
         for vol in volumes or ():
             self.add_volume(vol)
 
-        self.add_labels({"mars/service-type": self.rc_name})
+        self.add_labels({"xorbits/service-type": self.rc_name})
 
     def add_default_envs(self):
         self.add_env("MARS_K8S_POD_NAME", field_path="metadata.name")
@@ -665,10 +639,10 @@ class MarsReplicationConfig(ReplicationConfig, abc.ABC):
         result = super().build()
         if self._kind in ("Deployment", "ReplicaSet"):
             result["spec"]["selector"] = {
-                "matchLabels": {"mars/service-type": self.rc_name}
+                "matchLabels": {"xorbits/service-type": self.rc_name}
             }
         else:
-            result["spec"]["selector"] = {"mars/service-type": self.rc_name}
+            result["spec"]["selector"] = {"xorbits/service-type": self.rc_name}
         return result
 
 
@@ -677,7 +651,7 @@ class MarsSupervisorsConfig(MarsReplicationConfig):
     Configuration builder for Mars supervisor service
     """
 
-    rc_name = "marssupervisor"
+    rc_name = "xorbitssupervisor"
 
     def __init__(self, *args, **kwargs):
         self._web_port = kwargs.pop("web_port", None)
@@ -708,7 +682,7 @@ class MarsWorkersConfig(MarsReplicationConfig):
     Configuration builder for Mars worker service
     """
 
-    rc_name = "marsworker"
+    rc_name = "xorbitsworker"
 
     def __init__(self, *args, **kwargs):
         spill_volumes = kwargs.pop("spill_volumes", None) or ()
@@ -745,7 +719,7 @@ class MarsWorkersConfig(MarsReplicationConfig):
 
         if mount_shm:
             self.add_volume(
-                EmptyDirVolumeConfig("mars-shared", "/dev/shm", size_limit=size_limit)
+                EmptyDirVolumeConfig("xorbits-shared", "/dev/shm", size_limit=size_limit)
             )
 
         if min_cache_mem:

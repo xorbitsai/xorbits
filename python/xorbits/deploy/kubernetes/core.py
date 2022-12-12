@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -110,6 +110,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         web_url = (
             f"http://{self._service_name}.{self._k8s_namespace}:{supervisor_web_port}"
         )
+        print(f'Get web cluster api: {web_url}')
         api = WebClusterAPI(web_url)
         return api
 
@@ -125,13 +126,14 @@ class K8SClusterBackend(AbstractClusterBackend):
             streamer = w.stream(
                 self._client.list_namespaced_endpoints,
                 namespace=self._k8s_namespace,
-                label_selector=f"mars/service-name={self._service_name}",
+                label_selector=f"xorbits/service-name={self._service_name}",
                 timeout_seconds=60,
             )
             while True:
                 try:
                     event = await next_in_thread(streamer)
                     obj_dict = event["object"].to_dict()
+                    print(f'Event {obj_dict}')
                     yield self._format_endpoint_query_result(obj_dict)
                 except (ReadTimeoutError, StopAsyncIteration):
                     break
@@ -201,7 +203,7 @@ class K8SClusterBackend(AbstractClusterBackend):
 class K8SServiceMixin:
     @staticmethod
     def write_pid_file():
-        with open("/tmp/mars-service.pid", "w") as pid_file:
+        with open("/tmp/xorbits-service.pid", "w") as pid_file:
             pid_file.write(str(os.getpid()))
 
     async def wait_all_supervisors_ready(self):
