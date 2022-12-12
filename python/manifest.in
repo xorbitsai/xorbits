@@ -1,0 +1,17 @@
+global-include *.pyx
+global-include *.pxd
+global-include xorbits/**/*.yml
+global-exclude *.c
+global-exclude *.cpp
+global-exclude */**/tests/*.yml
+global-exclude */**/node_modules/**/*
+include setup.cfg
+include pyproject.toml
+include xorbits/_mars/lib/mmh3_src/*
+include xorbits/ui/index.html
+include xorbits/ui/static/*
+include xorbits/_mars/deploy/oscar/file-logging.conf
+global-exclude .DS_Store
+include versioneer.py
+include xorbits/_version.py
+global-exclude conftest.py
