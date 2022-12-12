@@ -5,8 +5,12 @@ formats: []
 sphinx:
    configuration: doc/source/conf.py
 
+
+build:
+  tools:
+    python: "3.9"
+
 python:
-  version: "3.9"
   install:
     - requirements: doc/requirements-doc.txt
     - method: pip
