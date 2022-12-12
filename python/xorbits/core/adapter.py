@@ -244,16 +244,6 @@ def wrap_mars_callable(
         return wrapped
 
 
-_DATA_TYPE_TO_MARS_CLS: Dict[DataType, Tuple[Type]] = {
-    DataType.tensor: MARS_TENSOR_TYPE,
-    DataType.dataframe: MARS_DATAFRAME_TYPE,
-    DataType.series: MARS_SERIES_TYPE,
-    DataType.index: MARS_INDEX_TYPE,
-    DataType.dataframe_groupby: MARS_DATAFRAME_GROUPBY_TYPE,
-    DataType.series_groupby: MARS_SERIES_GROUPBY_TYPE,
-}
-
-
 def collect_cls_members(
     cls: Type,
     data_type: Optional[DataType] = None,
@@ -289,13 +279,8 @@ def collect_cls_members(
     return cls_members
 
 
-for _data_type in DataType:
-    DATA_MEMBERS[_data_type] = {}
-    for mars_cls in _DATA_TYPE_TO_MARS_CLS.get(_data_type, ()):
-        if mars_cls is not None:
-            DATA_MEMBERS[_data_type].update(
-                collect_cls_members(mars_cls, data_type=_data_type)
-            )
+def register_data_members(data_type: DataType, cls: Type):
+    DATA_MEMBERS[data_type].update(collect_cls_members(cls, data_type=data_type))
 
 
 def get_cls_members(data_type: DataType) -> Dict[str, Any]:

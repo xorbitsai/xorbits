@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from . import flatiter
 from .core import (
     MARS_TENSOR_CALLABLES,
@@ -21,3 +22,18 @@ from .core import (
     MARS_TENSOR_OBJECTS,
     MARS_TENSOR_RANDOM_CALLABLES,
 )
+
+
+def _install():
+    from ...core.adapter import (
+        MARS_TENSOR_TYPE,
+        register_data_members,
+        wrap_magic_method,
+    )
+    from ...core.data import DataRef, DataType
+
+    for method in MARS_TENSOR_MAGIC_METHODS:
+        setattr(DataRef, method, wrap_magic_method(method))
+
+    for cls in MARS_TENSOR_TYPE:
+        register_data_members(DataType.tensor, cls)

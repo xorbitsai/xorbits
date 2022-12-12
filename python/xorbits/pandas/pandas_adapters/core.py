@@ -194,19 +194,22 @@ def _collect_pandas_module_members() -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_DATAFRAME_CALLABLES
 
     module_methods: Dict[str, Any] = dict()
-    for name, cls_member in inspect.getmembers(pd):
-        if (
-            name not in MARS_DATAFRAME_CALLABLES
-            and inspect.isfunction(cls_member)
-            and not name.startswith("_")
-        ):
-            module_methods[name] = wrap_mars_callable(
-                wrap_pandas_module_method(name),
-                attach_docstring=True,
-                is_cls_member=False,
-                docstring_src_module=pd,
-                docstring_src=getattr(pd, name, None),
-            )
+    with warnings.catch_warnings():
+        # suppress warnings raised by pandas when import xorbits.pandas
+        warnings.simplefilter("ignore", FutureWarning)
+        for name, cls_member in inspect.getmembers(pd):
+            if (
+                name not in MARS_DATAFRAME_CALLABLES
+                and inspect.isfunction(cls_member)
+                and not name.startswith("_")
+            ):
+                module_methods[name] = wrap_mars_callable(
+                    wrap_pandas_module_method(name),
+                    attach_docstring=True,
+                    is_cls_member=False,
+                    docstring_src_module=pd,
+                    docstring_src=getattr(pd, name, None),
+                )
     return module_methods
 
 

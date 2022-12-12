@@ -14,3 +14,32 @@
 
 from . import loc
 from .core import MARS_DATAFRAME_CALLABLES, MARS_DATAFRAME_MAGIC_METHODS
+
+
+def _install():
+    from ...core.adapter import (
+        MARS_DATAFRAME_GROUPBY_TYPE,
+        MARS_DATAFRAME_TYPE,
+        MARS_INDEX_TYPE,
+        MARS_SERIES_GROUPBY_TYPE,
+        MARS_SERIES_TYPE,
+        register_data_members,
+        wrap_magic_method,
+    )
+    from ...core.data import DataRef, DataType
+    from .core import _register_execution_conditions
+
+    for method in MARS_DATAFRAME_MAGIC_METHODS:
+        setattr(DataRef, method, wrap_magic_method(method))
+
+    _register_execution_conditions()
+    for cls in MARS_DATAFRAME_TYPE:
+        register_data_members(DataType.dataframe, cls)
+    for cls in MARS_SERIES_TYPE:
+        register_data_members(DataType.series, cls)
+    for cls in MARS_INDEX_TYPE:
+        register_data_members(DataType.index, cls)
+    for cls in MARS_DATAFRAME_GROUPBY_TYPE:
+        register_data_members(DataType.dataframe_groupby, cls)
+    for cls in MARS_SERIES_GROUPBY_TYPE:
+        register_data_members(DataType.series_groupby, cls)

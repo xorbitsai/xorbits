@@ -34,14 +34,11 @@ def unimplemented_func():
 
 
 def _install():
-    from .pandas_adapters import install as install_pandas_methods
+    from .mars_adapters import _install as _install_mars_methods
+    from .pandas_adapters import _install as _install_pandas_methods
 
-    install_pandas_methods()
-
-
-_install()
-
-del _install
+    _install_mars_methods()
+    _install_pandas_methods()
 
 
 def __dir__():
