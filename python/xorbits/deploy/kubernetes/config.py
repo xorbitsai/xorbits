@@ -186,6 +186,96 @@ class ServiceConfig(KubeConfig):
         }
 
 
+class IngressConfig(KubeConfig):
+    api_version = "networking.k8s.io/v1"
+
+    def __init__(self, namespace: str, name: str, service_name: str, service_port: int, cluster_type: str):
+        self._namespace = namespace
+        self._name = name
+        self._service_name = service_name
+        self._service_port = service_port
+        self._cluster_type = cluster_type
+
+    def build(self):
+        # metadata = {
+        #     "name": self._name,
+        #     "namespace": self._namespace
+        # }
+        # spec = {}
+        # if self._cluster_type == "eks":
+        #     metadata["annotations"] = {
+        #         "alb.ingress.kubernetes.io/scheme": "internet-facing",
+        #         "alb.ingress.kubernetes.io/target-type": "ip"
+        #     }
+        #     spec["ingressClassName"] = "alb"
+        #
+        # spec["rules"] = [{
+        #     "http": {
+        #         "paths": [{
+        #             "path": "/",
+        #             "pathType": "Prefix",
+        #             "backend": {
+        #                 "service": {
+        #                     "name": self._service_name,
+        #                     "port": {
+        #                         "number": str(self._service_port)
+        #                     }
+        #                 }
+        #             }
+        #         }]
+        #     }
+        # }]
+        from kubernetes import client
+
+        annotations = None
+        ingress_cls_name = None
+        if self._cluster_type == "eks":
+            annotations = {
+                "alb.ingress.kubernetes.io/scheme": "internet-facing",
+                "alb.ingress.kubernetes.io/target-type": "ip"
+            }
+            ingress_cls_name = "alb"
+
+        body = client.V1Ingress(
+            api_version="networking.k8s.io/v1",
+            kind="Ingress",
+            metadata=client.V1ObjectMeta(
+                name=self._name,
+                namespace=self._namespace,
+                annotations=annotations
+            ),
+            spec=client.V1IngressSpec(
+                rules=[
+                    client.V1IngressRule(
+                        http=client.V1HTTPIngressRuleValue(
+                            paths=[client.V1HTTPIngressPath(
+                                path="/",
+                                path_type="Prefix",
+                                backend=client.V1IngressBackend(
+                                    service=client.V1IngressServiceBackend(
+                                        name=self._service_name,
+                                        port=client.V1ServiceBackendPort(
+                                            number=self._service_port
+                                        )
+                                    )
+                                )
+                            )]
+                        )
+                    )
+                ],
+                ingress_class_name=ingress_cls_name
+            )
+        )
+
+        # return {
+        #     "apiVersion": "networking.k8s.io/v1",
+        #     "kind": "Ingress",
+        #     "metadata": metadata,
+        #     "spec": spec
+        # }
+        return body
+
+
 class ResourceConfig:
     """
     Configuration builder for Kubernetes computation resources

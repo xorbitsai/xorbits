@@ -33,7 +33,7 @@ from .config import (
     RoleBindingConfig,
     ServiceConfig,
     MarsSupervisorsConfig,
-    MarsWorkersConfig,
+    MarsWorkersConfig, IngressConfig,
 )
 
 try:
@@ -66,7 +66,7 @@ class KubernetesClusterClient:
         try:
             self._endpoint = self._cluster.start()
             self._session = new_session(self._endpoint)
-            init(self._endpoint)
+            # init(self._endpoint)
         except:  # noqa: E722  # nosec  # pylint: disable=bare-except
             self.stop()
             raise
@@ -102,15 +102,19 @@ class KubernetesCluster:
         service_name=None,
         service_type=None,
         timeout=None,
+        cluster_type="minikube",
         **kwargs,
     ):
         from kubernetes import client as kube_client
 
         if worker_cpu is None or worker_mem is None:  # pragma: no cover
             raise TypeError("`worker_cpu` and `worker_mem` must be specified")
+        if cluster_type not in ["minikube", "eks"]:
+            raise ValueError("`cluster_type` must be `minikube` or `eks`")
 
         self._api_client = kube_api_client
         self._core_api = kube_client.CoreV1Api(kube_api_client)
+        self._networking_api = kube_client.NetworkingV1Api(self._api_client)
 
         self._namespace = namespace
         self._image = image
@@ -120,6 +124,8 @@ class KubernetesCluster:
         self._extra_volumes = kwargs.pop("extra_volumes", ())
         self._pre_stop_command = kwargs.pop("pre_stop_command", None)
         self._log_when_fail = kwargs.pop("log_when_fail", False)
+        self._cluster_type = cluster_type
+        self._ingress_name = "xorbits-ingress"
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -319,6 +325,35 @@ class KubernetesCluster:
         if self._timeout is not None:  # pragma: no branch
             self._timeout -= time.time() - start_time
 
+    def _create_ingress(self):
+        self._networking_api.create_namespaced_ingress(
+            self._namespace,
+            IngressConfig(
+                self._namespace,
+                self._ingress_name,
+                self._service_name,
+                self._web_port,
+                self._cluster_type
+            ).build()
+        )
+
+    def _get_ingress_address(self):
+        from kubernetes import watch
+        w = watch.Watch()
+        for event in w.stream(
+                func=self._networking_api.list_namespaced_ingress, namespace=self._namespace):
+            if event["object"].kind == "Ingress" and \
+                    event["object"].status.load_balancer.ingress is not None and \
+                    len(event["object"].status.load_balancer.ingress) > 0:
+                ip = event["object"].status.load_balancer.ingress[0].ip
+                return f"http://{ip}:80"
+        # ingress = self._networking_api.read_namespaced_ingress(
+        #     self._ingress_name, self._namespace
+        # )
+        # print(ingress.to_dict())
+        # ingress = ingress.status.load_balancer.ingress[0]
+        # return f"http://{ingress.ip}:{ingress.port}"
+
     def _get_web_address(self):
         svc_data = self._core_api.read_namespaced_service(
             "xorbits-service", self._namespace
@@ -385,7 +420,10 @@ class KubernetesCluster:
 
             self._wait_services_ready()
 
-            self._external_web_endpoint = self._get_web_address()
+            self._create_ingress()
+
+            self._external_web_endpoint = self._get_ingress_address()
+            print(self._external_web_endpoint)
             self._wait_web_ready()
             return self._external_web_endpoint
         except:  # noqa: E722
@@ -438,6 +476,7 @@ def new_cluster(
     web_mem=None,
     service_type=None,
     timeout=None,
+    cluster_type="minikube",
     **kwargs,
 ):
     """
@@ -457,6 +496,7 @@ def new_cluster(
     :param web_mem: Memory size for every web service
     :param service_type: Type of Kubernetes Service, currently only ``NodePort`` supported
     :param timeout: Timeout when creating clusters
+    :param cluster_type: K8s Cluster type, ``minikube`` or ``eks`` supported
     """
     cluster_cls = kwargs.pop("cluster_cls", KubernetesCluster)
     cluster = cluster_cls(
@@ -476,6 +516,7 @@ def new_cluster(
         web_mem=web_mem,
         service_type=service_type,
         timeout=timeout,
+        cluster_type=cluster_type,
         **kwargs,
     )
     client = KubernetesClusterClient(cluster)
