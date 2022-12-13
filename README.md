@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/xprobe-inc/xorbits/main/doc/source/_static/xorbits.svg"><br>
+  <img width="77%" alt="" src="https://raw.githubusercontent.com/xprobe-inc/xorbits/main/doc/source/_static/xorbits.svg"><br>
 </div>
 
 # Xorbits: scalable Python data science, familiar & fast.
