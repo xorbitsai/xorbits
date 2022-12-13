@@ -13,3 +13,4 @@
 # limitations under the License.
 
 from .data import Data, DataRef, DataRefMeta, DataType
+from .execution import run

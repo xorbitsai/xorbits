@@ -34,7 +34,7 @@ def load_lineitem(
     df["L_SHIPDATE"] = xd.to_datetime(df.L_SHIPDATE, format="%Y-%m-%d")
     df["L_RECEIPTDATE"] = xd.to_datetime(df.L_RECEIPTDATE, format="%Y-%m-%d")
     df["L_COMMITDATE"] = xd.to_datetime(df.L_COMMITDATE, format="%Y-%m-%d")
-    return df.execute()
+    return df
 
 
 @functools.lru_cache
@@ -45,7 +45,7 @@ def load_part(
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    return df.execute()
+    return df
 
 
 @functools.lru_cache
@@ -57,7 +57,7 @@ def load_orders(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
     df["O_ORDERDATE"] = xd.to_datetime(df.O_ORDERDATE, format="%Y-%m-%d")
-    return df.execute()
+    return df
 
 
 @functools.lru_cache
@@ -68,7 +68,7 @@ def load_customer(
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    return df.execute()
+    return df
 
 
 @functools.lru_cache
@@ -79,7 +79,7 @@ def load_nation(
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    return df.execute()
+    return df
 
 
 @functools.lru_cache
@@ -90,7 +90,7 @@ def load_region(
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    return df.execute()
+    return df
 
 
 @functools.lru_cache
@@ -101,7 +101,7 @@ def load_supplier(
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    return df.execute()
+    return df
 
 
 @functools.lru_cache
@@ -112,7 +112,7 @@ def load_partsupp(
     df = xd.read_parquet(
         data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
     )
-    return df.execute()
+    return df
 
 
 def timethis(q: Callable):
@@ -1040,13 +1040,16 @@ def run_queries(
     total_start = time.time()
     print("Start data loading")
     queries_to_args = dict()
+    datasets_to_load = set()
     for query in queries:
         args = []
         for dataset in _query_to_datasets[query]:
             args.append(
                 globals()[f"load_{dataset}"](root, use_arrow_dtype, **storage_options)
             )
+            datasets_to_load.update(args)
         queries_to_args[query] = args
+    xorbits.run(list(datasets_to_load))
     print(f"Data loading time (s): {time.time() - total_start}")
 
     total_start = time.time()

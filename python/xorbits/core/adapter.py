@@ -178,9 +178,9 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
         conditions = _MARS_CLS_TO_EXECUTION_CONDITION[type(mars_entity).__name__]
         for cond in conditions:
             if cond(mars_entity):
-                from .execution import execute
+                from .execution import run
 
-                execute(inp)
+                run(inp)
         return mars_entity
     elif hasattr(inp, "_mars_obj"):
         # converters.
