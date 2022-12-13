@@ -19,8 +19,8 @@ from ..config import (
     RoleBindingConfig,
     ServiceConfig,
     EmptyDirVolumeConfig,
-    MarsSupervisorsConfig,
-    MarsWorkersConfig,
+    XorbitsSupervisorsConfig,
+    XorbitsWorkersConfig,
 )
 
 
@@ -46,13 +46,13 @@ def test_simple_objects():
 
 
 def test_supervisor_object():
-    supervisor_config = MarsSupervisorsConfig(
+    supervisor_config = XorbitsSupervisorsConfig(
         1, cpu=2, memory="10g", limit_resources=False, modules=["xorbits.test_mod"]
     )
     supervisor_config.add_simple_envs(dict(TEST_ENV="test_val"))
 
     supervisor_config_dict = supervisor_config.build()
-    assert supervisor_config_dict["metadata"]["name"] == "xorbits-supervisor"
+    assert supervisor_config_dict["metadata"]["name"] == "xorbitssupervisor"
     assert supervisor_config_dict["spec"]["replicas"] == 1
 
     container_dict = supervisor_config_dict["spec"]["template"]["spec"]["containers"][0]
@@ -67,7 +67,7 @@ def test_supervisor_object():
 
 
 def test_worker_object():
-    worker_config_dict = MarsWorkersConfig(
+    worker_config_dict = XorbitsWorkersConfig(
         4,
         cpu=2,
         memory=10 * 1024**3,
@@ -82,7 +82,7 @@ def test_worker_object():
         modules="xorbits.test_mod",
         mount_shm=True,
     ).build()
-    assert worker_config_dict["metadata"]["name"] == "xorbits-worker"
+    assert worker_config_dict["metadata"]["name"] == "xorbitsworker"
     assert worker_config_dict["spec"]["replicas"] == 4
 
     container_dict = worker_config_dict["spec"]["template"]["spec"]["containers"][0]
@@ -109,7 +109,7 @@ def test_worker_object():
     assert volume_mounts["empty-dir"]["mountPath"] == "/tmp/empty"
     assert volume_mounts["host-path-vol-0"]["mountPath"] == "/mnt/hostpath0"
 
-    worker_config_dict = MarsWorkersConfig(
+    worker_config_dict = XorbitsWorkersConfig(
         4,
         cpu=2,
         memory=10 * 1024**3,

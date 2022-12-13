@@ -543,9 +543,9 @@ class ReplicationConfig(KubeConfig):
         }
 
 
-class MarsReplicationConfig(ReplicationConfig, abc.ABC):
+class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
     """
-    Base configuration builder for replication controllers for Mars
+    Base configuration builder for replication controllers for Xorbits
     """
 
     rc_name = None
@@ -645,9 +645,9 @@ class MarsReplicationConfig(ReplicationConfig, abc.ABC):
         return result
 
 
-class MarsSupervisorsConfig(MarsReplicationConfig):
+class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
     """
-    Configuration builder for Mars supervisor service
+    Configuration builder for Xorbits supervisor service
     """
 
     rc_name = "xorbitssupervisor"
@@ -676,9 +676,9 @@ class MarsSupervisorsConfig(MarsReplicationConfig):
         return cmd
 
 
-class MarsWorkersConfig(MarsReplicationConfig):
+class XorbitsWorkersConfig(XorbitsReplicationConfig):
     """
-    Configuration builder for Mars worker service
+    Configuration builder for Xorbits worker service
     """
 
     rc_name = "xorbitsworker"

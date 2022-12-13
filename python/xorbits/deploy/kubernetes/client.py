@@ -31,8 +31,8 @@ from .config import (
     RoleConfig,
     RoleBindingConfig,
     ServiceConfig,
-    MarsSupervisorsConfig,
-    MarsWorkersConfig,
+    XorbitsSupervisorsConfig,
+    XorbitsWorkersConfig,
     IngressConfig,
 )
 
@@ -75,8 +75,8 @@ class KubernetesClusterClient:
 
 
 class KubernetesCluster:
-    _supervisor_config_cls = MarsSupervisorsConfig
-    _worker_config_cls = MarsWorkersConfig
+    _supervisor_config_cls = XorbitsSupervisorsConfig
+    _worker_config_cls = XorbitsWorkersConfig
     _default_service_port = 7103
     _default_web_port = 7104
 
@@ -213,7 +213,7 @@ class KubernetesCluster:
             self._service_name,
             service_type="NodePort",
             port=self._web_port,
-            selector={"xorbits/service-type": MarsSupervisorsConfig.rc_name},
+            selector={"xorbits/service-type": XorbitsSupervisorsConfig.rc_name},
         )
         self._core_api.create_namespaced_service(
             self._namespace, service_config.build()
@@ -309,8 +309,8 @@ class KubernetesCluster:
         min_worker_num = int(self._min_worker_num or self._worker_num)
         limits = [self._supervisor_num, min_worker_num]
         selectors = [
-            "xorbits/service-type=" + MarsSupervisorsConfig.rc_name,
-            "xorbits/service-type=" + MarsWorkersConfig.rc_name,
+            "xorbits/service-type=" + XorbitsSupervisorsConfig.rc_name,
+            "xorbits/service-type=" + XorbitsWorkersConfig.rc_name,
         ]
         start_time = time.time()
         logger.debug("Start waiting pods to be ready")
@@ -374,7 +374,7 @@ class KubernetesCluster:
         else:
             web_pods = self._core_api.list_namespaced_pod(
                 self._namespace,
-                label_selector="xorbits/service-type=" + MarsSupervisorsConfig.rc_name,
+                label_selector="xorbits/service-type=" + XorbitsSupervisorsConfig.rc_name,
             ).to_dict()
             host_ip = random.choice(web_pods["items"])["status"]["host_ip"]
         return f"http://{host_ip}:{node_port}"

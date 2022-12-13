@@ -25,7 +25,7 @@ from ..._mars.services.cluster.backends import (
 )
 from ..._mars.services.cluster.core import NodeRole
 from ..._mars.deploy.utils import wait_all_supervisors_ready, next_in_thread
-from .config import MarsReplicationConfig
+from .config import XorbitsReplicationConfig
 
 logger = logging.getLogger(__name__)
 RetType = TypeVar("RetType")
@@ -212,7 +212,7 @@ class K8SServiceMixin:
 
     async def start_readiness_server(self):
         readiness_port = os.environ.get(
-            "MARS_K8S_READINESS_PORT", MarsReplicationConfig.default_readiness_port
+            "MARS_K8S_READINESS_PORT", XorbitsReplicationConfig.default_readiness_port
         )
         self._readiness_server = await asyncio.start_server(
             lambda r, w: None, port=readiness_port
