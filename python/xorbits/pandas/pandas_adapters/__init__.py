@@ -15,7 +15,7 @@
 from .core import PANDAS_MODULE_METHODS
 
 
-def install():
+def _install():
     from .core import _collect_pandas_dataframe_members
 
     _collect_pandas_dataframe_members()

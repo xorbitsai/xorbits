@@ -66,6 +66,13 @@ from numpy import (
 )
 from numpy.lib.index_tricks import ndindex
 
+
+def _install():
+    from .mars_adapters import _install as _install_mars_adapters
+
+    _install_mars_adapters()
+
+
 try:
     import warnings
 

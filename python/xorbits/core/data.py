@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections import defaultdict
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List
 
@@ -31,7 +32,7 @@ class DataType(Enum):
     series_groupby = 9
 
 
-DATA_MEMBERS: Dict[DataType, Dict[str, Any]] = dict()
+DATA_MEMBERS: Dict[DataType, Dict[str, Any]] = defaultdict(dict)
 
 
 class Data:

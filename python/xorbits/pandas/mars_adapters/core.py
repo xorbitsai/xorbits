@@ -121,9 +121,6 @@ def _register_execution_conditions() -> None:
     )
 
 
-_register_execution_conditions()
-
-
 class MarsGetAttrProxy:
     def __init__(self, obj: Any):
         self._mars_obj = to_mars(obj)

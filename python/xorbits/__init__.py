@@ -13,8 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from . import _version
 from .deploy import init, shutdown
+
+
+def _install():
+    from .numpy import _install as _install_numpy
+    from .pandas import _install as _install_pandas
+
+    _install_pandas()
+    _install_numpy()
+
+
+_install()
+del _install
+
 
 __version__ = _version.get_versions()["version"]
 
