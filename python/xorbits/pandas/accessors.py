@@ -11,10 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from typing import Union
 
 import pandas
 
+from ..core import DataRef
 from ..core.adapter import (
     MarsDatetimeAccessor,
     MarsStringAccessor,
@@ -27,8 +28,13 @@ from .mars_adapters.core import MarsGetAttrProxy, install_members
 
 @register_converter(from_cls_list=[MarsStringAccessor])
 class StringAccessor(MarsGetAttrProxy):
-    def __init__(self, series):
-        super().__init__(MarsStringAccessor(to_mars(series)))
+    def __init__(self, obj: Union[DataRef, MarsStringAccessor]):
+        if isinstance(obj, MarsStringAccessor):
+            # when the owner of the accessor being xorbits.core.data.Data.
+            super().__init__(obj)
+        elif isinstance(obj, DataRef):
+            # when the owner of the accessor being xorbits.pandas.core.Series.
+            super().__init__(MarsStringAccessor(to_mars(obj)))
 
 
 install_members(
@@ -44,8 +50,13 @@ attach_module_callable_docstring(
 
 @register_converter(from_cls_list=[MarsDatetimeAccessor])
 class DatetimeAccessor(MarsGetAttrProxy):
-    def __init__(self, series):
-        super().__init__(MarsDatetimeAccessor(to_mars(series)))
+    def __init__(self, obj: Union[DataRef, MarsDatetimeAccessor]):
+        if isinstance(obj, MarsDatetimeAccessor):
+            # when the owner of the accessor being xorbits.core.data.Data.
+            super().__init__(obj)
+        elif isinstance(obj, DataRef):
+            # when the owner of the accessor being xorbits.pandas.core.Series.
+            super().__init__(MarsDatetimeAccessor(to_mars(obj)))
 
 
 install_members(
