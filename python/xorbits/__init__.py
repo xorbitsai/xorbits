@@ -15,6 +15,7 @@
 
 
 from . import _version
+from .core import run
 from .deploy import init, shutdown
 
 

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from ...pandas import get_dummies
-from ..execution import need_to_execute
+from ..execution import need_to_execute, run
 
 
 def test_deferred_execution_repr(setup, dummy_df):
@@ -75,3 +75,14 @@ def test_deferred_execution_groupby_apply(setup, dummy_df):
     s = str(groupby_applied)
     assert not need_to_execute(groupby_applied)
     assert s == str(groupby_applied.to_pandas())
+
+
+def test_manual_execution(setup, dummy_int_series):
+    assert need_to_execute(dummy_int_series)
+    run(dummy_int_series)
+    assert not need_to_execute(dummy_int_series)
+
+    series_to_execute = [dummy_int_series + i for i in range(3)]
+    assert all([need_to_execute(ref) for ref in series_to_execute])
+    run(series_to_execute)
+    assert not any([need_to_execute(ref) for ref in series_to_execute])

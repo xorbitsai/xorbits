@@ -163,13 +163,13 @@ class DataRef(metaclass=DataRefMeta):
             self.data.__setattr__(key, value)
 
     def __str__(self):
-        from .execution import execute
+        from .execution import run
 
-        execute(self)
+        run(self)
         return self.data.__str__()
 
     def __repr__(self):
-        from .execution import execute
+        from .execution import run
 
-        execute(self)
+        run(self)
         return self.data.__repr__()

@@ -12,29 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .adapter import mars_execute
+from typing import List, Tuple, Union
+
+from .adapter import MarsEntity, mars_execute
 from .data import DataRef
 
 
-def execute(ref: DataRef):
-    if need_to_execute(ref):
-        mars_entity = getattr(ref.data, "_mars_entity", None)
-        if mars_entity is not None:
-            mars_execute(mars_entity)
-        else:  # pragma: no cover
-            raise NotImplementedError(
-                f"Unable to execute an instance of {type(ref).__name__} "
-            )
-
-
-def need_to_execute(ref: DataRef):
+def _get_mars_entity(ref: DataRef) -> MarsEntity:
     mars_entity = getattr(ref.data, "_mars_entity", None)
     if mars_entity is not None:
-        return (
-            hasattr(mars_entity, "_executed_sessions")
-            and len(getattr(mars_entity, "_executed_sessions")) == 0
-        )
+        return mars_entity
     else:  # pragma: no cover
         raise NotImplementedError(
             f"Unable to execute an instance of {type(ref).__name__} "
         )
+
+
+def run(obj: Union[DataRef, List[DataRef], Tuple[DataRef]]) -> None:
+    """
+    Manually trigger execution.
+
+    Parameters
+    ----------
+    obj : DataRef or collection of DataRefs
+        DataRef or collection of DataRefs to execute.
+    """
+    if isinstance(obj, DataRef):
+        if need_to_execute(obj):
+            mars_execute(_get_mars_entity(obj))
+    else:
+        refs_to_execute = [_get_mars_entity(ref) for ref in obj if need_to_execute(ref)]
+        mars_execute(refs_to_execute)
+
+
+def need_to_execute(ref: DataRef):
+    mars_entity = _get_mars_entity(ref)
+    return (
+        hasattr(mars_entity, "_executed_sessions")
+        and len(getattr(mars_entity, "_executed_sessions")) == 0
+    )
