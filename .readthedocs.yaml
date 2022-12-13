@@ -1,13 +1,20 @@
 version: 2
-formats: []
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
    configuration: doc/source/conf.py
 
+build:
+  os: ubuntu-20.04
+  tools:
+    python: "3.9"
+
 python:
-  version: "3.9"
   install:
     - requirements: doc/requirements-doc.txt
     - method: pip
       path: python
+
+submodules:
+  include: all
+  recursive: true
