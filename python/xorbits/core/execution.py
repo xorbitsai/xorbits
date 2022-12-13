@@ -42,7 +42,8 @@ def run(obj: Union[DataRef, List[DataRef], Tuple[DataRef]]) -> None:
             mars_execute(_get_mars_entity(obj))
     else:
         refs_to_execute = [_get_mars_entity(ref) for ref in obj if need_to_execute(ref)]
-        mars_execute(refs_to_execute)
+        if refs_to_execute:
+            mars_execute(refs_to_execute)
 
 
 def need_to_execute(ref: DataRef):
