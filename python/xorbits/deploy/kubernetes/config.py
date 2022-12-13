@@ -17,6 +17,7 @@ import abc
 import functools
 import math
 import re
+import uuid
 
 from ..._mars import __version__ as mars_version
 from ..._mars.utils import parse_readable_size, calc_size_by_str
@@ -208,12 +209,15 @@ class IngressConfig(KubeConfig):
 
         annotations = None
         ingress_cls_name = None
+        host = None
         if self._cluster_type == "eks":
             annotations = {
                 "alb.ingress.kubernetes.io/scheme": "internet-facing",
                 "alb.ingress.kubernetes.io/target-type": "ip",
             }
             ingress_cls_name = "alb"
+        else:
+            host = "xorbits-ingress-" + str(uuid.uuid4().hex)
 
         body = client.V1Ingress(
             api_version="networking.k8s.io/v1",
@@ -224,6 +228,7 @@ class IngressConfig(KubeConfig):
             spec=client.V1IngressSpec(
                 rules=[
                     client.V1IngressRule(
+                        host=host,
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(
