@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/xprobe-inc/xorbits/main/doc/source/_static/xorbits.png"><br>
+  <img src="https://raw.githubusercontent.com/xprobe-inc/xorbits/main/doc/source/_static/xorbits.svg"><br>
 </div>
 
 # Xorbits: scalable Python data science, familiar & fast.
@@ -10,8 +10,8 @@
 
 ## What is it?
 Xorbits is a scalable Python data science framework that aims to **scale the whole Python data science world,
-including numpy, pandas, scikit-learn and many other libraries**. It can leverage the multi-cores or GPUs to 
-accelerate computation on a single machine, or scale to up to thousands of machines to support processing 
+including numpy, pandas, scikit-learn and many other libraries**. It can leverage multi cores or GPUs to 
+accelerate computation on a single machine, or scale out up to thousands of machines to support processing 
 terabytes of data. In our benchmark test, **Xorbits is the fastest framework among 
 the most popular distributed data science frameworks**.
 
@@ -27,23 +27,6 @@ Package Index (PyPI)](https://pypi.org/project/xorbits).
 ```shell
 # PyPI
 pip install xorbits
-```
-
-Deploy to bare metal machines is dead easy as well. Ensure xorbits is installed on each machine,
-then
-
-For supervisor which schedules tasks to workers.
-
-```shell
-# for supervisor
-python -m xorbits.supervisor -H <host_name> -p <supervisor_port> -w <web_port>
-```
-
-For workers which run actual computatins.
-
-```shell
-# for worker
-python -m xorbits.worker -H <host_name> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
 ```
 
 ## API compatibility
@@ -105,10 +88,28 @@ replace `import pandas` with `import xorbits.pandas` will just work,
 so does numpy and so forth.
 
 ## Lightning fast speed
-Xorbits is fastest compared to other popular frameworks.
+Xorbits is the fastest compared to other popular frameworks.
 
 We did a benchmark for TPC-H at scale factor 100 and 1000. 
-The performance showed as below.
+The performances are shown as below.
+
+## Deployment
+Deploy to bare metal machines is dead easy as well. Ensure xorbits is installed on each machine,
+then:
+
+For supervisor which schedules tasks to workers.
+
+```shell
+# for supervisor
+python -m xorbits.supervisor -H <host_name> -p <supervisor_port> -w <web_port>
+```
+
+For workers which run actual computations.
+
+```shell
+# for worker
+python -m xorbits.worker -H <host_name> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
+```
 
 ## License
 [Apache 2](LICENSE)
