@@ -150,7 +150,7 @@ def _start_kube_cluster(use_test_docker_file=True, **kwargs):
     _load_docker_env()
     image_name = _build_docker_images(use_test_docker_file=use_test_docker_file)
 
-    temp_spill_dir = tempfile.mkdtemp(prefix="test-mars-k8s-")
+    temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s_config.new_client_from_config()
     kube_api = k8s_client.CoreV1Api(api_client)
 
@@ -158,7 +158,7 @@ def _start_kube_cluster(use_test_docker_file=True, **kwargs):
     try:
         if use_test_docker_file:
             extra_volumes = [
-                HostPathVolumeConfig("mars-src-path", "/mnt/mars", MARS_ROOT)
+                HostPathVolumeConfig("xorbits-src-path", "/mnt/xorbits", MARS_ROOT)
             ]
             pre_stop_command = ["rm", "/tmp/stopping.tmp"]
         else:
@@ -242,8 +242,8 @@ def test_run_in_kubernetes(use_test_docker_file):
         extra_env={"MARS_K8S_GROUP_LABELS": "mars-test/group"},
         use_test_docker_file=use_test_docker_file,
     ):
-        a = mt.ones((100, 100), chunk_size=30) * 2 * 1 + 1
-        b = mt.ones((100, 100), chunk_size=20) * 2 * 1 + 1
+        a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
+        b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
         c = (a * b * 2 + 1).sum()
         r = c.execute().fetch()
 
@@ -266,7 +266,7 @@ def test_create_timeout():
 
     cluster = None
     try:
-        extra_vol_config = HostPathVolumeConfig("mars-src-path", "/mnt/mars", MARS_ROOT)
+        extra_vol_config = HostPathVolumeConfig("xorbits-src-path", "/mnt/xorbits", MARS_ROOT)
         with pytest.raises(TimeoutError):
             cluster = new_cluster(
                 api_client,
