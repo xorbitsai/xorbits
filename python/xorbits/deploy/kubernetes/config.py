@@ -56,7 +56,6 @@ class KubeConfig(abc.ABC):
     def create_namespaced(self, k8s_api_client, namespace):
         api = _get_k8s_api(self.api_version, k8s_api_client)
         config = self.build()
-        print(f'Config: {config}')
         method_name = f'create_namespaced_{_camel_to_underline(config["kind"])}'
         return getattr(api, method_name)(namespace, config)
 

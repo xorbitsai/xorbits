@@ -110,7 +110,6 @@ class K8SClusterBackend(AbstractClusterBackend):
         web_url = (
             f"http://{self._service_name}.{self._k8s_namespace}:{supervisor_web_port}"
         )
-        print(f'Get web cluster api: {web_url}')
         api = WebClusterAPI(web_url)
         return api
 
@@ -133,7 +132,6 @@ class K8SClusterBackend(AbstractClusterBackend):
                 try:
                     event = await next_in_thread(streamer)
                     obj_dict = event["object"].to_dict()
-                    print(f'Event {obj_dict}')
                     yield self._format_endpoint_query_result(obj_dict)
                 except (ReadTimeoutError, StopAsyncIteration):
                     break

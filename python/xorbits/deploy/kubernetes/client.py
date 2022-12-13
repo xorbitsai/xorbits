@@ -223,7 +223,6 @@ class KubernetesCluster:
         query = self._core_api.list_namespaced_pod(
             namespace=self._namespace, label_selector=label_selector
         ).to_dict()
-        print(query)
         cnt = 0
         for el in query["items"]:
             if el["status"]["phase"] in ("Error", "Failed"):
@@ -279,7 +278,6 @@ class KubernetesCluster:
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
-        print(f'Extra labels: {self._supervisor_extra_labels}')
         supervisors_config.create_namespaced(self._api_client, self._namespace)
 
     def _create_workers(self):
@@ -421,7 +419,6 @@ class KubernetesCluster:
 
             self._create_services()
             self._create_kube_service()
-            print(f'Create Service!')
 
             self._wait_services_ready()
 
