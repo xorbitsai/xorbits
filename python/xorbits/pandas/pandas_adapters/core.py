@@ -196,7 +196,19 @@ def _collect_pandas_module_members() -> Dict[str, Any]:
     module_methods: Dict[str, Any] = dict()
     with warnings.catch_warnings():
         # suppress warnings raised by pandas when import xorbits.pandas
-        warnings.simplefilter("ignore", FutureWarning)
+        warning_members = [
+            "pandas.Float64Index",
+            "pandas.Int64Index",
+            "pandas.UInt64Index",
+        ]
+        for m in warning_members:
+            warning_message = (
+                f"{m} is deprecated and will be removed from pandas in a future version. "
+                "Use pandas.Index with the appropriate dtype instead."
+            )
+            warnings.filterwarnings(
+                "ignore", category=FutureWarning, message=warning_message
+            )
         for name, cls_member in inspect.getmembers(pd):
             if (
                 name not in MARS_DATAFRAME_CALLABLES
