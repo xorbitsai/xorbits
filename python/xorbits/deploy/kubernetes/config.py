@@ -19,11 +19,10 @@ import math
 import re
 import uuid
 
-from ..._mars import __version__ as mars_version
+from ... import __version__
 from ..._mars.utils import parse_readable_size, calc_size_by_str
 
-# TODO
-DEFAULT_IMAGE = "xprobe/xorbits:" + "v0.1"
+DEFAULT_IMAGE = "xprobe/xorbits:v" + __version__
 DEFAULT_WORKER_CACHE_MEM = "40%"
 
 
