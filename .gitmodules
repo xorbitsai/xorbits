@@ -1,3 +1,3 @@
 [submodule "third_party/_mars"]
 	path = third_party/_mars
-	url = git@github.com:xprobe/mars.git
+	url = https://github.com/xprobe-inc/mars.git
