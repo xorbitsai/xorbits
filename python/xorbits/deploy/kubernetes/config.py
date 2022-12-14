@@ -17,12 +17,12 @@ import abc
 import functools
 import math
 import re
-import uuid
 
-from ... import __version__
+# from ... import __version__
 from ..._mars.utils import parse_readable_size, calc_size_by_str
 
-DEFAULT_IMAGE = "xprobe/xorbits:v" + __version__
+# TODO change to use __version__
+DEFAULT_IMAGE = "xprobe/xorbits:v" + "0.1"
 DEFAULT_WORKER_CACHE_MEM = "40%"
 
 
@@ -208,15 +208,12 @@ class IngressConfig(KubeConfig):
 
         annotations = None
         ingress_cls_name = None
-        host = None
         if self._cluster_type == "eks":
             annotations = {
                 "alb.ingress.kubernetes.io/scheme": "internet-facing",
                 "alb.ingress.kubernetes.io/target-type": "ip",
             }
             ingress_cls_name = "alb"
-        else:
-            host = "xorbits-ingress-" + str(uuid.uuid4().hex)
 
         body = client.V1Ingress(
             api_version="networking.k8s.io/v1",
@@ -227,7 +224,6 @@ class IngressConfig(KubeConfig):
             spec=client.V1IngressSpec(
                 rules=[
                     client.V1IngressRule(
-                        host=host,
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(
@@ -518,7 +514,6 @@ class ReplicationConfig(KubeConfig):
                 if self._readiness_probe
                 else None,
                 "lifecycle": lifecycle_dict or None,
-                "imagePullPolicy": "Always",
             }
         )
 
@@ -722,7 +717,9 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
 
         if mount_shm:
             self.add_volume(
-                EmptyDirVolumeConfig("xorbits-shared", "/dev/shm", size_limit=size_limit)
+                EmptyDirVolumeConfig(
+                    "xorbits-shared", "/dev/shm", size_limit=size_limit
+                )
             )
 
         if min_cache_mem:

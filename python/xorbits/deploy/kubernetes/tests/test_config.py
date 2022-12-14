@@ -40,7 +40,11 @@ def test_simple_objects():
     assert role_binding_config_dict["metadata"]["name"] == "xorbits-pod-reader-binding"
 
     service_config_dict = ServiceConfig(
-        "xorbits-test-service", "NodePort", "xorbits/service-type=xorbits-supervisor", 7103, 7103
+        "xorbits-test-service",
+        "NodePort",
+        "xorbits/service-type=xorbits-supervisor",
+        7103,
+        7103,
     ).build()
     assert service_config_dict["metadata"]["name"] == "xorbits-test-service"
 

@@ -21,23 +21,24 @@ import tempfile
 import uuid
 from contextlib import contextmanager
 from distutils.spawn import find_executable
+from typing import List
 
 import numpy as np
 import pytest
 
 from .... import numpy as xnp
-from ...._mars.tests.core import mock
 from .. import new_cluster
-from ..config import HostPathVolumeConfig
 
 try:
     from kubernetes import config as k8s_config, client as k8s_client
 except ImportError:
     k8s_client = k8s_config = None
 
-MARS_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(xnp.__file__)))
+XORBITS_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(xnp.__file__)))
+)
 TEST_ROOT = os.path.dirname(os.path.abspath(__file__))
-DOCKER_ROOT = os.path.join(os.path.dirname(TEST_ROOT), "docker")
+DOCKER_ROOT = os.path.join((os.path.dirname(os.path.dirname(TEST_ROOT))), "docker")
 
 kube_available = (
     find_executable("kubectl") is not None
@@ -47,7 +48,7 @@ kube_available = (
 
 
 def _collect_coverage():
-    dist_coverage_path = os.path.join(MARS_ROOT, ".dist-coverage")
+    dist_coverage_path = os.path.join(XORBITS_ROOT, ".dist-coverage")
     if os.path.exists(dist_coverage_path):
         # change ownership of coverage files
         if find_executable("sudo"):
@@ -76,43 +77,23 @@ def _collect_coverage():
         shutil.rmtree(dist_coverage_path)
 
 
-def _build_docker_images(use_test_docker_file=True):
-    image_name = "mars-test-image:" + uuid.uuid1().hex
+def _build_docker_images():
+    image_name = "xorbits-test-image:" + uuid.uuid1().hex
     try:
-        if use_test_docker_file:
-            proc = subprocess.Popen(
-                ["docker", "build", "-f", "Dockerfile.test", "-t", image_name, "."],
-                cwd=TEST_ROOT,
-            )
-        else:
-            proc = subprocess.Popen(
-                [
-                    "docker",
-                    "build",
-                    "-f",
-                    os.path.join(DOCKER_ROOT, "Dockerfile"),
-                    "-t",
-                    image_name,
-                    ".",
-                ],
-                cwd=MARS_ROOT,
-            )
+        proc = subprocess.Popen(
+            [
+                "docker",
+                "build",
+                "-f",
+                os.path.join(DOCKER_ROOT, "Dockerfile"),
+                "-t",
+                image_name,
+                ".",
+            ],
+            cwd=XORBITS_ROOT,
+        )
         if proc.wait() != 0:
             raise SystemError("Executing docker build failed.")
-
-        if use_test_docker_file:
-            proc = subprocess.Popen(
-                [
-                    "docker",
-                    "run",
-                    "-v",
-                    MARS_ROOT + ":/mnt/mars",
-                    image_name,
-                    "/srv/build_ext.sh",
-                ]
-            )
-            if proc.wait() != 0:
-                raise SystemError("Executing docker run failed.")
     except:  # noqa: E722
         _remove_docker_image(image_name)
         raise
@@ -126,6 +107,12 @@ def _remove_docker_image(image_name, raises=True):
     proc = subprocess.Popen(["docker", "rmi", "-f", image_name])
     if proc.wait() != 0 and raises:
         raise SystemError("Executing docker rmi failed.")
+
+
+def _run_command(commands: List[str]):
+    res = subprocess.run(commands, capture_output=True, check=True)
+    print(res.stdout)
+    print(res.stderr)
 
 
 def _load_docker_env():
@@ -144,11 +131,19 @@ def _load_docker_env():
         var, value = line.split("=", 1)
         os.environ[var] = value.strip('"')
 
+    # enable nginx ingress
+    _run_command(["minikube", "addons", "enable", "ingress"])
+
+
+def _load_image(image_name: str):
+    _run_command(["minikube", "image", "load", f"{image_name}"])
+
 
 @contextmanager
-def _start_kube_cluster(use_test_docker_file=True, **kwargs):
+def _start_kube_cluster(**kwargs):
     _load_docker_env()
-    image_name = _build_docker_images(use_test_docker_file=use_test_docker_file)
+    image_name = _build_docker_images()
+    _load_image(image_name)
 
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s_config.new_client_from_config()
@@ -156,21 +151,10 @@ def _start_kube_cluster(use_test_docker_file=True, **kwargs):
 
     cluster_client = None
     try:
-        if use_test_docker_file:
-            extra_volumes = [
-                HostPathVolumeConfig("xorbits-src-path", "/mnt/xorbits", MARS_ROOT)
-            ]
-            pre_stop_command = ["rm", "/tmp/stopping.tmp"]
-        else:
-            extra_volumes = []
-            pre_stop_command = None
-
         cluster_client = new_cluster(
             api_client,
             image=image_name,
             worker_spill_paths=[temp_spill_dir],
-            extra_volumes=extra_volumes,
-            pre_stop_command=pre_stop_command,
             timeout=600,
             log_when_fail=True,
             **kwargs,
@@ -197,26 +181,6 @@ def _start_kube_cluster(use_test_docker_file=True, **kwargs):
 
         yield
 
-        if use_test_docker_file:
-            # turn off service processes with grace to get coverage data
-            procs = []
-            pod_items = kube_api.list_namespaced_pod(cluster_client.namespace).to_dict()
-            for item in pod_items["items"]:
-                p = subprocess.Popen(
-                    [
-                        "kubectl",
-                        "exec",
-                        "-n",
-                        cluster_client.namespace,
-                        item["metadata"]["name"],
-                        "--",
-                        "/srv/graceful_stop.sh",
-                    ]
-                )
-                procs.append(p)
-            for p in procs:
-                p.wait()
-
         [p.terminate() for p in log_processes]
     finally:
         shutil.rmtree(temp_spill_dir)
@@ -229,56 +193,19 @@ def _start_kube_cluster(use_test_docker_file=True, **kwargs):
         _remove_docker_image(image_name, False)
 
 
-@pytest.mark.parametrize("use_test_docker_file", [True, False])
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-def test_run_in_kubernetes(use_test_docker_file):
+def test_run_in_kubernetes():
     with _start_kube_cluster(
         supervisor_cpu=0.5,
         supervisor_mem="1G",
         worker_cpu=0.5,
         worker_mem="1G",
         worker_cache_mem="64m",
-        extra_labels={"mars-test/group": "test-label-name"},
-        extra_env={"MARS_K8S_GROUP_LABELS": "mars-test/group"},
-        use_test_docker_file=use_test_docker_file,
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
         c = (a * b * 2 + 1).sum()
-        r = c.execute().fetch()
+        print(c)
 
         expected = (np.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
-        np.testing.assert_array_equal(r, expected.sum())
-
-
-@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@mock.patch(
-    "kubernetes.client.CoreV1Api.create_namespaced_replication_controller",
-    new=lambda *_, **__: None,
-)
-@mock.patch(
-    "kubernetes.client.AppsV1Api.create_namespaced_deployment",
-    new=lambda *_, **__: None,
-)
-def test_create_timeout():
-    _load_docker_env()
-    api_client = k8s_config.new_client_from_config()
-
-    cluster = None
-    try:
-        extra_vol_config = HostPathVolumeConfig("xorbits-src-path", "/mnt/xorbits", MARS_ROOT)
-        with pytest.raises(TimeoutError):
-            cluster = new_cluster(
-                api_client,
-                image="pseudo_image",
-                supervisor_cpu=0.5,
-                supervisor_mem="1G",
-                worker_cpu=0.5,
-                worker_mem="1G",
-                extra_volumes=[extra_vol_config],
-                timeout=1,
-            )
-    finally:
-        if cluster:
-            cluster.stop(wait=True)
-        _collect_coverage()
+        np.testing.assert_array_equal(c.to_numpy(), expected.sum())

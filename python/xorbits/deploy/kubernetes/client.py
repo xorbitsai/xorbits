@@ -258,7 +258,10 @@ class KubernetesCluster:
         )
         role_config.create_namespaced(self._api_client, self._namespace)
         role_binding_config = RoleBindingConfig(
-            "xorbits-pod-operator-binding", self._namespace, "xorbits-pod-operator", "default"
+            "xorbits-pod-operator-binding",
+            self._namespace,
+            "xorbits-pod-operator",
+            "default",
         )
         role_binding_config.create_namespaced(self._api_client, self._namespace)
 
@@ -374,7 +377,8 @@ class KubernetesCluster:
         else:
             web_pods = self._core_api.list_namespaced_pod(
                 self._namespace,
-                label_selector="xorbits/service-type=" + XorbitsSupervisorsConfig.rc_name,
+                label_selector="xorbits/service-type="
+                + XorbitsSupervisorsConfig.rc_name,
             ).to_dict()
             host_ip = random.choice(web_pods["items"])["status"]["host_ip"]
         return f"http://{host_ip}:{node_port}"
