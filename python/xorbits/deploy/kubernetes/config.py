@@ -432,6 +432,7 @@ class ReplicationConfig(KubeConfig):
         readiness_probe=None,
         pre_stop_command=None,
         kind=None,
+        **kwargs,
     ):
         self._name = name
         self._kind = kind or self._default_kind
@@ -451,6 +452,7 @@ class ReplicationConfig(KubeConfig):
         self._readiness_probe = readiness_probe
 
         self._pre_stop_command = pre_stop_command
+        self._use_local_image = kwargs.pop("use_local_image", False)
 
     @property
     def api_version(self):
@@ -515,6 +517,7 @@ class ReplicationConfig(KubeConfig):
                 if self._readiness_probe
                 else None,
                 "lifecycle": lifecycle_dict or None,
+                "imagePullPolicy": "Never" if self._use_local_image else None,
             }
         )
 

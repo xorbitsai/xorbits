@@ -125,6 +125,7 @@ class KubernetesCluster:
         self._log_when_fail = kwargs.pop("log_when_fail", False)
         self._cluster_type = cluster_type
         self._ingress_name = "xorbits-ingress"
+        self._use_local_image = kwargs.pop("use_local_image", False)
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -278,6 +279,7 @@ class KubernetesCluster:
             service_port=self._supervisor_service_port,
             web_port=self._web_port,
             pre_stop_command=self._pre_stop_command,
+            use_local_image=self._use_local_image,
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
@@ -299,6 +301,7 @@ class KubernetesCluster:
             service_port=self._worker_service_port,
             pre_stop_command=self._pre_stop_command,
             supervisor_web_port=self._web_port,
+            use_local_image=self._use_local_image,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)

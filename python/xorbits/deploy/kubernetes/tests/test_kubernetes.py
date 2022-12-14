@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import glob
+import logging
 import os
 import shutil
 import subprocess
@@ -21,7 +22,6 @@ import tempfile
 import uuid
 from contextlib import contextmanager
 from distutils.spawn import find_executable
-from typing import List
 
 import numpy as np
 import pytest
@@ -34,6 +34,8 @@ try:
     from kubernetes import config as k8s_config
 except ImportError:
     k8s_client = k8s_config = None
+
+logger = logging.getLogger(__name__)
 
 XORBITS_ROOT = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.dirname(xnp.__file__)))
@@ -110,12 +112,6 @@ def _remove_docker_image(image_name, raises=True):
         raise SystemError("Executing docker rmi failed.")
 
 
-def _run_command(commands: List[str]):
-    res = subprocess.run(commands, capture_output=True, check=True)
-    print(res.stdout)
-    print(res.stderr)
-
-
 def _load_docker_env():
     if os.path.exists("/var/run/docker.sock") or not shutil.which("minikube"):
         return
@@ -133,18 +129,17 @@ def _load_docker_env():
         os.environ[var] = value.strip('"')
 
     # enable nginx ingress
-    _run_command(["minikube", "addons", "enable", "ingress"])
-
-
-def _load_image(image_name: str):
-    _run_command(["minikube", "image", "load", f"{image_name}"])
+    ingress = subprocess.run(
+        ["minikube", "addons", "enable", "ingress"], capture_output=True, check=True
+    )
+    logger.info(f"Stdout for ingress enable: {ingress.stdout}")
+    logger.info(f"Stderr for ingress enable: {ingress.stderr}")
 
 
 @contextmanager
 def _start_kube_cluster(**kwargs):
     _load_docker_env()
     image_name = _build_docker_images()
-    _load_image(image_name)
 
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s_config.new_client_from_config()
@@ -202,6 +197,7 @@ def test_run_in_kubernetes():
         worker_cpu=0.5,
         worker_mem="1G",
         worker_cache_mem="64m",
+        use_local_image=True,
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
