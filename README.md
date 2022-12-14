@@ -140,6 +140,24 @@ Replace the `<supervisor_ip>` with the supervisor host name that you just specif
 ## Documentation
 The official documentation is hosted on: https://doc.xorbits.io
 
+## Roadmaps
+Main goals we want to achieve in the future include:
+
+* Transitioning from pandas native to arrow native for data storage,  
+  it will reduce the memory cost substantially and is more friendly for compute engine.
+* Introducing native engines that leverage technologies like vectorization and codegen 
+  to accelerate computations.
+* Scale as many libraries and algorithms as possible!
+
+More detailed roadmaps will be revealed soon, stay tuned!
+
+## Relationship with Mars
+Creators of xorbits are mainly from those of Mars, we built Xorbits currently on Mars 
+to reduce duplicated work, but the vision of Xorbits suggests that it's not 
+appropriate to put everything into Mars, instead, we need a new project 
+to support the roadmaps better. In the future, we will replace some core internal components 
+with other upcoming ones we will propose, stay tuned!
+
 ## Getting involved
 
 | Platform | Purpose |
