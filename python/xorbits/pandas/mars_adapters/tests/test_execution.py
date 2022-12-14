@@ -41,18 +41,32 @@ def test_on_dtypes_being_none(setup):
 
 def test_from_mars_execution_condition(setup, dummy_df, dummy_str_series):
     with tempfile.TemporaryDirectory() as tempdir:
-        # dataframe.
-        assert not need_to_execute(dummy_df.to_csv(os.path.join(tempdir, "frame.csv")))
-        assert not need_to_execute(dummy_df.to_parquet(os.path.join(tempdir)))
+        # dataframe to_csv.
+        csv_path = os.path.join(tempdir, "frame.csv")
+        assert not need_to_execute(dummy_df.to_csv(csv_path))
+        assert os.path.exists(csv_path)
+        # dataframe to_parquet.
+        parquet_path = os.path.join(tempdir, "frame.pq")
+        os.mkdir(parquet_path)
+        assert not need_to_execute(dummy_df.to_parquet(os.path.join(parquet_path)))
+        print(os.listdir(parquet_path))
+        assert os.path.exists(os.path.join(parquet_path, "0.parquet"))
+        # dataframe to_pickle.
+        pickle_path = os.path.join(tempdir, "frame.pkl")
         assert not need_to_execute(
             dummy_df.to_pickle(os.path.join(tempdir, "frame.pkl"))
         )
+        assert os.path.exists(pickle_path)
+        # dataframe to_json.
         assert not need_to_execute(dummy_df.to_json())
 
-        # series.
+        # series to_csv.
+        csv_path = os.path.join(tempdir, "frame.csv")
         assert not need_to_execute(
             dummy_str_series.to_csv(os.path.join(tempdir, "series.csv"))
         )
+        assert os.path.exists(csv_path)
+
         # TODO: series falling back methods not implemented yet.
         # assert not need_to_execute(dummy_str_series.to_pickle(os.path.join(tempdir, "series.pkl")))
         # assert not need_to_execute(dummy_str_series.to_json())
