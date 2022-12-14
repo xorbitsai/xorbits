@@ -152,7 +152,7 @@ class DataRefMeta(type):
         else:
             # for subclass like isintance(x, DataFrame),
             # check its data_type if match with cls
-            data_type = instance.data_type
+            data_type = instance.data.data_type
             try:
                 return data_type == SUB_CLASS_TO_DATA_TYPE[cls]
             except KeyError:
