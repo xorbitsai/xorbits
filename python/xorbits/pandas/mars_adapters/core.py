@@ -154,7 +154,8 @@ class MarsGetAttrProxy:
         self._mars_obj = to_mars(obj)
 
     def __getattr__(self, item):
-        attr = getattr(self._mars_obj, item)
+        mars_obj = object.__getattribute__(self, "_mars_obj")
+        attr = getattr(mars_obj, item)
         if attr is None:
             raise AttributeError(f"no attribute '{item}'")
         elif callable(attr):

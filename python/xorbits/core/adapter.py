@@ -294,18 +294,20 @@ def collect_cls_members(
                 docstring_src_cls=docstring_src_cls,
             )
         elif isinstance(cls_member, property):
-            from .utils.docstring import attach_cls_member_docstring
-
-            # no need to wrap the fget/fset method since this class member is purly for the doc
-            # generation.
-            attach_cls_member_docstring(
-                cls_member,
-                name,
-                data_type,
+            fget = cls_member.fget
+            if fget is None:
+                raise ValueError(f"property {name} does not have a valid fget method.")
+            c = wrap_mars_callable(
+                fget,
+                attach_docstring=True,
+                is_cls_member=True,
+                member_name=name,
+                data_type=data_type,
                 docstring_src_module=docstring_src_module,
                 docstring_src_cls=docstring_src_cls,
             )
-            cls_members[name] = cls_member
+            cls_members[name] = property(c)
+            cls_members[name].__doc__ = c.__doc__
 
     return cls_members
 
