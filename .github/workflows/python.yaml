@@ -135,9 +135,8 @@ jobs:
           --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
       working-directory: ./python
 
-    - name: Comment coverage
-      if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.python-version == '3.9') && (github.event_name == 'pull_request')}}
-      uses: orgoro/coverage@v3
+    - name: Report coverage data
+      uses: codecov/codecov-action@v3
       with:
-        coverageFile: python/coverage.xml
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.CODECOV_TOKEN }}
+        working-directory: ./python
