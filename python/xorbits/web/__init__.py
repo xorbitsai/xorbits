@@ -14,25 +14,8 @@
 # limitations under the License.
 
 
-from . import _version
-from .core import run
-from .deploy import init, shutdown
-
-
 def _install():
-    from .numpy import _install as _install_numpy
-    from .pandas import _install as _install_pandas
-    from .web import _install as _install_web
+    from .._mars.services.web.indexhandler import handlers
+    from .index_handler import XorbitsIndexHandler
 
-    _install_pandas()
-    _install_numpy()
-    _install_web()
-
-
-_install()
-del _install
-
-
-__version__ = _version.get_versions()["version"]
-
-__all__ = ["init", "shutdown"]
+    handlers["/"] = XorbitsIndexHandler

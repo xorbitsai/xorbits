@@ -16,7 +16,7 @@
 const path = require('path')
 
 module.exports = {
-  entry: './src/App.js',
+  entry: ['./src/App.js', './resources/favicon.svg'],
   mode: 'production',
   resolve: {
     extensions: ['*', '.js', '.jsx'],
@@ -25,7 +25,7 @@ module.exports = {
     path: path.resolve(__dirname, './static'),
     filename: 'bundle.js',
     publicPath: 'static/',
-    assetModuleFilename: 'resources/assets/images/[name].[ext]',
+    assetModuleFilename: 'resources/assets/images/[name][ext]',
   },
   module: {
     rules: [
