@@ -76,8 +76,8 @@ We did a benchmark for TPC-H at scale factor 100 and 1000. The performances are 
 Deployment
 ----------
 
-Locally
-~~~~~~~
+Local
+~~~~~
 
 On a single machine e.g. your laptop, optionally, you can initialize Xorbits on your own:
 

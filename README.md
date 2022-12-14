@@ -96,7 +96,7 @@ The performances are shown as below.
 
 ## Deployment
 
-### Locally
+### Local
 On a single machine e.g. your laptop, optionally, you can initialize Xorbits on your own:
 
 ```python
