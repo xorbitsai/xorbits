@@ -14,10 +14,9 @@
 
 import re
 
-from xorbits.core import DataRef
-
 from .... import pandas as xpd
 from .... import remote
+from ....core import DataRef
 
 
 def test_spawn(setup):

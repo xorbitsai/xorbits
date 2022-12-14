@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from xorbits.core.utils.docstring import (
+from ....core.utils.docstring import (
     add_arg_disclaimer,
     add_docstring_disclaimer,
     skip_doctest,

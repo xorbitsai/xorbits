@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from xorbits.core import DataRef
-
 from .... import numpy as np
+from ....core import DataRef
 
 
 def test_array_creation():
