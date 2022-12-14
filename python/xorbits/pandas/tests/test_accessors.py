@@ -16,22 +16,17 @@
 import pandas as pd
 
 from ... import pandas as xpd
-from ...core import DataRef
-from .. import Series
 
 
 def test_str_accessor(setup):
     # xs being a xorbits.pandas.core.Series instance
     s = pd.Series(["A_Str"])
     xs = xpd.Series(s)
-    assert isinstance(xs, Series)
     pd.testing.assert_series_equal(s.str.split("_"), xs.str.split("_").to_pandas())
 
     # xs being a xorbits.core.data.DataRef instance
     s = s + "_Series"
     xs = xs + "_Series"
-    assert not isinstance(xs, Series)
-    assert isinstance(xs, DataRef)
     pd.testing.assert_series_equal(s.str.split("_"), xs.str.split("_").to_pandas())
 
 
@@ -44,14 +39,11 @@ def test_dt_accessor(setup):
     )
     s = pd.Series(a)
     xs = xpd.Series(a)
-    assert isinstance(xs, Series)
     pd.testing.assert_series_equal(s.dt.year, xs.dt.year.to_pandas())
 
     # xs being a xorbits.core.data.DataRef instance
     s = pd.concat((s, s))
     xs = xpd.concat((xs, xs))
-    assert not isinstance(xs, Series)
-    assert isinstance(xs, DataRef)
     pd.testing.assert_series_equal(s.dt.year, xs.dt.year.to_pandas())
 
 
