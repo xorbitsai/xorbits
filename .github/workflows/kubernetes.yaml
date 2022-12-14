@@ -31,6 +31,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
+          activate-environment: test
 
       - name: Install python packages
         shell: bash
@@ -52,6 +53,7 @@ jobs:
       - name: Test with pytest
         shell: bash
         run: |
+          export PYTHONPATH="$PYTHONPATH:$(pwd):$(pwd)/python"
           export PYTEST_CONFIG_WITHOUT_COV="--log-level=DEBUG --timeout=1500 -W ignore::PendingDeprecationWarning"
           export PYTEST_CONFIG="$PYTEST_CONFIG_WITHOUT_COV --cov-config=python/setup.cfg --cov-report= --cov=python/xorbits/deploy"
           pytest $PYTEST_CONFIG python/xorbits/deploy/kubernetes
