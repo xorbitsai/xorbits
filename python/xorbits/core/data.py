@@ -85,11 +85,6 @@ class Data:
             raise NotImplementedError(f"Unsupported mars type {type(mars_entity)}")
         return Data(mars_entity=mars_entity, data_type=data_type)
 
-    def __getattr__(self, item: str):
-        from .adapter import MemberProxy
-
-        return MemberProxy.getattr(self.data_type, self._mars_entity, item)
-
     def __setattr__(self, key: str, value: Any):
         from .adapter import MemberProxy
 
@@ -171,7 +166,9 @@ class DataRef(metaclass=DataRefMeta):
         self.data = data
 
     def __getattr__(self, item):
-        return getattr(self.data, item)
+        from .adapter import MemberProxy
+
+        return MemberProxy.getattr(self, item)
 
     def __setattr__(self, key, value):
         if key in self.__fields:

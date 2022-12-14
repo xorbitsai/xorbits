@@ -27,12 +27,17 @@ def _install():
         wrap_magic_method,
     )
     from ...core.data import DataRef, DataType
-    from .core import _register_execution_conditions
+    from .core import (
+        _register_from_mars_execution_conditions,
+        _register_to_mars_execution_conditions,
+    )
 
     for method in MARS_DATAFRAME_MAGIC_METHODS:
         setattr(DataRef, method, wrap_magic_method(method))
 
-    _register_execution_conditions()
+    _register_to_mars_execution_conditions()
+    _register_from_mars_execution_conditions()
+
     for cls in MARS_DATAFRAME_TYPE:
         register_data_members(DataType.dataframe, cls)
     for cls in MARS_SERIES_TYPE:
