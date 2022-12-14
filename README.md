@@ -6,7 +6,8 @@
 [![PyPI Latest Release](https://img.shields.io/pypi/v/xorbits.svg?style=for-the-badge)](https://pypi.org/project/xorbits/)
 [![License](https://img.shields.io/pypi/l/xorbits.svg?style=for-the-badge)](https://github.com/xprobe-inc/xorbits/blob/main/LICENSE)
 [![Coverage](https://img.shields.io/codecov/c/github/xprobe-inc/xorbits?style=for-the-badge)](https://codecov.io/gh/xprobe-inc/xorbits)
-[![Slack](https://img.shields.io/badge/join_Slack-information-brightgreen.svg?logo=slack&style=for-the-badge)](https://slack.xorbits.io)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fxprobe-inc%2Fxorbits%2Fbadge%3Fref%3Dmain&style=for-the-badge&cacheSeconds=60)](https://actions-badge.atrox.dev/xprobe-inc/xorbits/goto?ref=main)
+[![Slack](https://img.shields.io/badge/join_Slack-781FF5.svg?logo=slack&style=for-the-badge)](https://slack.xorbits.io)
 
 ## What is it?
 Xorbits is a scalable Python data science framework that aims to **scale the whole Python data science world,
@@ -88,12 +89,24 @@ replace `import pandas` with `import xorbits.pandas` will just work,
 so does numpy and so forth.
 
 ## Lightning fast speed
-Xorbits is the fastest compared to other popular frameworks.
+Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
 
 We did a benchmark for TPC-H at scale factor 100 and 1000. 
 The performances are shown as below.
 
 ## Deployment
+
+### Locally
+On a single machine e.g. your laptop, optionally, you can initialize Xorbits on your own:
+
+```python
+import xorbits
+xorbits.init()
+```
+
+Or Xorbits will try to init for you when the first time some computation is triggered.
+
+### Bare metal
 Deploy to bare metal machines is dead easy as well. Ensure xorbits is installed on each machine,
 then:
 
@@ -111,6 +124,16 @@ For workers which run actual computations.
 python -m xorbits.worker -H <host_name> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
 ```
 
+Then connect to the supervisor anywhere that can run Python code.
+
+```python
+import xorbits
+xorbits.init("http://<supervisor_ip>:<supervisor_web_port>")
+```
+
+Replace the `<supervisor_ip>` with the supervisor host name that you just specified and 
+`<supervisor_web_port>` with the supervisor web port.
+
 ## License
 [Apache 2](LICENSE)
 
@@ -119,48 +142,10 @@ The official documentation is hosted on: https://doc.xorbits.io
 
 ## Getting involved
 
-<table>
-<tr>
-<td> Platform </td> <td> Purpose </td>
-</tr>
-<tr>
-<td>
-<a href="https://discuss.xorbits.io">Discourse Forum</a>
-</td>
-<td>
-Asking usage questions and discussing development.
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/xprobe-inc/xorbits/issues">Github Issues</a>
-</td>
-<td>
-Reporting bugs and filing feature requests.
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://slack.xorbits.io">Slack</a>
-</td>
-<td>
-Collaborating with other Xorbits users.
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://stackoverflow.com/questions/tagged/xorbits">StackOverflow</a>
-</td>
-<td>
-Asking questions about how to use Xorbits.
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://twitter.com/xorbits">Twitter</a>
-</td>
-<td>
-Staying up-to-date on new features.
-</td>
-</tr>
-</table>
+| Platform | Purpose |
+| --- | --- |
+| [Discourse Forum](https://discuss.xorbits.io) | Asking usage questions and discussing development. |
+| [Github Issues](https://github.com/xprobe-inc/xorbits/issues) | Reporting bugs and filing feature requests. |
+| [Slack](https://slack.xorbits.io) | Collaborating with other Xorbits users. |
+| [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits) | Asking questions about how to use Xorbits. |
+| [Twitter](https://twitter.com/xorbitsio) | Staying up-to-date on new features. |
