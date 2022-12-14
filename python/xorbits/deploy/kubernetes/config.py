@@ -17,9 +17,10 @@ import abc
 import functools
 import math
 import re
+from typing import Optional
 
 # from ... import __version__
-from ..._mars.utils import parse_readable_size, calc_size_by_str
+from ..._mars.utils import calc_size_by_str, parse_readable_size
 
 # TODO change to use __version__
 DEFAULT_IMAGE = "xprobe/xorbits:v" + "0.1"
@@ -547,7 +548,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
     Base configuration builder for replication controllers for Xorbits
     """
 
-    rc_name = None
+    rc_name: Optional[str] = None
     default_readiness_port = 15031
 
     def __init__(

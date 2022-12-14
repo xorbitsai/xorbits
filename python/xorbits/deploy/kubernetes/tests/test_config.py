@@ -14,11 +14,11 @@
 # limitations under the License.
 
 from ..config import (
-    NamespaceConfig,
-    RoleConfig,
-    RoleBindingConfig,
-    ServiceConfig,
     EmptyDirVolumeConfig,
+    NamespaceConfig,
+    RoleBindingConfig,
+    RoleConfig,
+    ServiceConfig,
     XorbitsSupervisorsConfig,
     XorbitsWorkersConfig,
 )

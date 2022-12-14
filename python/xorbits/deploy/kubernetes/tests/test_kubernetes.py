@@ -30,7 +30,8 @@ from .... import numpy as xnp
 from .. import new_cluster
 
 try:
-    from kubernetes import config as k8s_config, client as k8s_client
+    from kubernetes import client as k8s_client
+    from kubernetes import config as k8s_config
 except ImportError:
     k8s_client = k8s_config = None
 

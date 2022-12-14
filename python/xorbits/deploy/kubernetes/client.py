@@ -21,19 +21,19 @@ import time
 import uuid
 from urllib.parse import urlparse
 
+from ..._mars.deploy.utils import wait_services_ready
 from ..._mars.lib.aio import new_isolation, stop_isolation
 from ..._mars.services.cluster.api import WebClusterAPI
 from ..._mars.session import new_session
 from ..._mars.utils import calc_size_by_str
-from ..._mars.deploy.utils import wait_services_ready
 from .config import (
+    IngressConfig,
     NamespaceConfig,
-    RoleConfig,
     RoleBindingConfig,
+    RoleConfig,
     ServiceConfig,
     XorbitsSupervisorsConfig,
     XorbitsWorkersConfig,
-    IngressConfig,
 )
 
 try:
