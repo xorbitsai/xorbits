@@ -18,20 +18,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.9"]
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 0
+          submodules: recursive
 
-      - name: Install conda
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
         with:
-          auto-update-conda: true
-          python-version: ${{ matrix.python-version }}
-          activate-environment: test
+          python-version: "3.10"
 
       - name: Install python packages
         shell: bash
@@ -44,7 +42,7 @@ jobs:
           driver: none
         uses: medyagh/setup-minikube@master
 
-      - name: Install dependencies
+      - name: Install kubernetes dependencies
         shell: bash
         run: |
           python -m pip install kubernetes
@@ -54,6 +52,8 @@ jobs:
         shell: bash
         run: |
           export PYTHONPATH="$PYTHONPATH:$(pwd):$(pwd)/python"
+          echo $PYTHONPATH
+          python python/setup.py build_ext -i
           export PYTEST_CONFIG_WITHOUT_COV="--log-level=DEBUG --timeout=1500 -W ignore::PendingDeprecationWarning"
           export PYTEST_CONFIG="$PYTEST_CONFIG_WITHOUT_COV --cov-config=python/setup.cfg --cov-report= --cov=python/xorbits/deploy"
           pytest $PYTEST_CONFIG python/xorbits/deploy/kubernetes
