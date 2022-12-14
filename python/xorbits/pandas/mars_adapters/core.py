@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
 import inspect
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Callable, Dict, Set, Type
@@ -20,6 +21,7 @@ import pandas
 
 from ...core.adapter import (
     MARS_DATAFRAME_GROUPBY_TYPE,
+    MARS_DATAFRAME_OR_SERIES_TYPE,
     MARS_DATAFRAME_TYPE,
     MARS_SERIES_GROUPBY_TYPE,
     MARS_SERIES_TYPE,
@@ -35,6 +37,7 @@ from ...core.adapter import (
     to_mars,
     wrap_mars_callable,
 )
+from ...core.utils.docstring import attach_cls_member_docstring
 
 if TYPE_CHECKING:
     from ...core.adapter import MarsEntity
@@ -174,3 +177,25 @@ def install_members(
     )
     for name in members:
         setattr(cls, name, members[name])
+
+
+def wrap_user_defined_functions(c: Callable, member_name: str) -> Callable:
+    """
+    A function wrapper for user defined functions.
+    """
+
+    @functools.wraps(c)
+    def wrapped(*args, **kwargs):
+        new_args = to_mars(args)
+        new_kwargs = to_mars(kwargs)
+        try:
+            return from_mars(c(*new_args, **new_kwargs))
+        except (TypeError, ValueError):
+            # infer failed, add skip_infer=True manually
+            new_kwargs["skip_infer"] = True
+            ret = c(*new_args, **new_kwargs)
+            if isinstance(ret, MARS_DATAFRAME_OR_SERIES_TYPE):
+                ret = ret.ensure_data()
+            return from_mars(ret)
+
+    return attach_cls_member_docstring(wrapped, member_name)

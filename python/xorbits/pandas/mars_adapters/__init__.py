@@ -23,6 +23,10 @@ def _install():
         MARS_INDEX_TYPE,
         MARS_SERIES_GROUPBY_TYPE,
         MARS_SERIES_TYPE,
+        MarsDataFrame,
+        MarsDataFrameGroupBy,
+        MarsSeries,
+        collect_cls_members,
         register_data_members,
         wrap_magic_method,
     )
@@ -30,6 +34,7 @@ def _install():
     from .core import (
         _register_from_mars_execution_conditions,
         _register_to_mars_execution_conditions,
+        _register_execution_conditions
     )
 
     for method in MARS_DATAFRAME_MAGIC_METHODS:
@@ -39,12 +44,57 @@ def _install():
     _register_from_mars_execution_conditions()
 
     for cls in MARS_DATAFRAME_TYPE:
-        register_data_members(DataType.dataframe, cls)
+        register_data_members(
+            DataType.dataframe, collect_cls_members(cls, DataType.dataframe)
+        )
     for cls in MARS_SERIES_TYPE:
-        register_data_members(DataType.series, cls)
+        register_data_members(
+            DataType.series, collect_cls_members(cls, DataType.series)
+        )
     for cls in MARS_INDEX_TYPE:
-        register_data_members(DataType.index, cls)
+        register_data_members(DataType.index, collect_cls_members(cls, DataType.index))
     for cls in MARS_DATAFRAME_GROUPBY_TYPE:
-        register_data_members(DataType.dataframe_groupby, cls)
+        register_data_members(
+            DataType.dataframe_groupby,
+            collect_cls_members(cls, DataType.dataframe_groupby),
+        )
     for cls in MARS_SERIES_GROUPBY_TYPE:
-        register_data_members(DataType.series_groupby, cls)
+        register_data_members(
+            DataType.series_groupby, collect_cls_members(cls, DataType.series_groupby)
+        )
+
+    # install DataFrame user defined functions:
+    # DataFrame.apply
+    # DataFrame.transform
+    # DataFrame.map_chunk
+    # DataFrame.cartesian_chunk
+    dataframe_udfs = dict()
+    dataframe_udfs["apply"] = wrap_user_defined_functions(MarsDataFrame.apply, "apply")
+    dataframe_udfs["transform"] = wrap_user_defined_functions(
+        MarsDataFrame.apply, "transform"
+    )
+    dataframe_udfs["map_chunk"] = wrap_user_defined_functions(
+        MarsDataFrame.map_chunk, "map_chunk"
+    )
+    dataframe_udfs["cartesian_chunk"] = wrap_user_defined_functions(
+        MarsDataFrame.cartesian_chunk, "cartesian_chunk"
+    )
+    register_data_members(DataType.dataframe, dataframe_udfs)
+
+    # install Serise user defined functions
+    # Sereis.map
+    register_data_members(
+        DataType.series, dict(map=wrap_user_defined_functions(MarsSeries.map, "map"))
+    )
+
+    # install DataFrameGroupBy user defined functions:
+    # GroupBy.apply
+    # GroupBy.transform
+    dataframe_groupby_udfs = dict()
+    dataframe_groupby_udfs["apply"] = wrap_user_defined_functions(
+        MarsDataFrameGroupBy.apply, "apply"
+    )
+    dataframe_groupby_udfs["transform"] = wrap_user_defined_functions(
+        MarsDataFrameGroupBy.transform, "transform"
+    )
+    register_data_members(DataType.dataframe_groupby, dataframe_groupby_udfs)
