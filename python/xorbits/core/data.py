@@ -142,16 +142,16 @@ class DataRefMeta(type):
             return False
 
         if cls is DataRef:
-            # isintance(x, DataRef)
+            # isinstance(x, DataRef)
             return cls in instance.__class__.__mro__
         else:
-            # for subclass like isintance(x, DataFrame),
+            # for subclass like isinstance(x, DataFrame),
             # check its data_type if match with cls
             data_type = instance.data.data_type
             try:
                 return data_type == SUB_CLASS_TO_DATA_TYPE[cls]
             except KeyError:
-                raise TypeError(f"Unknonw subclass: {cls.__name__}")
+                raise TypeError(f"Unknown subclass: {cls.__name__}")
 
 
 class DataRef(metaclass=DataRefMeta):
