@@ -34,7 +34,7 @@ def _install():
     from .core import (
         _register_from_mars_execution_conditions,
         _register_to_mars_execution_conditions,
-        _register_execution_conditions
+        wrap_user_defined_functions,
     )
 
     for method in MARS_DATAFRAME_MAGIC_METHODS:
