@@ -117,6 +117,7 @@ def init(
         web=web,
         new=new,
     )
+    kw.update(kwargs)
     mars_new_session(**kw)
 
 
