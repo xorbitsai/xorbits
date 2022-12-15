@@ -295,7 +295,7 @@ def collect_cls_members(
             )
         elif isinstance(cls_member, property):
             fget = cls_member.fget
-            if fget is None:
+            if fget is None:  # pragma: no cover
                 raise ValueError(f"property {name} does not have a valid fget method.")
             c = wrap_mars_callable(
                 fget,

@@ -14,8 +14,10 @@
 # limitations under the License.
 
 import pandas as pd
+import pytest
 
 from ... import pandas as xpd
+from ..accessors import StringAccessor
 
 
 def test_str_accessor(setup):
@@ -44,11 +46,19 @@ def test_dt_accessor(setup):
     # property.
     pd.testing.assert_series_equal(s.dt.year, xs.dt.year.to_pandas())
 
-    # xs being a xorbits.core.data.DataRef instance
+    # xs being a xorbits.core.data.DataRef instance.
     s = pd.concat((s, s))
     xs = xpd.concat((xs, xs))
     pd.testing.assert_series_equal(s.dt.month_name(), xs.dt.month_name().to_pandas())
     pd.testing.assert_series_equal(s.dt.year, xs.dt.year.to_pandas())
+
+
+def test_getting_nonexistent_attr(setup):
+    accessor = xpd.Series(["A_Str"]).str
+    assert isinstance(accessor, StringAccessor)
+
+    with pytest.raises(AttributeError, match="no attribute 'foo'"):
+        getattr(accessor, "foo")
 
 
 def test_cls_docstring():
