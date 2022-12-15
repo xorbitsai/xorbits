@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="77%" alt="" src="https://raw.githubusercontent.com/xprobe-inc/xorbits/main/doc/source/_static/xorbits.svg"><br>
+  <img width="77%" alt="" src="https://doc.xorbits.io/en/latest/_static/xorbits.svg"><br>
 </div>
 
 # Xorbits: scalable Python data science, familiar & fast.
@@ -152,7 +152,7 @@ Main goals we want to achieve in the future include:
 More detailed roadmaps will be revealed soon, stay tuned!
 
 ## Relationship with Mars
-Creators of xorbits are mainly from those of Mars, we built Xorbits currently on Mars 
+The creators of Xorbits are mainly those of Mars, we built Xorbits currently on Mars 
 to reduce duplicated work, but the vision of Xorbits suggests that it's not 
 appropriate to put everything into Mars, instead, we need a new project 
 to support the roadmaps better. In the future, we will replace some core internal components 
