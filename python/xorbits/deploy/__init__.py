@@ -22,7 +22,6 @@ def init(
     address: Optional[str] = None,
     init_local: bool = no_default,
     session_id: Optional[str] = None,
-    default: bool = True,
     timeout: Optional[float] = None,
     n_worker: int = 1,
     n_cpu: Union[int, str] = "auto",
@@ -33,7 +32,7 @@ def init(
     **kwargs
 ) -> None:
     """
-    Init Xorbits runtime locally or connect to a Xorbits cluster.
+    Init Xorbits runtime locally or connect to an Xorbits cluster.
 
     Parameters
     ----------
@@ -48,8 +47,6 @@ def init(
         - Otherwise, if it's not specified, False will be set.
     session_id: str, optional
         Session ID, if not specified, a new ID will be auto generated.
-    default: bool
-        Set the current connection as the default one, True by default.
     timeout: float
         Timeout about creating a new runtime or connecting to an exising cluster.
     n_worker: int, optional
@@ -83,7 +80,7 @@ def init(
           Take effect only when ``init_local`` is True
 
     web: bool, str
-        If creating web UI.
+        If creating a web UI.
 
         .. note::
 
@@ -106,7 +103,6 @@ def init(
         address=address,
         init_local=init_local,
         session_id=session_id,
-        default=default,
         timeout=timeout,
         n_worker=n_worker,
         n_cpu=n_cpu,
