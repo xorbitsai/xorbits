@@ -98,12 +98,10 @@ def init(
           Take effect only when ``init_local`` is False
     """
     if init_local is no_default:
-        if address is None:
-            # if address not specified, force to initialize a local runtime
-            init_local = True
-        else:
-            # otherwise when init_local not specified, set to False
-            init_local = False
+        # if address not specified, force to initialize a local runtime
+        # otherwise when init_local not specified, set to False
+        init_local = True if address is None else False
+
     kw = dict(
         address=address,
         init_local=init_local,
