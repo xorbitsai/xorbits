@@ -1,8 +1,8 @@
 .. _index:
 
-.. figure:: _static/xorbits.svg
-   :align: center
-   :width: 77%
+.. raw:: html
+
+    <img class="align-center" alt="Xorbits Logo" src="_static/xorbits.svg" style="background-color: transparent", width="77%">
 
 ====
 
