@@ -152,7 +152,7 @@ Main goals we want to achieve in the future include:
 More detailed roadmaps will be revealed soon, stay tuned!
 
 ## Relationship with Mars
-Creators of xorbits are mainly from those of Mars, we built Xorbits currently on Mars 
+Creators of Xorbits are mainly from those of Mars, we built Xorbits currently on Mars 
 to reduce duplicated work, but the vision of Xorbits suggests that it's not 
 appropriate to put everything into Mars, instead, we need a new project 
 to support the roadmaps better. In the future, we will replace some core internal components 

@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 from .._mars.utils import no_default
 from ..core.adapter import mars_new_session, mars_stop_server
 
 
 def init(
-    address: str = None,
+    address: Optional[str] = None,
     init_local: bool = no_default,
-    session_id: str = None,
+    session_id: Optional[str] = None,
     default: bool = True,
-    timeout: float = None,
+    timeout: Optional[float] = None,
     n_worker: int = 1,
     n_cpu: Union[int, str] = "auto",
     mem_bytes: Union[int, str] = "auto",
@@ -37,7 +37,7 @@ def init(
 
     Parameters
     ----------
-    address: str
+    address: str, optional
         - if None which is default, address will be "127.0.0.1", a local runtime will be initialized
         - if specify an address for creating a new local runtime, specify like ``<ip>:<port>``
         - if connect to a Xorbits cluster address, e.g. ``http://<supervisor_ip>:<supervisor_web_port>``
@@ -46,13 +46,13 @@ def init(
 
         - When address is None, ``init_local`` will be True,
         - Otherwise, if it's not specified, False will be set.
-    session_id: str
+    session_id: str, optional
         Session ID, if not specified, a new ID will be auto generated.
     default: bool
         Set the current connection as the default one, True by default.
     timeout: float
         Timeout about creating a new runtime or connecting to an exising cluster.
-    n_worker: int
+    n_worker: int, optional
         How many workers to start when creating a local runtime.
 
         .. note::
