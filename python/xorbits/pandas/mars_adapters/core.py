@@ -23,10 +23,15 @@ from ...core.adapter import (
     MARS_DATAFRAME_TYPE,
     MARS_SERIES_GROUPBY_TYPE,
     MARS_SERIES_TYPE,
+    MarsDataFrameToCSV,
+    MarsDataFrameToParquet,
+    MarsDataFrameToSQLTable,
+    MarsDataFrameToVineyardChunk,
     collect_cls_members,
     from_mars,
     mars_dataframe,
-    register_execution_condition,
+    register_from_mars_execution_condition,
+    register_to_mars_execution_condition,
     to_mars,
     wrap_mars_callable,
 )
@@ -110,14 +115,37 @@ def _collect_dataframe_magic_methods() -> Set[str]:
 MARS_DATAFRAME_MAGIC_METHODS: Set[str] = _collect_dataframe_magic_methods()
 
 
-def _register_execution_conditions() -> None:
-    def _on_dtypes_being_none(mars_entity: "MarsEntity"):
+def _register_to_mars_execution_conditions() -> None:
+    def _on_dtypes_being_none(mars_entity: "MarsEntity") -> bool:
         if hasattr(mars_entity, "dtypes") and mars_entity.dtypes is None:
             return True
         return False
 
-    register_execution_condition(
+    register_to_mars_execution_condition(
         mars_dataframe.DataFrame.__name__, _on_dtypes_being_none
+    )
+
+
+def _register_from_mars_execution_conditions() -> None:
+    def _on_dataframe_export_functions_being_called(mars_entity: "MarsEntity") -> bool:
+        return isinstance(
+            mars_entity.op,
+            (
+                MarsDataFrameToParquet,
+                MarsDataFrameToCSV,
+                MarsDataFrameToSQLTable,
+                MarsDataFrameToVineyardChunk,
+            ),
+        )
+
+    def _on_series_export_functions_being_called(mars_entity: "MarsEntity") -> bool:
+        return isinstance(mars_entity.op, (MarsDataFrameToCSV, MarsDataFrameToSQLTable))
+
+    register_from_mars_execution_condition(
+        mars_dataframe.DataFrame.__name__, _on_dataframe_export_functions_being_called
+    )
+    register_from_mars_execution_condition(
+        mars_dataframe.Series.__name__, _on_series_export_functions_being_called
     )
 
 
@@ -126,7 +154,8 @@ class MarsGetAttrProxy:
         self._mars_obj = to_mars(obj)
 
     def __getattr__(self, item):
-        attr = getattr(self._mars_obj, item)
+        mars_obj = object.__getattribute__(self, "_mars_obj")
+        attr = getattr(mars_obj, item, None)
         if attr is None:
             raise AttributeError(f"no attribute '{item}'")
         elif callable(attr):

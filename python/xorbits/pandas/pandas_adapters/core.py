@@ -131,6 +131,7 @@ def wrap_pandas_dataframe_method(func_name):
 
 def wrap_pandas_module_method(func_name):
     # wrap pd member function
+    @functools.wraps(getattr(pd, func_name))
     def _wrapped(*args, **kwargs):
         warnings.warn(
             f"xorbits.pandas.{func_name} will fallback to Pandas", RuntimeWarning

@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import pytest
 
 from ...core.data import DataRef
 from ...numpy import ndarray
@@ -58,3 +59,15 @@ def test_instance_check(dummy_df, dummy_int_series, dummy_int_2d_array):
     computed = dummy_int_2d_array + 1
     assert computed.__class__ is DataRef
     assert isinstance(computed, ndarray)
+
+
+def test_instance_check_on_illegal_subclass():
+    class MyDataFrame(DataFrame):
+        pass
+
+    my_df = MyDataFrame({"foo": (1, 2, 3)})
+    isinstance(my_df, MyDataFrame)
+
+    assert isinstance(my_df + 1, DataFrame)
+    with pytest.raises(TypeError):
+        isinstance(my_df + 1, MyDataFrame)

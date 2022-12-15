@@ -85,11 +85,6 @@ class Data:
             raise NotImplementedError(f"Unsupported mars type {type(mars_entity)}")
         return Data(mars_entity=mars_entity, data_type=data_type)
 
-    def __getattr__(self, item: str):
-        from .adapter import MemberProxy
-
-        return MemberProxy.getattr(self.data_type, self._mars_entity, item)
-
     def __setattr__(self, key: str, value: Any):
         from .adapter import MemberProxy
 
@@ -143,20 +138,21 @@ class DataRefMeta(type):
 
     def __instancecheck__(cls: Type, instance: Any) -> bool:
         if not issubclass(instance.__class__, DataRef):
-            # not a DataRef instance
+            # not a DataRef instance.
             return False
 
         if cls is DataRef:
-            # isintance(x, DataRef)
+            # isinstance(x, DataRef).
             return cls in instance.__class__.__mro__
         else:
-            # for subclass like isintance(x, DataFrame),
+            # for subclass like isinstance(x, DataFrame),
             # check its data_type if match with cls
             data_type = instance.data.data_type
             try:
                 return data_type == SUB_CLASS_TO_DATA_TYPE[cls]
             except KeyError:
-                raise TypeError(f"Unknonw subclass: {cls.__name__}")
+                # subclassing DataRef subclasses is not allowed.
+                raise TypeError(f"Illegal subclass {instance.__class__.__name__}")
 
 
 class DataRef(metaclass=DataRefMeta):
@@ -171,7 +167,9 @@ class DataRef(metaclass=DataRefMeta):
         self.data = data
 
     def __getattr__(self, item):
-        return getattr(self.data, item)
+        from .adapter import MemberProxy
+
+        return MemberProxy.getattr(self, item)
 
     def __setattr__(self, key, value):
         if key in self.__fields:

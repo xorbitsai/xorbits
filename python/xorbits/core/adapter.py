@@ -46,6 +46,16 @@ from .._mars.dataframe.core import SERIES_GROUPBY_TYPE as MARS_SERIES_GROUPBY_TY
 from .._mars.dataframe.core import SERIES_TYPE as MARS_SERIES_TYPE
 from .._mars.dataframe.core import DataFrameGroupBy as MarsDataFrameGroupBy
 from .._mars.dataframe.core import SeriesGroupBy as MarsSeriesGroupBy
+from .._mars.dataframe.datastore.to_csv import DataFrameToCSV as MarsDataFrameToCSV
+from .._mars.dataframe.datastore.to_parquet import (
+    DataFrameToParquet as MarsDataFrameToParquet,
+)
+from .._mars.dataframe.datastore.to_sql import (
+    DataFrameToSQLTable as MarsDataFrameToSQLTable,
+)
+from .._mars.dataframe.datastore.to_vineyard import (
+    DataFrameToVineyardChunk as MarsDataFrameToVineyardChunk,
+)
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.plotting.core import PlotAccessor as MarsPlotAccessor
 from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
@@ -61,15 +71,25 @@ from .._mars.tensor.lib.index_tricks import OGridClass as MarsOGridClass
 from .._mars.tensor.lib.index_tricks import RClass as MarsRClass
 from .data import DATA_MEMBERS, Data, DataRef, DataType
 
-_MARS_CLS_TO_EXECUTION_CONDITION: Dict[
+# mars class name -> execution conditions
+_TO_MARS_EXECUTION_CONDITION: Dict[
+    str, List[Callable[["MarsEntity"], bool]]
+] = defaultdict(list)
+_FROM_MARS_EXECUTION_CONDITION: Dict[
     str, List[Callable[["MarsEntity"], bool]]
 ] = defaultdict(list)
 
 
-def register_execution_condition(
+def register_to_mars_execution_condition(
     mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
 ):
-    _MARS_CLS_TO_EXECUTION_CONDITION[mars_entity_type].append(condition)
+    _TO_MARS_EXECUTION_CONDITION[mars_entity_type].append(condition)
+
+
+def register_from_mars_execution_condition(
+    mars_entity_type: str, condition: Callable[["MarsEntity"], bool]
+):
+    _FROM_MARS_EXECUTION_CONDITION[mars_entity_type].append(condition)
 
 
 _MARS_CLS_TO_CONVERTER: Dict[Type, Callable] = {}
@@ -101,7 +121,8 @@ def register_converter(from_cls_list: List[Type]):
 
 def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
     def wrapped(self: DataRef, *args, **kwargs):
-        mars_entity = getattr(self.data, "_mars_entity", None)
+        # trigger on condition execution.
+        mars_entity = to_mars(self)
         if (mars_entity is None) or (
             not hasattr(mars_entity, method_name)
         ):  # pragma: no cover
@@ -133,18 +154,21 @@ def wrap_member_func(member_func: Callable, mars_entity: MarsEntity):
 
 class MemberProxy:
     @classmethod
-    def getattr(cls, data_type: DataType, mars_entity: MarsEntity, item: str):
+    def getattr(cls, ref: DataRef, item: str):
+        # trigger on condition execution.
+        mars_entity = to_mars(ref)
+        data_type = ref.data.data_type
         member = DATA_MEMBERS[data_type].get(item, None)
         if member is not None and callable(member):
             ret = wrap_member_func(member, mars_entity)
             ret.__doc__ = member.__doc__
             return ret
 
-        attr = getattr(mars_entity, item, None)
-        if attr is None:
-            # TODO: pandas implementation
+        if not hasattr(mars_entity, item):
             raise AttributeError(f"'{data_type.name}' object has no attribute '{item}'")
-        elif callable(attr):
+
+        attr = getattr(mars_entity, item, None)
+        if callable(attr):
             return wrap_mars_callable(
                 attr,
                 attach_docstring=True,
@@ -157,7 +181,9 @@ class MemberProxy:
             return from_mars(attr)
 
     @classmethod
-    def setattr(cls, mars_entity: MarsEntity, key: str, value: Any):
+    def setattr(cls, ref: DataRef, key: str, value: Any):
+        # trigger on condition execution.
+        mars_entity = to_mars(ref)
         if isinstance(getattr(type(mars_entity), key), property):
             # call the setter of the specified property.
             getattr(type(mars_entity), key).fset(mars_entity, to_mars(value))
@@ -174,8 +200,7 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
         mars_entity = getattr(inp.data, "_mars_entity", None)
         if mars_entity is None:
             raise TypeError(f"Can't covert {inp} to mars entity")
-        # trigger execution
-        conditions = _MARS_CLS_TO_EXECUTION_CONDITION[type(mars_entity).__name__]
+        conditions = _TO_MARS_EXECUTION_CONDITION[type(mars_entity).__name__]
         for cond in conditions:
             if cond(mars_entity):
                 from .execution import run
@@ -195,15 +220,21 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
         return inp
 
 
-def from_mars(inp: Union[MarsEntity, tuple, list, dict]):
+def from_mars(inp: Union[MarsEntity, Tuple, List, Dict, None]):
     """
     Convert mars entities to xorbits data references.
     """
-    converter = _get_converter(type(inp))
-    if converter is not None:
-        return converter(inp)
-    elif isinstance(inp, MarsEntity):
-        return DataRef(Data.from_mars(inp))
+    if isinstance(inp, MarsEntity):
+        conditions = _FROM_MARS_EXECUTION_CONDITION[type(inp).__name__]
+        ret = DataRef(Data.from_mars(inp))
+        for cond in conditions:
+            if cond(inp):
+                from .execution import run
+
+                run(ret)
+        return ret
+    elif _get_converter(type(inp)):
+        return _get_converter(type(inp))(inp)
     elif isinstance(inp, tuple):
         return tuple(from_mars(i) for i in inp)
     elif isinstance(inp, list):
@@ -263,18 +294,20 @@ def collect_cls_members(
                 docstring_src_cls=docstring_src_cls,
             )
         elif isinstance(cls_member, property):
-            from .utils.docstring import attach_cls_member_docstring
-
-            # no need to wrap the fget/fset method since this class member is purly for the doc
-            # generation.
-            attach_cls_member_docstring(
-                cls_member,
-                name,
-                data_type,
+            fget = cls_member.fget
+            if fget is None:  # pragma: no cover
+                raise ValueError(f"property {name} does not have a valid fget method.")
+            c = wrap_mars_callable(
+                fget,
+                attach_docstring=True,
+                is_cls_member=True,
+                member_name=name,
+                data_type=data_type,
                 docstring_src_module=docstring_src_module,
                 docstring_src_cls=docstring_src_cls,
             )
-            cls_members[name] = cls_member
+            cls_members[name] = property(c)
+            cls_members[name].__doc__ = c.__doc__
 
     return cls_members
 
