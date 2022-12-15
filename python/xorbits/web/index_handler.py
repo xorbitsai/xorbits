@@ -12,27 +12,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
+
+from .._mars.services.web import MarsRequestHandler
 
 
-from . import _version
-from .core import run
-from .deploy import init, shutdown
+class XorbitsIndexHandler(MarsRequestHandler):
+    def _get_index_page(self):
+        index_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "ui", "index.html"
+        )
+        with open(index_file, "r") as file_obj:
+            self._index_page = file_obj.read()
+        return self._index_page
 
-
-def _install():
-    from .numpy import _install as _install_numpy
-    from .pandas import _install as _install_pandas
-    from .web import _install as _install_web
-
-    _install_pandas()
-    _install_numpy()
-    _install_web()
-
-
-_install()
-del _install
-
-
-__version__ = _version.get_versions()["version"]
-
-__all__ = ["init", "shutdown"]
+    def get(self):
+        self.write(self._get_index_page())

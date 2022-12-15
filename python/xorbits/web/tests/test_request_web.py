@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,26 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import urllib.request
 
-from . import _version
-from .core import run
-from .deploy import init, shutdown
+import pytest
 
-
-def _install():
-    from .numpy import _install as _install_numpy
-    from .pandas import _install as _install_pandas
-    from .web import _install as _install_web
-
-    _install_pandas()
-    _install_numpy()
-    _install_web()
+from ..._mars.deploy.oscar.session import get_default_session
+from ...deploy import init, shutdown
 
 
-_install()
-del _install
+@pytest.fixture
+def init_with_web():
+    init(n_cpu=2, web=True)
+    yield
+    shutdown()
 
 
-__version__ = _version.get_versions()["version"]
-
-__all__ = ["init", "shutdown"]
+def test_web_ui(init_with_web):
+    sess = get_default_session()
+    endpoint = sess.get_web_endpoint()
+    req = urllib.request.Request(endpoint)
+    response = urllib.request.urlopen(req)
+    assert response.code == 200
+    assert b"Xorbits" in response.read()
+    sess.stop_server()

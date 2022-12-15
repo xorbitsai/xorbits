@@ -66,7 +66,7 @@ export default function MainFrame() {
             <DescriptionIcon fontSize="large" sx={{ marginLeft: 3 }} />
             <Link
               align="center"
-              href="https://docs.pymars.org"
+              href="https://doc.xorbits.io"
               underline="none"
               color="inherit"
               fontSize="large"

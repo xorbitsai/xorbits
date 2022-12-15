@@ -55,11 +55,11 @@ jobs:
           node-version: 12
       # ESLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
-        run: cd python/xorbits/ui && npm ci
+        run: cd python/xorbits/web/ui && npm ci
       - name: ESLint Check
-        run: cd python/xorbits/ui && npx eslint .
+        run: cd python/xorbits/web/ui && npx eslint .
       - name: Prettier Check
-        run: cd python/xorbits/ui && ./node_modules/.bin/prettier --check .
+        run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
 
   build_test_job:
     runs-on: ${{ matrix.os }}
