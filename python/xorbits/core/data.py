@@ -138,11 +138,11 @@ class DataRefMeta(type):
 
     def __instancecheck__(cls: Type, instance: Any) -> bool:
         if not issubclass(instance.__class__, DataRef):
-            # not a DataRef instance
+            # not a DataRef instance.
             return False
 
         if cls is DataRef:
-            # isinstance(x, DataRef)
+            # isinstance(x, DataRef).
             return cls in instance.__class__.__mro__
         else:
             # for subclass like isinstance(x, DataFrame),
@@ -151,7 +151,8 @@ class DataRefMeta(type):
             try:
                 return data_type == SUB_CLASS_TO_DATA_TYPE[cls]
             except KeyError:
-                raise TypeError(f"Unknown subclass: {cls.__name__}")
+                # subclassing DataRef subclasses is not allowed.
+                raise TypeError(f"Illegal subclass {instance.__class__.__name__}")
 
 
 class DataRef(metaclass=DataRefMeta):
