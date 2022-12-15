@@ -158,6 +158,8 @@ class MarsGetAttrProxy:
         attr = getattr(mars_obj, item, None)
         if attr is None:
             raise AttributeError(f"no attribute '{item}'")
+        elif callable(attr):  # pragma: no cover
+            return wrap_mars_callable(attr, attach_docstring=False, is_cls_member=True)
         else:  # pragma: no cover
             # class variable
             return from_mars(attr)

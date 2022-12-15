@@ -21,7 +21,7 @@ from ..core.utils.docstring import attach_module_callable_docstring
 
 @register_cls_to_type(DataType.dataframe_groupby)
 class DataFrameGroupBy(DataRef):
-    pass
+    """This is a DataFrameGroupBy subclass"""
 
 
 attach_module_callable_docstring(
@@ -31,7 +31,7 @@ attach_module_callable_docstring(
 
 @register_cls_to_type(data_type=DataType.series_groupby)
 class SeriesGroupBy(DataRef):
-    pass
+    """This is a SeriesGroupBy subclass"""
 
 
 attach_module_callable_docstring(
