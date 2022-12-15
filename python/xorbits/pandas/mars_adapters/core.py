@@ -37,6 +37,7 @@ from ...core.adapter import (
     to_mars,
     wrap_mars_callable,
 )
+from ...core.data import DataType
 from ...core.utils.docstring import attach_cls_member_docstring
 
 if TYPE_CHECKING:
@@ -179,7 +180,9 @@ def install_members(
         setattr(cls, name, members[name])
 
 
-def wrap_user_defined_functions(c: Callable, member_name: str) -> Callable:
+def wrap_user_defined_functions(
+    c: Callable, member_name: str, data_type: DataType
+) -> Callable:
     """
     A function wrapper for user defined functions.
     """
@@ -198,4 +201,4 @@ def wrap_user_defined_functions(c: Callable, member_name: str) -> Callable:
                 ret = ret.ensure_data()
             return from_mars(ret)
 
-    return attach_cls_member_docstring(wrapped, member_name)
+    return attach_cls_member_docstring(wrapped, member_name, data_type=data_type)

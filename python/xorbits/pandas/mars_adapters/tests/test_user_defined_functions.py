@@ -41,6 +41,7 @@ def test_dataframe_apply(setup):
     assert isinstance(res, DataRef)
     assert isinstance(res, Series)
     pd.testing.assert_series_equal(res.to_pandas(), pd.Series([1] * 4))
+    assert DataFrame.apply.__doc__
 
 
 def test_series_map(setup):
@@ -60,6 +61,7 @@ def test_series_map(setup):
     assert isinstance(res, Series)
     expected = series.map({5: 10})
     pd.testing.assert_series_equal(res.to_pandas(), expected)
+    assert Series.map.__doc__
 
 
 def test_dataframe_transform(setup):
