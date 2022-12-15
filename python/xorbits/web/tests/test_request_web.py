@@ -34,3 +34,4 @@ def test_web_ui(init_with_web):
     response = urllib.request.urlopen(req)
     assert response.code == 200
     assert b"Xorbits" in response.read()
+    sess.stop_server()
