@@ -14,20 +14,14 @@
 
 import pandas
 
-from ..core import Data, DataRef, DataType
-from ..core.adapter import MarsDataFrameGroupBy, MarsSeriesGroupBy, to_mars
+from ..core import DataRef, DataType
 from ..core.data import register_cls_to_type
 from ..core.utils.docstring import attach_module_callable_docstring
 
 
 @register_cls_to_type(DataType.dataframe_groupby)
 class DataFrameGroupBy(DataRef):
-    def __init__(self, *args, **kwargs):
-        data = Data(
-            data_type=DataType.dataframe_groupby,
-            mars_entity=MarsDataFrameGroupBy(*to_mars(args), **to_mars(kwargs)),
-        )
-        super().__init__(data)
+    pass
 
 
 attach_module_callable_docstring(
@@ -37,12 +31,7 @@ attach_module_callable_docstring(
 
 @register_cls_to_type(data_type=DataType.series_groupby)
 class SeriesGroupBy(DataRef):
-    def __init__(self, *args, **kwargs):
-        data = Data(
-            data_type=DataType.series_groupby,
-            mars_entity=MarsSeriesGroupBy(*to_mars(args), **to_mars(kwargs)),
-        )
-        super().__init__(data)
+    pass
 
 
 attach_module_callable_docstring(

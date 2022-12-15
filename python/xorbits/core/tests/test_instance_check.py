@@ -39,8 +39,9 @@ def test_instance_check(dummy_df, dummy_int_series, dummy_int_2d_array):
     assert isinstance(computed, Series)
 
     # Index
-    assert dummy_df.index.__class__ is DataRef
-    assert isinstance(dummy_df.index, Index)
+    index = Index([1, 2, 3])
+    assert index.__class__ is Index
+    assert isinstance(index, Index)
 
     # DataFrameGroupBy
     grouped = dummy_df.groupby("foo")

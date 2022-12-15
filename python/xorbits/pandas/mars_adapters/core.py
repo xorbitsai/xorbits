@@ -36,7 +36,7 @@ from ...core.adapter import (
     wrap_mars_callable,
 )
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ...core.adapter import MarsEntity
 
 
@@ -158,9 +158,8 @@ class MarsGetAttrProxy:
         attr = getattr(mars_obj, item, None)
         if attr is None:
             raise AttributeError(f"no attribute '{item}'")
-        elif callable(attr):
-            return wrap_mars_callable(attr, attach_docstring=False, is_cls_member=True)
-        else:
+        else:  # pragma: no cover
+            # class variable
             return from_mars(attr)
 
 

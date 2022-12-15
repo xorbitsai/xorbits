@@ -95,16 +95,6 @@ def register_from_mars_execution_condition(
 _MARS_CLS_TO_CONVERTER: Dict[Type, Callable] = {}
 
 
-def _get_converter(from_cls: Type):
-    if from_cls in _MARS_CLS_TO_CONVERTER:
-        return _MARS_CLS_TO_CONVERTER[from_cls]
-    for k, v in _MARS_CLS_TO_CONVERTER.items():
-        if issubclass(from_cls, k):
-            _MARS_CLS_TO_CONVERTER[from_cls] = v
-            return v
-    return None
-
-
 def register_converter(from_cls_list: List[Type]):
     """
     A decorator for convenience of registering a class converter.
@@ -184,7 +174,7 @@ class MemberProxy:
     def setattr(cls, ref: DataRef, key: str, value: Any):
         # trigger on condition execution.
         mars_entity = to_mars(ref)
-        if isinstance(getattr(type(mars_entity), key), property):
+        if isinstance(getattr(type(mars_entity), key, None), property):
             # call the setter of the specified property.
             getattr(type(mars_entity), key).fset(mars_entity, to_mars(value))
         else:
@@ -198,7 +188,7 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
 
     if isinstance(inp, DataRef):
         mars_entity = getattr(inp.data, "_mars_entity", None)
-        if mars_entity is None:
+        if mars_entity is None:  # pragma: no cover
             raise TypeError(f"Can't covert {inp} to mars entity")
         conditions = _TO_MARS_EXECUTION_CONDITION[type(mars_entity).__name__]
         for cond in conditions:
@@ -233,8 +223,8 @@ def from_mars(inp: Union[MarsEntity, Tuple, List, Dict, None]):
 
                 run(ret)
         return ret
-    elif _get_converter(type(inp)):
-        return _get_converter(type(inp))(inp)
+    elif type(inp) in _MARS_CLS_TO_CONVERTER:
+        return _MARS_CLS_TO_CONVERTER[type(inp)](inp)
     elif isinstance(inp, tuple):
         return tuple(from_mars(i) for i in inp)
     elif isinstance(inp, list):
@@ -317,7 +307,7 @@ def register_data_members(data_type: DataType, cls: Type):
 
 
 def get_cls_members(data_type: DataType) -> Dict[str, Any]:
-    if data_type not in DATA_MEMBERS:
+    if data_type not in DATA_MEMBERS:  # pragma: no cover
         raise ValueError(f"{data_type} do not have any bound class member.")
 
     return DATA_MEMBERS[data_type]
