@@ -143,5 +143,5 @@ Getting involved
    :maxdepth: 2
    :hidden:
 
-   reference/index
    getting_started/index
+   reference/index

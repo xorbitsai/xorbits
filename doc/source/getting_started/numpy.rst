@@ -448,9 +448,6 @@ over all the elements of the array::
 
 .. _quickstart.shape-manipulation:
 
-Shape Manipulation
-==================
-
 Changing the shape of an array
 ------------------------------
 
@@ -562,17 +559,17 @@ In general, for arrays with more than two dimensions, `hstack` stacks along thei
 `vstack` stacks along their first axes, and `concatenate` allows for an optional arguments giving
 the number of the axis along which the concatenation should happen.
 
-**Note**
+.. note::
 
-In complex cases, `r_` and `c_` are useful for creating arrays by stacking numbers along one axis.
-They allow the use of range literals ``:``. ::
+    In complex cases, `r_` and `c_` are useful for creating arrays by stacking numbers along one axis.
+    They allow the use of range literals ``:``. ::
 
-       >>> np.r_[1:4, 0, 4]
-       array([1, 2, 3, 0, 4])
+           >>> np.r_[1:4, 0, 4]
+           array([1, 2, 3, 0, 4])
 
-When used with arrays as arguments, `r_` and `c_` are similar to `vstack` and `hstack` in their
-default behavior, but allow for an optional argument giving the number of the axis along which to
-concatenate.
+    When used with arrays as arguments, `r_` and `c_` are similar to `vstack` and `hstack` in their
+    default behavior, but allow for an optional argument giving the number of the axis along which to
+    concatenate.
 
 Splitting one array into several smaller ones
 ---------------------------------------------
