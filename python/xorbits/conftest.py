@@ -16,7 +16,8 @@ import pytest
 
 from . import numpy as np
 from . import pandas as pd
-from .deploy import init, shutdown
+from ._mars.config import option_context
+from .tests.core import init_test
 
 
 @pytest.fixture
@@ -55,16 +56,21 @@ def dummy_int_2d_array():
 
 
 @pytest.fixture(scope="module")
-def setup():
-    try:
-        init(
-            address="test://127.0.0.1",
-            backend="mars",
-            init_local=True,
-            default=True,
-            web=False,
-            timeout=300,
-        )
-        yield
-    finally:
-        shutdown()
+def _setup_test_session():
+    sess = init_test(
+        address="test://127.0.0.1",
+        backend="mars",
+        init_local=True,
+        default=True,
+        web=False,
+        timeout=300,
+    )
+    with option_context({"show_progress": False}):
+        yield sess
+    sess.stop_server()
+
+
+@pytest.fixture
+def setup(_setup_test_session):
+    _setup_test_session.as_default()
+    yield _setup_test_session
