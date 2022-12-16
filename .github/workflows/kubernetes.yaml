@@ -38,10 +38,9 @@ jobs:
           python -m pip install -r python/conda-spec.txt
 
       - name: Start minikube
-        uses: medyagh/setup-minikube@latest
+        uses: medyagh/setup-minikube@master
         with:
           driver: none
-          addons: ingress
 
       - name: Install kubernetes dependencies
         shell: bash
