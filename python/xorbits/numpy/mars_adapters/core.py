@@ -13,7 +13,7 @@
 # limitations under the License.
 import inspect
 from types import ModuleType
-from typing import Any, Callable, Dict, List, Set
+from typing import Any, Callable, Dict, List, Optional, Set
 
 import numpy
 
@@ -27,7 +27,9 @@ from ...core.adapter import (
 
 
 def _collect_module_callables(
-    m: ModuleType, docstring_src_module: ModuleType, skip_members: List[str] = None
+    m: ModuleType,
+    docstring_src_module: ModuleType,
+    skip_members: Optional[List[str]] = None,
 ) -> Dict[str, Callable]:
     module_callables: Dict[str, Callable] = dict()
 
