@@ -4,13 +4,14 @@
 
 This is a short introduction to :code:`xorbits.pandas` which is originated from pandas' quickstart.
 
-Customarily, we import as follows:
+Customarily, we import and init as follows:
 
 .. ipython:: python
 
-
+   import xorbits
    import xorbits.numpy as np
    import xorbits.pandas as pd
+   xorbits.init()
 
 Object creation
 ---------------
@@ -136,6 +137,7 @@ Selecting a single column, which yields a :class:`Series`, equivalent to ``df.A`
 Selecting via ``[]``, which slices the rows.
 
 .. ipython:: python
+   :okwarning:
 
    df[0:3]
    df['20130102':'20130104']
@@ -158,6 +160,7 @@ Selecting on a multi-axis by label:
 Showing label slicing, both endpoints are *included*:
 
 .. ipython:: python
+   :okwarning:
 
    df.loc['20130102':'20130104', ['A', 'B']]
 
@@ -371,6 +374,7 @@ Grouping and then applying the :meth:`~xorbits.pandas.groupby.DataFrameGroupBy.s
 the resulting groups.
 
 .. ipython:: python
+   :okwarning:
 
    df.groupby('A').sum()
 
@@ -437,3 +441,4 @@ Reading from a csv file.
 
    import os
    os.remove('foo.csv')
+   xorbits.shutdown()
