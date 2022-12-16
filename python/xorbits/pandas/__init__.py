@@ -60,7 +60,7 @@ def __getattr__(name: str):
             raise AttributeError(name)
         elif name in PANDAS_MODULE_METHODS:
             return PANDAS_MODULE_METHODS[name]
-        else:
+        else:  # pragma: no cover
             if inspect.ismethod(getattr(pandas, name)):
                 return unimplemented_func
             else:

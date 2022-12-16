@@ -46,7 +46,7 @@ def get_base_indentation(doc: str) -> Optional[str]:
     if idx + 2 < len(doc):
         doc = doc[idx + 2 :]
         return " " * (len(doc) - len(doc.lstrip(" ")))
-    else:
+    else:  # pragma: no cover
         return None
 
 
@@ -59,7 +59,7 @@ def add_docstring_disclaimer(
         return None
 
     base_indentation = get_base_indentation(doc)
-    if base_indentation is None:
+    if base_indentation is None:  # pragma: no cover
         return doc
 
     if (
@@ -153,7 +153,9 @@ def add_arg_disclaimer(
         # the indentation of generated docstring must be consistent.
         base_indentation = get_base_indentation(doc)
         original_base_indentation = get_base_indentation(original_doc)
-        if base_indentation is None or original_base_indentation is None:
+        if (
+            base_indentation is None or original_base_indentation is None
+        ):  # pragma: no cover
             return doc
         param_description_indentation = base_indentation + " " * 4
 

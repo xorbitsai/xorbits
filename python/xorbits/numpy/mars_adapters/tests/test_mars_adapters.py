@@ -69,3 +69,7 @@ def test_objects():
 def test_flatiter(dummy_int_1d_array):
     for item in dummy_int_1d_array.flat:
         assert isinstance(item, DataRef)
+
+    old_data = dummy_int_1d_array.data._mars_entity.data
+    dummy_int_1d_array.flat[:2] = 0
+    assert dummy_int_1d_array.data._mars_entity.data is not old_data

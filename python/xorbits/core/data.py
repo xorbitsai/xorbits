@@ -49,7 +49,7 @@ class Data:
     def __init__(self, *args, **kwargs):
         self.data_type: DataType = kwargs.pop("data_type")
         self._mars_entity = kwargs.pop("mars_entity", None)
-        if len(args) > 0 or len(kwargs) > 0:
+        if len(args) > 0 or len(kwargs) > 0:  # pragma: no cover
             raise TypeError(f"Unexpected args {args} or kwargs {kwargs}.")
 
     @classmethod
@@ -96,7 +96,7 @@ class Data:
     def __str__(self):
         if self._mars_entity is not None:
             return self._mars_entity.__str__()
-        else:
+        else:  # pragma: no cover
             return super().__str__()
 
     def __repr__(self):
