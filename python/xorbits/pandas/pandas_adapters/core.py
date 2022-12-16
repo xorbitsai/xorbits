@@ -190,6 +190,9 @@ def _collect_pandas_dataframe_members():
         ):
             dataframe_members[name] = wrap_pandas_dataframe_method(name)
 
+    # make to_numpy an alias of to_tensor
+    dataframe_members["to_numpy"] = dataframe_members["to_tensor"]
+
 
 def _collect_pandas_module_members() -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_DATAFRAME_CALLABLES

@@ -128,3 +128,10 @@ def test_pandas_module_methods(setup):
     assert str(r) == str(expected)
     assert isinstance(r, DataRef)
     pd.testing.assert_frame_equal(r.to_pandas(), expected)
+
+
+def test_to_numpy(setup):
+    df = pd.DataFrame((1, 2, 3))
+    xdf = xpd.DataFrame((1, 2, 3))
+
+    np.testing.assert_array_equal(df.to_numpy(), xdf.to_numpy().to_numpy())
