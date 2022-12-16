@@ -28,6 +28,19 @@ def test_add_docstring_disclaimer():
         "This docstring was copied from pandas.core.frame.DataFrame."
     )
 
+    assert (
+        add_docstring_disclaimer(pd, pd.from_dummies, "\n\n\n", True)
+        .split("\n")[-2]
+        .endswith(
+            f".. warning:: This method has not been implemented yet. Xorbits will try to "
+            f"execute it with {pd.__name__}."
+        )
+    )
+    assert (
+        add_docstring_disclaimer(pd, pd.DataFrame, "test\n", False)
+        == "test\n\n\nThis docstring was copied from pandas.core.frame.DataFrame."
+    )
+
 
 def test_skip_doctest():
     doc = ">>> a = 0"

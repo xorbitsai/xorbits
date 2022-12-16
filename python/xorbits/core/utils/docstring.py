@@ -54,7 +54,7 @@ def add_docstring_disclaimer(
     docstring_src_module: Optional[ModuleType],
     docstring_src_cls: Optional[Callable],
     doc: Optional[str],
-    fallback_warning: Optional[bool] = False,
+    fallback_warning: bool = False,
 ) -> Optional[str]:
     if doc is None:
         return None
@@ -258,7 +258,7 @@ def attach_module_callable_docstring(
     c: Callable,
     docstring_src_module: ModuleType,
     docstring_src: Optional[Callable],
-    fallback_warning: Optional[bool] = False,
+    fallback_warning: bool = False,
 ) -> Callable:
     """
     Attach docstring to functions and constructors.
@@ -282,7 +282,7 @@ def attach_cls_member_docstring(
     data_type: Optional[DataType] = None,
     docstring_src_module: Optional[ModuleType] = None,
     docstring_src_cls: Optional[Type] = None,
-    fallback_warning: Optional[bool] = False,
+    fallback_warning: bool = False,
 ) -> Any:
     """
     Attach docstring to class members.
