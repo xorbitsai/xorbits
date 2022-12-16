@@ -70,6 +70,7 @@ def _setup_test_session():
     sess.stop_server()
 
 
+@pytest.fixture
 def setup(_setup_test_session):
     _setup_test_session.as_default()
     yield _setup_test_session
