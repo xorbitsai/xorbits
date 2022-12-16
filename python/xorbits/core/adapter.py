@@ -65,7 +65,6 @@ from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
 from .._mars.dataframe.window.rolling.core import Rolling as MarsRolling
 from .._mars.deploy.oscar import session
-from .._mars.deploy.oscar.tests.session import new_test_session as new_mars_test_session
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .._mars.tensor.core import Tensor as MarsTensor
 from .._mars.tensor.core import flatiter as mars_flatiter
