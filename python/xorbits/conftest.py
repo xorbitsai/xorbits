@@ -16,6 +16,7 @@ import pytest
 
 from . import numpy as np
 from . import pandas as pd
+from ._mars.config import option_context
 from .tests.core import init_test
 
 
@@ -55,7 +56,7 @@ def dummy_int_2d_array():
 
 
 @pytest.fixture(scope="module")
-def setup():
+def _setup_test_session():
     sess = init_test(
         address="test://127.0.0.1",
         backend="mars",
@@ -64,5 +65,12 @@ def setup():
         web=False,
         timeout=300,
     )
-    yield
+    with option_context({"show_progress": False}):
+        yield sess
     sess.stop_server()
+
+
+@pytest.fixture(scope="module")
+def setup(_setup_test_session):
+    _setup_test_session.as_default()
+    yield _setup_test_session
