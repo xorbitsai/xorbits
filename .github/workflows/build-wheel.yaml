@@ -1,0 +1,138 @@
+name: Build and upload to PyPI
+
+on:
+  schedule:
+    # trigger build every day at 4:30 UTC
+    - cron: '30 4 * * *'
+  push:
+    tags:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }} for ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [auto]
+        requires-python: [">=3.7"]
+        exclude:
+          - os: windows-latest
+            arch: auto
+            requires-python: ">=3.7"
+        include:
+          - os: ubuntu-latest
+            arch: aarch64
+            requires-python: ">=3.7,<3.8"
+          - os: ubuntu-latest
+            arch: aarch64
+            requires-python: ">=3.8,<3.9"
+          - os: ubuntu-latest
+            arch: aarch64
+            requires-python: ">=3.9,<3.10"
+          - os: ubuntu-latest
+            arch: aarch64
+            requires-python: ">=3.10,<3.11"
+          - os: macos-latest
+            arch: universal2
+            requires-python: ">=3.7,<3.9"
+          - os: macos-latest
+            arch: universal2
+            requires-python: ">=3.9,<3.11"
+          - os: windows-latest
+            arch: auto
+            requires-python: ">=3.7,<3.9"
+          - os: windows-latest
+            arch: auto
+            requires-python: ">=3.9,<3.11"
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up QEMU
+        if: ${{ matrix.arch == 'aarch64' }}
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
+      - name: Build web
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          pip install -r CI/requirements-wheel.txt
+          cd python && python setup.py build_web
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.11.3
+        env:
+          CIBW_ARCHS: ${{ matrix.arch }}
+          CIBW_PROJECT_REQUIRES_PYTHON: ${{ matrix.requires-python }}
+          CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web
+          CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web
+          CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
+          CIBW_TEST_REQUIRES: pytest requests
+          CIBW_BUILD_VERBOSITY: 1
+        with:
+          package-dir: ./python/
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Build web
+        run: |
+          pip install -r CI/requirements-wheel.txt
+          cd python && python setup.py build_web
+
+      - name: Build sdist
+        run: cd python && pipx run build --sdist
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./python/dist/*.tar.gz
+
+  upload_pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    # upload to PyPI on every tag starting with 'v'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          # unpacks default artifact into dist/
+          # if `name: artifact` is omitted, the action will create extra parent dir
+          name: artifact
+          path: dist
+
+      # if is xprobe repo, upload to pypi
+      - uses: pypa/gh-action-pypi-publish@v1.5.0
+        if: github.repository == 'xprobe-inc/xorbits'
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
+
+      # if is not xprobe repo, upload to test
+      - uses: pypa/gh-action-pypi-publish@v1.5.0
+        if: github.repository != 'xprobe-inc/xorbits'
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_PASSWORD }}
+          verbose: true
+          repository_url: https://test.pypi.org/legacy/

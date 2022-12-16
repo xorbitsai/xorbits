@@ -8,8 +8,8 @@ global-exclude */**/node_modules/**/*
 include setup.cfg
 include pyproject.toml
 include xorbits/_mars/lib/mmh3_src/*
-include xorbits/ui/index.html
-include xorbits/ui/static/*
+include xorbits/web/ui/index.html
+include xorbits/_mars/services/web/static/*
 include xorbits/_mars/deploy/oscar/file-logging.conf
 global-exclude .DS_Store
 include versioneer.py

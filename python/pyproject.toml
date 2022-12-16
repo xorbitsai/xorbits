@@ -2,9 +2,18 @@
 requires = [
     "setuptools<64",
     "wheel",
-    "cython>=0.29",
     "oldest-supported-numpy",
-    "scipy>=1.0.0",
+    "pandas==1.0.4; python_version<'3.9' and platform_machine!='aarch64'",
+    "pandas==1.1.3; python_version<'3.9' and platform_machine=='aarch64'",
+    "pandas==1.2.2; python_version>='3.9' and python_version<'3.10'",
+    "pandas==1.3.4; python_version>='3.10'",
+    "scipy==1.4.1; python_version<'3.9' and platform_machine!='aarch64'",
+    "scipy==1.5.3; python_version<'3.9' and platform_machine=='aarch64'",
+    "scipy==1.5.4; python_version>='3.9' and python_version<'3.10'",
+    "scipy==1.7.2; python_version>='3.10'",
+    "cython==0.29.26",
+    "requests>=2.4.0",
+    "cloudpickle>=1.5.0"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -24,3 +33,8 @@ markers = [
     "ray_dag: marks tests for ray backend.",
     "skip_ray_dag: marks tests that not execute in ray backend.",
 ]
+
+[tool.cibuildwheel]
+build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
+skip = "pp* *musllinux* *i686 cp36* cp310-win32"
+manylinux-x86_64-image = "manylinux2014"
