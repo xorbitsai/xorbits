@@ -65,9 +65,9 @@ def add_docstring_disclaimer(
 
     warning_msg = (
         f"\n\n{base_indentation}.. warning:: This method has not been implemented yet. Xorbits will try to "
-        f"execute it with pandas. "
-        if fallback_warning
-        else ""
+        f"execute it with {docstring_src_module.__name__}. "
+        if fallback_warning and docstring_src_module
+        else "\n"
     )
 
     if (
