@@ -65,7 +65,7 @@ def add_docstring_disclaimer(
 
     warning_msg = (
         f"\n\n{base_indentation}.. warning:: This method has not been implemented yet. Xorbits will try to "
-        f"execute it with {docstring_src_module.__name__}. "
+        f"execute it with {docstring_src_module.__name__}."
         if fallback_warning and docstring_src_module
         else "\n"
     )
@@ -77,7 +77,7 @@ def add_docstring_disclaimer(
     ):
         return (
             doc + warning_msg + f"\n{base_indentation}This docstring was copied from "
-            f"{docstring_src_cls.__module__}.{docstring_src_cls.__name__}. "
+            f"{docstring_src_cls.__module__}.{docstring_src_cls.__name__}."
         )
     elif docstring_src_module is not None:
         return (
