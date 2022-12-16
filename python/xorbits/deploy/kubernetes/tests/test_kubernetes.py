@@ -81,54 +81,28 @@ def _collect_coverage():
 
 
 def _build_docker_images():
-    print(XORBITS_ROOT)
-    print(DOCKER_ROOT)
     image_name = "xorbits-test-image:" + uuid.uuid1().hex
-    print(os.path.exists(os.path.join(DOCKER_ROOT, "Dockerfile")))
-    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile").removeprefix(XORBITS_ROOT + "/")
-    build_proc = subprocess.run(
-        [
-            "minikube",
-            "image",
-            "build",
-            "-f",
-            docker_file_path,
-            "-t",
-            image_name,
-            ".",
-        ],
-        cwd=XORBITS_ROOT,
-        check=True,
-        capture_output=True
+    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile").removeprefix(
+        XORBITS_ROOT + "/"
     )
-    print(build_proc.stdout)
-    print(build_proc.stderr)
-    print('Build Done')
-    print(build_proc.returncode)
-    # try:
-    #     build_proc = subprocess.run(
-    #         [
-    #             "minikube",
-    #             "image",
-    #             "build",
-    #             "-f",
-    #             os.path.join(DOCKER_ROOT, "Dockerfile"),
-    #             "-t",
-    #             image_name,
-    #             ".",
-    #         ],
-    #         cwd=XORBITS_ROOT,
-    #         check=True,
-    #         capture_output=True,
-    #         shell=True
-    #     )
-    #     logger.info(build_proc.stdout)
-    #     logger.warning(build_proc.stderr)
-    #     # if proc.wait() != 0:
-    #     #     raise SystemError("Executing docker build failed.")
-    # except:  # noqa: E722
-    #     _remove_docker_image(image_name)
-    #     raise
+    try:
+        build_proc = subprocess.Popen(
+            [
+                "docker",
+                "build",
+                "-f",
+                docker_file_path,
+                "-t",
+                image_name,
+                ".",
+            ],
+            cwd=XORBITS_ROOT,
+        )
+        if build_proc.wait() != 0:
+            raise SystemError("Executing docker build failed.")
+    except:  # noqa: E722
+        _remove_docker_image(image_name)
+        raise
     return image_name
 
 
@@ -142,41 +116,21 @@ def _remove_docker_image(image_name, raises=True):
 
 
 def _load_docker_env():
-    if os.path.exists("/var/run/docker.sock") or not shutil.which("minikube"):
-        # enable nginx ingress
-        ingress = subprocess.run(
-            ["minikube", "addons", "enable", "ingress"], capture_output=True, check=True
-        )
-        print(ingress.stdout)
-        print(ingress.stderr)
-        logger.info(f"Stdout for ingress enable: {ingress.stdout}")
-        logger.info(f"Stderr for ingress enable: {ingress.stderr}")
-        return
+    proc = subprocess.Popen(["minikube", "docker-env"], stdout=subprocess.PIPE)
+    proc.wait(30)
+    for line in proc.stdout:
+        line = line.decode().split("#", 1)[0]
+        line = line.strip()  # type: str | bytes
+        export_pos = line.find("export")
+        if export_pos < 0:
+            continue
+        line = line[export_pos + 6 :].strip()
+        var, value = line.split("=", 1)
+        os.environ[var] = value.strip('"')
 
-    # proc = subprocess.Popen(["minikube", "docker-env"], stdout=subprocess.PIPE)
-    # proc.wait(30)
-    # for line in proc.stdout:
-    #     line = line.decode().split("#", 1)[0]
-    #     line = line.strip()  # type: str | bytes
-    #     export_pos = line.find("export")
-    #     if export_pos < 0:
-    #         continue
-    #     line = line[export_pos + 6 :].strip()
-    #     var, value = line.split("=", 1)
-    #     os.environ[var] = value.strip('"')
-
-    # # enable nginx ingress
-    # ingress = subprocess.run(
-    #     ["minikube", "addons", "enable", "ingress"], capture_output=True, check=True
-    # )
-    # print(ingress.stdout)
-    # print(ingress.stderr)
-    # logger.info(f"Stdout for ingress enable: {ingress.stdout}")
-    # logger.info(f"Stderr for ingress enable: {ingress.stderr}")
-
-    # subprocess.run(
-    #     ["eval", "$(minikube -p minikube docker-env)"], capture_output=True, check=True, shell=True
-    # )
+    ingress = subprocess.Popen(["minikube", "addons", "enable", "ingress"])
+    if ingress.wait() != 0:
+        raise SystemError("Enable ingress failed!")
 
 
 @contextmanager
