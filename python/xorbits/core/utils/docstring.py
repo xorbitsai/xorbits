@@ -54,6 +54,7 @@ def add_docstring_disclaimer(
     docstring_src_module: Optional[ModuleType],
     docstring_src_cls: Optional[Callable],
     doc: Optional[str],
+    fallback_warning: Optional[bool],
 ) -> Optional[str]:
     if doc is None:
         return None
@@ -62,19 +63,27 @@ def add_docstring_disclaimer(
     if base_indentation is None:
         return doc
 
+    warning_msg = (
+        f"\n\n{base_indentation}.. warning:: This method has not been implemented yet. Xorbits will try to "
+        f"execute it with pandas. "
+        if fallback_warning
+        else ""
+    )
+
     if (
         docstring_src_cls is not None
         and hasattr(docstring_src_cls, "__module__")
         and docstring_src_cls.__module__
     ):
         return (
-            doc
-            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_cls.__module__}.{docstring_src_cls.__name__}."
+            doc + warning_msg + f"\n{base_indentation}This docstring was copied from "
+            f"{docstring_src_cls.__module__}.{docstring_src_cls.__name__}. "
         )
     elif docstring_src_module is not None:
         return (
             doc
-            + f"\n\n{base_indentation}This docstring was copied from {docstring_src_module.__name__}."
+            + warning_msg
+            + f"\n{base_indentation}This docstring was copied from {docstring_src_module.__name__}."
         )
     else:
         return doc
@@ -249,6 +258,7 @@ def attach_module_callable_docstring(
     c: Callable,
     docstring_src_module: ModuleType,
     docstring_src: Optional[Callable],
+    fallback_warning: Optional[bool] = False,
 ) -> Callable:
     """
     Attach docstring to functions and constructors.
@@ -261,7 +271,7 @@ def attach_module_callable_docstring(
     doc = getattr(docstring_src, "__doc__", None)
     doc = skip_doctest(doc)
     doc = add_arg_disclaimer(docstring_src, c, doc)
-    doc = add_docstring_disclaimer(docstring_src_module, None, doc)
+    doc = add_docstring_disclaimer(docstring_src_module, None, doc, fallback_warning)
     c.__doc__ = "" if doc is None else doc
     return c
 
@@ -272,6 +282,7 @@ def attach_cls_member_docstring(
     data_type: Optional[DataType] = None,
     docstring_src_module: Optional[ModuleType] = None,
     docstring_src_cls: Optional[Type] = None,
+    fallback_warning: Optional[bool] = False,
 ) -> Any:
     """
     Attach docstring to class members.
@@ -289,6 +300,8 @@ def attach_cls_member_docstring(
     doc = skip_doctest(doc)
     docstring_src = getattr(docstring_src_cls, member_name, None)
     doc = add_arg_disclaimer(docstring_src, member, doc)
-    doc = add_docstring_disclaimer(docstring_src_module, docstring_src_cls, doc)
+    doc = add_docstring_disclaimer(
+        docstring_src_module, docstring_src_cls, doc, fallback_warning
+    )
     member.__doc__ = "" if doc is None else doc
     return member
