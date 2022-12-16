@@ -48,13 +48,13 @@ def test_pandas_dataframe_methods(setup):
     # multi chunk and follow other operations
     df = xpd.DataFrame(raw, chunk_size=3)
     with pytest.warns(Warning) as w:
-        r = df.pivot(index="foo", columns="bar", values="baz").max(axis=0)
+        r = df.pivot(index="foo", columns="bar", values="baz") + 1
         assert "DataFrame.pivot will fallback to Pandas" == str(w[0].message)
 
-    expected = raw.pivot(index="foo", columns="bar", values="baz").max(axis=0)
+    expected = raw.pivot(index="foo", columns="bar", values="baz") + 1
     assert expected.shape == r.shape
     assert str(expected) == str(r)
-    pd.testing.assert_series_equal(expected, r.to_pandas())
+    pd.testing.assert_frame_equal(expected, r.to_pandas())
 
     # can be inferred
     df = xpd.DataFrame(raw)

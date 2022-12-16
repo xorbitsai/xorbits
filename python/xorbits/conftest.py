@@ -16,7 +16,8 @@ import pytest
 
 from . import numpy as np
 from . import pandas as pd
-from .deploy import init, shutdown
+from .deploy import shutdown
+from .tests.core import init_test
 
 
 @pytest.fixture
@@ -57,7 +58,7 @@ def dummy_int_2d_array():
 @pytest.fixture(scope="module")
 def setup():
     try:
-        init(
+        init_test(
             address="test://127.0.0.1",
             backend="mars",
             init_local=True,
