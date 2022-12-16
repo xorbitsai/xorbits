@@ -24,7 +24,7 @@ class PlotAccessor(MarsGetAttrProxy):
     def __init__(self, obj):
         super().__init__(MarsPlotAccessor(to_mars(obj)))
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs):  # pragma: no cover
         return from_mars(self._mars_obj(*to_mars(args), **to_mars(kwargs)))
 
 
