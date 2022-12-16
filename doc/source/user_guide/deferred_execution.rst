@@ -7,8 +7,8 @@ Deferred Execution
 .. currentmodule:: xorbits.pandas
 
 Most Xorbits objects, including Xorbits :class:`DataFrame`, are implemented to use deferred
-execution. Deferred execution means that operations on Xorbits objects are not execute immediately
-as they are called from Python. Instead, Xorbits builds an execution plan and the plan will not be
+execution. Deferred execution means that operations on Xorbits objects are not executed immediately
+as they are called. Instead, Xorbits builds an execution plan and the plan will not be
 executed until the result is actually required.
 
 Currently, execution will be triggered in the following situations:
@@ -20,11 +20,11 @@ Currently, execution will be triggered in the following situations:
 
 Deferred execution can greatly improve performance when you manipulate large datasets.
 Optimizations can be applied to the chained operations before calling the backend. For example,
-identical parts of an execution plan can be eliminate and executed only once.
+identical parts of an execution plan can be eliminated and executed only once.
 
 .. currentmodule:: xorbits
 
-To trigger the execution manually, you can use :func:`run`. You pass an Xorbits object, or a list
+To trigger the execution manually, you can use :func:`run`. You pass an Xorbits object or a list
 of Xorbits objects as the argument.
 
 ::
