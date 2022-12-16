@@ -128,6 +128,10 @@ def _load_docker_env():
         var, value = line.split("=", 1)
         os.environ[var] = value.strip('"')
 
+    ingress_proc = subprocess.Popen(["minikube", "addons", "enable", "ingress"])
+    if ingress_proc.wait() != 0:
+        raise SystemError("Enable ingress failed!")
+
 
 @contextmanager
 def _start_kube_cluster(**kwargs):
