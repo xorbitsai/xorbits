@@ -389,7 +389,7 @@ indices are considered complete slices\ ``:``
 
 The expression within brackets in ``b[i]`` is treated as an ``i``
 followed by as many instances of ``:`` as needed to represent the
-remaining axes. NumPy also allows you to write this using dots as
+remaining axes. You can also write this using dots as
 ``b[i, ...]``.
 
 The **dots** (``...``) represent as many colons as needed to produce a
