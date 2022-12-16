@@ -89,13 +89,14 @@ def test_dataframe_map_chunk(setup):
 
     # infer failed
     def f1(pdf):
-        return pdf.iloc[2, :2]
+        return pd.Series(pdf.iloc[2, :2], name="a")
 
     res = xdf.map_chunk(f1)
     assert isinstance(res, DataRef)
     assert isinstance(res, Series)
     pd.testing.assert_series_equal(
-        res.to_pandas(), pd.concat([df.iloc[2, :2], df.iloc[7, :2]])
+        res.to_pandas(),
+        pd.Series(pd.concat([df.iloc[2, :2], df.iloc[7, :2]]), name="a"),
     )
 
     res = xdf.map_chunk(lambda x: x + 1)
