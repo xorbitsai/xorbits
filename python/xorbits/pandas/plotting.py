@@ -37,3 +37,4 @@ install_members(
 attach_module_callable_docstring(
     PlotAccessor, pandas, pandas.plotting._core.PlotAccessor
 )
+PlotAccessor.__call__.__doc__ = PlotAccessor.__doc__

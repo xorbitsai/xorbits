@@ -3,4 +3,4 @@
 
 .. currentmodule:: {{ module }}
 
-.. autoaccessorcallable:: {{ objname }}
+.. autoaccessorcallable:: {{ objname }}.__call__
