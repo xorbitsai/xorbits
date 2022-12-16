@@ -54,7 +54,7 @@ def add_docstring_disclaimer(
     docstring_src_module: Optional[ModuleType],
     docstring_src_cls: Optional[Callable],
     doc: Optional[str],
-    fallback_warning: Optional[bool],
+    fallback_warning: Optional[bool] = False,
 ) -> Optional[str]:
     if doc is None:
         return None
