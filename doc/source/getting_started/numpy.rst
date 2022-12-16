@@ -9,7 +9,7 @@ This is a short introduction to :code:`xorbits.numpy` which is originated from N
 Array Creation
 --------------
 
-Popular mechanisms for creating arrays in numpy are supported in :code:`xorbits.numpy`.
+Popular mechanisms for creating arrays in NumPy are supported in :code:`xorbits.numpy`.
 
 For example, you can create an array from a regular Python list or tuple using the ``array``
 function. The type of the resulting array is deduced from the type of the elements in the sequences.
