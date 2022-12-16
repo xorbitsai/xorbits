@@ -222,6 +222,7 @@ def _collect_pandas_module_members() -> Dict[str, Any]:
                     is_cls_member=False,
                     docstring_src_module=pd,
                     docstring_src=getattr(pd, name, None),
+                    fallback_warning=True,
                 )
     return module_methods
 
