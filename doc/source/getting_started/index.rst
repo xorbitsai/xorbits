@@ -8,3 +8,4 @@ Getting Started
    :maxdepth: 2
 
    numpy
+   pandas
