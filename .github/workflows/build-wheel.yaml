@@ -21,11 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         arch: [auto]
-        requires-python: [">=3.7"]
-        exclude:
-          - os: windows-latest
-            arch: auto
-            requires-python: ">=3.7"
+        requires-python: [">=3.7,<3.9", ">=3.9,<3.11"]
         include:
           - os: ubuntu-latest
             arch: aarch64
@@ -44,12 +40,6 @@ jobs:
             requires-python: ">=3.7,<3.9"
           - os: macos-latest
             arch: universal2
-            requires-python: ">=3.9,<3.11"
-          - os: windows-latest
-            arch: auto
-            requires-python: ">=3.7,<3.9"
-          - os: windows-latest
-            arch: auto
             requires-python: ">=3.9,<3.11"
 
     steps:
