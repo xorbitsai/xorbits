@@ -29,7 +29,7 @@ def test_add_docstring_disclaimer():
     )
 
     assert (
-        add_docstring_disclaimer(pd, pd.from_dummies, "\n\n\n", True)
+        add_docstring_disclaimer(pd, pd.DataFrame, "test\n", True)
         .split("\n")[-2]
         .endswith(
             f".. warning:: This method has not been implemented yet. Xorbits will try to "
