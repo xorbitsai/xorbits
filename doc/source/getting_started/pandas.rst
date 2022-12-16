@@ -2,6 +2,8 @@
 10 minutes to :code:`xorbits.pandas`
 ====================================
 
+.. currentmodule:: xorbits.pandas
+
 This is a short introduction to :code:`xorbits.pandas` which is originated from pandas' quickstart.
 
 Customarily, we import and init as follows:
