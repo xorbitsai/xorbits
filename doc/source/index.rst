@@ -144,3 +144,4 @@ Getting involved
    :hidden:
 
    reference/index
+   getting_started/index
