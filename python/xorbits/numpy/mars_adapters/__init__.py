@@ -27,6 +27,7 @@ from .core import (
 def _install():
     from ...core.adapter import (
         MARS_TENSOR_TYPE,
+        collect_cls_members,
         register_data_members,
         wrap_magic_method,
     )
@@ -36,4 +37,6 @@ def _install():
         setattr(DataRef, method, wrap_magic_method(method))
 
     for cls in MARS_TENSOR_TYPE:
-        register_data_members(DataType.tensor, cls)
+        register_data_members(
+            DataType.tensor, collect_cls_members(cls, DataType.tensor)
+        )

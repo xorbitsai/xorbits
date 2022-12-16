@@ -40,6 +40,9 @@ from .._mars.dataframe.base.accessor import DatetimeAccessor as MarsDatetimeAcce
 from .._mars.dataframe.base.accessor import StringAccessor as MarsStringAccessor
 from .._mars.dataframe.core import CATEGORICAL_TYPE as MARS_CATEGORICAL_TYPE
 from .._mars.dataframe.core import DATAFRAME_GROUPBY_TYPE as MARS_DATAFRAME_GROUPBY_TYPE
+from .._mars.dataframe.core import (
+    DATAFRAME_OR_SERIES_TYPE as MARS_DATAFRAME_OR_SERIES_TYPE,
+)
 from .._mars.dataframe.core import DATAFRAME_TYPE as MARS_DATAFRAME_TYPE
 from .._mars.dataframe.core import INDEX_TYPE as MARS_INDEX_TYPE
 from .._mars.dataframe.core import SERIES_GROUPBY_TYPE as MARS_SERIES_GROUPBY_TYPE
@@ -185,6 +188,8 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     """
     Convert xorbits data references to mars entities and execute them if needed.
     """
+    from ..numpy.mars_adapters.core import MarsGetItemProxy
+    from ..pandas.mars_adapters.core import MarsGetAttrProxy
 
     if isinstance(inp, DataRef):
         mars_entity = getattr(inp.data, "_mars_entity", None)
@@ -197,7 +202,7 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
 
                 run(inp)
         return mars_entity
-    elif hasattr(inp, "_mars_obj"):
+    elif isinstance(inp, (MarsGetItemProxy, MarsGetAttrProxy)):
         # converters.
         return getattr(inp, "_mars_obj")
     elif isinstance(inp, tuple):
@@ -302,8 +307,8 @@ def collect_cls_members(
     return cls_members
 
 
-def register_data_members(data_type: DataType, cls: Type):
-    DATA_MEMBERS[data_type].update(collect_cls_members(cls, data_type=data_type))
+def register_data_members(data_type: DataType, members: Dict[str, Any]):
+    DATA_MEMBERS[data_type].update(members)
 
 
 def get_cls_members(data_type: DataType) -> Dict[str, Any]:
