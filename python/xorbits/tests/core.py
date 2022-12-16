@@ -14,10 +14,10 @@
 
 import os
 
-from ..core.adapter import new_mars_test_session
+from .._mars.deploy.oscar.tests.session import new_test_session
 
 TEST_CONFIG_FILE = os.path.join(os.path.dirname(__file__), "test_config.yml")
 
 
 def init_test(*args, **kwargs):
-    return new_mars_test_session(*args, config=TEST_CONFIG_FILE, **kwargs)
+    return new_test_session(*args, config=TEST_CONFIG_FILE, **kwargs)
