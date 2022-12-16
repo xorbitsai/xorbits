@@ -39,8 +39,9 @@ jobs:
 
       - name: Start minikube
         with:
-          driver: none
-        uses: medyagh/setup-minikube@master
+          driver: docker
+          addons: ingress
+        uses: medyagh/setup-minikube@latest
 
       - name: Install kubernetes dependencies
         shell: bash
