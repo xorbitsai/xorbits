@@ -14,7 +14,7 @@
 
 import pandas
 
-from ..core.adapter import MarsPlotAccessor, register_converter, to_mars
+from ..core.adapter import MarsPlotAccessor, from_mars, register_converter, to_mars
 from ..core.utils.docstring import attach_module_callable_docstring
 from .mars_adapters.core import MarsGetAttrProxy, install_members
 
@@ -23,6 +23,9 @@ from .mars_adapters.core import MarsGetAttrProxy, install_members
 class PlotAccessor(MarsGetAttrProxy):
     def __init__(self, obj):
         super().__init__(MarsPlotAccessor(to_mars(obj)))
+
+    def __call__(self, *args, **kwargs):  # pragma: no cover
+        return from_mars(self._mars_obj(*to_mars(args), **to_mars(kwargs)))
 
 
 install_members(
@@ -34,3 +37,4 @@ install_members(
 attach_module_callable_docstring(
     PlotAccessor, pandas, pandas.plotting._core.PlotAccessor
 )
+PlotAccessor.__call__.__doc__ = PlotAccessor.__doc__
