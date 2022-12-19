@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from kubernetes.client import V1Ingress
+import pytest
 
 from ..config import (
     EmptyDirVolumeConfig,
@@ -26,7 +26,16 @@ from ..config import (
     XorbitsWorkersConfig,
 )
 
+try:
+    from kubernetes.client.rest import ApiException as K8SApiException
+except ImportError:
+    K8SApiException = None
 
+
+kube_available = K8SApiException is not None
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_simple_objects():
     ns_config_dict = NamespaceConfig("ns_name").build()
     assert ns_config_dict["metadata"]["name"] == "ns_name"
@@ -52,6 +61,7 @@ def test_simple_objects():
     assert service_config_dict["metadata"]["name"] == "xorbits-test-service"
 
 
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_supervisor_object():
     supervisor_config = XorbitsSupervisorsConfig(
         1, cpu=2, memory="10g", limit_resources=False, modules=["xorbits.test_mod"]
@@ -90,6 +100,7 @@ def test_supervisor_object():
     assert supervisor_config.api_version == "v1"
 
 
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_worker_object():
     worker_config_dict = XorbitsWorkersConfig(
         4,
@@ -170,7 +181,10 @@ def test_worker_object():
     assert container_envs["MARS_K8S_SERVICE_PORT"]["value"] == str(11112)
 
 
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_ingress_object():
+    from kubernetes.client import V1Ingress
+
     ingress_config = IngressConfig(
         namespace="ns",
         name="ingress",

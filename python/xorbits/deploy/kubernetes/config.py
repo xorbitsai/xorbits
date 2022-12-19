@@ -159,7 +159,7 @@ class ServiceConfig(KubeConfig):
         self,
         name: str,
         service_type: str,
-        selector: str,
+        selector: Union[str, Dict],
         port: int,
         target_port: Optional[int] = None,
         protocol: Optional[str] = None,

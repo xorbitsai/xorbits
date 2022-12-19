@@ -18,7 +18,7 @@ import functools
 import logging
 import time
 import uuid
-from typing import Collection, Dict, Optional, Union
+from typing import Collection, Dict, List, Optional, Union
 
 from kubernetes.client import ApiClient
 
@@ -451,7 +451,7 @@ def new_cluster(
     worker_num: int = 1,
     worker_cpu: Optional[int] = None,
     worker_mem: Optional[str] = None,
-    worker_spill_paths: Optional[str] = None,
+    worker_spill_paths: Optional[List[str]] = None,
     worker_cache_mem: Optional[str] = None,
     min_worker_num: Optional[int] = None,
     web_num: int = 1,
