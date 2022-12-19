@@ -182,37 +182,31 @@ class BuildWeb(Command):
             return
 
         npm_path = shutil.which("npm")
-        if sys.platform == "win32":
-            build_path = os.path.realpath(os.path.join("..", ".."))
-        else:
-            build_path = repo_root
-        web_src_path = os.path.join(build_path, *cls._web_src_path.split("/"))
-        web_dest_path = os.path.join(build_path, *cls._web_dest_path.split("/"))
-        mars_web_path = os.path.join(build_path, *cls._mars_web_path.split("/"))
+        web_src_path = os.path.join(repo_root, *cls._web_src_path.split("/"))
+        web_dest_path = os.path.join(repo_root, *cls._web_dest_path.split("/"))
+        mars_web_path = os.path.join(repo_root, *cls._mars_web_path.split("/"))
 
-        if not os.path.exists(web_src_path):
-            return
-        elif npm_path is None:
-            if not os.path.exists(web_dest_path):
+        if not os.path.exists(mars_web_path):
+            if npm_path is None:
                 warnings.warn("Cannot find NPM, may affect displaying Mars Web")
-            return
+                return
+            else:
+                replacements = {"npm": npm_path}
+                cmd_errored = False
+                for cmd in cls._commands:
+                    cmd = [replacements.get(c, c) for c in cmd]
+                    proc_result = subprocess.run(cmd, cwd=web_src_path)
+                    if proc_result.returncode != 0:
+                        warnings.warn(f'Failed when running `{" ".join(cmd)}`')
+                        cmd_errored = True
+                        break
+                if not cmd_errored:
+                    assert os.path.exists(web_dest_path)
 
-        replacements = {"npm": npm_path}
-        cmd_errored = False
-        for cmd in cls._commands:
-            cmd = [replacements.get(c, c) for c in cmd]
-            proc_result = subprocess.run(cmd, cwd=web_src_path)
-            if proc_result.returncode != 0:
-                warnings.warn(f'Failed when running `{" ".join(cmd)}`')
-                cmd_errored = True
-                break
-        if not cmd_errored:
-            assert os.path.exists(cls._web_dest_path)
-
-        static_bundle_path = os.path.join(web_src_path, "static")
-        if os.path.exists(mars_web_path):
-            shutil.rmtree(mars_web_path)
-        shutil.copytree(static_bundle_path, mars_web_path)
+            static_bundle_path = os.path.join(web_src_path, "static")
+            if os.path.exists(mars_web_path):
+                shutil.rmtree(mars_web_path)
+            shutil.move(static_bundle_path, mars_web_path)
 
 
 CustomInstall.register_pre_command("build_web")
@@ -223,6 +217,14 @@ CustomSDist.register_pre_command("build_web")
 # Resolve path issue of versioneer
 sys.path.append(repo_root)
 versioneer = __import__("versioneer")
+
+
+# build long description
+def build_long_description():
+    readme_path = os.path.join(os.path.dirname(os.path.abspath(repo_root)), "README.md")
+
+    with open(readme_path, encoding="utf-8") as f:
+        return f.read()
 
 
 setup_options = dict(
@@ -236,5 +238,7 @@ setup_options = dict(
             "sdist": CustomSDist,
         }
     ),
+    long_description=build_long_description(),
+    long_description_content_type="text/markdown",
 )
 setup(**setup_options)

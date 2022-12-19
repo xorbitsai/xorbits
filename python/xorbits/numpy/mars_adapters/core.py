@@ -13,7 +13,7 @@
 # limitations under the License.
 import inspect
 from types import ModuleType
-from typing import Any, Callable, Dict, Set
+from typing import Any, Callable, Dict, List, Optional, Set
 
 import numpy
 
@@ -27,12 +27,16 @@ from ...core.adapter import (
 
 
 def _collect_module_callables(
-    m: ModuleType, docstring_src_module: ModuleType
+    m: ModuleType,
+    docstring_src_module: ModuleType,
+    skip_members: Optional[List[str]] = None,
 ) -> Dict[str, Callable]:
     module_callables: Dict[str, Callable] = dict()
 
     # install module functions.
     for name, func in inspect.getmembers(m, callable):
+        if skip_members is not None and name in skip_members:
+            continue
         module_callables[name] = wrap_mars_callable(
             func,
             attach_docstring=True,
@@ -45,7 +49,7 @@ def _collect_module_callables(
 
 
 MARS_TENSOR_CALLABLES: Dict[str, Callable] = _collect_module_callables(
-    mars_tensor, numpy
+    mars_tensor, numpy, skip_members=["bool", "float", "int", "object"]
 )
 MARS_TENSOR_RANDOM_CALLABLES: Dict[str, Callable] = _collect_module_callables(
     mars_tensor.random, numpy.random
