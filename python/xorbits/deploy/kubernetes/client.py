@@ -16,10 +16,8 @@
 import asyncio
 import functools
 import logging
-import random
 import time
 import uuid
-from urllib.parse import urlparse
 
 from ..._mars.deploy.utils import wait_services_ready
 from ..._mars.lib.aio import new_isolation, stop_isolation
@@ -66,7 +64,7 @@ class KubernetesClusterClient:
         try:
             self._endpoint = self._cluster.start()
             self._session = new_session(self._endpoint)
-        except:  # noqa: E722  # nosec  # pylint: disable=bare-except
+        except:  # noqa: E722  # nosec  # pylint: disable=bare-except   # pragma: no cover
             self.stop()
             raise
 
@@ -108,7 +106,7 @@ class KubernetesCluster:
 
         if worker_cpu is None or worker_mem is None:  # pragma: no cover
             raise TypeError("`worker_cpu` and `worker_mem` must be specified")
-        if cluster_type not in ["minikube", "eks"]:
+        if cluster_type not in ["minikube", "eks"]:  # pragma: no cover
             raise ValueError("`cluster_type` must be `minikube` or `eks`")
 
         self._api_client = kube_api_client
@@ -220,7 +218,7 @@ class KubernetesCluster:
             self._namespace, service_config.build()
         )
 
-    def _get_ready_pod_count(self, label_selector):
+    def _get_ready_pod_count(self, label_selector):  # pragma: no cover
         query = self._core_api.list_namespaced_pod(
             namespace=self._namespace, label_selector=label_selector
         ).to_dict()
@@ -241,11 +239,7 @@ class KubernetesCluster:
         return cnt
 
     def _create_namespace(self):
-        if self._namespace is None:
-            namespace = self._namespace = self._get_free_namespace()
-        else:
-            namespace = self._namespace
-
+        namespace = self._namespace = self._get_free_namespace()
         self._core_api.create_namespace(NamespaceConfig(namespace).build())
 
     def _create_roles_and_bindings(self):
@@ -362,30 +356,6 @@ class KubernetesCluster:
                 if address is not None:
                     return f"http://{address}:80"
 
-    def _get_web_address(self):
-        svc_data = self._core_api.read_namespaced_service(
-            "xorbits-service", self._namespace
-        ).to_dict()
-        node_port = svc_data["spec"]["ports"][0]["node_port"]
-
-        # docker desktop use a VM to hold docker processes, hence
-        # we need to use API address instead
-        desktop_nodes = self._core_api.list_node(
-            field_selector="metadata.name=docker-desktop"
-        ).to_dict()
-        if desktop_nodes["items"]:  # pragma: no cover
-            host_ip = urlparse(
-                self._core_api.api_client.configuration.host
-            ).netloc.split(":", 1)[0]
-        else:
-            web_pods = self._core_api.list_namespaced_pod(
-                self._namespace,
-                label_selector="xorbits/service-type="
-                + XorbitsSupervisorsConfig.rc_name,
-            ).to_dict()
-            host_ip = random.choice(web_pods["items"])["status"]["host_ip"]
-        return f"http://{host_ip}:{node_port}"
-
     def _wait_web_ready(self):
         loop = new_isolation().loop
 
@@ -410,7 +380,7 @@ class KubernetesCluster:
 
         asyncio.run_coroutine_threadsafe(get_supervisors(), loop).result()
 
-    def _load_cluster_logs(self):
+    def _load_cluster_logs(self):  # pragma: no cover
         log_dict = dict()
         pod_items = self._core_api.list_namespaced_pod(self._namespace).to_dict()
         for item in pod_items["items"]:
@@ -436,8 +406,8 @@ class KubernetesCluster:
             self._wait_web_ready()
             print(f"Endpoint {self._external_web_endpoint} ready!")
             return self._external_web_endpoint
-        except:  # noqa: E722
-            if self._log_when_fail:  # pargma: no cover
+        except:  # noqa: E722   # pragma: no cover
+            if self._log_when_fail:
                 logger.error("Error when creating cluster")
                 for name, log in self._load_cluster_logs().items():
                     logger.error("Error logs for %s:\n%s", name, log)
@@ -457,8 +427,8 @@ class KubernetesCluster:
             while True:
                 try:
                     api.read_namespace(self._namespace)
-                except K8SApiException as ex:
-                    if ex.status != 404:  # pragma: no cover
+                except K8SApiException as ex:  # pragma: no cover
+                    if ex.status != 404:
                         raise
                     break
                 else:
