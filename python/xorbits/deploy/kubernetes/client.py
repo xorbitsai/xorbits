@@ -20,8 +20,6 @@ import time
 import uuid
 from typing import Collection, Dict, List, Optional, Union
 
-from kubernetes.client import ApiClient
-
 from ..._mars.deploy.utils import wait_services_ready
 from ..._mars.lib.aio import new_isolation, stop_isolation
 from ..._mars.services.cluster.api import WebClusterAPI
@@ -38,9 +36,11 @@ from .config import (
 )
 
 try:
+    from kubernetes.client import ApiClient
     from kubernetes.client.rest import ApiException as K8SApiException
 except ImportError:  # pragma: no cover
     K8SApiException = None
+    ApiClient = None
 
 logger = logging.getLogger(__name__)
 

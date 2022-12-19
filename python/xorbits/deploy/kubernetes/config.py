@@ -19,10 +19,13 @@ import math
 import re
 from typing import Any, Dict, List, Optional, Union
 
-from kubernetes.client import ApiClient
-
 from ... import __version__
 from ..._mars.utils import calc_size_by_str, parse_readable_size
+
+try:
+    from kubernetes.client import ApiClient
+except ImportError:  # pragma: no cover
+    ApiClient = None
 
 DEFAULT_IMAGE = "xprobe/xorbits:v" + __version__
 DEFAULT_WORKER_CACHE_MEM = "40%"

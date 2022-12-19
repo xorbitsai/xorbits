@@ -27,12 +27,12 @@ from ..config import (
 )
 
 try:
-    from kubernetes.client.rest import ApiException as K8SApiException
+    import kubernetes
 except ImportError:
-    K8SApiException = None
+    kubernetes = None
 
 
-kube_available = K8SApiException is not None
+kube_available = kubernetes is not None
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
