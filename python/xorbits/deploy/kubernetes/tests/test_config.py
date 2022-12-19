@@ -12,9 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from kubernetes.client import V1Ingress
 
 from ..config import (
     EmptyDirVolumeConfig,
+    HostPathVolumeConfig,
+    IngressConfig,
     NamespaceConfig,
     RoleBindingConfig,
     RoleConfig,
@@ -68,6 +71,23 @@ def test_supervisor_object():
     assert container_envs["MARS_CPU_TOTAL"]["value"] == "2"
     assert int(container_envs["MARS_MEMORY_TOTAL"]["value"]) == 10 * 1024**3
     assert container_envs["MARS_LOAD_MODULES"]["value"] == "xorbits.test_mod"
+
+    supervisor_config = XorbitsSupervisorsConfig(
+        1,
+        cpu=2,
+        memory="10g",
+        limit_resources=False,
+        modules=["xorbits.test_mod"],
+        service_port=11111,
+        web_port=11112,
+        kind="Pod",
+    )
+    supervisor = supervisor_config.build()
+    assert (
+        supervisor["spec"]["selector"]["xorbits/service-type"]
+        == XorbitsSupervisorsConfig.rc_name
+    )
+    assert supervisor_config.api_version == "v1"
 
 
 def test_worker_object():
@@ -132,3 +152,32 @@ def test_worker_object():
     container_dict = worker_config_dict["spec"]["template"]["spec"]["containers"][0]
     volume_mounts = dict((v["name"], v) for v in container_dict["volumeMounts"])
     assert "shm-volume" not in volume_mounts
+
+    worker_config_dict = XorbitsWorkersConfig(
+        4,
+        cpu=2,
+        memory=None,
+        limit_resources=True,
+        supervisor_web_port=11111,
+        service_port=11112,
+        service_name="worker",
+        volumes=[HostPathVolumeConfig("vol", "/tmp/test1", "/tmp/test2")],
+    ).build()
+    container_dict = worker_config_dict["spec"]["template"]["spec"]["containers"][0]
+    container_envs = dict((p["name"], p) for p in container_dict["env"])
+    assert "MARS_CACHE_MEM_SIZE" not in container_envs
+    assert container_envs["MARS_K8S_SERVICE_NAME"]["value"] == "worker"
+    assert container_envs["MARS_K8S_SERVICE_PORT"]["value"] == str(11112)
+
+
+def test_ingress_object():
+    ingress_config = IngressConfig(
+        namespace="ns",
+        name="ingress",
+        service_name="ing-service",
+        service_port=7777,
+        cluster_type="eks",
+    )
+    ingress = ingress_config.build()
+    assert type(ingress) is V1Ingress
+    assert ingress.spec.ingress_class_name == "alb"

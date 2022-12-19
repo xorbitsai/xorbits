@@ -631,7 +631,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
 
     def config_readiness_probe(self):
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @staticmethod
     def get_local_app_module(mod_name):
