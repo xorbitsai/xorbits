@@ -18,6 +18,9 @@ import functools
 import logging
 import time
 import uuid
+from typing import Collection, Dict, Optional, Union
+
+from kubernetes.client import ApiClient
 
 from ..._mars.deploy.utils import wait_services_ready
 from ..._mars.lib.aio import new_isolation, stop_isolation
@@ -43,21 +46,21 @@ logger = logging.getLogger(__name__)
 
 
 class KubernetesClusterClient:
-    def __init__(self, cluster):
+    def __init__(self, cluster: "KubernetesCluster"):
         self._cluster = cluster
         self._endpoint = None
         self._session = None
 
     @property
-    def endpoint(self):
+    def endpoint(self) -> Optional[str]:
         return self._endpoint
 
     @property
-    def namespace(self):
+    def namespace(self) -> Optional[str]:
         return self._cluster.namespace
 
     @property
-    def session(self):
+    def session(self) -> Optional[str]:
         return self._session
 
     def start(self):
@@ -75,31 +78,31 @@ class KubernetesClusterClient:
 class KubernetesCluster:
     _supervisor_config_cls = XorbitsSupervisorsConfig
     _worker_config_cls = XorbitsWorkersConfig
-    _default_service_port = 7103
-    _default_web_port = 7104
+    _default_service_port: int = 7103
+    _default_web_port: int = 7104
 
     def __init__(
         self,
-        kube_api_client=None,
-        image=None,
-        namespace=None,
-        supervisor_num=1,
-        supervisor_cpu=1,
-        supervisor_mem="4G",
-        supervisor_mem_limit_ratio=None,
-        worker_num=1,
-        worker_cpu=None,
-        worker_mem=None,
-        worker_spill_paths=None,
-        worker_cache_mem=None,
-        min_worker_num=None,
-        worker_min_cache_mem=None,
-        worker_mem_limit_ratio=None,
-        web_port=None,
-        service_name=None,
-        service_type=None,
-        timeout=None,
-        cluster_type="minikube",
+        kube_api_client: Optional[ApiClient] = None,
+        image: Optional[str] = None,
+        namespace: Optional[str] = None,
+        supervisor_num: int = 1,
+        supervisor_cpu: int = 1,
+        supervisor_mem: str = "4G",
+        supervisor_mem_limit_ratio: Optional[float] = None,
+        worker_num: int = 1,
+        worker_cpu: Optional[int] = None,
+        worker_mem: Optional[str] = None,
+        worker_spill_paths: Optional[str] = None,
+        worker_cache_mem: Optional[str] = None,
+        min_worker_num: Optional[int] = None,
+        worker_min_cache_mem: Optional[str] = None,
+        worker_mem_limit_ratio: Optional[float] = None,
+        web_port: Optional[int] = None,
+        service_name: Optional[str] = None,
+        service_type: Optional[str] = None,
+        timeout: Optional[int] = None,
+        cluster_type: str = "minikube",
         **kwargs,
     ):
         from kubernetes import client as kube_client
@@ -135,7 +138,7 @@ class KubernetesCluster:
         extra_labels = kwargs.pop("extra_labels", None) or dict()
         service_port = kwargs.pop("service_port", None) or self._default_service_port
 
-        def _override_modules(updates):
+        def _override_modules(updates: Union[str, Collection]):
             modules = set(extra_modules)
             updates = updates.split(",") if isinstance(updates, str) else updates
             modules.update(updates)
@@ -189,10 +192,10 @@ class KubernetesCluster:
         )
 
     @property
-    def namespace(self):
+    def namespace(self) -> Optional[str]:
         return self._namespace
 
-    def _get_free_namespace(self):
+    def _get_free_namespace(self) -> str:
         while True:
             namespace = "xorbits-ns-" + str(uuid.uuid4().hex)
             try:
@@ -218,7 +221,7 @@ class KubernetesCluster:
             self._namespace, service_config.build()
         )
 
-    def _get_ready_pod_count(self, label_selector):  # pragma: no cover
+    def _get_ready_pod_count(self, label_selector: str) -> int:  # pragma: no cover
         query = self._core_api.list_namespaced_pod(
             namespace=self._namespace, label_selector=label_selector
         ).to_dict()
@@ -380,7 +383,7 @@ class KubernetesCluster:
 
         asyncio.run_coroutine_threadsafe(get_supervisors(), loop).result()
 
-    def _load_cluster_logs(self):  # pragma: no cover
+    def _load_cluster_logs(self) -> Dict:  # pragma: no cover
         log_dict = dict()
         pod_items = self._core_api.list_namespaced_pod(self._namespace).to_dict()
         for item in pod_items["items"]:
@@ -414,7 +417,7 @@ class KubernetesCluster:
             self.stop()
             raise
 
-    def stop(self, wait=False, timeout=0):
+    def stop(self, wait: bool = False, timeout: int = 0):
         # stop isolation
         stop_isolation()
 
@@ -440,25 +443,25 @@ class KubernetesCluster:
 
 
 def new_cluster(
-    kube_api_client=None,
-    image=None,
-    supervisor_num=1,
-    supervisor_cpu=None,
-    supervisor_mem=None,
-    worker_num=1,
-    worker_cpu=None,
-    worker_mem=None,
-    worker_spill_paths=None,
-    worker_cache_mem=None,
-    min_worker_num=None,
-    web_num=1,
-    web_cpu=None,
-    web_mem=None,
-    service_type=None,
-    timeout=None,
-    cluster_type="minikube",
+    kube_api_client: Optional[ApiClient] = None,
+    image: Optional[str] = None,
+    supervisor_num: int = 1,
+    supervisor_cpu: Optional[int] = None,
+    supervisor_mem: Optional[str] = None,
+    worker_num: int = 1,
+    worker_cpu: Optional[int] = None,
+    worker_mem: Optional[str] = None,
+    worker_spill_paths: Optional[str] = None,
+    worker_cache_mem: Optional[str] = None,
+    min_worker_num: Optional[int] = None,
+    web_num: int = 1,
+    web_cpu: Optional[int] = None,
+    web_mem: Optional[str] = None,
+    service_type: Optional[str] = None,
+    timeout: Optional[int] = None,
+    cluster_type: str = "minikube",
     **kwargs,
-):
+) -> "KubernetesClusterClient":
     """
     :param kube_api_client: Kubernetes API client, can be created with ``new_client_from_config``
     :param image: Docker image to use, ``xprobe/xorbits:<xorbits version>`` by default

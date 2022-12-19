@@ -16,7 +16,7 @@
 import asyncio
 import logging
 import os
-from typing import AsyncGenerator, Dict, List, Optional, TypeVar
+from typing import Any, AsyncGenerator, Dict, List, Optional, TypeVar
 
 from ..._mars.deploy.utils import next_in_thread, wait_all_supervisors_ready
 from ..._mars.services.cluster import WebClusterAPI
@@ -36,7 +36,11 @@ class K8SClusterBackend(AbstractClusterBackend):
     name = "k8s"
 
     def __init__(
-        self, node_role=None, pool_address=None, k8s_config=None, k8s_namespace=None
+        self,
+        node_role: Optional[NodeRole] = None,
+        pool_address: Optional[str] = None,
+        k8s_config: Optional[Any] = None,
+        k8s_namespace: Optional[str] = None,
     ):
         from kubernetes import client
 
@@ -56,8 +60,6 @@ class K8SClusterBackend(AbstractClusterBackend):
         self._service_name = os.environ.get("MARS_K8S_SERVICE_NAME")
         self._full_label_selector = None
         self._client = client.CoreV1Api(client.ApiClient(self._k8s_config))
-
-        self._pod_to_ep = dict()
 
     @classmethod
     async def create(

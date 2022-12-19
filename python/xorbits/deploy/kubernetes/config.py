@@ -17,17 +17,18 @@ import abc
 import functools
 import math
 import re
-from typing import Optional
+from typing import Any, Dict, List, Optional, Union
 
-# from ... import __version__
+from kubernetes.client import ApiClient
+
+from ... import __version__
 from ..._mars.utils import calc_size_by_str, parse_readable_size
 
-# TODO change to use __version__
-DEFAULT_IMAGE = "xprobe/xorbits:v" + "0.1"
+DEFAULT_IMAGE = "xprobe/xorbits:v" + __version__
 DEFAULT_WORKER_CACHE_MEM = "40%"
 
 
-def _remove_nones(cfg):
+def _remove_nones(cfg) -> Dict:
     return dict((k, v) for k, v in cfg.items() if v is not None)
 
 
@@ -39,14 +40,14 @@ _kube_api_mapping = {
 
 
 @functools.lru_cache(10)
-def _get_k8s_api(api_version, k8s_api_client):
+def _get_k8s_api(api_version: str, k8s_api_client: ApiClient):
     from kubernetes import client as kube_client
 
     return getattr(kube_client, _kube_api_mapping[api_version])(k8s_api_client)
 
 
 @functools.lru_cache(10)
-def _camel_to_underline(name):
+def _camel_to_underline(name: str) -> str:
     s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
     return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
 
@@ -54,7 +55,7 @@ def _camel_to_underline(name):
 class KubeConfig(abc.ABC):
     api_version = "v1"
 
-    def create_namespaced(self, k8s_api_client, namespace):
+    def create_namespaced(self, k8s_api_client: ApiClient, namespace: str):
         api = _get_k8s_api(self.api_version, k8s_api_client)
         config = self.build()
         method_name = f'create_namespaced_{_camel_to_underline(config["kind"])}'
@@ -72,7 +73,9 @@ class RoleConfig(KubeConfig):
 
     api_version = "rbac.authorization.k8s.io/v1"
 
-    def __init__(self, name, namespace, api_groups, resources, verbs):
+    def __init__(
+        self, name: str, namespace: str, api_groups: str, resources: str, verbs: str
+    ):
         self._name = name
         self._namespace = namespace
         self._api_groups = api_groups.split(",")
@@ -100,7 +103,9 @@ class RoleBindingConfig(KubeConfig):
 
     api_version = "rbac.authorization.k8s.io/v1"
 
-    def __init__(self, name, namespace, role_name, service_account_name):
+    def __init__(
+        self, name: str, namespace: str, role_name: str, service_account_name: str
+    ):
         self._name = name
         self._namespace = namespace
         self._role_name = role_name
@@ -130,7 +135,7 @@ class NamespaceConfig(KubeConfig):
     Configuration builder for Kubernetes namespaces
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         self._name = name
 
     def build(self):
@@ -151,7 +156,13 @@ class ServiceConfig(KubeConfig):
     """
 
     def __init__(
-        self, name, service_type, selector, port, target_port=None, protocol=None
+        self,
+        name: str,
+        service_type: str,
+        selector: str,
+        port: int,
+        target_port: Optional[int] = None,
+        protocol: Optional[str] = None,
     ):
         self._name = name
         self._type = service_type
@@ -263,11 +274,11 @@ class ResourceConfig:
         assert not ratio
 
     @property
-    def cpu(self):
+    def cpu(self) -> int:
         return self._cpu
 
     @property
-    def memory(self):
+    def memory(self) -> float:
         return self._memory
 
     def build(self):
@@ -284,7 +295,7 @@ class PortConfig:
     Configuration builder for Kubernetes ports definition for containers
     """
 
-    def __init__(self, container_port):
+    def __init__(self, container_port: Union[int, str]):
         self._container_port = int(container_port)
 
     def build(self):
@@ -298,7 +309,7 @@ class VolumeConfig(abc.ABC):
     Base configuration builder for Kubernetes volumes
     """
 
-    def __init__(self, name, mount_path):
+    def __init__(self, name: str, mount_path: str):
         self.name = name
         self.mount_path = mount_path
 
@@ -318,7 +329,13 @@ class HostPathVolumeConfig(VolumeConfig):
     Configuration builder for Kubernetes host volumes
     """
 
-    def __init__(self, name, mount_path, host_path, volume_type=None):
+    def __init__(
+        self,
+        name: str,
+        mount_path: str,
+        host_path: str,
+        volume_type: Optional[str] = None,
+    ):
         super().__init__(name, mount_path)
         self._host_path = host_path
         self._volume_type = volume_type or "DirectoryOrCreate"
@@ -335,7 +352,13 @@ class EmptyDirVolumeConfig(VolumeConfig):
     Configuration builder for Kubernetes empty-dir volumes
     """
 
-    def __init__(self, name, mount_path, use_memory=True, size_limit=None):
+    def __init__(
+        self,
+        name: str,
+        mount_path: str,
+        use_memory: bool = True,
+        size_limit: Optional[int] = None,
+    ):
         super().__init__(name, mount_path)
         self._medium = "Memory" if use_memory else None
         self._size_limit = size_limit
@@ -354,7 +377,7 @@ class ContainerEnvConfig:
     Configuration builder for Kubernetes container environments
     """
 
-    def __init__(self, name, value=None, field_path=None):
+    def __init__(self, name: str, value: Optional[Any] = None, field_path: str = None):
         self._name = name
         self._value = value
         self._field_path = field_path
@@ -375,11 +398,11 @@ class ProbeConfig:
 
     def __init__(
         self,
-        initial_delay=5,
-        period=1,
-        timeout=None,
-        success_thresh=None,
-        failure_thresh=None,
+        initial_delay: int = 5,
+        period: int = 1,
+        timeout: Optional[int] = None,
+        success_thresh: Optional[int] = None,
+        failure_thresh: Optional[int] = None,
     ):
         self._initial_delay = initial_delay
         self._period = period
@@ -423,25 +446,25 @@ class ReplicationConfig(KubeConfig):
 
     def __init__(
         self,
-        name,
-        image,
-        replicas,
-        resource_request=None,
-        resource_limit=None,
-        liveness_probe=None,
-        readiness_probe=None,
-        pre_stop_command=None,
-        kind=None,
+        name: Optional[str],
+        image: str,
+        replicas: int,
+        resource_request: Optional["ResourceConfig"] = None,
+        resource_limit: Optional["ResourceConfig"] = None,
+        liveness_probe: Optional["ProbeConfig"] = None,
+        readiness_probe: Optional["ProbeConfig"] = None,
+        pre_stop_command: Optional[List[str]] = None,
+        kind: str = None,
         **kwargs,
     ):
         self._name = name
         self._kind = kind or self._default_kind
         self._image = image
         self._replicas = replicas
-        self._ports = []
-        self._volumes = []
-        self._envs = dict()
-        self._labels = dict()
+        self._ports: List[PortConfig] = []
+        self._volumes: List[VolumeConfig] = []
+        self._envs: Dict[str, ContainerEnvConfig] = dict()
+        self._labels: Dict[str, Any] = dict()
 
         self.add_default_envs()
 
@@ -521,7 +544,7 @@ class ReplicationConfig(KubeConfig):
             }
         )
 
-    def build_template_spec(self):
+    def build_template_spec(self) -> Dict:
         result = {
             "containers": [self.build_container()],
             "volumes": [vol.build() for vol in self._volumes],
@@ -556,16 +579,16 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
 
     def __init__(
         self,
-        replicas,
-        cpu=None,
-        memory=None,
-        limit_resources=False,
-        memory_limit_ratio=None,
-        image=None,
-        modules=None,
-        volumes=None,
-        service_name=None,
-        service_port=None,
+        replicas: int,
+        cpu: Optional[int] = None,
+        memory: Optional[str] = None,
+        limit_resources: bool = False,
+        memory_limit_ratio: Optional[float] = None,
+        image: Optional[str] = None,
+        modules: Optional[Union[str, List[str]]] = None,
+        volumes: Optional[List[VolumeConfig]] = None,
+        service_name: Optional[str] = None,
+        service_port: Optional[int] = None,
         **kwargs,
     ):
         self._cpu = cpu
@@ -575,7 +598,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         assert not ratio
 
         if isinstance(modules, str):
-            self._modules = modules.split(",")
+            self._modules: Optional[List[str]] = modules.split(",")
         else:
             self._modules = modules
 
@@ -634,7 +657,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         raise NotImplementedError  # pragma: no cover
 
     @staticmethod
-    def get_local_app_module(mod_name):
+    def get_local_app_module(mod_name) -> str:
         return __name__.rsplit(".", 1)[0] + "." + mod_name
 
     def build(self):
@@ -662,7 +685,7 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         if self._web_port:
             self.add_port(self._web_port)
 
-    def config_readiness_probe(self):
+    def config_readiness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
 
     def build_container_command(self):
@@ -731,7 +754,7 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         if supervisor_web_port:
             self.add_env("MARS_K8S_SUPERVISOR_WEB_PORT", supervisor_web_port)
 
-    def config_readiness_probe(self):
+    def config_readiness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
 
     def build_container_command(self):
