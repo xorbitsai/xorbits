@@ -54,12 +54,13 @@ jobs:
           export PYTHONPATH="$PYTHONPATH:$(pwd):$(pwd)/python"
           python python/setup.py build_ext -i
           export PYTEST_CONFIG_WITHOUT_COV="--log-level=DEBUG --timeout=1500 -W ignore::PendingDeprecationWarning"
-          export PYTEST_CONFIG="$PYTEST_CONFIG_WITHOUT_COV --cov-config=python/setup.cfg --cov-report= --cov=python/xorbits/deploy"
+          export PYTEST_CONFIG="$PYTEST_CONFIG_WITHOUT_COV --cov-config=python/setup.cfg --cov-report=xml --cov=python/xorbits/deploy"
           pytest $PYTEST_CONFIG -s python/xorbits/deploy/kubernetes
-          coverage report
-          coverage xml
 
-      - name: Report coverage data
-        shell: bash
-        run: |
-          bash <(curl -s https://codecov.io/bash)
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          flags: unittests
+          name: codecov-gpu
+          verbose: true
