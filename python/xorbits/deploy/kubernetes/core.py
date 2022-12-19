@@ -189,7 +189,10 @@ class K8SClusterBackend(AbstractClusterBackend):
             pass
 
     async def request_worker(
-        self, worker_cpu: int = None, worker_mem: int = None, timeout: int = None
+        self,
+        worker_cpu: Optional[int] = None,
+        worker_mem: Optional[int] = None,
+        timeout: Optional[int] = None,
     ) -> str:
         raise NotImplementedError
 

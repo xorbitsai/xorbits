@@ -377,7 +377,9 @@ class ContainerEnvConfig:
     Configuration builder for Kubernetes container environments
     """
 
-    def __init__(self, name: str, value: Optional[Any] = None, field_path: str = None):
+    def __init__(
+        self, name: str, value: Optional[Any] = None, field_path: Optional[str] = None
+    ):
         self._name = name
         self._value = value
         self._field_path = field_path
@@ -454,7 +456,7 @@ class ReplicationConfig(KubeConfig):
         liveness_probe: Optional["ProbeConfig"] = None,
         readiness_probe: Optional["ProbeConfig"] = None,
         pre_stop_command: Optional[List[str]] = None,
-        kind: str = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
         self._name = name
