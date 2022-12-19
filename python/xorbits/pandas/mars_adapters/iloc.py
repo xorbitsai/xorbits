@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ...core.adapter import MarsDataFrameLoc, register_converter
+from ...core.adapter import MarsDataFrameIloc, register_converter
 from .core import MarsPandasGetItemProxy
 
 
-@register_converter(from_cls_list=[MarsDataFrameLoc])
-class DataFrameLoc(MarsPandasGetItemProxy):
+@register_converter(from_cls_list=[MarsDataFrameIloc])
+class DataFrameIloc(MarsPandasGetItemProxy):
     pass

@@ -60,6 +60,22 @@ def test_dataframe_loc(setup, dummy_df):
     assert 0 == row[0]
     assert pd.Series({"foo": 0}, name=0).equals(row[1])
 
+    xdf = dummy_df.iloc[[0], [0]]
+    assert isinstance(xdf, DataRef)
+
+    rows = list(xdf.iterrows())
+    assert 1 == len(rows)
+    row = rows[0]
+    assert 2 == len(row)
+    assert 0 == row[0]
+    assert pd.Series({"foo": 0}, name=0).equals(row[1])
+
+    xdf = dummy_df.at[0, "foo"]
+    assert isinstance(xdf, DataRef)
+
+    assert 0 == len(xdf)
+    assert 0 == xdf.to_numpy()
+
 
 def test_string_accessor(setup, dummy_str_series):
     assert isinstance(dummy_str_series.str, MarsGetAttrProxy)

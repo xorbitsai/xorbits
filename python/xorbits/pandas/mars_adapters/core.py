@@ -174,3 +174,13 @@ def install_members(
     )
     for name in members:
         setattr(cls, name, members[name])
+
+
+class MarsPandasGetItemProxy:
+    def __init__(self, mars_obj):
+        self._mars_obj = mars_obj
+
+    def __getitem__(self, item):
+        return wrap_mars_callable(
+            self._mars_obj.__getitem__, attach_docstring=False, is_cls_member=True
+        )(item)
