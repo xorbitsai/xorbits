@@ -59,6 +59,8 @@ from .._mars.dataframe.datastore.to_sql import (
 from .._mars.dataframe.datastore.to_vineyard import (
     DataFrameToVineyardChunk as MarsDataFrameToVineyardChunk,
 )
+from .._mars.dataframe.indexing.at import DataFrameAt as MarsDataFrameAt
+from .._mars.dataframe.indexing.iloc import DataFrameIloc as MarsDataFrameIloc
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.plotting.core import PlotAccessor as MarsPlotAccessor
 from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
