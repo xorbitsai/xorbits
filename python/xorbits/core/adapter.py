@@ -60,6 +60,7 @@ from .._mars.dataframe.datastore.to_vineyard import (
     DataFrameToVineyardChunk as MarsDataFrameToVineyardChunk,
 )
 from .._mars.dataframe.indexing.at import DataFrameAt as MarsDataFrameAt
+from .._mars.dataframe.indexing.iat import DataFrameIat as MarsDataFrameIat
 from .._mars.dataframe.indexing.iloc import DataFrameIloc as MarsDataFrameIloc
 from .._mars.dataframe.indexing.loc import DataFrameLoc as MarsDataFrameLoc
 from .._mars.dataframe.plotting.core import PlotAccessor as MarsPlotAccessor
@@ -210,11 +211,18 @@ class MemberProxy:
             mars_entity.__setattr__(key, value)
 
 
+class MarsGetItemProxy:
+    def __init__(self, mars_obj):
+        self._mars_obj = mars_obj
+
+    def __getitem__(self, item):
+        return from_mars(self._mars_obj[to_mars(item)])
+
+
 def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     """
     Convert xorbits data references to mars entities and execute them if needed.
     """
-    from ..numpy.mars_adapters.core import MarsGetItemProxy
     from ..pandas.mars_adapters.core import MarsGetAttrProxy
 
     if isinstance(inp, DataRef):
