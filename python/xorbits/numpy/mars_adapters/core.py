@@ -17,13 +17,7 @@ from typing import Any, Callable, Dict, List, Optional, Set
 
 import numpy
 
-from ...core.adapter import (
-    MARS_TENSOR_TYPE,
-    from_mars,
-    mars_tensor,
-    to_mars,
-    wrap_mars_callable,
-)
+from ...core.adapter import MARS_TENSOR_TYPE, mars_tensor, wrap_mars_callable
 
 
 def _collect_module_callables(
@@ -60,14 +54,6 @@ MARS_TENSOR_FFT_CALLABLES: Dict[str, Callable] = _collect_module_callables(
 MARS_TENSOR_LINALG_CALLABLES: Dict[str, Callable] = _collect_module_callables(
     mars_tensor.linalg, numpy.linalg
 )
-
-
-class MarsGetItemProxy:
-    def __init__(self, mars_obj):
-        self._mars_obj = mars_obj
-
-    def __getitem__(self, item):
-        return from_mars(self._mars_obj[to_mars(item)])
 
 
 def _collect_tensor_objects():

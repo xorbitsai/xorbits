@@ -14,17 +14,46 @@
 
 import pandas
 from pandas.core.accessor import CachedAccessor
+from pandas.util._decorators import doc
 
 from ..core import Data, DataRef, DataType
 from ..core.adapter import MarsDataFrame, MarsIndex, MarsSeries, to_mars
 from ..core.data import register_cls_to_type
 from ..core.utils.docstring import attach_module_callable_docstring
 from .accessors import DatetimeAccessor, StringAccessor
+from .mars_adapters.indexing import (
+    DataFrameAt,
+    DataFrameIat,
+    DataFrameIloc,
+    DataFrameLoc,
+)
 from .plotting import PlotAccessor
 
 
+class MarsIndexingMixin:
+    @property
+    @doc(DataFrameAt)
+    def at(self):
+        return DataFrameAt(self.data._mars_entity.at)
+
+    @property
+    @doc(DataFrameIat)
+    def iat(self):
+        return DataFrameIat(self.data._mars_entity.iat)
+
+    @property
+    @doc(DataFrameLoc)
+    def loc(self):
+        return DataFrameLoc(self.data._mars_entity.loc)
+
+    @property
+    @doc(DataFrameIloc)
+    def iloc(self):
+        return DataFrameIloc(self.data._mars_entity.iloc)
+
+
 @register_cls_to_type(data_type=DataType.dataframe)
-class DataFrame(DataRef):
+class DataFrame(DataRef, MarsIndexingMixin):
 
     plot = CachedAccessor("plot", PlotAccessor)
 
@@ -40,7 +69,7 @@ attach_module_callable_docstring(DataFrame, pandas, pandas.DataFrame)
 
 
 @register_cls_to_type(data_type=DataType.series)
-class Series(DataRef):
+class Series(DataRef, MarsIndexingMixin):
 
     str = CachedAccessor("str", StringAccessor)
     dt = CachedAccessor("dt", DatetimeAccessor)

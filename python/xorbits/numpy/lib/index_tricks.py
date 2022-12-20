@@ -15,13 +15,13 @@ import numpy
 
 from ...core.adapter import (
     MarsCClass,
+    MarsGetItemProxy,
     MarsMGridClass,
     MarsOGridClass,
     MarsRClass,
     register_converter,
 )
 from ...core.utils.docstring import attach_module_callable_docstring
-from ...numpy.mars_adapters.core import MarsGetItemProxy
 
 
 @register_converter(from_cls_list=[MarsCClass])
