@@ -16,6 +16,12 @@ from .core import PANDAS_MODULE_METHODS
 
 
 def _install():
-    from .core import _collect_pandas_dataframe_members
+    from .core import (
+        _collect_pandas_dataframe_members,
+        _collect_pandas_index_members,
+        _collect_pandas_series_members,
+    )
 
     _collect_pandas_dataframe_members()
+    _collect_pandas_series_members()
+    _collect_pandas_index_members()
