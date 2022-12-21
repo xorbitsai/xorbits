@@ -14,7 +14,7 @@
 
 import pandas
 
-from ...core.adapter import (
+from ..core.adapter import (
     MarsDataFrameAt,
     MarsDataFrameIat,
     MarsDataFrameIloc,
@@ -22,7 +22,7 @@ from ...core.adapter import (
     MarsGetItemProxy,
     register_converter,
 )
-from ...core.utils.docstring import attach_module_callable_docstring
+from ..core.utils.docstring import attach_module_callable_docstring
 
 
 @register_converter(from_cls_list=[MarsDataFrameAt])
@@ -38,7 +38,7 @@ class DataFrameIat(MarsGetItemProxy):
     pass
 
 
-attach_module_callable_docstring(DataFrameAt, pandas, pandas.core.indexing._iAtIndexer)
+attach_module_callable_docstring(DataFrameIat, pandas, pandas.core.indexing._iAtIndexer)
 
 
 @register_converter(from_cls_list=[MarsDataFrameLoc])

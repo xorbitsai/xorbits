@@ -21,16 +21,11 @@ from ..core.adapter import MarsDataFrame, MarsIndex, MarsSeries, to_mars
 from ..core.data import register_cls_to_type
 from ..core.utils.docstring import attach_module_callable_docstring
 from .accessors import DatetimeAccessor, StringAccessor
-from .mars_adapters.indexing import (
-    DataFrameAt,
-    DataFrameIat,
-    DataFrameIloc,
-    DataFrameLoc,
-)
+from .indexing import DataFrameAt, DataFrameIat, DataFrameIloc, DataFrameLoc
 from .plotting import PlotAccessor
 
 
-class MarsIndexingMixin:
+class IndexingMixin:
     @property
     @doc(DataFrameAt)
     def at(self):
@@ -53,7 +48,7 @@ class MarsIndexingMixin:
 
 
 @register_cls_to_type(data_type=DataType.dataframe)
-class DataFrame(DataRef, MarsIndexingMixin):
+class DataFrame(DataRef, IndexingMixin):
 
     plot = CachedAccessor("plot", PlotAccessor)
 
@@ -69,7 +64,7 @@ attach_module_callable_docstring(DataFrame, pandas, pandas.DataFrame)
 
 
 @register_cls_to_type(data_type=DataType.series)
-class Series(DataRef, MarsIndexingMixin):
+class Series(DataRef, IndexingMixin):
 
     str = CachedAccessor("str", StringAccessor)
     dt = CachedAccessor("dt", DatetimeAccessor)

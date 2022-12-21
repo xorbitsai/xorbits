@@ -17,6 +17,7 @@ import pandas as pd
 import pytest
 
 from ... import pandas as xpd
+from ...core.utils.docstring import attach_module_callable_docstring
 from ..accessors import StringAccessor
 
 
@@ -88,7 +89,7 @@ def test_cls_docstring():
     )
 
 
-def test_obj_docstring(setup, dummy_str_series, dummy_dt_series):
+def test_obj_docstring(setup, dummy_str_series, dummy_dt_series, dummy_df):
     assert isinstance(dummy_str_series, xpd.Series)
 
     docstring = dummy_str_series.str.__doc__
@@ -111,3 +112,38 @@ def test_obj_docstring(setup, dummy_str_series, dummy_dt_series):
         "This docstring was copied from "
         "pandas.core.indexes.accessors.CombinedDatetimelikeProperties."
     )
+
+    def f():
+        pass
+
+    docstring = dummy_df.loc.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._LocIndexer)
+    assert docstring is not None and docstring == f.__doc__
+
+    docstring = dummy_df.iloc.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._iLocIndexer)
+    assert docstring is not None and docstring == f.__doc__
+
+    docstring = dummy_df.at.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._AtIndexer)
+    assert docstring is not None and docstring == f.__doc__
+
+    docstring = dummy_df.iat.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._iAtIndexer)
+    assert docstring is not None and docstring == f.__doc__
+
+    docstring = dummy_dt_series.loc.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._LocIndexer)
+    assert docstring is not None and docstring == f.__doc__
+
+    docstring = dummy_dt_series.iloc.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._iLocIndexer)
+    assert docstring is not None and docstring == f.__doc__
+
+    docstring = dummy_dt_series.at.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._AtIndexer)
+    assert docstring is not None and docstring == f.__doc__
+
+    docstring = dummy_dt_series.iat.__doc__
+    attach_module_callable_docstring(f, pd, pd.core.indexing._iAtIndexer)
+    assert docstring is not None and docstring == f.__doc__
