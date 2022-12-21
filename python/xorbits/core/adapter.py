@@ -74,6 +74,30 @@ from .._mars.tensor.lib.index_tricks import OGridClass as MarsOGridClass
 from .._mars.tensor.lib.index_tricks import RClass as MarsRClass
 from .data import DATA_MEMBERS, Data, DataRef, DataType
 
+
+def own_data(mars_entity: MarsEntity) -> bool:
+    # There are several mars operands which holds data directly. For example,
+    # `DataFrameDataSource`, it is an operand represents creating a DataFrame
+    # from Pandas DataFrame and its member `data` is the Pandas DataFrame. For
+    # those mars entities that created by operands like these can skip executions
+    # when users iterate or print entities. This function is to check if
+    # mars entity's operand owns data.
+    from .._mars.dataframe.datasource.dataframe import DataFrameDataSource
+    from .._mars.dataframe.datasource.index import IndexDataSource
+    from .._mars.dataframe.datasource.series import SeriesDataSource
+    from .._mars.tensor.datasource import ArrayDataSource
+
+    if (
+        isinstance(
+            mars_entity.op,
+            (ArrayDataSource, DataFrameDataSource, SeriesDataSource, IndexDataSource),
+        )
+        and mars_entity.op.data is not None
+    ):
+        return True
+    return False
+
+
 # mars class name -> execution conditions
 _TO_MARS_EXECUTION_CONDITION: Dict[
     str, List[Callable[["MarsEntity"], bool]]

@@ -14,6 +14,7 @@
 
 from collections import defaultdict
 from enum import Enum
+from itertools import count
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -42,9 +43,6 @@ class Data:
         "data_type",
         "_mars_entity",
     ]
-
-    def __dir__(self) -> Iterable[str]:
-        return list(DATA_MEMBERS[self.data_type])
 
     def __init__(self, *args, **kwargs):
         self.data_type: DataType = kwargs.pop("data_type")
@@ -161,7 +159,7 @@ class DataRef(metaclass=DataRefMeta):
     __fields = ["data"]
 
     def __dir__(self) -> Iterable[str]:
-        return dir(self.data)
+        return list(DATA_MEMBERS[self.data.data_type])
 
     def __init__(self, data: Data):
         self.data = data
@@ -177,17 +175,60 @@ class DataRef(metaclass=DataRefMeta):
         else:
             self.data.__setattr__(key, value)
 
+    def own_data(self):
+        from .adapter import own_data
+
+        return own_data(self.data._mars_entity)
+
+    def __iter__(self):
+        # Mars entity hasn't implemented __iter__, however `iter(mars_entityt)`
+        # still works, it's because iteration is supported by `__getitem__` that
+        # accepts intergers 0,1,.., it can be seen as a "legacy feature" that not
+        # recommended. Here we implement __iter__ for some data types, others keep
+        # behaviors with Mars.
+        if self.own_data():
+            # if own data, return iteration on data
+            yield from iter(self.data._mars_entity.op.data)
+        else:
+            if self.data.data_type == DataType.dataframe:
+                yield from iter(self.data._mars_entity.dtypes.index)
+            elif self.data.data_type == DataType.series:
+                for batch_data in self.data._mars_entity.iterbatch():
+                    yield from batch_data.__iter__()
+            elif self.data.data_type == DataType.index:
+                for batch_data in self.data._mars_entity.to_series().iterbatch():
+                    yield from batch_data.__iter__()
+            else:
+
+                def gen():
+                    counter = count()
+                    while True:
+                        try:
+                            yield self.__getitem__(next(counter))
+                        except IndexError:
+                            break
+
+                yield from gen()
+
     def __str__(self):
         from .execution import run
 
-        run(self)
-        return self.data.__str__()
+        if self.own_data():
+            # skip execution if own data
+            return self.data._mars_entity.op.data.__str__()
+        else:
+            run(self)
+            return self.data.__str__()
 
     def __repr__(self):
         from .execution import run
 
-        run(self)
-        return self.data.__repr__()
+        if self.own_data():
+            # skip execution if own data
+            return self.data._mars_entity.op.data.__repr__()
+        else:
+            run(self)
+            return self.data.__repr__()
 
 
 SUB_CLASS_TO_DATA_TYPE: Dict[Type[DataRef], DataType] = dict()
