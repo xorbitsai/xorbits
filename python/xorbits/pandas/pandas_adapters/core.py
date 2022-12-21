@@ -15,7 +15,7 @@
 import functools
 import inspect
 import warnings
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Type
 
 import pandas as pd
 
@@ -81,51 +81,72 @@ def _get_output_type(func: Callable) -> MarsOutputType:
     return output_type
 
 
-def wrap_pandas_dataframe_method(func_name):
+def wrap_pandas_cls_method(cls: Type, func_name: str):
     # wrap pd.DataFrame member functions
-    @functools.wraps(getattr(pd.DataFrame, func_name))
+    @functools.wraps(getattr(cls, func_name))
     def _wrapped(entity: MarsEntity, *args, **kwargs):
+        def _spawn(entity: MarsEntity) -> MarsEntity:
+            """
+            Execute pandas fallback with mars remote.
+            """
+
+            def execute_func(
+                mars_entity: MarsEntity, f_name: str, *args, **kwargs
+            ) -> Any:
+                pd_data = mars_entity.to_pandas()
+                return getattr(pd_data, f_name)(*args, **kwargs)
+
+            new_args = (entity, func_name) + args
+            ret = mars_remote.spawn(
+                execute_func, args=new_args, kwargs=kwargs, output_types="object"
+            )
+            return from_mars(ret.execute())
+
+        def _map_chunk(entity: MarsEntity, skip_infer: bool = False) -> MarsEntity:
+            """
+            Execute pandas fallback with map_chunk.
+            """
+            ret = entity.map_chunk(
+                lambda x, *args, **kwargs: getattr(x, func_name)(*args, **kwargs),
+                args=args,
+                kwargs=kwargs,
+                skip_infer=skip_infer,
+            )
+            if skip_infer:
+                ret = ret.ensure_data()
+            return from_mars(ret)
+
         warnings.warn(
             f"{type(entity).__name__}.{func_name} will fallback to Pandas",
             RuntimeWarning,
         )
+
         # rechunk mars tileable as one chunk
-        one_chunk_data = entity.rechunk(max(entity.shape))
+        one_chunk_entity = entity.rechunk(max(entity.shape))
 
         # use map_chunk to execute pandas function
         try:
-            ret = one_chunk_data.map_chunk(
-                lambda x, *args, **kwargs: getattr(x, func_name)(*args, **kwargs),
-                args=args,
-                kwargs=kwargs,
-            )
+            if hasattr(one_chunk_entity, "map_chunk"):
+                return _map_chunk(one_chunk_entity, skip_infer=False)
+            else:
+                return _spawn(one_chunk_entity)
         except TypeError:
+            import traceback
+
+            traceback.print_exc()
+
             # when infer failed in map_chunk, we would use remote to execute
             # or skip inferring
-            output_type = _get_output_type(getattr(pd.DataFrame, func_name))
+            output_type = _get_output_type(getattr(cls, func_name))
             if output_type == MarsOutputType.object:
-                # for object type, use remote to execute
-                def execute_func(mars_entity, f_name: str, *args, **kwargs):
-                    pd_data = mars_entity.to_pandas()
-                    return getattr(pd_data, f_name)(*args, **kwargs)
-
-                new_args = (entity, func_name) + args
-                ret = mars_remote.spawn(
-                    execute_func, args=new_args, kwargs=kwargs, output_types=output_type
-                )
-                ret = ret.execute()
+                return _spawn(one_chunk_entity)
             else:
                 # skip_infer = True to avoid TypeError raised by inferring
-                ret = one_chunk_data.map_chunk(
-                    lambda x, *args, **kwargs: getattr(x, func_name)(*args, **kwargs),
-                    args=args,
-                    kwargs=kwargs,
-                    skip_infer=True,
-                )
-                ret = ret.ensure_data()
-        return from_mars(ret)
+                return _map_chunk(one_chunk_entity, skip_infer=True)
 
-    attach_cls_member_docstring(_wrapped, func_name, DataType.dataframe)
+    attach_cls_member_docstring(
+        _wrapped, func_name, docstring_src_module=pd, docstring_src_cls=cls
+    )
     return _wrapped
 
 
@@ -180,18 +201,25 @@ def wrap_pandas_module_method(func_name):
     return _wrapped
 
 
-def _collect_pandas_dataframe_members():
-    dataframe_members = get_cls_members(DataType.dataframe)
-    for name, cls_member in inspect.getmembers(pd.DataFrame):
-        if (
-            name not in dataframe_members
-            and inspect.isfunction(cls_member)
-            and not name.startswith("_")
-        ):
-            dataframe_members[name] = wrap_pandas_dataframe_method(name)
-
+def _collect_pandas_cls_members(pd_cls: Type, data_type: DataType):
+    members = get_cls_members(data_type)
+    for name, pd_cls_member in inspect.getmembers(pd_cls, inspect.isfunction):
+        if name not in members and not name.startswith("_"):
+            members[name] = wrap_pandas_cls_method(pd_cls, name)
     # make to_numpy an alias of to_tensor
-    dataframe_members["to_numpy"] = dataframe_members["to_tensor"]
+    members["to_numpy"] = members["to_tensor"]
+
+
+def _collect_pandas_dataframe_members():
+    _collect_pandas_cls_members(pd.DataFrame, DataType.dataframe)
+
+
+def _collect_pandas_series_members():
+    _collect_pandas_cls_members(pd.Series, DataType.series)
+
+
+def _collect_pandas_index_members():
+    _collect_pandas_cls_members(pd.Index, DataType.index)
 
 
 def _collect_pandas_module_members() -> Dict[str, Any]:
