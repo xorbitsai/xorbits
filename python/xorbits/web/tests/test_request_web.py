@@ -17,14 +17,15 @@ import urllib.request
 import pytest
 
 from ..._mars.deploy.oscar.session import get_default_session
-from ...deploy import init, shutdown
+from ...tests.core import init_test
 
 
 @pytest.fixture
 def init_with_web():
-    init(n_cpu=2, web=True)
+    sess = init_test(n_cpu=2, web=True)
+    sess.as_default()
     yield
-    shutdown()
+    sess.stop_server()
 
 
 def test_web_ui(init_with_web):
@@ -34,4 +35,3 @@ def test_web_ui(init_with_web):
     response = urllib.request.urlopen(req)
     assert response.code == 200
     assert b"Xorbits" in response.read()
-    sess.stop_server()
