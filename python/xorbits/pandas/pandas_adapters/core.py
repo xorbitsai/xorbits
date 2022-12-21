@@ -124,25 +124,20 @@ def wrap_pandas_cls_method(cls: Type, func_name: str):
         # rechunk mars tileable as one chunk
         one_chunk_entity = entity.rechunk(max(entity.shape))
 
-        # use map_chunk to execute pandas function
-        try:
-            if hasattr(one_chunk_entity, "map_chunk"):
+        if hasattr(one_chunk_entity, "map_chunk"):
+            try:
                 return _map_chunk(one_chunk_entity, skip_infer=False)
-            else:
-                return _spawn(one_chunk_entity)
-        except TypeError:
-            import traceback
-
-            traceback.print_exc()
-
-            # when infer failed in map_chunk, we would use remote to execute
-            # or skip inferring
-            output_type = _get_output_type(getattr(cls, func_name))
-            if output_type == MarsOutputType.object:
-                return _spawn(one_chunk_entity)
-            else:
-                # skip_infer = True to avoid TypeError raised by inferring
-                return _map_chunk(one_chunk_entity, skip_infer=True)
+            except TypeError:
+                # when infer failed in map_chunk, we would use remote to execute
+                # or skip inferring
+                output_type = _get_output_type(getattr(cls, func_name))
+                if output_type == MarsOutputType.object:
+                    return _spawn(one_chunk_entity)
+                else:
+                    # skip_infer = True to avoid TypeError raised by inferring
+                    return _map_chunk(one_chunk_entity, skip_infer=True)
+        else:
+            return _spawn(one_chunk_entity)
 
     attach_cls_member_docstring(
         _wrapped, func_name, docstring_src_module=pd, docstring_src_cls=cls
