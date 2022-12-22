@@ -175,7 +175,7 @@ class DataRef(metaclass=DataRefMeta):
         else:
             self.data.__setattr__(key, value)
 
-    def own_data(self):
+    def _own_data(self):
         from .adapter import own_data
 
         return own_data(self.data._mars_entity)
@@ -186,8 +186,8 @@ class DataRef(metaclass=DataRefMeta):
         # accepts intergers 0,1,.., it can be seen as a "legacy feature" that not
         # recommended. Here we implement __iter__ for some data types, others keep
         # behaviors with Mars.
-        if self.own_data():
-            # if own data, return iteration on data
+        if self._own_data():
+            # if own data, return iteration on data directly
             yield from iter(self.data._mars_entity.op.data)
         else:
             if self.data.data_type == DataType.dataframe:
@@ -213,7 +213,7 @@ class DataRef(metaclass=DataRefMeta):
     def __str__(self):
         from .execution import run
 
-        if self.own_data():
+        if self._own_data():
             # skip execution if own data
             return self.data._mars_entity.op.data.__str__()
         else:
@@ -223,7 +223,7 @@ class DataRef(metaclass=DataRefMeta):
     def __repr__(self):
         from .execution import run
 
-        if self.own_data():
+        if self._own_data():
             # skip execution if own data
             return self.data._mars_entity.op.data.__repr__()
         else:

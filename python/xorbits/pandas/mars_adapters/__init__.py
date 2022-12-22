@@ -107,19 +107,15 @@ def _install():
     # DataFrame.itertuples, DataFrame.itertuples
     dataframe_iteration_functions = dict()
     dataframe_iteration_functions["itertuples"] = wrap_iteration_functions(
-        MarsDataFrame.itertuples, "itertuples", DataType.dataframe, True
+        MarsDataFrame.itertuples, "itertuples", True
     )
     dataframe_iteration_functions["iterrows"] = wrap_iteration_functions(
-        MarsDataFrame.iterrows, "iterrows", DataType.dataframe, True
+        MarsDataFrame.iterrows, "iterrows", True
     )
     register_data_members(DataType.dataframe, dataframe_iteration_functions)
 
     # Series.items
     register_data_members(
         DataType.series,
-        dict(
-            items=wrap_iteration_functions(
-                MarsSeries.items, "items", DataType.series, True
-            )
-        ),
+        dict(items=wrap_iteration_functions(MarsSeries.items, "items", True)),
     )

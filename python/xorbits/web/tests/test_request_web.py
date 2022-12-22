@@ -22,7 +22,7 @@ from ...tests.core import init_test
 
 @pytest.fixture
 def init_with_web():
-    sess = init_test(n_cpu=2, web=True)
+    sess = init_test(web=True)
     sess.as_default()
     yield
     sess.stop_server()

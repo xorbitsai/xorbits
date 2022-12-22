@@ -205,7 +205,6 @@ def wrap_user_defined_functions(
 def wrap_iteration_functions(
     member_method: Callable,
     member_name: str,
-    data_type: DataType,
     attach_docstring: bool,
 ):
     """
@@ -215,12 +214,13 @@ def wrap_iteration_functions(
     @functools.wraps(member_method)
     def wrapped(self: MarsEntity, *args, **kwargs):
         if own_data(self):
+            # if own data, return iteration on data directly
             return getattr(self.op.data, member_name)(*to_mars(args), **to_mars(kwargs))
         else:
             return from_mars(member_method(self, *to_mars(args), **to_mars(kwargs)))
 
     if attach_docstring:
         return attach_cls_member_docstring(wrapped, member_name)
-    else:
+    else:  # pragma: no cover
         wrapped.__doc__ = ""
         return wrapped
