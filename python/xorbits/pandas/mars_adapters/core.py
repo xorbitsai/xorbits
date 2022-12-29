@@ -15,7 +15,7 @@
 import functools
 import inspect
 from types import ModuleType
-from typing import Any, Callable, Dict, Set, Type
+from typing import Callable, Dict, Set, Type
 
 import pandas
 
