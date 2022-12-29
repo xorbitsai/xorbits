@@ -138,3 +138,6 @@ python/xorbits/_mars
 # web staff
 node_modules/
 static/
+
+# doc
+doc/source/savefig/
