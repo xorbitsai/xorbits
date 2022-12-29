@@ -4,7 +4,7 @@
 Cluster deployment
 ==================
 
-If you have some machines either on the cloud or not, you want to deploy Xorbits via command lines,
+If you have some machines either on the cloud or not, and you want to deploy Xorbits via command lines,
 you can refer to this documentation.
 
 Installation
