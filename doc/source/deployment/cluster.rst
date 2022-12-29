@@ -46,7 +46,7 @@ Or using ``python -m``:
 Connecting to Created Cluster
 -----------------------------
 
-Now, you can connect to the supervisor anywhere that can run Python code.
+Now, you can connect to the supervisor from anywhere that can run Python code.
 
 .. code-block:: python
 
