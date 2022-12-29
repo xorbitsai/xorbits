@@ -17,7 +17,6 @@ import pandas as pd
 import pytest
 
 from ... import pandas as xpd
-from ...core.utils.docstring import attach_module_callable_docstring
 from ..accessors import StringAccessor
 
 
