@@ -76,50 +76,14 @@ We did a benchmark for TPC-H at scale factor 100 and 1000. The performances are 
 Deployment
 ----------
 
-Local
-~~~~~
+Xorbits can be deployed on your local machine, or largely deployed to a cluster via command lines.
 
-On a single machine e.g. your laptop, optionally, you can initialize Xorbits on your own:
-
-.. code-block:: python
-
-    import xorbits
-    xorbits.init()
-
-Or Xorbits will try to init for you when the first time some computation is triggered.
-
-
-Bare metal
-~~~~~~~~~~
-
-Deploy to bare metal machines is dead easy as well. Ensure xorbits is installed on each machine,
-then:
-
-For supervisor which schedules tasks to workers.
-
-.. code-block:: shell
-
-   # for supervisor
-   python -m xorbits.supervisor -H <host_name> -p <supervisor_port> -w <web_port>
-
-For workers which run actual computations.
-
-.. code-block:: shell
-
-   # for worker
-   python -m xorbits.worker -H <host_name> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
-
-
-Then connect to the supervisor anywhere that can run Python code.
-
-.. code-block:: python
-
-    import xorbits
-    xorbits.init("http://<supervisor_ip>:<supervisor_web_port>")
-
-Replace the ``<supervisor_ip>`` with the supervisor host name that you just specified and
-``<supervisor_web_port>`` with the supervisor web port.
-
+======================================= =========================================================
+Deployment                              Description
+======================================= =========================================================
+:ref:`Local <deployment_local>`         Running Xorbits on a local machine, e.g. laptop
+:ref:`Cluster <deployment_cluster>`     Deploy Xorbits to existing cluster via command lines
+======================================= =========================================================
 
 Getting involved
 ----------------
@@ -145,4 +109,5 @@ Getting involved
 
    getting_started/index
    user_guide/index
+   deployment/index
    reference/index

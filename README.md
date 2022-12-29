@@ -97,43 +97,13 @@ The performances are shown as below.
 
 ## Deployment
 
-### Local
-On a single machine e.g. your laptop, optionally, you can initialize Xorbits on your own:
+Xorbits can be deployed on your local machine, or largely deployed to a cluster via command lines.
 
-```python
-import xorbits
-xorbits.init()
-```
+| Deployment                                                          | Description                                          |
+|---------------------------------------------------------------------|------------------------------------------------------|
+| [Local](https://doc.xorbits.io/en/latest/deployment/local.html)     | Running Xorbits on a local machine, e.g. laptop      |
+| [Cluster](https://doc.xorbits.io/en/latest/deployment/cluster.html) | Deploy Xorbits to existing cluster via command lines |
 
-Or Xorbits will try to init for you when the first time some computation is triggered.
-
-### Bare metal
-Deploy to bare metal machines is dead easy as well. Ensure xorbits is installed on each machine,
-then:
-
-For supervisor which schedules tasks to workers.
-
-```shell
-# for supervisor
-python -m xorbits.supervisor -H <host_name> -p <supervisor_port> -w <web_port>
-```
-
-For workers which run actual computations.
-
-```shell
-# for worker
-python -m xorbits.worker -H <host_name> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
-```
-
-Then connect to the supervisor anywhere that can run Python code.
-
-```python
-import xorbits
-xorbits.init("http://<supervisor_ip>:<supervisor_web_port>")
-```
-
-Replace the `<supervisor_ip>` with the supervisor host name that you just specified and 
-`<supervisor_web_port>` with the supervisor web port.
 
 ## License
 [Apache 2](LICENSE)
@@ -161,10 +131,10 @@ with other upcoming ones we will propose, stay tuned!
 
 ## Getting involved
 
-| Platform | Purpose |
-| --- | --- |
-| [Discourse Forum](https://discuss.xorbits.io) | Asking usage questions and discussing development. |
-| [Github Issues](https://github.com/xprobe-inc/xorbits/issues) | Reporting bugs and filing feature requests. |
-| [Slack](https://slack.xorbits.io) | Collaborating with other Xorbits users. |
-| [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits) | Asking questions about how to use Xorbits. |
-| [Twitter](https://twitter.com/xorbitsio) | Staying up-to-date on new features. |
+| Platform                                                            | Purpose                                            |
+|---------------------------------------------------------------------|----------------------------------------------------|
+| [Discourse Forum](https://discuss.xorbits.io)                       | Asking usage questions and discussing development. |
+| [Github Issues](https://github.com/xprobe-inc/xorbits/issues)       | Reporting bugs and filing feature requests.        |
+| [Slack](https://slack.xorbits.io)                                   | Collaborating with other Xorbits users.            |
+| [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits) | Asking questions about how to use Xorbits.         |
+| [Twitter](https://twitter.com/xorbitsio)                            | Staying up-to-date on new features.                |
