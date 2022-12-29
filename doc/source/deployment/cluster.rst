@@ -15,7 +15,7 @@ First, ensure Xorbits is correctly installed on each machine, if not, see :ref:`
 Starting Supervisor
 -------------------
 
-Among the machines, pick at least one as supervisor which integrated web service as well,
+Among the machines, pick at least one as the supervisor which ships with a web service as well,
 starting supervisor via command:
 
 .. code-block:: bash
