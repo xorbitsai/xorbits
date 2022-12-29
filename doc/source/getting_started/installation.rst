@@ -43,7 +43,7 @@ Recommended dependencies can be installed conveniently using pip.
 
 ::
 
-    pip install xorbits[extra]
+    pip install 'xorbits[extra]'
 
 
 The following extra dependencies will be installed.

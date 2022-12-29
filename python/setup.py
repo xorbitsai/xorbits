@@ -23,7 +23,7 @@ from sysconfig import get_config_vars
 import numpy as np
 from Cython.Build import cythonize
 from pkg_resources import parse_version
-from setuptools import setup, Extension, Command
+from setuptools import Command, Extension, setup
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
