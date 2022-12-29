@@ -80,6 +80,7 @@ def test_own_data(setup, dummy_df, dummy_str_series):
         dummy_df.itertuples(index=False), pd_df.itertuples(index=False)
     ):
         assert row == expected_row
+    assert dummy_df.itertuples.__doc__
     assert need_to_execute(dummy_df)
 
     for (index, row), (expected_index, expected_row) in zip(
@@ -87,6 +88,7 @@ def test_own_data(setup, dummy_df, dummy_str_series):
     ):
         assert index == expected_index
         pd.testing.assert_series_equal(row, expected_row)
+    assert dummy_df.iterrows.__doc__
     assert need_to_execute(dummy_df)
 
     columns = dummy_df.columns
@@ -99,4 +101,5 @@ def test_own_data(setup, dummy_df, dummy_str_series):
     ):
         assert value == expected_value
         assert index == expected_index
+    assert dummy_str_series.items.__doc__
     assert need_to_execute(dummy_str_series)

@@ -205,6 +205,7 @@ def wrap_user_defined_functions(
 def wrap_iteration_functions(
     member_method: Callable,
     member_name: str,
+    data_type: DataType,
     attach_docstring: bool,
 ):
     """
@@ -220,7 +221,7 @@ def wrap_iteration_functions(
             return from_mars(member_method(self, *to_mars(args), **to_mars(kwargs)))
 
     if attach_docstring:
-        return attach_cls_member_docstring(wrapped, member_name)
+        return attach_cls_member_docstring(wrapped, member_name, data_type)
     else:  # pragma: no cover
         wrapped.__doc__ = ""
         return wrapped

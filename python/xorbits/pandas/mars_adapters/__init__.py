@@ -104,18 +104,22 @@ def _install():
     register_data_members(DataType.dataframe_groupby, dataframe_groupby_udfs)
 
     # install iteration functions
-    # DataFrame.itertuples, DataFrame.itertuples
+    # DataFrame.itertuples, DataFrame.iterrows
     dataframe_iteration_functions = dict()
     dataframe_iteration_functions["itertuples"] = wrap_iteration_functions(
-        MarsDataFrame.itertuples, "itertuples", True
+        MarsDataFrame.itertuples, "itertuples", DataType.dataframe, True
     )
     dataframe_iteration_functions["iterrows"] = wrap_iteration_functions(
-        MarsDataFrame.iterrows, "iterrows", True
+        MarsDataFrame.iterrows, "iterrows", DataType.dataframe, True
     )
     register_data_members(DataType.dataframe, dataframe_iteration_functions)
 
     # Series.items
     register_data_members(
         DataType.series,
-        dict(items=wrap_iteration_functions(MarsSeries.items, "items", True)),
+        dict(
+            items=wrap_iteration_functions(
+                MarsSeries.items, "items", DataType.series, True
+            )
+        ),
     )
