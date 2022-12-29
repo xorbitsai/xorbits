@@ -16,8 +16,8 @@ import pandas as pd
 
 from .... import pandas as xpd
 from ....core import DataRef
+from ....core.adapter import MarsGetAttrProxy
 from ...indexing import DataFrameAt, DataFrameIat, DataFrameIloc, DataFrameLoc
-from ..core import MarsGetAttrProxy
 
 
 def test_dataframe_categorical(setup):
