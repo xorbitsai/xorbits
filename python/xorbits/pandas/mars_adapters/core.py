@@ -150,22 +150,6 @@ def _register_from_mars_execution_conditions() -> None:
     )
 
 
-class MarsGetAttrProxy:
-    def __init__(self, obj: Any):
-        self._mars_obj = to_mars(obj)
-
-    def __getattr__(self, item):
-        mars_obj = object.__getattribute__(self, "_mars_obj")
-        attr = getattr(mars_obj, item, None)
-        if attr is None:
-            raise AttributeError(f"no attribute '{item}'")
-        elif callable(attr):  # pragma: no cover
-            return wrap_mars_callable(attr, attach_docstring=False, is_cls_member=True)
-        else:  # pragma: no cover
-            # class variable
-            return from_mars(attr)
-
-
 def install_members(
     cls: Type, mars_cls: Type, docstring_src_module: ModuleType, docstring_src_cls: Type
 ):

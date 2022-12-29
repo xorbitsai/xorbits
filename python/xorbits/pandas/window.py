@@ -14,9 +14,15 @@
 
 import pandas
 
-from ..core.adapter import MarsEWM, MarsExpanding, MarsRolling, register_converter
+from ..core.adapter import (
+    MarsEWM,
+    MarsExpanding,
+    MarsGetAttrProxy,
+    MarsRolling,
+    register_converter,
+)
 from ..core.utils.docstring import attach_module_callable_docstring
-from .mars_adapters.core import MarsGetAttrProxy, install_members
+from .mars_adapters.core import install_members
 
 
 @register_converter(from_cls_list=[MarsRolling])

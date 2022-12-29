@@ -18,12 +18,13 @@ import pandas
 from ..core import DataRef
 from ..core.adapter import (
     MarsDatetimeAccessor,
+    MarsGetAttrProxy,
     MarsStringAccessor,
     register_converter,
     to_mars,
 )
 from ..core.utils.docstring import attach_module_callable_docstring
-from .mars_adapters.core import MarsGetAttrProxy, install_members
+from .mars_adapters.core import install_members
 
 
 @register_converter(from_cls_list=[MarsStringAccessor])
