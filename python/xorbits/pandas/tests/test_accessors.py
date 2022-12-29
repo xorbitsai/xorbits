@@ -87,6 +87,22 @@ def test_cls_docstring():
         "pandas.core.indexes.accessors.CombinedDatetimelikeProperties."
     )
 
+    assert xpd.DataFrame.loc.__doc__ is not None and xpd.DataFrame.loc.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+    assert (
+        xpd.DataFrame.iloc.__doc__ is not None
+        and xpd.DataFrame.iloc.__doc__.endswith(
+            "This docstring was copied from pandas."
+        )
+    )
+    assert xpd.DataFrame.at.__doc__ is not None and xpd.DataFrame.at.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+    assert xpd.DataFrame.iat.__doc__ is not None and xpd.DataFrame.iat.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+
 
 def test_obj_docstring(setup, dummy_str_series, dummy_dt_series, dummy_df):
     assert isinstance(dummy_str_series, xpd.Series)
@@ -122,21 +138,5 @@ def test_obj_docstring(setup, dummy_str_series, dummy_dt_series, dummy_df):
         "This docstring was copied from pandas."
     )
     assert dummy_df.iat.__doc__ is not None and dummy_df.iat.__doc__.endswith(
-        "This docstring was copied from pandas."
-    )
-
-    assert xpd.DataFrame.loc.__doc__ is not None and xpd.DataFrame.loc.__doc__.endswith(
-        "This docstring was copied from pandas."
-    )
-    assert (
-        xpd.DataFrame.iloc.__doc__ is not None
-        and xpd.DataFrame.iloc.__doc__.endswith(
-            "This docstring was copied from pandas."
-        )
-    )
-    assert xpd.DataFrame.at.__doc__ is not None and xpd.DataFrame.at.__doc__.endswith(
-        "This docstring was copied from pandas."
-    )
-    assert xpd.DataFrame.iat.__doc__ is not None and xpd.DataFrame.iat.__doc__.endswith(
         "This docstring was copied from pandas."
     )
