@@ -31,7 +31,7 @@ Or using ``python -m``:
 Starting Workers
 ----------------
 
-The rest machines can be started as workers via command:
+The rest of the machines can be started as workers via command:
 
 .. code-block:: bash
 
