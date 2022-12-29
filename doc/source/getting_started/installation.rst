@@ -39,9 +39,30 @@ uvloop (for systems other than win32)                            0.14.0
 Recommended dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+Recommended dependencies can be installed conveniently using pip.
+
+::
+
+    pip install xorbits[extra]
+
+
+The following extra dependencies will be installed.
+
 * `numexpr <https://github.com/pydata/numexpr>`__: for accelerating certain numerical operations.
   ``numexpr`` uses multiple cores as well as smart chunking and caching to achieve large speedups.
   If installed, must be Version 2.6.4 or higher.
+
+* `pillow <https://python-pillow.org/>`__: the Python Imaging Library. If installed, must be
+  Version 7.0.0 or higher.
+
+* `pyarrow <https://pypi.org/project/pyarrow/>`__: python API for Arrow C++ libraries. If
+  installed, must be Version 0.11.0 or higher and cannot be 0.16.x.
+
+* `lz4 <https://github.com/python-lz4/python-lz4>`__: python bindings for the LZ4 compression
+  library. If installed, must be Version 1.0.0 or higher.
+
+* `fsspec <https://github.com/fsspec/filesystem_spec>`__: for cloud data accessing. If installed,
+  must be Version 2022.7.1 or higher and cannot be Version 2022.8.0.
 
 .. note::
 
