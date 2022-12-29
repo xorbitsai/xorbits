@@ -219,11 +219,26 @@ class MarsGetItemProxy:
         return from_mars(self._mars_obj[to_mars(item)])
 
 
+class MarsGetAttrProxy:
+    def __init__(self, obj: Any):
+        self._mars_obj = to_mars(obj)
+
+    def __getattr__(self, item):
+        mars_obj = object.__getattribute__(self, "_mars_obj")
+        attr = getattr(mars_obj, item, None)
+        if attr is None:
+            raise AttributeError(f"no attribute '{item}'")
+        elif callable(attr):  # pragma: no cover
+            return wrap_mars_callable(attr, attach_docstring=False, is_cls_member=True)
+        else:  # pragma: no cover
+            # class variable
+            return from_mars(attr)
+
+
 def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     """
     Convert xorbits data references to mars entities and execute them if needed.
     """
-    from ..pandas.mars_adapters.core import MarsGetAttrProxy
 
     if isinstance(inp, DataRef):
         mars_entity = getattr(inp.data, "_mars_entity", None)
