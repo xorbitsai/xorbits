@@ -81,7 +81,7 @@ def _get_output_type(func: Callable) -> MarsOutputType:
     return output_type
 
 
-def wrap_pandas_cls_method(cls: Type, func_name: str):
+def wrap_pandas_cls_method(cls: Type, func_name: str, fallback_warning: bool = False):
     # wrap pd.DataFrame member functions
     @functools.wraps(getattr(cls, func_name))
     def _wrapped(entity: MarsEntity, *args, **kwargs):
@@ -140,7 +140,11 @@ def wrap_pandas_cls_method(cls: Type, func_name: str):
             return _spawn(one_chunk_entity)
 
     attach_cls_member_docstring(
-        _wrapped, func_name, docstring_src_module=pd, docstring_src_cls=cls
+        _wrapped,
+        func_name,
+        docstring_src_module=pd,
+        docstring_src_cls=cls,
+        fallback_warning=fallback_warning,
     )
     return _wrapped
 
@@ -200,7 +204,7 @@ def _collect_pandas_cls_members(pd_cls: Type, data_type: DataType):
     members = get_cls_members(data_type)
     for name, pd_cls_member in inspect.getmembers(pd_cls, inspect.isfunction):
         if name not in members and not name.startswith("_"):
-            members[name] = wrap_pandas_cls_method(pd_cls, name)
+            members[name] = wrap_pandas_cls_method(pd_cls, name, fallback_warning=True)
     # make to_numpy an alias of to_tensor
     members["to_numpy"] = members["to_tensor"]
 
