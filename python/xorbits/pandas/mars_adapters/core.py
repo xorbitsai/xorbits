@@ -15,7 +15,7 @@
 import functools
 import inspect
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Callable, Dict, Set, Type
+from typing import Any, Callable, Dict, Set, Type
 
 import pandas
 
@@ -29,9 +29,11 @@ from ...core.adapter import (
     MarsDataFrameToParquet,
     MarsDataFrameToSQLTable,
     MarsDataFrameToVineyardChunk,
+    MarsEntity,
     collect_cls_members,
     from_mars,
     mars_dataframe,
+    own_data,
     register_from_mars_execution_condition,
     register_to_mars_execution_condition,
     to_mars,
@@ -40,13 +42,8 @@ from ...core.adapter import (
 from ...core.data import DataType
 from ...core.utils.docstring import attach_cls_member_docstring
 
-if TYPE_CHECKING:  # pragma: no cover
-    from ...core.adapter import MarsEntity
-
 
 # functions and class constructors defined by mars dataframe
-
-
 def _collect_module_callables() -> Dict[str, Callable]:
     mars_dataframe_callables = dict()
 
@@ -203,3 +200,28 @@ def wrap_user_defined_functions(
             return from_mars(ret)
 
     return attach_cls_member_docstring(wrapped, member_name, data_type=data_type)
+
+
+def wrap_iteration_functions(
+    member_method: Callable,
+    member_name: str,
+    data_type: DataType,
+    attach_docstring: bool,
+):
+    """
+    Wrapper for iteration functions.
+    """
+
+    @functools.wraps(member_method)
+    def wrapped(self: MarsEntity, *args, **kwargs):
+        if own_data(self):
+            # if own data, return iteration on data directly
+            return getattr(self.op.data, member_name)(*to_mars(args), **to_mars(kwargs))
+        else:
+            return from_mars(member_method(self, *to_mars(args), **to_mars(kwargs)))
+
+    if attach_docstring:
+        return attach_cls_member_docstring(wrapped, member_name, data_type)
+    else:  # pragma: no cover
+        wrapped.__doc__ = ""
+        return wrapped

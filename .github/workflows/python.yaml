@@ -45,10 +45,7 @@ jobs:
           sortPaths: "python/xorbits"
           configuration: "--check-only --profile black --diff --skip-glob xorbits/_mars/"
       - name: mypy
-        uses: jpetrucciani/mypy-check@master
-        with:
-          path: 'python/xorbits'
-          mypy_flags: '--config-file python/setup.cfg'
+        run: pip install mypy && cd python && mypy xorbits
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:

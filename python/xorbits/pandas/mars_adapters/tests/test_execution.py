@@ -14,6 +14,8 @@
 import os
 import tempfile
 
+import pandas as pd
+
 from .... import pandas as xpd
 from ....core.execution import need_to_execute
 
@@ -70,3 +72,34 @@ def test_from_mars_execution_condition(setup, dummy_df, dummy_str_series):
         # TODO: series falling back methods not implemented yet.
         # assert not need_to_execute(dummy_str_series.to_pickle(os.path.join(tempdir, "series.pkl")))
         # assert not need_to_execute(dummy_str_series.to_json())
+
+
+def test_own_data(setup, dummy_df, dummy_str_series):
+    pd_df = pd.DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
+    for row, expected_row in zip(
+        dummy_df.itertuples(index=False), pd_df.itertuples(index=False)
+    ):
+        assert row == expected_row
+    assert dummy_df.itertuples.__doc__
+    assert need_to_execute(dummy_df)
+
+    for (index, row), (expected_index, expected_row) in zip(
+        dummy_df.iterrows(), pd_df.iterrows()
+    ):
+        assert index == expected_index
+        pd.testing.assert_series_equal(row, expected_row)
+    assert dummy_df.iterrows.__doc__
+    assert need_to_execute(dummy_df)
+
+    columns = dummy_df.columns
+    assert list(columns) == ["foo", "bar"]
+    assert need_to_execute(columns)
+
+    pd_series = pd.Series(["foo", "bar", "baz"])
+    for (index, value), (expected_index, expected_value) in zip(
+        dummy_str_series.items(), pd_series.items()
+    ):
+        assert value == expected_value
+        assert index == expected_index
+    assert dummy_str_series.items.__doc__
+    assert need_to_execute(dummy_str_series)

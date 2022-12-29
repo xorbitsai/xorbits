@@ -34,6 +34,7 @@ def _install():
     from .core import (
         _register_from_mars_execution_conditions,
         _register_to_mars_execution_conditions,
+        wrap_iteration_functions,
         wrap_user_defined_functions,
     )
 
@@ -101,3 +102,24 @@ def _install():
         MarsDataFrameGroupBy.transform, "transform", DataType.dataframe_groupby
     )
     register_data_members(DataType.dataframe_groupby, dataframe_groupby_udfs)
+
+    # install iteration functions
+    # DataFrame.itertuples, DataFrame.iterrows
+    dataframe_iteration_functions = dict()
+    dataframe_iteration_functions["itertuples"] = wrap_iteration_functions(
+        MarsDataFrame.itertuples, "itertuples", DataType.dataframe, True
+    )
+    dataframe_iteration_functions["iterrows"] = wrap_iteration_functions(
+        MarsDataFrame.iterrows, "iterrows", DataType.dataframe, True
+    )
+    register_data_members(DataType.dataframe, dataframe_iteration_functions)
+
+    # Series.items
+    register_data_members(
+        DataType.series,
+        dict(
+            items=wrap_iteration_functions(
+                MarsSeries.items, "items", DataType.series, True
+            )
+        ),
+    )
