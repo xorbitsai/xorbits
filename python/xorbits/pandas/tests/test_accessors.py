@@ -113,37 +113,31 @@ def test_obj_docstring(setup, dummy_str_series, dummy_dt_series, dummy_df):
         "pandas.core.indexes.accessors.CombinedDatetimelikeProperties."
     )
 
-    def f():
-        pass
+    assert dummy_df.loc.__doc__ is not None and dummy_df.loc.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+    assert dummy_df.iloc.__doc__ is not None and dummy_df.iloc.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+    assert dummy_df.at.__doc__ is not None and dummy_df.at.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+    assert dummy_df.iat.__doc__ is not None and dummy_df.iat.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
 
-    docstring = dummy_df.loc.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._LocIndexer)
-    assert docstring is not None and docstring == f.__doc__
-
-    docstring = dummy_df.iloc.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._iLocIndexer)
-    assert docstring is not None and docstring == f.__doc__
-
-    docstring = dummy_df.at.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._AtIndexer)
-    assert docstring is not None and docstring == f.__doc__
-
-    docstring = dummy_df.iat.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._iAtIndexer)
-    assert docstring is not None and docstring == f.__doc__
-
-    docstring = dummy_dt_series.loc.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._LocIndexer)
-    assert docstring is not None and docstring == f.__doc__
-
-    docstring = dummy_dt_series.iloc.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._iLocIndexer)
-    assert docstring is not None and docstring == f.__doc__
-
-    docstring = dummy_dt_series.at.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._AtIndexer)
-    assert docstring is not None and docstring == f.__doc__
-
-    docstring = dummy_dt_series.iat.__doc__
-    attach_module_callable_docstring(f, pd, pd.core.indexing._iAtIndexer)
-    assert docstring is not None and docstring == f.__doc__
+    assert xpd.DataFrame.loc.__doc__ is not None and xpd.DataFrame.loc.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+    assert (
+        xpd.DataFrame.iloc.__doc__ is not None
+        and xpd.DataFrame.iloc.__doc__.endswith(
+            "This docstring was copied from pandas."
+        )
+    )
+    assert xpd.DataFrame.at.__doc__ is not None and xpd.DataFrame.at.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
+    assert xpd.DataFrame.iat.__doc__ is not None and xpd.DataFrame.iat.__doc__.endswith(
+        "This docstring was copied from pandas."
+    )
