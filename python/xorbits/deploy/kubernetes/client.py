@@ -355,7 +355,7 @@ class KubernetesCluster:
                 ip = ingress.ip
                 host = ingress.hostname if hasattr(ingress, "hostname") else None
                 address = ip or host
-                print(f"Ip: {ip}, Host: {host}, Address: {address}")
+                logger.debug(f"Ingress ip: {ip}, host: {host}, address: {address}")
                 if address is not None:
                     return f"http://{address}:80"
 
