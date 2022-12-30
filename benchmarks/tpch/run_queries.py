@@ -1081,8 +1081,8 @@ def main():
     )
     parser.add_argument(
         "--use-arrow-dtype",
-        type=bool,
-        default=True,
+        default=False,
+        action="store_true",
         help="Use arrow dtype.",
     )
     parser.add_argument(
