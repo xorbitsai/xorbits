@@ -4,6 +4,13 @@
 Kubernetes deployment
 =====================
 
+Prerequisites
+-------------
+Install Xorbits on the machine where you plan to run the kubernetes deploy code.
+Refer to :ref:`installation document <installation>`.
+
+Currently we support Xorbits kubernetes cluster deployment based on Minikube.
+
 Minikube
 --------
 Make sure Minikube is properly installed on your machine, create a cluster and enable the NGINX Ingress controller:
@@ -36,7 +43,7 @@ Then deploy Xorbits cluster, for example:
 
 
 When a log of the form ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` appears,
-you can access the web page of your Xorbits cluster through the endpoint in the log.
+you can access the web page of your xorbits cluster through the endpoint in the log.
 
 To verify the cluster:
 
@@ -46,31 +53,38 @@ To verify the cluster:
     print(pd.DataFrame({'a': [1,2,3,4]}).sum())
 
 
-Amazon Elastic Kubernetes Service (Amazon EKS)
-----------------------------------------------
-Firstly, make sure you have an EKS cluster and it can access `our Dockerhub <https://hub.docker.com/repository/docker/xprobe/xorbits>`_ to pull the Xorbits image.
+API Parameters
+-----------
 
-Secondly, install the `AWS Load Balancer Controller <https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html>`_.
+``new_cluster`` Parameters
+~~~~~~~~~~~~~~
 
-Then, deploy Xorbits cluster, for example:
-
-.. code-block:: python
-
-    from kubernetes import config
-    from xorbits.deploy.kubernetes import new_cluster
-    cluster = new_cluster(config.new_client_from_config(), worker_cpu=1, worker_mem='4g', cluster_type='eks')
-
-
-Note that the option *cluster_type=\'eks\'* cannot be ignored.
-When a log of the form ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` appears,
-you can access the web page of your Xorbits cluster through the endpoint in the log.
-
-To verify the cluster:
-
-.. code-block:: python
-
-    import xorbits.numpy as np
-    a = np.ones((100, 100), chunk_size=30) * 2 * 1 + 1
-    b = np.ones((100, 100), chunk_size=20) * 2 * 1 + 1
-    c = (a * b * 2 + 1).sum()
-    print(c)
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| Parameter           | Type                         | Description                                          | Required / Default value          |
++=====================+==============================+======================================================+===================================+
+| kube_api_client     | kubernetes.client.ApiClient  | Kubernetes API client                                | required                          |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| image               | str                          | Docker image to use                                  | xprobe/xorbits:<xorbits version>  |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| supervisor_num      | int                          | Number of supervisors in the cluster                 | 1                                 |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| supervisor_cpu      | int                          | Number of CPUs for every supervisor                  | 1                                 |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| supervisor_mem      | str                          | Memory size for every supervisor                     | 4G                                |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| worker_num          | int                          | Number of workers in the cluster                     | 1                                 |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| worker_cpu          | int                          | Number of CPUs for every worker                      | required                          |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| worker_mem          | str                          | Memory size for every worker                         | required                          |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| worker_spill_paths  | List[str]                    | Spill paths for worker pods on host                  | None                              |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| worker_cache_mem    | str                          | Size or ratio of cache memory for every worker       | None                              |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| min_worker_num      | int                          | Minimal ready workers                                | None (equal to worker_num)        |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| timeout             | int                          | Timeout seconds when creating clusters               | None (never timeout)              |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
+| cluster_type        | str                          | K8s Cluster type, ``minikube`` or ``eks`` supported  | minikube                          |
++---------------------+------------------------------+------------------------------------------------------+-----------------------------------+

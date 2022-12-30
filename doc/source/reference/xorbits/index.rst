@@ -15,6 +15,7 @@ Initialization
 
    init
    shutdown
+   deploy.kubernetes.client.new_cluster
 
 Computation
 ~~~~~~~~~~~

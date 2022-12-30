@@ -9,3 +9,4 @@ Deployment
 
    local
    cluster
+   kubernetes
