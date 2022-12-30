@@ -33,6 +33,8 @@ def test_client_api(setup):
     api = API.create()
     assert isinstance(api, _ClientAPI)
     assert len(api.list_workers()) > 0
+    # call twice
+    assert len(api.list_workers()) > 0
 
 
 def test_not_inited():

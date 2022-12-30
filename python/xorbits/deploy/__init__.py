@@ -15,7 +15,7 @@
 from typing import Any, Dict, List, Optional, Union
 
 from .._mars.utils import no_default
-from ..core.adapter import mars_new_session, mars_stop_server
+from ..core.adapter import mars_new_session, session
 
 
 def init(
@@ -120,11 +120,11 @@ def init(
     mars_new_session(**kw)
 
 
-def shutdown() -> None:
+def shutdown(**kw) -> None:
     """
     Shutdown current local runtime.
     """
-    mars_stop_server()
+    session.get_default_session().stop_server(**kw)
 
 
 __all__ = [
