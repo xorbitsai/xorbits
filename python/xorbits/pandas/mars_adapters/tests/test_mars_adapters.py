@@ -16,8 +16,8 @@ import pandas as pd
 
 from .... import pandas as xpd
 from ....core import DataRef
-from ..core import MarsGetAttrProxy
-from ..loc import DataFrameLoc
+from ....core.adapter import MarsGetAttrProxy
+from ...indexing import DataFrameAt, DataFrameIat, DataFrameIloc, DataFrameLoc
 
 
 def test_dataframe_categorical(setup):
@@ -47,7 +47,7 @@ def test_dataframe_rolling(setup, dummy_df):
     assert isinstance(df, DataRef)
 
 
-def test_dataframe_loc(setup, dummy_df):
+def test_dataframe_indexing(setup, dummy_df):
     assert isinstance(dummy_df.loc, DataFrameLoc)
 
     xdf = dummy_df.loc[[0], ["foo"]]
@@ -59,6 +59,64 @@ def test_dataframe_loc(setup, dummy_df):
     assert 2 == len(row)
     assert 0 == row[0]
     assert pd.Series({"foo": 0}, name=0).equals(row[1])
+
+    assert isinstance(dummy_df.iloc, DataFrameIloc)
+
+    xdf = dummy_df.iloc[[0], [0]]
+    assert isinstance(xdf, DataRef)
+
+    rows = list(xdf.iterrows())
+    assert 1 == len(rows)
+    row = rows[0]
+    assert 2 == len(row)
+    assert 0 == row[0]
+    assert pd.Series({"foo": 0}, name=0).equals(row[1])
+
+    assert isinstance(dummy_df.at, DataFrameAt)
+
+    xdf = dummy_df.at[0, "foo"]
+    assert isinstance(xdf, DataRef)
+
+    assert 0 == len(xdf)
+    assert 0 == xdf.to_numpy()
+
+    assert isinstance(dummy_df.iat, DataFrameIat)
+
+    xdf = dummy_df.iat[0, 0]
+    assert isinstance(xdf, DataRef)
+
+    assert 0 == len(xdf)
+    assert 0 == xdf.to_numpy()
+
+
+def test_series_indexing(setup, dummy_int_series):
+    assert isinstance(dummy_int_series.loc, DataFrameLoc)
+    res = dummy_int_series.loc[0]
+    assert isinstance(res, DataRef)
+
+    assert 0 == len(res)
+    assert 1 == res.to_numpy()
+
+    assert isinstance(dummy_int_series.iloc, DataFrameIloc)
+    res = dummy_int_series.iloc[0]
+    assert isinstance(res, DataRef)
+
+    assert 0 == len(res)
+    assert 1 == res.to_numpy()
+
+    assert isinstance(dummy_int_series.at, DataFrameAt)
+    res = dummy_int_series.at[1]
+    assert isinstance(res, DataRef)
+
+    assert 0 == len(res)
+    assert 2 == res.to_numpy()
+
+    assert isinstance(dummy_int_series.iat, DataFrameIat)
+    res = dummy_int_series.iat[1]
+    assert isinstance(res, DataRef)
+
+    assert 0 == len(res)
+    assert 2 == res.to_numpy()
 
 
 def test_string_accessor(setup, dummy_str_series):
