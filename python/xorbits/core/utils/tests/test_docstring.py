@@ -15,6 +15,7 @@
 from ....core.utils.docstring import (
     add_arg_disclaimer,
     add_docstring_disclaimer,
+    add_version_disclaimer,
     skip_doctest,
 )
 
@@ -49,6 +50,26 @@ def test_skip_doctest():
     assert doc + ", +SKIP" == skip_doctest(doc)
     doc = ">>> a = 0  # doctest: +SKIP"
     assert doc == skip_doctest(doc)
+
+
+def test_add_version_disclaimer():
+    doc = """
+       .. deprecated:: 1.0.0
+
+       .. versionchanged:: 1.0.0
+
+       .. versionadded:: 0.1.0
+    """
+    expected = """
+       .. deprecated:: 1.0.0(pandas)
+
+       .. versionchanged:: 1.0.0(pandas)
+
+       .. versionadded:: 0.1.0(pandas)
+    """
+    import pandas
+
+    assert expected == add_version_disclaimer(doc, pandas)
 
 
 def test_add_arg_disclaimer():

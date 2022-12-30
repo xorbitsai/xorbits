@@ -89,6 +89,27 @@ def add_docstring_disclaimer(
         return doc
 
 
+def add_version_disclaimer(
+    doc: Optional[str], docstring_src_module: Optional[ModuleType]
+) -> Optional[str]:
+
+    if doc is None or docstring_src_module is None:
+        return doc
+
+    lines = []
+    for line in doc.splitlines():
+        stripped = line.strip()
+        if (
+            stripped.startswith(".. deprecated::")
+            or stripped.startswith(".. versionchanged::")
+            or stripped.startswith(".. versionadded::")
+        ):
+            line = line + f"({docstring_src_module.__name__})"
+        lines.append(line)
+
+    return "\n".join(lines)
+
+
 def skip_doctest(doc: Optional[str]) -> Optional[str]:
     def skip_line(line):
         # NumPy docstring contains cursor and comment only example
@@ -105,7 +126,7 @@ def skip_doctest(doc: Optional[str]) -> Optional[str]:
 
     if doc is None:
         return None
-    return "\n".join([skip_line(line) for line in doc.split("\n")])
+    return "\n".join([skip_line(line) for line in doc.splitlines()])
 
 
 def add_arg_disclaimer(
@@ -272,6 +293,7 @@ def attach_module_callable_docstring(
 
     doc = getattr(docstring_src, "__doc__", None)
     doc = skip_doctest(doc)
+    doc = add_version_disclaimer(doc, docstring_src_module)
     doc = add_arg_disclaimer(docstring_src, c, doc)
     doc = add_docstring_disclaimer(docstring_src_module, None, doc, fallback_warning)
     c.__doc__ = "" if doc is None else doc
@@ -300,6 +322,7 @@ def attach_cls_member_docstring(
         )
     doc = gen_member_docstring(docstring_src_cls, member_name)
     doc = skip_doctest(doc)
+    doc = add_version_disclaimer(doc, docstring_src_module)
     docstring_src = getattr(docstring_src_cls, member_name, None)
     doc = add_arg_disclaimer(docstring_src, member, doc)
     doc = add_docstring_disclaimer(
