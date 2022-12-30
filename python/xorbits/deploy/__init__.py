@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from .._mars.utils import no_default
 from ..core.adapter import mars_new_session, mars_stop_server
@@ -99,18 +99,23 @@ def init(
         # otherwise when init_local not specified, set to False
         init_local = True if address is None else False
 
-    kw = dict(
+    kw: Dict[str, Any] = dict(
         address=address,
         init_local=init_local,
         session_id=session_id,
         timeout=timeout,
-        n_worker=n_worker,
-        n_cpu=n_cpu,
-        mem_bytes=mem_bytes,
-        cuda_devices=cuda_devices,
-        web=web,
         new=new,
     )
+    if init_local:
+        kw.update(
+            dict(
+                n_worker=n_worker,
+                n_cpu=n_cpu,
+                mem_bytes=mem_bytes,
+                cuda_devices=cuda_devices,
+                web=web,
+            )
+        )
     kw.update(kwargs)
     mars_new_session(**kw)
 
