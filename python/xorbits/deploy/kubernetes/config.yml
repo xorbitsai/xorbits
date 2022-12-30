@@ -1,7 +1,5 @@
-"@inherits": ../oscar/base_config.yml
+"@inherits": '@default'
 cluster:
   backend: k8s
 storage:
   backends: [shared_memory]
-  plasma:
-    store_memory: 20%

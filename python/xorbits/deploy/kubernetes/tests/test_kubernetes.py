@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,13 +26,10 @@ import numpy as np
 import pytest
 
 from .... import numpy as xnp
+from ...._mars.utils import lazy_import
 from .. import new_cluster
 
-try:
-    from kubernetes import client as k8s_client
-    from kubernetes import config as k8s_config
-except ImportError:
-    k8s_client = k8s_config = None
+k8s = lazy_import("kubernetes")
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +42,7 @@ DOCKER_ROOT = os.path.join((os.path.dirname(os.path.dirname(TEST_ROOT))), "docke
 kube_available = (
     find_executable("kubectl") is not None
     and find_executable("docker") is not None
-    and k8s_config is not None
+    and k8s is not None
 )
 
 
@@ -139,8 +135,8 @@ def _start_kube_cluster(**kwargs):
     image_name = _build_docker_images()
 
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
-    api_client = k8s_config.new_client_from_config()
-    kube_api = k8s_client.CoreV1Api(api_client)
+    api_client = k8s.config.new_client_from_config()
+    kube_api = k8s.client.CoreV1Api(api_client)
 
     cluster_client = None
     try:

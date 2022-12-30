@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -366,6 +365,7 @@ class KubernetesCluster:
             start_time = time.time()
             while True:
                 try:
+                    # TODO use Xorbits API instead of mars.
                     cluster_api = WebClusterAPI(self._external_web_endpoint)
                     supervisors = await cluster_api.get_supervisors()
 
@@ -462,23 +462,50 @@ def new_cluster(
     **kwargs,
 ) -> "KubernetesClusterClient":
     """
-    :param kube_api_client: Kubernetes API client, can be created with ``new_client_from_config``
-    :param image: Docker image to use, ``xprobe/xorbits:<xorbits version>`` by default
-    :param supervisor_num: Number of supervisors in the cluster, 1 by default
-    :param supervisor_cpu: Number of CPUs for every supervisor
-    :param supervisor_mem: Memory size for every supervisor
-    :param worker_num: Number of workers in the cluster, 1 by default
-    :param worker_cpu: Number of CPUs for every worker
-    :param worker_mem: Memory size for every worker
-    :param worker_spill_paths: Spill paths for worker pods on hosts
-    :param worker_cache_mem: Size or ratio of cache memory for every worker
-    :param min_worker_num: Minimal ready workers
-    :param web_num: Number of web services in the cluster, 1 by default
-    :param web_cpu: Number of CPUs for every web service
-    :param web_mem: Memory size for every web service
-    :param service_type: Type of Kubernetes Service, currently only ``NodePort`` supported
-    :param timeout: Timeout when creating clusters
-    :param cluster_type: K8s Cluster type, ``minikube`` or ``eks`` supported
+    The entrance of deploying xorbits cluster.
+
+    Parameters
+    ----------
+    kube_api_client :
+        Kubernetes API client, can be created with ``new_client_from_config``
+    image :
+        Docker image to use, ``xprobe/xorbits:<xorbits version>`` by default
+    supervisor_num :
+        Number of supervisors in the cluster, 1 by default
+    supervisor_cpu :
+        Number of CPUs for every supervisor
+    supervisor_mem :
+        Memory size for every supervisor
+    worker_num :
+        Number of workers in the cluster, 1 by default
+    worker_cpu :
+        Number of CPUs for every worker
+    worker_mem :
+        Memory size for every worker
+    worker_spill_paths :
+        Spill paths for worker pods on host
+    worker_cache_mem :
+        Size or ratio of cache memory for every worker
+    min_worker_num :
+        Minimal ready workers
+    web_num :
+        Number of web services in the cluster, 1 by default
+    web_cpu :
+        Number of CPUs for every web service
+    web_mem :
+        Memory size for every web service
+    service_type :
+        Type of Kubernetes Service, currently only ``NodePort`` supported
+    timeout :
+        Timeout when creating clusters
+    cluster_type :
+        K8s Cluster type, ``minikube`` or ``eks`` supported
+    kwargs
+
+    Returns
+    -------
+    KubernetesClusterClient
+        a KubernetesClusterClient instance
     """
     cluster_cls = kwargs.pop("cluster_cls", KubernetesCluster)
     cluster = cluster_cls(

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +13,7 @@
 # limitations under the License.
 import pytest
 
+from ...._mars.utils import lazy_import
 from ..config import (
     EmptyDirVolumeConfig,
     HostPathVolumeConfig,
@@ -26,16 +26,10 @@ from ..config import (
     XorbitsWorkersConfig,
 )
 
-try:
-    import kubernetes
-except ImportError:
-    kubernetes = None
+kubernetes = lazy_import("kubernetes")
 
 
-kube_available = kubernetes is not None
-
-
-@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
 def test_simple_objects():
     ns_config_dict = NamespaceConfig("ns_name").build()
     assert ns_config_dict["metadata"]["name"] == "ns_name"
@@ -61,7 +55,7 @@ def test_simple_objects():
     assert service_config_dict["metadata"]["name"] == "xorbits-test-service"
 
 
-@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
 def test_supervisor_object():
     supervisor_config = XorbitsSupervisorsConfig(
         1, cpu=2, memory="10g", limit_resources=False, modules=["xorbits.test_mod"]
@@ -100,7 +94,7 @@ def test_supervisor_object():
     assert supervisor_config.api_version == "v1"
 
 
-@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
 def test_worker_object():
     worker_config_dict = XorbitsWorkersConfig(
         4,
@@ -181,7 +175,7 @@ def test_worker_object():
     assert container_envs["MARS_K8S_SERVICE_PORT"]["value"] == str(11112)
 
 
-@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
 def test_ingress_object():
     from kubernetes.client import V1Ingress
 
