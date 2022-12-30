@@ -1,0 +1,19 @@
+pull_request_rules:
+  - name: Automatic merge
+    conditions:
+      - "#approved-reviews-by>=2"
+      - check-success=build: Python CI / lint (ubuntu-latest, 3.10)
+      - check-success=build: Python CI / build_test_job (ubuntu-latest, 3.7)
+      - check-success=build: Python CI / build_test_job (ubuntu-latest, 3.8)
+      - check-success=build: Python CI / build_test_job (ubuntu-latest, 3.9)
+      - check-success=build: Python CI / build_test_job (ubuntu-latest, 3.10)
+      - check-success=build: Python CI / build_test_job (macos-latest, 3.7)
+      - check-success=build: Python CI / build_test_job (macos-latest, 3.10)
+      - check-success=build: Python CI / build_test_job (windows-latest, 3.7)
+      - check-success=build: Python CI / build_test_job (windows-latest, 3.10)
+      - check-success=build: codecov/project
+      - check-success=build: docs/readthedocs.org:xorbits
+      - base=main
+    actions:
+      merge:
+        method: merge
