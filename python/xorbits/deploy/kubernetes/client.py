@@ -453,10 +453,6 @@ def new_cluster(
     worker_spill_paths: Optional[List[str]] = None,
     worker_cache_mem: Optional[str] = None,
     min_worker_num: Optional[int] = None,
-    web_num: int = 1,
-    web_cpu: Optional[int] = None,
-    web_mem: Optional[str] = None,
-    service_type: Optional[str] = None,
     timeout: Optional[int] = None,
     cluster_type: str = "minikube",
     **kwargs,
@@ -488,14 +484,6 @@ def new_cluster(
         Size or ratio of cache memory for every worker
     min_worker_num :
         Minimal ready workers
-    web_num :
-        Number of web services in the cluster, 1 by default
-    web_cpu :
-        Number of CPUs for every web service
-    web_mem :
-        Memory size for every web service
-    service_type :
-        Type of Kubernetes Service, currently only ``NodePort`` supported
     timeout :
         Timeout when creating clusters
     cluster_type :
@@ -520,10 +508,6 @@ def new_cluster(
         worker_spill_paths=worker_spill_paths,
         worker_cache_mem=worker_cache_mem,
         min_worker_num=min_worker_num,
-        web_num=web_num,
-        web_cpu=web_cpu,
-        web_mem=web_mem,
-        service_type=service_type,
         timeout=timeout,
         cluster_type=cluster_type,
         **kwargs,
