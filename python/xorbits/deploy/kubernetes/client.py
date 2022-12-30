@@ -405,9 +405,8 @@ class KubernetesCluster:
             self._create_ingress()
 
             self._external_web_endpoint = self._get_ingress_address()
-            print(self._external_web_endpoint)
             self._wait_web_ready()
-            print(f"Endpoint {self._external_web_endpoint} ready!")
+            logger.warning(f"Xorbits endpoint {self._external_web_endpoint} is ready!")
             return self._external_web_endpoint
         except:  # noqa: E722   # pragma: no cover
             if self._log_when_fail:

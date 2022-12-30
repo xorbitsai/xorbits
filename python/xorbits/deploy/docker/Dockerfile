@@ -14,7 +14,7 @@ RUN mkdir -p /srv
 
 WORKDIR /srv
 
-RUN cp /opt/xorbits/third_party/_mars/mars/deploy/oscar/file-logging.conf /srv/logging.conf && \
+RUN cp /opt/xorbits/python/xorbits/deploy/oscar/file-logging.conf /srv/logging.conf && \
     cp /opt/xorbits/python/xorbits/deploy/docker/entrypoint.sh /srv/entrypoint.sh && \
     chmod a+x /srv/*.sh
 
