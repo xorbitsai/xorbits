@@ -14,22 +14,9 @@
 
 import urllib.request
 
-import pytest
 
-from ..._mars.deploy.oscar.session import get_default_session
-from ...tests.core import init_test
-
-
-@pytest.fixture
-def init_with_web():
-    sess = init_test(web=True)
-    sess.as_default()
-    yield
-    sess.stop_server()
-
-
-def test_web_ui(init_with_web):
-    sess = get_default_session()
+def test_web_ui(setup_with_web):
+    sess = setup_with_web
     endpoint = sess.get_web_endpoint()
     req = urllib.request.Request(endpoint)
     response = urllib.request.urlopen(req)

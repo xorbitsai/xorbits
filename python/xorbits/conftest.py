@@ -17,6 +17,8 @@ import pytest
 from . import numpy as np
 from . import pandas as pd
 from ._mars.config import option_context
+from ._mars.deploy.oscar.session import clear_default_session
+from ._mars.oscar.backends.router import Router
 from .tests.core import init_test
 
 
@@ -55,7 +57,7 @@ def dummy_int_2d_array():
     return np.arange(9).reshape(3, 3)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="package")
 def _setup_test_session():
     sess = init_test(
         address="test://127.0.0.1",
@@ -66,11 +68,32 @@ def _setup_test_session():
         timeout=300,
     )
     with option_context({"show_progress": False}):
-        yield sess
-    sess.stop_server()
+        try:
+            yield sess
+        finally:
+            sess.stop_server(isolation=False)
+            Router.set_instance(None)
 
 
 @pytest.fixture
 def setup(_setup_test_session):
     _setup_test_session.as_default()
     yield _setup_test_session
+    clear_default_session()
+
+
+@pytest.fixture
+def _setup_with_web():
+    sess = init_test(web=True)
+    try:
+        yield sess
+    finally:
+        sess.stop_server(isolation=False)
+        Router.set_instance(None)
+
+
+@pytest.fixture
+def setup_with_web(_setup_with_web):
+    _setup_with_web.as_default()
+    yield _setup_with_web
+    clear_default_session()
