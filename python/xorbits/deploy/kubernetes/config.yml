@@ -1,0 +1,5 @@
+"@inherits": '@default'
+cluster:
+  backend: k8s
+storage:
+  backends: [shared_memory]
