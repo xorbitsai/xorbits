@@ -32,7 +32,7 @@ the ``kubectl`` context on your machine will be detected. Please make sure kubec
 You should be able to see ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` soon, and
 you can access the web UI of your Xorbits cluster using the endpoint.
 
-Refer :ref:`Kubernetes deployment <deployment/kubernetes:Docker Image>` to deploy Xorbits with your own image.
+Refer :ref:`Kubernetes deployment <deployment_image>` to deploy Xorbits with your own image.
 
 ``new_cluster`` api refers to :meth:`xorbits.deploy.kubernetes.client.new_cluster`.
 

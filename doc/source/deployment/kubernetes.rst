@@ -57,6 +57,7 @@ To verify the cluster:
     print(pd.DataFrame({'a': [1,2,3,4]}).sum())
 
 
+.. _deployment_image:
 
 Docker Image
 ------------
