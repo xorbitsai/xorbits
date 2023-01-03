@@ -34,60 +34,24 @@ pip install xorbits
 ## API compatibility
 As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
 
-Here is an example.
-
-<table>
-<tr>
-<td> pandas </td> <td> Xorbits </td>
-</tr>
-<tr>
-<td>
-
-```python
-import pandas as pd
-
-ratings = pd.read_csv('ratings.csv')
-movies = pd.read_csv('movies.csv')
-
-m = ratings.groupby(
-    'MOVIE_ID', as_index=False).agg(
-    {'RATING': ['mean', 'count']})
-m.columns = ['MOVIE_ID', 'RATING', 'COUNT']
-m = m[m['COUNT'] > 100]
-top_100 = m.sort_values(
-    'RATING', ascending=False)[:100]
-top_100 = top_100.merge(
-    movies[['MOVIE_ID', 'NAME']])
-print(top_100)
-```
-
-</td>
-<td>
-    
-```python
-import xorbits.pandas as pd
-
-ratings = pd.read_csv('ratings.csv')
-movies = pd.read_csv('movies.csv')
-
-m = ratings.groupby(
-    'MOVIE_ID', as_index=False).agg(
-    {'RATING': ['mean', 'count']})
-m.columns = ['MOVIE_ID', 'RATING', 'COUNT']
-m = m[m['COUNT'] > 100]
-top_100 = m.sort_values(
-    'RATING', ascending=False)[:100]
-top_100 = top_100.merge(
-    movies[['MOVIE_ID', 'NAME']])
-print(top_100)
-```
-</td>
-</tr>
-</table>
+<div align="center">
+  <img width="100%" alt="" src="https://doc.xorbits.io/en/latest/_static/pandas_vs_xorbits.gif"><br>
+</div>
 
 Codes are almost identical except for the import, 
 replace `import pandas` with `import xorbits.pandas` will just work, 
 so does numpy and so forth.
+
+All Xorbits APIs implemented or planned include:
+
+| API                                                                            | Implemented version or plan |
+|--------------------------------------------------------------------------------|-----------------------------|
+| [xorbits.pandas](https://doc.xorbits.io/en/latest/reference/pandas/index.html) | v0.1.0                      |
+| [xorbits.numpy](https://doc.xorbits.io/en/latest/reference/numpy/index.html)   | v0.1.0                      |
+| xorbits.sklearn                                                                | Planned in the near future  |
+| xorbits.xgboost                                                                | Planned in the near future  |
+| xorbits.lightgbm                                                               | Planned in the near future  |
+| xorbits.xarray                                                                 | Planned in the future       |
 
 ## Lightning fast speed
 Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
@@ -99,10 +63,12 @@ The performances are shown as below.
 
 Xorbits can be deployed on your local machine, or largely deployed to a cluster via command lines.
 
-| Deployment                                                          | Description                                          |
-|---------------------------------------------------------------------|------------------------------------------------------|
-| [Local](https://doc.xorbits.io/en/latest/deployment/local.html)     | Running Xorbits on a local machine, e.g. laptop      |
-| [Cluster](https://doc.xorbits.io/en/latest/deployment/cluster.html) | Deploy Xorbits to existing cluster via command lines |
+| Deployment                                                                | Description                                                |
+|---------------------------------------------------------------------------|------------------------------------------------------------|
+| [Local](https://doc.xorbits.io/en/latest/deployment/local.html)           | Running Xorbits on a local machine, e.g. laptop            |
+| [Cluster](https://doc.xorbits.io/en/latest/deployment/cluster.html)       | Deploy Xorbits to existing cluster via command lines       |
+| [Kubernetes](https://doc.xorbits.io/en/latest/deployment/kubernetes.html) | Deploy Xorbits to existing k8s cluster via python codes    |
+| [Cloud](https://doc.xorbits.io/en/latest/deployment/cloud.html)           | Deploy Xorbits to various cloud platforms via python codes |
 
 
 ## License

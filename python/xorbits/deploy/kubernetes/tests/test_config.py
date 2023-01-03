@@ -14,6 +14,7 @@
 import pytest
 
 from ...._mars.utils import lazy_import
+from ..client import KubernetesCluster
 from ..config import (
     EmptyDirVolumeConfig,
     HostPathVolumeConfig,
@@ -189,3 +190,27 @@ def test_ingress_object():
     ingress = ingress_config.build()
     assert type(ingress) is V1Ingress
     assert ingress.spec.ingress_class_name == "alb"
+
+
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
+def test_cluster_type():
+    from kubernetes import config
+
+    context = {"cluster": "minikube"}
+    res = KubernetesCluster._get_k8s_context(context)
+    assert res == "kubernetes"
+
+    context = {"context": {"user": "yyyawsxxx"}}
+    res = KubernetesCluster._get_k8s_context(context)
+    assert res == "eks"
+
+    context = {"name": "arn:eks:abcd"}
+    res = KubernetesCluster._get_k8s_context(context)
+    assert res == "eks"
+
+    res = KubernetesCluster._get_cluster_type("kubernetes")
+    assert res == "kubernetes"
+
+    res = KubernetesCluster._get_cluster_type("auto")
+    expected = KubernetesCluster._get_k8s_context(config.list_kube_config_contexts()[1])
+    assert res == expected
