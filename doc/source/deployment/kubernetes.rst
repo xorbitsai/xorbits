@@ -69,4 +69,4 @@ You can follow the `Docker document <https://docs.docker.com/engine/reference/co
 
 After you build your own image, push it to a image repository accessible by your K8s cluster, e.g. your own DockerHub namespace.
 
-Finally, specify your own image during the deployment process through the ``image`` option of the ``new_cluster`` api.
+Finally, specify your own image during the deployment process through the ``image`` option of the :meth:`xorbits.deploy.kubernetes.client.new_cluster` api.
