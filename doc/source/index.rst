@@ -37,34 +37,24 @@ API compatibility
 
 As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
 
-Here is an example.
-
-+--------------------------------------------------+--------------------------------------------------+
-| **pandas**                                       | **Xorbits**                                      |
-+--------------------------------------------------+--------------------------------------------------+
-|.. code-block:: python                            |.. code-block:: python                            |
-|                                                  |                                                  |
-|    import pandas as pd                           |    import xorbits.pandas as pd                   |
-|                                                  |                                                  |
-|    ratings = pd.read_csv('ratings.csv')          |    ratings = pd.read_csv('ratings.csv')          |
-|    movies = pd.read_csv('movies.csv')            |    movies = pd.read_csv('movies.csv')            |
-|                                                  |                                                  |
-|    m = ratings.groupby(                          |    m = ratings.groupby(                          |
-|        'MOVIE_ID', as_index=False).agg(          |        'MOVIE_ID', as_index=False).agg(          |
-|        {'RATING': ['mean', 'count']})            |        {'RATING': ['mean', 'count']})            |
-|    m.columns = ['MOVIE_ID', 'RATING', 'COUNT']   |    m.columns = ['MOVIE_ID', 'RATING', 'COUNT']   |
-|    m = m[m['COUNT'] > 100]                       |    m = m[m['COUNT'] > 100]                       |
-|    top_100 = m.sort_values(                      |    top_100 = m.sort_values(                      |
-|        'RATING', ascending=False)[:100]          |        'RATING', ascending=False)[:100]          |
-|    top_100 = top_100.merge(                      |    top_100 = top_100.merge(                      |
-|        movies[['MOVIE_ID', 'NAME']])             |        movies[['MOVIE_ID', 'NAME']])             |
-|    print(top_100)                                |    print(top_100)                                |
-|                                                  |                                                  |
-+--------------------------------------------------+--------------------------------------------------+
+.. image:: _static/pandas_vs_xorbits.gif
 
 Codes are almost identical except for the import,
 replace ``import pandas`` with ``import xorbits.pandas`` will just work,
 so does numpy and so forth.
+
+All Xorbits APIs implemented or planned include:
+
+======================================= =========================================================
+API                                     Implemented version or plan
+======================================= =========================================================
+:ref:`xorbits.pandas <pandas_api>`      v0.1.0
+:ref:`xorbits.numpy <numpy_api>`        v0.1.0
+``xorbits.sklearn``                     Planned in the near future
+``xorbits.xgboost``                     Planned in the near future
+``xorbits.lightgbm``                    Planned in the near future
+``xorbits.xarray``                      Planned in the future
+======================================= =========================================================
 
 Lightning fast speed
 --------------------
