@@ -1,4 +1,10 @@
 pull_request_rules:
+  - name: automatic update
+    conditions:
+      - -conflict # skip PRs with conflicts
+      - -draft # filter-out GH draft PRs
+    actions:
+      update:
   - name: Automatic merge
     conditions:
       - "#approved-reviews-by>=2"
