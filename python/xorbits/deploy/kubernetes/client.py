@@ -483,11 +483,11 @@ def new_cluster(
     worker_cache_mem :
         Size or ratio of cache memory for every worker
     min_worker_num :
-        Minimal ready workers, equal to worker_num by default
+        Minimal ready workers, equal to ``worker_num`` by default
     timeout :
         Timeout in seconds when creating clusters, never timeout by default
     cluster_type :
-        K8s cluster type, ``minikube`` or ``eks`` supported
+        K8s cluster type, ``minikube`` or ``eks`` supported, ``minikube`` by default
     kwargs :
         Extra kwargs
 
