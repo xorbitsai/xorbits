@@ -469,26 +469,27 @@ def new_cluster(
     supervisor_num :
         Number of supervisors in the cluster, 1 by default
     supervisor_cpu :
-        Number of CPUs for every supervisor
+        Number of CPUs for every supervisor, 1 by default
     supervisor_mem :
-        Memory size for every supervisor
+        Memory size for every supervisor, 4G by default
     worker_num :
         Number of workers in the cluster, 1 by default
     worker_cpu :
-        Number of CPUs for every worker
+        Number of CPUs for every worker, required
     worker_mem :
-        Memory size for every worker
+        Memory size for every worker, required
     worker_spill_paths :
         Spill paths for worker pods on host
     worker_cache_mem :
         Size or ratio of cache memory for every worker
     min_worker_num :
-        Minimal ready workers
+        Minimal ready workers, equal to worker_num by default
     timeout :
-        Timeout when creating clusters
+        Timeout in seconds when creating clusters, never timeout by default
     cluster_type :
-        K8s Cluster type, ``minikube`` or ``eks`` supported
-    kwargs
+        K8s cluster type, ``minikube`` or ``eks`` supported
+    kwargs :
+        Extra kwargs
 
     Returns
     -------

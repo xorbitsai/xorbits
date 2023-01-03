@@ -27,8 +27,11 @@ Then, deploy Xorbits cluster, for example:
 
 
 Note that the option ``cluster_type='eks'`` cannot be ignored.
+
 When a log of the form ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` appears,
 you can access the web page of your xorbits cluster through the endpoint in the log.
+
+``new_cluster`` api refers to :meth:`xorbits.deploy.kubernetes.client.new_cluster`.
 
 To verify the cluster:
 

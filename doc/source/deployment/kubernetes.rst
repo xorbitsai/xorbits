@@ -45,46 +45,11 @@ Then deploy Xorbits cluster, for example:
 When a log of the form ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` appears,
 you can access the web page of your xorbits cluster through the endpoint in the log.
 
+``new_cluster`` api refers to :meth:`xorbits.deploy.kubernetes.client.new_cluster`.
+
 To verify the cluster:
 
 .. code-block:: python
 
     import xorbits.pandas as pd
     print(pd.DataFrame({'a': [1,2,3,4]}).sum())
-
-
-API Parameters
------------
-
-``new_cluster`` Parameters
-~~~~~~~~~~~~~~
-
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| Parameter           | Type                         | Description                                          | Required / Default value          |
-+=====================+==============================+======================================================+===================================+
-| kube_api_client     | kubernetes.client.ApiClient  | Kubernetes API client                                | required                          |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| image               | str                          | Docker image to use                                  | xprobe/xorbits:<xorbits version>  |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| supervisor_num      | int                          | Number of supervisors in the cluster                 | 1                                 |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| supervisor_cpu      | int                          | Number of CPUs for every supervisor                  | 1                                 |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| supervisor_mem      | str                          | Memory size for every supervisor                     | 4G                                |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| worker_num          | int                          | Number of workers in the cluster                     | 1                                 |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| worker_cpu          | int                          | Number of CPUs for every worker                      | required                          |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| worker_mem          | str                          | Memory size for every worker                         | required                          |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| worker_spill_paths  | List[str]                    | Spill paths for worker pods on host                  | None                              |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| worker_cache_mem    | str                          | Size or ratio of cache memory for every worker       | None                              |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| min_worker_num      | int                          | Minimal ready workers                                | None (equal to worker_num)        |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| timeout             | int                          | Timeout seconds when creating clusters               | None (never timeout)              |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+
-| cluster_type        | str                          | K8s Cluster type, ``minikube`` or ``eks`` supported  | minikube                          |
-+---------------------+------------------------------+------------------------------------------------------+-----------------------------------+

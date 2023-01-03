@@ -10,3 +10,4 @@ Deployment
    local
    cluster
    kubernetes
+   cloud
