@@ -85,10 +85,12 @@ For more information, see [performance benchmarks](https://xorbits.io/benchmark)
 
 Xorbits can be deployed on your local machine, or largely deployed to a cluster via command lines.
 
-| Deployment                                                          | Description                                          |
-|---------------------------------------------------------------------|------------------------------------------------------|
-| [Local](https://doc.xorbits.io/en/latest/deployment/local.html)     | Running Xorbits on a local machine, e.g. laptop      |
-| [Cluster](https://doc.xorbits.io/en/latest/deployment/cluster.html) | Deploy Xorbits to existing cluster via command lines |
+| Deployment                                                                | Description                                                |
+|---------------------------------------------------------------------------|------------------------------------------------------------|
+| [Local](https://doc.xorbits.io/en/latest/deployment/local.html)           | Running Xorbits on a local machine, e.g. laptop            |
+| [Cluster](https://doc.xorbits.io/en/latest/deployment/cluster.html)       | Deploy Xorbits to existing cluster via command lines       |
+| [Kubernetes](https://doc.xorbits.io/en/latest/deployment/kubernetes.html) | Deploy Xorbits to existing k8s cluster via python codes    |
+| [Cloud](https://doc.xorbits.io/en/latest/deployment/cloud.html)           | Deploy Xorbits to various cloud platforms via python codes |
 
 
 ## License
