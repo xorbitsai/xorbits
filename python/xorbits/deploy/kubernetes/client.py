@@ -101,15 +101,15 @@ class KubernetesCluster:
         service_name: Optional[str] = None,
         service_type: Optional[str] = None,
         timeout: Optional[int] = None,
-        cluster_type: str = "minikube",
+        cluster_type: str = "auto",
         **kwargs,
     ):
         from kubernetes import client as kube_client
 
         if worker_cpu is None or worker_mem is None:  # pragma: no cover
             raise TypeError("`worker_cpu` and `worker_mem` must be specified")
-        if cluster_type not in ["minikube", "eks"]:  # pragma: no cover
-            raise ValueError("`cluster_type` must be `minikube` or `eks`")
+        if cluster_type not in ["auto", "eks", "kubernetes"]:  # pragma: no cover
+            raise ValueError("`cluster_type` must be `auto`, `kubernetes` or `eks`")
 
         self._api_client = kube_api_client
         self._core_api = kube_client.CoreV1Api(kube_api_client)
@@ -123,7 +123,7 @@ class KubernetesCluster:
         self._extra_volumes = kwargs.pop("extra_volumes", ())
         self._pre_stop_command = kwargs.pop("pre_stop_command", None)
         self._log_when_fail = kwargs.pop("log_when_fail", False)
-        self._cluster_type = cluster_type
+        self._cluster_type = self._get_cluster_type(cluster_type)
         self._ingress_name = "xorbits-ingress"
         self._use_local_image = kwargs.pop("use_local_image", False)
 
@@ -193,6 +193,32 @@ class KubernetesCluster:
     @property
     def namespace(self) -> Optional[str]:
         return self._namespace
+
+    @staticmethod
+    def _get_k8s_context(context: Dict) -> str:
+        cluster = context.get("context", {}).get("cluster", "")
+        user = context.get("context", {}).get("user", "")
+        name = context.get("name", "")
+
+        for s in [cluster, user, name]:
+            if ("eks" in s) or ("aws" in s):
+                return "eks"
+        return "kubernetes"
+
+    @staticmethod
+    def _get_cluster_type(cluster_type: str) -> str:
+        from kubernetes import config
+
+        if cluster_type == "auto":
+            try:
+                curr_context = config.list_kube_config_contexts()[1]
+                return KubernetesCluster._get_k8s_context(curr_context)
+            except:  # pragma: no cover
+                raise ValueError(
+                    "`cluster_type` cannot be `auto`, please check your kubectl configuration or specify it as `eks` or `kubernetes`"
+                )
+        else:
+            return cluster_type
 
     def _get_free_namespace(self) -> str:
         while True:
@@ -454,7 +480,7 @@ def new_cluster(
     worker_cache_mem: Optional[str] = None,
     min_worker_num: Optional[int] = None,
     timeout: Optional[int] = None,
-    cluster_type: str = "minikube",
+    cluster_type: str = "auto",
     **kwargs,
 ) -> "KubernetesClusterClient":
     """
@@ -487,7 +513,9 @@ def new_cluster(
     timeout :
         Timeout in seconds when creating clusters, never timeout by default
     cluster_type :
-        K8s cluster type, ``minikube`` or ``eks`` supported, ``minikube`` by default
+        K8s cluster type, ``auto``, ``kubernetes`` or ``eks`` supported, ``auto`` by default.
+        ``auto`` means that it will automatically detect whether the kubectl context is ``eks``.
+        You can also manually specify ``kubernetes`` or ``eks`` in some special cases.
     kwargs :
         Extra kwargs
 

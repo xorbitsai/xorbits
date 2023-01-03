@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
+    "sphinx.ext.autosectionlabel",
     "IPython.sphinxext.ipython_directive",
     "IPython.sphinxext.ipython_console_highlighting",
     "matplotlib.sphinxext.plot_directive",
@@ -28,6 +29,7 @@ extensions = [
 
 templates_path = ["_templates"]
 exclude_patterns = []
+autosectionlabel_prefix_document = True
 
 
 # -- Options for HTML output -------------------------------------------------

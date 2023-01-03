@@ -6,14 +6,14 @@ Cloud deployment
 
 Prerequisites
 -------------
-Currently we support deploying Xorbits to Amazon EKS cluster.
+Currently, we support deploying Xorbits on an existing Amazon EKS cluster.
 
-Install Xorbits on the machine where you can control your Amazon EKS cluster.
+Install Xorbits on the machine for Amazon EKS cluster management.
 Refer to :ref:`installation document <installation>`.
 
 Amazon EKS
 ----------
-Firstly, make sure you have an EKS cluster and it can access `our Dockerhub <https://hub.docker.com/repository/docker/xprobe/xorbits>`_ to pull the Xorbits image.
+Firstly, make sure your EKS cluster can access `our Dockerhub <https://hub.docker.com/repository/docker/xprobe/xorbits>`_ to pull the Xorbits image.
 
 Secondly, install the `AWS Load Balancer Controller <https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html>`_.
 
@@ -23,13 +23,16 @@ Then, deploy Xorbits cluster, for example:
 
     from kubernetes import config
     from xorbits.deploy.kubernetes import new_cluster
-    cluster = new_cluster(config.new_client_from_config(), worker_cpu=1, worker_mem='4g', cluster_type='eks')
+    cluster = new_cluster(config.new_client_from_config(), worker_cpu=1, worker_mem='4g')
 
 
-Note that the option ``cluster_type='eks'`` cannot be ignored.
+Note that the option ``cluster_type`` of the ``new_cluster`` api equals to ``auto`` by default, which means that
+the ``kubectl`` context on your machine will be detected. Please make sure kubectl uses your eks context.
 
-When a log of the form ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` appears,
-you can access the web page of your xorbits cluster through the endpoint in the log.
+You should be able to see ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` soon, and
+you can access the web UI of your Xorbits cluster using the endpoint.
+
+Refer :ref:`Kubernetes deployment <deployment/kubernetes:Docker Image>` to deploy Xorbits with your own image.
 
 ``new_cluster`` api refers to :meth:`xorbits.deploy.kubernetes.client.new_cluster`.
 
