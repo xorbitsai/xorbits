@@ -92,7 +92,7 @@ def test_cluster(dummy_df):
                 retcode = p.wait(1)
             except subprocess.TimeoutExpired:
                 # supervisor & worker will run forever,
-                # timeout means everything goes well, at least looks well,
+                # timeout means everything goes well, at least looks well.
                 continue
             else:
                 if retcode:

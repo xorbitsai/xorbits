@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import concurrent.futures
+import sys
 
 import psutil
+import pytest
 
 from ... import pandas as pd
 from ..._mars.oscar.backends.router import Router
@@ -40,6 +42,10 @@ def _safe_shutdown():
                 pass
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32" and sys.version_info[:2] < (3, 8),
+    reason="Skip for windows & Python < 3.8",
+)
 def test_init():
     init(n_cpu=2, init_local=True)
     try:
