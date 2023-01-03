@@ -26,7 +26,7 @@ Then, deploy Xorbits cluster, for example:
     cluster = new_cluster(config.new_client_from_config(), worker_cpu=1, worker_mem='4g')
 
 
-Note that the option ``cluster_type`` of the ``new_cluster`` api equals to ``auto`` by default, which means that
+Note that the option ``cluster_type`` of the function ``new_cluster`` has default value ``auto``, which means that
 the ``kubectl`` context on your machine will be detected. Please make sure kubectl uses your eks context.
 
 You should be able to see ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` soon, and
