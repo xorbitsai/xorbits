@@ -34,56 +34,9 @@ pip install xorbits
 ## API compatibility
 As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
 
-Here is an example.
-
-<table>
-<tr>
-<td> pandas </td> <td> Xorbits </td>
-</tr>
-<tr>
-<td>
-
-```python
-import pandas as pd
-
-ratings = pd.read_csv('ratings.csv')
-movies = pd.read_csv('movies.csv')
-
-m = ratings.groupby(
-    'MOVIE_ID', as_index=False).agg(
-    {'RATING': ['mean', 'count']})
-m.columns = ['MOVIE_ID', 'RATING', 'COUNT']
-m = m[m['COUNT'] > 100]
-top_100 = m.sort_values(
-    'RATING', ascending=False)[:100]
-top_100 = top_100.merge(
-    movies[['MOVIE_ID', 'NAME']])
-print(top_100)
-```
-
-</td>
-<td>
-    
-```python
-import xorbits.pandas as pd
-
-ratings = pd.read_csv('ratings.csv')
-movies = pd.read_csv('movies.csv')
-
-m = ratings.groupby(
-    'MOVIE_ID', as_index=False).agg(
-    {'RATING': ['mean', 'count']})
-m.columns = ['MOVIE_ID', 'RATING', 'COUNT']
-m = m[m['COUNT'] > 100]
-top_100 = m.sort_values(
-    'RATING', ascending=False)[:100]
-top_100 = top_100.merge(
-    movies[['MOVIE_ID', 'NAME']])
-print(top_100)
-```
-</td>
-</tr>
-</table>
+<div align="center">
+  <img width="77%" alt="" src="https://doc.xorbits.io/en/latest/_static/pandas_vs_xorbits.gif">
+</div>
 
 Codes are almost identical except for the import, 
 replace `import pandas` with `import xorbits.pandas` will just work, 
