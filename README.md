@@ -35,12 +35,23 @@ pip install xorbits
 As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
 
 <div align="center">
-  <img width="77%" alt="" src="https://doc.xorbits.io/en/latest/_static/pandas_vs_xorbits.gif"><br>
+  <img width="100%" alt="" src="https://doc.xorbits.io/en/latest/_static/pandas_vs_xorbits.gif"><br>
 </div>
 
 Codes are almost identical except for the import, 
 replace `import pandas` with `import xorbits.pandas` will just work, 
 so does numpy and so forth.
+
+All Xorbits APIs implemented or planned include:
+
+| API                                                                            | Implemented version or plan |
+|--------------------------------------------------------------------------------|-----------------------------|
+| [xorbits.pandas](https://doc.xorbits.io/en/latest/reference/pandas/index.html) | v0.1.0                      |
+| [xorbits.numpy](https://doc.xorbits.io/en/latest/reference/numpy/index.html)   | v0.1.0                      |
+| xorbits.sklearn                                                                | Planned in the near future  |
+| xorbits.xgboost                                                                | Planned in the near future  |
+| xorbits.lightgbm                                                               | Planned in the near future  |
+| xorbits.xarray                                                                 | Planned in the future       |
 
 ## Lightning fast speed
 Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
