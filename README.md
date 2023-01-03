@@ -35,7 +35,7 @@ pip install xorbits
 As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
 
 <div align="center">
-  <img width="77%" alt="" src="https://doc.xorbits.io/en/latest/_static/pandas_vs_xorbits.gif">
+  <img width="77%" alt="" src="https://doc.xorbits.io/en/latest/_static/pandas_vs_xorbits.gif"><br>
 </div>
 
 Codes are almost identical except for the import, 
