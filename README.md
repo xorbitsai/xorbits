@@ -23,7 +23,7 @@ just have fun to comprehend it in your own way.
 ## At a glance
 
 <div align="center">
-  <img width="100%" alt="" src="https://doc.xorbits.io/en/latest/_static/pandas_vs_xorbits.gif"><br>
+  <img width="100%" alt="" src="https://raw.githubusercontent.com/xprobe-inc/xorbits/main/doc/source/_static/pandas_vs_xorbits.gif"><br>
 </div>
 
 Codes are almost identical except for the import, 
