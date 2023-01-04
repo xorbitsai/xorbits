@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,22 +26,22 @@ from .plotting import PlotAccessor
 
 
 class IndexingMixin:
-    @property
+    @property  # type: ignore
     @doc(DataFrameAt)
     def at(self):
         return DataFrameAt(self.data._mars_entity.at)
 
-    @property
+    @property  # type: ignore
     @doc(DataFrameIat)
     def iat(self):
         return DataFrameIat(self.data._mars_entity.iat)
 
-    @property
+    @property  # type: ignore
     @doc(DataFrameLoc)
     def loc(self):
         return DataFrameLoc(self.data._mars_entity.loc)
 
-    @property
+    @property  # type: ignore
     @doc(DataFrameIloc)
     def iloc(self):
         return DataFrameIloc(self.data._mars_entity.iloc)
