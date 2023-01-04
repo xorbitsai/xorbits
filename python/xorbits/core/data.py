@@ -17,6 +17,8 @@ from enum import Enum
 from itertools import count
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
+from ..utils import safe_repr_str
+
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
 
@@ -210,6 +212,7 @@ class DataRef(metaclass=DataRefMeta):
 
                 yield from gen()
 
+    @safe_repr_str
     def __str__(self):
         from .execution import run
 
@@ -220,6 +223,7 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__str__()
 
+    @safe_repr_str
     def __repr__(self):
         from .execution import run
 
