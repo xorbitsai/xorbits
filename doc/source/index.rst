@@ -19,6 +19,15 @@ the most popular distributed data science frameworks**.
 As for the name of ``xorbits``, it has many meanings, you can treat it as ``X-or-bits`` or ``X-orbits`` or ``xor-bits``,
 just have fun to comprehend it in your own way.
 
+At a glance
+-----------
+
+.. image:: _static/pandas_vs_xorbits.gif
+
+Codes are almost identical except for the import,
+replace ``import pandas`` with ``import xorbits.pandas`` will just work,
+so does numpy and so forth.
+
 Where to get it?
 ----------------
 
@@ -36,12 +45,6 @@ API compatibility
 -----------------
 
 As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
-
-.. image:: _static/pandas_vs_xorbits.gif
-
-Codes are almost identical except for the import,
-replace ``import pandas`` with ``import xorbits.pandas`` will just work,
-so does numpy and so forth.
 
 All Xorbits APIs implemented or planned include:
 
@@ -64,42 +67,54 @@ Xorbits is the fastest compared to other popular frameworks according to our ben
 We did benchmarks for TPC-H at scale factor 100 (~100 GB datasets) and 1000 (~1 TB datasets).
 The performances are shown as below.
 
-Xorbits vs Dask
-~~~~~~~~~~~~~~~
+TPC-H SF100: Xorbits vs Dask
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://xorbits.io/res/benchmark_dask.png
 
 Q21 was excluded since Dask ran out of memory. Across all queries, Xorbits was found to be 7.3x faster than Dask.
 
-Xorbits vs Pandas API on Spark
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TPC-H SF100: Xorbits vs Pandas API on Spark
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://xorbits.io/res/benchmark_spark.png
 
 Across all queries, the two systems have roughly similar performance, but Xorbits provided much better API compatibility.
 Pandas API on Spark failed on Q1, Q4, Q7, Q21, and ran out of memory on Q20.
 
-Xorbits vs Modin
-~~~~~~~~~~~~~~~~
+TPC-H SF100: Xorbits vs Modin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://xorbits.io/res/benchmark_modin.png
 
 Although Modin ran out of memory for most of the queries that involve heavy data shuffles,
 making the performance difference less obvious, Xorbits was still found to be 3.2x faster than Modin.
 
+TPC-H SF1000: Xorbits
+~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: https://xorbits.io/res/xorbits_1t.png
+
+Although Xorbits is able to pass all the queries in a row,
+Dask, Pandas API on Spark and Modin failed on most of the queries.
+Thus, we are not able to compare the performance difference now, and we plan to try again later.
+
 For more information, see `performance benchmarks <https://xorbits.io/benchmark>`_.
 
 Deployment
 ----------
 
-Xorbits can be deployed on your local machine, or largely deployed to a cluster via command lines.
+Xorbits can be deployed on your local machine, largely deployed to a cluster via command lines,
+or deploy via Kubernetes and clouds.
 
-======================================= =========================================================
-Deployment                              Description
-======================================= =========================================================
-:ref:`Local <deployment_local>`         Running Xorbits on a local machine, e.g. laptop
-:ref:`Cluster <deployment_cluster>`     Deploy Xorbits to existing cluster via command lines
-======================================= =========================================================
+========================================= ============================================================
+Deployment                                Description
+========================================= ============================================================
+:ref:`Local <deployment_local>`           Running Xorbits on a local machine, e.g. laptop
+:ref:`Cluster <deployment_cluster>`       Deploy Xorbits to existing cluster via command lines
+:ref:`Kubernetes <deployment_kubernetes>` Deploy Xorbits to existing k8s cluster via python codes
+:ref:`Cloud <deployment_cloud>`           Deploy Xorbits to various cloud platforms via python codes
+========================================= ============================================================
 
 Getting involved
 ----------------
