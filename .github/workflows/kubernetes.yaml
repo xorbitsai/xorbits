@@ -57,6 +57,5 @@ jobs:
       - name: Report coverage data
         uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          working-directory: ./python
-          verbose: true
+          working-directory: ./python/xorbits/deploy
+          flags: kubernetes
