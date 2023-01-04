@@ -56,8 +56,30 @@ All Xorbits APIs implemented or planned include:
 ## Lightning fast speed
 Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
 
-We did a benchmark for TPC-H at scale factor 100 and 1000. 
+We did benchmarks for TPC-H at scale factor 100 (~100 GB datasets) and 1000 (~1 TB datasets). 
 The performances are shown as below.
+
+### Xorbits vs Dask
+
+![Xorbits vs Dask](https://xorbits.io/res/benchmark_dask.png)
+
+Q21 was excluded since Dask ran out of memory. Across all queries, Xorbits was found to be 7.3x faster than Dask.
+
+### Xorbits vs Pandas API on Spark
+
+![Xorbits vs Pandas API on Spark](https://xorbits.io/res/benchmark_spark.png)
+
+Across all queries, the two systems have roughly similar performance, but Xorbits provided much better API compatibility.
+Pandas API on Spark failed on Q1, Q4, Q7, Q21, and ran out of memory on Q20.
+
+### Xorbits vs Modin
+
+![Xorbits vs Modin](https://xorbits.io/res/benchmark_modin.png)
+
+Although Modin ran out of memory for most of the queries that involve heavy data shuffles, 
+making the performance difference less obvious, Xorbits was still found to be 3.2x faster than Modin.
+
+For more information, see [performance benchmarks](https://xorbits.io/benchmark).
 
 ## Deployment
 
