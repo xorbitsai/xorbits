@@ -12,14 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 import traceback
 from typing import Callable
-
-
-def is_debug() -> bool:
-    """Return if the debugger is currently active"""
-    return hasattr(sys, "gettrace") and sys.gettrace() is not None
 
 
 def is_pydev_evaluating_value() -> bool:
