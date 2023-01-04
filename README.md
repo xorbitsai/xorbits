@@ -56,7 +56,7 @@ All Xorbits APIs implemented or planned include:
 ## Lightning fast speed
 Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
 
-We did a benchmark for TPC-H at scale factor 100(~100GB datasets) and 1000(~1TB datasets). 
+We did benchmarks for TPC-H at scale factor 100 (~100 GB datasets) and 1000 (~1 TB datasets). 
 The performances are shown as below.
 
 ### Xorbits vs Dask
