@@ -82,7 +82,9 @@ class KubernetesCluster:
 
     def __init__(
         self,
-        kube_api_client: Optional[ApiClient] = None,
+        kube_api_client: ApiClient,
+        worker_cpu: int,
+        worker_mem: str,
         image: Optional[str] = None,
         namespace: Optional[str] = None,
         supervisor_num: int = 1,
@@ -90,8 +92,6 @@ class KubernetesCluster:
         supervisor_mem: str = "4G",
         supervisor_mem_limit_ratio: Optional[float] = None,
         worker_num: int = 1,
-        worker_cpu: Optional[int] = None,
-        worker_mem: Optional[str] = None,
         worker_spill_paths: Optional[str] = None,
         worker_cache_mem: Optional[str] = None,
         min_worker_num: Optional[int] = None,
@@ -468,14 +468,14 @@ class KubernetesCluster:
 
 
 def new_cluster(
-    kube_api_client: Optional[ApiClient] = None,
+    kube_api_client: ApiClient,
+    worker_cpu: int,
+    worker_mem: str,
     image: Optional[str] = None,
     supervisor_num: int = 1,
-    supervisor_cpu: Optional[int] = None,
-    supervisor_mem: Optional[str] = None,
+    supervisor_cpu: int = 1,
+    supervisor_mem: str = "4G",
     worker_num: int = 1,
-    worker_cpu: Optional[int] = None,
-    worker_mem: Optional[str] = None,
     worker_spill_paths: Optional[List[str]] = None,
     worker_cache_mem: Optional[str] = None,
     min_worker_num: Optional[int] = None,
@@ -489,7 +489,11 @@ def new_cluster(
     Parameters
     ----------
     kube_api_client :
-        Kubernetes API client, can be created with ``new_client_from_config``
+        Kubernetes API client, required, can be created with ``new_client_from_config``
+    worker_cpu :
+        Number of CPUs for every worker, required
+    worker_mem :
+        Memory size for every worker, required
     image :
         Docker image to use, ``xprobe/xorbits:<xorbits version>`` by default
     supervisor_num :
@@ -500,10 +504,6 @@ def new_cluster(
         Memory size for every supervisor, 4G by default
     worker_num :
         Number of workers in the cluster, 1 by default
-    worker_cpu :
-        Number of CPUs for every worker, required
-    worker_mem :
-        Memory size for every worker, required
     worker_spill_paths :
         Spill paths for worker pods on host
     worker_cache_mem :
@@ -527,13 +527,13 @@ def new_cluster(
     cluster_cls = kwargs.pop("cluster_cls", KubernetesCluster)
     cluster = cluster_cls(
         kube_api_client,
+        worker_cpu,
+        worker_mem,
         image=image,
         supervisor_num=supervisor_num,
         supervisor_cpu=supervisor_cpu,
         supervisor_mem=supervisor_mem,
         worker_num=worker_num,
-        worker_cpu=worker_cpu,
-        worker_mem=worker_mem,
         worker_spill_paths=worker_spill_paths,
         worker_cache_mem=worker_cache_mem,
         min_worker_num=min_worker_num,
