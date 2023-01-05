@@ -31,6 +31,7 @@ jobs:
         shell: bash
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
+        if: ${{ github.repository == 'xprobe-inc/xorbits' }}
         run: |
           if [[ "$GITHUB_REF" =~ ^"refs/tags/" ]]; then
             export GITHUB_TAG_REF="$GITHUB_REF"
