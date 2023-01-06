@@ -117,7 +117,7 @@ def init(
     )
     if address is None and default_session is not None:
         # if has initialized, no need to new session
-        if new:
+        if new:  # pragma: no branch
             session.get_default_session().as_default()
         return
     if init_local:
@@ -139,7 +139,7 @@ def shutdown(**kw) -> None:
     Shutdown current local runtime.
     """
     sess = session.get_default_session()
-    if sess:
+    if sess:  # pragma: no branch
         sess.stop_server(**kw)
 
 
