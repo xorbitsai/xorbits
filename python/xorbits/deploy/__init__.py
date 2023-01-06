@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import atexit
 from typing import Any, Dict, List, Optional, Union
 
 from .._mars.utils import no_default
@@ -29,7 +30,7 @@ def init(
     cuda_devices: Union[List[int], List[List[int]], str] = "auto",
     web: Union[bool, str] = "auto",
     new: bool = True,
-    **kwargs
+    **kwargs,
 ) -> None:
     """
     Init Xorbits runtime locally or connect to an Xorbits cluster.
@@ -43,7 +44,8 @@ def init(
     init_local: bool, no default value
         Indicates if creating a new local runtime.
 
-        - When address is None, ``init_local`` will be True,
+        - If has initialized, ``init_local`` cannot be True, it will skip creating,
+        - When address is None and not initialized, ``init_local`` will be True,
         - Otherwise, if it's not specified, False will be set.
     session_id: str, optional
         Session ID, if not specified, a new ID will be auto generated.
@@ -94,10 +96,17 @@ def init(
 
           Take effect only when ``init_local`` is False
     """
+    default_session = session.get_default_session()
+    if init_local is True and default_session is not None:
+        raise ValueError(
+            f"`init_local` cannot be True if has initialized,"
+            f"call `shutdown` before init."
+        )
     if init_local is no_default:
-        # if address not specified, force to initialize a local runtime
+        # if address not specified and has not initialized,
+        # force to initialize a local runtime.
         # otherwise when init_local not specified, set to False
-        init_local = True if address is None else False
+        init_local = True if (address is None and default_session is None) else False
 
     kw: Dict[str, Any] = dict(
         address=address,
@@ -106,6 +115,11 @@ def init(
         timeout=timeout,
         new=new,
     )
+    if address is None and default_session is not None:
+        # if has initialized, no need to new session
+        if new:
+            session.get_default_session().as_default()
+        return
     if init_local:
         kw.update(
             dict(
@@ -124,7 +138,13 @@ def shutdown(**kw) -> None:
     """
     Shutdown current local runtime.
     """
-    session.get_default_session().stop_server(**kw)
+    sess = session.get_default_session()
+    if sess:
+        sess.stop_server(**kw)
+
+
+# shutdown when python process exit
+atexit.register(shutdown)
 
 
 __all__ = [

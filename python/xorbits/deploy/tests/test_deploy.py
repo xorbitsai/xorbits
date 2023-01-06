@@ -47,8 +47,11 @@ def _safe_shutdown():
     reason="Skip for windows & Python < 3.8",
 )
 def test_init():
-    init(n_cpu=2, init_local=True)
+    init(n_cpu=2)
     try:
         assert repr(pd.Series([1, 2, 3]).sum()) == "6"
+        init()
+        with pytest.raises(ValueError):
+            init(init_local=True)
     finally:
         _safe_shutdown()
