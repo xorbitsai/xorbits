@@ -100,6 +100,7 @@ class KubernetesCluster:
         web_port: Optional[int] = None,
         service_name: Optional[str] = None,
         service_type: Optional[str] = None,
+        pip: Optional[str] = None,
         timeout: Optional[int] = None,
         cluster_type: str = "auto",
         **kwargs,
@@ -189,6 +190,7 @@ class KubernetesCluster:
         self._worker_service_port = (
             kwargs.pop("worker_service_port", None) or service_port
         )
+        self._pip = pip
 
     @property
     def namespace(self) -> Optional[str]:
@@ -302,6 +304,7 @@ class KubernetesCluster:
             web_port=self._web_port,
             pre_stop_command=self._pre_stop_command,
             use_local_image=self._use_local_image,
+            pip=self._pip,
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
@@ -324,6 +327,7 @@ class KubernetesCluster:
             pre_stop_command=self._pre_stop_command,
             supervisor_web_port=self._web_port,
             use_local_image=self._use_local_image,
+            pip=self._pip,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)
@@ -479,6 +483,7 @@ def new_cluster(
     worker_spill_paths: Optional[List[str]] = None,
     worker_cache_mem: Optional[str] = None,
     min_worker_num: Optional[int] = None,
+    pip: Optional[str] = None,
     timeout: Optional[int] = None,
     cluster_type: str = "auto",
     **kwargs,
@@ -537,6 +542,7 @@ def new_cluster(
         worker_spill_paths=worker_spill_paths,
         worker_cache_mem=worker_cache_mem,
         min_worker_num=min_worker_num,
+        pip=pip,
         timeout=timeout,
         cluster_type=cluster_type,
         **kwargs,

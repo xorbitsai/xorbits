@@ -15,6 +15,7 @@
 import abc
 import functools
 import math
+import os
 import re
 from typing import Any, Dict, List, Optional, Union
 
@@ -480,6 +481,7 @@ class ReplicationConfig(KubeConfig):
 
         self._pre_stop_command = pre_stop_command
         self._use_local_image = kwargs.pop("use_local_image", False)
+        self._pip = kwargs.pop("pip", None)
 
     @property
     def api_version(self):
@@ -511,6 +513,21 @@ class ReplicationConfig(KubeConfig):
     def build_container_command(self):
         """Output container command"""
 
+    def _get_install_commands(self) -> Optional[str]:
+        if isinstance(self._pip, str):
+            if not os.path.exists(self._pip):
+                raise ValueError("Cannot read pip requirements file.")
+            with open(self._pip, "r") as f:
+                content = f.read()
+            return f"""
+            pip install --upgrade pip;
+            mkdir -p /srv/pip;
+            touch /srv/pip/requirements.txt;
+            echo {content} > /srv/pip/requirements.txt;
+            pip install -r /srv/pip/requirements.txt;
+            """
+        return None
+
     def build_container(self):
         resources_dict = {
             "requests": self._resource_request.build()
@@ -524,6 +541,11 @@ class ReplicationConfig(KubeConfig):
                     "exec": {"command": self._pre_stop_command},
                 }
                 if self._pre_stop_command
+                else None,
+                "postStart": {
+                    "exec": {"command": ["/bin/sh", "-c", self._get_install_commands()]}
+                }
+                if self._pip
                 else None,
             }
         )
