@@ -28,7 +28,7 @@ Or using ``python -m``:
 
     python -m xorbits.supervisor -H <supervisor_ip> -p <supervisor_port> -w <web_port>
 
-`<web_port>` is used for creating Web service, web service is used for:
+`<web_port>` is used for creating a web service, which is used for:
 
 1. Web UI to monitor cluster status and see detailed information of submitted tasks.
 2. Accept connection from clients. Users can call `xorbits.init("<supervisor_ip>:<web_port>")`
