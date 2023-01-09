@@ -20,13 +20,19 @@ starting supervisor via command:
 
 .. code-block:: bash
 
-    xorbits-supervisor -H <host_name> -p <supervisor_port> -w <web_port>
+    xorbits-supervisor -H <supervisor_ip> -p <supervisor_port> -w <web_port>
 
 Or using ``python -m``:
 
 .. code-block:: bash
 
-    python -m xorbits.supervisor -H <host_name> -p <supervisor_port> -w <web_port>
+    python -m xorbits.supervisor -H <supervisor_ip> -p <supervisor_port> -w <web_port>
+
+`<web_port>` is used for creating Web service, web service is used for:
+
+1. Web UI to monitor cluster status and see detailed information of submitted tasks.
+2. Accept connection from clients. Users can call `xorbits.init("<supervisor_ip>:<web_port>")`
+   to connect to a cluster.
 
 Starting Workers
 ----------------
@@ -35,13 +41,13 @@ The rest of the machines can be started as workers via command:
 
 .. code-block:: bash
 
-    xorbits-worker -H <host_name> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
+    xorbits-worker -H <worker_ip> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
 
 Or using ``python -m``:
 
 .. code-block:: bash
 
-    python -m xorbits.worker -H <host_name> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
+    python -m xorbits.worker -H <worker_ip> -p <worker_port> -s <supervisor_ip>:<supervisor_port>
 
 Connecting to Created Cluster
 -----------------------------
@@ -54,7 +60,7 @@ Now, you can connect to the supervisor from anywhere that can run Python code.
     xorbits.init("http://<supervisor_ip>:<supervisor_web_port>")
 
 
-Replace the ``<supervisor_ip>`` with the supervisor host name that you just specified and
+Replace the ``<supervisor_ip>`` with the supervisor IP that you just specified and
 ``<supervisor_web_port>`` with the supervisor web port.
 
 Xorbits Web UI
@@ -82,7 +88,7 @@ Common Command line options are listed below.
 |                  | configuration.                                                 |
 +------------------+----------------------------------------------------------------+
 | ``-s``           | List of supervisor endpoints, separated by commas. Useful for  |
-|                  | workers and webs to spot supervisors, or when you want to run  |
+|                  | workers to spot supervisors, or when you want to run           |
 |                  | more than one supervisor                                       |
 +------------------+----------------------------------------------------------------+
 | ``--log-level``  | Log level, can be ``debug``, ``info``, ``warning``, ``error``  |
@@ -122,29 +128,33 @@ Extra Options for Workers
 Example
 -------
 
-For instance, if you want to start a Xorbits cluster with two supervisors and two
+For instance, if you want to start a Xorbits cluster with one supervisor and two
 workers, you can run commands below (memory and CPU tunings are omitted):
 
-On Supervisor 1 (192.168.1.10):
+On Supervisor (192.168.1.10):
 
 .. code-block:: bash
 
-    xorbits-supervisor -H 192.168.1.10 -p 7001 -w 7005 -s 192.168.1.10:7001,192.168.1.11:7002
-
-On Supervisor 2 (192.168.1.11):
-
-.. code-block:: bash
-
-    xorbits-supervisor -H 192.168.1.11 -p 7002 -s 192.168.1.10:7001,192.168.1.11:7002
+    xorbits-supervisor -H 192.168.1.10 -p 7001 -w 7005
 
 On Worker 1 (192.168.1.20):
 
 .. code-block:: bash
 
-    xorbits-worker -H 192.168.1.20 -p 7003 -s 192.168.1.10:7001,192.168.1.11:7002
+    xorbits-worker -H 192.168.1.20 -p 7003 -s 192.168.1.10:7001
 
 On Worker 2 (192.168.1.21):
 
 .. code-block:: bash
 
-    xorbits-worker -H 192.168.1.21 -p 7004 -s 192.168.1.10:7001,192.168.1.11:7002
+    xorbits-worker -H 192.168.1.21 -p 7004 -s 192.168.1.10:7001
+
+On a client which is able to connect to supervisor, you can run the Python code below to verify:
+
+.. code-block:: python
+
+    import xorbits
+    import xorbits.numpy as np
+
+    xorbits.init('http://192.168.1.10:7005')
+    print(np.random.rand(100, 100).mean())
