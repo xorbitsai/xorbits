@@ -30,7 +30,7 @@ Or using ``python -m``:
 
 `<web_port>` is used for creating a web service, which is used for:
 
-1. Web UI to monitor cluster status and see detailed information of submitted tasks.
+1. Provide a web UI to show cluster status and detailed information of submitted tasks.
 2. Accept connection from clients. Users can call `xorbits.init("<supervisor_ip>:<web_port>")`
    to connect to a cluster.
 
