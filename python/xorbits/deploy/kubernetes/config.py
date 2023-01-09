@@ -729,9 +729,8 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         if self._web_port:
             start_command += f" -w {str(self._web_port)}"
         if self._cpu:
-            start_command += f" --n-process {str(int(math.ceil(self._cpu)))};"
-        if not start_command.endswith(";"):
-            start_command += ";"
+            start_command += f" --n-process {str(int(math.ceil(self._cpu)))}"
+        start_command += ";"
 
         cmd[0] += start_command
         return cmd
@@ -796,9 +795,8 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         cmd = super().build_container_command()
         start_command = f"/srv/entrypoint.sh {self.get_local_app_module('worker')}"
         if self._service_port:
-            start_command += f" -p {str(self._service_port)};"
-        if not start_command.endswith(";"):
-            start_command += ";"
+            start_command += f" -p {str(self._service_port)}"
+        start_command += ";"
 
         cmd[0] += start_command
         return cmd

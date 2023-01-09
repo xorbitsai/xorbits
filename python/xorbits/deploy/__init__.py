@@ -138,9 +138,12 @@ def shutdown(**kw) -> None:
     """
     Shutdown current local runtime.
     """
-    sess = session.get_default_session()
-    if sess:  # pragma: no branch
-        sess.stop_server(**kw)
+    try:
+        sess = session.get_default_session()
+        if sess:  # pragma: no branch
+            sess.stop_server(**kw)
+    except:  # noqa: E722  # pragma: no cover  # pylint: disable=bare-except
+        pass
 
 
 # shutdown when python process exit
