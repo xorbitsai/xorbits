@@ -39,7 +39,10 @@ def _stop_processes(procs: List[subprocess.Popen]):
         if not proc:
             continue
 
-        sub_ps_procs.extend(psutil.Process(proc.pid).children(recursive=True))
+        try:
+            sub_ps_procs.extend(psutil.Process(proc.pid).children(recursive=True))
+        except psutil.NoSuchProcess:
+            continue
         proc.terminate()
 
     for proc in procs:
