@@ -228,40 +228,45 @@ def test_install_command():
         f.write("package2")
 
     rc = XorbitsSupervisorsConfig(replicas=1, pip=file_path)
-    install_command = rc._get_install_commands()
-    assert "package1\npackage2" in install_command
-    assert not ("conda" in install_command)
+    content = rc.get_install_content(rc._pip)
+    assert "package1\npackage2" in content
+    assert not ("conda" in content)
 
     rc = XorbitsWorkersConfig(replicas=1, conda=file_path)
-    install_command = rc._get_install_commands()
-    assert "package1\npackage2" in install_command
-    assert not ("pip" in install_command)
+    content = rc.get_install_content(rc._conda)
+    assert "package1\npackage2" in content
+    assert not ("pip" in content)
+    commands = rc.build_container_command()
+    assert "conda_yaml" in commands[0]
 
     with pytest.raises(ValueError):
         rc = XorbitsWorkersConfig(replicas=1, pip="/aa/bb.txt")
-        install_command = rc._get_install_commands()
+        _ = rc.get_install_content(rc._pip)
 
     with pytest.raises(ValueError):
         rc = XorbitsWorkersConfig(replicas=1, conda="/aa/bb.yaml")
-        install_command = rc._get_install_commands()
+        _ = rc.get_install_content(rc._conda)
 
     rc = XorbitsWorkersConfig(replicas=1, pip=["p1", "p2"])
-    install_command = rc._get_install_commands()
-    assert "p1\np2" in install_command
+    content = rc.get_install_content(rc._pip)
+    assert "p1\np2" in content
 
     rc = XorbitsWorkersConfig(replicas=1, conda=["p1==1.0.0", "p2"])
-    install_command = rc._get_install_commands()
-    assert "p1==1.0.0\np2" in install_command
+    content = rc.get_install_content(rc._conda)
+    assert "p1==1.0.0\np2" in content
 
     rc = XorbitsWorkersConfig(replicas=1, conda=["p1", "p2"], pip=file_path)
-    install_command = rc._get_install_commands()
-    assert "package1\npackage2" in install_command
-    assert "p1\np2" in install_command
+    content1 = rc.get_install_content(rc._pip)
+    content2 = rc.get_install_content(rc._conda)
+    assert "package1\npackage2" in content1
+    assert "p1\np2" in content2
 
-    build_res = rc.build_container()
-    assert "lifecycle" in build_res
-    assert "postStart" in build_res["lifecycle"]
-    assert install_command in build_res["lifecycle"]["postStart"]["exec"]["command"][2]
+    commands = rc.build_container_command()
+    print(commands[0])
+    assert len(commands) == 1
+    assert "install.sh" in commands[0]
+    assert "entrypoint.sh" in commands[0]
+    assert "conda_default" in commands[0]
 
     try:
         os.remove(file_path)
