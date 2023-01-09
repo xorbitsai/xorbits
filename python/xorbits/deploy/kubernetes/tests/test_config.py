@@ -262,7 +262,6 @@ def test_install_command():
     assert "p1\np2" in content2
 
     commands = rc.build_container_command()
-    print(commands[0])
     assert len(commands) == 1
     assert "install.sh" in commands[0]
     assert "entrypoint.sh" in commands[0]
