@@ -524,6 +524,27 @@ def new_cluster(
         Size or ratio of cache memory for every worker
     min_worker_num :
         Minimal ready workers, equal to ``worker_num`` by default
+    pip :
+        Either a list of pip requirements specifiers,
+        or a string containing the path to a pip `requirements.txt <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_ file.
+        None by default.
+        Both supervisor and worker will install the specified pip packages.
+        Examples:
+
+            * ``pip=["requests==1.0.0", "aiohttp"]``
+            * ``pip="/path/to/requirements.txt"``
+    conda :
+        Either a string containing the path to a `conda environment.yml <https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-file-manually>`_ file,
+        or a list of conda packages used for `conda install <https://docs.conda.io/projects/conda/en/latest/commands/install.html>`_ command.
+        None by default.
+        Both supervisor and worker will install the specified conda packages.
+        When this parameter is list type, install the conda packages from the `default channel <https://repo.anaconda.com/pkgs/>`_.
+        When this parameter is string type, the ``name`` attribute in the environment.yml file will not take effect,
+        since all package changes will occur in the ``base`` conda environment where Xorbits exists.
+        Examples:
+
+            * ``conda=["tensorflow", "tensorboard"]``
+            * ``conda="/path/to/environment.yml"``
     timeout :
         Timeout in seconds when creating clusters, never timeout by default
     cluster_type :
