@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import pytest
+import tempfile
+import os
 
 from ...._mars.utils import lazy_import
 from ..client import KubernetesCluster
@@ -214,3 +216,27 @@ def test_cluster_type():
     res = KubernetesCluster._get_cluster_type("auto")
     expected = KubernetesCluster._get_k8s_context(config.list_kube_config_contexts()[1])
     assert res == expected
+
+
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
+def test_install_command():
+    _, file_path = tempfile.mkstemp()
+
+    with open(file_path, "w") as f:
+        f.write("package1\n")
+        f.write("package2")
+
+    rc = XorbitsSupervisorsConfig(replicas=1, pip=file_path)
+    install_command = rc._get_install_commands()
+    assert "package1\npackage2" in install_command
+    assert not ("conda" in install_command)
+
+    rc = XorbitsWorkersConfig(replicas=1, conda=file_path)
+    install_command = rc._get_install_commands()
+    assert "package1\npackage2" in install_command
+    assert not ("pip" in install_command)
+
+    try:
+        os.remove(file_path)
+    except:
+        pass

@@ -100,7 +100,8 @@ class KubernetesCluster:
         web_port: Optional[int] = None,
         service_name: Optional[str] = None,
         service_type: Optional[str] = None,
-        pip: Optional[str] = None,
+        pip: Optional[Union[str, List[str]]] = None,
+        conda: Optional[Union[str, List[str]]] = None,
         timeout: Optional[int] = None,
         cluster_type: str = "auto",
         **kwargs,
@@ -111,6 +112,10 @@ class KubernetesCluster:
             raise TypeError("`worker_cpu` and `worker_mem` must be specified")
         if cluster_type not in ["auto", "eks", "kubernetes"]:  # pragma: no cover
             raise ValueError("`cluster_type` must be `auto`, `kubernetes` or `eks`")
+        if pip is not None and not isinstance(pip, (str, list)):  # pragma: no cover
+            raise TypeError("`pip` must be str or List[str] type.")
+        if conda is not None and not isinstance(conda, (str, list)):  # pragma: no cover
+            raise TypeError("`conda` must be str or List[str] type.")
 
         self._api_client = kube_api_client
         self._core_api = kube_client.CoreV1Api(kube_api_client)
@@ -191,6 +196,7 @@ class KubernetesCluster:
             kwargs.pop("worker_service_port", None) or service_port
         )
         self._pip = pip
+        self._conda = conda
 
     @property
     def namespace(self) -> Optional[str]:
@@ -305,6 +311,7 @@ class KubernetesCluster:
             pre_stop_command=self._pre_stop_command,
             use_local_image=self._use_local_image,
             pip=self._pip,
+            conda=self._conda,
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
@@ -328,6 +335,7 @@ class KubernetesCluster:
             supervisor_web_port=self._web_port,
             use_local_image=self._use_local_image,
             pip=self._pip,
+            conda=self._conda,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)
@@ -483,7 +491,8 @@ def new_cluster(
     worker_spill_paths: Optional[List[str]] = None,
     worker_cache_mem: Optional[str] = None,
     min_worker_num: Optional[int] = None,
-    pip: Optional[str] = None,
+    pip: Optional[Union[str, List[str]]] = None,
+    conda: Optional[Union[str, List[str]]] = None,
     timeout: Optional[int] = None,
     cluster_type: str = "auto",
     **kwargs,
@@ -543,6 +552,7 @@ def new_cluster(
         worker_cache_mem=worker_cache_mem,
         min_worker_num=min_worker_num,
         pip=pip,
+        conda=conda,
         timeout=timeout,
         cluster_type=cluster_type,
         **kwargs,

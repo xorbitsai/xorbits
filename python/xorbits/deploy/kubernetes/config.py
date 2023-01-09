@@ -481,7 +481,8 @@ class ReplicationConfig(KubeConfig):
 
         self._pre_stop_command = pre_stop_command
         self._use_local_image = kwargs.pop("use_local_image", False)
-        self._pip = kwargs.pop("pip", None)
+        self._pip: Optional[Union[str, List[str]]] = kwargs.pop("pip", None)
+        self._conda: Optional[Union[str, List[str]]] = kwargs.pop("conda", None)
 
     @property
     def api_version(self):
@@ -513,20 +514,47 @@ class ReplicationConfig(KubeConfig):
     def build_container_command(self):
         """Output container command"""
 
-    def _get_install_commands(self) -> Optional[str]:
-        if isinstance(self._pip, str):
-            if not os.path.exists(self._pip):
-                raise ValueError("Cannot read pip requirements file.")
-            with open(self._pip, "r") as f:
-                content = f.read()
-            return f"""
-            pip install --upgrade pip;
-            mkdir -p /srv/pip;
-            touch /srv/pip/requirements.txt;
-            echo {content} > /srv/pip/requirements.txt;
-            pip install -r /srv/pip/requirements.txt;
-            """
-        return None
+    def _get_install_commands(self) -> str:
+        commands = ""
+        if self._pip is not None:
+            if isinstance(self._pip, str):
+                if not os.path.exists(self._pip):
+                    raise ValueError(
+                        f"Cannot find the pip requirements file {self._pip}."
+                    )
+                with open(self._pip, "r") as f:
+                    content = f.read()
+            else:
+                content = "\n".join(self._pip)
+            commands += f"""
+                pip install --upgrade pip;
+                mkdir -p /srv/pip;
+                touch /srv/pip/requirements.txt;
+                echo "{content}" > /srv/pip/requirements.txt;
+                pip install -r /srv/pip/requirements.txt;
+                """
+
+        if self._conda is not None:
+            if isinstance(self._conda, str):
+                if not os.path.exists(self._conda):
+                    raise ValueError(f"Cannot find the file {self._conda} for conda.")
+                with open(self._conda, "r") as f:
+                    content = f.read()
+                commands += f"""
+                    mkdir -p /srv/conda;
+                    touch /srv/conda/env.yaml;
+                    echo "{content}" > /srv/conda/env.yaml;
+                    conda env update --name base --file /srv/conda/env.yaml;
+                    """
+            else:
+                content = "\n".join(self._conda)
+                commands += f"""
+                    mkdir -p /srv/conda;
+                    touch /srv/conda/conda.txt;
+                    echo "{content}" > /srv/conda/conda.txt;
+                    conda install --yes --file /srv/conda/conda.txt;
+                    """
+        return commands
 
     def build_container(self):
         resources_dict = {
@@ -545,7 +573,7 @@ class ReplicationConfig(KubeConfig):
                 "postStart": {
                     "exec": {"command": ["/bin/sh", "-c", self._get_install_commands()]}
                 }
-                if self._pip
+                if self._pip or self._conda
                 else None,
             }
         )
