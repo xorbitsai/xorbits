@@ -192,7 +192,7 @@ def test_run_in_kubernetes():
         worker_mem="1G",
         worker_cache_mem="64m",
         use_local_image=True,
-        pip=["Faker", "cloudpickle"],
+        pip=["Faker", "cloudpickle==2.2.0"],
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
