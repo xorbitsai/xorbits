@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import pytest
-import tempfile
 import os
+import tempfile
+
+import pytest
 
 from ...._mars.utils import lazy_import
 from ..client import KubernetesCluster
@@ -235,6 +236,32 @@ def test_install_command():
     install_command = rc._get_install_commands()
     assert "package1\npackage2" in install_command
     assert not ("pip" in install_command)
+
+    with pytest.raises(ValueError):
+        rc = XorbitsWorkersConfig(replicas=1, pip="/aa/bb.txt")
+        install_command = rc._get_install_commands()
+
+    with pytest.raises(ValueError):
+        rc = XorbitsWorkersConfig(replicas=1, conda="/aa/bb.yaml")
+        install_command = rc._get_install_commands()
+
+    rc = XorbitsWorkersConfig(replicas=1, pip=["p1", "p2"])
+    install_command = rc._get_install_commands()
+    assert "p1\np2" in install_command
+
+    rc = XorbitsWorkersConfig(replicas=1, conda=["p1==1.0.0", "p2"])
+    install_command = rc._get_install_commands()
+    assert "p1==1.0.0\np2" in install_command
+
+    rc = XorbitsWorkersConfig(replicas=1, conda=["p1", "p2"], pip=file_path)
+    install_command = rc._get_install_commands()
+    assert "package1\npackage2" in install_command
+    assert "p1\np2" in install_command
+
+    build_res = rc.build_container()
+    assert "lifecycle" in build_res
+    assert "postStart" in build_res["lifecycle"]
+    assert install_command in build_res["lifecycle"]["postStart"]["exec"]["command"][2]
 
     try:
         os.remove(file_path)

@@ -192,6 +192,7 @@ def test_run_in_kubernetes():
         worker_mem="1G",
         worker_cache_mem="64m",
         use_local_image=True,
+        pip=["Faker"],
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
@@ -200,3 +201,19 @@ def test_run_in_kubernetes():
 
         expected = (np.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
         np.testing.assert_array_equal(c.to_numpy(), expected.sum())
+
+        import pandas as pd
+
+        def gen_data(n=100):
+            from faker import Faker
+
+            df = pd.DataFrame()
+            faker = Faker()
+            df["name"] = [faker.name() for _ in range(n)]
+            df["address"] = [faker.address() for _ in range(n)]
+            return df
+
+        import xorbits.remote as xr
+
+        res = xr.spawn(gen_data).to_object()
+        print(res)

@@ -540,6 +540,8 @@ class ReplicationConfig(KubeConfig):
                     raise ValueError(f"Cannot find the file {self._conda} for conda.")
                 with open(self._conda, "r") as f:
                     content = f.read()
+                # env.yaml must apply to `base` env,
+                # therefore, specify --name option for `conda env update` command
                 commands += f"""
                     mkdir -p /srv/conda;
                     touch /srv/conda/env.yaml;
