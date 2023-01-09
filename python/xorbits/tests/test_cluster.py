@@ -17,6 +17,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from typing import List
 
 import psutil
 
@@ -32,20 +33,26 @@ scheduling:
 TIMEOUT = 100
 
 
-def _terminate(pid: int):
-    try:
-        proc = psutil.Process(pid)
-    except psutil.NoSuchProcess:
-        return
-    sub_pids = [p.pid for p in proc.children(recursive=True)]
-    proc.terminate()
-    proc.wait(5)
-    for p in sub_pids:
-        try:
-            proc = psutil.Process(p)
-            proc.kill()
-        except psutil.NoSuchProcess:
+def _stop_processes(procs: List[subprocess.Popen]):
+    sub_ps_procs = []
+    for proc in procs:
+        if not proc:
             continue
+
+        sub_ps_procs.extend(psutil.Process(proc.pid).children(recursive=True))
+        proc.terminate()
+
+    for proc in procs:
+        try:
+            proc.wait(5)
+        except subprocess.TimeoutExpired:
+            pass
+
+    for ps_proc in sub_ps_procs + procs:
+        try:
+            ps_proc.kill()
+        except psutil.NoSuchProcess:
+            pass
 
 
 def test_cluster(dummy_df):
@@ -118,5 +125,4 @@ def test_cluster(dummy_df):
         if is_timeout:
             raise TimeoutError
     finally:
-        _terminate(worker_process.pid)
-        _terminate(supervisor_process.pid)
+        _stop_processes([supervisor_process, worker_process])
