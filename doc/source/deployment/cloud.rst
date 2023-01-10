@@ -34,6 +34,8 @@ you can access the web UI of your Xorbits cluster using the endpoint.
 
 Refer :ref:`Kubernetes deployment <deployment_image>` to deploy Xorbits with your own image.
 
+Refer :ref:`Install Python Packages <deployment_install>` to install additional python packages for the Xorbits supervisors and workers.
+
 ``new_cluster`` api refers to :meth:`xorbits.deploy.kubernetes.client.new_cluster`.
 
 To verify the cluster:
