@@ -135,19 +135,23 @@ def init(
 
 
 def shutdown(**kw) -> None:
+    sess = session.get_default_session()
+    if sess:  # pragma: no branch
+        sess.stop_server(**kw)
+
+
+def safe_shutdown(**kw) -> None:
     """
     Shutdown current local runtime.
     """
     try:
-        sess = session.get_default_session()
-        if sess:  # pragma: no branch
-            sess.stop_server(**kw)
+        shutdown(**kw)
     except:  # noqa: E722  # pragma: no cover  # pylint: disable=bare-except
         pass
 
 
 # shutdown when python process exit
-atexit.register(shutdown)
+atexit.register(safe_shutdown)
 
 
 __all__ = [
