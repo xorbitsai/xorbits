@@ -135,6 +135,9 @@ def init(
 
 
 def shutdown(**kw) -> None:
+    """
+    Shutdown current local runtime.
+    """
     sess = session.get_default_session()
     if sess:  # pragma: no branch
         sess.stop_server(**kw)
@@ -142,7 +145,7 @@ def shutdown(**kw) -> None:
 
 def safe_shutdown(**kw) -> None:
     """
-    Shutdown current local runtime.
+    Shutdown current local runtime, and ignore all the errors.
     """
     try:
         shutdown(**kw)
