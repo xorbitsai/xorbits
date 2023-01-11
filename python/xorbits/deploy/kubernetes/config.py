@@ -15,6 +15,7 @@
 import abc
 import functools
 import math
+import os
 import re
 from typing import Any, Dict, List, Optional, Union
 
@@ -480,6 +481,8 @@ class ReplicationConfig(KubeConfig):
 
         self._pre_stop_command = pre_stop_command
         self._use_local_image = kwargs.pop("use_local_image", False)
+        self._pip: Optional[Union[str, List[str]]] = kwargs.pop("pip", None)
+        self._conda: Optional[Union[str, List[str]]] = kwargs.pop("conda", None)
 
     @property
     def api_version(self):
@@ -507,9 +510,34 @@ class ReplicationConfig(KubeConfig):
     def add_volume(self, vol):
         self._volumes.append(vol)
 
+    @staticmethod
+    def get_install_content(source: Union[str, List[str]]) -> str:
+        if isinstance(source, str):
+            if not os.path.exists(source):
+                raise ValueError(f"Cannot find the file {source} for installation.")
+            with open(source, "r") as f:
+                content = f.read()
+        else:
+            content = "\n".join(source)
+        return content
+
     @abc.abstractmethod
-    def build_container_command(self):
+    def build_container_command(self) -> List:
         """Output container command"""
+        cmd = ""
+        # All install contents must be wrapped in double quotes to ensure the correctness
+        # when passing to the shell script.
+        # At the same time, each command is followed by a semicolon to separate the individual commands.
+        if self._pip is not None:
+            cmd += f'/srv/install.sh pip "{self.get_install_content(self._pip)}" ; '
+        if self._conda is not None:
+            if isinstance(self._conda, str):
+                cmd += f'/srv/install.sh conda_yaml "{self.get_install_content(self._conda)}" ; '
+
+            else:
+                cmd += f'/srv/install.sh conda_default "{self.get_install_content(self._conda)}" ; '
+
+        return [cmd]
 
     def build_container(self):
         resources_dict = {
@@ -529,7 +557,8 @@ class ReplicationConfig(KubeConfig):
         )
         return _remove_nones(
             {
-                "command": self.build_container_command(),
+                "command": ["/bin/sh", "-c"],
+                "args": self.build_container_command(),
                 "env": [env.build() for env in self._envs.values()] or None,
                 "image": self._image,
                 "name": self._name,
@@ -693,16 +722,17 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
 
     def build_container_command(self):
-        cmd = [
-            "/srv/entrypoint.sh",
-            self.get_local_app_module("supervisor"),
-        ]
+        cmd = super().build_container_command()
+        start_command = f"/srv/entrypoint.sh {self.get_local_app_module('supervisor')}"
         if self._service_port:
-            cmd += ["-p", str(self._service_port)]
+            start_command += f" -p {str(self._service_port)}"
         if self._web_port:
-            cmd += ["-w", str(self._web_port)]
+            start_command += f" -w {str(self._web_port)}"
         if self._cpu:
-            cmd += ["--n-process", str(int(math.ceil(self._cpu)))]
+            start_command += f" --n-process {str(int(math.ceil(self._cpu)))}"
+        start_command += ";"
+
+        cmd[0] += start_command
         return cmd
 
 
@@ -762,10 +792,11 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
 
     def build_container_command(self):
-        cmd = [
-            "/srv/entrypoint.sh",
-            self.get_local_app_module("worker"),
-        ]
+        cmd = super().build_container_command()
+        start_command = f"/srv/entrypoint.sh {self.get_local_app_module('worker')}"
         if self._service_port:
-            cmd += ["-p", str(self._service_port)]
+            start_command += f" -p {str(self._service_port)}"
+        start_command += ";"
+
+        cmd[0] += start_command
         return cmd

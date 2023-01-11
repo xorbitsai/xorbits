@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
+import tempfile
+
 import pytest
 
 from ...._mars.utils import lazy_import
@@ -214,3 +217,57 @@ def test_cluster_type():
     res = KubernetesCluster._get_cluster_type("auto")
     expected = KubernetesCluster._get_k8s_context(config.list_kube_config_contexts()[1])
     assert res == expected
+
+
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
+def test_install_command():
+    _, file_path = tempfile.mkstemp()
+
+    with open(file_path, "w") as f:
+        f.write("package1\n")
+        f.write("package2")
+
+    rc = XorbitsSupervisorsConfig(replicas=1, pip=file_path)
+    content = rc.get_install_content(rc._pip)
+    assert "package1\npackage2" in content
+    assert not ("conda" in content)
+
+    rc = XorbitsWorkersConfig(replicas=1, conda=file_path)
+    content = rc.get_install_content(rc._conda)
+    assert "package1\npackage2" in content
+    assert not ("pip" in content)
+    commands = rc.build_container_command()
+    assert "conda_yaml" in commands[0]
+
+    with pytest.raises(ValueError):
+        rc = XorbitsWorkersConfig(replicas=1, pip="/aa/bb.txt")
+        _ = rc.get_install_content(rc._pip)
+
+    with pytest.raises(ValueError):
+        rc = XorbitsWorkersConfig(replicas=1, conda="/aa/bb.yaml")
+        _ = rc.get_install_content(rc._conda)
+
+    rc = XorbitsWorkersConfig(replicas=1, pip=["p1", "p2"])
+    content = rc.get_install_content(rc._pip)
+    assert "p1\np2" in content
+
+    rc = XorbitsWorkersConfig(replicas=1, conda=["p1==1.0.0", "p2"])
+    content = rc.get_install_content(rc._conda)
+    assert "p1==1.0.0\np2" in content
+
+    rc = XorbitsWorkersConfig(replicas=1, conda=["p1", "p2"], pip=file_path)
+    content1 = rc.get_install_content(rc._pip)
+    content2 = rc.get_install_content(rc._conda)
+    assert "package1\npackage2" in content1
+    assert "p1\np2" in content2
+
+    commands = rc.build_container_command()
+    assert len(commands) == 1
+    assert "install.sh" in commands[0]
+    assert "entrypoint.sh" in commands[0]
+    assert "conda_default" in commands[0]
+
+    try:
+        os.remove(file_path)
+    except:
+        pass

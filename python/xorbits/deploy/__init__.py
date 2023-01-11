@@ -143,8 +143,18 @@ def shutdown(**kw) -> None:
         sess.stop_server(**kw)
 
 
+def safe_shutdown(**kw) -> None:  # pragma: no cover
+    """
+    Shutdown current local runtime, and ignore all the errors.
+    """
+    try:
+        shutdown(**kw)
+    except:  # noqa: E722  # pylint: disable=bare-except
+        pass
+
+
 # shutdown when python process exit
-atexit.register(shutdown)
+atexit.register(safe_shutdown)
 
 
 __all__ = [
