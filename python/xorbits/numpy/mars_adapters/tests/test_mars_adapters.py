@@ -12,24 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .... import numpy as np
+from .... import numpy
 from ....core import DataRef
 
 
 def test_array_creation():
     # 1-d array creation.
-    assert isinstance(np.arange(10), DataRef)
+    assert isinstance(numpy.arange(10), DataRef)
     # 2-d array creation.
-    assert isinstance(np.eye(3), DataRef)
+    assert isinstance(numpy.eye(3), DataRef)
     # n-d array creation.
-    assert isinstance(np.zeros((2, 3)), DataRef)
+    assert isinstance(numpy.zeros((2, 3)), DataRef)
 
 
 def test_indexing(dummy_int_1d_array):
     # test magic method __getitem__.
     assert isinstance(dummy_int_1d_array[0], DataRef)
     assert isinstance(dummy_int_1d_array[1:], DataRef)
-    assert isinstance(dummy_int_1d_array[np.array([1, 2])], DataRef)
+    assert isinstance(dummy_int_1d_array[numpy.array([1, 2])], DataRef)
 
 
 def test_arithmetic_op(dummy_int_1d_array):
@@ -50,20 +50,20 @@ def test_comparison_op(dummy_int_1d_array):
 
 
 def test_fft(dummy_int_1d_array):
-    assert isinstance(np.fft.fft(dummy_int_1d_array), DataRef)
+    assert isinstance(numpy.fft.fft(dummy_int_1d_array), DataRef)
 
 
 def test_linalg(dummy_int_2d_array):
-    for a in np.linalg.svd(dummy_int_2d_array):
+    for a in numpy.linalg.svd(dummy_int_2d_array):
         assert isinstance(a, DataRef)
 
 
 def test_random():
-    assert isinstance(np.random.standard_normal(10), DataRef)
+    assert isinstance(numpy.random.standard_normal(10), DataRef)
 
 
 def test_objects():
-    assert isinstance(np.c_[np.array([1, 2, 3]), np.array([4, 5, 6])], DataRef)
+    assert isinstance(numpy.c_[numpy.array([1, 2, 3]), numpy.array([4, 5, 6])], DataRef)
 
 
 def test_flatiter(dummy_int_1d_array):

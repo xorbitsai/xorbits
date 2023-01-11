@@ -14,7 +14,7 @@
 
 import pytest
 
-from . import numpy as np
+from . import numpy
 from . import pandas as pd
 from ._mars.config import option_context
 from ._mars.deploy.oscar.session import clear_default_session
@@ -24,7 +24,7 @@ from .tests.core import init_test
 
 @pytest.fixture
 def doctest_namespace():
-    return {"pd": pd, "np": np}
+    return {"pd": pd, "numpy": numpy}
 
 
 @pytest.fixture
@@ -49,12 +49,12 @@ def dummy_dt_series():
 
 @pytest.fixture
 def dummy_int_1d_array():
-    return np.array([0, 1, 2])
+    return numpy.array([0, 1, 2])
 
 
 @pytest.fixture
 def dummy_int_2d_array():
-    return np.arange(9).reshape(3, 3)
+    return numpy.arange(9).reshape(3, 3)
 
 
 @pytest.fixture(scope="package")

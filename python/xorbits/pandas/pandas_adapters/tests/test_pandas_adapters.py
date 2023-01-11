@@ -15,7 +15,7 @@
 import os
 import tempfile
 
-import numpy as np
+import numpy
 import pandas as pd
 import pytest
 
@@ -149,7 +149,7 @@ def test_pandas_dataframe_methods(setup):
     expected = raw.median(numeric_only=True).sum()
     assert str(r2) == str(expected)
     assert isinstance(r2, DataRef)
-    np.testing.assert_approx_equal(r2.fetch(), expected)
+    numpy.testing.assert_approx_equal(r2.fetch(), expected)
 
     # output is not series or dataframe
     df = xpd.DataFrame(raw)
@@ -261,7 +261,7 @@ def test_pandas_series_methods(setup):
     assert s.argmax() == r.to_object()
 
     # output is a series and type inference succeed.
-    a = pd.Series([1, 1, 1, np.nan], index=["a", "b", "c", "d"])
+    a = pd.Series([1, 1, 1, numpy.nan], index=["a", "b", "c", "d"])
     xa = xpd.Series(a)
     with pytest.warns(Warning) as w:
         r = xa.divide(10, fill_value=0)
@@ -270,7 +270,7 @@ def test_pandas_series_methods(setup):
     pd.testing.assert_series_equal(a.divide(10, fill_value=0), r.to_pandas())
 
     # multi chunks.
-    s = pd.Series(np.random.randn(12))
+    s = pd.Series(numpy.random.randn(12))
     xs = xpd.Series(s, chunk_size=4)
     with pytest.warns(Warning) as w:
         r = xs.divide(10)
@@ -280,7 +280,7 @@ def test_pandas_series_methods(setup):
 
     # divide by another series.
     # TODO: TypeError: cannot pickle 'weakref' object
-    # b = pd.Series([1, np.nan, 1, np.nan], index=['a', 'b', 'd', 'e'])
+    # b = pd.Series([1, numpy.nan, 1, numpy.nan], index=['a', 'b', 'd', 'e'])
     # xb = xpd.Series(b)
     # with pytest.warns(Warning) as w:
     #     r = xa.divide(xb, fill_value=0)
@@ -301,7 +301,7 @@ def test_pandas_series_methods(setup):
 
     # asof.
     # TODO: AssertionError: shape in metadata (4,) is not consistent with real shape (2,).
-    # s = pd.Series([1, 2, np.nan, 4], index=[10, 20, 30, 40])
+    # s = pd.Series([1, 2, numpy.nan, 4], index=[10, 20, 30, 40])
     # xs = xpd.Series(s)
     # assert s.asof(20) == xs.asof(20).to_object()
     # pd.testing.assert_series_equal(s.asof([5, 20]), xs.asof([5, 20]).to_pandas())
@@ -389,7 +389,7 @@ def test_pandas_index_methods(setup):
     assert i.argmax() == r.to_object()
 
     # output is an array.
-    np.testing.assert_array_equal(i.notnull(), xi.notnull().to_object())
+    numpy.testing.assert_array_equal(i.notnull(), xi.notnull().to_object())
 
     # TODO: TypeError: Input must be Index or array-like
     # i1 = pd.Index([2, 1, 3, 4])
@@ -449,15 +449,15 @@ def test_pandas_module_methods(setup):
 def test_to_numpy(setup):
     df = pd.DataFrame((1, 2, 3))
     xdf = xpd.DataFrame((1, 2, 3))
-    np.testing.assert_array_equal(df.to_numpy(), xdf.to_numpy().to_numpy())
+    numpy.testing.assert_array_equal(df.to_numpy(), xdf.to_numpy().to_numpy())
 
     s = pd.Series((1, 2, 3))
     xs = xpd.Series(s)
-    np.testing.assert_array_equal(s.to_numpy(), xs.to_numpy().to_numpy())
+    numpy.testing.assert_array_equal(s.to_numpy(), xs.to_numpy().to_numpy())
 
     i = s.index
     xi = xs.index
-    np.testing.assert_array_equal(i.to_numpy(), xi.to_numpy().to_numpy())
+    numpy.testing.assert_array_equal(i.to_numpy(), xi.to_numpy().to_numpy())
 
 
 def test_docstring():

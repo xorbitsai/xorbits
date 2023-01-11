@@ -11,13 +11,13 @@ def test_basic_cases():
         warnings.simplefilter("error")
         import xorbits
         import xorbits.pandas as pd
-        import xorbits.numpy as np
+        import xorbits.numpy as xnp
 
     xorbits.init()
     df = pd.DataFrame({'A': [1, 2, 3]})
     assert str(df) == str(pandas.DataFrame({'A': [1, 2, 3]}))
 
-    array = np.ones((2, 2))
+    array = xnp.ones((2, 2))
     assert str(array) == str(numpy.ones((2, 2)))
 
     # make sure web is built

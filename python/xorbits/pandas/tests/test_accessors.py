@@ -33,11 +33,11 @@ def test_str_accessor(setup):
 
 
 def test_dt_accessor(setup):
-    import numpy as np
+    import numpy
 
     # xs being a xorbits.pandas.core.Series instance
-    a = np.arange(
-        np.datetime64("2000-01-01"), np.datetime64("2000-01-03"), dtype=np.datetime64
+    a = numpy.arange(
+        numpy.datetime64("2000-01-01"), numpy.datetime64("2000-01-03"), dtype=numpy.datetime64
     )
     s = pd.Series(a)
     xs = xpd.Series(a)

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
+import numpy
 import pandas as pd
 
 from .... import pandas as xpd
@@ -84,7 +84,7 @@ def test_dataframe_transform(setup):
 
 
 def test_dataframe_map_chunk(setup):
-    df = pd.DataFrame(np.random.rand(10, 5), columns=[f"col{i}" for i in range(5)])
+    df = pd.DataFrame(numpy.random.rand(10, 5), columns=[f"col{i}" for i in range(5)])
     xdf = xpd.DataFrame(df, chunk_size=(5, 3))
 
     # infer failed
@@ -106,7 +106,7 @@ def test_dataframe_map_chunk(setup):
 
 
 def test_dataframe_cartesian_chunk(setup):
-    rs = np.random.RandomState(0)
+    rs = numpy.random.RandomState(0)
     raw1 = pd.DataFrame({"a": range(10), "b": rs.rand(10)})
     raw2 = pd.DataFrame(
         {"c": rs.randint(3, size=10), "d": rs.rand(10), "e": rs.rand(10)}

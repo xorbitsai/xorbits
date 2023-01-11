@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
+import numpy
 
 from .... import numpy as xnp
 from ..index_tricks import CClass, MGridClass, OGridClass, RClass
 
 
 def test_ogrid(setup):
-    np.testing.assert_array_equal(np.ogrid[-1:1:5j], xnp.ogrid[-1:1:5j].to_numpy())
+    numpy.testing.assert_array_equal(numpy.ogrid[-1:1:5j], xnp.ogrid[-1:1:5j].to_numpy())
 
 
 def test_ogrid_docstring():
@@ -39,7 +39,7 @@ def test_ogrid_docstring():
 
 
 def test_mgrid(setup):
-    np.testing.assert_array_equal(np.mgrid[0:5, 0:5], xnp.mgrid[0:5, 0:5].to_numpy())
+    numpy.testing.assert_array_equal(numpy.mgrid[0:5, 0:5], xnp.mgrid[0:5, 0:5].to_numpy())
 
 
 def test_mgrid_docstring():
@@ -59,8 +59,8 @@ def test_mgrid_docstring():
 
 
 def test_c_(setup):
-    np.testing.assert_array_equal(
-        np.c_[np.array([1, 2, 3]), np.array([4, 5, 6])],
+    numpy.testing.assert_array_equal(
+        numpy.c_[numpy.array([1, 2, 3]), numpy.array([4, 5, 6])],
         xnp.c_[xnp.array([1, 2, 3]), xnp.array([4, 5, 6])].to_numpy(),
     )
 
@@ -82,8 +82,8 @@ def test_c__docstring():
 
 
 def test_r_(setup):
-    np.testing.assert_array_equal(
-        np.r_["0,2,0", [1, 2, 3], [4, 5, 6]],
+    numpy.testing.assert_array_equal(
+        numpy.r_["0,2,0", [1, 2, 3], [4, 5, 6]],
         xnp.r_["0,2,0", [1, 2, 3], [4, 5, 6]].to_numpy(),
     )
 

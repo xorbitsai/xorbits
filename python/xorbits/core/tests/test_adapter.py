@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
+import numpy
 import pandas as pd
 import pytest
 
@@ -179,6 +179,6 @@ def test_iter(setup, dummy_df, dummy_str_series, dummy_int_1d_array):
     for r, expected in zip(dummy_df.index, expected_index):
         assert r == expected
 
-    np_array = np.array([0, 1, 2]) + 1
-    for r, expected in zip(dummy_int_1d_array + 1, np_array):
+    numpy_array = numpy.array([0, 1, 2]) + 1
+    for r, expected in zip(dummy_int_1d_array + 1, numpy_array):
         assert r.to_numpy() == expected

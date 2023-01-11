@@ -95,9 +95,9 @@ def spawn(
 
     Xorbits objects can also be used in spawned functions.
 
-    >>> import xorbits.numpy as np
+    >>> import xorbits.numpy as xnp
     >>> def driver2():
-    ...     t = np.ones((10, 10))
+    ...     t = xnp.ones((10, 10))
     ...     return t.sum().to_numpy()
     >>> xr.spawn(driver2).to_object()
     100.0

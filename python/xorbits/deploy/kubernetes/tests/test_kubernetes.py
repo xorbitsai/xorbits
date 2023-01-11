@@ -22,7 +22,7 @@ import uuid
 from contextlib import contextmanager
 from distutils.spawn import find_executable
 
-import numpy as np
+import numpy
 import pytest
 
 from .... import numpy as xnp
@@ -198,5 +198,5 @@ def test_run_in_kubernetes():
         c = (a * b * 2 + 1).sum()
         print(c)
 
-        expected = (np.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
-        np.testing.assert_array_equal(c.to_numpy(), expected.sum())
+        expected = (numpy.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
+        numpy.testing.assert_array_equal(c.to_numpy(), expected.sum())

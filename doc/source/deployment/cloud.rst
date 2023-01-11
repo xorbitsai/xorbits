@@ -40,8 +40,8 @@ To verify the cluster:
 
 .. code-block:: python
 
-    import xorbits.numpy as np
-    a = np.ones((100, 100), chunk_size=30) * 2 * 1 + 1
-    b = np.ones((100, 100), chunk_size=20) * 2 * 1 + 1
+    import xorbits.numpy as xnp
+    a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
+    b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
     c = (a * b * 2 + 1).sum()
     print(c)

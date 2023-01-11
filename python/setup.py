@@ -20,7 +20,7 @@ import sys
 import warnings
 from sysconfig import get_config_vars
 
-import numpy as np
+import numpy
 from Cython.Build import cythonize
 from pkg_resources import parse_version
 from setuptools import Command, Extension, setup
@@ -114,7 +114,7 @@ def _discover_pyx():
             exts[mod_name] = Extension(
                 mod_name,
                 [full_fn] + source,
-                include_dirs=[np.get_include()] + include_dirs,
+                include_dirs=[numpy.get_include()] + include_dirs,
                 **cy_extension_kw,
             )
     return exts

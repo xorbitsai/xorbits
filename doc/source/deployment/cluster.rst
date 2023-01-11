@@ -154,7 +154,7 @@ On a client which is able to connect to supervisor, you can run the Python code 
 .. code-block:: python
 
     import xorbits
-    import xorbits.numpy as np
+    import xorbits.numpy as xnp
 
     xorbits.init('http://192.168.1.10:7005')
-    print(np.random.rand(100, 100).mean())
+    print(xnp.random.rand(100, 100).mean())

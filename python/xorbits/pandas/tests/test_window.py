@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy as np
+import numpy
 import pandas as pd
 import pytest
 
@@ -28,7 +28,7 @@ def test_rolling(setup):
 
 @pytest.mark.skip("Incompatible behavior")
 def test_ewm(setup):
-    df = pd.DataFrame({"B": [0, 1, 2, np.nan, 4]})
+    df = pd.DataFrame({"B": [0, 1, 2, numpy.nan, 4]})
     xdf = xpd.DataFrame(df)
     #           B
     # 0  0.000000
@@ -50,7 +50,7 @@ def test_ewm(setup):
 
 @pytest.mark.skip("Incompatible behavior")
 def test_expanding(setup):
-    df = pd.DataFrame({"B": [0, 1, 2, np.nan, 4]})
+    df = pd.DataFrame({"B": [0, 1, 2, numpy.nan, 4]})
     xdf = xpd.DataFrame(df)
     expected = df.expanding(1).sum()
     actual = xdf.expanding(1).sum()

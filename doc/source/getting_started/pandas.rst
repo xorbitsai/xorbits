@@ -11,7 +11,7 @@ Customarily, we import and init as follows:
 .. ipython:: python
 
    import xorbits
-   import xorbits.numpy as np
+   import xorbits.numpy as xnp
    import xorbits.pandas as pd
    xorbits.init()
 
@@ -23,7 +23,7 @@ Creating a :class:`Series` by passing a list of values, letting it create a defa
 .. ipython:: python
    :okwarning:
 
-   s = pd.Series([1, 3, 5, np.nan, 6, 8])
+   s = pd.Series([1, 3, 5, xnp.nan, 6, 8])
    s
 
 Creating a :class:`DataFrame` by passing an array, with a datetime index and labeled columns:
@@ -32,7 +32,7 @@ Creating a :class:`DataFrame` by passing an array, with a datetime index and lab
 
    dates = pd.date_range('20130101', periods=6)
    dates
-   df = pd.DataFrame(np.random.randn(6, 4), index=dates, columns=list('ABCD'))
+   df = pd.DataFrame(xnp.random.randn(6, 4), index=dates, columns=list('ABCD'))
    df
 
 Creating a :class:`DataFrame` by passing a dict of objects that can be converted to series-like.
@@ -42,7 +42,7 @@ Creating a :class:`DataFrame` by passing a dict of objects that can be converted
    df2 = pd.DataFrame({'A': 1.,
                        'B': pd.Timestamp('20130102'),
                        'C': pd.Series(1, index=list(range(4)), dtype='float32'),
-                       'D': np.array([3] * 4, dtype='int32'),
+                       'D': xnp.array([3] * 4, dtype='int32'),
                        'E': 'foo'})
    df2
 
@@ -271,7 +271,7 @@ Operating with objects that have different dimensionality and need alignment. In
 
 .. ipython:: python
 
-   s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
+   s = pd.Series([1, 3, 5, xnp.nan, 6, 8], index=dates).shift(2)
    s
    df.sub(s, axis='index')
 
@@ -296,7 +296,7 @@ some cases always uses them).
 
 .. ipython:: python
 
-   s = pd.Series(['A', 'B', 'C', 'Aaba', 'Baca', np.nan, 'CABA', 'dog', 'cat'])
+   s = pd.Series(['A', 'B', 'C', 'Aaba', 'Baca', xnp.nan, 'CABA', 'dog', 'cat'])
    s.str.lower()
 
 Merge
@@ -314,7 +314,7 @@ Concatenating :code:`xorbits.pandas` objects together with :func:`concat`:
 
 .. ipython:: python
 
-   df = pd.DataFrame(np.random.randn(10, 4))
+   df = pd.DataFrame(xnp.random.randn(10, 4))
    df
 
    # break it into pieces
@@ -368,8 +368,8 @@ following steps:
                             'foo', 'bar', 'foo', 'foo'],
                       'B': ['one', 'one', 'two', 'three',
                             'two', 'two', 'one', 'three'],
-                      'C': np.random.randn(8),
-                      'D': np.random.randn(8)})
+                      'C': xnp.random.randn(8),
+                      'D': xnp.random.randn(8)})
    df
 
 Grouping and then applying the :meth:`~xorbits.pandas.groupby.DataFrameGroupBy.sum` function to
@@ -399,7 +399,7 @@ We use the standard convention for referencing the matplotlib API:
 
 .. ipython:: python
 
-   ts = pd.Series(np.random.randn(1000),
+   ts = pd.Series(xnp.random.randn(1000),
                   index=pd.date_range('1/1/2000', periods=1000))
    ts = ts.cumsum()
 
@@ -411,7 +411,7 @@ of the columns with labels:
 
 .. ipython:: python
 
-   df = pd.DataFrame(np.random.randn(1000, 4), index=ts.index,
+   df = pd.DataFrame(xnp.random.randn(1000, 4), index=ts.index,
                      columns=['A', 'B', 'C', 'D'])
    df = df.cumsum()
 

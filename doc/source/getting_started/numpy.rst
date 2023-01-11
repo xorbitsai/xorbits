@@ -16,23 +16,25 @@ function. The type of the resulting array is deduced from the type of the elemen
 
 ::
 
-    >>> import xorbits.numpy as np
-    >>> a = np.array([2, 3, 4])
+    >>> import xorbits.numpy as xnp
+    >>> a = xnp.array([2, 3, 4])
     >>> a
     array([2, 3, 4])
     >>> a.dtype
     dtype('int64')
-    >>> b = np.array([1.2, 3.5, 5.1])
+    >>> b = xnp.array([1.2, 3.5, 5.1])
     >>> b.dtype
     dtype('float64')
 
 In addition, creating an array from existing NumPy ndarray is supported.
 
+
+Note: Due to the fact that xorbits.numpy is often aliased as either 'np' or 'xnp', numpy is not aliased and is only referred to as numpy and xorbits.numpy is only referred to as xnp.
 ::
 
-    >>> import numpy as np
+    >>> import numpy
     >>> import xorbits.numpy as xnp
-    >>> a = np.arange(6)
+    >>> a = numpy.arange(6)
     >>> b = xnp.array(a)
     >>> print(b)
     array([0 1 2 3 4 5])
@@ -42,18 +44,18 @@ rather than providing a single sequence as an argument.
 
 ::
 
-    >>> a = np.array(1, 2, 3, 4)    # WRONG
+    >>> a = numpy.array(1, 2, 3, 4)    # WRONG
     Traceback (most recent call last):
       ...
     TypeError: array() takes from 1 to 2 positional arguments but 4 were given
-    >>> a = np.array([1, 2, 3, 4])  # RIGHT
+    >>> a = numpy.array([1, 2, 3, 4])  # RIGHT
 
 ``array`` transforms sequences of sequences into two-dimensional arrays, sequences of sequences
 of sequences into three-dimensional arrays, and so on.
 
 ::
 
-    >>> b = np.array([(1.5, 2, 3), (4, 5, 6)])
+    >>> b = numpy.array([(1.5, 2, 3), (4, 5, 6)])
     >>> b
     array([[1.5, 2. , 3. ],
            [4. , 5. , 6. ]])
@@ -62,7 +64,7 @@ The type of the array can also be explicitly specified at creation time:
 
 ::
 
-    >>> c = np.array([[1, 2], [3, 4]], dtype=complex)
+    >>> c = numpy.array([[1, 2], [3, 4]], dtype=complex)
     >>> c
     array([[1.+0.j, 2.+0.j],
            [3.+0.j, 4.+0.j]])
@@ -78,11 +80,11 @@ specified via the key word argument ``dtype``.
 
 ::
 
-    >>> np.zeros((3, 4))
+    >>> numpy.zeros((3, 4))
     array([[0., 0., 0., 0.],
            [0., 0., 0., 0.],
            [0., 0., 0., 0.]])
-    >>> np.ones((2, 3, 4), dtype=np.int16)
+    >>> numpy.ones((2, 3, 4), dtype=numpy.int16)
     array([[[1, 1, 1, 1],
             [1, 1, 1, 1],
             [1, 1, 1, 1]],
@@ -90,7 +92,7 @@ specified via the key word argument ``dtype``.
            [[1, 1, 1, 1],
             [1, 1, 1, 1],
             [1, 1, 1, 1]]], dtype=int16)
-    >>> np.empty((2, 3)) #doctest: +SKIP
+    >>> numpy.empty((2, 3)) #doctest: +SKIP
     array([[3.73603959e-262, 6.02658058e-154, 6.55490914e-260],  # may vary
            [5.30498948e-313, 3.14673309e-307, 1.00000000e+000]])
 
@@ -99,9 +101,9 @@ To create sequences of numbers, use ``arange`` function which is analogous to th
 
 ::
 
-    >>> np.arange(10, 30, 5)
+    >>> numpy.arange(10, 30, 5)
     array([10, 15, 20, 25])
-    >>> np.arange(0, 2, 0.3)  # it accepts float arguments
+    >>> numpy.arange(0, 2, 0.3)  # it accepts float arguments
     array([0. , 0.3, 0.6, 0.9, 1.2, 1.5, 1.8])
 
 When ``arange`` is used with floating point arguments, it is generally not possible to predict the
@@ -110,20 +112,20 @@ usually better to use the function ``linspace`` that receives as an argument the
 elements that we want, instead of the step::
 
     >>> from xorbits.numpy import pi
-    >>> np.linspace(0, 2, 9)                   # 9 numbers from 0 to 2
+    >>> numpy.linspace(0, 2, 9)                   # 9 numbers from 0 to 2
     array([0.  , 0.25, 0.5 , 0.75, 1.  , 1.25, 1.5 , 1.75, 2.  ])
-    >>> x = np.linspace(0, 2 * pi, 100)        # useful to evaluate function at lots of points
-    >>> f = np.sin(x)
+    >>> x = numpy.linspace(0, 2 * pi, 100)        # useful to evaluate function at lots of points
+    >>> f = numpy.sin(x)
 
 
 However, the way of loading and saving arrays is quite different. Please see :ref:`io <routines.io>` for
 detailed info. Here's an example of loading an HDF5 file::
 
-    >>> a = np.from_hdf5("t.hdf5", dataset="t")
+    >>> a = numpy.from_hdf5("t.hdf5", dataset="t")
 
 Once an ndarray is created, use ``to_numpy`` to convert it to a local NumPy ndarray::
 
-    >>> a = np.array([1, 2, 3, 4])
+    >>> a = numpy.array([1, 2, 3, 4])
     >>> a.to_numpy()
     array([1, 2, 3, 4])
 
@@ -143,18 +145,18 @@ as lists of matrices.
 
 ::
 
-    >>> a = np.arange(6)                    # 1d array
+    >>> a = numpy.arange(6)                    # 1d array
     >>> print(a)
     [0 1 2 3 4 5]
     >>>
-    >>> b = np.arange(12).reshape(4, 3)     # 2d array
+    >>> b = numpy.arange(12).reshape(4, 3)     # 2d array
     >>> print(b)
     [[ 0  1  2]
      [ 3  4  5]
      [ 6  7  8]
      [ 9 10 11]]
     >>>
-    >>> c = np.arange(24).reshape(2, 3, 4)  # 3d array
+    >>> c = numpy.arange(24).reshape(2, 3, 4)  # 3d array
     >>> print(c)
     [[[ 0  1  2  3]
       [ 4  5  6  7]
@@ -167,10 +169,10 @@ as lists of matrices.
 If an array is too large to be printed, the central part of the array will be automatically skipped
 and only prints the corners::
 
-    >>> print(np.arange(10000))
+    >>> print(numpy.arange(10000))
     [   0    1    2 ... 9997 9998 9999]
     >>>
-    >>> print(np.arange(10000).reshape(100, 100))
+    >>> print(numpy.arange(10000).reshape(100, 100))
     [[   0    1    2 ...   97   98   99]
      [ 100  101  102 ...  197  198  199]
      [ 200  201  202 ...  297  298  299]
@@ -190,8 +192,8 @@ result.
 
 ::
 
-    >>> a = np.array([20, 30, 40, 50])
-    >>> b = np.arange(4)
+    >>> a = numpy.array([20, 30, 40, 50])
+    >>> b = numpy.arange(4)
     >>> b
     array([0, 1, 2, 3])
     >>> c = a - b
@@ -199,7 +201,7 @@ result.
     array([20, 29, 38, 47])
     >>> b**2
     array([0, 1, 4, 9])
-    >>> 10 * np.sin(a)
+    >>> 10 * numpy.sin(a)
     array([ 9.12945251, -9.88031624,  7.4511316 , -2.62374854])
     >>> a < 35
     array([ True,  True, False, False])
@@ -208,9 +210,9 @@ Unlike in many matrix languages, the product operator ``*`` operates elementwise
 :code:`xorbits.numpy` arrays. The matrix product can be performed using the ``@`` operator (in
 python >=3.5) or the ``dot`` function or method::
 
-    >>> A = np.array([[1, 1],
+    >>> A = numpy.array([[1, 1],
     ...               [0, 1]])
-    >>> B = np.array([[2, 0],
+    >>> B = numpy.array([[2, 0],
     ...               [3, 4]])
     >>> A * B     # elementwise product
     array([[2, 0],
@@ -227,7 +229,7 @@ create a new one.
 
 ::
 
-    >>> a = np.ones((2, 3), dtype=int)
+    >>> a = numpy.ones((2, 3), dtype=int)
     >>> b = rg.random((2, 3))
     >>> a *= 3
     >>> a
@@ -243,8 +245,8 @@ more general or precise one (a behavior known as upcasting).
 
 ::
 
-    >>> a = np.ones(3, dtype=np.int32)
-    >>> b = np.linspace(0, pi, 3)
+    >>> a = numpy.ones(3, dtype=numpy.int32)
+    >>> b = numpy.linspace(0, pi, 3)
     >>> b.dtype.name
     'float64'
     >>> c = a + b
@@ -252,7 +254,7 @@ more general or precise one (a behavior known as upcasting).
     array([1.        , 2.57079633, 4.14159265])
     >>> c.dtype.name
     'float64'
-    >>> d = np.exp(c * 1j)
+    >>> d = numpy.exp(c * 1j)
     >>> d
     array([ 0.54030231+0.84147098j, -0.84147098+0.54030231j,
            -0.54030231-0.84147098j])
@@ -264,7 +266,7 @@ as methods of the ``ndarray`` class.
 
 ::
 
-    >>> a = np.random.random((2, 3))
+    >>> a = numpy.random.random((2, 3))
     >>> a
     array([[0.82770259, 0.40919914, 0.54959369],
            [0.02755911, 0.75351311, 0.53814331]])
@@ -279,7 +281,7 @@ By default, these operations apply to the array as though it were a list of numb
 its shape. However, by specifying the ``axis`` parameter you can apply an operation along the
 specified axis of an array::
 
-    >>> b = np.arange(12).reshape(3, 4)
+    >>> b = numpy.arange(12).reshape(3, 4)
     >>> b
     array([[ 0,  1,  2,  3],
            [ 4,  5,  6,  7],
@@ -306,15 +308,15 @@ output.
 
 ::
 
-    >>> B = np.arange(3)
+    >>> B = numpy.arange(3)
     >>> B
     array([0, 1, 2])
-    >>> np.exp(B)
+    >>> numpy.exp(B)
     array([1.        , 2.71828183, 7.3890561 ])
-    >>> np.sqrt(B)
+    >>> numpy.sqrt(B)
     array([0.        , 1.        , 1.41421356])
-    >>> C = np.array([2., -1., 4.])
-    >>> np.add(B, C)
+    >>> C = numpy.array([2., -1., 4.])
+    >>> numpy.add(B, C)
     array([2., 0., 6.])
 
 .. _quickstart.indexing-slicing-and-iterating:
@@ -329,7 +331,7 @@ and other Python sequences.
 
 ::
 
-    >>> a = np.arange(10)**3
+    >>> a = numpy.arange(10)**3
     >>> a
     array([  0,   1,   8,  27,  64, 125, 216, 343, 512, 729])
     >>> a[2]
@@ -364,7 +366,7 @@ are given in a tuple separated by commas::
     >>> def f(x, y):
     ...     return 10 * x + y
     ...
-    >>> b = np.arange(12).reshape(3, 4)
+    >>> b = numpy.arange(12).reshape(3, 4)
     >>> b
     array([[ 0,  1,  2,  3],
            [ 4,  5,  6,  7],
@@ -402,7 +404,7 @@ axes, then
 
 ::
 
-    >>> c = np.array([[[  0,  1,  2],  # a 3D array (two stacked 2D arrays)
+    >>> c = numpy.array([[[  0,  1,  2],  # a 3D array (two stacked 2D arrays)
     ...                [ 10, 12, 13]],
     ...               [[100, 101, 102],
     ...                [110, 112, 113]]])
@@ -453,7 +455,7 @@ Changing the shape of an array
 
 An array has a shape given by the number of elements along each axis::
 
-    >>> a = np.floor(10 * np.random.random((3, 4)))
+    >>> a = numpy.floor(10 * numpy.random.random((3, 4)))
     >>> a
     array([[6., 9., 5., 2.],
            [4., 9., 8., 9.],
@@ -506,20 +508,20 @@ Stacking together different arrays
 
 Several arrays can be stacked together along different axes::
 
-    >>> a = np.floor(10 * np.random.random((2, 2)))
+    >>> a = numpy.floor(10 * numpy.random.random((2, 2)))
     >>> a
     array([[9., 7.],
            [5., 2.]])
-    >>> b = np.floor(10 * np.random.random((2, 2)))
+    >>> b = numpy.floor(10 * numpy.random.random((2, 2)))
     >>> b
     array([[1., 9.],
            [5., 1.]])
-    >>> np.vstack((a, b))
+    >>> numpy.vstack((a, b))
     array([[9., 7.],
            [5., 2.],
            [1., 9.],
            [5., 1.]])
-    >>> np.hstack((a, b))
+    >>> numpy.hstack((a, b))
     array([[9., 7., 1., 9.],
            [5., 2., 5., 1.]])
 
@@ -527,32 +529,32 @@ The function `column_stack` stacks 1D arrays as columns into a 2D array. It is e
 `hstack` only for 2D arrays::
 
     >>> from xorbits.numpy import newaxis
-    >>> np.column_stack((a, b))  # with 2D arrays
+    >>> numpy.column_stack((a, b))  # with 2D arrays
     array([[9., 7., 1., 9.],
            [5., 2., 5., 1.]])
-    >>> a = np.array([4., 2.])
-    >>> b = np.array([3., 8.])
-    >>> np.column_stack((a, b))  # returns a 2D array
+    >>> a = numpy.array([4., 2.])
+    >>> b = numpy.array([3., 8.])
+    >>> numpy.column_stack((a, b))  # returns a 2D array
     array([[4., 3.],
            [2., 8.]])
-    >>> np.hstack((a, b))        # the result is different
+    >>> numpy.hstack((a, b))        # the result is different
     array([4., 2., 3., 8.])
     >>> a[:, newaxis]  # view `a` as a 2D column vector
     array([[4.],
            [2.]])
-    >>> np.column_stack((a[:, newaxis], b[:, newaxis]))
+    >>> numpy.column_stack((a[:, newaxis], b[:, newaxis]))
     array([[4., 3.],
            [2., 8.]])
-    >>> np.hstack((a[:, newaxis], b[:, newaxis]))  # the result is the same
+    >>> numpy.hstack((a[:, newaxis], b[:, newaxis]))  # the result is the same
     array([[4., 3.],
            [2., 8.]])
 
 On the other hand, the function `row_stack` is equivalent to `vstack` for any input arrays. In
 fact, `row_stack` is an alias for `vstack`::
 
-    >>> np.column_stack is np.hstack
+    >>> numpy.column_stack is numpy.hstack
     False
-    >>> np.row_stack is np.vstack
+    >>> numpy.row_stack is numpy.vstack
     True
 
 In general, for arrays with more than two dimensions, `hstack` stacks along their second axes,
@@ -564,7 +566,7 @@ the number of the axis along which the concatenation should happen.
     In complex cases, `r_` and `c_` are useful for creating arrays by stacking numbers along one axis.
     They allow the use of range literals ``:``. ::
 
-           >>> np.r_[1:4, 0, 4]
+           >>> numpy.r_[1:4, 0, 4]
            array([1, 2, 3, 0, 4])
 
     When used with arrays as arguments, `r_` and `c_` are similar to `vstack` and `hstack` in their
@@ -579,18 +581,18 @@ array along its horizontal axis, either by specifying the number of
 equally shaped arrays to return, or by specifying the columns after
 which the division should occur::
 
-    >>> a = np.floor(10 * rg.random((2, 12)))
+    >>> a = numpy.floor(10 * rg.random((2, 12)))
     >>> a
     array([[6., 7., 6., 9., 0., 5., 4., 0., 6., 8., 5., 2.],
            [8., 5., 5., 7., 1., 8., 6., 7., 1., 8., 1., 0.]])
     >>> # Split `a` into 3
-    >>> np.hsplit(a, 3)
+    >>> numpy.hsplit(a, 3)
     [array([[6., 7., 6., 9.],
            [8., 5., 5., 7.]]), array([[0., 5., 4., 0.],
            [1., 8., 6., 7.]]), array([[6., 8., 5., 2.],
            [1., 8., 1., 0.]])]
     >>> # Split `a` after the third and the fourth column
-    >>> np.hsplit(a, (3, 4))
+    >>> numpy.hsplit(a, (3, 4))
     [array([[6., 7., 6.],
            [8., 5., 5.]]), array([[9.],
            [7.]]), array([[0., 5., 4., 0., 6., 8., 5., 2.],
