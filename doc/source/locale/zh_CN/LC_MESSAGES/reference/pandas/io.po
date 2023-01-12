@@ -1,0 +1,419 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/pandas/io.rst:5
+msgid "Input/output"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:9
+msgid "Pickling"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:15:<autosummary>:1
+msgid ""
+":py:obj:`read_pickle <xorbits.pandas.read_pickle>`\\ "
+"\\(filepath\\_or\\_buffer\\[\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:15:<autosummary>:1
+msgid "Load pickled pandas object (or any object) from file."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:15:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_pickle <xorbits.pandas.DataFrame.to_pickle>`\\ "
+"\\(path\\[\\, compression\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:15:<autosummary>:1
+msgid "Pickle (serialize) object to file."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:17
+msgid "Flat file"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid ""
+":py:obj:`read_table <xorbits.pandas.read_table>`\\ "
+"\\(filepath\\_or\\_buffer\\[\\, sep\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid "Read general delimited file into DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid ""
+":py:obj:`read_csv <xorbits.pandas.read_csv>`\\ \\(path\\[\\, names\\, "
+"sep\\, index\\_col\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid "Read a comma-separated values (csv) file into DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_csv <xorbits.pandas.DataFrame.to_csv>`\\ "
+"\\(path\\[\\, sep\\, na\\_rep\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid "Write object to a comma-separated values (csv) file."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid ""
+":py:obj:`read_fwf <xorbits.pandas.read_fwf>`\\ "
+"\\(filepath\\_or\\_buffer\\[\\, colspecs\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:25:<autosummary>:1
+msgid "Read a table of fixed-width formatted lines into DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:27
+msgid "Clipboard"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:33:<autosummary>:1
+msgid ":py:obj:`read_clipboard <xorbits.pandas.read_clipboard>`\\ \\(\\[sep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:33:<autosummary>:1
+msgid "Read text from clipboard and pass to read_csv."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_clipboard "
+"<xorbits.pandas.DataFrame.to_clipboard>`\\ \\(\\[excel\\, sep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:33:<autosummary>:1
+msgid "Copy object to the system clipboard."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:35
+msgid "Excel"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:42:<autosummary>:1
+msgid ":py:obj:`read_excel <xorbits.pandas.read_excel>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:42:<autosummary>:1
+msgid "Read an Excel file into a pandas DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_excel <xorbits.pandas.DataFrame.to_excel>`\\ "
+"\\(excel\\_writer\\[\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:42:<autosummary>:1
+msgid "Write object to an Excel sheet."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:60
+msgid "JSON"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`read_json <xorbits.pandas.read_json>`\\ \\(\\[path\\_or\\_buf\\,"
+" orient\\, typ\\, dtype\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:67:<autosummary>:1
+msgid "Convert a JSON string to pandas object."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`json_normalize <xorbits.pandas.json_normalize>`\\ \\(data\\[\\, "
+"record\\_path\\, meta\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:67:<autosummary>:1
+msgid "Normalize semi-structured JSON data into a flat table."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_json <xorbits.pandas.DataFrame.to_json>`\\ "
+"\\(\\[path\\_or\\_buf\\, orient\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:67:<autosummary>:1
+msgid "Convert the object to a JSON string."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:78
+msgid "HTML"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:84:<autosummary>:1
+msgid ""
+":py:obj:`read_html <xorbits.pandas.read_html>`\\ \\(io\\[\\, match\\, "
+"flavor\\, header\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:84:<autosummary>:1
+msgid "Read HTML tables into a ``list`` of ``DataFrame`` objects."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:84:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_html <xorbits.pandas.DataFrame.to_html>`\\ "
+"\\(\\[buf\\, columns\\, col\\_space\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:84:<autosummary>:1
+msgid "Render a DataFrame as an HTML table."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:95
+msgid "XML"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:101:<autosummary>:1
+msgid ""
+":py:obj:`read_xml <xorbits.pandas.read_xml>`\\ "
+"\\(path\\_or\\_buffer\\[\\, xpath\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:101:<autosummary>:1
+msgid "Read XML document into a ``DataFrame`` object."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:101:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_xml <xorbits.pandas.DataFrame.to_xml>`\\ "
+"\\(\\[path\\_or\\_buffer\\, index\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:101:<autosummary>:1
+msgid "Render a DataFrame to an XML document."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:103
+msgid "Latex"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_latex <xorbits.pandas.DataFrame.to_latex>`\\ "
+"\\(\\[buf\\, columns\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:108:<autosummary>:1
+msgid "Render object to a LaTeX tabular, longtable, or nested table."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:119
+msgid "HDFStore: PyTables (HDF5)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:132:<autosummary>:1
+msgid ""
+":py:obj:`read_hdf <xorbits.pandas.read_hdf>`\\ \\(path\\_or\\_buf\\[\\, "
+"key\\, mode\\, errors\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:132:<autosummary>:1
+msgid "Read from the store, close it if we opened it."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:135
+msgid ""
+"One can store a subclass of :class:`DataFrame` or :class:`Series` to "
+"HDF5, but the type of the subclass is lost upon storing."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:139
+msgid "Feather"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:145:<autosummary>:1
+msgid ""
+":py:obj:`read_feather <xorbits.pandas.read_feather>`\\ \\(path\\[\\, "
+"columns\\, use\\_threads\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:145:<autosummary>:1
+msgid "Load a feather-format object from the file path."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:145:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_feather <xorbits.pandas.DataFrame.to_feather>`\\ "
+"\\(path\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:145:<autosummary>:1
+msgid "Write a DataFrame to the binary Feather format."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:147
+msgid "Parquet"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:153:<autosummary>:1
+msgid ""
+":py:obj:`read_parquet <xorbits.pandas.read_parquet>`\\ \\(path\\[\\, "
+"engine\\, columns\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:153:<autosummary>:1
+msgid "Load a parquet object from the file path, returning a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:153:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_parquet <xorbits.pandas.DataFrame.to_parquet>`\\ "
+"\\(path\\[\\, engine\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:153:<autosummary>:1
+msgid "Write a DataFrame to the binary parquet format."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:155
+msgid "ORC"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:161:<autosummary>:1
+msgid ":py:obj:`read_orc <xorbits.pandas.read_orc>`\\ \\(path\\[\\, columns\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:161:<autosummary>:1
+msgid "Load an ORC object from the file path, returning a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:163
+msgid "SAS"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:168:<autosummary>:1
+msgid ":py:obj:`read_sas <xorbits.pandas.read_sas>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:168:<autosummary>:1
+msgid "Read SAS files stored as either XPORT or SAS7BDAT format files."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:170
+msgid "SPSS"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:175:<autosummary>:1
+msgid ""
+":py:obj:`read_spss <xorbits.pandas.read_spss>`\\ \\(path\\[\\, usecols\\,"
+" convert\\_categoricals\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:175:<autosummary>:1
+msgid "Load an SPSS file from the file path, returning a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:177
+msgid "SQL"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid ""
+":py:obj:`read_sql_table <xorbits.pandas.read_sql_table>`\\ "
+"\\(table\\_name\\, con\\[\\, schema\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid "Read SQL database table into a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid ""
+":py:obj:`read_sql_query <xorbits.pandas.read_sql_query>`\\ \\(sql\\, "
+"con\\[\\, index\\_col\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid "Read SQL query into a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid ""
+":py:obj:`read_sql <xorbits.pandas.read_sql>`\\ \\(sql\\, con\\[\\, "
+"index\\_col\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid "Read SQL query or database table into a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_sql <xorbits.pandas.DataFrame.to_sql>`\\ \\(name\\,"
+" con\\[\\, schema\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:185:<autosummary>:1
+msgid "Write records stored in a DataFrame to a SQL database."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:187
+msgid "Google BigQuery"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:192:<autosummary>:1
+msgid ""
+":py:obj:`read_gbq <xorbits.pandas.read_gbq>`\\ \\(query\\[\\, "
+"project\\_id\\, index\\_col\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:192:<autosummary>:1
+msgid "Load data from Google BigQuery."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:194
+msgid "STATA"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:200:<autosummary>:1
+msgid ""
+":py:obj:`read_stata <xorbits.pandas.read_stata>`\\ "
+"\\(filepath\\_or\\_buffer\\[\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:200:<autosummary>:1
+msgid "Read Stata file into DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:200:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_stata <xorbits.pandas.DataFrame.to_stata>`\\ "
+"\\(path\\[\\, convert\\_dates\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:200:<autosummary>:1
+msgid "Export DataFrame object to Stata dta format."
+msgstr ""
+

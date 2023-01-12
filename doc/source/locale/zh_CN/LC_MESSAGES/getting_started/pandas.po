@@ -1,0 +1,362 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/getting_started/pandas.rst:3
+msgid "10 minutes to :code:`xorbits.pandas`"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:7
+msgid ""
+"This is a short introduction to :code:`xorbits.pandas` which is "
+"originated from pandas' quickstart."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:9
+msgid "Customarily, we import and init as follows:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:19
+msgid "Object creation"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:21
+msgid ""
+"Creating a :class:`Series` by passing a list of values, letting it create"
+" a default integer index:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:29
+msgid ""
+"Creating a :class:`DataFrame` by passing an array, with a datetime index "
+"and labeled columns:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:38
+msgid ""
+"Creating a :class:`DataFrame` by passing a dict of objects that can be "
+"converted to series-like."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:49
+msgid "The columns of the resulting :class:`DataFrame` have different dtypes."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:57
+msgid "Viewing data"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:59
+msgid "Here is how to view the top and bottom rows of the frame:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:66
+msgid "Display the index, columns:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:74
+msgid ""
+":meth:`DataFrame.to_numpy` gives a ndarray representation of the "
+"underlying data. Note that this can be an expensive operation when your "
+":class:`DataFrame` has columns with different data types, which comes "
+"down to a fundamental difference between DataFrame and ndarray: "
+"**ndarrays have one dtype for the entire ndarray, while DataFrames have "
+"one dtype per column**. When you call :meth:`DataFrame.to_numpy`, "
+":code:`xorbits.pandas` will find the ndarray dtype that can hold *all* of"
+" the dtypes in the DataFrame. This may end up being ``object``, which "
+"requires casting every value to a Python object."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:82
+msgid ""
+"For ``df``, our :class:`DataFrame` of all floating-point values, "
+":meth:`DataFrame.to_numpy` is fast and doesn't require copying data."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:89
+msgid ""
+"For ``df2``, the :class:`DataFrame` with multiple dtypes, "
+":meth:`DataFrame.to_numpy` is relatively expensive."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:98
+msgid ""
+":meth:`DataFrame.to_numpy` does *not* include the index or column labels "
+"in the output."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:101
+msgid ":func:`~DataFrame.describe` shows a quick statistic summary of your data:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:107
+msgid "Sorting by an axis:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:113
+msgid "Sorting by values:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:120
+msgid "Selection"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:124
+msgid ""
+"While standard Python expressions for selecting and setting are intuitive"
+" and come in handy for interactive work, for production code, we "
+"recommend the optimized :code:`xorbits.pandas` data access methods, "
+"``.at``, ``.iat``, ``.loc`` and ``.iloc``."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:131
+msgid "Getting"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:133
+msgid ""
+"Selecting a single column, which yields a :class:`Series`, equivalent to "
+"``df.A``:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:139
+msgid "Selecting via ``[]``, which slices the rows."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:148
+msgid "Selection by label"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:150
+msgid "For getting a cross section using a label:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:156
+msgid "Selecting on a multi-axis by label:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:162
+msgid "Showing label slicing, both endpoints are *included*:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:169
+msgid "Reduction in the dimensions of the returned object:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:175
+msgid "For getting a scalar value:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:181
+#: ../../source/getting_started/pandas.rst:226
+msgid "For getting fast access to a scalar (equivalent to the prior method):"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:188
+msgid "Selection by position"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:190
+msgid "Select via the position of the passed integers:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:196
+msgid "By integer slices, acting similar to python:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:202
+msgid "By lists of integer position locations, similar to the python style:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:208
+msgid "For slicing rows explicitly:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:214
+msgid "For slicing columns explicitly:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:220
+msgid "For getting a value explicitly:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:233
+msgid "Boolean indexing"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:235
+msgid "Using a single column's values to select data."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:241
+msgid "Selecting values from a DataFrame where a boolean condition is met."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:249
+msgid "Operations"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:252
+msgid "Stats"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:254
+msgid "Operations in general *exclude* missing data."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:256
+msgid "Performing a descriptive statistic:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:262
+msgid "Same operation on the other axis:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:269
+msgid ""
+"Operating with objects that have different dimensionality and need "
+"alignment. In addition, :code:`xorbits.pandas` automatically broadcasts "
+"along the specified dimension."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:280
+msgid "Apply"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:282
+msgid "Applying functions to the data:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:289
+msgid "String Methods"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:291
+msgid ""
+"Series is equipped with a set of string processing methods in the `str` "
+"attribute that make it easy to operate on each element of the array, as "
+"in the code snippet below. Note that pattern-matching in `str` generally "
+"uses `regular expressions <https://docs.python.org/3/library/re.html>`__ "
+"by default (and in some cases always uses them)."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:303
+msgid "Merge"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:306
+msgid "Concat"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:308
+msgid ""
+":code:`xorbits.pandas` provides various facilities for easily combining "
+"together Series and DataFrame objects with various kinds of set logic for"
+" the indexes and relational algebra functionality in the case of join / "
+"merge-type operations."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:313
+msgid "Concatenating :code:`xorbits.pandas` objects together with :func:`concat`:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:326
+msgid ""
+"Adding a column to a :class:`DataFrame` is relatively fast. However, "
+"adding a row requires a copy, and may be expensive. We recommend passing "
+"a pre-built list of records to the :class:`DataFrame` constructor instead"
+" of building a :class:`DataFrame` by iteratively appending records to it."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:332
+msgid "Join"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:334
+msgid "SQL style merges."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:344
+msgid "Another example that can be given is:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:355
+msgid "Grouping"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:357
+msgid ""
+"By \"group by\" we are referring to a process involving one or more of "
+"the following steps:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:360
+msgid "**Splitting** the data into groups based on some criteria"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:361
+msgid "**Applying** a function to each group independently"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:362
+msgid "**Combining** the results into a data structure"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:375
+msgid ""
+"Grouping and then applying the "
+":meth:`~xorbits.pandas.groupby.DataFrameGroupBy.sum` function to the "
+"resulting groups."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:383
+msgid ""
+"Grouping by multiple columns forms a hierarchical index, and again we can"
+" apply the `sum` function."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:391
+msgid "Plotting"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:393
+msgid "We use the standard convention for referencing the matplotlib API:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:409
+msgid ""
+"On a DataFrame, the :meth:`~DataFrame.plot` method is a convenience to "
+"plot all of the columns with labels:"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:424
+msgid "Getting data in/out"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:427
+msgid "CSV"
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:429
+msgid "Writing to a csv file."
+msgstr ""
+
+#: ../../source/getting_started/pandas.rst:435
+msgid "Reading from a csv file."
+msgstr ""
+

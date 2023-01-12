@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/numpy/array-creation.rst:4
+msgid "Array creation routines"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:9
+msgid "From shape or value"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`empty <xorbits.numpy.empty>`\\ \\(shape\\[\\, dtype\\, order\\, "
+"like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return a new array of given shape and type, without initializing entries."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`empty_like <xorbits.numpy.empty_like>`\\ \\(prototype\\[\\, "
+"dtype\\, order\\, subok\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return a new array with the same shape and type as a given array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`eye <xorbits.numpy.eye>`\\ \\(N\\[\\, M\\, k\\, dtype\\, "
+"sparse\\, gpu\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return a 2-D array with ones on the diagonal and zeros elsewhere."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`identity <xorbits.numpy.identity>`\\ \\(n\\[\\, dtype\\, "
+"sparse\\, gpu\\, chunk\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return the identity array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`ones <xorbits.numpy.ones>`\\ \\(shape\\[\\, dtype\\, "
+"chunk\\_size\\, gpu\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return a new array of given shape and type, filled with ones."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`ones_like <xorbits.numpy.ones_like>`\\ \\(a\\[\\, dtype\\, "
+"gpu\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return an array of ones with the same shape and type as a given array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`zeros <xorbits.numpy.zeros>`\\ \\(shape\\[\\, dtype\\, order\\, "
+"like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return a new array of given shape and type, filled with zeros."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`zeros_like <xorbits.numpy.zeros_like>`\\ \\(a\\[\\, dtype\\, "
+"gpu\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return an array of zeros with the same shape and type as a given array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`full <xorbits.numpy.full>`\\ \\(shape\\, fill\\_value\\[\\, "
+"dtype\\, chunk\\_size\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return a new array of given shape and type, filled with `fill_value`."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid ""
+":py:obj:`full_like <xorbits.numpy.full_like>`\\ \\(a\\, "
+"fill\\_value\\[\\, dtype\\, gpu\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:23:<autosummary>:1
+msgid "Return a full array with the same shape and type as a given array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:25
+msgid "From existing data"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`array <xorbits.numpy.array>`\\ \\(x\\[\\, dtype\\, copy\\, "
+"order\\, ndmin\\, chunk\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "array(object, dtype=None, *, copy=True, order='K', subok=False, ndmin=0,"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`asarray <xorbits.numpy.asarray>`\\ \\(a\\[\\, dtype\\, order\\, "
+"like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Convert the input to an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`ascontiguousarray <xorbits.numpy.ascontiguousarray>`\\ "
+"\\(a\\[\\, dtype\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Return a contiguous array (ndim >= 1) in memory (C order)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ":py:obj:`copy <xorbits.numpy.copy>`\\ \\(a\\[\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Return an array copy of the given object."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:44
+msgid "Numerical ranges"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid ""
+":py:obj:`arange <xorbits.numpy.arange>`\\ \\(\\[start\\,\\] stop\\[\\, "
+"step\\,\\]\\[\\, dtype\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid "Return evenly spaced values within a given interval."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid ""
+":py:obj:`linspace <xorbits.numpy.linspace>`\\ \\(start\\, stop\\[\\, "
+"num\\, endpoint\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid "Return evenly spaced numbers over a specified interval."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid ":py:obj:`meshgrid <xorbits.numpy.meshgrid>`\\ \\(\\*xi\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid "Return coordinate matrices from coordinate vectors."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid ":py:obj:`mgrid <xorbits.numpy.mgrid>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid "`nd_grid` instance which returns a dense multi-dimensional \"meshgrid\"."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid ":py:obj:`ogrid <xorbits.numpy.ogrid>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid "`nd_grid` instance which returns an open multi-dimensional \"meshgrid\"."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:57
+msgid "Building matrices"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`diag <xorbits.numpy.diag>`\\ \\(v\\[\\, k\\, sparse\\, gpu\\, "
+"chunk\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid "Extract a diagonal or construct a diagonal array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`diagflat <xorbits.numpy.diagflat>`\\ \\(v\\[\\, k\\, sparse\\, "
+"gpu\\, chunk\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid "Create a two-dimensional array with the flattened input as a diagonal."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid ":py:obj:`tril <xorbits.numpy.tril>`\\ \\(m\\[\\, k\\, gpu\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid "Lower triangle of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid ":py:obj:`triu <xorbits.numpy.triu>`\\ \\(m\\[\\, k\\, gpu\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid "Upper triangle of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:69
+msgid "The Matrix class"
+msgstr ""
+

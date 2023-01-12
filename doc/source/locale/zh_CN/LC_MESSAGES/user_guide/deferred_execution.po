@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/user_guide/deferred_execution.rst:5
+msgid "Deferred Execution"
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:9
+msgid ""
+"Most Xorbits objects, including Xorbits :class:`DataFrame`, are "
+"implemented to use deferred execution. Deferred execution means that "
+"operations on Xorbits objects are not executed immediately as they are "
+"called. Instead, Xorbits builds an execution plan and the plan will not "
+"be executed until the result is actually required."
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:14
+msgid "Currently, execution will be triggered in the following situations:"
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:16
+msgid "``repr`` is called."
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:17
+msgid "``str`` is called."
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:18
+msgid ""
+"Output methods are called. For example, :meth:`DataFrame.to_csv` is "
+"called."
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:19
+msgid ""
+"Critical information is missing. For example, the dtypes of a "
+"``DataFrame``."
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:21
+msgid ""
+"Deferred execution can greatly improve performance when you manipulate "
+"large datasets. Optimizations can be applied to the chained operations "
+"before calling the backend. For example, identical parts of an execution "
+"plan can be eliminated and executed only once."
+msgstr ""
+
+#: ../../source/user_guide/deferred_execution.rst:27
+msgid ""
+"To trigger the execution manually, you can use :func:`run`. You pass an "
+"Xorbits object or a list of Xorbits objects as the argument."
+msgstr ""
+

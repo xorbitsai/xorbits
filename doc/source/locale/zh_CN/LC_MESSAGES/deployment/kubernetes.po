@@ -1,0 +1,125 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/deployment/kubernetes.rst:5
+msgid "Kubernetes deployment"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:8
+msgid "Prerequisites"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:9
+msgid ""
+"Install Xorbits on the machine where you plan to run the kubernetes "
+"deploy code. Refer to :ref:`installation document <installation>`."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:13
+msgid "Kubernetes"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:14
+msgid ""
+"Make sure a K8s cluster is properly installed on your machine(s), and "
+"enable the `ingress service <https://kubernetes.io/docs/concepts"
+"/services-networking/ingress/>`_."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:16
+msgid ""
+"For example, if you use Minikube, start a cluster and enable ingress like"
+" this:"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:23
+msgid ""
+"Follow `minikube documentation <https://kubernetes.io/docs/tasks/access-"
+"application-cluster/ingress-minikube/>`_ to verify whether ingress is "
+"enabled correctly."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:25
+msgid ""
+"For MacOS with docker driver, `docker-mac-net-connect "
+"<https://github.com/chipmk/docker-mac-net-connect>`_ is needed due to its"
+" `limitation <https://github.com/kubernetes/minikube/issues/7332>`_:"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:36
+msgid "Then deploy Xorbits cluster, for example:"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:45
+msgid "Please make sure ``kubectl`` uses your kubernetes cluster context."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:47
+msgid ""
+"You should be able to see ``Xorbits endpoint "
+"http://<ingress_service_ip>:80 is ready!`` soon, and you can access the "
+"web UI of your Xorbits cluster using the endpoint."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:50
+msgid ""
+"``new_cluster`` api refers to "
+":meth:`xorbits.deploy.kubernetes.client.new_cluster`."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:52
+msgid "To verify the cluster:"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:63
+msgid "Docker Image"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:64
+msgid ""
+"By default, the image tagged by ``xprobe/xorbits:<xorbits version>`` on "
+"`our Dockerhub "
+"<https://hub.docker.com/repository/docker/xprobe/xorbits>`_ is used in "
+"the kubernetes deployment. Each released version of Xorbits has its "
+"image, distinguished by the ``<xorbits version>``."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:67
+msgid ""
+"If you need to build an image from source, the related Dockerfiles exists"
+" at `this position <https://github.com/xprobe-"
+"inc/xorbits/tree/main/python/xorbits/deploy/docker>`_ for reference. You "
+"can follow the `Docker document "
+"<https://docs.docker.com/engine/reference/commandline/build/>`_ to build "
+"your own Xorbits image."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:70
+msgid ""
+"After you build your own image, push it to a image repository accessible "
+"by your K8s cluster, e.g. your own DockerHub namespace."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:72
+msgid ""
+"Finally, specify your own image during the deployment process through the"
+" ``image`` option of the "
+":meth:`xorbits.deploy.kubernetes.client.new_cluster` api."
+msgstr ""
+

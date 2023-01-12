@@ -1,0 +1,360 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/getting_started/numpy.rst:3
+msgid "10 minutes to :code:`xorbits.numpy`"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:7
+msgid ""
+"This is a short introduction to :code:`xorbits.numpy` which is originated"
+" from NumPy's quickstart."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:10
+msgid "Array Creation"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:12
+msgid ""
+"Popular mechanisms for creating arrays in NumPy are supported in "
+":code:`xorbits.numpy`."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:14
+msgid ""
+"For example, you can create an array from a regular Python list or tuple "
+"using the ``array`` function. The type of the resulting array is deduced "
+"from the type of the elements in the sequences."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:29
+msgid "In addition, creating an array from existing NumPy ndarray is supported."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:40
+msgid ""
+"A frequent error consists in calling ``array`` with multiple arguments, "
+"rather than providing a single sequence as an argument."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:51
+msgid ""
+"``array`` transforms sequences of sequences into two-dimensional arrays, "
+"sequences of sequences of sequences into three-dimensional arrays, and so"
+" on."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:61
+msgid "The type of the array can also be explicitly specified at creation time:"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:70
+msgid ""
+"Often, the elements of an array are originally unknown, but its size is "
+"known. Hence, several functions are offered to create arrays with initial"
+" placeholder content. These minimize the necessity of growing arrays, an "
+"expensive operation."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:74
+msgid ""
+"The function ``zeros`` creates an array full of zeros, the function "
+"``ones`` creates an array full of ones, and the function ``empty`` "
+"creates an array whose initial content is random and depends on the state"
+" of the memory. By default, the dtype of the created array is "
+"``float64``, but it can be specified via the key word argument ``dtype``."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:97
+msgid ""
+"To create sequences of numbers, use ``arange`` function which is "
+"analogous to the Python built-in ``range``, but returns an array."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:107
+msgid ""
+"When ``arange`` is used with floating point arguments, it is generally "
+"not possible to predict the number of elements obtained, due to the "
+"finite floating point precision. For this reason, it is usually better to"
+" use the function ``linspace`` that receives as an argument the number of"
+" elements that we want, instead of the step::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:119
+msgid ""
+"However, the way of loading and saving arrays is quite different. Please "
+"see :ref:`io <routines.io>` for detailed info. Here's an example of "
+"loading an HDF5 file::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:124
+msgid ""
+"Once an ndarray is created, use ``to_numpy`` to convert it to a local "
+"NumPy ndarray::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:132
+msgid "Printing Arrays"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:134
+msgid "Xorbits displays an array in a similar way to NumPy:"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:136
+msgid "the last axis is printed from left to right,"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:137
+msgid "the second-to-last is printed from top to bottom,"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:138
+msgid ""
+"the rest are also printed from top to bottom, with each slice separated "
+"from the next by an empty line."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:141
+msgid ""
+"One-dimensional arrays are then printed as rows, bidimensionals as "
+"matrices and tridimensionals as lists of matrices."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:167
+msgid ""
+"If an array is too large to be printed, the central part of the array "
+"will be automatically skipped and only prints the corners::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:186
+msgid "Basic Operations"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:188
+msgid ""
+"Arithmetic operators on arrays apply *elementwise*. A new array is "
+"created and filled with the result."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:207
+msgid ""
+"Unlike in many matrix languages, the product operator ``*`` operates "
+"elementwise in :code:`xorbits.numpy` arrays. The matrix product can be "
+"performed using the ``@`` operator (in python >=3.5) or the ``dot`` "
+"function or method::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:225
+msgid ""
+"Some operations, such as ``+=`` and ``*=``, act in place to modify an "
+"existing array rather than create a new one."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:241
+msgid ""
+"When operating with arrays of different types, the type of the resulting "
+"array corresponds to the more general or precise one (a behavior known as"
+" upcasting)."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:262
+msgid ""
+"Many unary operations, such as computing the sum of all the elements in "
+"the array, are implemented as methods of the ``ndarray`` class."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:278
+msgid ""
+"By default, these operations apply to the array as though it were a list "
+"of numbers, regardless of its shape. However, by specifying the ``axis`` "
+"parameter you can apply an operation along the specified axis of an "
+"array::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:301
+msgid "Universal Functions"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:303
+msgid ""
+"Mathematical functions such as sin, cos, and exp are provided. These are "
+"called \"universal functions\" (\\ ``ufunc``). These functions operate "
+"elementwise on an array, producing an array as output."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:323
+msgid "Indexing, Slicing and Iterating"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:325
+msgid ""
+"**One-dimensional** arrays can be indexed, sliced and iterated over, much"
+" like `lists "
+"<https://docs.python.org/tutorial/introduction.html#lists>`__ and other "
+"Python sequences."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:361
+msgid ""
+"**Multidimensional** arrays can have one index per axis. These indices "
+"are given in a tuple separated by commas::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:382
+msgid ""
+"When fewer indices are provided than the number of axes, the missing "
+"indices are considered complete slices\\ ``:``"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:390
+msgid ""
+"The expression within brackets in ``b[i]`` is treated as an ``i`` "
+"followed by as many instances of ``:`` as needed to represent the "
+"remaining axes. You can also write this using dots as ``b[i, ...]``."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:395
+msgid ""
+"The **dots** (``...``) represent as many colons as needed to produce a "
+"complete indexing tuple. For example, if ``x`` is an array with 5 axes, "
+"then"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:399
+msgid "``x[1, 2, ...]`` is equivalent to ``x[1, 2, :, :, :]``,"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:400
+msgid "``x[..., 3]`` to ``x[:, :, :, :, 3]`` and"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:401
+msgid "``x[4, ..., 5, :]`` to ``x[4, :, :, 5, :]``."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:418
+msgid ""
+"**Iterating** over multidimensional arrays is done with respect to the "
+"first axis::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:428
+msgid ""
+"However, if one wants to perform an operation on each element in the "
+"array, one can use the ``flat`` attribute which is an `iterator "
+"<https://docs.python.org/tutorial/classes.html#iterators>`__ over all the"
+" elements of the array::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:452
+msgid "Changing the shape of an array"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:454
+msgid "An array has a shape given by the number of elements along each axis::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:464
+msgid ""
+"The shape of an array can be changed with various commands. Note that the"
+" following three commands all return a modified array, but do not change "
+"the original array::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:486
+msgid ""
+"The order of the elements in the array resulting from ``ravel`` is "
+"normally \"C-style\", that is, the rightmost index \"changes the "
+"fastest\", so the element after ``a[0, 0]`` is ``a[0, 1]``. If the array "
+"is reshaped to some other shape, again the array is treated as "
+"\"C-style\". Normally arrays are created stored in this order, so "
+"``ravel`` will usually not need to copy its argument, but if the array "
+"was made by taking slices of another array or created with unusual "
+"options, it may need to be copied. The functions ``ravel`` and "
+"``reshape`` can also be instructed, using an optional argument, to use "
+"FORTRAN-style arrays, in which the leftmost index changes the fastest."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:494
+msgid ""
+"If a dimension is given as ``-1`` in a reshaping operation, the other "
+"dimensions are automatically calculated::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:505
+msgid "Stacking together different arrays"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:507
+msgid "Several arrays can be stacked together along different axes::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:526
+msgid ""
+"The function `column_stack` stacks 1D arrays as columns into a 2D array. "
+"It is equivalent to `hstack` only for 2D arrays::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:550
+msgid ""
+"On the other hand, the function `row_stack` is equivalent to `vstack` for"
+" any input arrays. In fact, `row_stack` is an alias for `vstack`::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:558
+msgid ""
+"In general, for arrays with more than two dimensions, `hstack` stacks "
+"along their second axes, `vstack` stacks along their first axes, and "
+"`concatenate` allows for an optional arguments giving the number of the "
+"axis along which the concatenation should happen."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:564
+msgid ""
+"In complex cases, `r_` and `c_` are useful for creating arrays by "
+"stacking numbers along one axis. They allow the use of range literals "
+"``:``. ::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:570
+msgid ""
+"When used with arrays as arguments, `r_` and `c_` are similar to `vstack`"
+" and `hstack` in their default behavior, but allow for an optional "
+"argument giving the number of the axis along which to concatenate."
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:575
+msgid "Splitting one array into several smaller ones"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:577
+msgid ""
+"Using `hsplit`, you can split an array along its horizontal axis, either "
+"by specifying the number of equally shaped arrays to return, or by "
+"specifying the columns after which the division should occur::"
+msgstr ""
+
+#: ../../source/getting_started/numpy.rst:599
+msgid ""
+"`vsplit` splits along the vertical axis, and `array_split` allows one to "
+"specify along which axis to split."
+msgstr ""
+

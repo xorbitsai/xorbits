@@ -5,7 +5,7 @@
 
 # -- Project information -----------------------------------------------------
 project = "Xorbits"
-copyright = "2022, Xprobe-inc"
+copyright = "2022-2023, Xprobe Inc."
 author = "Xprobe-inc"
 
 from xorbits import __version__
@@ -28,6 +28,10 @@ extensions = [
 
 templates_path = ["_templates"]
 exclude_patterns = []
+
+# i18n
+locale_dirs = ['locale/']   # path is example but recommended.
+gettext_compact = False     # optional
 
 
 # -- Options for HTML output -------------------------------------------------

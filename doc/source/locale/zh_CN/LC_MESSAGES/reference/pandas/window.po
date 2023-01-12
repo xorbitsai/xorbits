@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/pandas/window.rst:5
+msgid "Window"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:7
+msgid ""
+"Rolling objects are returned by ``.rolling`` calls: "
+":func:`xorbits.pandas.DataFrame.rolling`, "
+":func:`xorbits.pandas.Series.rolling`, etc. Expanding objects are "
+"returned by ``.expanding`` calls: "
+":func:`xorbits.pandas.DataFrame.expanding`, "
+":func:`xorbits.pandas.Series.expanding`, etc. ExponentialMovingWindow "
+"objects are returned by ``.ewm`` calls: "
+":func:`xorbits.pandas.DataFrame.ewm` , :func:`xorbits.pandas.Series.ewm`,"
+" etc."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:16
+msgid "Rolling window functions"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ":py:obj:`Rolling.count <xorbits.pandas.window.Rolling.count>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling count of non NaN observations."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.sum <xorbits.pandas.window.Rolling.sum>`\\ \\(\\*args\\,"
+" \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling sum."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.mean <xorbits.pandas.window.Rolling.mean>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling mean."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.median <xorbits.pandas.window.Rolling.median>`\\ "
+"\\(\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling median."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.var <xorbits.pandas.window.Rolling.var>`\\ "
+"\\(\\[ddof\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling variance."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.std <xorbits.pandas.window.Rolling.std>`\\ "
+"\\(\\[ddof\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling standard deviation."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.min <xorbits.pandas.window.Rolling.min>`\\ \\(\\*args\\,"
+" \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling minimum."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.max <xorbits.pandas.window.Rolling.max>`\\ \\(\\*args\\,"
+" \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling maximum."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.skew <xorbits.pandas.window.Rolling.skew>`\\ "
+"\\(\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling unbiased skewness."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.kurt <xorbits.pandas.window.Rolling.kurt>`\\ "
+"\\(\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid "Calculate the rolling Fisher's definition of kurtosis without bias."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+msgid ""
+":py:obj:`Rolling.aggregate <xorbits.pandas.window.Rolling.aggregate>`\\ "
+"\\(func\\, \\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:39:<autosummary>:1
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Aggregate using one or more operations over the specified axis."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:43
+msgid "Weighted window functions"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:57
+msgid "Expanding window functions"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ":py:obj:`Expanding.count <xorbits.pandas.window.Expanding.count>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Calculate the expanding count of non NaN observations."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ":py:obj:`Expanding.sum <xorbits.pandas.window.Expanding.sum>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Calculate the expanding sum."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ":py:obj:`Expanding.mean <xorbits.pandas.window.Expanding.mean>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Calculate the expanding mean."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ":py:obj:`Expanding.var <xorbits.pandas.window.Expanding.var>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Calculate the expanding variance."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ":py:obj:`Expanding.std <xorbits.pandas.window.Expanding.std>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Calculate the expanding standard deviation."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ":py:obj:`Expanding.min <xorbits.pandas.window.Expanding.min>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Calculate the expanding minimum."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ":py:obj:`Expanding.max <xorbits.pandas.window.Expanding.max>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid "Calculate the expanding maximum."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:80:<autosummary>:1
+msgid ""
+":py:obj:`Expanding.aggregate "
+"<xorbits.pandas.window.Expanding.aggregate>`\\ \\(func\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:84
+msgid "Exponentially-weighted window functions"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:96:<autosummary>:1
+msgid ""
+":py:obj:`ExponentialMovingWindow.mean "
+"<xorbits.pandas.window.ExponentialMovingWindow.mean>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:96:<autosummary>:1
+msgid "Calculate the ewm (exponential weighted moment) mean."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:96:<autosummary>:1
+msgid ""
+":py:obj:`ExponentialMovingWindow.std "
+"<xorbits.pandas.window.ExponentialMovingWindow.std>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:96:<autosummary>:1
+msgid "Calculate the ewm (exponential weighted moment) standard deviation."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:96:<autosummary>:1
+msgid ""
+":py:obj:`ExponentialMovingWindow.var "
+"<xorbits.pandas.window.ExponentialMovingWindow.var>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:96:<autosummary>:1
+msgid "Calculate the ewm (exponential weighted moment) variance."
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:100
+msgid "Window indexer"
+msgstr ""
+
+#: ../../source/reference/pandas/window.rst:103
+msgid "Base class for defining custom window boundaries."
+msgstr ""
+

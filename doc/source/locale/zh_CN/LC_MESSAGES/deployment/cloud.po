@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/deployment/cloud.rst:5
+msgid "Cloud deployment"
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:8
+msgid "Prerequisites"
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:9
+msgid "Currently, we support deploying Xorbits on an existing Amazon EKS cluster."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:11
+msgid ""
+"Install Xorbits on the machine for Amazon EKS cluster management. Refer "
+"to :ref:`installation document <installation>`."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:15
+msgid "Amazon EKS"
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:16
+msgid ""
+"Firstly, make sure your EKS cluster can access `our Dockerhub "
+"<https://hub.docker.com/repository/docker/xprobe/xorbits>`_ to pull the "
+"Xorbits image."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:18
+msgid ""
+"Secondly, install the `AWS Load Balancer Controller "
+"<https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-"
+"controller.html>`_."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:20
+msgid "Then, deploy Xorbits cluster, for example:"
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:29
+msgid ""
+"Note that the option ``cluster_type`` of the function ``new_cluster`` has"
+" default value ``auto``, which means that Xorbits will detect the "
+"``kubectl`` context automatically. Please make sure ``kubectl`` is using "
+"the correct EKS context."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:32
+msgid ""
+"You should be able to see ``Xorbits endpoint "
+"http://<ingress_service_ip>:80 is ready!`` soon, and you can access the "
+"web UI of your Xorbits cluster using the endpoint."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:35
+msgid ""
+"Refer :ref:`Kubernetes deployment <deployment_image>` to deploy Xorbits "
+"with your own image."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:37
+msgid ""
+"``new_cluster`` api refers to "
+":meth:`xorbits.deploy.kubernetes.client.new_cluster`."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:39
+msgid "To verify the cluster:"
+msgstr ""
+

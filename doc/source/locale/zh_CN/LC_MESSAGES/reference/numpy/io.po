@@ -1,0 +1,101 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/numpy/io.rst:4
+msgid "Input and output"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:9
+msgid "NumPy binary files (NPY, NPZ)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:18
+msgid ""
+"The format of these binary file types is documented in "
+":py:mod:`xorbits.numpy.lib.format`"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:22
+msgid "Text files"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:35
+msgid "Raw binary files"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid ""
+":py:obj:`from_hdf5 <xorbits.numpy.from_hdf5>`\\ \\(hdf5\\_file\\[\\, "
+"group\\, dataset\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid ""
+":py:obj:`to_hdf5 <xorbits.numpy.to_hdf5>`\\ \\(hdf5\\_file\\, x\\[\\, "
+"group\\, dataset\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid ""
+":py:obj:`from_zarr <xorbits.numpy.from_zarr>`\\ \\(path\\[\\, group\\, "
+"dataset\\, chunk\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid ""
+":py:obj:`to_zarr <xorbits.numpy.to_zarr>`\\ \\(path\\, x\\[\\, group\\, "
+"dataset\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid ""
+":py:obj:`from_tiledb <xorbits.numpy.from_tiledb>`\\ \\(uri\\[\\, ctx\\, "
+"key\\, timestamp\\, gpu\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid ""
+":py:obj:`to_tiledb <xorbits.numpy.to_tiledb>`\\ \\(uri\\, x\\[\\, ctx\\, "
+"key\\, timestamp\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:49
+msgid "String formatting"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:60
+msgid "Memory mapping files"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:68
+msgid "Text formatting options"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:78
+msgid "Base-n representations"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:86
+msgid "Data sources"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:93
+msgid "Binary Format Description"
+msgstr ""
+

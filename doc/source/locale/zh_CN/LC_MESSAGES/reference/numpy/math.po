@@ -1,0 +1,922 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/numpy/math.rst:2
+msgid "Mathematical functions"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:7
+msgid "Trigonometric functions"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`sin <xorbits.numpy.sin>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Trigonometric sine, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`cos <xorbits.numpy.cos>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Cosine element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`tan <xorbits.numpy.tan>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Compute tangent element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`arcsin <xorbits.numpy.arcsin>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Inverse sine, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`arccos <xorbits.numpy.arccos>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Trigonometric inverse cosine, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`arctan <xorbits.numpy.arctan>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Trigonometric inverse tangent, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`hypot <xorbits.numpy.hypot>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\, "
+"where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Given the \"legs\" of a right triangle, return its hypotenuse."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`arctan2 <xorbits.numpy.arctan2>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Element-wise arc tangent of ``x1/x2`` choosing the quadrant correctly."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`degrees <xorbits.numpy.degrees>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Convert angles from radians to degrees."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`radians <xorbits.numpy.radians>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid "Convert angles from degrees to radians."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`deg2rad <xorbits.numpy.deg2rad>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`rad2deg <xorbits.numpy.rad2deg>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:26
+msgid "Hyperbolic functions"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid ""
+":py:obj:`sinh <xorbits.numpy.sinh>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid "Hyperbolic sine, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid ""
+":py:obj:`cosh <xorbits.numpy.cosh>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid "Hyperbolic cosine, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid ""
+":py:obj:`tanh <xorbits.numpy.tanh>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid "Compute hyperbolic tangent element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid ""
+":py:obj:`arcsinh <xorbits.numpy.arcsinh>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid "Inverse hyperbolic sine element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid ""
+":py:obj:`arccosh <xorbits.numpy.arccosh>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid "Inverse hyperbolic cosine, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid ""
+":py:obj:`arctanh <xorbits.numpy.arctanh>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:36:<autosummary>:1
+msgid "Inverse hyperbolic tangent element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:38
+msgid "Rounding"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid ":py:obj:`around <xorbits.numpy.around>`\\ \\(a\\[\\, decimals\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid "Evenly round to the given number of decimals."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid ""
+":py:obj:`rint <xorbits.numpy.rint>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid "Round elements of the array to the nearest integer."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid ":py:obj:`fix <xorbits.numpy.fix>`\\ \\(x\\[\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid "Round to nearest integer towards zero."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid ""
+":py:obj:`floor <xorbits.numpy.floor>`\\ \\(x\\, \\/\\[\\, out\\, where\\,"
+" casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid "Return the floor of the input, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid ""
+":py:obj:`ceil <xorbits.numpy.ceil>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid "Return the ceiling of the input, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid ""
+":py:obj:`trunc <xorbits.numpy.trunc>`\\ \\(x\\, \\/\\[\\, out\\, where\\,"
+" casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:48:<autosummary>:1
+msgid "Return the truncated value of the input, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:50
+msgid "Sums, products, differences"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`prod <xorbits.numpy.prod>`\\ \\(a\\[\\, axis\\, dtype\\, out\\, "
+"keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Return the product of array elements over a given axis."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`sum <xorbits.numpy.sum>`\\ \\(a\\[\\, axis\\, dtype\\, out\\, "
+"keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Sum of array elements over a given axis."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`nanprod <xorbits.numpy.nanprod>`\\ \\(a\\[\\, axis\\, dtype\\, "
+"out\\, keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+"Return the product of array elements over a given axis treating Not a "
+"Numbers (NaNs) as ones."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`nansum <xorbits.numpy.nansum>`\\ \\(a\\[\\, axis\\, dtype\\, "
+"out\\, keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+"Return the sum of array elements over a given axis treating Not a Numbers"
+" (NaNs) as zero."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`cumprod <xorbits.numpy.cumprod>`\\ \\(a\\[\\, axis\\, dtype\\, "
+"out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Return the cumulative product of elements along a given axis."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`cumsum <xorbits.numpy.cumsum>`\\ \\(a\\[\\, axis\\, dtype\\, "
+"out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Return the cumulative sum of the elements along a given axis."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`nancumprod <xorbits.numpy.nancumprod>`\\ \\(a\\[\\, axis\\, "
+"dtype\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+"Return the cumulative product of array elements over a given axis "
+"treating Not a Numbers (NaNs) as one."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`nancumsum <xorbits.numpy.nancumsum>`\\ \\(a\\[\\, axis\\, "
+"dtype\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+"Return the cumulative sum of array elements over a given axis treating "
+"Not a Numbers (NaNs) as zero."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ":py:obj:`diff <xorbits.numpy.diff>`\\ \\(a\\[\\, n\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Calculate the n-th discrete difference along the given axis."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`ediff1d <xorbits.numpy.ediff1d>`\\ \\(a\\[\\, to\\_end\\, "
+"to\\_begin\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "The differences between consecutive elements of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ":py:obj:`trapz <xorbits.numpy.trapz>`\\ \\(y\\[\\, x\\, dx\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Integrate along the given axis using the composite trapezoidal rule."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:69
+msgid "Exponents and logarithms"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`exp <xorbits.numpy.exp>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Calculate the exponential of all elements in the input array."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`expm1 <xorbits.numpy.expm1>`\\ \\(x\\, \\/\\[\\, out\\, where\\,"
+" casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Calculate ``exp(x) - 1`` for all elements in the array."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`exp2 <xorbits.numpy.exp2>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Calculate `2**p` for all `p` in the input array."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`log <xorbits.numpy.log>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Natural logarithm, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`log10 <xorbits.numpy.log10>`\\ \\(x\\, \\/\\[\\, out\\, where\\,"
+" casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Return the base 10 logarithm of the input array, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`log2 <xorbits.numpy.log2>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Base-2 logarithm of `x`."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`log1p <xorbits.numpy.log1p>`\\ \\(x\\, \\/\\[\\, out\\, where\\,"
+" casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Return the natural logarithm of one plus the input array, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`logaddexp <xorbits.numpy.logaddexp>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Logarithm of the sum of exponentiations of the inputs."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid ""
+":py:obj:`logaddexp2 <xorbits.numpy.logaddexp2>`\\ \\(x1\\, x2\\, "
+"\\/\\[\\, out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:82:<autosummary>:1
+msgid "Logarithm of the sum of exponentiations of the inputs in base-2."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:84
+msgid "Other special functions"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:90:<autosummary>:1
+msgid ":py:obj:`i0 <xorbits.numpy.i0>`\\ \\(x\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:90:<autosummary>:1
+msgid "Modified Bessel function of the first kind, order 0."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:90:<autosummary>:1
+msgid ":py:obj:`sinc <xorbits.numpy.sinc>`\\ \\(x\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:90:<autosummary>:1
+msgid "Return the normalized sinc function."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:92
+msgid "Floating point routines"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid ""
+":py:obj:`signbit <xorbits.numpy.signbit>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid "Returns element-wise True where signbit is set (less than zero)."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid ""
+":py:obj:`copysign <xorbits.numpy.copysign>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid "Change the sign of x1 to that of x2, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid ""
+":py:obj:`frexp <xorbits.numpy.frexp>`\\ \\(x\\[\\, out1\\, out2\\]\\, \\/"
+" \\[\\[\\, out\\, where\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid "Decompose the elements of x into mantissa and twos exponent."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid ""
+":py:obj:`ldexp <xorbits.numpy.ldexp>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\, "
+"where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid "Returns x1 * 2**x2, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid ""
+":py:obj:`nextafter <xorbits.numpy.nextafter>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid "Return the next floating-point value after x1 towards x2, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid ""
+":py:obj:`spacing <xorbits.numpy.spacing>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:102:<autosummary>:1
+msgid "Return the distance between x and the nearest adjacent number."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:104
+msgid "Rational routines"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:112
+msgid "Arithmetic operations"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`add <xorbits.numpy.add>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Add arguments element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`reciprocal <xorbits.numpy.reciprocal>`\\ \\(x\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Return the reciprocal of the argument, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`positive <xorbits.numpy.positive>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Numerical positive, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`negative <xorbits.numpy.negative>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Numerical negative, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`multiply <xorbits.numpy.multiply>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Multiply arguments element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`divide <xorbits.numpy.divide>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\,"
+" where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Divide arguments element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`power <xorbits.numpy.power>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\, "
+"where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "First array elements raised to powers from second array, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`subtract <xorbits.numpy.subtract>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Subtract arguments, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`true_divide <xorbits.numpy.true_divide>`\\ \\(x1\\, x2\\[\\, "
+"out\\, where\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+"divide(x1, x2, /, out=None, *, where=True, casting='same_kind', "
+"order='K', dtype=None, subok=True[, signature, extobj])"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`floor_divide <xorbits.numpy.floor_divide>`\\ \\(x1\\, x2\\, "
+"\\/\\[\\, out\\, where\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Return the largest integer smaller or equal to the division of the inputs."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`float_power <xorbits.numpy.float_power>`\\ \\(x1\\, x2\\, "
+"\\/\\[\\, out\\, where\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`fmod <xorbits.numpy.fmod>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\, "
+"where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Returns the element-wise remainder of division."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ":py:obj:`mod <xorbits.numpy.mod>`\\ \\(x1\\, x2\\[\\, out\\, where\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+"remainder(x1, x2, /, out=None, *, where=True, casting='same_kind', "
+"order='K', dtype=None, subok=True[, signature, extobj])"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`modf <xorbits.numpy.modf>`\\ \\(x\\[\\, out1\\, out2\\]\\, \\/ "
+"\\[\\[\\, out\\, where\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid "Return the fractional and integral parts of an array, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+":py:obj:`remainder <xorbits.numpy.remainder>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:135
+msgid "Handling complex numbers"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid ":py:obj:`angle <xorbits.numpy.angle>`\\ \\(z\\[\\, deg\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid "Return the angle of the complex argument."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid ":py:obj:`real <xorbits.numpy.real>`\\ \\(val\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid "Return the real part of the complex argument."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid ":py:obj:`imag <xorbits.numpy.imag>`\\ \\(val\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid "Return the imaginary part of the complex argument."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid ":py:obj:`conj <xorbits.numpy.conj>`\\ \\(x\\[\\, out\\, where\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid ""
+"conjugate(x, /, out=None, *, where=True, casting='same_kind', order='K', "
+"dtype=None, subok=True[, signature, extobj])"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid ""
+":py:obj:`conjugate <xorbits.numpy.conjugate>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:144:<autosummary>:1
+msgid "Return the complex conjugate, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:146
+msgid "Extrema Finding"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`maximum <xorbits.numpy.maximum>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid "Element-wise maximum of array elements."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`fmax <xorbits.numpy.fmax>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\, "
+"where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`amax <xorbits.numpy.amax>`\\ \\(a\\[\\, axis\\, out\\, "
+"keepdims\\, combine\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid "Return the maximum of an array or maximum along an axis."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`nanmax <xorbits.numpy.nanmax>`\\ \\(a\\[\\, axis\\, out\\, "
+"keepdims\\, combine\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+"Return the maximum of an array or maximum along an axis, ignoring any "
+"NaNs."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`minimum <xorbits.numpy.minimum>`\\ \\(x1\\, x2\\, \\/\\[\\, "
+"out\\, where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid "Element-wise minimum of array elements."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`fmin <xorbits.numpy.fmin>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\, "
+"where\\, casting\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`amin <xorbits.numpy.amin>`\\ \\(a\\[\\, axis\\, out\\, "
+"keepdims\\, combine\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid "Return the minimum of an array or minimum along an axis."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid ""
+":py:obj:`nanmin <xorbits.numpy.nanmin>`\\ \\(a\\[\\, axis\\, out\\, "
+"keepdims\\, combine\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:160:<autosummary>:1
+msgid "Return minimum of an array or minimum along an axis, ignoring any NaNs."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:162
+msgid "Miscellaneous"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`clip <xorbits.numpy.clip>`\\ \\(a\\, a\\_min\\, a\\_max\\[\\, "
+"out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Clip (limit) the values in an array."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`sqrt <xorbits.numpy.sqrt>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Return the non-negative square-root of an array, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`cbrt <xorbits.numpy.cbrt>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Return the cube-root of an array, element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`square <xorbits.numpy.square>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Return the element-wise square of the input."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`absolute <xorbits.numpy.absolute>`\\ \\(x\\, \\/\\[\\, out\\, "
+"where\\, casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Calculate the absolute value element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`fabs <xorbits.numpy.fabs>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Compute the absolute values element-wise."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`sign <xorbits.numpy.sign>`\\ \\(x\\, \\/\\[\\, out\\, where\\, "
+"casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Returns an element-wise indication of the sign of a number."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ":py:obj:`nan_to_num <xorbits.numpy.nan_to_num>`\\ \\(x\\[\\, copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+"Replace NaN with zero and infinity with large finite numbers (default "
+"behaviour) or with the numbers defined by the user using the `nan`, "
+"`posinf` and/or `neginf` keywords."
+msgstr ""
+

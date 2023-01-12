@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/deployment/local.rst:5
+msgid "Local deployment"
+msgstr ""
+
+#: ../../source/deployment/local.rst:7
+msgid ""
+"Local deployment means that you can run Xorbits on your local machine, "
+"e.g. laptop."
+msgstr ""
+
+#: ../../source/deployment/local.rst:10
+msgid "Installation"
+msgstr ""
+
+#: ../../source/deployment/local.rst:12
+msgid ""
+"First, ensure Xorbits is correctly installed, if not, see "
+":ref:`installation document <installation>`."
+msgstr ""
+
+#: ../../source/deployment/local.rst:15
+msgid "Init Xorbits runtime optionally"
+msgstr ""
+
+#: ../../source/deployment/local.rst:17
+msgid ""
+"Secondly, you don't have to, but you can optionally init an Xorbits "
+"runtime manually."
+msgstr ""
+
+#: ../../source/deployment/local.rst:24
+msgid ""
+"Or Xorbits will try to init for you in the background when the first time"
+" some computation is triggered."
+msgstr ""
+
+#: ../../source/deployment/local.rst:28
+msgid ""
+"Initialization of Xorbits may take a while to accomplish, if you try to "
+"measure performance of your code and so forth, you'd better init Xorbits "
+"runtime in advance, or the time of init may be accounted into execution "
+"time which may be distracted."
+msgstr ""
+

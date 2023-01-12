@@ -1,0 +1,447 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/numpy/array-manipulation.rst:2
+msgid "Array manipulation routines"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:7
+msgid "Basic operations"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:13:<autosummary>:1
+msgid ""
+":py:obj:`copyto <xorbits.numpy.copyto>`\\ \\(dst\\, src\\[\\, casting\\, "
+"where\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:13:<autosummary>:1
+msgid "Copies values from one array to another, broadcasting as necessary."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:13:<autosummary>:1
+msgid ":py:obj:`shape <xorbits.numpy.shape>`\\ \\(a\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:13:<autosummary>:1
+msgid "Return the shape of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:15
+msgid "Changing array shape"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`reshape <xorbits.numpy.reshape>`\\ \\(a\\, newshape\\[\\, "
+"order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid "Gives a new shape to an array without changing its data."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid ":py:obj:`ravel <xorbits.numpy.ravel>`\\ \\(a\\[\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid "Return a contiguous flattened array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid ":py:obj:`ndarray.flat <xorbits.numpy.ndarray.flat>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid "A 1-D iterator over the array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`ndarray.flatten <xorbits.numpy.ndarray.flatten>`\\ "
+"\\(\\[order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:24:<autosummary>:1
+msgid "Return a copy of the array collapsed into one dimension."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:26
+msgid "Transpose-like operations"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid ""
+":py:obj:`moveaxis <xorbits.numpy.moveaxis>`\\ \\(a\\, source\\, "
+"destination\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid "Move axes of an array to new positions."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid ""
+":py:obj:`rollaxis <xorbits.numpy.rollaxis>`\\ \\(tensor\\, axis\\[\\, "
+"start\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid "Roll the specified axis backwards, until it lies in a given position."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid ":py:obj:`swapaxes <xorbits.numpy.swapaxes>`\\ \\(a\\, axis1\\, axis2\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid "Interchange two axes of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid ":py:obj:`ndarray.T <xorbits.numpy.ndarray.T>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid "The transposed array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid ":py:obj:`transpose <xorbits.numpy.transpose>`\\ \\(a\\[\\, axes\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:35:<autosummary>:1
+msgid "Reverse or permute the axes of an array; returns the modified array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:37
+msgid "Changing number of dimensions"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ":py:obj:`atleast_1d <xorbits.numpy.atleast_1d>`\\ \\(\\*tensors\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "Convert inputs to arrays with at least one dimension."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ":py:obj:`atleast_2d <xorbits.numpy.atleast_2d>`\\ \\(\\*tensors\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "View inputs as arrays with at least two dimensions."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ":py:obj:`atleast_3d <xorbits.numpy.atleast_3d>`\\ \\(\\*tensors\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "View inputs as arrays with at least three dimensions."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ""
+":py:obj:`broadcast_to <xorbits.numpy.broadcast_to>`\\ \\(tensor\\, "
+"shape\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "Broadcast an array to a new shape."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ""
+":py:obj:`broadcast_arrays <xorbits.numpy.broadcast_arrays>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "Broadcast any number of arrays against each other."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ":py:obj:`expand_dims <xorbits.numpy.expand_dims>`\\ \\(a\\, axis\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "Expand the shape of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ":py:obj:`squeeze <xorbits.numpy.squeeze>`\\ \\(a\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "Remove axes of length one from `a`."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:51
+msgid "Changing kind of array"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ""
+":py:obj:`asarray <xorbits.numpy.asarray>`\\ \\(a\\[\\, dtype\\, order\\, "
+"like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Convert the input to an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ""
+":py:obj:`asfortranarray <xorbits.numpy.asfortranarray>`\\ \\(a\\[\\, "
+"dtype\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Return an array (ndim >= 1) laid out in Fortran order in memory."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ""
+":py:obj:`ascontiguousarray <xorbits.numpy.ascontiguousarray>`\\ "
+"\\(a\\[\\, dtype\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Return a contiguous array (ndim >= 1) in memory (C order)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:65
+msgid "Joining arrays"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ""
+":py:obj:`concatenate <xorbits.numpy.concatenate>`\\ \\(\\[axis\\, out\\, "
+"dtype\\, casting\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid "Join a sequence of arrays along an existing axis."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ":py:obj:`stack <xorbits.numpy.stack>`\\ \\(tensors\\[\\, axis\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid "Join a sequence of arrays along a new axis."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ":py:obj:`block <xorbits.numpy.block>`\\ \\(arrays\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid "Assemble an nd-array from nested lists of blocks."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ":py:obj:`vstack <xorbits.numpy.vstack>`\\ \\(tup\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid "Stack arrays in sequence vertically (row wise)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ":py:obj:`hstack <xorbits.numpy.hstack>`\\ \\(tup\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid "Stack arrays in sequence horizontally (column wise)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ":py:obj:`dstack <xorbits.numpy.dstack>`\\ \\(tup\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid "Stack arrays in sequence depth wise (along third axis)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ":py:obj:`column_stack <xorbits.numpy.column_stack>`\\ \\(tup\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid "Stack 1-D arrays as columns into a 2-D array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:79
+msgid "Splitting arrays"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid ""
+":py:obj:`split <xorbits.numpy.split>`\\ \\(ary\\, "
+"indices\\_or\\_sections\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid "Split an array into multiple sub-arrays as views into `ary`."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid ""
+":py:obj:`array_split <xorbits.numpy.array_split>`\\ \\(a\\, "
+"indices\\_or\\_sections\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid "Split an array into multiple sub-arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid ""
+":py:obj:`dsplit <xorbits.numpy.dsplit>`\\ \\(a\\, "
+"indices\\_or\\_sections\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid "Split array into multiple sub-arrays along the 3rd axis (depth)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid ""
+":py:obj:`hsplit <xorbits.numpy.hsplit>`\\ \\(a\\, "
+"indices\\_or\\_sections\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid "Split an array into multiple sub-arrays horizontally (column-wise)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid ""
+":py:obj:`vsplit <xorbits.numpy.vsplit>`\\ \\(a\\, "
+"indices\\_or\\_sections\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:88:<autosummary>:1
+msgid "Split an array into multiple sub-arrays vertically (row-wise)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:90
+msgid "Tiling arrays"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:96:<autosummary>:1
+msgid ":py:obj:`tile <xorbits.numpy.tile>`\\ \\(A\\, reps\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:96:<autosummary>:1
+msgid "Construct an array by repeating A the number of times given by reps."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:96:<autosummary>:1
+msgid ":py:obj:`repeat <xorbits.numpy.repeat>`\\ \\(a\\, repeats\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:96:<autosummary>:1
+msgid "Repeat elements of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:98
+msgid "Adding and removing elements"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid ":py:obj:`delete <xorbits.numpy.delete>`\\ \\(arr\\, obj\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid "Return a new array with sub-arrays along an axis deleted."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`insert <xorbits.numpy.insert>`\\ \\(arr\\, obj\\, values\\[\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid "Insert values along the given axis before the given indices."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`append <xorbits.numpy.append>`\\ \\(arr\\, values\\[\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid "Append values to the end of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`unique <xorbits.numpy.unique>`\\ \\(ar\\[\\, return\\_index\\, "
+"return\\_inverse\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid "Find the unique elements of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:110
+msgid "Rearranging elements"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid ":py:obj:`flip <xorbits.numpy.flip>`\\ \\(m\\, axis\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid "Reverse the order of elements in an array along the given axis."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid ":py:obj:`fliplr <xorbits.numpy.fliplr>`\\ \\(m\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid "Reverse the order of elements along axis 1 (left/right)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid ":py:obj:`flipud <xorbits.numpy.flipud>`\\ \\(m\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid "Reverse the order of elements along axis 0 (up/down)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid ":py:obj:`roll <xorbits.numpy.roll>`\\ \\(a\\, shift\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid "Roll array elements along a given axis."
+msgstr ""
+

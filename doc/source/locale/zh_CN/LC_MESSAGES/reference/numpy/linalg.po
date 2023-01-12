@@ -1,0 +1,239 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/numpy/linalg.rst:6
+msgid "Linear algebra (:mod:`xorbits.numpy.linalg`)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:8
+msgid ""
+"The NumPy linear algebra functions rely on BLAS and LAPACK to provide "
+"efficient low level implementations of standard linear algebra "
+"algorithms. Those libraries may be provided by NumPy itself using C "
+"versions of a subset of their reference implementations but, when "
+"possible, highly optimized libraries that take advantage of specialized "
+"processor functionality are preferred. Examples of such libraries are "
+"OpenBLAS_, MKL (TM), and ATLAS. Because those libraries are multithreaded"
+" and processor dependent, environmental variables and external packages "
+"such as threadpoolctl_ may be needed to control the number of threads or "
+"specify the processor architecture."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:21
+msgid ""
+"The SciPy library also contains a `~scipy.linalg` submodule, and there is"
+" overlap in the functionality provided by the SciPy and NumPy submodules."
+"  SciPy contains functions not found in `xorbits.numpy.linalg`, such as "
+"functions related to LU decomposition and the Schur decomposition, "
+"multiple ways of calculating the pseudoinverse, and matrix "
+"transcendentals such as the matrix logarithm.  Some functions that exist "
+"in both have augmented functionality in `scipy.linalg`. For example, "
+"`scipy.linalg.eig` can take a second matrix argument for solving "
+"generalized eigenvalue problems.  Some functions in NumPy, however, have "
+"more flexible broadcasting options.  For example, "
+"`xorbits.numpy.linalg.solve` can handle \"stacked\" arrays, while "
+"`scipy.linalg.solve` accepts only a single square array as its first "
+"argument."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:35
+msgid ""
+"The term *matrix* as it is used on this page indicates a 2d "
+"`xorbits.numpy.array` object, and *not* a `xorbits.numpy.matrix` object. "
+"The latter is no longer recommended, even for linear algebra. See "
+":ref:`the matrix object documentation<matrix-objects>` for more "
+"information."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:42
+msgid "The ``@`` operator"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:44
+msgid ""
+"Introduced in NumPy 1.10.0, the ``@`` operator is preferable to other "
+"methods when computing the matrix product between 2d arrays. The "
+":func:`xorbits.numpy.matmul` function implements the ``@`` operator."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:51
+msgid "Matrix and vector products"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ":py:obj:`dot <xorbits.numpy.dot>`\\ \\(a\\, b\\[\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Dot product of two arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ":py:obj:`vdot <xorbits.numpy.vdot>`\\ \\(a\\, b\\, \\/\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Return the dot product of two vectors."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ":py:obj:`inner <xorbits.numpy.inner>`\\ \\(a\\, b\\, \\/\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Inner product of two arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`matmul <xorbits.numpy.matmul>`\\ \\(x1\\, x2\\, \\/\\[\\, out\\,"
+" casting\\, order\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Matrix product of two arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`tensordot <xorbits.numpy.tensordot>`\\ \\(a\\, b\\[\\, axes\\, "
+"sparse\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Compute tensor dot product along specified axes."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`einsum <xorbits.numpy.einsum>`\\ \\(subscripts\\, "
+"\\*operands\\[\\, dtype\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "einsum(subscripts, *operands, out=None, dtype=None, order='K',"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:69
+msgid "Decompositions"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:76:<autosummary>:1
+msgid ""
+":py:obj:`linalg.cholesky <xorbits.numpy.linalg.cholesky>`\\ \\(a\\[\\, "
+"lower\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:76:<autosummary>:1
+msgid "Cholesky decomposition."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:76:<autosummary>:1
+msgid ":py:obj:`linalg.qr <xorbits.numpy.linalg.qr>`\\ \\(a\\[\\, method\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:76:<autosummary>:1
+msgid "Compute the qr factorization of a matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:76:<autosummary>:1
+msgid ":py:obj:`linalg.svd <xorbits.numpy.linalg.svd>`\\ \\(a\\[\\, method\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:76:<autosummary>:1
+msgid "Singular Value Decomposition."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:78
+msgid "Matrix eigenvalues"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:88
+msgid "Norms and other numbers"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid ""
+":py:obj:`linalg.norm <xorbits.numpy.linalg.norm>`\\ \\(x\\[\\, ord\\, "
+"axis\\, keepdims\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid "Matrix or vector norm."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid ":py:obj:`trace <trace>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid "program/module to trace Python program or function execution"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:100
+msgid "Solving equations and inverting matrices"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid ""
+":py:obj:`linalg.solve <xorbits.numpy.linalg.solve>`\\ \\(a\\, b\\[\\, "
+"sym\\_pos\\, sparse\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid "Solve a linear matrix equation, or system of linear scalar equations."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid ":py:obj:`linalg.inv <xorbits.numpy.linalg.inv>`\\ \\(a\\[\\, sparse\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid "Compute the (multiplicative) inverse of a matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:112
+msgid "Exceptions"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:121
+msgid "Linear algebra on several matrices at once"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:125
+msgid ""
+"Several of the linear algebra routines listed above are able to compute "
+"results for several matrices at once, if they are stacked into the same "
+"array."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:129
+msgid ""
+"This is indicated in the documentation via input parameter specifications"
+" such as ``a : (..., M, M) array_like``. This means that if for instance "
+"given an input array ``a.shape == (N, M, M)``, it is interpreted as a "
+"\"stack\" of N matrices, each of size M-by-M. Similar specification "
+"applies to return values, for instance the determinant has ``det : "
+"(...)`` and will in this case return an array of shape ``det(a).shape == "
+"(N,)``. This generalizes to linear algebra operations on higher-"
+"dimensional arrays: the last 1 or 2 dimensions of a multidimensional "
+"array are interpreted as vectors or matrices, as appropriate for each "
+"operation."
+msgstr ""
+

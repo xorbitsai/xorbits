@@ -1,0 +1,211 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/getting_started/installation.rst:5
+msgid "Installation"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:7
+msgid ""
+"Xorbits can be installed via pip from `PyPI "
+"<https://pypi.org/project/xorbits>`__."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:15
+msgid "Python version support"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:17
+msgid "Officially Python 3,7, 3.8, 3.9 and 3.10."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:20
+msgid "Dependencies"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:23
+msgid "Package"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:23
+msgid "Minimum supported version"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:25
+msgid "`NumPy <https://numpy.org>`__"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:25
+msgid "1.20.3"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:26
+msgid "`pandas <https://pandas.pydata.org>`__"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:26
+#: ../../source/getting_started/installation.rst:27
+msgid "1.0.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:27
+msgid "`scipy <https://scipy.org>`__"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:28
+msgid "`scikit-learn <https://scikit-learn.org/stable>`__"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:28
+msgid "0.20"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:29
+msgid "cloudpickle"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:29
+msgid "1.5.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:30
+msgid "pyyaml"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:30
+msgid "5.1"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:31
+msgid "psutil"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:31
+msgid "5.9.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:32
+msgid "pickle5 (for python version < 3.8)"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:32
+msgid "0.0.1"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:33
+msgid "shared-memory38 (for python version < 3.8)"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:33
+msgid "0.1.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:34
+msgid "tornado"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:34
+msgid "6.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:35
+msgid "sqlalchemy"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:35
+msgid "1.2.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:36
+msgid "defusedxml"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:36
+msgid "0.5.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:37
+msgid "tqdm"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:37
+msgid "4.1.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:38
+msgid "uvloop (for systems other than win32)"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:38
+msgid "0.14.0"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:42
+msgid "Recommended dependencies"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:44
+msgid "Recommended dependencies can be installed conveniently using pip."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:51
+msgid "The following extra dependencies will be installed."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:53
+msgid ""
+"`numexpr <https://github.com/pydata/numexpr>`__: for accelerating certain"
+" numerical operations. ``numexpr`` uses multiple cores as well as smart "
+"chunking and caching to achieve large speedups. If installed, must be "
+"Version 2.6.4 or higher."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:57
+msgid ""
+"`pillow <https://python-pillow.org/>`__: the Python Imaging Library. If "
+"installed, must be Version 7.0.0 or higher."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:60
+msgid ""
+"`pyarrow <https://pypi.org/project/pyarrow/>`__: python API for Arrow C++"
+" libraries. If installed, must be Version 0.11.0 or higher and cannot be "
+"0.16.x."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:63
+msgid ""
+"`lz4 <https://github.com/python-lz4/python-lz4>`__: python bindings for "
+"the LZ4 compression library. If installed, must be Version 1.0.0 or "
+"higher."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:66
+msgid ""
+"`fsspec <https://github.com/fsspec/filesystem_spec>`__: for cloud data "
+"accessing. If installed, must be Version 2022.7.1 or higher and cannot be"
+" Version 2022.8.0."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:71
+msgid ""
+"You are highly encouraged to install these libraries, as they provide "
+"speed improvements, especially when working with large data sets."
+msgstr ""
+
