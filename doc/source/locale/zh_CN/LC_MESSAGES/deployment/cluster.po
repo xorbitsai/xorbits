@@ -1,0 +1,269 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/deployment/cluster.rst:5
+msgid "Cluster deployment"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:7
+msgid ""
+"If you have some machines either on the cloud or not, and you want to "
+"deploy Xorbits via command lines, you can refer to this documentation."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:11
+msgid "Installation"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:13
+msgid ""
+"First, ensure Xorbits is correctly installed on each machine, if not, see"
+" :ref:`installation document <installation>`."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:16
+msgid "Starting Supervisor"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:18
+msgid ""
+"Among the machines, pick at least one as the supervisor which ships with "
+"a web service as well, starting supervisor via command:"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:25
+#: ../../source/deployment/cluster.rst:46
+msgid "Or using ``python -m``:"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:31
+msgid "`<web_port>` is used for creating a web service, which is used for:"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:33
+msgid ""
+"Provide a web UI to show cluster status and detailed information of "
+"submitted tasks."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:34
+msgid ""
+"Accept connections from clients when users call "
+"`xorbits.init(\"<supervisor_ip>:<web_port>\")` to connect to a cluster."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:38
+msgid "Starting Workers"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:40
+msgid "The rest of the machines can be started as workers via command:"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:53
+msgid "Connecting to Created Cluster"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:55
+msgid ""
+"Now, you can connect to the supervisor from anywhere that can run Python "
+"code."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:63
+msgid ""
+"Replace the ``<supervisor_ip>`` with the supervisor IP that you just "
+"specified and ``<supervisor_web_port>`` with the supervisor web port."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:67
+msgid "Xorbits Web UI"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:69
+msgid ""
+"You can open a web browser and type "
+"``http://<supervisor_ip>:<supervisor_web_port>`` to open Xorbits Web UI "
+"to look up resource usage of workers and execution progress of submitted "
+"tasks."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:73
+msgid "Command Line Options"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:76
+msgid "Common Options"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:78
+msgid "Common Command line options are listed below."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:81
+#: ../../source/deployment/cluster.rst:107
+#: ../../source/deployment/cluster.rst:116
+msgid "Argument"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:81
+#: ../../source/deployment/cluster.rst:107
+#: ../../source/deployment/cluster.rst:116
+msgid "Description"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:83
+msgid "``-H``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:83
+msgid "Service IP binding, ``0.0.0.0`` by default"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:85
+msgid "``-p``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:85
+msgid "Port of the service. If absent, a randomized port will be used"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:87
+msgid "``-f``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:87
+msgid "Path to service configuration file. Absent when use default configuration."
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:90
+msgid "``-s``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:90
+msgid ""
+"List of supervisor endpoints, separated by commas. Useful for workers to "
+"spot supervisors, or when you want to run more than one supervisor"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:94
+msgid "``--log-level``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:94
+msgid "Log level, can be ``debug``, ``info``, ``warning``, ``error``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:96
+msgid "``--log-format``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:96
+msgid "Log format, can be Python logging format"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:98
+msgid "``--log-conf``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:98
+msgid "Python logging configuration file, ``logging.conf`` by default"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:100
+msgid "``--use-uvloop``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:100
+msgid "Whether to use ``uvloop`` to accelerate, ``auto`` by default"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:104
+msgid "Extra Options for Supervisors"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:109
+msgid "``-w``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:109
+msgid "Port of web service in supervisor"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:113
+msgid "Extra Options for Workers"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:118
+msgid "``--n-cpu``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:118
+msgid ""
+"Number of CPU cores to use. If absent, the value will be the available "
+"number of cores"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:121
+msgid "``--n-io-process``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:121
+msgid "Number of IO processes for network operations. 1 by default"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:123
+msgid "``--cuda-devices``"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:123
+msgid ""
+"Index of CUDA devices to use. If not specified, all devices will be used."
+" Specifying an empty string will ignore all devices"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:129
+msgid "Example"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:131
+msgid ""
+"For instance, if you want to start a Xorbits cluster with one supervisor "
+"and two workers, you can run commands below (memory and CPU tunings are "
+"omitted):"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:134
+msgid "On Supervisor (192.168.1.10):"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:140
+msgid "On Worker 1 (192.168.1.20):"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:146
+msgid "On Worker 2 (192.168.1.21):"
+msgstr ""
+
+#: ../../source/deployment/cluster.rst:152
+msgid ""
+"On a client which is able to connect to supervisor, you can run the "
+"Python code below to verify:"
+msgstr ""
+

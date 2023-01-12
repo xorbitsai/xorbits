@@ -1,0 +1,906 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/pandas/indexing.rst:5
+msgid "Index objects"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:8
+msgid "Index"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:11
+msgid ""
+"**Many of these methods or variants thereof are available on the objects "
+"that contain an index (Series/DataFrame) and those should most likely be "
+"used before calling these methods directly.**"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:19:<autosummary>:1
+msgid ":py:obj:`Index <xorbits.pandas.Index>`\\ \\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:19:<autosummary>:1
+msgid "Immutable sequence used for indexing and alignment."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:21
+#: ../../source/reference/pandas/indexing.rst:459
+msgid "Properties"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.values <xorbits.pandas.Index.values>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Return an array representing the data in the Index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.is_monotonic <xorbits.pandas.Index.is_monotonic>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Alias for is_monotonic_increasing."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ""
+":py:obj:`Index.is_monotonic_increasing "
+"<xorbits.pandas.Index.is_monotonic_increasing>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ""
+"Return if the index is monotonic increasing (only equal or increasing) "
+"values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ""
+":py:obj:`Index.is_monotonic_decreasing "
+"<xorbits.pandas.Index.is_monotonic_decreasing>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ""
+"Return if the index is monotonic decreasing (only equal or decreasing) "
+"values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.dtype <xorbits.pandas.Index.dtype>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Return the dtype object of the underlying data."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.inferred_type <xorbits.pandas.Index.inferred_type>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Return a string of the type inferred from the values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.shape <xorbits.pandas.Index.shape>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Return a tuple of the shape of the underlying data."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.name <xorbits.pandas.Index.name>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Return Index or MultiIndex name."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.names <xorbits.pandas.Index.names>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.ndim <xorbits.pandas.Index.ndim>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Number of dimensions of the underlying data, by definition 1."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.size <xorbits.pandas.Index.size>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Return the number of elements in the underlying data."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ":py:obj:`Index.T <xorbits.pandas.Index.T>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Return the transpose, which is by definition self."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid ""
+":py:obj:`Index.memory_usage <xorbits.pandas.Index.memory_usage>`\\ "
+"\\(\\[deep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
+msgid "Memory usage of the values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:46
+#: ../../source/reference/pandas/indexing.rst:215
+msgid "Modifying and computations"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.all <xorbits.pandas.Index.all>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return whether all elements are Truthy."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.any <xorbits.pandas.Index.any>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return whether any element is Truthy."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.argmin <xorbits.pandas.Index.argmin>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return int position of the smallest value in the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.argmax <xorbits.pandas.Index.argmax>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return int position of the largest value in the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.copy <xorbits.pandas.Index.copy>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Make a copy of this object."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.delete <xorbits.pandas.Index.delete>`\\ \\(loc\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Make new Index with passed location(-s) deleted."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.drop <xorbits.pandas.Index.drop>`\\ \\(labels\\[\\, "
+"errors\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Make new Index with passed list of labels deleted."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.drop_duplicates <xorbits.pandas.Index.drop_duplicates>`\\ "
+"\\(\\[keep\\, method\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return Index with duplicate values removed."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.duplicated <xorbits.pandas.Index.duplicated>`\\ "
+"\\(\\[keep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Indicate duplicate index values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.equals <xorbits.pandas.Index.equals>`\\ \\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Determine if two Index object are equal."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.factorize <xorbits.pandas.Index.factorize>`\\ "
+"\\(\\[sort\\, na\\_sentinel\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Encode the object as an enumerated type or categorical variable."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.identical <xorbits.pandas.Index.identical>`\\ \\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+"Similar to equals, but checks that object attributes and types are also "
+"equal."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.insert <xorbits.pandas.Index.insert>`\\ \\(loc\\, item\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Make new Index inserting new item at location."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_ <xorbits.pandas.Index.is_>`\\ \\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "More flexible, faster check like ``is`` but that works through views."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_boolean <xorbits.pandas.Index.is_boolean>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index only consists of booleans."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.is_categorical <xorbits.pandas.Index.is_categorical>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index holds categorical data."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_floating <xorbits.pandas.Index.is_floating>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index is a floating type."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_integer <xorbits.pandas.Index.is_integer>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index only consists of integers."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_interval <xorbits.pandas.Index.is_interval>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index holds Interval objects."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_mixed <xorbits.pandas.Index.is_mixed>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index holds data with mixed data types."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_numeric <xorbits.pandas.Index.is_numeric>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index only consists of numeric data."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.is_object <xorbits.pandas.Index.is_object>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Check if the Index is of the object dtype."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.min <xorbits.pandas.Index.min>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return the minimum value of the Index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.max <xorbits.pandas.Index.max>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return the maximum value of the Index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.reindex <xorbits.pandas.Index.reindex>`\\ \\(target\\[\\, "
+"method\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Create index with target's values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.rename <xorbits.pandas.Index.rename>`\\ \\(name\\[\\, "
+"inplace\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Alter Index or MultiIndex name."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.repeat <xorbits.pandas.Index.repeat>`\\ \\(repeats\\[\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Repeat elements of a Index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.where <xorbits.pandas.Index.where>`\\ \\(cond\\[\\, "
+"other\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Replace values where the condition is False."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.take <xorbits.pandas.Index.take>`\\ \\(indices\\[\\, "
+"axis\\, allow\\_fill\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return a new Index of the values selected by the indices."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.putmask <xorbits.pandas.Index.putmask>`\\ \\(mask\\, "
+"value\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return a new Index of the values set with the mask."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ":py:obj:`Index.unique <xorbits.pandas.Index.unique>`\\ \\(\\[level\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return unique values in the index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.nunique <xorbits.pandas.Index.nunique>`\\ "
+"\\(\\[dropna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return number of unique elements in the object."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid ""
+":py:obj:`Index.value_counts <xorbits.pandas.Index.value_counts>`\\ "
+"\\(\\[normalize\\, sort\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
+msgid "Return a Series containing counts of unique values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:85
+msgid "Compatibility with MultiIndex"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:91:<autosummary>:1
+msgid ""
+":py:obj:`Index.set_names <xorbits.pandas.Index.set_names>`\\ "
+"\\(names\\[\\, level\\, inplace\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:91:<autosummary>:1
+msgid "Set Index or MultiIndex name."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:91:<autosummary>:1
+msgid ""
+":py:obj:`Index.droplevel <xorbits.pandas.Index.droplevel>`\\ "
+"\\(\\[level\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:91:<autosummary>:1
+msgid "Return index with requested level(s) removed."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:93
+msgid "Missing values"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid ""
+":py:obj:`Index.fillna <xorbits.pandas.Index.fillna>`\\ \\(\\[value\\, "
+"downcast\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid "Fill NA/NaN values with the specified value."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid ":py:obj:`Index.dropna <xorbits.pandas.Index.dropna>`\\ \\(\\[how\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid "Return Index without NA/NaN values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid ":py:obj:`Index.isna <xorbits.pandas.Index.isna>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid "Detect missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid ":py:obj:`Index.notna <xorbits.pandas.Index.notna>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:101:<autosummary>:1
+msgid "Detect existing (non-missing) values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:103
+#: ../../source/reference/pandas/indexing.rst:391
+#: ../../source/reference/pandas/indexing.rst:430
+msgid "Conversion"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ""
+":py:obj:`Index.astype <xorbits.pandas.Index.astype>`\\ \\(dtype\\[\\, "
+"copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Create an Index with values cast to dtypes."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ":py:obj:`Index.item <xorbits.pandas.Index.item>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Return the first element of the underlying data as a Python scalar."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ""
+":py:obj:`Index.map <xorbits.pandas.Index.map>`\\ \\(mapper\\[\\, "
+"na\\_action\\, dtype\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Map values using an input mapping or function."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ":py:obj:`Index.ravel <xorbits.pandas.Index.ravel>`\\ \\(\\[order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Return an ndarray of the flattened values of the underlying data."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ":py:obj:`Index.to_list <xorbits.pandas.Index.to_list>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Return a list of the values."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ""
+":py:obj:`Index.to_native_types <xorbits.pandas.Index.to_native_types>`\\ "
+"\\(\\[slicer\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Format specified values of `self` and return them."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ""
+":py:obj:`Index.to_series <xorbits.pandas.Index.to_series>`\\ "
+"\\(\\[index\\, name\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Create a Series with both index and values equal to the index keys."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ""
+":py:obj:`Index.to_frame <xorbits.pandas.Index.to_frame>`\\ \\(\\[index\\,"
+" name\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid "Create a DataFrame with a column containing the Index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:116:<autosummary>:1
+msgid ":py:obj:`Index.view <xorbits.pandas.Index.view>`\\ \\(\\[cls\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:118
+msgid "Sorting"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:125:<autosummary>:1
+msgid ""
+":py:obj:`Index.argsort <xorbits.pandas.Index.argsort>`\\ \\(\\*args\\, "
+"\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:125:<autosummary>:1
+msgid "Return the integer indices that would sort the index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:125:<autosummary>:1
+msgid ""
+":py:obj:`Index.searchsorted <xorbits.pandas.Index.searchsorted>`\\ "
+"\\(value\\[\\, side\\, sorter\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:125:<autosummary>:1
+msgid "Find indices where elements should be inserted to maintain order."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:125:<autosummary>:1
+msgid ""
+":py:obj:`Index.sort_values <xorbits.pandas.Index.sort_values>`\\ "
+"\\(\\[return\\_indexer\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:125:<autosummary>:1
+msgid "Return a sorted copy of the index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:127
+#: ../../source/reference/pandas/indexing.rst:375
+msgid "Time-specific operations"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:132:<autosummary>:1
+msgid ""
+":py:obj:`Index.shift <xorbits.pandas.Index.shift>`\\ \\(\\[periods\\, "
+"freq\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:132:<autosummary>:1
+msgid "Shift index by desired number of time frequency increments."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:134
+msgid "Combining / joining / set operations"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid ":py:obj:`Index.append <xorbits.pandas.Index.append>`\\ \\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid "Append a collection of Index options together."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid ""
+":py:obj:`Index.join <xorbits.pandas.Index.join>`\\ \\(other\\[\\, how\\, "
+"level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid ""
+"Compute join_index and indexers to conform data structures to the new "
+"index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid ""
+":py:obj:`Index.intersection <xorbits.pandas.Index.intersection>`\\ "
+"\\(other\\[\\, sort\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid "Form the intersection of two Index objects."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid ""
+":py:obj:`Index.union <xorbits.pandas.Index.union>`\\ \\(other\\[\\, "
+"sort\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid "Form the union of two Index objects."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid ""
+":py:obj:`Index.difference <xorbits.pandas.Index.difference>`\\ "
+"\\(other\\[\\, sort\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid "Return a new Index with elements of index not in `other`."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid ""
+":py:obj:`Index.symmetric_difference "
+"<xorbits.pandas.Index.symmetric_difference>`\\ \\(other\\[\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
+msgid "Compute the symmetric difference of two Index objects."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:146
+#: ../../source/reference/pandas/indexing.rst:366
+msgid "Selecting"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ":py:obj:`Index.asof <xorbits.pandas.Index.asof>`\\ \\(label\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Return the label from the index, or, if not present, the previous one."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.asof_locs <xorbits.pandas.Index.asof_locs>`\\ \\(where\\, "
+"mask\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Return the locations (indices) of labels in the index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.get_indexer <xorbits.pandas.Index.get_indexer>`\\ "
+"\\(target\\[\\, method\\, limit\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Compute indexer and mask for new index given the current index."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.get_indexer_for <xorbits.pandas.Index.get_indexer_for>`\\ "
+"\\(target\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Guaranteed return of an indexer even when non-unique."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.get_indexer_non_unique "
+"<xorbits.pandas.Index.get_indexer_non_unique>`\\ \\(target\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.get_level_values "
+"<xorbits.pandas.Index.get_level_values>`\\ \\(level\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Return an Index of values for requested level."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.get_loc <xorbits.pandas.Index.get_loc>`\\ \\(key\\[\\, "
+"method\\, tolerance\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Get integer location, slice or boolean mask for requested label."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.get_slice_bound <xorbits.pandas.Index.get_slice_bound>`\\ "
+"\\(label\\, side\\[\\, kind\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Calculate slice bound that corresponds to given label."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.get_value <xorbits.pandas.Index.get_value>`\\ \\(series\\,"
+" key\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Fast lookup of value from 1-dimensional ndarray."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.isin <xorbits.pandas.Index.isin>`\\ \\(values\\[\\, "
+"level\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Return a boolean array where the index values are in `values`."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.slice_indexer <xorbits.pandas.Index.slice_indexer>`\\ "
+"\\(\\[start\\, end\\, step\\, kind\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Compute the slice indexer for input labels and step."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid ""
+":py:obj:`Index.slice_locs <xorbits.pandas.Index.slice_locs>`\\ "
+"\\(\\[start\\, end\\, step\\, kind\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:162:<autosummary>:1
+msgid "Compute slice locations for input labels."
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:166
+msgid "Numeric Index"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:190
+msgid "CategoricalIndex"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:198
+msgid "Categorical components"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:225
+msgid "IntervalIndex"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:233
+msgid "IntervalIndex components"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:259
+msgid "MultiIndex"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:272
+msgid "MultiIndex constructors"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:282
+msgid "MultiIndex properties"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:294
+msgid "MultiIndex components"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:309
+msgid "MultiIndex selecting"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:322
+msgid "DatetimeIndex"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:330
+msgid "Time/date components"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:402
+#: ../../source/reference/pandas/indexing.rst:442
+#: ../../source/reference/pandas/indexing.rst:487
+msgid "Methods"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:410
+msgid "TimedeltaIndex"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:418
+msgid "Components"
+msgstr ""
+
+#: ../../source/reference/pandas/indexing.rst:451
+msgid "PeriodIndex"
+msgstr ""
+

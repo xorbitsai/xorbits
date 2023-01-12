@@ -1,0 +1,291 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/index.rst:11
+msgid "Xorbits: scalable Python data science, familiar & fast."
+msgstr "Xorbits：熟悉的接口，自动并行或分布式"
+
+#: ../../source/index.rst:13
+msgid ""
+"Xorbits is a scalable Python data science framework that aims to **scale "
+"the whole Python data science world, including numpy, pandas, scikit-"
+"learn and many other libraries**. It can leverage multi cores or GPUs to "
+"accelerate computation on a single machine, or scale out up to thousands "
+"of machines to support processing terabytes of data. In our benchmark "
+"test, **Xorbits is the fastest framework among the most popular "
+"distributed data science frameworks**."
+msgstr ""
+
+#: ../../source/index.rst:19
+msgid ""
+"As for the name of ``xorbits``, it has many meanings, you can treat it as"
+" ``X-or-bits`` or ``X-orbits`` or ``xor-bits``, just have fun to "
+"comprehend it in your own way."
+msgstr ""
+
+#: ../../source/index.rst:23
+msgid "At a glance"
+msgstr ""
+
+#: ../../source/index.rst:27
+msgid ""
+"Codes are almost identical except for the import, replace ``import "
+"pandas`` with ``import xorbits.pandas`` will just work, so does numpy and"
+" so forth."
+msgstr ""
+
+#: ../../source/index.rst:32
+msgid "Where to get it?"
+msgstr ""
+
+#: ../../source/index.rst:34
+msgid ""
+"The source code is currently hosted on GitHub at: https://github.com"
+"/xprobe-inc/xorbits"
+msgstr ""
+
+#: ../../source/index.rst:36
+msgid ""
+"Binary installers for the latest released version are available at the "
+"`Python Package Index (PyPI) <https://pypi.org/project/xorbits>`_"
+msgstr ""
+
+#: ../../source/index.rst:45
+msgid "API compatibility"
+msgstr ""
+
+#: ../../source/index.rst:47
+msgid ""
+"As long as you know how to use numpy, pandas and so forth, you would "
+"probably know how to use xorbits."
+msgstr ""
+
+#: ../../source/index.rst:49
+msgid "All Xorbits APIs implemented or planned include:"
+msgstr ""
+
+#: ../../source/index.rst:52
+msgid "API"
+msgstr ""
+
+#: ../../source/index.rst:52
+msgid "Implemented version or plan"
+msgstr ""
+
+#: ../../source/index.rst:54
+msgid ":ref:`xorbits.pandas <pandas_api>`"
+msgstr ""
+
+#: ../../source/index.rst:54 ../../source/index.rst:55
+msgid "v0.1.0"
+msgstr ""
+
+#: ../../source/index.rst:55
+msgid ":ref:`xorbits.numpy <numpy_api>`"
+msgstr ""
+
+#: ../../source/index.rst:56
+msgid "``xorbits.sklearn``"
+msgstr ""
+
+#: ../../source/index.rst:56 ../../source/index.rst:57
+#: ../../source/index.rst:58
+msgid "Planned in the near future"
+msgstr ""
+
+#: ../../source/index.rst:57
+msgid "``xorbits.xgboost``"
+msgstr ""
+
+#: ../../source/index.rst:58
+msgid "``xorbits.lightgbm``"
+msgstr ""
+
+#: ../../source/index.rst:59
+msgid "``xorbits.xarray``"
+msgstr ""
+
+#: ../../source/index.rst:59
+msgid "Planned in the future"
+msgstr ""
+
+#: ../../source/index.rst:63
+msgid "Lightning fast speed"
+msgstr ""
+
+#: ../../source/index.rst:65
+msgid ""
+"Xorbits is the fastest compared to other popular frameworks according to "
+"our benchmark tests."
+msgstr ""
+
+#: ../../source/index.rst:67
+msgid ""
+"We did benchmarks for TPC-H at scale factor 100 (~100 GB datasets) and "
+"1000 (~1 TB datasets). The performances are shown as below."
+msgstr ""
+
+#: ../../source/index.rst:71
+msgid "TPC-H SF100: Xorbits vs Dask"
+msgstr ""
+
+#: ../../source/index.rst:75
+msgid ""
+"Q21 was excluded since Dask ran out of memory. Across all queries, "
+"Xorbits was found to be 7.3x faster than Dask."
+msgstr ""
+
+#: ../../source/index.rst:78
+msgid "TPC-H SF100: Xorbits vs Pandas API on Spark"
+msgstr ""
+
+#: ../../source/index.rst:82
+msgid ""
+"Across all queries, the two systems have roughly similar performance, but"
+" Xorbits provided much better API compatibility. Pandas API on Spark "
+"failed on Q1, Q4, Q7, Q21, and ran out of memory on Q20."
+msgstr ""
+
+#: ../../source/index.rst:86
+msgid "TPC-H SF100: Xorbits vs Modin"
+msgstr ""
+
+#: ../../source/index.rst:90
+msgid ""
+"Although Modin ran out of memory for most of the queries that involve "
+"heavy data shuffles, making the performance difference less obvious, "
+"Xorbits was still found to be 3.2x faster than Modin."
+msgstr ""
+
+#: ../../source/index.rst:94
+msgid "TPC-H SF1000: Xorbits"
+msgstr ""
+
+#: ../../source/index.rst:98
+msgid ""
+"Although Xorbits is able to pass all the queries in a row, Dask, Pandas "
+"API on Spark and Modin failed on most of the queries. Thus, we are not "
+"able to compare the performance difference now, and we plan to try again "
+"later."
+msgstr ""
+
+#: ../../source/index.rst:102
+msgid ""
+"For more information, see `performance benchmarks "
+"<https://xorbits.io/benchmark>`_."
+msgstr ""
+
+#: ../../source/index.rst:105 ../../source/index.rst:111
+msgid "Deployment"
+msgstr ""
+
+#: ../../source/index.rst:107
+msgid ""
+"Xorbits can be deployed on your local machine, largely deployed to a "
+"cluster via command lines, or deploy via Kubernetes and clouds."
+msgstr ""
+
+#: ../../source/index.rst:111
+msgid "Description"
+msgstr ""
+
+#: ../../source/index.rst:113
+msgid ":ref:`Local <deployment_local>`"
+msgstr ""
+
+#: ../../source/index.rst:113
+msgid "Running Xorbits on a local machine, e.g. laptop"
+msgstr ""
+
+#: ../../source/index.rst:114
+msgid ":ref:`Cluster <deployment_cluster>`"
+msgstr ""
+
+#: ../../source/index.rst:114
+msgid "Deploy Xorbits to existing cluster via command lines"
+msgstr ""
+
+#: ../../source/index.rst:115
+msgid ":ref:`Kubernetes <deployment_kubernetes>`"
+msgstr ""
+
+#: ../../source/index.rst:115
+msgid "Deploy Xorbits to existing k8s cluster via python codes"
+msgstr ""
+
+#: ../../source/index.rst:116
+msgid ":ref:`Cloud <deployment_cloud>`"
+msgstr ""
+
+#: ../../source/index.rst:116
+msgid "Deploy Xorbits to various cloud platforms via python codes"
+msgstr ""
+
+#: ../../source/index.rst:120
+msgid "Getting involved"
+msgstr ""
+
+#: ../../source/index.rst:123
+msgid "**Platform**"
+msgstr ""
+
+#: ../../source/index.rst:123
+msgid "**Purpose**"
+msgstr ""
+
+#: ../../source/index.rst:125
+msgid "`Discourse Forum <https://discuss.xorbits.io/>`_"
+msgstr ""
+
+#: ../../source/index.rst:125
+msgid "Asking usage questions and discussing development."
+msgstr ""
+
+#: ../../source/index.rst:127
+msgid "`Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_"
+msgstr ""
+
+#: ../../source/index.rst:127
+msgid "Reporting bugs and filing feature requests."
+msgstr ""
+
+#: ../../source/index.rst:129
+msgid "`Slack <https://slack.xorbits.io/>`_"
+msgstr ""
+
+#: ../../source/index.rst:129
+msgid "Collaborating with other Xorbits users."
+msgstr ""
+
+#: ../../source/index.rst:131
+msgid "`StackOverflow <https://stackoverflow.com/questions/tagged/xorbits>`_"
+msgstr ""
+
+#: ../../source/index.rst:131
+msgid "Asking questions about how to use Xorbits."
+msgstr ""
+
+#: ../../source/index.rst:133
+msgid "`Twitter <https://twitter.com/xorbitsio>`_"
+msgstr ""
+
+#: ../../source/index.rst:133
+msgid "Staying up-to-date on new features."
+msgstr ""
+

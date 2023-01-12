@@ -1,0 +1,211 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/numpy/statistics.rst:2
+msgid "Statistics"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:8
+msgid "Order statistics"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid ""
+":py:obj:`ptp <xorbits.numpy.ptp>`\\ \\(a\\[\\, axis\\, out\\, "
+"keepdims\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid "Range of values (maximum - minimum) along an axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid ""
+":py:obj:`percentile <xorbits.numpy.percentile>`\\ \\(a\\, q\\[\\, axis\\,"
+" out\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid "Compute the q-th percentile of the data along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid ""
+":py:obj:`quantile <xorbits.numpy.quantile>`\\ \\(a\\, q\\[\\, axis\\, "
+"out\\, overwrite\\_input\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid "Compute the q-th quantile of the data along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:20
+msgid "Averages and variances"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`median <xorbits.numpy.median>`\\ \\(a\\[\\, axis\\, out\\, "
+"overwrite\\_input\\, keepdims\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the median along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`average <xorbits.numpy.average>`\\ \\(a\\[\\, axis\\, weights\\,"
+" returned\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the weighted average along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`mean <xorbits.numpy.mean>`\\ \\(a\\[\\, axis\\, dtype\\, out\\, "
+"keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the arithmetic mean along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`std <xorbits.numpy.std>`\\ \\(a\\[\\, axis\\, dtype\\, out\\, "
+"ddof\\, keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the standard deviation along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`var <xorbits.numpy.var>`\\ \\(a\\[\\, axis\\, dtype\\, out\\, "
+"ddof\\, keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the variance along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`nanmean <xorbits.numpy.nanmean>`\\ \\(a\\[\\, axis\\, dtype\\, "
+"out\\, keepdims\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the arithmetic mean along the specified axis, ignoring NaNs."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`nanstd <xorbits.numpy.nanstd>`\\ \\(a\\[\\, axis\\, dtype\\, "
+"out\\, ddof\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+"Compute the standard deviation along the specified axis, while ignoring "
+"NaNs."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
+":py:obj:`nanvar <xorbits.numpy.nanvar>`\\ \\(a\\[\\, axis\\, dtype\\, "
+"out\\, ddof\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the variance along the specified axis, while ignoring NaNs."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:36
+msgid "Correlating"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:44:<autosummary>:1
+msgid ":py:obj:`corrcoef <xorbits.numpy.corrcoef>`\\ \\(x\\[\\, y\\, rowvar\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:44:<autosummary>:1
+msgid "Return Pearson product-moment correlation coefficients."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:44:<autosummary>:1
+msgid ""
+":py:obj:`cov <xorbits.numpy.cov>`\\ \\(m\\[\\, y\\, rowvar\\, bias\\, "
+"ddof\\, fweights\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:44:<autosummary>:1
+msgid "Estimate a covariance matrix, given data and weights."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:46
+msgid "Histograms"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid ""
+":py:obj:`histogram <xorbits.numpy.histogram>`\\ \\(a\\[\\, bins\\, "
+"range\\, weights\\, density\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid "Compute the histogram of a dataset."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid ""
+":py:obj:`bincount <xorbits.numpy.bincount>`\\ \\(x\\, \\/\\[\\, "
+"weights\\, minlength\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid "Count number of occurrences of each value in array of non-negative ints."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid ""
+":py:obj:`histogram_bin_edges <xorbits.numpy.histogram_bin_edges>`\\ "
+"\\(a\\[\\, bins\\, range\\, weights\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid ""
+"Function to calculate only the edges of the bins used by the `histogram` "
+"function."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid ""
+":py:obj:`digitize <xorbits.numpy.digitize>`\\ \\(x\\, bins\\[\\, "
+"right\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid "Return the indices of the bins to which each value in input array belongs."
+msgstr ""
+

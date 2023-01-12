@@ -1,0 +1,3126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/pandas/series.rst:5
+msgid "Series"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:9
+msgid "Constructor"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:14:<autosummary>:1
+msgid ":py:obj:`Series <xorbits.pandas.Series>`\\ \\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:14:<autosummary>:1
+msgid "One-dimensional ndarray with axis labels (including time series)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:16
+msgid "Attributes"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:17
+msgid "**Axes**"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.index <xorbits.pandas.Series.index>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "The index (axis labels) of the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.values <xorbits.pandas.Series.values>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return Series as ndarray or ndarray-like depending on the dtype."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.dtype <xorbits.pandas.Series.dtype>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return the dtype object of the underlying data."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.shape <xorbits.pandas.Series.shape>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return a tuple of the shape of the underlying data."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.ndim <xorbits.pandas.Series.ndim>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Number of dimensions of the underlying data, by definition 1."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.size <xorbits.pandas.Series.size>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return the number of elements in the underlying data."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.T <xorbits.pandas.Series.T>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return the transpose, which is by definition self."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ""
+":py:obj:`Series.memory_usage <xorbits.pandas.Series.memory_usage>`\\ "
+"\\(\\[index\\, deep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return the memory usage of the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.empty <xorbits.pandas.Series.empty>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Indicator whether Series/DataFrame is empty."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ":py:obj:`Series.name <xorbits.pandas.Series.name>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return the name of the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid ""
+":py:obj:`Series.set_flags <xorbits.pandas.Series.set_flags>`\\ "
+"\\(\\*\\[\\, copy\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:38:<autosummary>:1
+msgid "Return a new object with updated flags."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:40
+msgid "Conversion"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ""
+":py:obj:`Series.astype <xorbits.pandas.Series.astype>`\\ \\(dtype\\[\\, "
+"copy\\, errors\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Cast a pandas object to a specified dtype ``dtype``."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ""
+":py:obj:`Series.convert_dtypes <xorbits.pandas.Series.convert_dtypes>`\\ "
+"\\(\\[infer\\_objects\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Convert columns to best possible dtypes using dtypes supporting ``pd.NA``."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ""
+":py:obj:`Series.infer_objects <xorbits.pandas.Series.infer_objects>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Attempt to infer better dtypes for object columns."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ":py:obj:`Series.copy <xorbits.pandas.Series.copy>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Make a copy of this object's indices and data."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ":py:obj:`Series.bool <xorbits.pandas.Series.bool>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Return the bool of a single element Series or DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_numpy <xorbits.pandas.Series.to_numpy>`\\ "
+"\\(\\[dtype\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_period <xorbits.pandas.Series.to_period>`\\ "
+"\\(\\[freq\\, copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Convert Series from DatetimeIndex to PeriodIndex."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_timestamp <xorbits.pandas.Series.to_timestamp>`\\ "
+"\\(\\[freq\\, how\\, copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Cast to DatetimeIndex of Timestamps, at *beginning* of period."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ":py:obj:`Series.to_list <xorbits.pandas.Series.to_list>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid "Return a list of the values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:54:<autosummary>:1
+msgid ""
+":py:obj:`Series.__array__ <xorbits.pandas.Series.__array__>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:56
+msgid "Indexing, iteration"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ""
+":py:obj:`Series.get <xorbits.pandas.Series.get>`\\ \\(key\\[\\, "
+"default\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Get item from object for given key (ex: DataFrame column)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.at <xorbits.pandas.Series.at>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Access a single value for a row/column label pair."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.iat <xorbits.pandas.Series.iat>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Access a single value for a row/column pair by integer position."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.loc <xorbits.pandas.Series.loc>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Access a group of rows and columns by label(s) or a boolean array."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.iloc <xorbits.pandas.Series.iloc>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Purely integer-location based indexing for selection by position."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.__iter__ <xorbits.pandas.Series.__iter__>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ""
+":py:obj:`Series.items <xorbits.pandas.Series.items>`\\ "
+"\\(\\[batch\\_size\\, session\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Lazily iterate over (index, value) tuples."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ""
+":py:obj:`Series.iteritems <xorbits.pandas.Series.iteritems>`\\ "
+"\\(\\[batch\\_size\\, session\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.keys <xorbits.pandas.Series.keys>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Return alias for index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.pop <xorbits.pandas.Series.pop>`\\ \\(item\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Return item and drops from series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ":py:obj:`Series.item <xorbits.pandas.Series.item>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Return the first element of the underlying data as a Python scalar."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid ""
+":py:obj:`Series.xs <xorbits.pandas.Series.xs>`\\ \\(key\\[\\, axis\\, "
+"level\\, drop\\_level\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:72:<autosummary>:1
+msgid "Return cross-section from the Series/DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:73
+msgid ""
+"For more information on ``.at``, ``.iat``, ``.loc``, and ``.iloc``,  see "
+"the :ref:`indexing documentation <indexing>`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:77
+msgid "Binary operator functions"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.add <xorbits.pandas.Series.add>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Return Addition of series and other, element-wise (binary operator `add`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.sub <xorbits.pandas.Series.sub>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Subtraction of series and other, element-wise (binary operator "
+"`sub`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.mul <xorbits.pandas.Series.mul>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Multiplication of series and other, element-wise (binary operator "
+"`mul`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.div <xorbits.pandas.Series.div>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Floating division of series and other, element-wise (binary "
+"operator `truediv`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.truediv <xorbits.pandas.Series.truediv>`\\ \\(other\\[\\,"
+" level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.floordiv <xorbits.pandas.Series.floordiv>`\\ "
+"\\(other\\[\\, level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Integer division of series and other, element-wise (binary "
+"operator `floordiv`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.mod <xorbits.pandas.Series.mod>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Return Modulo of series and other, element-wise (binary operator `mod`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.pow <xorbits.pandas.Series.pow>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Exponential power of series and other, element-wise (binary "
+"operator `pow`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.radd <xorbits.pandas.Series.radd>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Addition of series and other, element-wise (binary operator "
+"`radd`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.rsub <xorbits.pandas.Series.rsub>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Subtraction of series and other, element-wise (binary operator "
+"`rsub`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.rmul <xorbits.pandas.Series.rmul>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Multiplication of series and other, element-wise (binary operator "
+"`rmul`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.rdiv <xorbits.pandas.Series.rdiv>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Floating division of series and other, element-wise (binary "
+"operator `rtruediv`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.rtruediv <xorbits.pandas.Series.rtruediv>`\\ "
+"\\(other\\[\\, level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.rfloordiv <xorbits.pandas.Series.rfloordiv>`\\ "
+"\\(other\\[\\, level\\, fill\\_value\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Integer division of series and other, element-wise (binary "
+"operator `rfloordiv`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.rmod <xorbits.pandas.Series.rmod>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Return Modulo of series and other, element-wise (binary operator `rmod`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.rpow <xorbits.pandas.Series.rpow>`\\ \\(other\\[\\, "
+"level\\, fill\\_value\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Exponential power of series and other, element-wise (binary "
+"operator `rpow`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.combine <xorbits.pandas.Series.combine>`\\ \\(other\\, "
+"func\\[\\, fill\\_value\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Combine the Series with a Series or scalar according to `func`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.combine_first <xorbits.pandas.Series.combine_first>`\\ "
+"\\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Update null elements with value in the same location in 'other'."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.round <xorbits.pandas.Series.round>`\\ "
+"\\(\\[decimals\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Round each value in a Series to the given number of decimals."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.lt <xorbits.pandas.Series.lt>`\\ \\(other\\[\\, level\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Return Less than of series and other, element-wise (binary operator `lt`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.gt <xorbits.pandas.Series.gt>`\\ \\(other\\[\\, level\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Greater than of series and other, element-wise (binary operator "
+"`gt`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.le <xorbits.pandas.Series.le>`\\ \\(other\\[\\, level\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Less than or equal to of series and other, element-wise (binary "
+"operator `le`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.ge <xorbits.pandas.Series.ge>`\\ \\(other\\[\\, level\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Greater than or equal to of series and other, element-wise (binary"
+" operator `ge`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.ne <xorbits.pandas.Series.ne>`\\ \\(other\\[\\, level\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+"Return Not equal to of series and other, element-wise (binary operator "
+"`ne`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.eq <xorbits.pandas.Series.eq>`\\ \\(other\\[\\, level\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Return Equal to of series and other, element-wise (binary operator `eq`)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ""
+":py:obj:`Series.product <xorbits.pandas.Series.product>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the product of the values over the requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid ":py:obj:`Series.dot <xorbits.pandas.Series.dot>`\\ \\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:108:<autosummary>:1
+msgid "Compute the dot product between the Series and the columns of other."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:110
+msgid "Function application, GroupBy & window"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.apply <xorbits.pandas.Series.apply>`\\ \\(func\\[\\, "
+"convert\\_dtype\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Invoke function on values of Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.agg <xorbits.pandas.Series.agg>`\\ \\(\\[func\\, "
+"axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Aggregate using one or more operations over the specified axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.aggregate <xorbits.pandas.Series.aggregate>`\\ "
+"\\(\\[func\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.transform <xorbits.pandas.Series.transform>`\\ "
+"\\(func\\[\\, convert\\_dtype\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Call ``func`` on self producing a Series with the same axis shape as self."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.map <xorbits.pandas.Series.map>`\\ \\(arg\\[\\, "
+"na\\_action\\, dtype\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Map values of Series according to an input mapping or function."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.groupby <xorbits.pandas.Series.groupby>`\\ \\(\\[by\\, "
+"level\\, as\\_index\\, sort\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Group Series using a mapper or by a Series of columns."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.rolling <xorbits.pandas.Series.rolling>`\\ "
+"\\(window\\[\\, min\\_periods\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Provide rolling window calculations."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.expanding <xorbits.pandas.Series.expanding>`\\ "
+"\\(\\[min\\_periods\\, center\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Provide expanding window calculations."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.ewm <xorbits.pandas.Series.ewm>`\\ \\(\\[com\\, span\\, "
+"halflife\\, alpha\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Provide exponentially weighted (EW) calculations."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid ""
+":py:obj:`Series.pipe <xorbits.pandas.Series.pipe>`\\ \\(func\\, "
+"\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:124:<autosummary>:1
+msgid "Apply chainable functions that expect Series or DataFrames."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:128
+msgid "Computations / descriptive stats"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ":py:obj:`Series.abs <xorbits.pandas.Series.abs>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return a Series/DataFrame with absolute numeric value of each element."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.all <xorbits.pandas.Series.all>`\\ \\(\\[axis\\, "
+"bool\\_only\\, skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return whether all elements are True, potentially over an axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.any <xorbits.pandas.Series.any>`\\ \\(\\[axis\\, "
+"bool\\_only\\, skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return whether any element is True, potentially over an axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.autocorr <xorbits.pandas.Series.autocorr>`\\ "
+"\\(\\[lag\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Compute the lag-N autocorrelation."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.between <xorbits.pandas.Series.between>`\\ \\(left\\, "
+"right\\[\\, inclusive\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return boolean Series equivalent to left <= series <= right."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.clip <xorbits.pandas.Series.clip>`\\ \\(\\[lower\\, "
+"upper\\, axis\\, inplace\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Trim values at input threshold(s)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.corr <xorbits.pandas.Series.corr>`\\ \\(other\\[\\, "
+"method\\, min\\_periods\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Compute correlation with `other` Series, excluding missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.count <xorbits.pandas.Series.count>`\\ \\(\\[level\\, "
+"combine\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return number of non-NA/null observations in the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.cov <xorbits.pandas.Series.cov>`\\ \\(other\\[\\, "
+"min\\_periods\\, ddof\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Compute covariance with Series, excluding missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.cummax <xorbits.pandas.Series.cummax>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return cumulative maximum over a DataFrame or Series axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.cummin <xorbits.pandas.Series.cummin>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return cumulative minimum over a DataFrame or Series axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.cumprod <xorbits.pandas.Series.cumprod>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return cumulative product over a DataFrame or Series axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.cumsum <xorbits.pandas.Series.cumsum>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return cumulative sum over a DataFrame or Series axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.describe <xorbits.pandas.Series.describe>`\\ "
+"\\(\\[percentiles\\, include\\, exclude\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Generate descriptive statistics."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ":py:obj:`Series.diff <xorbits.pandas.Series.diff>`\\ \\(\\[periods\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "First discrete difference of element."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.factorize <xorbits.pandas.Series.factorize>`\\ "
+"\\(\\[sort\\, na\\_sentinel\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Encode the object as an enumerated type or categorical variable."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.kurt <xorbits.pandas.Series.kurt>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return unbiased kurtosis over requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.mad <xorbits.pandas.Series.mad>`\\ \\(\\[axis\\, "
+"skipna\\, level\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the mean absolute deviation of the values over the requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.max <xorbits.pandas.Series.max>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the maximum of the values over the requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.mean <xorbits.pandas.Series.mean>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the mean of the values over the requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.median <xorbits.pandas.Series.median>`\\ \\(\\[axis\\, "
+"skipna\\, out\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the median of the values over the requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.min <xorbits.pandas.Series.min>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the minimum of the values over the requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ":py:obj:`Series.mode <xorbits.pandas.Series.mode>`\\ \\(\\[dropna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the mode(s) of the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.nlargest <xorbits.pandas.Series.nlargest>`\\ \\(\\[n\\, "
+"keep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the largest `n` elements."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.nsmallest <xorbits.pandas.Series.nsmallest>`\\ \\(\\[n\\,"
+" keep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the smallest `n` elements."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.pct_change <xorbits.pandas.Series.pct_change>`\\ "
+"\\(\\[periods\\, fill\\_method\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Percentage change between the current and a prior element."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.prod <xorbits.pandas.Series.prod>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.quantile <xorbits.pandas.Series.quantile>`\\ \\(\\[q\\, "
+"interpolation\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return value at the given quantile."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.rank <xorbits.pandas.Series.rank>`\\ \\(\\[axis\\, "
+"method\\, numeric\\_only\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Compute numerical data ranks (1 through n) along axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.sem <xorbits.pandas.Series.sem>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ddof\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return unbiased standard error of the mean over requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.skew <xorbits.pandas.Series.skew>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return unbiased skew over requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.std <xorbits.pandas.Series.std>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ddof\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return sample standard deviation over requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.sum <xorbits.pandas.Series.sum>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, min\\_count\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return the sum of the values over the requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.var <xorbits.pandas.Series.var>`\\ \\(\\[axis\\, "
+"skipna\\, level\\, ddof\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return unbiased variance over requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.kurtosis <xorbits.pandas.Series.kurtosis>`\\ "
+"\\(\\[axis\\, skipna\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.unique <xorbits.pandas.Series.unique>`\\ "
+"\\(\\[method\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return unique values of Series object."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.nunique <xorbits.pandas.Series.nunique>`\\ "
+"\\(\\[dropna\\, combine\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return number of unique elements in the object."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ":py:obj:`Series.is_monotonic <xorbits.pandas.Series.is_monotonic>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return boolean if values in the object are monotonic_increasing."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.is_monotonic_increasing "
+"<xorbits.pandas.Series.is_monotonic_increasing>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Alias for is_monotonic."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.is_monotonic_decreasing "
+"<xorbits.pandas.Series.is_monotonic_decreasing>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return boolean if values in the object are monotonic_decreasing."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid ""
+":py:obj:`Series.value_counts <xorbits.pandas.Series.value_counts>`\\ "
+"\\(\\[normalize\\, sort\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
+msgid "Return a Series containing counts of unique values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:176
+msgid "Reindexing / selection / label manipulation"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.align <xorbits.pandas.Series.align>`\\ \\(other\\[\\, "
+"join\\, axis\\, level\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Align two objects on their axes with the specified join method."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.drop <xorbits.pandas.Series.drop>`\\ \\(\\[labels\\, "
+"axis\\, index\\, columns\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return Series with specified index labels removed."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.droplevel <xorbits.pandas.Series.droplevel>`\\ "
+"\\(level\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return Series/DataFrame with requested index / column level(s) removed."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.drop_duplicates "
+"<xorbits.pandas.Series.drop_duplicates>`\\ \\(\\[keep\\, inplace\\, "
+"method\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return Series with duplicate values removed."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.duplicated <xorbits.pandas.Series.duplicated>`\\ "
+"\\(\\[keep\\, method\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Indicate duplicate Series values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ":py:obj:`Series.equals <xorbits.pandas.Series.equals>`\\ \\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Test whether two objects contain the same elements."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ":py:obj:`Series.first <xorbits.pandas.Series.first>`\\ \\(offset\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Select initial periods of time series data based on a date offset."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ":py:obj:`Series.head <xorbits.pandas.Series.head>`\\ \\(\\[n\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return the first `n` rows."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.idxmax <xorbits.pandas.Series.idxmax>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return the row label of the maximum value."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.idxmin <xorbits.pandas.Series.idxmin>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return the row label of the minimum value."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ":py:obj:`Series.isin <xorbits.pandas.Series.isin>`\\ \\(values\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Whether elements in Series are contained in `values`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ":py:obj:`Series.last <xorbits.pandas.Series.last>`\\ \\(offset\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Select final periods of time series data based on a date offset."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.reindex <xorbits.pandas.Series.reindex>`\\ \\(\\*args\\, "
+"\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Conform Series to new index with optional filling logic."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.reindex_like <xorbits.pandas.Series.reindex_like>`\\ "
+"\\(other\\[\\, method\\, copy\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return an object with matching indices as other object."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.rename <xorbits.pandas.Series.rename>`\\ \\(\\[index\\, "
+"axis\\, copy\\, inplace\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Alter Series index labels or name."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.rename_axis <xorbits.pandas.Series.rename_axis>`\\ "
+"\\(\\[mapper\\, index\\, columns\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Set the name of the axis for the index or columns."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.reset_index <xorbits.pandas.Series.reset_index>`\\ "
+"\\(\\[level\\, drop\\, name\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Generate a new DataFrame or Series with the index reset."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.sample <xorbits.pandas.Series.sample>`\\ \\(\\[n\\, "
+"frac\\, replace\\, weights\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return a random sample of items from an axis of object."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.set_axis <xorbits.pandas.Series.set_axis>`\\ "
+"\\(labels\\[\\, axis\\, inplace\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Assign desired index to given axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.take <xorbits.pandas.Series.take>`\\ \\(indices\\[\\, "
+"axis\\, is\\_copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return the elements in the given *positional* indices along an axis."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ":py:obj:`Series.tail <xorbits.pandas.Series.tail>`\\ \\(\\[n\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Return the last `n` rows."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.truncate <xorbits.pandas.Series.truncate>`\\ "
+"\\(\\[before\\, after\\, axis\\, copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Truncate a Series or DataFrame before and after some index value."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.where <xorbits.pandas.Series.where>`\\ \\(cond\\[\\, "
+"other\\, inplace\\, axis\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Replace values where the condition is False."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.mask <xorbits.pandas.Series.mask>`\\ \\(cond\\[\\, "
+"other\\, inplace\\, axis\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Replace values where the condition is True."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.add_prefix <xorbits.pandas.Series.add_prefix>`\\ "
+"\\(prefix\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Prefix labels with string `prefix`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.add_suffix <xorbits.pandas.Series.add_suffix>`\\ "
+"\\(suffix\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid "Suffix labels with string `suffix`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+":py:obj:`Series.filter <xorbits.pandas.Series.filter>`\\ \\(\\[items\\, "
+"like\\, regex\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:207:<autosummary>:1
+msgid ""
+"Subset the dataframe rows or columns according to the specified index "
+"labels."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:209
+msgid "Missing data handling"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.backfill <xorbits.pandas.Series.backfill>`\\ "
+"\\(\\[axis\\, inplace\\, limit\\, downcast\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Synonym for :meth:`DataFrame.fillna` with ``method='bfill'``."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.bfill <xorbits.pandas.Series.bfill>`\\ \\(\\[axis\\, "
+"inplace\\, limit\\, downcast\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.dropna <xorbits.pandas.Series.dropna>`\\ \\(\\[axis\\, "
+"inplace\\, how\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Return a new Series with missing values removed."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.ffill <xorbits.pandas.Series.ffill>`\\ \\(\\[axis\\, "
+"inplace\\, limit\\, downcast\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Synonym for :meth:`DataFrame.fillna` with ``method='ffill'``."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.fillna <xorbits.pandas.Series.fillna>`\\ \\(\\[value\\, "
+"method\\, axis\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Fill NA/NaN values using the specified method."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.interpolate <xorbits.pandas.Series.interpolate>`\\ "
+"\\(\\[method\\, axis\\, limit\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Fill NaN values using an interpolation method."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ":py:obj:`Series.isna <xorbits.pandas.Series.isna>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Detect missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ":py:obj:`Series.isnull <xorbits.pandas.Series.isnull>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Series.isnull is an alias for Series.isna."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ":py:obj:`Series.notna <xorbits.pandas.Series.notna>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Detect existing (non-missing) values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ":py:obj:`Series.notnull <xorbits.pandas.Series.notnull>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Series.notnull is an alias for Series.notna."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.pad <xorbits.pandas.Series.pad>`\\ \\(\\[axis\\, "
+"inplace\\, limit\\, downcast\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid ""
+":py:obj:`Series.replace <xorbits.pandas.Series.replace>`\\ "
+"\\(\\[to\\_replace\\, value\\, inplace\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:225:<autosummary>:1
+msgid "Replace values given in `to_replace` with `value`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:227
+msgid "Reshaping, sorting"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.argsort <xorbits.pandas.Series.argsort>`\\ \\(\\[axis\\, "
+"kind\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Return the integer indices that would sort the Series values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.argmin <xorbits.pandas.Series.argmin>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Return int position of the smallest value in the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.argmax <xorbits.pandas.Series.argmax>`\\ \\(\\[axis\\, "
+"skipna\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Return int position of the largest value in the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.reorder_levels <xorbits.pandas.Series.reorder_levels>`\\ "
+"\\(order\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Rearrange index levels using input order."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.sort_values <xorbits.pandas.Series.sort_values>`\\ "
+"\\(\\[axis\\, ascending\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Sort by the values."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.sort_index <xorbits.pandas.Series.sort_index>`\\ "
+"\\(\\[axis\\, level\\, ascending\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Sort Series by index labels."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.swaplevel <xorbits.pandas.Series.swaplevel>`\\ \\(\\[i\\,"
+" j\\, copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Swap levels i and j in a :class:`MultiIndex`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.unstack <xorbits.pandas.Series.unstack>`\\ \\(\\[level\\,"
+" fill\\_value\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Unstack, also known as pivot, Series with MultiIndex to produce DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.explode <xorbits.pandas.Series.explode>`\\ "
+"\\(\\[ignore\\_index\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Transform each element of a list-like to a row."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.searchsorted <xorbits.pandas.Series.searchsorted>`\\ "
+"\\(value\\[\\, side\\, sorter\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Find indices where elements should be inserted to maintain order."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ":py:obj:`Series.ravel <xorbits.pandas.Series.ravel>`\\ \\(\\[order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Return the flattened underlying data as an ndarray."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.repeat <xorbits.pandas.Series.repeat>`\\ \\(repeats\\[\\,"
+" axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Repeat elements of a Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ""
+":py:obj:`Series.squeeze <xorbits.pandas.Series.squeeze>`\\ "
+"\\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Squeeze 1 dimensional axis objects into scalars."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid ":py:obj:`Series.view <xorbits.pandas.Series.view>`\\ \\(\\[dtype\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:245:<autosummary>:1
+msgid "Create a new view of the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:247
+msgid "Combining / comparing / joining / merging"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:254:<autosummary>:1
+msgid ""
+":py:obj:`Series.append <xorbits.pandas.Series.append>`\\ \\(other\\[\\, "
+"ignore\\_index\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:254:<autosummary>:1
+msgid "Concatenate two or more Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:254:<autosummary>:1
+msgid ""
+":py:obj:`Series.compare <xorbits.pandas.Series.compare>`\\ \\(other\\[\\,"
+" align\\_axis\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:254:<autosummary>:1
+msgid "Compare to another Series and show the differences."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:254:<autosummary>:1
+msgid ":py:obj:`Series.update <xorbits.pandas.Series.update>`\\ \\(other\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:254:<autosummary>:1
+msgid "Modify Series in place using values from passed Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:256
+msgid "Time Series-related"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.asfreq <xorbits.pandas.Series.asfreq>`\\ \\(freq\\[\\, "
+"method\\, how\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Convert time series to specified frequency."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.asof <xorbits.pandas.Series.asof>`\\ \\(where\\[\\, "
+"subset\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Return the last row(s) without any NaNs before `where`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.shift <xorbits.pandas.Series.shift>`\\ \\(\\[periods\\, "
+"freq\\, axis\\, fill\\_value\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Shift index by desired number of periods with an optional time `freq`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.first_valid_index "
+"<xorbits.pandas.Series.first_valid_index>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Return index for first non-NA value or None, if no non-NA value is found."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.last_valid_index "
+"<xorbits.pandas.Series.last_valid_index>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Return index for last non-NA value or None, if no non-NA value is found."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.resample <xorbits.pandas.Series.resample>`\\ "
+"\\(rule\\[\\, axis\\, closed\\, label\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Resample time-series data."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.tz_convert <xorbits.pandas.Series.tz_convert>`\\ "
+"\\(tz\\[\\, axis\\, level\\, copy\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Convert tz-aware axis to target time zone."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.tz_localize <xorbits.pandas.Series.tz_localize>`\\ "
+"\\(tz\\[\\, axis\\, level\\, copy\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Localize tz-naive index of a Series or DataFrame to target time zone."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.at_time <xorbits.pandas.Series.at_time>`\\ \\(time\\[\\, "
+"asof\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Select values at particular time of day (e.g., 9:30AM)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.between_time <xorbits.pandas.Series.between_time>`\\ "
+"\\(start\\_time\\, end\\_time\\[\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Select values between particular times of the day (e.g., 9:00-9:30 AM)."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.tshift <xorbits.pandas.Series.tshift>`\\ \\(\\[periods\\,"
+" freq\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Shift the time index, using the index's frequency if available."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid ""
+":py:obj:`Series.slice_shift <xorbits.pandas.Series.slice_shift>`\\ "
+"\\(\\[periods\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:272:<autosummary>:1
+msgid "Equivalent to `shift` without copying data."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:274
+msgid "Accessors"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:276
+msgid ""
+"pandas provides dtype-specific methods under various accessors. These are"
+" separate namespaces within :class:`Series` that only apply to specific "
+"data types."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:281
+msgid "Data Type"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:281
+msgid "Accessor"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:283
+msgid "Datetime, Timedelta, Period"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:283
+msgid ":ref:`dt <api.series.dt>`"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:284
+msgid "String"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:284
+msgid ":ref:`str <api.series.str>`"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:285
+msgid "Categorical"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:285
+msgid ":ref:`cat <api.series.cat>`"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:286
+msgid "Sparse"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:286
+msgid ":ref:`sparse <api.series.sparse>`"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:292
+msgid "Datetimelike properties"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:294
+msgid ""
+"``Series.dt`` can be used to access the values of the series as "
+"datetimelike and return several properties. These can be accessed like "
+"``Series.dt.<property>``."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:299
+msgid "Datetime properties"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.date <xorbits.pandas.Series.dt.date>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Returns numpy array of python :class:`datetime.date` objects."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.time <xorbits.pandas.Series.dt.time>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Returns numpy array of :class:`datetime.time` objects."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.timetz <xorbits.pandas.Series.dt.timetz>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ""
+"Returns numpy array of :class:`datetime.time` objects with timezone "
+"information."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.year <xorbits.pandas.Series.dt.year>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The year of the datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.month <xorbits.pandas.Series.dt.month>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The month as January=1, December=12."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.day <xorbits.pandas.Series.dt.day>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The day of the datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.hour <xorbits.pandas.Series.dt.hour>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The hours of the datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.minute <xorbits.pandas.Series.dt.minute>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The minutes of the datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.second <xorbits.pandas.Series.dt.second>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The seconds of the datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.microsecond <xorbits.pandas.Series.dt.microsecond>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The microseconds of the datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.nanosecond <xorbits.pandas.Series.dt.nanosecond>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The nanoseconds of the datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.week <xorbits.pandas.Series.dt.week>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The week ordinal of the year according to the ISO 8601 standard."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.weekofyear <xorbits.pandas.Series.dt.weekofyear>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.dayofweek <xorbits.pandas.Series.dt.dayofweek>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The day of the week with Monday=0, Sunday=6."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.day_of_week <xorbits.pandas.Series.dt.day_of_week>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.weekday <xorbits.pandas.Series.dt.weekday>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.dayofyear <xorbits.pandas.Series.dt.dayofyear>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The ordinal day of the year."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.day_of_year <xorbits.pandas.Series.dt.day_of_year>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.quarter <xorbits.pandas.Series.dt.quarter>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The quarter of the date."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.is_month_start "
+"<xorbits.pandas.Series.dt.is_month_start>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Indicates whether the date is the first day of the month."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.is_month_end <xorbits.pandas.Series.dt.is_month_end>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Indicates whether the date is the last day of the month."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.is_quarter_start "
+"<xorbits.pandas.Series.dt.is_quarter_start>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Indicator for whether the date is the first day of a quarter."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.is_quarter_end "
+"<xorbits.pandas.Series.dt.is_quarter_end>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Indicator for whether the date is the last day of a quarter."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.is_year_start "
+"<xorbits.pandas.Series.dt.is_year_start>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Indicate whether the date is the first day of a year."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.is_year_end <xorbits.pandas.Series.dt.is_year_end>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Indicate whether the date is the last day of the year."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.is_leap_year <xorbits.pandas.Series.dt.is_leap_year>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Boolean indicator if the date belongs to a leap year."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.daysinmonth <xorbits.pandas.Series.dt.daysinmonth>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "The number of days in the month."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.days_in_month "
+"<xorbits.pandas.Series.dt.days_in_month>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.tz <xorbits.pandas.Series.dt.tz>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid "Return the timezone."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:335:<autosummary>:1
+msgid ":py:obj:`Series.dt.freq <xorbits.pandas.Series.dt.freq>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:337
+msgid "Datetime methods"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.isocalendar <xorbits.pandas.Series.dt.isocalendar>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Calculate year, week, and day according to the ISO 8601 standard."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.to_period <xorbits.pandas.Series.dt.to_period>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Cast to PeriodArray/Index at a particular frequency."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.to_pydatetime "
+"<xorbits.pandas.Series.dt.to_pydatetime>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Return the data as an array of :class:`datetime.datetime` objects."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.tz_localize <xorbits.pandas.Series.dt.tz_localize>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Localize tz-naive Datetime Array/Index to tz-aware Datetime Array/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.tz_convert <xorbits.pandas.Series.dt.tz_convert>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Convert tz-aware Datetime Array/Index from one time zone to another."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.normalize <xorbits.pandas.Series.dt.normalize>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Convert times to midnight."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.strftime <xorbits.pandas.Series.dt.strftime>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Convert to Index using specified date_format."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.round <xorbits.pandas.Series.dt.round>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Perform round operation on the data to the specified `freq`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.floor <xorbits.pandas.Series.dt.floor>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Perform floor operation on the data to the specified `freq`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.ceil <xorbits.pandas.Series.dt.ceil>`\\ \\(\\*args\\, "
+"\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid "Perform ceil operation on the data to the specified `freq`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.month_name <xorbits.pandas.Series.dt.month_name>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+"Return the month names of the :class:`~pandas.Series` or "
+":class:`~pandas.DatetimeIndex` with specified locale."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.day_name <xorbits.pandas.Series.dt.day_name>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:355:<autosummary>:1
+msgid ""
+"Return the day names of the :class:`~pandas.Series` or "
+":class:`~pandas.DatetimeIndex` with specified locale."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:357
+msgid "Period properties"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:366:<autosummary>:1
+msgid ":py:obj:`Series.dt.qyear <xorbits.pandas.Series.dt.qyear>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:366:<autosummary>:1
+msgid ":py:obj:`Series.dt.start_time <xorbits.pandas.Series.dt.start_time>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:366:<autosummary>:1
+msgid ":py:obj:`Series.dt.end_time <xorbits.pandas.Series.dt.end_time>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:368
+msgid "Timedelta properties"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid ":py:obj:`Series.dt.days <xorbits.pandas.Series.dt.days>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid "Number of days for each element."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid ":py:obj:`Series.dt.seconds <xorbits.pandas.Series.dt.seconds>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid "Number of seconds (>= 0 and less than 1 day) for each element."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid ":py:obj:`Series.dt.microseconds <xorbits.pandas.Series.dt.microseconds>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid "Number of microseconds (>= 0 and less than 1 second) for each element."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid ":py:obj:`Series.dt.nanoseconds <xorbits.pandas.Series.dt.nanoseconds>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid "Number of nanoseconds (>= 0 and less than 1 microsecond) for each element."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid ":py:obj:`Series.dt.components <xorbits.pandas.Series.dt.components>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:379:<autosummary>:1
+msgid "Return a Dataframe of the components of the Timedeltas."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:381
+msgid "Timedelta methods"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:390:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.to_pytimedelta "
+"<xorbits.pandas.Series.dt.to_pytimedelta>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:390:<autosummary>:1
+msgid "Return an array of native :class:`datetime.timedelta` objects."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:390:<autosummary>:1
+msgid ""
+":py:obj:`Series.dt.total_seconds "
+"<xorbits.pandas.Series.dt.total_seconds>`\\ \\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:390:<autosummary>:1
+msgid "Return total duration of each element expressed in seconds."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:394
+msgid "String handling"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:396
+msgid ""
+"``Series.str`` can be used to access the values of the series as strings "
+"and apply several methods to it. These can be accessed like "
+"``Series.str.<function/property>``."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.capitalize <xorbits.pandas.Series.str.capitalize>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Convert strings in the Series/Index to be capitalized."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.casefold <xorbits.pandas.Series.str.casefold>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Convert strings in the Series/Index to be casefolded."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.cat <xorbits.pandas.Series.str.cat>`\\ "
+"\\(\\[others\\, sep\\, na\\_rep\\, join\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Concatenate strings in the Series/Index with given separator."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.center <xorbits.pandas.Series.str.center>`\\ "
+"\\(width\\[\\, fillchar\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Pad left and right side of strings in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.contains <xorbits.pandas.Series.str.contains>`\\ "
+"\\(pat\\[\\, case\\, flags\\, na\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+"Test if pattern or regex is contained within a string of a Series or "
+"Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.count <xorbits.pandas.Series.str.count>`\\ "
+"\\(pat\\[\\, flags\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Count occurrences of pattern in each string of the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.decode <xorbits.pandas.Series.str.decode>`\\ "
+"\\(encoding\\[\\, errors\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Decode character string in the Series/Index using indicated encoding."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.encode <xorbits.pandas.Series.str.encode>`\\ "
+"\\(encoding\\[\\, errors\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Encode character string in the Series/Index using indicated encoding."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.endswith <xorbits.pandas.Series.str.endswith>`\\ "
+"\\(pat\\[\\, na\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Test if the end of each string element matches a pattern."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.extract <xorbits.pandas.Series.str.extract>`\\ "
+"\\(pat\\[\\, flags\\, expand\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Extract capture groups in the regex `pat` as columns in a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.extractall <xorbits.pandas.Series.str.extractall>`\\ "
+"\\(pat\\[\\, flags\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Extract capture groups in the regex `pat` as columns in DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.find <xorbits.pandas.Series.str.find>`\\ \\(sub\\[\\,"
+" start\\, end\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Return lowest indexes in each strings in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.findall <xorbits.pandas.Series.str.findall>`\\ "
+"\\(pat\\[\\, flags\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Find all occurrences of pattern or regular expression in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.fullmatch <xorbits.pandas.Series.str.fullmatch>`\\ "
+"\\(pat\\[\\, case\\, flags\\, na\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Determine if each string entirely matches a regular expression."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.get <xorbits.pandas.Series.str.get>`\\ \\(i\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Extract element from each component at specified position."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.index <xorbits.pandas.Series.str.index>`\\ "
+"\\(sub\\[\\, start\\, end\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Return lowest indexes in each string in Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.join <xorbits.pandas.Series.str.join>`\\ \\(sep\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+"Join lists contained as elements in the Series/Index with passed "
+"delimiter."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.len <xorbits.pandas.Series.str.len>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Compute the length of each element in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.ljust <xorbits.pandas.Series.str.ljust>`\\ "
+"\\(width\\[\\, fillchar\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Pad right side of strings in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.lower <xorbits.pandas.Series.str.lower>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Convert strings in the Series/Index to lowercase."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.lstrip <xorbits.pandas.Series.str.lstrip>`\\ "
+"\\(\\[to\\_strip\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Remove leading characters."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.match <xorbits.pandas.Series.str.match>`\\ "
+"\\(pat\\[\\, case\\, flags\\, na\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Determine if each string starts with a match of a regular expression."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.normalize <xorbits.pandas.Series.str.normalize>`\\ "
+"\\(form\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Return the Unicode normal form for the strings in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.pad <xorbits.pandas.Series.str.pad>`\\ \\(width\\[\\,"
+" side\\, fillchar\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Pad strings in the Series/Index up to width."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.partition <xorbits.pandas.Series.str.partition>`\\ "
+"\\(\\[sep\\, expand\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Split the string at the first occurrence of `sep`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.removeprefix "
+"<xorbits.pandas.Series.str.removeprefix>`\\ \\(prefix\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Remove a prefix from an object series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.removesuffix "
+"<xorbits.pandas.Series.str.removesuffix>`\\ \\(suffix\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Remove a suffix from an object series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.repeat <xorbits.pandas.Series.str.repeat>`\\ "
+"\\(repeats\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Duplicate each string in the Series or Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.replace <xorbits.pandas.Series.str.replace>`\\ "
+"\\(pat\\, repl\\[\\, n\\, case\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Replace each occurrence of pattern/regex in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.rfind <xorbits.pandas.Series.str.rfind>`\\ "
+"\\(sub\\[\\, start\\, end\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Return highest indexes in each strings in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.rindex <xorbits.pandas.Series.str.rindex>`\\ "
+"\\(sub\\[\\, start\\, end\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Return highest indexes in each string in Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.rjust <xorbits.pandas.Series.str.rjust>`\\ "
+"\\(width\\[\\, fillchar\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Pad left side of strings in the Series/Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.rpartition <xorbits.pandas.Series.str.rpartition>`\\ "
+"\\(\\[sep\\, expand\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Split the string at the last occurrence of `sep`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.rstrip <xorbits.pandas.Series.str.rstrip>`\\ "
+"\\(\\[to\\_strip\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Remove trailing characters."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.slice <xorbits.pandas.Series.str.slice>`\\ "
+"\\(\\[start\\, stop\\, step\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Slice substrings from each element in the Series or Index."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.slice_replace "
+"<xorbits.pandas.Series.str.slice_replace>`\\ \\(\\[start\\, stop\\, "
+"repl\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Replace a positional slice of a string with another value."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.split <xorbits.pandas.Series.str.split>`\\ "
+"\\(\\[pat\\, n\\, expand\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Split strings around given separator/delimiter."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.rsplit <xorbits.pandas.Series.str.rsplit>`\\ "
+"\\(\\[pat\\, n\\, expand\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.startswith <xorbits.pandas.Series.str.startswith>`\\ "
+"\\(pat\\[\\, na\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Test if the start of each string element matches a pattern."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.strip <xorbits.pandas.Series.str.strip>`\\ "
+"\\(\\[to\\_strip\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Remove leading and trailing characters."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.swapcase <xorbits.pandas.Series.str.swapcase>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Convert strings in the Series/Index to be swapcased."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.title <xorbits.pandas.Series.str.title>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Convert strings in the Series/Index to titlecase."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.translate <xorbits.pandas.Series.str.translate>`\\ "
+"\\(table\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Map all characters in the string through the given mapping table."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.upper <xorbits.pandas.Series.str.upper>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Convert strings in the Series/Index to uppercase."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.wrap <xorbits.pandas.Series.str.wrap>`\\ \\(width\\, "
+"\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Wrap strings in Series/Index at specified line width."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.zfill <xorbits.pandas.Series.str.zfill>`\\ \\(width\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Pad strings in the Series/Index by prepending '0' characters."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.isalnum <xorbits.pandas.Series.str.isalnum>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are alphanumeric."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.isalpha <xorbits.pandas.Series.str.isalpha>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are alphabetic."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.isdigit <xorbits.pandas.Series.str.isdigit>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are digits."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.isspace <xorbits.pandas.Series.str.isspace>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are whitespace."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.islower <xorbits.pandas.Series.str.islower>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are lowercase."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.isupper <xorbits.pandas.Series.str.isupper>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are uppercase."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ":py:obj:`Series.str.istitle <xorbits.pandas.Series.str.istitle>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are titlecase."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.isnumeric <xorbits.pandas.Series.str.isnumeric>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are numeric."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid ""
+":py:obj:`Series.str.isdecimal <xorbits.pandas.Series.str.isdecimal>`\\ "
+"\\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:460:<autosummary>:1
+msgid "Check whether all characters in each string are decimal."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:480
+msgid "Categorical accessor"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:482
+msgid ""
+"Categorical-dtype specific methods and attributes are available under the"
+" ``Series.cat`` accessor."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:510
+msgid "Sparse accessor"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:512
+msgid ""
+"Sparse-dtype specific methods and attributes are provided under the "
+"``Series.sparse`` accessor."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:534
+msgid "Flags"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:536
+msgid ""
+"Flags refer to attributes of the xorbits.pandas object. Properties of the"
+" dataset (like the date is was recorded, the URL it was accessed from, "
+"etc.) should be stored in :attr:`Series.attrs`."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:548
+msgid "Metadata"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:550
+msgid ""
+":attr:`Series.attrs` is a dictionary for storing global metadata for this"
+" Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:552
+msgid ""
+"``Series.attrs`` is considered experimental and may change without "
+"warning."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:561
+msgid "Plotting"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:562
+msgid ""
+"``Series.plot`` is both a callable method and a namespace attribute for "
+"specific plotting methods of the form ``Series.plot.<kind>``."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:570:<autosummary>:1
+msgid ":py:obj:`Series.plot <xorbits.pandas.Series.plot>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:570:<autosummary>:1
+msgid "alias of :py:class:`xorbits.pandas.plotting.PlotAccessor`"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.area <xorbits.pandas.Series.plot.area>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Draw a stacked area plot."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.bar <xorbits.pandas.Series.plot.bar>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Vertical bar plot."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.barh <xorbits.pandas.Series.plot.barh>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Make a horizontal bar plot."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.box <xorbits.pandas.Series.plot.box>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Make a box plot of the DataFrame columns."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.density <xorbits.pandas.Series.plot.density>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Generate Kernel Density Estimate plot using Gaussian kernels."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.hist <xorbits.pandas.Series.plot.hist>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Draw one histogram of the DataFrame's columns."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.kde <xorbits.pandas.Series.plot.kde>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.line <xorbits.pandas.Series.plot.line>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Plot Series or DataFrame as lines."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid ""
+":py:obj:`Series.plot.pie <xorbits.pandas.Series.plot.pie>`\\ "
+"\\(\\*args\\, \\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:584:<autosummary>:1
+msgid "Generate a pie plot."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:589:<autosummary>:1
+msgid ""
+":py:obj:`Series.hist <xorbits.pandas.Series.hist>`\\ \\(\\[by\\, ax\\, "
+"grid\\, xlabelsize\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:589:<autosummary>:1
+msgid "Draw histogram of the input series using matplotlib."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:591
+msgid "Serialization / IO / conversion"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_pickle <xorbits.pandas.Series.to_pickle>`\\ "
+"\\(path\\[\\, compression\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Pickle (serialize) object to file."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_csv <xorbits.pandas.Series.to_csv>`\\ \\(path\\[\\, "
+"sep\\, na\\_rep\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Write object to a comma-separated values (csv) file."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_dict <xorbits.pandas.Series.to_dict>`\\ \\(\\[into\\, "
+"batch\\_size\\, session\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Convert Series to {label -> value} dict or dict-like object."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_excel <xorbits.pandas.Series.to_excel>`\\ "
+"\\(excel\\_writer\\[\\, sheet\\_name\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Write object to an Excel sheet."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_frame <xorbits.pandas.Series.to_frame>`\\ "
+"\\(\\[name\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Convert Series to DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ":py:obj:`Series.to_xarray <xorbits.pandas.Series.to_xarray>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Return an xarray object from the pandas object."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_hdf <xorbits.pandas.Series.to_hdf>`\\ "
+"\\(path\\_or\\_buf\\, key\\[\\, mode\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Write the contained data to an HDF5 file using HDFStore."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_sql <xorbits.pandas.Series.to_sql>`\\ \\(name\\, "
+"con\\[\\, schema\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Write records stored in a DataFrame to a SQL database."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_json <xorbits.pandas.Series.to_json>`\\ "
+"\\(\\[path\\_or\\_buf\\, orient\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Convert the object to a JSON string."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_string <xorbits.pandas.Series.to_string>`\\ "
+"\\(\\[buf\\, na\\_rep\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Render a string representation of the Series."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_clipboard <xorbits.pandas.Series.to_clipboard>`\\ "
+"\\(\\[excel\\, sep\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Copy object to the system clipboard."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_latex <xorbits.pandas.Series.to_latex>`\\ \\(\\[buf\\,"
+" columns\\, col\\_space\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Render object to a LaTeX tabular, longtable, or nested table."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid ""
+":py:obj:`Series.to_markdown <xorbits.pandas.Series.to_markdown>`\\ "
+"\\(\\[buf\\, mode\\, index\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:607:<autosummary>:1
+msgid "Print Series in Markdown-friendly format."
+msgstr ""
+

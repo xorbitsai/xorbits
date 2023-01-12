@@ -1,0 +1,335 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/pandas/general_functions.rst:5
+msgid "General functions"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:9
+msgid "Data manipulations"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`melt <xorbits.pandas.melt>`\\ \\(frame\\[\\, id\\_vars\\, "
+"value\\_vars\\, var\\_name\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+"Unpivot a DataFrame from wide to long format, optionally leaving "
+"identifiers set."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`pivot <xorbits.pandas.pivot>`\\ \\(data\\[\\, index\\, "
+"columns\\, values\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Return reshaped DataFrame organized by given index / column values."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`pivot_table <xorbits.pandas.pivot_table>`\\ \\(data\\[\\, "
+"values\\, index\\, columns\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Create a spreadsheet-style pivot table as a DataFrame."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`crosstab <xorbits.pandas.crosstab>`\\ \\(index\\, columns\\[\\, "
+"values\\, rownames\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Compute a simple cross tabulation of two (or more) factors."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`cut <xorbits.pandas.cut>`\\ \\(x\\, bins\\[\\, right\\, "
+"labels\\, retbins\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Bin values into discrete intervals."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`qcut <xorbits.pandas.qcut>`\\ \\(x\\, q\\[\\, labels\\, "
+"retbins\\, precision\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Quantile-based discretization function."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`merge <xorbits.pandas.merge>`\\ \\(df\\, right\\[\\, how\\, "
+"on\\, left\\_on\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Merge DataFrame or named Series objects with a database-style join."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`merge_ordered <xorbits.pandas.merge_ordered>`\\ \\(left\\, "
+"right\\[\\, on\\, left\\_on\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Perform a merge for ordered data with optional filling/interpolation."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`merge_asof <xorbits.pandas.merge_asof>`\\ \\(left\\, right\\[\\,"
+" on\\, left\\_on\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Perform a merge by key distance."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`concat <xorbits.pandas.concat>`\\ \\(objs\\[\\, axis\\, join\\, "
+"ignore\\_index\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+"Concatenate pandas objects along a particular axis with optional set "
+"logic along the other axes."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`get_dummies <xorbits.pandas.get_dummies>`\\ \\(data\\[\\, "
+"prefix\\, prefix\\_sep\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Convert categorical variable into dummy/indicator variables."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`factorize <xorbits.pandas.factorize>`\\ \\(values\\[\\, sort\\, "
+"na\\_sentinel\\, size\\_hint\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Encode the object as an enumerated type or categorical variable."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ":py:obj:`unique <xorbits.pandas.unique>`\\ \\(values\\[\\, method\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Return unique values based on a hash table."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`lreshape <xorbits.pandas.lreshape>`\\ \\(data\\, groups\\[\\, "
+"dropna\\, label\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Reshape wide-format data to long."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+":py:obj:`wide_to_long <xorbits.pandas.wide_to_long>`\\ \\(df\\, "
+"stubnames\\, i\\, j\\[\\, sep\\, suffix\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid "Unpivot a DataFrame from wide to long format."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:31
+msgid "Top-level missing data"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:39:<autosummary>:1
+msgid ":py:obj:`isna <xorbits.pandas.isna>`\\ \\(obj\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:39:<autosummary>:1
+msgid "Detect missing values for an array-like object."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:39:<autosummary>:1
+msgid ":py:obj:`isnull <xorbits.pandas.isnull>`\\ \\(obj\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:39:<autosummary>:1
+msgid ":py:obj:`notna <xorbits.pandas.notna>`\\ \\(obj\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:39:<autosummary>:1
+msgid "Detect non-missing values for an array-like object."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:39:<autosummary>:1
+msgid ":py:obj:`notnull <xorbits.pandas.notnull>`\\ \\(obj\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:41
+msgid "Top-level dealing with numeric data"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:46:<autosummary>:1
+msgid ""
+":py:obj:`to_numeric <xorbits.pandas.to_numeric>`\\ \\(arg\\[\\, errors\\,"
+" downcast\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:46:<autosummary>:1
+msgid "Convert argument to a numeric type."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:48
+msgid "Top-level dealing with datetimelike data"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`to_datetime <xorbits.pandas.to_datetime>`\\ \\(arg\\[\\, "
+"errors\\, dayfirst\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid "Convert argument to datetime."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`to_timedelta <xorbits.pandas.to_timedelta>`\\ \\(arg\\[\\, "
+"unit\\, errors\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid "Convert argument to timedelta."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`date_range <xorbits.pandas.date_range>`\\ \\(\\[start\\, end\\, "
+"periods\\, freq\\, tz\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid "Return a fixed frequency DatetimeIndex."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`bdate_range <xorbits.pandas.bdate_range>`\\ \\(\\[start\\, "
+"end\\, periods\\, freq\\, tz\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+"Return a fixed frequency DatetimeIndex, with business day as the default "
+"frequency."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`period_range <xorbits.pandas.period_range>`\\ \\(\\[start\\, "
+"end\\, periods\\, freq\\, name\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid "Return a fixed frequency PeriodIndex."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`timedelta_range <xorbits.pandas.timedelta_range>`\\ "
+"\\(\\[start\\, end\\, periods\\, freq\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+"Return a fixed frequency TimedeltaIndex, with day as the default "
+"frequency."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`infer_freq <xorbits.pandas.infer_freq>`\\ \\(index\\[\\, "
+"warn\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
+msgid "Infer the most likely frequency given the input index."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:61
+msgid "Top-level dealing with Interval data"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:66:<autosummary>:1
+msgid ""
+":py:obj:`interval_range <xorbits.pandas.interval_range>`\\ \\(\\[start\\,"
+" end\\, periods\\, freq\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:66:<autosummary>:1
+msgid "Return a fixed frequency IntervalIndex."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:68
+msgid "Top-level evaluation"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:73:<autosummary>:1
+msgid ""
+":py:obj:`eval <xorbits.pandas.eval>`\\ \\(expr\\[\\, parser\\, engine\\, "
+"local\\_dict\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:73:<autosummary>:1
+msgid "Evaluate a Python expression as a string using various backends."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:75
+msgid "Hashing"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:83
+msgid "Importing from other DataFrame libraries"
+msgstr ""
+

@@ -1,0 +1,575 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/reference/pandas/groupby.rst:5
+msgid "GroupBy"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:8
+msgid ""
+"GroupBy objects are returned by groupby calls: "
+":func:`xorbits.pandas.DataFrame.groupby`, "
+":func:`xorbits.pandas.Series.groupby`, etc."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:12
+msgid "Indexing, iteration"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.__iter__ "
+"<xorbits.pandas.groupby.DataFrameGroupBy.__iter__>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.__iter__ "
+"<xorbits.pandas.groupby.SeriesGroupBy.__iter__>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:34
+msgid "Function application helper"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:39:<autosummary>:1
+msgid ":py:obj:`NamedAgg <xorbits.pandas.NamedAgg>`\\ \\(column\\, aggfunc\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:43
+msgid "Function application"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.apply "
+"<xorbits.pandas.groupby.SeriesGroupBy.apply>`\\ \\(func\\, \\*args\\[\\, "
+"...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid "Apply function ``func`` group-wise and combine the results together."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.apply "
+"<xorbits.pandas.groupby.DataFrameGroupBy.apply>`\\ \\(func\\, "
+"\\*args\\[\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.agg <xorbits.pandas.groupby.SeriesGroupBy.agg>`\\ "
+"\\(\\[func\\, method\\, combine\\_size\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid "Aggregate using one or more operations over the specified axis."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.agg "
+"<xorbits.pandas.groupby.DataFrameGroupBy.agg>`\\ \\(\\[func\\, method\\, "
+"...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.aggregate "
+"<xorbits.pandas.groupby.SeriesGroupBy.aggregate>`\\ \\(\\[func\\, "
+"method\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.aggregate "
+"<xorbits.pandas.groupby.DataFrameGroupBy.aggregate>`\\ \\(\\[func\\, "
+"method\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.transform "
+"<xorbits.pandas.groupby.SeriesGroupBy.transform>`\\ \\(f\\, \\*args\\[\\,"
+" dtypes\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+"Call function producing a like-indexed Series on each group and return a "
+"Series having the same indexes as the original object filled with the "
+"transformed values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.transform "
+"<xorbits.pandas.groupby.DataFrameGroupBy.transform>`\\ \\(f\\, "
+"\\*args\\[\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
+msgid ""
+"Call function producing a like-indexed DataFrame on each group and return"
+" a DataFrame having the same indexes as the original object filled with "
+"the transformed values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:61
+msgid "``DataFrameGroupBy`` computations / descriptive stats"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.all "
+"<xorbits.pandas.groupby.DataFrameGroupBy.all>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Return True if all values in the group are truthful, else False."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.any "
+"<xorbits.pandas.groupby.DataFrameGroupBy.any>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Return True if any value in the group is truthful, else False."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.backfill "
+"<xorbits.pandas.groupby.DataFrameGroupBy.backfill>`\\ \\(\\[limit\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Backward fill the values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.bfill "
+"<xorbits.pandas.groupby.DataFrameGroupBy.bfill>`\\ \\(\\[limit\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.count "
+"<xorbits.pandas.groupby.DataFrameGroupBy.count>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute count of group, excluding missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.cumcount "
+"<xorbits.pandas.groupby.DataFrameGroupBy.cumcount>`\\ "
+"\\(\\[ascending\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Number each item in each group from 0 to the length of that group - 1."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.cummax "
+"<xorbits.pandas.groupby.DataFrameGroupBy.cummax>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Cumulative max for each group."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.cummin "
+"<xorbits.pandas.groupby.DataFrameGroupBy.cummin>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Cumulative min for each group."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.cumprod "
+"<xorbits.pandas.groupby.DataFrameGroupBy.cumprod>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Cumulative product for each group."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.cumsum "
+"<xorbits.pandas.groupby.DataFrameGroupBy.cumsum>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Cumulative sum for each group."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.ffill "
+"<xorbits.pandas.groupby.DataFrameGroupBy.ffill>`\\ \\(\\[limit\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Forward fill the values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.fillna "
+"<xorbits.pandas.groupby.DataFrameGroupBy.fillna>`\\ \\(\\[value\\, "
+"method\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Fill NA/NaN values using the specified method."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.head "
+"<xorbits.pandas.groupby.DataFrameGroupBy.head>`\\ \\(\\[n\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Return first n rows of each group."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.max "
+"<xorbits.pandas.groupby.DataFrameGroupBy.max>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute max of group values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.mean "
+"<xorbits.pandas.groupby.DataFrameGroupBy.mean>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute mean of groups, excluding missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.min "
+"<xorbits.pandas.groupby.DataFrameGroupBy.min>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute min of group values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.nunique "
+"<xorbits.pandas.groupby.DataFrameGroupBy.nunique>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid "Return DataFrame with counts of unique elements in each position."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.prod "
+"<xorbits.pandas.groupby.DataFrameGroupBy.prod>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute prod of group values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.sample "
+"<xorbits.pandas.groupby.DataFrameGroupBy.sample>`\\ \\(\\[n\\, frac\\, "
+"replace\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Return a random sample of items from each group."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.sem "
+"<xorbits.pandas.groupby.DataFrameGroupBy.sem>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute standard error of the mean of groups, excluding missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.size "
+"<xorbits.pandas.groupby.DataFrameGroupBy.size>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute group sizes."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.skew "
+"<xorbits.pandas.groupby.DataFrameGroupBy.skew>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Return unbiased skew over requested axis."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.std "
+"<xorbits.pandas.groupby.DataFrameGroupBy.std>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute standard deviation of groups, excluding missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.sum "
+"<xorbits.pandas.groupby.DataFrameGroupBy.sum>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute sum of group values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+msgid ""
+":py:obj:`DataFrameGroupBy.var "
+"<xorbits.pandas.groupby.DataFrameGroupBy.var>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:114:<autosummary>:1
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Compute variance of groups, excluding missing values."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:116
+msgid "``SeriesGroupBy`` computations / descriptive stats"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.all <xorbits.pandas.groupby.SeriesGroupBy.all>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.any <xorbits.pandas.groupby.SeriesGroupBy.any>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.backfill "
+"<xorbits.pandas.groupby.SeriesGroupBy.backfill>`\\ \\(\\[limit\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.bfill "
+"<xorbits.pandas.groupby.SeriesGroupBy.bfill>`\\ \\(\\[limit\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.count "
+"<xorbits.pandas.groupby.SeriesGroupBy.count>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.cumcount "
+"<xorbits.pandas.groupby.SeriesGroupBy.cumcount>`\\ \\(\\[ascending\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.cummax "
+"<xorbits.pandas.groupby.SeriesGroupBy.cummax>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.cummin "
+"<xorbits.pandas.groupby.SeriesGroupBy.cummin>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.cumprod "
+"<xorbits.pandas.groupby.SeriesGroupBy.cumprod>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.cumsum "
+"<xorbits.pandas.groupby.SeriesGroupBy.cumsum>`\\ \\(\\[axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.ffill "
+"<xorbits.pandas.groupby.SeriesGroupBy.ffill>`\\ \\(\\[limit\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.fillna "
+"<xorbits.pandas.groupby.SeriesGroupBy.fillna>`\\ \\(\\[value\\, method\\,"
+" axis\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.head "
+"<xorbits.pandas.groupby.SeriesGroupBy.head>`\\ \\(\\[n\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.max <xorbits.pandas.groupby.SeriesGroupBy.max>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.mean "
+"<xorbits.pandas.groupby.SeriesGroupBy.mean>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.min <xorbits.pandas.groupby.SeriesGroupBy.min>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.nunique "
+"<xorbits.pandas.groupby.SeriesGroupBy.nunique>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid "Return number of unique elements in the group."
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.prod "
+"<xorbits.pandas.groupby.SeriesGroupBy.prod>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.sample "
+"<xorbits.pandas.groupby.SeriesGroupBy.sample>`\\ \\(\\[n\\, frac\\, "
+"replace\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.sem <xorbits.pandas.groupby.SeriesGroupBy.sem>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.size "
+"<xorbits.pandas.groupby.SeriesGroupBy.size>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.skew "
+"<xorbits.pandas.groupby.SeriesGroupBy.skew>`\\ \\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.std <xorbits.pandas.groupby.SeriesGroupBy.std>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.sum <xorbits.pandas.groupby.SeriesGroupBy.sum>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:173:<autosummary>:1
+msgid ""
+":py:obj:`SeriesGroupBy.var <xorbits.pandas.groupby.SeriesGroupBy.var>`\\ "
+"\\(\\*\\*kw\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/groupby.rst:175
+msgid "Plotting and visualization"
+msgstr ""
+
