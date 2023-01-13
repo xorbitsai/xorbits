@@ -164,7 +164,6 @@ class BuildWeb(Command):
     user_options = []
     _web_src_path = "xorbits/web/ui"
     _web_dest_path = "xorbits/web/ui/static/bundle.js"
-    _mars_web_path = "../third_party/_mars/mars/services/web/static"
     _commands = [
         ["npm", "install"],
         ["npm", "run", "build"],
@@ -184,29 +183,22 @@ class BuildWeb(Command):
         npm_path = shutil.which("npm")
         web_src_path = os.path.join(repo_root, *cls._web_src_path.split("/"))
         web_dest_path = os.path.join(repo_root, *cls._web_dest_path.split("/"))
-        mars_web_path = os.path.join(repo_root, *cls._mars_web_path.split("/"))
 
-        if not os.path.exists(mars_web_path):
-            if npm_path is None:
-                warnings.warn("Cannot find NPM, may affect displaying Mars Web")
-                return
-            else:
-                replacements = {"npm": npm_path}
-                cmd_errored = False
-                for cmd in cls._commands:
-                    cmd = [replacements.get(c, c) for c in cmd]
-                    proc_result = subprocess.run(cmd, cwd=web_src_path)
-                    if proc_result.returncode != 0:
-                        warnings.warn(f'Failed when running `{" ".join(cmd)}`')
-                        cmd_errored = True
-                        break
-                if not cmd_errored:
-                    assert os.path.exists(web_dest_path)
-
-            static_bundle_path = os.path.join(web_src_path, "static")
-            if os.path.exists(mars_web_path):
-                shutil.rmtree(mars_web_path)
-            shutil.move(static_bundle_path, mars_web_path)
+        if npm_path is None:
+            warnings.warn("Cannot find NPM, may affect displaying Mars Web")
+            return
+        else:
+            replacements = {"npm": npm_path}
+            cmd_errored = False
+            for cmd in cls._commands:
+                cmd = [replacements.get(c, c) for c in cmd]
+                proc_result = subprocess.run(cmd, cwd=web_src_path)
+                if proc_result.returncode != 0:
+                    warnings.warn(f'Failed when running `{" ".join(cmd)}`')
+                    cmd_errored = True
+                    break
+            if not cmd_errored:
+                assert os.path.exists(web_dest_path)
 
 
 CustomInstall.register_pre_command("build_web")
