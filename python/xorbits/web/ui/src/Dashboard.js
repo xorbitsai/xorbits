@@ -21,8 +21,6 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Grid from '@mui/material/Unstable_Grid2'
 import sum from 'lodash/sum'
-import uniq from 'lodash/uniq'
-import without from 'lodash/without'
 import PropTypes from 'prop-types'
 import React from 'react'
 
@@ -34,7 +32,9 @@ class NodeInfo extends React.Component {
   constructor(props) {
     super(props)
     this.nodeRole = props.nodeRole.toLowerCase()
-    this.state = {}
+    this.state = {
+      version: {},
+    }
   }
 
   refreshInfo() {
@@ -48,6 +48,19 @@ class NodeInfo extends React.Component {
         state[this.nodeRole] = res.nodes
         this.setState(state)
       })
+
+    if (JSON.stringify(this.state.version) === '{}') {
+      fetch(`/api/xorbits/version`)
+        .then((res) => res.json())
+        .then((res) => {
+          const { state } = this
+          state['version'] = {
+            release: 'v' + res['version'],
+            commit: res['full-revisionid'],
+          }
+          this.setState(state)
+        })
+    }
   }
 
   componentDidMount() {
@@ -78,17 +91,6 @@ class NodeInfo extends React.Component {
       cpu_avail: gatherResourceStats('cpu_avail'),
       memory_total: gatherResourceStats('memory_total'),
       memory_avail: gatherResourceStats('memory_avail'),
-      git_branches: uniq(
-        without(
-          Object.values(roleData).map((val) => {
-            const { git_info } = val.env
-            return git_info === undefined
-              ? undefined
-              : `${git_info.hash} ${git_info.ref}`
-          }),
-          undefined
-        )
-      ),
     }
     resourceStats.cpu_used = resourceStats.cpu_total - resourceStats.cpu_avail
     resourceStats.memory_used =
@@ -140,16 +142,11 @@ class NodeInfo extends React.Component {
             </StyledTableCell>
           </StyledTableRow>
           <StyledTableRow>
-            <StyledTableCell>Git Branch</StyledTableCell>
+            <StyledTableCell>Version</StyledTableCell>
             <StyledTableCell>
               <Grid container>
-                <Grid>
-                  {resourceStats.git_branches.map((branch, idx) => (
-                    <div key={`${this.nodeRole}_git_branch_${idx.toString()}`}>
-                      {branch}
-                    </div>
-                  ))}
-                </Grid>
+                <Grid xs={4}>Release: {this.state.version.release}</Grid>
+                <Grid xs={8}>Commit: {this.state.version.commit}</Grid>
               </Grid>
             </StyledTableCell>
           </StyledTableRow>

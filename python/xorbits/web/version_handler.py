@@ -11,19 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
 
 from .._mars.services.web import MarsRequestHandler
 
 
-class XorbitsIndexHandler(MarsRequestHandler):
-    def _get_index_page(self):
-        index_file = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "ui", "index.html"
-        )
-        with open(index_file, "r") as file_obj:
-            self._index_page = file_obj.read()
-        return self._index_page
+class XorbitsVersionHandler(MarsRequestHandler):
+    @staticmethod
+    def _get_version():
+        from .._version import get_versions
+
+        return get_versions()
 
     def get(self):
-        self.write(self._get_index_page())
+        self.write(self._get_version())
