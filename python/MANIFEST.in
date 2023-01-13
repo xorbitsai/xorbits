@@ -9,7 +9,7 @@ include setup.cfg
 include pyproject.toml
 include xorbits/_mars/lib/mmh3_src/*
 include xorbits/web/ui/index.html
-global-include xorbits/_mars/services/web/static/**/*
+global-include xorbits/web/ui/static/**/*
 include xorbits/_mars/deploy/oscar/file-logging.conf
 global-exclude .DS_Store
 include versioneer.py
