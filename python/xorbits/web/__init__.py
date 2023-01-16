@@ -15,7 +15,15 @@
 
 
 def _install():
-    from .._mars.services.web.indexhandler import handlers
+    import os
+
+    from tornado import web
+
+    from .._mars.services.web.handlers import handlers, static_handlers
     from .index_handler import XorbitsIndexHandler
 
     handlers["/"] = XorbitsIndexHandler
+    static_handlers[r"[^\?\&]*/static/(.*)"] = (
+        web.StaticFileHandler,
+        {"path": os.path.join(os.path.dirname(__file__), "ui", "static")},
+    )
