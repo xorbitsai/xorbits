@@ -1,4 +1,5 @@
-ARG BASE_CONTAINER=xprobe/xorbits:base
+ARG PYTHON_VERSION=3.9
+ARG BASE_CONTAINER=xprobe/xorbits:base-py${PYTHON_VERSION}
 FROM ${BASE_CONTAINER}
 
 # Run this under `xorbits` dir

@@ -14,6 +14,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.7", "3.8", "3.9", "3.10" ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -29,12 +32,12 @@ jobs:
 
       - name: Build and push Docker image
         shell: bash
+        if: ${{ github.repository == 'ChengjieLi28/xorbits' }}
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
-        if: ${{ github.repository == 'xprobe-inc/xorbits' }}
+          PY_VERSION: ${{ matrix.python-version }}
         run: |
           if [[ "$GITHUB_REF" =~ ^"refs/tags/" ]]; then
-            export GITHUB_TAG_REF="$GITHUB_REF"
             export GIT_TAG=$(echo "$GITHUB_REF" | sed -e "s/refs\/tags\///g")
           else
             export GIT_BRANCH=$(echo "$GITHUB_REF" | sed -e "s/refs\/heads\///g")
@@ -68,6 +71,20 @@ jobs:
               fi
               export IMAGE_TAG="nightly-$branch"
             fi
-            docker build -t "$DOCKER_ORG/xorbits:$IMAGE_TAG" --progress=plain -f python/xorbits/deploy/docker/Dockerfile .
-            docker push "$DOCKER_ORG/xorbits:$IMAGE_TAG"
+            docker build -t "$DOCKER_ORG/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.base . --build-arg PYTHON_VERSION=$PY_VERSION
+            docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-${PY_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=$PY_VERSION
+            docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-${PY_VERSION}"
           done
+          
+      - name: Set default image
+        shell: bash
+        if: matrix.python-version == '3.9' && ${{ github.repository == 'ChengjieLi28/xorbits' }}
+        env:
+          DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
+          PY_VERSION: ${{ matrix.python-version }}
+        run: |
+          if [[ "$GITHUB_REF" =~ ^"refs/tags/" ]]; then
+            export GIT_TAG=$(echo "$GITHUB_REF" | sed -e "s/refs\/tags\///g")
+            docker tag "$DOCKER_ORG/xorbits:${GIT_TAG}-${PY_VERSION}" "$DOCKER_ORG/xorbits:${GIT_TAG}"
+            docker push "$DOCKER_ORG/xorbits:${GIT_TAG}"
+          fi

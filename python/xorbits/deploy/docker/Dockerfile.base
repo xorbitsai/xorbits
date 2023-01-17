@@ -1,7 +1,10 @@
 ARG BASE_CONTAINER=continuumio/miniconda3:4.12.0
 FROM ${BASE_CONTAINER}
 
-RUN /opt/conda/bin/conda install \
+ARG PYTHON_VERSION=3.9
+
+RUN /opt/conda/bin/conda install python=${PYTHON_VERSION} && \
+    /opt/conda/bin/conda install \
     cloudpickle \
     cython \
     greenlet \
@@ -25,6 +28,7 @@ RUN /opt/conda/bin/conda install \
   && pip install \
     adlfs \
     fsspec>=2022.7.1,!=2022.8.0 \
+    s3fs \
   && /opt/conda/bin/conda clean --all -f -y
 
 SHELL ["/bin/bash", "-c"]
