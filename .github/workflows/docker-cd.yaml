@@ -71,7 +71,7 @@ jobs:
               fi
               export IMAGE_TAG="nightly-$branch"
             fi
-            docker build -t "$DOCKER_ORG/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.base . --build-arg PYTHON_VERSION=$PY_VERSION
+            docker build -t "xprobe/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.base . --build-arg PYTHON_VERSION=$PY_VERSION
             docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-${PY_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=$PY_VERSION
             docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-${PY_VERSION}"
           done
