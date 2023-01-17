@@ -12,20 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import urllib.request
+from .._mars.services.web import MarsRequestHandler
 
 
-def test_web_ui(setup_with_web):
-    sess = setup_with_web
-    endpoint = sess.get_web_endpoint()
-    req = urllib.request.Request(endpoint)
-    response = urllib.request.urlopen(req)
-    assert response.code == 200
-    assert b"Xorbits" in response.read()
+class XorbitsVersionHandler(MarsRequestHandler):
+    @staticmethod
+    def _get_version():
+        from .._version import get_versions
 
-    req = urllib.request.Request(endpoint + "/api/xorbits/version")
-    response = urllib.request.urlopen(req)
-    assert response.code == 200
-    body = response.read()
-    assert b"full-revisionid" in body
-    assert b"version" in body
+        return get_versions()
+
+    def get(self):
+        self.write(self._get_version())

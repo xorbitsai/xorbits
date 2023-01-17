@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +20,11 @@ def _install():
 
     from .._mars.services.web.handlers import handlers, static_handlers
     from .index_handler import XorbitsIndexHandler
+    from .version_handler import XorbitsVersionHandler
 
     handlers["/"] = XorbitsIndexHandler
     static_handlers[r"[^\?\&]*/static/(.*)"] = (
         web.StaticFileHandler,
         {"path": os.path.join(os.path.dirname(__file__), "ui", "static")},
     )
+    handlers["/api/xorbits/version"] = XorbitsVersionHandler
