@@ -22,3 +22,10 @@ def test_web_ui(setup_with_web):
     response = urllib.request.urlopen(req)
     assert response.code == 200
     assert b"Xorbits" in response.read()
+
+    req = urllib.request.Request(endpoint + "/api/xorbits/version")
+    response = urllib.request.urlopen(req)
+    assert response.code == 200
+    body = response.read()
+    assert b"full-revisionid" in body
+    assert b"version" in body
