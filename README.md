@@ -131,10 +131,10 @@ with other upcoming ones we will propose, stay tuned!
 
 ## Getting involved
 
-| Platform                                                            | Purpose                                            |
-|---------------------------------------------------------------------|----------------------------------------------------|
-| [Discourse Forum](https://discuss.xorbits.io)                       | Asking usage questions and discussing development. |
-| [Github Issues](https://github.com/xprobe-inc/xorbits/issues)       | Reporting bugs and filing feature requests.        |
-| [Slack](https://slack.xorbits.io)                                   | Collaborating with other Xorbits users.            |
-| [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits) | Asking questions about how to use Xorbits.         |
-| [Twitter](https://twitter.com/xorbitsio)                            | Staying up-to-date on new features.                |
+| Platform                                                                                       | Purpose                                            |
+|------------------------------------------------------------------------------------------------|----------------------------------------------------|
+| [Discourse Forum](https://discuss.xorbits.io)                                                  | Asking usage questions and discussing development. |
+| [Github Issues](https://github.com/xprobe-inc/xorbits/issues)                                  | Reporting bugs and filing feature requests.        |
+| [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1ltk5n9dc-P15F5VeRllDydoyUCmuGQA)  | Collaborating with other Xorbits users.            |
+| [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits)                            | Asking questions about how to use Xorbits.         |
+| [Twitter](https://twitter.com/xorbitsio)                                                       | Staying up-to-date on new features.                |
