@@ -126,7 +126,7 @@ Getting involved
 +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
 +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-| `Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1ltk5n9dc-P15F5VeRllDydoyUCmuGQA>`_ | Collaborating with other Xorbits users.            |
+| `Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg>`_ | Collaborating with other Xorbits users.            |
 +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 | `StackOverflow <https://stackoverflow.com/questions/tagged/xorbits>`_                            | Asking questions about how to use Xorbits.         |
 +--------------------------------------------------------------------------------------------------+----------------------------------------------------+

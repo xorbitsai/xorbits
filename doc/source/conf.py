@@ -56,7 +56,7 @@ html_theme_options = {
         },
         {
             "name": "Slack",
-            "url": "https://join.slack.com/t/xorbitsio/shared_invite/zt-1ltk5n9dc-P15F5VeRllDydoyUCmuGQA",
+            "url": "https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg",
             "icon": "fa-brands fa-slack",
             "type": "fontawesome",
         },

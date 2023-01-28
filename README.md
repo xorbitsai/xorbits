@@ -8,7 +8,7 @@
 [![Coverage](https://img.shields.io/codecov/c/github/xprobe-inc/xorbits?style=for-the-badge)](https://codecov.io/gh/xprobe-inc/xorbits)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/xprobe-inc/xorbits/python.yaml?branch=main&style=for-the-badge&label=GITHUB%20ACTIONS&logo=github)](https://actions-badge.atrox.dev/xprobe-inc/xorbits/goto?ref=main)
 [![Doc](https://readthedocs.org/projects/xorbits/badge/?version=latest&style=for-the-badge)](https://doc.xorbits.io)
-[![Slack](https://img.shields.io/badge/join_Slack-781FF5.svg?logo=slack&style=for-the-badge)](https://join.slack.com/t/xorbitsio/shared_invite/zt-1ltk5n9dc-P15F5VeRllDydoyUCmuGQA)
+[![Slack](https://img.shields.io/badge/join_Slack-781FF5.svg?logo=slack&style=for-the-badge)](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg)
 
 ## What is it?
 Xorbits is a scalable Python data science framework that aims to **scale the whole Python data science world,
@@ -135,6 +135,6 @@ with other upcoming ones we will propose, stay tuned!
 |------------------------------------------------------------------------------------------------|----------------------------------------------------|
 | [Discourse Forum](https://discuss.xorbits.io)                                                  | Asking usage questions and discussing development. |
 | [Github Issues](https://github.com/xprobe-inc/xorbits/issues)                                  | Reporting bugs and filing feature requests.        |
-| [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1ltk5n9dc-P15F5VeRllDydoyUCmuGQA)  | Collaborating with other Xorbits users.            |
+| [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg)  | Collaborating with other Xorbits users.            |
 | [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits)                            | Asking questions about how to use Xorbits.         |
 | [Twitter](https://twitter.com/xorbitsio)                                                       | Staying up-to-date on new features.                |

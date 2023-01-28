@@ -266,7 +266,7 @@ msgid "Reporting bugs and filing feature requests."
 msgstr ""
 
 #: ../../source/index.rst:129
-msgid "`Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1ltk5n9dc-P15F5VeRllDydoyUCmuGQA>`_"
+msgid "`Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg>`_"
 msgstr ""
 
 #: ../../source/index.rst:129
