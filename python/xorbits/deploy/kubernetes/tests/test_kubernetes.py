@@ -77,11 +77,31 @@ def _collect_coverage():
 
 
 def _build_docker_images():
+    base_image_name = "xorbits-test-base-image"
+    base_docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile.base").removeprefix(
+        XORBITS_ROOT + "/"
+    )
+
     image_name = "xorbits-test-image:" + uuid.uuid1().hex
     docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile").removeprefix(
         XORBITS_ROOT + "/"
     )
     try:
+        base_build_proc = subprocess.Popen(
+            [
+                "docker",
+                "build",
+                "-f",
+                base_docker_file_path,
+                "-t",
+                base_image_name,
+                ".",
+            ],
+            cwd=XORBITS_ROOT,
+        )
+        if base_build_proc.wait() != 0:
+            raise SystemError("Executing docker base build failed.")
+
         build_proc = subprocess.Popen(
             [
                 "docker",
@@ -91,12 +111,15 @@ def _build_docker_images():
                 "-t",
                 image_name,
                 ".",
+                "--build-arg",
+                f"BASE_CONTAINER={base_image_name}",
             ],
             cwd=XORBITS_ROOT,
         )
         if build_proc.wait() != 0:
             raise SystemError("Executing docker build failed.")
     except:  # noqa: E722
+        _remove_docker_image(base_image_name)
         _remove_docker_image(image_name)
         raise
     return image_name
