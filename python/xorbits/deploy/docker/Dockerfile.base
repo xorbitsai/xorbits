@@ -1,17 +1,43 @@
 ARG BASE_CONTAINER=continuumio/miniconda3:4.12.0
-FROM ${BASE_CONTAINER}
-
 ARG PYTHON_VERSION=3.9
+FROM ${BASE_CONTAINER} AS base
 
-RUN /opt/conda/bin/conda install python=${PYTHON_VERSION} && \
-    /opt/conda/bin/conda install \
+FROM base AS py3.7-base
+SHELL ["/bin/bash", "-c"]
+ARG PYTHON_VERSION=3.9
+RUN if [ "$PYTHON_VERSION" == "3.7" ] ; then /opt/conda/bin/conda install python=3.7 \
+    && /opt/conda/bin/conda install numpy\<=1.21.6 \
+    && /opt/conda/bin/conda install -c conda-forge pandas\<=1.3.5 ; fi
+
+FROM base AS py3.8-base
+SHELL ["/bin/bash", "-c"]
+ARG PYTHON_VERSION=3.9
+RUN if [ "$PYTHON_VERSION" == "3.8" ] ; then /opt/conda/bin/conda install python=3.8 \
+    && /opt/conda/bin/conda install numpy\>=1.14.0 \
+    && /opt/conda/bin/conda install -c conda-forge pandas\>=1.5.0 ; fi
+
+FROM base AS py3.9-base
+SHELL ["/bin/bash", "-c"]
+ARG PYTHON_VERSION=3.9
+RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then /opt/conda/bin/conda install python=3.9 \
+    && /opt/conda/bin/conda install numpy\>=1.14.0 \
+    && /opt/conda/bin/conda install -c conda-forge pandas\>=1.5.0 ; fi
+
+FROM base AS py3.10-base
+SHELL ["/bin/bash", "-c"]
+ARG PYTHON_VERSION=3.9
+RUN if [ "$PYTHON_VERSION" == "3.10" ] ; then /opt/conda/bin/conda install python=3.10 \
+    && /opt/conda/bin/conda install numpy\>=1.14.0 \
+    && /opt/conda/bin/conda install -c conda-forge pandas\>=1.5.0 ; fi
+
+FROM py${PYTHON_VERSION}-base AS final
+RUN /opt/conda/bin/conda install \
     cloudpickle \
     cython \
     greenlet \
     mkl \
     numba \
     numexpr \
-    numpy\>=1.14.0 \
     psutil \
     scikit-learn \
     scipy \
@@ -21,7 +47,6 @@ RUN /opt/conda/bin/conda install python=${PYTHON_VERSION} && \
   && /opt/conda/bin/conda install -c conda-forge \
     libiconv \
     pyarrow\>=1.0 \
-    pandas\>=1.5.0 \
     tiledb-py \
     python-kubernetes \
     uvloop \
@@ -30,8 +55,6 @@ RUN /opt/conda/bin/conda install python=${PYTHON_VERSION} && \
     fsspec>=2022.7.1,!=2022.8.0 \
     s3fs \
   && /opt/conda/bin/conda clean --all -f -y
-
-SHELL ["/bin/bash", "-c"]
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 14.21.1
