@@ -78,7 +78,7 @@ jobs:
           
       - name: Set default image
         shell: bash
-        if: matrix.python-version == '3.9' && ${{ github.repository == 'xprobe-inc/xorbits' }}
+        if: ${{ matrix.python-version == '3.9' }} && ${{ github.repository == 'xprobe-inc/xorbits' }}
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
           PY_VERSION: ${{ matrix.python-version }}
