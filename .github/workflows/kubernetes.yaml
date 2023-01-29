@@ -35,6 +35,7 @@ jobs:
         uses: medyagh/setup-minikube@master
         with:
           driver: none
+          kubernetes-version: v1.23.12
 
       - name: Install kubernetes dependencies
         shell: bash
