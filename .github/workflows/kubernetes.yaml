@@ -32,11 +32,11 @@ jobs:
           python-version: "3.9"
 
       - name: Start minikube
-        uses: medyagh/setup-minikube@latest
+        uses: medyagh/setup-minikube@master
         with:
           driver: none
           extra-config: 'kubelet.cgroup-driver=systemd'
-          start-args: '--force-systemd=true'
+          start-args: '--force-systemd=true --container-runtime=containerd'
 
       - name: Install kubernetes dependencies
         shell: bash
