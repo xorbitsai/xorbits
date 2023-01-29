@@ -35,6 +35,7 @@ jobs:
         uses: medyagh/setup-minikube@master
         with:
           driver: none
+          extra-config: 'kubelet.cgroup-driver=systemd'
 
       - name: Install kubernetes dependencies
         shell: bash
