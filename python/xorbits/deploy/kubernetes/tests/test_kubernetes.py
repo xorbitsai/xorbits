@@ -122,7 +122,7 @@ def _build_docker_images():
         _remove_docker_image(base_image_name)
         _remove_docker_image(image_name)
         raise
-    return image_name
+    return base_image_name, image_name
 
 
 def _remove_docker_image(image_name, raises=True):
@@ -155,7 +155,7 @@ def _load_docker_env():
 @contextmanager
 def _start_kube_cluster(**kwargs):
     _load_docker_env()
-    image_name = _build_docker_images()
+    base_image_name, image_name = _build_docker_images()
 
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s.config.new_client_from_config()
@@ -204,6 +204,7 @@ def _start_kube_cluster(**kwargs):
                 pass
         _collect_coverage()
         _remove_docker_image(image_name, False)
+        _remove_docker_image(base_image_name, False)
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
