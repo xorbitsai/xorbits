@@ -36,6 +36,7 @@ jobs:
         with:
           driver: none
           extra-config: 'kubelet.cgroup-driver=systemd'
+          start-args: '--force-systemd=true'
 
       - name: Install kubernetes dependencies
         shell: bash
