@@ -457,7 +457,7 @@ class ReplicationConfig(KubeConfig):
         resource_request: Optional["ResourceConfig"] = None,
         resource_limit: Optional["ResourceConfig"] = None,
         liveness_probe: Optional["ProbeConfig"] = None,
-        readiness_probe: Optional["ProbeConfig"] = None,
+        startup_probe: Optional["ProbeConfig"] = None,
         pre_stop_command: Optional[List[str]] = None,
         kind: Optional[str] = None,
         **kwargs,
@@ -477,7 +477,7 @@ class ReplicationConfig(KubeConfig):
         self._resource_limit = resource_limit
 
         self._liveness_probe = liveness_probe
-        self._readiness_probe = readiness_probe
+        self._startup_probe = startup_probe
 
         self._pre_stop_command = pre_stop_command
         self._use_local_image = kwargs.pop("use_local_image", False)
@@ -569,8 +569,8 @@ class ReplicationConfig(KubeConfig):
                 "livenessProbe": self._liveness_probe.build()
                 if self._liveness_probe
                 else None,
-                "readinessProbe": self._readiness_probe.build()
-                if self._readiness_probe
+                "startupProbe": self._startup_probe.build()
+                if self._startup_probe
                 else None,
                 "lifecycle": lifecycle_dict or None,
                 "imagePullPolicy": "Never" if self._use_local_image else None,
@@ -651,7 +651,8 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             replicas,
             resource_request=req_res,
             resource_limit=limit_res if limit_resources else None,
-            readiness_probe=self.config_readiness_probe(),
+            liveness_probe=self.config_liveness_probe(),
+            startup_probe=self.config_startup_probe(),
             **kwargs,
         )
         if service_port:
@@ -686,7 +687,13 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         if self._modules:
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
 
-    def config_readiness_probe(self):
+    # def config_readiness_probe(self):
+    #     raise NotImplementedError  # pragma: no cover
+
+    def config_liveness_probe(self):
+        raise NotImplementedError  # pragma: no cover
+
+    def config_startup_probe(self):
         raise NotImplementedError  # pragma: no cover
 
     @staticmethod
@@ -718,8 +725,18 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         if self._web_port:
             self.add_port(self._web_port)
 
-    def config_readiness_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
+    # def config_readiness_probe(self) -> "TcpSocketProbeConfig":
+    #     return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
+
+    def config_liveness_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
+        )
+
+    def config_startup_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
+        )
 
     def build_container_command(self):
         cmd = super().build_container_command()
@@ -788,8 +805,18 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         if supervisor_web_port:
             self.add_env("MARS_K8S_SUPERVISOR_WEB_PORT", supervisor_web_port)
 
-    def config_readiness_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
+    # def config_readiness_probe(self) -> "TcpSocketProbeConfig":
+    #     return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
+
+    def config_liveness_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
+        )
+
+    def config_startup_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
+        )
 
     def build_container_command(self):
         cmd = super().build_container_command()
