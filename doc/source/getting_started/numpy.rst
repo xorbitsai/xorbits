@@ -117,8 +117,13 @@ elements that we want, instead of the step::
 
 
 However, the way of loading and saving arrays is quite different. Please see :ref:`io <routines.io>` for
-detailed info. Here's an example of loading an HDF5 file::
+detailed info. Here's an example of creating and loading an HDF5 file::
 
+    >>> import h5py                            # if you don't have h5py installed, run "pip install h5py" first
+    >>> arr = np.random.randn(1000)
+    >>> with h5py.File('t.hdf5', 'w') as f:
+    >>>     dset = f.create_dataset("t", data=arr)
+    >>>
     >>> a = np.from_hdf5("t.hdf5", dataset="t")
 
 Once an ndarray is created, use ``to_numpy`` to convert it to a local NumPy ndarray::
@@ -228,7 +233,7 @@ create a new one.
 ::
 
     >>> a = np.ones((2, 3), dtype=int)
-    >>> b = rg.random((2, 3))
+    >>> b = np.random.random((2, 3))
     >>> a *= 3
     >>> a
     array([[3, 3, 3],
@@ -244,7 +249,7 @@ more general or precise one (a behavior known as upcasting).
 ::
 
     >>> a = np.ones(3, dtype=np.int32)
-    >>> b = np.linspace(0, pi, 3)
+    >>> b = np.linspace(0, np.pi, 3)
     >>> b.dtype.name
     'float64'
     >>> c = a + b
@@ -579,7 +584,7 @@ array along its horizontal axis, either by specifying the number of
 equally shaped arrays to return, or by specifying the columns after
 which the division should occur::
 
-    >>> a = np.floor(10 * rg.random((2, 12)))
+    >>> a = np.floor(10 * np.random.random((2, 12)))
     >>> a
     array([[6., 7., 6., 9., 0., 5., 4., 0., 6., 8., 5., 2.],
            [8., 5., 5., 7., 1., 8., 6., 7., 1., 8., 1., 0.]])
