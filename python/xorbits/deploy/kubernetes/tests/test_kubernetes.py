@@ -45,6 +45,8 @@ kube_available = (
     and k8s is not None
 )
 
+PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
+
 
 def _collect_coverage():
     dist_coverage_path = os.path.join(XORBITS_ROOT, ".dist-coverage")
@@ -76,7 +78,7 @@ def _collect_coverage():
         shutil.rmtree(dist_coverage_path)
 
 
-def _build_docker_images():
+def _build_docker_images(py_version: str):
     base_image_name = "xorbits-test-base-image"
     base_docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile.base").removeprefix(
         XORBITS_ROOT + "/"
@@ -96,6 +98,8 @@ def _build_docker_images():
                 "-t",
                 base_image_name,
                 ".",
+                "--build-arg",
+                f"PYTHON_VERSION={py_version}",
             ],
             cwd=XORBITS_ROOT,
         )
@@ -154,8 +158,9 @@ def _load_docker_env():
 
 @contextmanager
 def _start_kube_cluster(**kwargs):
+    py_version = kwargs.pop("py_version")
     _load_docker_env()
-    base_image_name, image_name = _build_docker_images()
+    base_image_name, image_name = _build_docker_images(py_version)
 
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s.config.new_client_from_config()
@@ -208,7 +213,8 @@ def _start_kube_cluster(**kwargs):
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-def test_run_in_kubernetes():
+@pytest.mark.parametrize("py_version", PYTHON_VERSIONS)
+def test_run_in_kubernetes(py_version):
     with _start_kube_cluster(
         supervisor_cpu=0.5,
         supervisor_mem="1G",
@@ -217,6 +223,7 @@ def test_run_in_kubernetes():
         worker_cache_mem="64m",
         use_local_image=True,
         pip=["Faker", "cloudpickle==2.2.0"],
+        py_version=py_version,
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
