@@ -42,7 +42,7 @@ pip install xorbits
 ```
 
 ## API compatibility
-As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
+As long as you know how to use numpy, pandas and so forth, you would probably know how to use Xorbits.
 
 All Xorbits APIs implemented or planned include:
 
