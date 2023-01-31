@@ -19,82 +19,85 @@ msgstr ""
 
 #: ../../source/deployment/cluster.rst:5
 msgid "Cluster deployment"
-msgstr ""
+msgstr "在集群中部署"
 
 #: ../../source/deployment/cluster.rst:7
 msgid ""
 "If you have some machines either on the cloud or not, and you want to "
 "deploy Xorbits via command lines, you can refer to this documentation."
-msgstr ""
+msgstr "如果需要部署在本地或者云端的机器上，可以参考这篇文档，使用命令行部署一个分布式的 Xorbits 集群。"
 
 #: ../../source/deployment/cluster.rst:11
 msgid "Installation"
-msgstr ""
+msgstr "安装"
 
 #: ../../source/deployment/cluster.rst:13
 msgid ""
 "First, ensure Xorbits is correctly installed on each machine, if not, see"
 " :ref:`installation document <installation>`."
 msgstr ""
+"首先，参考安装 :ref:`installation document <installation>` 确保每个机器都正确安装了 Xorbits。"
 
 #: ../../source/deployment/cluster.rst:16
 msgid "Starting Supervisor"
-msgstr ""
+msgstr "启动 supervisor"
 
 #: ../../source/deployment/cluster.rst:18
 msgid ""
 "Among the machines, pick at least one as the supervisor which ships with "
 "a web service as well, starting supervisor via command:"
-msgstr ""
+msgstr "在所有机器中选择一个用来启动 supervisor 和 web 服务，启动命令："
 
 #: ../../source/deployment/cluster.rst:25
 #: ../../source/deployment/cluster.rst:46
 msgid "Or using ``python -m``:"
-msgstr ""
+msgstr "或者使用 ``python -m``:"
 
 #: ../../source/deployment/cluster.rst:31
 msgid "`<web_port>` is used for creating a web service, which is used for:"
-msgstr ""
+msgstr "`<web_port>` 是指定 web 服务的端口，web 服务主要用来："
 
 #: ../../source/deployment/cluster.rst:33
 msgid ""
 "Provide a web UI to show cluster status and detailed information of "
 "submitted tasks."
-msgstr ""
+msgstr "提供展示集群状态与任务详情的 UI。"
 
 #: ../../source/deployment/cluster.rst:34
 msgid ""
 "Accept connections from clients when users call "
 "`xorbits.init(\"<supervisor_ip>:<web_port>\")` to connect to a cluster."
-msgstr ""
+msgstr "用户可以使用 `xorbits.init(\"<supervisor_ip>:<web_port>\") 创建连接，提交任务到集群。"
 
 #: ../../source/deployment/cluster.rst:38
 msgid "Starting Workers"
-msgstr ""
+msgstr "启动 worker"
 
 #: ../../source/deployment/cluster.rst:40
 msgid "The rest of the machines can be started as workers via command:"
-msgstr ""
+msgstr "其余的机器可以作为 worker 启动，启动命令："
 
 #: ../../source/deployment/cluster.rst:53
 msgid "Connecting to Created Cluster"
-msgstr ""
+msgstr "连接到创建的集群"
 
 #: ../../source/deployment/cluster.rst:55
 msgid ""
 "Now, you can connect to the supervisor from anywhere that can run Python "
 "code."
-msgstr ""
+msgstr "接下来使用 Python 代码与集群创建连接。"
 
 #: ../../source/deployment/cluster.rst:63
 msgid ""
 "Replace the ``<supervisor_ip>`` with the supervisor IP that you just "
 "specified and ``<supervisor_web_port>`` with the supervisor web port."
 msgstr ""
+"用 supervisor 的 IP 地址替换 ``<supervisor_ip>``，用刚刚指定的 web 端口"
+"替换 ``<supervisor_web_port>``。"
 
 #: ../../source/deployment/cluster.rst:67
 msgid "Xorbits Web UI"
-msgstr ""
+msgstr "Xorbits Web UI"
 
 #: ../../source/deployment/cluster.rst:69
 msgid ""
@@ -103,144 +106,147 @@ msgid ""
 "to look up resource usage of workers and execution progress of submitted "
 "tasks."
 msgstr ""
+"你可以在浏览器中打开 ``http://<supervisor_ip>:<supervisor_web_port>`` 浏览 Web UI，"
+"查看集群资源以及提交的任务执行进度等信息。"
 
 #: ../../source/deployment/cluster.rst:73
 msgid "Command Line Options"
-msgstr ""
+msgstr "命令行参数"
 
 #: ../../source/deployment/cluster.rst:76
 msgid "Common Options"
-msgstr ""
+msgstr "公共参数"
 
 #: ../../source/deployment/cluster.rst:78
 msgid "Common Command line options are listed below."
-msgstr ""
+msgstr "下面列出的是公用的参数。"
 
 #: ../../source/deployment/cluster.rst:81
 #: ../../source/deployment/cluster.rst:107
 #: ../../source/deployment/cluster.rst:116
 msgid "Argument"
-msgstr ""
+msgstr "参数名"
 
 #: ../../source/deployment/cluster.rst:81
 #: ../../source/deployment/cluster.rst:107
 #: ../../source/deployment/cluster.rst:116
 msgid "Description"
-msgstr ""
+msgstr "描述"
 
 #: ../../source/deployment/cluster.rst:83
 msgid "``-H``"
-msgstr ""
+msgstr "``-H``"
 
 #: ../../source/deployment/cluster.rst:83
 msgid "Service IP binding, ``0.0.0.0`` by default"
-msgstr ""
+msgstr "服务绑定的 IP，默认 ``0.0.0.0``"
 
 #: ../../source/deployment/cluster.rst:85
 msgid "``-p``"
-msgstr ""
+msgstr "``-p``"
 
 #: ../../source/deployment/cluster.rst:85
 msgid "Port of the service. If absent, a randomized port will be used"
-msgstr ""
+msgstr "服务端口。如果不指定会使用一个随机闲置端口"
 
 #: ../../source/deployment/cluster.rst:87
 msgid "``-f``"
-msgstr ""
+msgstr "``-f``"
 
 #: ../../source/deployment/cluster.rst:87
 msgid "Path to service configuration file. Absent when use default configuration."
-msgstr ""
+msgstr "配置文件地址。不指定使用默认配置。"
 
 #: ../../source/deployment/cluster.rst:90
 msgid "``-s``"
-msgstr ""
+msgstr "``-s``"
 
 #: ../../source/deployment/cluster.rst:90
 msgid ""
 "List of supervisor endpoints, separated by commas. Useful for workers to "
 "spot supervisors, or when you want to run more than one supervisor"
-msgstr ""
+msgstr "Supervisor 地址列表，逗号分隔。用来启动 worker 时指定 supervisor 的地址"
+"或者在多 supervisor 时指定。"
 
 #: ../../source/deployment/cluster.rst:94
 msgid "``--log-level``"
-msgstr ""
+msgstr "``--log-level``"
 
 #: ../../source/deployment/cluster.rst:94
 msgid "Log level, can be ``debug``, ``info``, ``warning``, ``error``"
-msgstr ""
+msgstr "日志级别，包括 ``debug``, ``info``, ``warning``, ``error``"
 
 #: ../../source/deployment/cluster.rst:96
 msgid "``--log-format``"
-msgstr ""
+msgstr "``--log-format``"
 
 #: ../../source/deployment/cluster.rst:96
 msgid "Log format, can be Python logging format"
-msgstr ""
+msgstr "日志格式，兼容 Python logging 模块格式"
 
 #: ../../source/deployment/cluster.rst:98
 msgid "``--log-conf``"
-msgstr ""
+msgstr "``--log-conf``"
 
 #: ../../source/deployment/cluster.rst:98
 msgid "Python logging configuration file, ``logging.conf`` by default"
-msgstr ""
+msgstr "日志配置文件，默认 ``logging.conf``"
 
 #: ../../source/deployment/cluster.rst:100
 msgid "``--use-uvloop``"
-msgstr ""
+msgstr "``--use-uvloop``"
 
 #: ../../source/deployment/cluster.rst:100
 msgid "Whether to use ``uvloop`` to accelerate, ``auto`` by default"
-msgstr ""
+msgstr "是否使用 ``uvloop`` 加速，默认是 ``auto``"
 
 #: ../../source/deployment/cluster.rst:104
 msgid "Extra Options for Supervisors"
-msgstr ""
+msgstr "Supervisor 其余参数"
 
 #: ../../source/deployment/cluster.rst:109
 msgid "``-w``"
-msgstr ""
+msgstr "``-w``"
 
 #: ../../source/deployment/cluster.rst:109
 msgid "Port of web service in supervisor"
-msgstr ""
+msgstr "Web 服务的端口"
 
 #: ../../source/deployment/cluster.rst:113
 msgid "Extra Options for Workers"
-msgstr ""
+msgstr "Worker 其余参数"
 
 #: ../../source/deployment/cluster.rst:118
 msgid "``--n-cpu``"
-msgstr ""
+msgstr "``--n-cpu``"
 
 #: ../../source/deployment/cluster.rst:118
 msgid ""
 "Number of CPU cores to use. If absent, the value will be the available "
 "number of cores"
-msgstr ""
+msgstr "使用的 CPU 核数。如果不填，使用所有可用的核。"
 
 #: ../../source/deployment/cluster.rst:121
 msgid "``--n-io-process``"
-msgstr ""
+msgstr "``--n-io-process``"
 
 #: ../../source/deployment/cluster.rst:121
 msgid "Number of IO processes for network operations. 1 by default"
-msgstr ""
+msgstr "IO 进程个数。默认是 1"
 
 #: ../../source/deployment/cluster.rst:123
 msgid "``--cuda-devices``"
-msgstr ""
+msgstr "``--cuda-devices``"
 
 #: ../../source/deployment/cluster.rst:123
 msgid ""
 "Index of CUDA devices to use. If not specified, all devices will be used."
 " Specifying an empty string will ignore all devices"
-msgstr ""
+msgstr "使用的 CUDA 设备索引。如果不指定，使用所有的设备。指定为空字符串则忽略所有设备。"
 
 #: ../../source/deployment/cluster.rst:129
 msgid "Example"
-msgstr ""
+msgstr "示例"
 
 #: ../../source/deployment/cluster.rst:131
 msgid ""
@@ -248,22 +254,24 @@ msgid ""
 "and two workers, you can run commands below (memory and CPU tunings are "
 "omitted):"
 msgstr ""
+"假设需要起一个 supervisor 两个 worker 的 Xorbits 集群，可以使用如下的命令："
 
 #: ../../source/deployment/cluster.rst:134
 msgid "On Supervisor (192.168.1.10):"
-msgstr ""
+msgstr "Supervisor(192.168.1.10) 上："
 
 #: ../../source/deployment/cluster.rst:140
 msgid "On Worker 1 (192.168.1.20):"
-msgstr ""
+msgstr "worker1(192.168.1.20) 上："
 
 #: ../../source/deployment/cluster.rst:146
 msgid "On Worker 2 (192.168.1.21):"
-msgstr ""
+msgstr "worker2(192.168.1.21) 上："
 
 #: ../../source/deployment/cluster.rst:152
 msgid ""
 "On a client which is able to connect to supervisor, you can run the "
 "Python code below to verify:"
 msgstr ""
+"在一个与 supervisor 连通的端上，使用下面的 Python 代码做验证："
 
