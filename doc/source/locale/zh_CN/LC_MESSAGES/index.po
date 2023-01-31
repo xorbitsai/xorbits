@@ -154,7 +154,7 @@ msgstr "我们测试了 TPC-H 在 scale factor 100（大约100G数据集）和 1
 
 #: ../../source/index.rst:71
 msgid "TPC-H SF100: Xorbits vs Dask"
-msgstr "TPC-H SF1000：Xorbits 对比 Dask"
+msgstr "TPC-H SF100：Xorbits 对比 Dask"
 
 #: ../../source/index.rst:75
 msgid ""
