@@ -691,13 +691,18 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         if self._modules:
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
 
-    # def config_readiness_probe(self):
-    #     raise NotImplementedError  # pragma: no cover
-
     def config_liveness_probe(self):
+        """
+        Liveness probe works after the startup probe.
+        If the startup probe exists, the initial_delay of the liveness probe can be smaller.
+        """
         raise NotImplementedError  # pragma: no cover
 
     def config_startup_probe(self):
+        """
+        The startup probe is used to check whether the startup is smooth.
+        The initial_delay of the startup probe can be sensitive to the system.
+        """
         raise NotImplementedError  # pragma: no cover
 
     @staticmethod
@@ -728,9 +733,6 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         super().__init__(*args, **kwargs)
         if self._web_port:
             self.add_port(self._web_port)
-
-    # def config_readiness_probe(self) -> "TcpSocketProbeConfig":
-    #     return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
 
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(
@@ -810,9 +812,6 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         if supervisor_web_port:
             self.add_env("MARS_K8S_SUPERVISOR_WEB_PORT", supervisor_web_port)
 
-    # def config_readiness_probe(self) -> "TcpSocketProbeConfig":
-    #     return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
-
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(
             self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
@@ -824,6 +823,12 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         )
 
     def config_init_containers(self) -> List[Dict]:
+        """
+        The worker pod checks whether the readiness port of the supervisor is successfully opened in the init container.
+        The worker pod will not start until the init container is executed successfully.
+        This ensures that the worker must start after the supervisor.
+        The image and command used by the init container refer to the Kubernetes official documentation (https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
+        """
         return [
             {
                 "name": "waiting-for-supervisors",
