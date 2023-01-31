@@ -102,7 +102,7 @@ msgstr "如果你知道如何使用 numpy、pandas 等，你很可能就已经�
 
 #: ../../source/index.rst:58
 msgid "All Xorbits APIs implemented or planned include:"
-msgstr "实现的或计划实现的 Xorbits 接口"
+msgstr "实现的或计划实现的 Xorbits 接口包括："
 
 #: ../../source/index.rst:61
 msgid "API"

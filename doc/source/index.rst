@@ -31,11 +31,11 @@ so does numpy and so forth.
 Where to get it?
 ----------------
 
-.. only:: html and not zh_cn
+.. only:: not zh_cn
 
     The source code is currently hosted on GitHub at: https://github.com/xprobe-inc/xorbits
 
-.. only:: html and zh_cn
+.. only:: zh_cn
 
     The source code is currently hosted on:
 
@@ -128,7 +128,7 @@ Deployment                                Description
 Getting involved
 ----------------
 
-.. only:: html and not zh_cn
+.. only:: not zh_cn
 
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | **Platform**                                                                                     | **Purpose**                                        |
@@ -144,7 +144,7 @@ Getting involved
     | `Twitter <https://twitter.com/xorbitsio>`_                                                       | Staying up-to-date on new features.                |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 
-.. only:: html and zh_cn
+.. only:: zh_cn
 
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | **Platform**                                                                                     | **Purpose**                                        |
