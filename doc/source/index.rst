@@ -44,7 +44,7 @@ Binary installers for the latest released version are available at the
 API compatibility
 -----------------
 
-As long as you know how to use numpy, pandas and so forth, you would probably know how to use xorbits.
+As long as you know how to use numpy, pandas and so forth, you would probably know how to use Xorbits.
 
 All Xorbits APIs implemented or planned include:
 
@@ -119,19 +119,29 @@ Deployment                                Description
 Getting involved
 ----------------
 
-+--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-| **Platform**                                                                                     | **Purpose**                                        |
-+--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-| `Discourse Forum <https://discuss.xorbits.io/>`_                                                 | Asking usage questions and discussing development. |
-+--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-| `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
-+--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-| `Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg>`_  | Collaborating with other Xorbits users.            |
-+--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-| `StackOverflow <https://stackoverflow.com/questions/tagged/xorbits>`_                            | Asking questions about how to use Xorbits.         |
-+--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-| `Twitter <https://twitter.com/xorbitsio>`_                                                       | Staying up-to-date on new features.                |
-+--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+.. only:: html and not zh_cn
+
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | **Platform**                                                                                     | **Purpose**                                        |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | `Discourse Forum <https://discuss.xorbits.io/>`_                                                 | Asking usage questions and discussing development. |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | `Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg>`_  | Collaborating with other Xorbits users.            |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | `StackOverflow <https://stackoverflow.com/questions/tagged/xorbits>`_                            | Asking questions about how to use Xorbits.         |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | `Twitter <https://twitter.com/xorbitsio>`_                                                       | Staying up-to-date on new features.                |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+
+.. only:: html and zh_cn
+
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | **Platform**                                                                                     | **Purpose**                                        |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 
 
 .. toctree::
