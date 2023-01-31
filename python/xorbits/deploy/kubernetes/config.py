@@ -161,7 +161,7 @@ class ServiceConfig(KubeConfig):
     def __init__(
         self,
         name: str,
-        service_type: str,
+        service_type: Optional[str],
         selector: Union[str, Dict],
         port: int,
         target_port: Optional[int] = None,
@@ -510,6 +510,9 @@ class ReplicationConfig(KubeConfig):
     def add_volume(self, vol):
         self._volumes.append(vol)
 
+    def config_init_containers(self) -> List[Dict]:
+        return []
+
     @staticmethod
     def get_install_content(source: Union[str, List[str]]) -> str:
         if isinstance(source, str):
@@ -580,6 +583,7 @@ class ReplicationConfig(KubeConfig):
     def build_template_spec(self) -> Dict:
         result = {
             "containers": [self.build_container()],
+            "initContainers": self.config_init_containers(),
             "volumes": [vol.build() for vol in self._volumes],
         }
         return dict((k, v) for k, v in result.items() if v)
@@ -771,6 +775,7 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         )
         min_cache_mem = kwargs.pop("min_cache_mem", None)
         self._readiness_port = kwargs.pop("readiness_port", self.default_readiness_port)
+        self._readiness_service_name = kwargs.pop("readiness_service_name", None)
         supervisor_web_port = kwargs.pop("supervisor_web_port", None)
 
         super().__init__(*args, **kwargs)
@@ -817,6 +822,19 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         return TcpSocketProbeConfig(
             self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
         )
+
+    def config_init_containers(self) -> List[Dict]:
+        return [
+            {
+                "name": "waiting-for-supervisors",
+                "image": "busybox:1.28",
+                "command": [
+                    "sh",
+                    "-c",
+                    f"until nslookup {self._readiness_service_name}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for supervisors; sleep 5; done",
+                ],
+            }
+        ]
 
     def build_container_command(self):
         cmd = super().build_container_command()
