@@ -161,7 +161,7 @@ class ServiceConfig(KubeConfig):
     def __init__(
         self,
         name: str,
-        service_type: str,
+        service_type: Optional[str],
         selector: Union[str, Dict],
         port: int,
         target_port: Optional[int] = None,
@@ -457,7 +457,7 @@ class ReplicationConfig(KubeConfig):
         resource_request: Optional["ResourceConfig"] = None,
         resource_limit: Optional["ResourceConfig"] = None,
         liveness_probe: Optional["ProbeConfig"] = None,
-        readiness_probe: Optional["ProbeConfig"] = None,
+        startup_probe: Optional["ProbeConfig"] = None,
         pre_stop_command: Optional[List[str]] = None,
         kind: Optional[str] = None,
         **kwargs,
@@ -477,7 +477,7 @@ class ReplicationConfig(KubeConfig):
         self._resource_limit = resource_limit
 
         self._liveness_probe = liveness_probe
-        self._readiness_probe = readiness_probe
+        self._startup_probe = startup_probe
 
         self._pre_stop_command = pre_stop_command
         self._use_local_image = kwargs.pop("use_local_image", False)
@@ -509,6 +509,9 @@ class ReplicationConfig(KubeConfig):
 
     def add_volume(self, vol):
         self._volumes.append(vol)
+
+    def config_init_containers(self) -> List[Dict]:
+        return []
 
     @staticmethod
     def get_install_content(source: Union[str, List[str]]) -> str:
@@ -569,8 +572,8 @@ class ReplicationConfig(KubeConfig):
                 "livenessProbe": self._liveness_probe.build()
                 if self._liveness_probe
                 else None,
-                "readinessProbe": self._readiness_probe.build()
-                if self._readiness_probe
+                "startupProbe": self._startup_probe.build()
+                if self._startup_probe
                 else None,
                 "lifecycle": lifecycle_dict or None,
                 "imagePullPolicy": "Never" if self._use_local_image else None,
@@ -580,6 +583,7 @@ class ReplicationConfig(KubeConfig):
     def build_template_spec(self) -> Dict:
         result = {
             "containers": [self.build_container()],
+            "initContainers": self.config_init_containers(),
             "volumes": [vol.build() for vol in self._volumes],
         }
         return dict((k, v) for k, v in result.items() if v)
@@ -651,7 +655,8 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             replicas,
             resource_request=req_res,
             resource_limit=limit_res if limit_resources else None,
-            readiness_probe=self.config_readiness_probe(),
+            liveness_probe=self.config_liveness_probe(),
+            startup_probe=self.config_startup_probe(),
             **kwargs,
         )
         if service_port:
@@ -686,7 +691,18 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         if self._modules:
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
 
-    def config_readiness_probe(self):
+    def config_liveness_probe(self):
+        """
+        Liveness probe works after the startup probe.
+        If the startup probe exists, the initial_delay of the liveness probe can be smaller.
+        """
+        raise NotImplementedError  # pragma: no cover
+
+    def config_startup_probe(self):
+        """
+        The startup probe is used to check whether the startup is smooth.
+        The initial_delay of the startup probe can be sensitive to the system.
+        """
         raise NotImplementedError  # pragma: no cover
 
     @staticmethod
@@ -718,8 +734,15 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         if self._web_port:
             self.add_port(self._web_port)
 
-    def config_readiness_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
+    def config_liveness_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
+        )
+
+    def config_startup_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
+        )
 
     def build_container_command(self):
         cmd = super().build_container_command()
@@ -754,6 +777,7 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         )
         min_cache_mem = kwargs.pop("min_cache_mem", None)
         self._readiness_port = kwargs.pop("readiness_port", self.default_readiness_port)
+        self._readiness_service_name = kwargs.pop("readiness_service_name", None)
         supervisor_web_port = kwargs.pop("supervisor_web_port", None)
 
         super().__init__(*args, **kwargs)
@@ -788,8 +812,34 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
         if supervisor_web_port:
             self.add_env("MARS_K8S_SUPERVISOR_WEB_PORT", supervisor_web_port)
 
-    def config_readiness_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(self._readiness_port, timeout=60, failure_thresh=10)
+    def config_liveness_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
+        )
+
+    def config_startup_probe(self) -> "TcpSocketProbeConfig":
+        return TcpSocketProbeConfig(
+            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
+        )
+
+    def config_init_containers(self) -> List[Dict]:
+        """
+        The worker pod checks whether the readiness port of the supervisor is successfully opened in the init container.
+        The worker pod will not start until the init container is executed successfully.
+        This ensures that the worker must start after the supervisor.
+        The image and command used by the init container refer to the Kubernetes official documentation (https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
+        """
+        return [
+            {
+                "name": "waiting-for-supervisors",
+                "image": "busybox:1.28",
+                "command": [
+                    "sh",
+                    "-c",
+                    f"until nslookup {self._readiness_service_name}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for supervisors; sleep 5; done",
+                ],
+            }
+        ]
 
     def build_container_command(self):
         cmd = super().build_container_command()
