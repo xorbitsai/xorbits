@@ -79,33 +79,11 @@ def _collect_coverage():
 
 
 def _build_docker_images(py_version: str):
-    base_image_name = "xorbits-test-base-image"
-    base_docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile.base").removeprefix(
-        XORBITS_ROOT + "/"
-    )
-
     image_name = "xorbits-test-image:" + uuid.uuid1().hex
     docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile").removeprefix(
         XORBITS_ROOT + "/"
     )
     try:
-        base_build_proc = subprocess.Popen(
-            [
-                "docker",
-                "build",
-                "-f",
-                base_docker_file_path,
-                "-t",
-                base_image_name,
-                ".",
-                "--build-arg",
-                f"PYTHON_VERSION={py_version}",
-            ],
-            cwd=XORBITS_ROOT,
-        )
-        if base_build_proc.wait() != 0:
-            raise SystemError("Executing docker base build failed.")
-
         build_proc = subprocess.Popen(
             [
                 "docker",
@@ -116,17 +94,16 @@ def _build_docker_images(py_version: str):
                 image_name,
                 ".",
                 "--build-arg",
-                f"BASE_CONTAINER={base_image_name}",
+                f"PYTHON_VERSION={py_version}",
             ],
             cwd=XORBITS_ROOT,
         )
         if build_proc.wait() != 0:
             raise SystemError("Executing docker build failed.")
     except:  # noqa: E722
-        _remove_docker_image(base_image_name)
         _remove_docker_image(image_name)
         raise
-    return base_image_name, image_name
+    return image_name
 
 
 def _remove_docker_image(image_name, raises=True):
@@ -160,7 +137,7 @@ def _load_docker_env():
 def _start_kube_cluster(**kwargs):
     py_version = kwargs.pop("py_version")
     _load_docker_env()
-    base_image_name, image_name = _build_docker_images(py_version)
+    image_name = _build_docker_images(py_version)
 
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s.config.new_client_from_config()
@@ -209,7 +186,6 @@ def _start_kube_cluster(**kwargs):
                 pass
         _collect_coverage()
         _remove_docker_image(image_name, False)
-        _remove_docker_image(base_image_name, False)
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
