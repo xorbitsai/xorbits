@@ -25,7 +25,7 @@ html_zh_cn:
 gettext:
 	$(SPHINXBUILD) -b gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
 	$(SPHINXINTL) update -p $(BUILDDIR)/locale $(I18NSPHINXLANGS)
-	$(SOURCEDIR)/norm_zh.py
+	python $(SOURCEDIR)/norm_zh.py
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
