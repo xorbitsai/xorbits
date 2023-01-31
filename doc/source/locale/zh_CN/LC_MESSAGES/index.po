@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../source/index.rst:11
 msgid "Xorbits: scalable Python data science, familiar & fast."
-msgstr "Xorbits：加速 Python 数据处理和 AI，简单易用且速度超快"
+msgstr "加速 Python 数据处理和 AI，简单易用且速度超快"
 
 #: ../../source/index.rst:13
 msgid ""
