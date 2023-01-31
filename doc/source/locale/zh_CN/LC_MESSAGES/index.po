@@ -161,7 +161,7 @@ msgid ""
 "Q21 was excluded since Dask ran out of memory. Across all queries, "
 "Xorbits was found to be 7.3x faster than Dask."
 msgstr ""
-"Dask 在 Q21 跑的时候内存溢出，因此 Q21 被排除。所有查询中，Xorbits 比 Dask 快7.3倍。"
+"Dask 在 Q21 跑的时候内存溢出，因此 Q21 被排除。综合所有查询，Xorbits 比 Dask 快7.3倍。"
 
 #: ../../source/index.rst:78
 msgid "TPC-H SF100: Xorbits vs Pandas API on Spark"
