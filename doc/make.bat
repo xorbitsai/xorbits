@@ -9,6 +9,8 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=source
 set BUILDDIR=build
+set I18NSPHINXOPTS=%SPHINXOPTS% %SOURCEDIR%
+set I18NSPHINXLANGS=-l zh_CN
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
@@ -26,6 +28,19 @@ if errorlevel 9009 (
 if "%1" == "" goto help
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+goto end
+
+:html_zh_cn
+%SPHINXBUILD% -b html %ALLSPHINXOPTS% -t zh_cn -D language='zh_CN' %SOURCEDIR% %BUILDDIR%/html_zh_cn
+:gettext
+%SPHINXBUILD% -b gettext %I18NSPHINXOPTS% %BUILDDIR%/locale
+if errorlevel 1 exit /b 1
+%SPHINXINTL% update -p %BUILDDIR%/locale %I18NSPHINXLANGS%
+if errorlevel 1 exit /b 1
+python %SOURCEDIR%/norm_zh.py
+if errorlevel 1 exit /b 1
+echo.
+echo.Build finished. The message catalogs are in %BUILDDIR%/locale.
 goto end
 
 :help

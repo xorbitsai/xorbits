@@ -271,3 +271,29 @@ def test_install_command():
         os.remove(file_path)
     except:
         pass
+
+
+@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
+def test_init_container():
+    supervisor_config = XorbitsSupervisorsConfig(
+        1,
+        cpu=2,
+        memory="10g",
+        limit_resources=False,
+        modules=["xorbits.test_mod"],
+        service_port=11111,
+        web_port=11112,
+        kind="Pod",
+    )
+    res = supervisor_config.config_init_containers()
+    assert len(res) == 0
+
+    worker_config = XorbitsWorkersConfig(
+        4, cpu=2, memory=10 * 1024**3, readiness_service_name="test"
+    )
+    res = worker_config.config_init_containers()
+    assert len(res) == 1
+    init_container_conf = res[0]
+    assert "image" in init_container_conf
+    assert "command" in init_container_conf
+    assert "test" in init_container_conf["command"][2]

@@ -30,6 +30,7 @@ from .config import (
     RoleBindingConfig,
     RoleConfig,
     ServiceConfig,
+    XorbitsReplicationConfig,
     XorbitsSupervisorsConfig,
     XorbitsWorkersConfig,
 )
@@ -197,6 +198,9 @@ class KubernetesCluster:
         )
         self._pip = pip
         self._conda = conda
+        self._readiness_service_name = kwargs.pop(
+            "readiness_service_name", "xorbits-readiness-service"
+        )
 
     @property
     def namespace(self) -> Optional[str]:
@@ -252,6 +256,22 @@ class KubernetesCluster:
         )
         self._core_api.create_namespaced_service(
             self._namespace, service_config.build()
+        )
+
+    def _create_readiness_service(self):
+        """
+        Start a simple ClusterIP service for the workers to detect whether the supervisor is successfully started.
+        """
+        readiness_service_config = ServiceConfig(
+            name=self._readiness_service_name,
+            service_type=None,
+            selector={"xorbits/service-type": XorbitsSupervisorsConfig.rc_name},
+            port=XorbitsReplicationConfig.default_readiness_port,
+            target_port=XorbitsReplicationConfig.default_readiness_port,
+            protocol="TCP",
+        )
+        self._core_api.create_namespaced_service(
+            self._namespace, readiness_service_config.build()
         )
 
     def _get_ready_pod_count(self, label_selector: str) -> int:  # pragma: no cover
@@ -336,6 +356,7 @@ class KubernetesCluster:
             use_local_image=self._use_local_image,
             pip=self._pip,
             conda=self._conda,
+            readiness_service_name=self._readiness_service_name,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)
@@ -437,6 +458,7 @@ class KubernetesCluster:
 
             self._create_services()
             self._create_kube_service()
+            self._create_readiness_service()
 
             self._wait_services_ready()
 
