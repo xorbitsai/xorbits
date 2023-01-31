@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-01-31 15:45+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,5 +121,27 @@ msgid ""
 "Finally, specify your own image during the deployment process through the"
 " ``image`` option of the "
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster` api."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:78
+msgid "Install Python Packages"
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:79
+msgid ""
+"Refer `DockerFile <https://github.com/xprobe-"
+"inc/xorbits/blob/main/python/xorbits/deploy/docker/Dockerfile.base>`_ for"
+" the python packages included in the Xorbits image. If you want to "
+"install additional python packages in your Xorbits K8s cluster, use "
+"``pip`` and ``conda`` options of the "
+":meth:`xorbits.deploy.kubernetes.client.new_cluster` api."
+msgstr ""
+
+#: ../../source/deployment/kubernetes.rst:82
+msgid ""
+"Please make sure your K8s cluster can access the corresponding `channel "
+"of conda <https://docs.conda.io/projects/conda/en/latest/user-"
+"guide/concepts/channels.html>`_ or `PyPi <https://pypi.org/>`_, when "
+"using ``pip`` and ``conda`` options."
 msgstr ""
 
