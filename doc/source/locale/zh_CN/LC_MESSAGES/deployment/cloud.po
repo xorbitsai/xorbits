@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-01-31 15:45+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,11 +80,17 @@ msgstr ""
 
 #: ../../source/deployment/cloud.rst:37
 msgid ""
+"Refer :ref:`Install Python Packages <deployment_install>` to install "
+"additional python packages for the Xorbits supervisors and workers."
+msgstr ""
+
+#: ../../source/deployment/cloud.rst:39
+msgid ""
 "``new_cluster`` api refers to "
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster`."
 msgstr ""
 
-#: ../../source/deployment/cloud.rst:39
+#: ../../source/deployment/cloud.rst:41
 msgid "To verify the cluster:"
 msgstr ""
 
