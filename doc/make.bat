@@ -37,6 +37,8 @@ goto end
 if errorlevel 1 exit /b 1
 %SPHINXINTL% update -p %BUILDDIR%/locale %I18NSPHINXLANGS%
 if errorlevel 1 exit /b 1
+python %SOURCEDIR%/norm_zh.py
+if errorlevel 1 exit /b 1
 echo.
 echo.Build finished. The message catalogs are in %BUILDDIR%/locale.
 goto end
