@@ -258,15 +258,15 @@ msgstr ""
 
 #: ../../source/deployment/cluster.rst:134
 msgid "On Supervisor (192.168.1.10):"
-msgstr "Supervisor(192.168.1.10) 上："
+msgstr "Supervisor (192.168.1.10) 上："
 
 #: ../../source/deployment/cluster.rst:140
 msgid "On Worker 1 (192.168.1.20):"
-msgstr "worker1(192.168.1.20) 上："
+msgstr "worker1 (192.168.1.20) 上："
 
 #: ../../source/deployment/cluster.rst:146
 msgid "On Worker 2 (192.168.1.21):"
-msgstr "worker2(192.168.1.21) 上："
+msgstr "worker2 (192.168.1.21) 上："
 
 #: ../../source/deployment/cluster.rst:152
 msgid ""
