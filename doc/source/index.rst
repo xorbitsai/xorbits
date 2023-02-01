@@ -31,7 +31,16 @@ so does numpy and so forth.
 Where to get it?
 ----------------
 
-The source code is currently hosted on GitHub at: https://github.com/xprobe-inc/xorbits
+.. only:: not zh_cn
+
+    The source code is currently hosted on GitHub at: https://github.com/xprobe-inc/xorbits
+
+.. only:: zh_cn
+
+    The source code is currently hosted on:
+
+    1. Github: https://github.com/xprobe-inc/xorbits
+    2. Gitee: https://gitee.com/xprobe-inc/xorbits
 
 Binary installers for the latest released version are available at the
 `Python Package Index (PyPI) <https://pypi.org/project/xorbits>`_
@@ -119,7 +128,7 @@ Deployment                                Description
 Getting involved
 ----------------
 
-.. only:: html and not zh_cn
+.. only:: not zh_cn
 
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | **Platform**                                                                                     | **Purpose**                                        |
@@ -135,12 +144,14 @@ Getting involved
     | `Twitter <https://twitter.com/xorbitsio>`_                                                       | Staying up-to-date on new features.                |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 
-.. only:: html and zh_cn
+.. only:: zh_cn
 
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | **Platform**                                                                                     | **Purpose**                                        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
+    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
+    | `Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_                                    | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 
 
