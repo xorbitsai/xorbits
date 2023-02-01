@@ -67,7 +67,7 @@ msgstr "提供展示集群状态与任务详情的 UI。"
 msgid ""
 "Accept connections from clients when users call "
 "`xorbits.init(\"<supervisor_ip>:<web_port>\")` to connect to a cluster."
-msgstr "用户可以使用 `xorbits.init(\"<supervisor_ip>:<web_port>\") 创建连接，提交任务到集群。"
+msgstr "用户可以使用 `xorbits.init(\"<supervisor_ip>:<web_port>\")` 创建连接，提交任务到集群。"
 
 #: ../../source/deployment/cluster.rst:38
 msgid "Starting Workers"
