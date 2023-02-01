@@ -36,7 +36,7 @@ msgid ""
 "First, ensure Xorbits is correctly installed, if not, see "
 ":ref:`installation document <installation>`."
 msgstr ""
-"首先，参考:ref:`安装文档 <installation>` 确保每个机器都正确安装了 Xorbits。"
+"首先，参考 :ref:`安装文档 <installation>` 确保每个机器都正确安装了 Xorbits。"
 
 #: ../../source/deployment/local.rst:15
 msgid "Init Xorbits runtime optionally"
