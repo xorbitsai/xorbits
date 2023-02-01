@@ -274,6 +274,22 @@ class KubernetesCluster:
             self._namespace, readiness_service_config.build()
         )
 
+    def _wait_service_ready(self):
+        from kubernetes import watch
+
+        w = watch.Watch()
+        selector = f"xorbits/service-type in ( {XorbitsSupervisorsConfig.rc_name}, {XorbitsWorkersConfig.rc_name} )"
+
+        cnt = 0
+        for event in w.stream(
+            func=self._core_api.list_namespaced_pod, namespace=self._namespace,
+            label_selector=selector
+        ):
+            phase = event["object"].status.phase
+            container_status = event["object"].status.container_statuses[0]
+            if event["object"].status.phase == "Running" and :
+                cnt += 1
+
     def _get_ready_pod_count(self, label_selector: str) -> int:  # pragma: no cover
         query = self._core_api.list_namespaced_pod(
             namespace=self._namespace, label_selector=label_selector
