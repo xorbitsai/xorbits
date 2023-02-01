@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../source/user_guide/deferred_execution.rst:5
 msgid "Deferred Execution"
-msgstr ""
+msgstr "推迟执行"
 
 #: ../../source/user_guide/deferred_execution.rst:9
 msgid ""
@@ -29,30 +29,34 @@ msgid ""
 "called. Instead, Xorbits builds an execution plan and the plan will not "
 "be executed until the result is actually required."
 msgstr ""
+"Xorbits 里大部分对象都是设计成推迟执行的，包括 :class:`DataFrame` 对象。"
+"所谓推迟执行，就是算子在被调用时，不是立即计算，而只是创建了一个执行计划，"
+"只有在真正需要它的时候才会触发执行。"
 
 #: ../../source/user_guide/deferred_execution.rst:14
 msgid "Currently, execution will be triggered in the following situations:"
-msgstr ""
+msgstr "目前，以下几种情况会触发执行："
 
 #: ../../source/user_guide/deferred_execution.rst:16
 msgid "``repr`` is called."
-msgstr ""
+msgstr "``repr`` 被调用。"
 
 #: ../../source/user_guide/deferred_execution.rst:17
 msgid "``str`` is called."
-msgstr ""
+msgstr "``str`` 被调用。"
 
 #: ../../source/user_guide/deferred_execution.rst:18
 msgid ""
 "Output methods are called. For example, :meth:`DataFrame.to_csv` is "
 "called."
 msgstr ""
+"调用存储数据的方式时，比如 :meth:`DataFrame.to_csv` 方法。"
 
 #: ../../source/user_guide/deferred_execution.rst:19
 msgid ""
 "Critical information is missing. For example, the dtypes of a "
 "``DataFrame``."
-msgstr ""
+msgstr "必要的信息缺失时。比如调用过程中 ``DataFrame`` 的数据类型未知。"
 
 #: ../../source/user_guide/deferred_execution.rst:21
 msgid ""
@@ -61,10 +65,14 @@ msgid ""
 "before calling the backend. For example, identical parts of an execution "
 "plan can be eliminated and executed only once."
 msgstr ""
+"在大规模数据中，推迟执行能够极大地提升计算性能。针对连续的调用，部分算子可以做"
+"一些优化。比如在执行计划存在重复的算子，优化器可以剪裁，减少计算量。"
 
 #: ../../source/user_guide/deferred_execution.rst:27
 msgid ""
 "To trigger the execution manually, you can use :func:`run`. You pass an "
 "Xorbits object or a list of Xorbits objects as the argument."
 msgstr ""
+"当然，也可以调用 :func:`run` 手动触发执行。你可以传入一个或者一列 Xorbits 对象作为"
+"参数。"
 
