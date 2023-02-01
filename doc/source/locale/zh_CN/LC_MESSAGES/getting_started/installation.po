@@ -25,7 +25,7 @@ msgstr "安装"
 msgid ""
 "Xorbits can be installed via pip from `PyPI "
 "<https://pypi.org/project/xorbits>`__."
-msgstr "Xorbits 可以通过 `PyPI <https://pypi.org/project/xorbits>`__安装。"
+msgstr "Xorbits 可以通过 `PyPI <https://pypi.org/project/xorbits>`__ 安装。"
 
 #: ../../source/getting_started/installation.rst:15
 msgid "Python version support"
