@@ -51,7 +51,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -s --ignore xorbits/_mars/ -o log_cli=true --log-cli-level=DEBUG --timeout=1500 \
+          pytest -s --ignore xorbits/_mars/ -o log_cli=true --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
         working-directory: ./python

@@ -79,9 +79,8 @@ def _collect_coverage():
 
 def _build_docker_images(py_version: str):
     image_name = "xorbits-test-image:" + uuid.uuid1().hex
-    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile").lstrip(
-        XORBITS_ROOT + "/"
-    )
+    xorbits_root = XORBITS_ROOT + "/"
+    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile")[len(xorbits_root):]
     try:
         build_proc = subprocess.Popen(
             [
