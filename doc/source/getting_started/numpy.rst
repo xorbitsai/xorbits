@@ -528,8 +528,8 @@ Several arrays can be stacked together along different axes::
     array([[9., 7., 1., 9.],
            [5., 2., 5., 1.]])
 
-The function `column_stack` stacks 1D arrays as columns into a 2D array. It is equivalent to
-`hstack` only for 2D arrays::
+The function ``column_stack`` stacks 1D arrays as columns into a 2D array. It is equivalent to
+``hstack`` only for 2D arrays::
 
     >>> from xorbits.numpy import newaxis
     >>> np.column_stack((a, b))  # with 2D arrays
@@ -552,34 +552,34 @@ The function `column_stack` stacks 1D arrays as columns into a 2D array. It is e
     array([[4., 3.],
            [2., 8.]])
 
-On the other hand, the function `row_stack` is equivalent to `vstack` for any input arrays. In
-fact, `row_stack` is an alias for `vstack`::
+On the other hand, the function ``row_stack`` is equivalent to ``vstack`` for any input arrays. In
+fact, ``row_stack`` is an alias for ``vstack``::
 
     >>> np.column_stack is np.hstack
     False
     >>> np.row_stack is np.vstack
     True
 
-In general, for arrays with more than two dimensions, `hstack` stacks along their second axes,
-`vstack` stacks along their first axes, and `concatenate` allows for an optional arguments giving
+In general, for arrays with more than two dimensions, ``hstack`` stacks along their second axes,
+``vstack`` stacks along their first axes, and ``concatenate`` allows for an optional arguments giving
 the number of the axis along which the concatenation should happen.
 
 .. note::
 
-    In complex cases, `r_` and `c_` are useful for creating arrays by stacking numbers along one axis.
+    In complex cases, ``r_`` and ``c_`` are useful for creating arrays by stacking numbers along one axis.
     They allow the use of range literals ``:``. ::
 
            >>> np.r_[1:4, 0, 4]
            array([1, 2, 3, 0, 4])
 
-    When used with arrays as arguments, `r_` and `c_` are similar to `vstack` and `hstack` in their
+    When used with arrays as arguments, ``r_`` and ``c_`` are similar to ``vstack`` and ``hstack`` in their
     default behavior, but allow for an optional argument giving the number of the axis along which to
     concatenate.
 
 Splitting one array into several smaller ones
 ---------------------------------------------
 
-Using `hsplit`, you can split an
+Using ``hsplit``, you can split an
 array along its horizontal axis, either by specifying the number of
 equally shaped arrays to return, or by specifying the columns after
 which the division should occur::
@@ -601,6 +601,6 @@ which the division should occur::
            [7.]]), array([[0., 5., 4., 0., 6., 8., 5., 2.],
            [1., 8., 6., 7., 1., 8., 1., 0.]])]
 
-`vsplit` splits along the vertical
-axis, and `array_split` allows
+``vsplit`` splits along the vertical
+axis, and ``array_split`` allows
 one to specify along which axis to split.

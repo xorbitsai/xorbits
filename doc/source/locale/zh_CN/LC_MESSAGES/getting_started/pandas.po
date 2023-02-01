@@ -39,23 +39,23 @@ msgstr "创建对象"
 msgid ""
 "Creating a :class:`Series` by passing a list of values, letting it create"
 " a default integer index:"
-msgstr "用 list 创建 Series，此时系统会默认自动生成整数索引："
+msgstr "用 list 创建 :class:`Series`，此时系统会默认自动生成整数索引："
 
 #: ../../source/getting_started/pandas.rst:29
 msgid ""
 "Creating a :class:`DataFrame` by passing an array, with a datetime index "
 "and labeled columns:"
-msgstr "用 NumPy array 创建 DataFrame，自定义列名，并使用自定义的日期时间索引："
+msgstr "用数组创建 :class:`DataFrame`，自定义列名与索引："
 
 #: ../../source/getting_started/pandas.rst:38
 msgid ""
 "Creating a :class:`DataFrame` by passing a dict of objects that can be "
 "converted to series-like."
-msgstr "用 dict 创建 DataFrame："
+msgstr "用 dict 创建 :class:`DataFrame`："
 
 #: ../../source/getting_started/pandas.rst:49
 msgid "The columns of the resulting :class:`DataFrame` have different dtypes."
-msgstr "创建出的 DataFrame 的每一列将具有不同的类型。"
+msgstr "创建出的 :class:`DataFrame` 的每一列将具有不同的类型。"
 
 #: ../../source/getting_started/pandas.rst:57
 msgid "Viewing data"
@@ -82,7 +82,7 @@ msgid ""
 "requires casting every value to a Python object."
 msgstr ""
 "调用 :meth:`DataFrame.to_numpy` 可以 ndarray 的形式返回 DataFrame 的数据。"
-"需要注意的是，当 DataFrame 的各个列为不同的类型时，这个操作将会非常耗时。这个"
+"需要注意的是，当 :class:`DataFrame` 的各个列为不同的类型时，这个操作将会非常耗时。这个"
 "现象是由于 DataFrame 和 ndarray 的本质区别造成的：**ndarray 仅有一种类型，"
 "而 DataFrame 则是每一列有一种类型**。当你调用 :meth:`DataFrame.to_numpy` 时，"
 ":code:`xorbits.pandas` 将会根据 DataFrame 各个列的类型推导出返回的 ndarray 的"
@@ -170,7 +170,7 @@ msgstr "按标签选择多列数据："
 
 #: ../../source/getting_started/pandas.rst:162
 msgid "Showing label slicing, both endpoints are *included*:"
-msgstr "按标签切片，结果*包含*起始点与结束点："
+msgstr "按标签切片，结果 *包含* 起始点与结束点："
 
 #: ../../source/getting_started/pandas.rst:169
 msgid "Reduction in the dimensions of the returned object:"
@@ -235,7 +235,7 @@ msgstr "统计"
 
 #: ../../source/getting_started/pandas.rst:254
 msgid "Operations in general *exclude* missing data."
-msgstr "一般情况下，运算时会*排除*缺失值。"
+msgstr "一般情况下，运算时会 *排除* 缺失值。"
 
 #: ../../source/getting_started/pandas.rst:256
 msgid "Performing a descriptive statistic:"
@@ -274,9 +274,9 @@ msgid ""
 "uses `regular expressions <https://docs.python.org/3/library/re.html>`__ "
 "by default (and in some cases always uses them)."
 msgstr ""
-"Series 的 str 属性包含一系列字符串处理方法，方便用户对每一个元素应用特定字符串操作。"
-"如下列代码所示。注意，str 的模式匹配默认"
-"使用 `正则表达式 <https://docs.python.org/3/library/re.html>`__"
+"Series 的 `str` 属性包含一系列字符串处理方法，方便用户对每一个元素应用特定字符串操作。"
+"如下列代码所示。注意，`str` 的模式匹配默认"
+"使用正则表达式"
 "（且在某些情况下仅支持正则表达式）。"
 
 #: ../../source/getting_started/pandas.rst:303
@@ -375,7 +375,7 @@ msgstr "我们使用 matplotlib API 的标准约定："
 msgid ""
 "On a DataFrame, the :meth:`~DataFrame.plot` method is a convenience to "
 "plot all of the columns with labels:"
-msgstr "DataFrame 的 :meth:`~DataFrame.plot` 方法可以方便地可视化所有带标签的列"
+msgstr "DataFrame 的 :meth:`~DataFrame.plot` 方法可以方便地可视化所有带标签的列："
 
 #: ../../source/getting_started/pandas.rst:424
 msgid "Getting data in/out"
