@@ -16,8 +16,8 @@ import glob
 import logging
 import os
 import shutil
-import sys
 import subprocess
+import sys
 import tempfile
 import uuid
 from contextlib import contextmanager
