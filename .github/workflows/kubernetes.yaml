@@ -27,9 +27,6 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
@@ -58,6 +55,10 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
         working-directory: ./python
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
 
       - name: Report coverage data
         uses: codecov/codecov-action@v3
