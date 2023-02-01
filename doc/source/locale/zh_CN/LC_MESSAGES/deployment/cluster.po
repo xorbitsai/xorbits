@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../source/deployment/cluster.rst:5
 msgid "Cluster deployment"
-msgstr "在集群中部署"
+msgstr "集群部署"
 
 #: ../../source/deployment/cluster.rst:7
 msgid ""
@@ -36,7 +36,7 @@ msgid ""
 "First, ensure Xorbits is correctly installed on each machine, if not, see"
 " :ref:`installation document <installation>`."
 msgstr ""
-"首先，参考安装 :ref:`installation document <installation>` 确保每个机器都正确安装了 Xorbits。"
+"首先，参考 :ref:`安装文档 <installation>` 确保每个机器都正确安装了 Xorbits。"
 
 #: ../../source/deployment/cluster.rst:16
 msgid "Starting Supervisor"
@@ -115,11 +115,11 @@ msgstr "命令行参数"
 
 #: ../../source/deployment/cluster.rst:76
 msgid "Common Options"
-msgstr "公共参数"
+msgstr "共用参数"
 
 #: ../../source/deployment/cluster.rst:78
 msgid "Common Command line options are listed below."
-msgstr "下面列出的是公用的参数。"
+msgstr "下面列出的是共用的参数。"
 
 #: ../../source/deployment/cluster.rst:81
 #: ../../source/deployment/cluster.rst:107
@@ -273,5 +273,5 @@ msgid ""
 "On a client which is able to connect to supervisor, you can run the "
 "Python code below to verify:"
 msgstr ""
-"在一个与 supervisor 连通的端上，使用下面的 Python 代码做验证："
+"在一个与 supervisor 可以连通的客户端，使用下面的 Python 代码做验证："
 
