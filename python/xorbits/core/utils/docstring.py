@@ -92,7 +92,6 @@ def add_docstring_disclaimer(
 def add_version_disclaimer(
     doc: Optional[str], docstring_src_module: Optional[ModuleType]
 ) -> Optional[str]:
-
     if doc is None or docstring_src_module is None:
         return doc
 
