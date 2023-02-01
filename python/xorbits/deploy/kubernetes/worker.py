@@ -37,12 +37,16 @@ class K8SWorkerCommandRunner(K8SServiceMixin, WorkerCommandRunner):
             self.config,
             mark_ready=False,
         )
+        logger.warning(f"After start_worker!!!")
         await self.wait_all_supervisors_ready()
+        logger.warning(f"After wait_all_supervisors_ready!!! {self.args.endpoint}")
 
         cluster_api = await ClusterAPI.create(self.args.endpoint)
         await cluster_api.mark_node_ready()
+        logger.warning(f"After mark node ready!!!")
 
         await self.start_readiness_server()
+        logger.warning(f"After start readiness server!!!")
 
     async def stop_services(self):
         await self.stop_readiness_server()
