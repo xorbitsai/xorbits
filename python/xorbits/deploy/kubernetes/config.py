@@ -404,7 +404,7 @@ class ProbeConfig:
     def __init__(
         self,
         initial_delay: int = 5,
-        period: int = 10,
+        period: int = 5,
         timeout: Optional[int] = None,
         success_thresh: Optional[int] = None,
         failure_thresh: Optional[int] = None,

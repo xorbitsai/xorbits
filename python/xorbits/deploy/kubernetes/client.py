@@ -15,11 +15,11 @@
 import asyncio
 import functools
 import logging
-import subprocess
 import time
 import uuid
-from typing import Callable, Collection, Dict, List, Optional, Union
+from typing import Collection, Dict, List, Optional, Union
 
+from ..._mars.deploy.utils import wait_services_ready
 from ..._mars.lib.aio import new_isolation, stop_isolation
 from ..._mars.services.cluster.api import WebClusterAPI
 from ..._mars.session import new_session
@@ -274,25 +274,6 @@ class KubernetesCluster:
             self._namespace, readiness_service_config.build()
         )
 
-    @staticmethod
-    def _wait_service(
-        selectors: List, min_counts: List[int], count_fun: Callable, timeout=None
-    ):
-        readies = [0] * len(selectors)
-        start_time = time.time()
-        while True:
-            all_satisfy = True
-            for idx, selector in enumerate(selectors):
-                if readies[idx] < min_counts[idx]:
-                    all_satisfy = False
-                    readies[idx] = count_fun(selector)
-                    break
-            if all_satisfy:
-                break
-            if timeout and timeout + start_time < time.time():
-                raise TimeoutError("Wait cluster start timeout")
-            time.sleep(3)
-
     def _get_ready_pod_count(self, label_selector: str) -> int:  # pragma: no cover
         query = self._core_api.list_namespaced_pod(
             namespace=self._namespace, label_selector=label_selector
@@ -311,18 +292,6 @@ class KubernetesCluster:
                 for cond in el["status"].get("conditions") or ()
             ):
                 cnt += 1
-            else:
-                logger.warning(f"Pod warning: status: {el['status']} \n")
-                proc = subprocess.Popen(
-                    [
-                        "kubectl",
-                        "get",
-                        "po",
-                        "-n",
-                        str(self._namespace),
-                    ]
-                )
-                proc.wait()
         return cnt
 
     def _create_namespace(self):
@@ -406,7 +375,7 @@ class KubernetesCluster:
         ]
         start_time = time.time()
         logger.debug("Start waiting pods to be ready")
-        self._wait_service(
+        wait_services_ready(
             selectors,
             limits,
             lambda sel: self._get_ready_pod_count(sel),
