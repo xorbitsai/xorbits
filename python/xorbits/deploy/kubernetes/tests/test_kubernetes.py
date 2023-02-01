@@ -190,10 +190,10 @@ def _start_kube_cluster(**kwargs):
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_run_in_kubernetes():
     with _start_kube_cluster(
-        supervisor_cpu=0.5,
-        supervisor_mem="1G",
-        worker_cpu=0.5,
-        worker_mem="1G",
+        supervisor_cpu=1,
+        supervisor_mem="2G",
+        worker_cpu=1,
+        worker_mem="2G",
         worker_cache_mem="64m",
         use_local_image=True,
         pip=["Faker", "cloudpickle==2.2.0"],
