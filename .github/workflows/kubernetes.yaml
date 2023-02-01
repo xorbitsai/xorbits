@@ -18,6 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
+        python-version: [ "3.7", "3.8", "3.9", "3.10" ]
 
     steps:
       - name: Check out code
@@ -29,7 +30,7 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: ${{ matrix.python-version }}
 
       - name: Start minikube
         uses: medyagh/setup-minikube@master

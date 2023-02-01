@@ -16,6 +16,7 @@ import glob
 import logging
 import os
 import shutil
+import sys
 import subprocess
 import tempfile
 import uuid
@@ -44,8 +45,6 @@ kube_available = (
     and find_executable("docker") is not None
     and k8s is not None
 )
-
-PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
 
 
 def _collect_coverage():
@@ -135,7 +134,7 @@ def _load_docker_env():
 
 @contextmanager
 def _start_kube_cluster(**kwargs):
-    py_version = kwargs.pop("py_version")
+    py_version = str(sys.version_info.major) + "." + str(sys.version_info.minor)
     _load_docker_env()
     image_name = _build_docker_images(py_version)
 
@@ -189,8 +188,7 @@ def _start_kube_cluster(**kwargs):
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@pytest.mark.parametrize("py_version", PYTHON_VERSIONS)
-def test_run_in_kubernetes(py_version):
+def test_run_in_kubernetes():
     with _start_kube_cluster(
         supervisor_cpu=0.5,
         supervisor_mem="1G",
@@ -199,7 +197,6 @@ def test_run_in_kubernetes(py_version):
         worker_cache_mem="64m",
         use_local_image=True,
         pip=["Faker", "cloudpickle==2.2.0"],
-        py_version=py_version,
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
