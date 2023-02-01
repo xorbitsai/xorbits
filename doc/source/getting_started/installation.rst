@@ -58,7 +58,7 @@ The following extra dependencies will be installed.
   Version 7.0.0 or higher.
 
 * `pyarrow <https://pypi.org/project/pyarrow/>`__: python API for Arrow C++ libraries. If
-  installed, must be Version 0.11.0 or higher and cannot be 0.16.x.
+  installed, must be Version 5.0.0 or higher.
 
 * `lz4 <https://github.com/python-lz4/python-lz4>`__: python bindings for the LZ4 compression
   library. If installed, must be Version 1.0.0 or higher.
