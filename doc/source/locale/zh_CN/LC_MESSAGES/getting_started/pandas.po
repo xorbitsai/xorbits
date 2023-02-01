@@ -19,55 +19,55 @@ msgstr ""
 
 #: ../../source/getting_started/pandas.rst:3
 msgid "10 minutes to :code:`xorbits.pandas`"
-msgstr ""
+msgstr "十分钟入门 :code:`xorbits.pandas`"
 
 #: ../../source/getting_started/pandas.rst:7
 msgid ""
 "This is a short introduction to :code:`xorbits.pandas` which is "
 "originated from pandas' quickstart."
-msgstr ""
+msgstr "本文旨在帮助用户快速上手 :code:`xorbits.pandas`，文章内容部分来源于 pandas 的文档。"
 
 #: ../../source/getting_started/pandas.rst:9
 msgid "Customarily, we import and init as follows:"
-msgstr ""
+msgstr "通常我们先 import 并初始化 xorbits"
 
 #: ../../source/getting_started/pandas.rst:19
 msgid "Object creation"
-msgstr ""
+msgstr "创建对象"
 
 #: ../../source/getting_started/pandas.rst:21
 msgid ""
 "Creating a :class:`Series` by passing a list of values, letting it create"
 " a default integer index:"
-msgstr ""
+msgstr "用 list 创建 Series，此时系统会默认自动生成整数索引："
 
 #: ../../source/getting_started/pandas.rst:29
 msgid ""
 "Creating a :class:`DataFrame` by passing an array, with a datetime index "
 "and labeled columns:"
-msgstr ""
+msgstr "用 NumPy array 创建 DataFrame，自定义列名，并使用自定义的日期时间索引："
 
 #: ../../source/getting_started/pandas.rst:38
 msgid ""
 "Creating a :class:`DataFrame` by passing a dict of objects that can be "
 "converted to series-like."
-msgstr ""
+msgstr "用 dict 创建 DataFrame："
 
 #: ../../source/getting_started/pandas.rst:49
 msgid "The columns of the resulting :class:`DataFrame` have different dtypes."
-msgstr ""
+msgstr "创建出的 DataFrame 的每一列将具有不同的类型。"
 
 #: ../../source/getting_started/pandas.rst:57
 msgid "Viewing data"
-msgstr ""
+msgstr "浏览数据"
 
 #: ../../source/getting_started/pandas.rst:59
 msgid "Here is how to view the top and bottom rows of the frame:"
-msgstr ""
+msgstr "查看 DataFrame 头部和尾部数据："
 
 #: ../../source/getting_started/pandas.rst:66
 msgid "Display the index, columns:"
-msgstr ""
+msgstr "展示索引与列名："
 
 #: ../../source/getting_started/pandas.rst:74
 msgid ""
@@ -81,40 +81,54 @@ msgid ""
 " the dtypes in the DataFrame. This may end up being ``object``, which "
 "requires casting every value to a Python object."
 msgstr ""
+"调用 :meth:`DataFrame.to_numpy` 可以 ndarray 的形式返回 DataFrame 的数据。"
+"需要注意的是，当 DataFrame 的各个列为不同的类型时，这个操作将会非常耗时。这个"
+"现象是由于 DataFrame 和 ndarray 的本质区别造成的：**ndarray 仅有一种类型，"
+"而 DataFrame 则是每一列有一种类型**。当你调用 :meth:`DataFrame.to_numpy` 时，"
+":code:`xorbits.pandas` 将会根据 DataFrame 各个列的类型推导出返回的 ndarray 的"
+"类型。当返回的 ndarray 类型为 object 时，系统将需要把 DataFrame 中的每一个值转"
+"为一个 Python 对象。"
+
 
 #: ../../source/getting_started/pandas.rst:82
 msgid ""
 "For ``df``, our :class:`DataFrame` of all floating-point values, "
 ":meth:`DataFrame.to_numpy` is fast and doesn't require copying data."
 msgstr ""
+"对于 ``df``， 由于它是全部由浮点数构成的 :class:`DataFrame`，"
+":meth:`DataFrame.to_numpy` 将非常高效，且不需要复制任何数据。"
+
 
 #: ../../source/getting_started/pandas.rst:89
 msgid ""
 "For ``df2``, the :class:`DataFrame` with multiple dtypes, "
 ":meth:`DataFrame.to_numpy` is relatively expensive."
 msgstr ""
+"对于 ``df2``，由于它包含了不同类型的列，:meth:`DataFrame.to_numpy` 的"
+"开销相对会更多。"
+
 
 #: ../../source/getting_started/pandas.rst:98
 msgid ""
 ":meth:`DataFrame.to_numpy` does *not* include the index or column labels "
 "in the output."
-msgstr ""
+msgstr ":meth:`DataFrame.to_numpy` 的结果中*不*包含索引和列名。"
 
 #: ../../source/getting_started/pandas.rst:101
 msgid ":func:`~DataFrame.describe` shows a quick statistic summary of your data:"
-msgstr ""
+msgstr ":func:`~DataFrame.describe` 可以用来快速查看数据的统计摘要："
 
 #: ../../source/getting_started/pandas.rst:107
 msgid "Sorting by an axis:"
-msgstr ""
+msgstr "按轴排序："
 
 #: ../../source/getting_started/pandas.rst:113
 msgid "Sorting by values:"
-msgstr ""
+msgstr "按值排序"
 
 #: ../../source/getting_started/pandas.rst:120
 msgid "Selection"
-msgstr ""
+msgstr "选择数据"
 
 #: ../../source/getting_started/pandas.rst:124
 msgid ""
@@ -123,109 +137,113 @@ msgid ""
 "recommend the optimized :code:`xorbits.pandas` data access methods, "
 "``.at``, ``.iat``, ``.loc`` and ``.iloc``."
 msgstr ""
+"尽管交互式用法下，标准的 Python 表达式可以非常直观且方便地选取或设置数据。对于生产"
+"代码，我们还是推荐经过优化的 :code:`xorbits.pandas` 数据访问方法，如：``.at``、 "
+"``.iat``、 ``.loc`` 以及 ``.iloc``。"
+
 
 #: ../../source/getting_started/pandas.rst:131
 msgid "Getting"
-msgstr ""
+msgstr "获取数据"
 
 #: ../../source/getting_started/pandas.rst:133
 msgid ""
 "Selecting a single column, which yields a :class:`Series`, equivalent to "
 "``df.A``:"
-msgstr ""
+msgstr "选择单列数据，返回一个 :class:`Series` 对象，与 ``df.A`` 等效："
 
 #: ../../source/getting_started/pandas.rst:139
-msgid "Selecting via ``[]``, which slices the rows."
-msgstr ""
+msgid "Selecting via ``[]``, which slices the rows:"
+msgstr "用 ``[]`` 选择多列数据："
 
 #: ../../source/getting_started/pandas.rst:148
 msgid "Selection by label"
-msgstr ""
+msgstr "按标签选择数据"
 
 #: ../../source/getting_started/pandas.rst:150
 msgid "For getting a cross section using a label:"
-msgstr ""
+msgstr "按标签选择一列数据："
 
 #: ../../source/getting_started/pandas.rst:156
 msgid "Selecting on a multi-axis by label:"
-msgstr ""
+msgstr "按标签选择多列数据："
 
 #: ../../source/getting_started/pandas.rst:162
 msgid "Showing label slicing, both endpoints are *included*:"
-msgstr ""
+msgstr "按标签切片，结果*包含*起始点与结束点："
 
 #: ../../source/getting_started/pandas.rst:169
 msgid "Reduction in the dimensions of the returned object:"
-msgstr ""
+msgstr "数据降维："
 
 #: ../../source/getting_started/pandas.rst:175
 msgid "For getting a scalar value:"
-msgstr ""
+msgstr "提取标量："
 
 #: ../../source/getting_started/pandas.rst:181
 #: ../../source/getting_started/pandas.rst:226
 msgid "For getting fast access to a scalar (equivalent to the prior method):"
-msgstr ""
+msgstr "快速访问标量（与上述提取标量方法等效）："
 
 #: ../../source/getting_started/pandas.rst:188
 msgid "Selection by position"
-msgstr ""
+msgstr "按位置选择数据"
 
 #: ../../source/getting_started/pandas.rst:190
 msgid "Select via the position of the passed integers:"
-msgstr ""
+msgstr "按坐标选择数据："
 
 #: ../../source/getting_started/pandas.rst:196
 msgid "By integer slices, acting similar to python:"
-msgstr ""
+msgstr "按切片选择数据，与 Python 类似："
 
 #: ../../source/getting_started/pandas.rst:202
 msgid "By lists of integer position locations, similar to the python style:"
-msgstr ""
+msgstr "以坐标列表选择数据，与 Python 类似："
 
 #: ../../source/getting_started/pandas.rst:208
 msgid "For slicing rows explicitly:"
-msgstr ""
+msgstr "行切片："
 
 #: ../../source/getting_started/pandas.rst:214
 msgid "For slicing columns explicitly:"
-msgstr ""
+msgstr "列切片："
 
 #: ../../source/getting_started/pandas.rst:220
 msgid "For getting a value explicitly:"
-msgstr ""
+msgstr "获取指定坐标对应的值："
 
 #: ../../source/getting_started/pandas.rst:233
 msgid "Boolean indexing"
-msgstr ""
+msgstr "布尔索引"
 
 #: ../../source/getting_started/pandas.rst:235
 msgid "Using a single column's values to select data."
-msgstr ""
+msgstr "用单列的值选择数据："
 
 #: ../../source/getting_started/pandas.rst:241
 msgid "Selecting values from a DataFrame where a boolean condition is met."
-msgstr ""
+msgstr "选择 DataFrame 里满足条件的值："
 
 #: ../../source/getting_started/pandas.rst:249
 msgid "Operations"
-msgstr ""
+msgstr "运算"
 
 #: ../../source/getting_started/pandas.rst:252
 msgid "Stats"
-msgstr ""
+msgstr "统计"
 
 #: ../../source/getting_started/pandas.rst:254
 msgid "Operations in general *exclude* missing data."
-msgstr ""
+msgstr "一般情况下，运算时会*排除*缺失值。"
 
 #: ../../source/getting_started/pandas.rst:256
 msgid "Performing a descriptive statistic:"
-msgstr ""
+msgstr "进行描述性统计："
 
 #: ../../source/getting_started/pandas.rst:262
 msgid "Same operation on the other axis:"
-msgstr ""
+msgstr "在另一个轴上执行同样的操作"
 
 #: ../../source/getting_started/pandas.rst:269
 msgid ""
@@ -233,18 +251,20 @@ msgid ""
 "alignment. In addition, :code:`xorbits.pandas` automatically broadcasts "
 "along the specified dimension."
 msgstr ""
+"不同维度对象运算时，要先对齐。此外，:code:`xorbits.pandas` 会自动沿指定"
+"维度广播。"
 
 #: ../../source/getting_started/pandas.rst:280
 msgid "Apply"
-msgstr ""
+msgstr "应用函数"
 
 #: ../../source/getting_started/pandas.rst:282
 msgid "Applying functions to the data:"
-msgstr ""
+msgstr "在 DataFrame 上应用函数："
 
 #: ../../source/getting_started/pandas.rst:289
 msgid "String Methods"
-msgstr ""
+msgstr "字符串方法"
 
 #: ../../source/getting_started/pandas.rst:291
 msgid ""
@@ -254,14 +274,18 @@ msgid ""
 "uses `regular expressions <https://docs.python.org/3/library/re.html>`__ "
 "by default (and in some cases always uses them)."
 msgstr ""
+"Series 的 str 属性包含一系列字符串处理方法，方便用户对每一个元素应用特定字符串操作。"
+"如下列代码所示。注意，str 的模式匹配默认"
+"使用 `正则表达式 <https://docs.python.org/3/library/re.html>`__"
+"（且在某些情况下仅支持正则表达式）。"
 
 #: ../../source/getting_started/pandas.rst:303
 msgid "Merge"
-msgstr ""
+msgstr "合并操作"
 
 #: ../../source/getting_started/pandas.rst:306
 msgid "Concat"
-msgstr ""
+msgstr "结合"
 
 #: ../../source/getting_started/pandas.rst:308
 msgid ""
@@ -270,10 +294,14 @@ msgid ""
 " the indexes and relational algebra functionality in the case of join / "
 "merge-type operations."
 msgstr ""
+":code:`xorbits.pandas` 提供了多种将 Series、DataFrame 对象组合在一起的功能，"
+"用索引与关联代数功能的多种设置逻辑可执行连接（join）与合并（merge）操作。"
+
 
 #: ../../source/getting_started/pandas.rst:313
 msgid "Concatenating :code:`xorbits.pandas` objects together with :func:`concat`:"
-msgstr ""
+msgstr "使用 :func:`concat` 结合多个 :code:`xorbits.pandas` 对象："
+
 
 #: ../../source/getting_started/pandas.rst:326
 msgid ""
@@ -282,40 +310,42 @@ msgid ""
 "a pre-built list of records to the :class:`DataFrame` constructor instead"
 " of building a :class:`DataFrame` by iteratively appending records to it."
 msgstr ""
+"为 :class:`DataFrame` 新增一列相对较快。而新增一行由于需要数据复制，可能开销较大。"
+"因此在创建 DataFrame 时，不推荐迭代追加行，推荐在创建时将所有的行以列表形式传入。"
 
 #: ../../source/getting_started/pandas.rst:332
 msgid "Join"
-msgstr ""
+msgstr "连接"
 
 #: ../../source/getting_started/pandas.rst:334
 msgid "SQL style merges."
-msgstr ""
+msgstr "类 SQL 的合并操作。"
 
 #: ../../source/getting_started/pandas.rst:344
 msgid "Another example that can be given is:"
-msgstr ""
+msgstr "这里还有一个例子："
 
 #: ../../source/getting_started/pandas.rst:355
 msgid "Grouping"
-msgstr ""
+msgstr "分组"
 
 #: ../../source/getting_started/pandas.rst:357
 msgid ""
 "By \"group by\" we are referring to a process involving one or more of "
 "the following steps:"
-msgstr ""
+msgstr "\"group by\" 指的是下面的一步或多步处理："
 
 #: ../../source/getting_started/pandas.rst:360
 msgid "**Splitting** the data into groups based on some criteria"
-msgstr ""
+msgstr "**分组**： 按条件将数据分为多组"
 
 #: ../../source/getting_started/pandas.rst:361
 msgid "**Applying** a function to each group independently"
-msgstr ""
+msgstr "**应用函数**：在每个分组上分别应用函数"
 
 #: ../../source/getting_started/pandas.rst:362
 msgid "**Combining** the results into a data structure"
-msgstr ""
+msgstr "**合并**：将结果合并为一个数据结构"
 
 #: ../../source/getting_started/pandas.rst:375
 msgid ""
@@ -323,40 +353,42 @@ msgid ""
 ":meth:`~xorbits.pandas.groupby.DataFrameGroupBy.sum` function to the "
 "resulting groups."
 msgstr ""
+"先分组，而后用 :meth:`~xorbits.pandas.groupby.DataFrameGroupBy.sum` 函数"
+"计算每一组的汇总数据。"
 
 #: ../../source/getting_started/pandas.rst:383
 msgid ""
 "Grouping by multiple columns forms a hierarchical index, and again we can"
 " apply the `sum` function."
 msgstr ""
+"用多列作为分组依据，生成多层索引，再应用 `sum` 函数。"
 
 #: ../../source/getting_started/pandas.rst:391
 msgid "Plotting"
-msgstr ""
+msgstr "可视化"
 
 #: ../../source/getting_started/pandas.rst:393
 msgid "We use the standard convention for referencing the matplotlib API:"
-msgstr ""
+msgstr "我们使用 matplotlib API 的标准约定："
 
 #: ../../source/getting_started/pandas.rst:409
 msgid ""
 "On a DataFrame, the :meth:`~DataFrame.plot` method is a convenience to "
 "plot all of the columns with labels:"
-msgstr ""
+msgstr "DataFrame 的 :meth:`~DataFrame.plot` 方法可以方便地可视化所有带标签的列"
 
 #: ../../source/getting_started/pandas.rst:424
 msgid "Getting data in/out"
-msgstr ""
+msgstr "数据输入 / 输出"
 
 #: ../../source/getting_started/pandas.rst:427
 msgid "CSV"
-msgstr ""
+msgstr "CSV"
 
 #: ../../source/getting_started/pandas.rst:429
 msgid "Writing to a csv file."
-msgstr ""
+msgstr "写 csv 文件。"
 
 #: ../../source/getting_started/pandas.rst:435
 msgid "Reading from a csv file."
-msgstr ""
-
+msgstr "读 csv 文件。"

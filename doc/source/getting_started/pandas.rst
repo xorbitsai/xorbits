@@ -136,7 +136,7 @@ Selecting a single column, which yields a :class:`Series`, equivalent to ``df.A`
 
    df['A']
 
-Selecting via ``[]``, which slices the rows.
+Selecting via ``[]``, which slices the rows:
 
 .. ipython:: python
    :okwarning:
