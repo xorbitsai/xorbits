@@ -19,39 +19,41 @@ msgstr ""
 
 #: ../../source/deployment/local.rst:5
 msgid "Local deployment"
-msgstr ""
+msgstr "本地部署"
 
 #: ../../source/deployment/local.rst:7
 msgid ""
 "Local deployment means that you can run Xorbits on your local machine, "
 "e.g. laptop."
-msgstr ""
+msgstr "Xorbits 支持本地部署，也就是跑在自己本地机器，比如个人笔记本上。"
 
 #: ../../source/deployment/local.rst:10
 msgid "Installation"
-msgstr ""
+msgstr "安装"
 
 #: ../../source/deployment/local.rst:12
 msgid ""
 "First, ensure Xorbits is correctly installed, if not, see "
 ":ref:`installation document <installation>`."
 msgstr ""
+"首先，参考:ref:`安装文档 <installation>` 确保每个机器都正确安装了 Xorbits。"
 
 #: ../../source/deployment/local.rst:15
 msgid "Init Xorbits runtime optionally"
-msgstr ""
+msgstr "初始化 Xorbits"
 
 #: ../../source/deployment/local.rst:17
 msgid ""
 "Secondly, you don't have to, but you can optionally init an Xorbits "
 "runtime manually."
-msgstr ""
+msgstr "其次，你可以选择手动初始化 Xorbits。"
 
 #: ../../source/deployment/local.rst:24
 msgid ""
 "Or Xorbits will try to init for you in the background when the first time"
 " some computation is triggered."
 msgstr ""
+"如果没有手动初始化，Xorbits 会在第一次触发执行的时候初始化。"
 
 #: ../../source/deployment/local.rst:28
 msgid ""
@@ -60,4 +62,6 @@ msgid ""
 "runtime in advance, or the time of init may be accounted into execution "
 "time which may be distracted."
 msgstr ""
+"一般完成初始化会花一定时间，如果你想做性能之类的测试，最好在测试前先手动初始化，"
+"否则初始化的时间可能会被加到计算时间内，影响测试结果。"
 
