@@ -303,10 +303,10 @@ msgid ""
 "``reshape`` can also be instructed, using an optional argument, to use "
 "FORTRAN-style arrays, in which the leftmost index changes the fastest."
 msgstr ""
-"调用 ``ravel`` 返回的数组中，元素的排列顺序通常是\"C-风格\"。也就是说，最右边的索引\"变化最快\"。因此 [0,0] "
+"调用 ``ravel`` 返回的数组中，元素的排列顺序通常是\"C-风格\"。也就是说，按照顺序最右边的索引最先变化。因此 [0,0] "
 "之后的元素是 [0,1] 。如果将数组重组为其他形状，该数组仍将被视为\"C风格\"。数组中的元素通常也是按这个顺序存储，因此 ``ravel``"
 " 不需要复制数据。但如果该数组是另一个数组的切片，或者是以特殊参数创建的，``ravel`` 可能需要进行数据复制。此时可以使用 "
-"``ravel`` 的可选参数指定使用\"FORTRAN-风格\"，此时最左侧的索引变化最快。"
+"``ravel`` 的可选参数指定使用\"FORTRAN-风格\"，按照顺序最左侧的索引最先变化。"
 
 #: ../../source/getting_started/numpy.rst:499
 msgid ""
