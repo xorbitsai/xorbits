@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 15:45+0800\n"
+"POT-Creation-Date: 2023-02-01 17:36+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,51 +19,51 @@ msgstr ""
 
 #: ../../source/getting_started/numpy.rst:3
 msgid "10 minutes to :code:`xorbits.numpy`"
-msgstr ""
+msgstr "十分钟入门 :code:`xorbits.numpy`"
 
 #: ../../source/getting_started/numpy.rst:7
 msgid ""
 "This is a short introduction to :code:`xorbits.numpy` which is originated"
 " from NumPy's quickstart."
-msgstr ""
+msgstr "我们将快速介绍 :code:`xorbits.numpy` 的基本功能，主要内容源自 NumPy 的快速入门教程。"
 
 #: ../../source/getting_started/numpy.rst:10
 msgid "Array Creation"
-msgstr ""
+msgstr "数组创建"
 
 #: ../../source/getting_started/numpy.rst:12
 msgid ""
 "Popular mechanisms for creating arrays in NumPy are supported in "
 ":code:`xorbits.numpy`."
-msgstr ""
+msgstr ":code:`xorbits.numpy` 支持 NumPy 中常见创建数组的方式。"
 
 #: ../../source/getting_started/numpy.rst:14
 msgid ""
 "For example, you can create an array from a regular Python list or tuple "
 "using the ``array`` function. The type of the resulting array is deduced "
 "from the type of the elements in the sequences."
-msgstr ""
+msgstr "例如，你可以调用 ``array`` 函数，用 Python list 或 tuple 创建数组。数组的类型将由系统自动推导得到。"
 
 #: ../../source/getting_started/numpy.rst:29
 msgid "In addition, creating an array from existing NumPy ndarray is supported."
-msgstr ""
+msgstr "此外，还可以从已有的 NumPy 数组创建数组。"
 
 #: ../../source/getting_started/numpy.rst:40
 msgid ""
 "A frequent error consists in calling ``array`` with multiple arguments, "
 "rather than providing a single sequence as an argument."
-msgstr ""
+msgstr "一个常见的错误是在调用 ``array`` 函数时，传入了多个参数，而不是传入单个序列。"
 
 #: ../../source/getting_started/numpy.rst:51
 msgid ""
 "``array`` transforms sequences of sequences into two-dimensional arrays, "
 "sequences of sequences of sequences into three-dimensional arrays, and so"
 " on."
-msgstr ""
+msgstr "``array`` 函数还可以用二维序列创建二维数组，用三维序列创建三位数组，以此类推。"
 
 #: ../../source/getting_started/numpy.rst:61
 msgid "The type of the array can also be explicitly specified at creation time:"
-msgstr ""
+msgstr "也可以在创建数组时显式指定数组类型："
 
 #: ../../source/getting_started/numpy.rst:70
 msgid ""
@@ -71,7 +71,7 @@ msgid ""
 "known. Hence, several functions are offered to create arrays with initial"
 " placeholder content. These minimize the necessity of growing arrays, an "
 "expensive operation."
-msgstr ""
+msgstr "通常，最初数组的元素是未知的，但它的大小是已知的。因此，我们提供了几个函数来创建具有初始占位符内容的数组。这样可以避免数组大小增加带来的开销。"
 
 #: ../../source/getting_started/numpy.rst:74
 msgid ""
@@ -81,12 +81,14 @@ msgid ""
 " of the memory. By default, the dtype of the created array is "
 "``float64``, but it can be specified via the key word argument ``dtype``."
 msgstr ""
+"函数 ``zeros`` 会创建一个由 0 组成的数组。函数 ``ones`` 会创建一个由 1 组成的数组。函数 ``empty`` "
+"会创建一个随机的数组，内容取决于内存的状态。默认情况下，创建的数组类型为 ``float64``，但也可以用参数 ``dtype`` 指定。"
 
 #: ../../source/getting_started/numpy.rst:97
 msgid ""
 "To create sequences of numbers, use ``arange`` function which is "
 "analogous to the Python built-in ``range``, but returns an array."
-msgstr ""
+msgstr "为了创建数字数组，可以使用与 Python 内建函数 ``range`` 相似的函数 ``arange`` 。"
 
 #: ../../source/getting_started/numpy.rst:107
 msgid ""
@@ -96,63 +98,65 @@ msgid ""
 " use the function ``linspace`` that receives as an argument the number of"
 " elements that we want, instead of the step::"
 msgstr ""
+"当以浮点数作为 ``arange`` 的参数时，由于浮点数的精度有限，通常无法预测元素的个数。因此在这种情况下，最好使用可以指定预期元素个数的 "
+"``linspace`` 函数："
 
 #: ../../source/getting_started/numpy.rst:119
 msgid ""
 "However, the way of loading and saving arrays is quite different. Please "
 "see :ref:`io <routines.io>` for detailed info. Here's an example of "
 "creating and loading an HDF5 file::"
-msgstr ""
+msgstr "加载和保存数组方法请参考 :ref:`io <routines.io>`。下面是一个将数组保存为 HDF5 文件并读取的示例："
 
 #: ../../source/getting_started/numpy.rst:129
 msgid ""
 "Once an ndarray is created, use ``to_numpy`` to convert it to a local "
 "NumPy ndarray::"
-msgstr ""
+msgstr "当数组创建后，可以用 ``to_numpy`` 方法把它转换为一个本地的 NumPy 数组："
 
 #: ../../source/getting_started/numpy.rst:137
 msgid "Printing Arrays"
-msgstr ""
+msgstr "打印数组"
 
 #: ../../source/getting_started/numpy.rst:139
 msgid "Xorbits displays an array in a similar way to NumPy:"
-msgstr ""
+msgstr "Xorbits 展示数组的方式与 NumPy 类似："
 
 #: ../../source/getting_started/numpy.rst:141
 msgid "the last axis is printed from left to right,"
-msgstr ""
+msgstr "最后一个轴从左到右打印"
 
 #: ../../source/getting_started/numpy.rst:142
 msgid "the second-to-last is printed from top to bottom,"
-msgstr ""
+msgstr "倒数第二个从上到下打印"
 
 #: ../../source/getting_started/numpy.rst:143
 msgid ""
 "the rest are also printed from top to bottom, with each slice separated "
 "from the next by an empty line."
-msgstr ""
+msgstr "其余部分也从上到下打印，每个切片用空行分隔"
 
 #: ../../source/getting_started/numpy.rst:146
 msgid ""
 "One-dimensional arrays are then printed as rows, bidimensionals as "
 "matrices and tridimensionals as lists of matrices."
-msgstr ""
+msgstr "然后将一维数组按行打印，将二维数据打印为矩阵，将三维数据打印为矩阵列表。"
 
 #: ../../source/getting_started/numpy.rst:172
 msgid ""
 "If an array is too large to be printed, the central part of the array "
 "will be automatically skipped and only prints the corners::"
-msgstr ""
+msgstr "如果数组太大而无法打印，会自动跳过数组的中心部分并仅打印角点："
 
 #: ../../source/getting_started/numpy.rst:191
 msgid "Basic Operations"
-msgstr ""
+msgstr "基本操作"
 
 #: ../../source/getting_started/numpy.rst:193
 msgid ""
 "Arithmetic operators on arrays apply *elementwise*. A new array is "
 "created and filled with the result."
-msgstr ""
+msgstr "数组上的算术操作会应用到 *每一个元素* ，并返回一个新的数组："
 
 #: ../../source/getting_started/numpy.rst:212
 msgid ""
@@ -161,25 +165,27 @@ msgid ""
 "performed using the ``@`` operator (in python >=3.5) or the ``dot`` "
 "function or method::"
 msgstr ""
+"与其他矩阵语言不同，乘法运算符 ``*`` 在 :code:`xorbits.numpy` 数组中按元素进行计算。矩阵乘法操作可以用 ``@`` "
+"运算符 (python >=3.5) 或 ``dot`` 函数或方法："
 
 #: ../../source/getting_started/numpy.rst:230
 msgid ""
 "Some operations, such as ``+=`` and ``*=``, act in place to modify an "
 "existing array rather than create a new one."
-msgstr ""
+msgstr "某些操作（如 ``+=`` 和 ``*=`` ）会更直接更改被操作的数组，不会创建新数组。"
 
 #: ../../source/getting_started/numpy.rst:246
 msgid ""
 "When operating with arrays of different types, the type of the resulting "
 "array corresponds to the more general or precise one (a behavior known as"
 " upcasting)."
-msgstr ""
+msgstr "当使用不同类型的数组进行操作时，结果数组的类型会选择更泛用或更精确的（即向上转换）。"
 
 #: ../../source/getting_started/numpy.rst:267
 msgid ""
 "Many unary operations, such as computing the sum of all the elements in "
 "the array, are implemented as methods of the ``ndarray`` class."
-msgstr ""
+msgstr "许多一元操作，例如计算数组中所有元素的总和，是作为 ``ndarray`` 类的方法实现的。"
 
 #: ../../source/getting_started/numpy.rst:283
 msgid ""
@@ -187,11 +193,11 @@ msgid ""
 "of numbers, regardless of its shape. However, by specifying the ``axis`` "
 "parameter you can apply an operation along the specified axis of an "
 "array::"
-msgstr ""
+msgstr "默认情况下，在数组上应用这些操作和在数字列表上应用一样，与数组形状无关。但是，通过指定 ``axis`` 参数，您可以沿数组的指定轴应用操作："
 
 #: ../../source/getting_started/numpy.rst:306
 msgid "Universal Functions"
-msgstr ""
+msgstr "通用函数"
 
 #: ../../source/getting_started/numpy.rst:308
 msgid ""
@@ -199,10 +205,12 @@ msgid ""
 "called \"universal functions\" (\\ ``ufunc``). These functions operate "
 "elementwise on an array, producing an array as output."
 msgstr ""
+":code:`xorbits.numpy` 提供了如 sin，cos 和 exp "
+"等数学函数。在这些函数被称为\"通用函数\"。这些函数在数组上按元素进行运算，并输出一个新的数组。"
 
 #: ../../source/getting_started/numpy.rst:328
 msgid "Indexing, Slicing and Iterating"
-msgstr ""
+msgstr "索引、切片和迭代"
 
 #: ../../source/getting_started/numpy.rst:330
 msgid ""
@@ -211,18 +219,19 @@ msgid ""
 "<https://docs.python.org/tutorial/introduction.html#lists>`__ and other "
 "Python sequences."
 msgstr ""
+"**一维** 数组可以进行索引、切片和迭代操作，与 list 及其他 Python 序列类似。"
 
 #: ../../source/getting_started/numpy.rst:366
 msgid ""
 "**Multidimensional** arrays can have one index per axis. These indices "
 "are given in a tuple separated by commas::"
-msgstr ""
+msgstr "对 **多维** 数组进行索引操作时，需要以逗号分隔的形式指定每个轴的索引："
 
 #: ../../source/getting_started/numpy.rst:387
 msgid ""
 "When fewer indices are provided than the number of axes, the missing "
 "indices are considered complete slices\\ ``:``"
-msgstr ""
+msgstr "当提供的索引少于轴的数量时，缺失的索引将被认为是完整的切片："
 
 #: ../../source/getting_started/numpy.rst:395
 msgid ""
@@ -230,31 +239,33 @@ msgid ""
 "followed by as many instances of ``:`` as needed to represent the "
 "remaining axes. You can also write this using dots as ``b[i, ...]``."
 msgstr ""
+"``b[i]`` 方括号中的表达式 ``i`` 将会自动追加若干个 ``:``，用于表示缺省的轴的索引，也可以用 ``b[i, ...]`` "
+"来表示相同含义。"
 
 #: ../../source/getting_started/numpy.rst:400
 msgid ""
 "The **dots** (``...``) represent as many colons as needed to produce a "
 "complete indexing tuple. For example, if ``x`` is an array with 5 axes, "
 "then"
-msgstr ""
+msgstr "**省略号** （``...``）用于补足完整索引，等同于为补足完整索引需要的若干 ``:``。举例来说，如果 x 是具有5个轴的数组，则："
 
 #: ../../source/getting_started/numpy.rst:404
 msgid "``x[1, 2, ...]`` is equivalent to ``x[1, 2, :, :, :]``,"
-msgstr ""
+msgstr "``x[1, 2, ...]`` 等价于 ``x[1, 2, :, :, :]``"
 
 #: ../../source/getting_started/numpy.rst:405
 msgid "``x[..., 3]`` to ``x[:, :, :, :, 3]`` and"
-msgstr ""
+msgstr "``x[..., 3]`` 等价于 ``x[:, :, :, :, 3]``"
 
 #: ../../source/getting_started/numpy.rst:406
 msgid "``x[4, ..., 5, :]`` to ``x[4, :, :, 5, :]``."
-msgstr ""
+msgstr "``x[4, ..., 5, :]`` 等价于 ``x[4, :, :, 5, :]``"
 
 #: ../../source/getting_started/numpy.rst:423
 msgid ""
 "**Iterating** over multidimensional arrays is done with respect to the "
 "first axis::"
-msgstr ""
+msgstr "对多维数组进行 **迭代** 是在第一个轴上进行的："
 
 #: ../../source/getting_started/numpy.rst:433
 msgid ""
@@ -262,22 +273,22 @@ msgid ""
 "array, one can use the ``flat`` attribute which is an `iterator "
 "<https://docs.python.org/tutorial/classes.html#iterators>`__ over all the"
 " elements of the array::"
-msgstr ""
+msgstr "但是，如果想要对数组中的每个元素执行操作，可以使用 ``flat`` 属性，该属性是数组的所有元素的迭代器："
 
 #: ../../source/getting_started/numpy.rst:457
 msgid "Changing the shape of an array"
-msgstr ""
+msgstr "改变数组的形状"
 
 #: ../../source/getting_started/numpy.rst:459
 msgid "An array has a shape given by the number of elements along each axis::"
-msgstr ""
+msgstr "一个数组的形状是由每个轴的元素数量决定的："
 
 #: ../../source/getting_started/numpy.rst:469
 msgid ""
 "The shape of an array can be changed with various commands. Note that the"
 " following three commands all return a modified array, but do not change "
 "the original array::"
-msgstr ""
+msgstr "可以使用各种命令更改数组的形状。以下三个命令都返回一个修改后的数组，但不会更改原始数组："
 
 #: ../../source/getting_started/numpy.rst:491
 msgid ""
@@ -292,69 +303,81 @@ msgid ""
 "``reshape`` can also be instructed, using an optional argument, to use "
 "FORTRAN-style arrays, in which the leftmost index changes the fastest."
 msgstr ""
+"调用 ``ravel`` 返回的数组中，元素的排列顺序通常是\"C-风格\"。也就是说，按照顺序最右边的索引最先变化。因此 [0,0] "
+"之后的元素是 [0,1] 。如果将数组重组为其他形状，该数组仍将被视为\"C风格\"。数组中的元素通常也是按这个顺序存储，因此 ``ravel``"
+" 不需要复制数据。但如果该数组是另一个数组的切片，或者是以特殊参数创建的，``ravel`` 可能需要进行数据复制。此时可以使用 "
+"``ravel`` 的可选参数指定使用\"FORTRAN-风格\"，按照顺序最左侧的索引最先变化。"
 
 #: ../../source/getting_started/numpy.rst:499
 msgid ""
 "If a dimension is given as ``-1`` in a reshaping operation, the other "
 "dimensions are automatically calculated::"
-msgstr ""
+msgstr "在 reshape 操作时，如果某一个维度指定为 ``-1``，则会自动计算其他维度的大小："
 
 #: ../../source/getting_started/numpy.rst:510
 msgid "Stacking together different arrays"
-msgstr ""
+msgstr "堆叠不同数组"
 
 #: ../../source/getting_started/numpy.rst:512
 msgid "Several arrays can be stacked together along different axes::"
-msgstr ""
+msgstr "几个数组可以沿不同的轴堆叠在一起："
 
 #: ../../source/getting_started/numpy.rst:531
 msgid ""
-"The function `column_stack` stacks 1D arrays as columns into a 2D array. "
-"It is equivalent to `hstack` only for 2D arrays::"
+"The function ``column_stack`` stacks 1D arrays as columns into a 2D "
+"array. It is equivalent to ``hstack`` only for 2D arrays::"
 msgstr ""
+"函数 ``column_stack`` 将多个一维数组视作多列数据，堆叠为二维数组。对二维数组，``column_stack`` 与 "
+"``hstack`` 方法等价："
 
 #: ../../source/getting_started/numpy.rst:555
 msgid ""
-"On the other hand, the function `row_stack` is equivalent to `vstack` for"
-" any input arrays. In fact, `row_stack` is an alias for `vstack`::"
-msgstr ""
+"On the other hand, the function ``row_stack`` is equivalent to ``vstack``"
+" for any input arrays. In fact, ``row_stack`` is an alias for "
+"``vstack``::"
+msgstr "另一方面，对于任意数组，``row_stack`` 和 ``vstack`` 等效："
 
 #: ../../source/getting_started/numpy.rst:563
 msgid ""
-"In general, for arrays with more than two dimensions, `hstack` stacks "
-"along their second axes, `vstack` stacks along their first axes, and "
-"`concatenate` allows for an optional arguments giving the number of the "
-"axis along which the concatenation should happen."
+"In general, for arrays with more than two dimensions, ``hstack`` stacks "
+"along their second axes, ``vstack`` stacks along their first axes, and "
+"``concatenate`` allows for an optional arguments giving the number of the"
+" axis along which the concatenation should happen."
 msgstr ""
+"总的来说，对于大于等于二维的数组，``hstack`` 沿第二个轴堆叠，``vstack`` 沿第一个轴堆叠。``concatenate`` "
+"则有可选参数来决定沿哪个轴进行结合。"
 
 #: ../../source/getting_started/numpy.rst:569
 msgid ""
-"In complex cases, `r_` and `c_` are useful for creating arrays by "
+"In complex cases, ``r_`` and ``c_`` are useful for creating arrays by "
 "stacking numbers along one axis. They allow the use of range literals "
 "``:``. ::"
-msgstr ""
+msgstr "在复杂情况下，``r_`` 与 ``c_`` 通过沿一个轴堆叠数字来创建数组时非常有用。可以使用范围操作 ``:``"
 
 #: ../../source/getting_started/numpy.rst:575
 msgid ""
-"When used with arrays as arguments, `r_` and `c_` are similar to `vstack`"
-" and `hstack` in their default behavior, but allow for an optional "
-"argument giving the number of the axis along which to concatenate."
+"When used with arrays as arguments, ``r_`` and ``c_`` are similar to "
+"``vstack`` and ``hstack`` in their default behavior, but allow for an "
+"optional argument giving the number of the axis along which to "
+"concatenate."
 msgstr ""
+"当输入参数为数组时，``r_`` 与 ``c_`` 和 ``vstack`` 及 ``hstack`` "
+"的默认行为类似，但有可选参数用于指定沿哪个轴进行结合。"
 
 #: ../../source/getting_started/numpy.rst:580
 msgid "Splitting one array into several smaller ones"
-msgstr ""
+msgstr "将一个数组拆分成几个较小的数组"
 
 #: ../../source/getting_started/numpy.rst:582
 msgid ""
-"Using `hsplit`, you can split an array along its horizontal axis, either "
-"by specifying the number of equally shaped arrays to return, or by "
-"specifying the columns after which the division should occur::"
-msgstr ""
+"Using ``hsplit``, you can split an array along its horizontal axis, "
+"either by specifying the number of equally shaped arrays to return, or by"
+" specifying the columns after which the division should occur::"
+msgstr "你可以使用 ``hsplit`` 来将一个数组沿水平轴拆分。也可以指定拆分出的数组数量，或指定拆分的位置："
 
 #: ../../source/getting_started/numpy.rst:604
 msgid ""
-"`vsplit` splits along the vertical axis, and `array_split` allows one to "
-"specify along which axis to split."
-msgstr ""
+"``vsplit`` splits along the vertical axis, and ``array_split`` allows one"
+" to specify along which axis to split."
+msgstr "``vsplit`` 沿垂直轴进行拆分。``array_split`` 允许指定沿哪个轴进行拆分。"
 
