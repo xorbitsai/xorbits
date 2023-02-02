@@ -166,7 +166,7 @@ msgid ""
 "function or method::"
 msgstr ""
 "与其他矩阵语言不同，乘法运算符 ``*`` 在 :code:`xorbits.numpy` 数组中按元素进行计算。矩阵乘法操作可以用 ``@`` "
-"运算符 (python >=3.5) 或 `dot` 函数或方法："
+"运算符 (python >=3.5) 或 ``dot`` 函数或方法："
 
 #: ../../source/getting_started/numpy.rst:230
 msgid ""
