@@ -373,7 +373,7 @@ msgid ""
 "Using ``hsplit``, you can split an array along its horizontal axis, "
 "either by specifying the number of equally shaped arrays to return, or by"
 " specifying the columns after which the division should occur::"
-msgstr "你可以使用 ``hsplit`` 来将一个数组沿水平轴拆分。你可以指定拆分出的数组数量，或指定拆分的位置："
+msgstr "你可以使用 ``hsplit`` 来将一个数组沿水平轴拆分。也可以指定拆分出的数组数量，或指定拆分的位置："
 
 #: ../../source/getting_started/numpy.rst:604
 msgid ""

@@ -112,7 +112,7 @@ msgstr ""
 msgid ""
 ":meth:`DataFrame.to_numpy` does *not* include the index or column labels "
 "in the output."
-msgstr ":meth:`DataFrame.to_numpy` 的结果中*不*包含索引和列名。"
+msgstr ":meth:`DataFrame.to_numpy` 的结果中 *不* 包含索引和列名。"
 
 #: ../../source/getting_started/pandas.rst:101
 msgid ":func:`~DataFrame.describe` shows a quick statistic summary of your data:"
@@ -124,7 +124,7 @@ msgstr "按轴排序："
 
 #: ../../source/getting_started/pandas.rst:113
 msgid "Sorting by values:"
-msgstr "按值排序"
+msgstr "按值排序："
 
 #: ../../source/getting_started/pandas.rst:120
 msgid "Selection"
@@ -243,7 +243,7 @@ msgstr "进行描述性统计："
 
 #: ../../source/getting_started/pandas.rst:262
 msgid "Same operation on the other axis:"
-msgstr "在另一个轴上执行同样的操作"
+msgstr "在另一个轴上执行同样的操作："
 
 #: ../../source/getting_started/pandas.rst:269
 msgid ""
@@ -294,8 +294,9 @@ msgid ""
 " the indexes and relational algebra functionality in the case of join / "
 "merge-type operations."
 msgstr ""
-":code:`xorbits.pandas` 提供了多种将 Series、DataFrame 对象组合在一起的功能，"
-"用索引与关联代数功能的多种设置逻辑可执行连接（join）与合并（merge）操作。"
+":code:`xorbits.pandas` 提供了多种方法，可以轻松地将 Series、DataFrame 对象通过"
+"不同的索引逻辑组合在一起，并且支持关系代数语义的连接（join）与合并（merge）操作。"
+""
 
 
 #: ../../source/getting_started/pandas.rst:313
@@ -361,7 +362,7 @@ msgid ""
 "Grouping by multiple columns forms a hierarchical index, and again we can"
 " apply the `sum` function."
 msgstr ""
-"用多列作为分组依据，生成多层索引，再应用 `sum` 函数。"
+"用多列作为分组依据，生成多层索引，再应用 ``sum`` 函数。"
 
 #: ../../source/getting_started/pandas.rst:391
 msgid "Plotting"
