@@ -335,7 +335,7 @@ msgid ""
 "On the other hand, the function ``row_stack`` is equivalent to ``vstack``"
 " for any input arrays. In fact, ``row_stack`` is an alias for "
 "``vstack``::"
-msgstr "另一方面，对于任意数组，`row_stack` 和 `vstack` 等效："
+msgstr "另一方面，对于任意数组，``row_stack`` 和 ``vstack`` 等效："
 
 #: ../../source/getting_started/numpy.rst:563
 msgid ""
