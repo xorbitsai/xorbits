@@ -88,7 +88,7 @@ msgstr ""
 msgid ""
 "To create sequences of numbers, use ``arange`` function which is "
 "analogous to the Python built-in ``range``, but returns an array."
-msgstr "为了创建数字数组，可以使用与 Python 内建函数 ``range`` 相似的函数``arange``。"
+msgstr "为了创建数字数组，可以使用与 Python 内建函数 ``range`` 相似的函数 ``arange`` 。"
 
 #: ../../source/getting_started/numpy.rst:107
 msgid ""
