@@ -50,7 +50,7 @@ msgid ""
 "Output methods are called. For example, :meth:`DataFrame.to_csv` is "
 "called."
 msgstr ""
-"调用存储数据的方式时，比如 :meth:`DataFrame.to_csv` 方法。"
+"调用存储数据的方法时，比如 :meth:`DataFrame.to_csv` 方法。"
 
 #: ../../source/user_guide/deferred_execution.rst:19
 msgid ""
