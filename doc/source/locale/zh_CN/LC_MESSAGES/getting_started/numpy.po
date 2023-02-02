@@ -344,7 +344,7 @@ msgid ""
 "``concatenate`` allows for an optional arguments giving the number of the"
 " axis along which the concatenation should happen."
 msgstr ""
-"总的来说，对于大于等于二维的数组，`hstack` 沿第二个轴堆叠，`vstack` 沿第一个轴堆叠。`concatenate` "
+"总的来说，对于大于等于二维的数组，``hstack`` 沿第二个轴堆叠，``vstack`` 沿第一个轴堆叠。``concatenate`` "
 "则有可选参数来决定沿哪个轴进行结合。"
 
 #: ../../source/getting_started/numpy.rst:569
