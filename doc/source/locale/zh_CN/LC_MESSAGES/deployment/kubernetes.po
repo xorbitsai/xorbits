@@ -19,41 +19,41 @@ msgstr ""
 
 #: ../../source/deployment/kubernetes.rst:5
 msgid "Kubernetes deployment"
-msgstr ""
+msgstr "在 Kubernetes 中部署"
 
 #: ../../source/deployment/kubernetes.rst:8
 msgid "Prerequisites"
-msgstr ""
+msgstr "先决条件"
 
 #: ../../source/deployment/kubernetes.rst:9
 msgid ""
 "Install Xorbits on the machine where you plan to run the kubernetes "
 "deploy code. Refer to :ref:`installation document <installation>`."
-msgstr ""
+msgstr "在你计划部署 Xorbits Kubernetes 集群的机器上安装Xorbits。参考:ref:`installation document <installation>`。"
 
 #: ../../source/deployment/kubernetes.rst:13
 msgid "Kubernetes"
-msgstr ""
+msgstr "Kubernetes 部署"
 
 #: ../../source/deployment/kubernetes.rst:14
 msgid ""
 "Make sure a K8s cluster is properly installed on your machine(s), and "
 "enable the `ingress service <https://kubernetes.io/docs/concepts"
 "/services-networking/ingress/>`_."
-msgstr ""
+msgstr "确保机器上有一个可用的 Kubernetes 集群，同时开启`ingress 服务 <https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress/>`_。"
 
 #: ../../source/deployment/kubernetes.rst:16
 msgid ""
 "For example, if you use Minikube, start a cluster and enable ingress like"
 " this:"
-msgstr ""
+msgstr "例如，如果你的机器上安装的是 Minikube ，运行如下命令以启动集群和开启 ingress ："
 
 #: ../../source/deployment/kubernetes.rst:23
 msgid ""
 "Follow `minikube documentation <https://kubernetes.io/docs/tasks/access-"
 "application-cluster/ingress-minikube/>`_ to verify whether ingress is "
 "enabled correctly."
-msgstr ""
+msgstr "参考 `Minikube 文档 <https://kubernetes.io/zh-cn/docs/tasks/access-application-cluster/ingress-minikube/>`_ 以验证 ingress 服务是否正确启动。"
 
 #: ../../source/deployment/kubernetes.rst:25
 msgid ""
@@ -61,14 +61,16 @@ msgid ""
 "<https://github.com/chipmk/docker-mac-net-connect>`_ is needed due to its"
 " `limitation <https://github.com/kubernetes/minikube/issues/7332>`_:"
 msgstr ""
+"对于 MacOs 操作系统上基于 docker 后端的 Minikube 集群，由于其网络架构的`限制 <https://github.com/kubernetes/minikube/issues/7332>`_，"
+"需要安装 `docker-mac-net-connect <https://github.com/chipmk/docker-mac-net-connect>`_ 以正确使用 ingress 服务代理出来的地址。参考以下命令："
 
 #: ../../source/deployment/kubernetes.rst:36
 msgid "Then deploy Xorbits cluster, for example:"
-msgstr ""
+msgstr "然后可以通过 python 代码部署 Xorbits 至你的 Kubernetes 集群，例如："
 
 #: ../../source/deployment/kubernetes.rst:45
 msgid "Please make sure ``kubectl`` uses your kubernetes cluster context."
-msgstr ""
+msgstr "请务必确保机器上的 ``kubectl`` 命令指向你需要部署的 Kubernetes 集群。"
 
 #: ../../source/deployment/kubernetes.rst:47
 msgid ""
@@ -76,16 +78,18 @@ msgid ""
 "http://<ingress_service_ip>:80 is ready!`` soon, and you can access the "
 "web UI of your Xorbits cluster using the endpoint."
 msgstr ""
+"运行上述部署代码后，控制台将出现形如 ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` 的日志，"
+"此时意味着部署成功，你可以通过日志中的地址访问 Xorbits 集群的网页。"
 
 #: ../../source/deployment/kubernetes.rst:50
 msgid ""
 "``new_cluster`` api refers to "
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster`."
-msgstr ""
+msgstr "部署代码中的 ``new_cluster`` 接口的完整参数和说明请参考 :meth:`xorbits.deploy.kubernetes.client.new_cluster`。"
 
 #: ../../source/deployment/kubernetes.rst:52
 msgid "To verify the cluster:"
-msgstr ""
+msgstr "运行如下代码验证 Xorbits 集群是否正常工作："
 
 #: ../../source/deployment/kubernetes.rst:63
 msgid "Docker Image"
