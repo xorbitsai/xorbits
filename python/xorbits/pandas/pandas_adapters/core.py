@@ -56,7 +56,7 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
     pd.wide_to_long: MarsOutputType.dataframe,
 }
 
-if pd.__version__ >= "1.3.0":
+if pd.__version__ >= "1.3.0":  # pragma: no branch
     _NO_ANNOTATION_FUNCS[pd.read_xml] = MarsOutputType.dataframe
 
 
