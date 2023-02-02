@@ -17,6 +17,7 @@ import logging
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import uuid
 from contextlib import contextmanager
@@ -76,11 +77,10 @@ def _collect_coverage():
         shutil.rmtree(dist_coverage_path)
 
 
-def _build_docker_images():
+def _build_docker_images(py_version: str):
     image_name = "xorbits-test-image:" + uuid.uuid1().hex
-    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile").removeprefix(
-        XORBITS_ROOT + "/"
-    )
+    xorbits_root = XORBITS_ROOT + "/"
+    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile")[len(xorbits_root) :]
     try:
         build_proc = subprocess.Popen(
             [
@@ -91,6 +91,8 @@ def _build_docker_images():
                 "-t",
                 image_name,
                 ".",
+                "--build-arg",
+                f"PYTHON_VERSION={py_version}",
             ],
             cwd=XORBITS_ROOT,
         )
@@ -131,8 +133,9 @@ def _load_docker_env():
 
 @contextmanager
 def _start_kube_cluster(**kwargs):
+    py_version = str(sys.version_info.major) + "." + str(sys.version_info.minor)
     _load_docker_env()
-    image_name = _build_docker_images()
+    image_name = _build_docker_images(py_version)
 
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s.config.new_client_from_config()
@@ -144,7 +147,7 @@ def _start_kube_cluster(**kwargs):
             api_client,
             image=image_name,
             worker_spill_paths=[temp_spill_dir],
-            timeout=600,
+            timeout=300,
             log_when_fail=True,
             **kwargs,
         )

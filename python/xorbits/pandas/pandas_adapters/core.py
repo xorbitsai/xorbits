@@ -53,9 +53,11 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
     pd.read_spss: MarsOutputType.dataframe,
     pd.read_stata: MarsOutputType.dataframe,
     pd.read_table: MarsOutputType.dataframe,
-    pd.read_xml: MarsOutputType.dataframe,
     pd.wide_to_long: MarsOutputType.dataframe,
 }
+
+if pd.__version__ >= "1.3.0":  # pragma: no branch
+    _NO_ANNOTATION_FUNCS[pd.read_xml] = MarsOutputType.dataframe
 
 
 def _get_output_type(func: Callable) -> MarsOutputType:

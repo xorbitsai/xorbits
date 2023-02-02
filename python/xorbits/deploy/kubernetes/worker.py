@@ -41,7 +41,6 @@ class K8SWorkerCommandRunner(K8SServiceMixin, WorkerCommandRunner):
 
         cluster_api = await ClusterAPI.create(self.args.endpoint)
         await cluster_api.mark_node_ready()
-
         await self.start_readiness_server()
 
     async def stop_services(self):
