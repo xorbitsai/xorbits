@@ -49,7 +49,6 @@ class IndexingMixin:
 
 @register_cls_to_type(data_type=DataType.dataframe)
 class DataFrame(DataRef, IndexingMixin):
-
     plot = CachedAccessor("plot", PlotAccessor)
 
     def __init__(self, *args, **kwargs):
@@ -65,7 +64,6 @@ attach_module_callable_docstring(DataFrame, pandas, pandas.DataFrame)
 
 @register_cls_to_type(data_type=DataType.series)
 class Series(DataRef, IndexingMixin):
-
     str = CachedAccessor("str", StringAccessor)
     dt = CachedAccessor("dt", DatetimeAccessor)
     plot = CachedAccessor("plot", PlotAccessor)
