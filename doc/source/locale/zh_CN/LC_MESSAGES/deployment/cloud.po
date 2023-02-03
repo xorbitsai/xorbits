@@ -19,11 +19,11 @@ msgstr ""
 
 #: ../../source/deployment/cloud.rst:5
 msgid "Cloud deployment"
-msgstr "在云中部署"
+msgstr "云上部署"
 
 #: ../../source/deployment/cloud.rst:8
 msgid "Prerequisites"
-msgstr "先决条件"
+msgstr "前置条件"
 
 #: ../../source/deployment/cloud.rst:9
 msgid "Currently, we support deploying Xorbits on an existing Amazon EKS cluster."

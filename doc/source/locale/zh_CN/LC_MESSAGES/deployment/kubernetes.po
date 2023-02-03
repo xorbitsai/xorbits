@@ -23,7 +23,7 @@ msgstr "在 Kubernetes 中部署"
 
 #: ../../source/deployment/kubernetes.rst:8
 msgid "Prerequisites"
-msgstr "先决条件"
+msgstr "前置条件"
 
 #: ../../source/deployment/kubernetes.rst:9
 msgid ""
@@ -66,7 +66,7 @@ msgid ""
 "<https://github.com/chipmk/docker-mac-net-connect>`_ is needed due to its"
 " `limitation <https://github.com/kubernetes/minikube/issues/7332>`_:"
 msgstr ""
-"对于 MacOs 操作系统上基于 docker 后端的 Minikube 集群，由于其网络架构的 `限制 "
+"对于 macOS 操作系统上基于 docker 后端的 Minikube 集群，由于其网络架构的 `限制 "
 "<https://github.com/kubernetes/minikube/issues/7332>`_，需要安装 `docker-mac-"
 "net-connect <https://github.com/chipmk/docker-mac-net-connect>`_ 以正确使用 "
 "ingress 服务代理出来的地址。参考以下命令："
