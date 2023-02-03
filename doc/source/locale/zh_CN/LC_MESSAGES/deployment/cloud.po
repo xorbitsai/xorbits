@@ -19,25 +19,28 @@ msgstr ""
 
 #: ../../source/deployment/cloud.rst:5
 msgid "Cloud deployment"
-msgstr ""
+msgstr "云上部署"
 
 #: ../../source/deployment/cloud.rst:8
 msgid "Prerequisites"
-msgstr ""
+msgstr "前置条件"
 
 #: ../../source/deployment/cloud.rst:9
 msgid "Currently, we support deploying Xorbits on an existing Amazon EKS cluster."
 msgstr ""
+"目前，我们支持在 Amazon EKS 中部署 Xorbits 。"
 
 #: ../../source/deployment/cloud.rst:11
 msgid ""
 "Install Xorbits on the machine for Amazon EKS cluster management. Refer "
 "to :ref:`installation document <installation>`."
 msgstr ""
+"在 EKS 集群管理机器上安装 Xorbits。参考 :ref:`安装教程 <installation>`。"
 
 #: ../../source/deployment/cloud.rst:15
 msgid "Amazon EKS"
 msgstr ""
+"Amazon EKS 部署"
 
 #: ../../source/deployment/cloud.rst:16
 msgid ""
@@ -45,6 +48,8 @@ msgid ""
 "<https://hub.docker.com/repository/docker/xprobe/xorbits>`_ to pull the "
 "Xorbits image."
 msgstr ""
+"第一步，确保你的 EKS 集群能够访问 `Dockerhub "
+"<https://hub.docker.com/repository/docker/xprobe/xorbits>`_ 以拉取 Xorbits 官方镜像。"
 
 #: ../../source/deployment/cloud.rst:18
 msgid ""
@@ -52,10 +57,14 @@ msgid ""
 "<https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-"
 "controller.html>`_."
 msgstr ""
+"第二步，在你的 EKS 集群中安装 `AWS Load Balancer Controller "
+"<https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-"
+"controller.html>`_。"
 
 #: ../../source/deployment/cloud.rst:20
 msgid "Then, deploy Xorbits cluster, for example:"
 msgstr ""
+"第三步，通过 Python 代码部署 Xorbits，例如："
 
 #: ../../source/deployment/cloud.rst:29
 msgid ""
@@ -64,6 +73,8 @@ msgid ""
 "``kubectl`` context automatically. Please make sure ``kubectl`` is using "
 "the correct EKS context."
 msgstr ""
+"注意， ``new_cluster`` 接口的 ``cluster_type`` 选项默认值为 ``auto``，意味着 Xorbits 将自动探测你的机器上的 ``kubectl`` 命令指向的集群。"
+"因此请确保 ``kubectl`` 命令指向目标 EKS 集群。"
 
 #: ../../source/deployment/cloud.rst:32
 msgid ""
@@ -71,26 +82,31 @@ msgid ""
 "http://<ingress_service_ip>:80 is ready!`` soon, and you can access the "
 "web UI of your Xorbits cluster using the endpoint."
 msgstr ""
+"部署代码运行后，你将很快在控制台中看到形如 ``Xorbits endpoint http://<ingress_service_ip>:80 is ready!`` 的日志，"
+"这意味着部署成功，同时你可以用日志中的地址访问 Xorbits 集群的网页。"
 
 #: ../../source/deployment/cloud.rst:35
 msgid ""
 "Refer :ref:`Kubernetes deployment <deployment_image>` to deploy Xorbits "
 "with your own image."
 msgstr ""
+"参考 :ref:`Docker 镜像 <deployment_image>` 以使用你自己制作的镜像在 EKS 中部署 Xorbits。"
 
 #: ../../source/deployment/cloud.rst:37
 msgid ""
 "Refer :ref:`Install Python Packages <deployment_install>` to install "
 "additional python packages for the Xorbits supervisors and workers."
 msgstr ""
+"参考 :ref:`安装 Python 包 <deployment_install>` 为 Xorbits 集群中所有节点安装额外的 Python 包。"
 
 #: ../../source/deployment/cloud.rst:39
 msgid ""
 "``new_cluster`` api refers to "
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster`."
 msgstr ""
+"部署代码中的 ``new_cluster`` 接口详细信息参阅 :meth:`xorbits.deploy.kubernetes.client.new_cluster`。"
 
 #: ../../source/deployment/cloud.rst:41
 msgid "To verify the cluster:"
 msgstr ""
-
+"在同一控制台中运行以下代码验证 EKS 中的 Xorbits 集群是否正常工作："
