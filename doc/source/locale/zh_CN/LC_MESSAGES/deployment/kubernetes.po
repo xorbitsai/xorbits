@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../source/deployment/kubernetes.rst:5
 msgid "Kubernetes deployment"
-msgstr "在 Kubernetes 中部署"
+msgstr "Kubernetes 部署"
 
 #: ../../source/deployment/kubernetes.rst:8
 msgid "Prerequisites"
