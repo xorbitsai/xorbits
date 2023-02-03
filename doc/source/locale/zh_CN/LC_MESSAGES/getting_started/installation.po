@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-02-03 14:44+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,165 +27,167 @@ msgid ""
 "<https://pypi.org/project/xorbits>`__."
 msgstr "Xorbits 可以通过 `PyPI <https://pypi.org/project/xorbits>`__ 安装。"
 
-#: ../../source/getting_started/installation.rst:15
+#: ../../source/getting_started/installation.rst:17
 msgid "Python version support"
 msgstr "支持的 Python 版本"
 
-#: ../../source/getting_started/installation.rst:17
+#: ../../source/getting_started/installation.rst:19
 msgid "Officially Python 3,7, 3.8, 3.9 and 3.10."
 msgstr "Python 官方 3.7、3.8、3.9 和 3.10 版本。"
 
-#: ../../source/getting_started/installation.rst:20
+#: ../../source/getting_started/installation.rst:22
 msgid "Dependencies"
 msgstr "依赖"
 
-#: ../../source/getting_started/installation.rst:23
+#: ../../source/getting_started/installation.rst:25
 msgid "Package"
 msgstr "包名"
 
-#: ../../source/getting_started/installation.rst:23
+#: ../../source/getting_started/installation.rst:25
 msgid "Minimum supported version"
 msgstr "最低支持版本"
 
-#: ../../source/getting_started/installation.rst:25
+#: ../../source/getting_started/installation.rst:27
 msgid "`NumPy <https://numpy.org>`__"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:25
+#: ../../source/getting_started/installation.rst:27
 msgid "1.20.3"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:26
+#: ../../source/getting_started/installation.rst:28
 msgid "`pandas <https://pandas.pydata.org>`__"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:26
-#: ../../source/getting_started/installation.rst:27
+#: ../../source/getting_started/installation.rst:28
+#: ../../source/getting_started/installation.rst:29
 msgid "1.0.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:27
+#: ../../source/getting_started/installation.rst:29
 msgid "`scipy <https://scipy.org>`__"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:28
+#: ../../source/getting_started/installation.rst:30
 msgid "`scikit-learn <https://scikit-learn.org/stable>`__"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:28
+#: ../../source/getting_started/installation.rst:30
 msgid "0.20"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:29
+#: ../../source/getting_started/installation.rst:31
 msgid "cloudpickle"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:29
+#: ../../source/getting_started/installation.rst:31
 msgid "1.5.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:30
+#: ../../source/getting_started/installation.rst:32
 msgid "pyyaml"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:30
+#: ../../source/getting_started/installation.rst:32
 msgid "5.1"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:31
+#: ../../source/getting_started/installation.rst:33
 msgid "psutil"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:31
+#: ../../source/getting_started/installation.rst:33
 msgid "5.9.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:32
+#: ../../source/getting_started/installation.rst:34
 msgid "pickle5 (for python version < 3.8)"
 msgstr "pickle5 （Python 版本小于 3.8 时）"
 
-#: ../../source/getting_started/installation.rst:32
+#: ../../source/getting_started/installation.rst:34
 msgid "0.0.1"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:33
+#: ../../source/getting_started/installation.rst:35
 msgid "shared-memory38 (for python version < 3.8)"
 msgstr "shared-memory38 （Python 版本小于 3.8 时）"
 
-#: ../../source/getting_started/installation.rst:33
+#: ../../source/getting_started/installation.rst:35
 msgid "0.1.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:34
+#: ../../source/getting_started/installation.rst:36
 msgid "tornado"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:34
+#: ../../source/getting_started/installation.rst:36
 msgid "6.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:35
+#: ../../source/getting_started/installation.rst:37
 msgid "sqlalchemy"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:35
+#: ../../source/getting_started/installation.rst:37
 msgid "1.2.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:36
+#: ../../source/getting_started/installation.rst:38
 msgid "defusedxml"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:36
+#: ../../source/getting_started/installation.rst:38
 msgid "0.5.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:37
+#: ../../source/getting_started/installation.rst:39
 msgid "tqdm"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:37
+#: ../../source/getting_started/installation.rst:39
 msgid "4.1.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:38
+#: ../../source/getting_started/installation.rst:40
 msgid "uvloop (for systems other than win32)"
 msgstr "uvloop （非 win32 系统）"
 
-#: ../../source/getting_started/installation.rst:38
+#: ../../source/getting_started/installation.rst:40
 msgid "0.14.0"
 msgstr ""
 
-#: ../../source/getting_started/installation.rst:42
+#: ../../source/getting_started/installation.rst:44
 msgid "Recommended dependencies"
 msgstr "推荐安装的依赖"
 
-#: ../../source/getting_started/installation.rst:44
+#: ../../source/getting_started/installation.rst:46
 msgid "Recommended dependencies can be installed conveniently using pip."
 msgstr "可以使用 pip 命令方便地安装推荐依赖。"
 
-#: ../../source/getting_started/installation.rst:51
+#: ../../source/getting_started/installation.rst:53
 msgid "The following extra dependencies will be installed."
 msgstr "下面的依赖会被安装："
 
-#: ../../source/getting_started/installation.rst:53
+#: ../../source/getting_started/installation.rst:57
 msgid ""
 "`numexpr <https://github.com/pydata/numexpr>`__: for accelerating certain"
 " numerical operations. ``numexpr`` uses multiple cores as well as smart "
 "chunking and caching to achieve large speedups. If installed, must be "
 "Version 2.6.4 or higher."
 msgstr ""
-"`numexpr <https://github.com/pydata/numexpr>`__：某些情况下可以加速数值计算。"
-"``numexpr`` 可以利用多核以及缓存等技术获得计算速度的提升。安装版本需要不低于 2.6.4。"
+"`numexpr <https://github.com/pydata/numexpr>`__：某些情况下可以加速数值"
+"计算。``numexpr`` 可以利用多核以及缓存等技术获得计算速度的提升。安装版本"
+"需要不低于 2.6.4。"
 
-#: ../../source/getting_started/installation.rst:57
+#: ../../source/getting_started/installation.rst:61
 msgid ""
 "`pillow <https://python-pillow.org/>`__: the Python Imaging Library. If "
 "installed, must be Version 7.0.0 or higher."
 msgstr ""
-"`pillow <https://python-pillow.org/>`__：Python 图像处理库。安装版本需要不低于 7.0.0。"
+"`pillow <https://python-pillow.org/>`__：Python 图像处理库。安装版本需要"
+"不低于 7.0.0。"
 
-#: ../../source/getting_started/installation.rst:60
+#: ../../source/getting_started/installation.rst:64
 msgid ""
 "`pyarrow <https://pypi.org/project/pyarrow/>`__: python API for Arrow C++"
 " libraries. If installed, must be Version 5.0.0 or higher."
@@ -193,28 +195,72 @@ msgstr ""
 "`pyarrow <https://pypi.org/project/pyarrow/>`__：Arrow 库的 Python API。"
 "安装版本需要不低于 5.0.0。"
 
-#: ../../source/getting_started/installation.rst:63
+#: ../../source/getting_started/installation.rst:67
 msgid ""
 "`lz4 <https://github.com/python-lz4/python-lz4>`__: python bindings for "
 "the LZ4 compression library. If installed, must be Version 1.0.0 or "
 "higher."
 msgstr ""
-"`lz4 <https://github.com/python-lz4/python-lz4>`__：LZ4 压缩库的 Python SDK。"
-"安装版本需要不低于 1.0.0。"
+"`lz4 <https://github.com/python-lz4/python-lz4>`__：LZ4 压缩库的 Python "
+"SDK。安装版本需要不低于 1.0.0。"
 
-#: ../../source/getting_started/installation.rst:66
+#: ../../source/getting_started/installation.rst:70
 msgid ""
 "`fsspec <https://github.com/fsspec/filesystem_spec>`__: for cloud data "
 "accessing. If installed, must be Version 2022.7.1 or higher and cannot be"
 " Version 2022.8.0."
 msgstr ""
-"`fsspec <https://github.com/fsspec/filesystem_spec>`__：用来读取云存储中的数据。"
-"安装版本需要不低于 2022.7.1 并且不等于 2022.8.0。"
+"`fsspec <https://github.com/fsspec/filesystem_spec>`__：用来读取云存储中"
+"的数据。安装版本需要不低于 2022.7.1 并且不等于 2022.8.0。"
 
-#: ../../source/getting_started/installation.rst:71
+#: ../../source/getting_started/installation.rst:75
 msgid ""
 "You are highly encouraged to install these libraries, as they provide "
 "speed improvements, especially when working with large data sets."
+msgstr "为了获得更快的速度，尤其是在大规模数据集上，推荐安装这些库。"
+
+#: ../../source/getting_started/installation.rst:79
+#: ../../source/getting_started/installation.rst:84
+msgid "Deployment"
 msgstr ""
-"为了获得更快的速度，尤其是在大规模数据集上，推荐安装这些库。"
+
+#: ../../source/getting_started/installation.rst:81
+msgid "Xorbits can be deployed on many platforms, see below for what you need."
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:84
+msgid "Description"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:86
+msgid ":ref:`Local <deployment_local>`"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:86
+msgid "Running Xorbits on a local machine, e.g. laptop"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:87
+msgid ":ref:`Cluster <deployment_cluster>`"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:87
+msgid "Deploy Xorbits to existing cluster via command lines"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:88
+msgid ":ref:`Kubernetes <deployment_kubernetes>`"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:88
+msgid "Deploy Xorbits to existing k8s cluster via python codes"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:89
+msgid ":ref:`Cloud <deployment_cloud>`"
+msgstr ""
+
+#: ../../source/getting_started/installation.rst:89
+msgid "Deploy Xorbits to various cloud platforms via python codes"
+msgstr ""
 

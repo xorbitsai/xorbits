@@ -163,3 +163,4 @@ Getting involved
    user_guide/index
    deployment/index
    reference/index
+   development/index

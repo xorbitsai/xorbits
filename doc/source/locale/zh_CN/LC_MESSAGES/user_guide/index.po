@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-02-03 14:44+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,4 +20,25 @@ msgstr ""
 #: ../../source/user_guide/index.rst:5
 msgid "User Guide"
 msgstr "用户指南"
+
+#: ../../source/user_guide/index.rst:7
+msgid ""
+"The User Guide covers all of Xorbits by topic area. Each of the "
+"subsections introduces a topic (such as \"deployment\"), and discusses "
+"how Xorbits approaches the problem, with many examples throughout."
+msgstr ""
+"这份用户指南根据主题划分，覆盖了 Xorbits 的方方面面。每个部分介绍了一个"
+"主题（例如 \"部署\"），讨论了 Xorbits 里如何解决，并伴有许多样例。"
+
+#: ../../source/user_guide/index.rst:11
+msgid ""
+"Users brand-new to Xorbits should start with :ref:`10min_numpy` and "
+":ref:`10min_pandas`."
+msgstr "新来 Xorbits 的用户应当从 :ref:`10min_numpy` 和 :ref:`10min_pandas` 开始。"
+
+#: ../../source/user_guide/index.rst:13
+msgid ""
+"Further information on any specific method can be obtained in the "
+":ref:`reference_index`."
+msgstr "关于方法的具体信息可以在 :ref:`reference_index` 获得。"
 

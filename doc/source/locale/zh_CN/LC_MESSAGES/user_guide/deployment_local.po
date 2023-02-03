@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-02-03 14:44+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,45 +17,45 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: ../../source/deployment/local.rst:5
+#: ../../source/user_guide/deployment_local.rst:5
 msgid "Local deployment"
 msgstr "本地部署"
 
-#: ../../source/deployment/local.rst:7
+#: ../../source/user_guide/deployment_local.rst:7
 msgid ""
 "Local deployment means that you can run Xorbits on your local machine, "
 "e.g. laptop."
 msgstr "Xorbits 支持本地部署，也就是跑在自己本地机器，比如个人笔记本上。"
 
-#: ../../source/deployment/local.rst:10
+#: ../../source/user_guide/deployment_local.rst:10
 msgid "Installation"
 msgstr "安装"
 
-#: ../../source/deployment/local.rst:12
+#: ../../source/user_guide/deployment_local.rst:12
 msgid ""
 "First, ensure Xorbits is correctly installed, if not, see "
 ":ref:`installation document <installation>`."
 msgstr ""
 "首先，参考 :ref:`安装文档 <installation>` 确保每个机器都正确安装了 Xorbits。"
 
-#: ../../source/deployment/local.rst:15
+#: ../../source/user_guide/deployment_local.rst:15
 msgid "Init Xorbits runtime optionally"
 msgstr "初始化 Xorbits"
 
-#: ../../source/deployment/local.rst:17
+#: ../../source/user_guide/deployment_local.rst:17
 msgid ""
 "Secondly, you don't have to, but you can optionally init an Xorbits "
 "runtime manually."
 msgstr "其次，你可以选择手动初始化 Xorbits。"
 
-#: ../../source/deployment/local.rst:24
+#: ../../source/user_guide/deployment_local.rst:24
 msgid ""
 "Or Xorbits will try to init for you in the background when the first time"
 " some computation is triggered."
 msgstr ""
 "如果没有手动初始化，Xorbits 会在第一次触发执行的时候初始化。"
 
-#: ../../source/deployment/local.rst:28
+#: ../../source/user_guide/deployment_local.rst:28
 msgid ""
 "Initialization of Xorbits may take a while to accomplish, if you try to "
 "measure performance of your code and so forth, you'd better init Xorbits "

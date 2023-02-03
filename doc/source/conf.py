@@ -30,8 +30,8 @@ templates_path = ["_templates"]
 exclude_patterns = []
 
 # i18n
-locale_dirs = ['locale/']   # path is example but recommended.
-gettext_compact = False     # optional
+locale_dirs = ["locale/"]  # path is example but recommended.
+gettext_compact = False  # optional
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -44,10 +44,16 @@ html_theme_options = {
         "image_light": "logo.svg",
         "image_dark": "logo-white.svg",
     },
-    "external_links": [
+}
+
+# tags is injected by sphinx,
+# see https://stackoverflow.com/a/73497480
+if "zh_cn" not in tags.tags.keys():
+    # en
+    html_theme_options["external_links"] = [
         {"name": "xorbits.io", "url": "https://xorbits.io"},
-    ],
-    "icon_links": [
+    ]
+    html_theme_options["icon_links"] = [
         {
             "name": "GitHub",
             "url": "https://github.com/xprobe-inc/xorbits",
@@ -66,8 +72,20 @@ html_theme_options = {
             "icon": "fa-brands fa-twitter",
             "type": "fontawesome",
         },
-    ],
-}
+    ]
+else:
+    # zh_cn
+    html_theme_options["external_links"] = [
+        {"name": "xorbits.cn", "url": "https://xorbits.cn"},
+    ]
+    html_theme_options["icon_links"] = [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/xprobe-inc/xorbits",
+            "icon": "fa-brands fa-github",
+            "type": "fontawesome",
+        },
+    ]
 
 html_favicon = "_static/favicon.svg"
 
@@ -226,7 +244,6 @@ class AccessorCallableDocumenter(AccessorLevelDocumenter, MethodDocumenter):
 
 
 def setup(app):
-
     app.connect("autodoc-process-docstring", remove_flags_docstring)
     app.connect("autodoc-process-docstring", process_class_docstrings)
     app.add_autodocumenter(AccessorDocumenter)
