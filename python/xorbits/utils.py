@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib
 import sys
 import traceback
-from typing import Callable
+from typing import Callable, Optional
 
 
 def is_pydev_evaluating_value() -> bool:
@@ -41,3 +42,13 @@ def get_local_py_version():
     Get the python version on the machine where Xorbits is installed, formatted by "major.minor", like "3.10"
     """
     return str(sys.version_info.major) + "." + str(sys.version_info.minor)
+
+
+def get_local_package_version(package_name: str) -> Optional[str]:
+    """
+    Get the version of a python package. If the package is not installed, return None
+    """
+    try:
+        return importlib.import_module(package_name).__version__
+    except ModuleNotFoundError:
+        return None

@@ -13,3 +13,6 @@
 # limitations under the License.
 
 SUPPORTED_PY_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
+
+# Packages that require the compatible version between local and cluster
+COMPATIBLE_DEPS = ["cloudpickle", "numpy", "pandas"]

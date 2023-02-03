@@ -21,7 +21,8 @@ from typing import Any, Dict, List, Optional, Union
 
 from ... import __version__
 from ..._mars.utils import calc_size_by_str, parse_readable_size
-from ...utils import get_local_py_version
+from ...compat._constants import COMPATIBLE_DEPS
+from ...utils import get_local_package_version, get_local_py_version
 
 try:
     from kubernetes.client import ApiClient
@@ -524,6 +525,15 @@ class ReplicationConfig(KubeConfig):
             content = "\n".join(source)
         return content
 
+    @staticmethod
+    def get_compatible_packages() -> List[str]:
+        deps = []
+        for dep in COMPATIBLE_DEPS:
+            version = get_local_package_version(dep)
+            if version is not None:
+                deps.append(f"{dep}=={version}")
+        return deps
+
     @abc.abstractmethod
     def build_container_command(self) -> List:
         """Output container command"""
@@ -531,6 +541,14 @@ class ReplicationConfig(KubeConfig):
         # All install contents must be wrapped in double quotes to ensure the correctness
         # when passing to the shell script.
         # At the same time, each command is followed by a semicolon to separate the individual commands.
+        deps = self.get_compatible_packages()
+        if deps:
+            # Install for consistent packages must be at the top of all commands.
+            # This does not affect user behavior.
+            cmd += (
+                f'/srv/install.sh pip_compatible "{self.get_install_content(deps)}" ; '
+            )
+
         if self._pip is not None:
             cmd += f'/srv/install.sh pip "{self.get_install_content(self._pip)}" ; '
         if self._conda is not None:
