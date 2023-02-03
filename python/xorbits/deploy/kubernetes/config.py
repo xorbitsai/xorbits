@@ -21,13 +21,13 @@ from typing import Any, Dict, List, Optional, Union
 
 from ... import __version__
 from ..._mars.utils import calc_size_by_str, parse_readable_size
+from ...utils import get_local_py_version
 
 try:
     from kubernetes.client import ApiClient
 except ImportError:  # pragma: no cover
     ApiClient = None
 
-DEFAULT_IMAGE = "xprobe/xorbits:v" + __version__
 DEFAULT_WORKER_CACHE_MEM = "40%"
 
 
@@ -651,7 +651,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
 
         super().__init__(
             self.rc_name,
-            image or DEFAULT_IMAGE,
+            image or self.get_default_image(),
             replicas,
             resource_request=req_res,
             resource_limit=limit_res if limit_resources else None,
@@ -666,6 +666,12 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             self.add_volume(vol)
 
         self.add_labels({"xorbits/service-type": self.rc_name})
+
+    @staticmethod
+    def get_default_image():
+        image = "xprobe/xorbits:v" + __version__
+        image += f"-py{get_local_py_version()}"
+        return image
 
     def add_default_envs(self):
         self.add_env("MARS_K8S_POD_NAME", field_path="metadata.name")

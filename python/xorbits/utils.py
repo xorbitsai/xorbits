@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import traceback
 from typing import Callable
 
@@ -33,3 +34,10 @@ def safe_repr_str(f: Callable):
             return f(self, *args, **kwargs)
 
     return inn
+
+
+def get_local_py_version():
+    """
+    Get the python version on the machine where Xorbits is installed, formatted by "major.minor", like "3.10"
+    """
+    return str(sys.version_info.major) + "." + str(sys.version_info.minor)

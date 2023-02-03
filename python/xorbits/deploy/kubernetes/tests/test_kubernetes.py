@@ -17,7 +17,6 @@ import logging
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
 import uuid
 from contextlib import contextmanager
@@ -28,6 +27,7 @@ import pytest
 
 from .... import numpy as xnp
 from ...._mars.utils import lazy_import
+from ....utils import get_local_py_version
 from .. import new_cluster
 
 k8s = lazy_import("kubernetes")
@@ -133,7 +133,7 @@ def _load_docker_env():
 
 @contextmanager
 def _start_kube_cluster(**kwargs):
-    py_version = str(sys.version_info.major) + "." + str(sys.version_info.minor)
+    py_version = get_local_py_version()
     _load_docker_env()
     image_name = _build_docker_images(py_version)
 
