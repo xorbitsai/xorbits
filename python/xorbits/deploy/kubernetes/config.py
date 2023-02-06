@@ -23,6 +23,7 @@ from ... import __version__
 from ..._mars.utils import calc_size_by_str, parse_readable_size
 from ...compat._constants import COMPATIBLE_DEPS
 from ...utils import get_local_package_version, get_local_py_version
+from ._constants import SERVICE_PID_FILE
 
 try:
     from kubernetes.client import ApiClient
@@ -443,6 +444,21 @@ class TcpSocketProbeConfig(ProbeConfig):
         return ret
 
 
+class CommandExecProbeConfig(ProbeConfig):
+    """
+    Configuration builder for command probe
+    """
+
+    def __init__(self, commands: List[str], **kwargs):
+        super().__init__(**kwargs)
+        self._commands = commands
+
+    def build(self):
+        ret = super().build()
+        ret["exec"] = {"command": self._commands}
+        return ret
+
+
 class ReplicationConfig(KubeConfig):
     """
     Base configuration builder for Kubernetes replication controllers
@@ -722,12 +738,17 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         """
         raise NotImplementedError  # pragma: no cover
 
-    def config_startup_probe(self):
+    @staticmethod
+    def config_startup_probe() -> "ProbeConfig":
         """
         The startup probe is used to check whether the startup is smooth.
         The initial_delay of the startup probe can be sensitive to the system.
         """
-        raise NotImplementedError  # pragma: no cover
+        return CommandExecProbeConfig(
+            ["sh", "-c", f'until [ -f "{SERVICE_PID_FILE}" ]; do sleep 3s; done'],
+            failure_thresh=5,
+            initial_delay=10,
+        )
 
     @staticmethod
     def get_local_app_module(mod_name) -> str:
@@ -761,11 +782,6 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(
             self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
-        )
-
-    def config_startup_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(
-            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
         )
 
     def build_container_command(self):
@@ -839,11 +855,6 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(
             self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
-        )
-
-    def config_startup_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(
-            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
         )
 
     def config_init_containers(self) -> List[Dict]:

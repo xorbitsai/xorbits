@@ -28,7 +28,6 @@ class K8SWorkerCommandRunner(K8SServiceMixin, WorkerCommandRunner):
         from ..._mars.deploy.oscar.worker import start_worker
         from ..._mars.services.cluster import ClusterAPI
 
-        self.write_pid_file()
         await start_worker(
             self.pool.external_address,
             self.args.supervisors,
@@ -42,6 +41,7 @@ class K8SWorkerCommandRunner(K8SServiceMixin, WorkerCommandRunner):
         cluster_api = await ClusterAPI.create(self.args.endpoint)
         await cluster_api.mark_node_ready()
         await self.start_readiness_server()
+        self.write_pid_file()
 
     async def stop_services(self):
         await self.stop_readiness_server()
