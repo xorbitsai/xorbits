@@ -25,8 +25,7 @@ elif [ "$source" == "pip_compatible" ]; then
   mkdir -p /srv/pip_compatible
   touch /srv/pip_compatible/requirements.txt
   echo "$content" > /srv/pip_compatible/requirements.txt
-  pip install -r /srv/pip_compatible/requirements.txt --retries 3 > /srv/pip_compatible/logs.txt 2>&1
-  if [ $? -eq 0 ]; then
+  if pip install -r /srv/pip_compatible/requirements.txt --retries 3 > /srv/pip_compatible/logs.txt 2>&1; then
     echo "Succeed to install some version-sensitive packages."
   fi
 else
