@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 20:25+0800\n"
+"POT-Creation-Date: 2023-02-07 12:52+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -248,8 +248,8 @@ msgid ":ref:`Local <deployment_local>`"
 msgstr ":ref:`单机 <deployment_local>`"
 
 #: ../../source/index.rst:122
-msgid "Running Xorbits on a local machine, e.g. laptop"
-msgstr "将 Xorbits 跑在单机，比如笔记本"
+msgid "Run Xorbits on a local machine, e.g. your laptop"
+msgstr "将 Xorbits 跑在单机，比如你的笔记本"
 
 #: ../../source/index.rst:123
 msgid ":ref:`Cluster <deployment_cluster>`"
@@ -264,7 +264,7 @@ msgid ":ref:`Kubernetes <deployment_kubernetes>`"
 msgstr ""
 
 #: ../../source/index.rst:124
-msgid "Deploy Xorbits to existing k8s cluster via python codes"
+msgid "Deploy Xorbits to existing k8s cluster via python code"
 msgstr "通过 Python 代码把 Xorbits 部署到已有的 k8s 集群"
 
 #: ../../source/index.rst:125
@@ -272,7 +272,7 @@ msgid ":ref:`Cloud <deployment_cloud>`"
 msgstr ":ref:`云 <deployment_cloud>`"
 
 #: ../../source/index.rst:125
-msgid "Deploy Xorbits to various cloud platforms via python codes"
+msgid "Deploy Xorbits to various cloud platforms via python code"
 msgstr "通过 Python 代码把 Xoribts 部署到云平台"
 
 #: ../../source/index.rst:129

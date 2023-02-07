@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-03 14:44+0800\n"
+"POT-Creation-Date: 2023-02-07 11:59+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -218,49 +218,3 @@ msgid ""
 "You are highly encouraged to install these libraries, as they provide "
 "speed improvements, especially when working with large data sets."
 msgstr "为了获得更快的速度，尤其是在大规模数据集上，推荐安装这些库。"
-
-#: ../../source/getting_started/installation.rst:79
-#: ../../source/getting_started/installation.rst:84
-msgid "Deployment"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:81
-msgid "Xorbits can be deployed on many platforms, see below for what you need."
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:84
-msgid "Description"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:86
-msgid ":ref:`Local <deployment_local>`"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:86
-msgid "Running Xorbits on a local machine, e.g. laptop"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:87
-msgid ":ref:`Cluster <deployment_cluster>`"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:87
-msgid "Deploy Xorbits to existing cluster via command lines"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:88
-msgid ":ref:`Kubernetes <deployment_kubernetes>`"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:88
-msgid "Deploy Xorbits to existing k8s cluster via python codes"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:89
-msgid ":ref:`Cloud <deployment_cloud>`"
-msgstr ""
-
-#: ../../source/getting_started/installation.rst:89
-msgid "Deploy Xorbits to various cloud platforms via python codes"
-msgstr ""
-

@@ -97,12 +97,12 @@ Xorbits can be deployed on your local machine, largely deployed to a cluster via
 or deploy via Kubernetes and clouds.
 
 
-| Deployment                                                                | Description                                                |
-|---------------------------------------------------------------------------|------------------------------------------------------------|
-| [Local](https://doc.xorbits.io/en/latest/deployment/local.html)           | Running Xorbits on a local machine, e.g. laptop            |
-| [Cluster](https://doc.xorbits.io/en/latest/deployment/cluster.html)       | Deploy Xorbits to existing cluster via command lines       |
-| [Kubernetes](https://doc.xorbits.io/en/latest/deployment/kubernetes.html) | Deploy Xorbits to existing k8s cluster via python codes    |
-| [Cloud](https://doc.xorbits.io/en/latest/deployment/cloud.html)           | Deploy Xorbits to various cloud platforms via python codes |
+| Deployment                                                                           | Description                                               |
+|--------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| [Local](https://doc.xorbits.io/en/latest/user_guide/deployment_local.html)           | Run Xorbits on a local machine, e.g. your laptop          |
+| [Cluster](https://doc.xorbits.io/en/latest/user_guide/deployment_cluster.html)       | Deploy Xorbits to existing cluster via command lines      |
+| [Kubernetes](https://doc.xorbits.io/en/latest/user_guide/deployment_kubernetes.html) | Deploy Xorbits to existing k8s cluster via python code    |
+| [Cloud](https://doc.xorbits.io/en/latest/user_guide/deployment_cloud.html)           | Deploy Xorbits to various cloud platforms via python code |
 
 
 ## License
