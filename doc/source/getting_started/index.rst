@@ -8,5 +8,6 @@ Getting Started
    :maxdepth: 2
 
    installation
+   deployment.rst
    numpy
    pandas

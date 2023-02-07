@@ -1,0 +1,64 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-03 15:21+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/getting_started/deployment.rst:2
+#: ../../source/getting_started/deployment.rst:7
+msgid "Deployment"
+msgstr "部署"
+
+#: ../../source/getting_started/deployment.rst:4
+msgid "Xorbits can be deployed on many platforms, see below for what you need."
+msgstr "Xorbits 能部署到许多平台，参考以下表格查看更多。"
+
+#: ../../source/getting_started/deployment.rst:7
+msgid "Description"
+msgstr "描述"
+
+#: ../../source/getting_started/deployment.rst:9
+msgid ":ref:`Local <deployment_local>`"
+msgstr ":ref:`单机 <deployment_local>`"
+
+#: ../../source/getting_started/deployment.rst:9
+msgid "Running Xorbits on a local machine, e.g. laptop"
+msgstr "将 Xorbits 跑在单机，比如笔记本"
+
+#: ../../source/getting_started/deployment.rst:10
+msgid ":ref:`Cluster <deployment_cluster>`"
+msgstr ":ref:`集群 <deployment_cluster>`"
+
+#: ../../source/getting_started/deployment.rst:10
+msgid "Deploy Xorbits to existing cluster via command lines"
+msgstr "通过命令行将 Xorbits 部署到集群"
+
+#: ../../source/getting_started/deployment.rst:11
+msgid ":ref:`Kubernetes <deployment_kubernetes>`"
+msgstr ""
+
+#: ../../source/getting_started/deployment.rst:11
+msgid "Deploy Xorbits to existing k8s cluster via python codes"
+msgstr "通过 Python 代码把 Xorbits 部署到已有的 k8s 集群"
+
+#: ../../source/getting_started/deployment.rst:12
+msgid ":ref:`Cloud <deployment_cloud>`"
+msgstr ":ref:`云 <deployment_cloud>`"
+
+#: ../../source/getting_started/deployment.rst:12
+msgid "Deploy Xorbits to various cloud platforms via python codes"
+msgstr "通过 Python 代码把 Xoribts 部署到云平台"
+

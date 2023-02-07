@@ -1,0 +1,611 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-03 14:44+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: ../../source/development/contributing_codebase.rst:5
+msgid "Contributing to the code base"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:8
+msgid "Table of Contents:"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:11
+msgid "Code standards"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:13
+msgid ""
+"Writing good code is not just about what you write. It is also about "
+"*how* you write it. During :ref:`Continuous Integration "
+"<contributing.ci>` testing, several tools will be run to check your code "
+"for stylistic errors. Good style is a requirement for submitting code to "
+"Xorbits."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:18
+msgid ""
+"In addition, it is important that we do not make sudden changes to the "
+"code that could have the potential to break a lot of user code as a "
+"result, that is, we need it to be as *backwards compatible* as possible "
+"to avoid mass breakages."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:23
+msgid ""
+"Checks (including static type checking) are run by ``pre-commit`` - see "
+":ref:`here <contributing.pre-commit>` for how to run them."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:30
+msgid "Pre-commit"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:32
+msgid ""
+"Additionally, :ref:`Continuous Integration <contributing.ci>` will run "
+"code formatting checks like ``black``, ``flake8``, ``isort``, and more "
+"using `pre-commit hooks <https://pre-commit.com/>`_ Any warnings from "
+"these checks will cause the :ref:`Continuous Integration "
+"<contributing.ci>` to fail; therefore, it is helpful to run the check "
+"yourself before submitting code. This can be done by installing ``pre-"
+"commit``::"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:40
+msgid "and then running::"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:44
+msgid ""
+"from the root of the Xorbits repository. Now all of the styling checks "
+"will be run each time you commit changes without your needing to run each"
+" one manually. In addition, using ``pre-commit`` will also allow you to "
+"more easily remain up-to-date with our code checks as they change."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:49
+msgid ""
+"Note that if needed, you can skip these checks with ``git commit --no-"
+"verify``."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:51
+msgid ""
+"If you don't want to use ``pre-commit`` as part of your workflow, you can"
+" still use it to run its checks with::"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:56
+#: ../../source/development/contributing_codebase.rst:62
+msgid "without needing to have done ``pre-commit install`` beforehand."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:58
+msgid ""
+"If you want to run checks on all recently committed files on "
+"upstream/main you can use::"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:66
+msgid ""
+"You may want to periodically run ``pre-commit gc``, to clean up repos "
+"which are no longer used."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:71
+msgid ""
+"If you have conflicting installations of ``virtualenv``, then you may get"
+" an error - see `here <https://github.com/pypa/virtualenv/issues/1875>`_."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:74
+msgid ""
+"Also, due to a `bug in virtualenv "
+"<https://github.com/pypa/virtualenv/issues/1986>`_, you may run into "
+"issues if you're using conda. To solve this, you can downgrade "
+"``virtualenv`` to version ``20.0.33``."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:79
+msgid "Optional dependencies"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:81
+msgid ""
+"All methods using an optional dependency should include a test asserting "
+"that an ``ImportError`` is raised when the optional dependency is not "
+"found. This test should be skipped if the library is present."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:85
+msgid ""
+"All optional dependencies and the minimum required version should be "
+"documented in :ref:`install.optional_dependencies`."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:89
+msgid "Backwards compatibility"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:91
+msgid ""
+"Please try to maintain backward compatibility. If you think breakage is "
+"required, clearly state why as part of the pull request.  Also, be "
+"careful when changing method signatures and add deprecation warnings "
+"where needed. Also, add the deprecated sphinx directive to the deprecated"
+" functions or methods."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:96
+msgid "You'll also need to"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:98
+msgid ""
+"Write a new test that asserts a warning is issued when calling with the "
+"deprecated argument"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:99
+msgid "Update all of Xorbits existing tests and code to use the new argument"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:104
+msgid "Type hints"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:106
+msgid ""
+"Xorbits strongly encourages the use of :pep:`484` style type hints. New "
+"development should contain type hints and pull requests to annotate "
+"existing code are accepted as well!"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:109
+msgid "Style guidelines"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:111
+msgid ""
+"Type imports should follow the ``from typing import ...`` convention. "
+"Some types do not need to be imported since :pep:`585` some builtin "
+"constructs, such as ``list`` and ``tuple``, can directly be used for type"
+" annotations. So rather than"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:119
+#: ../../source/development/contributing_codebase.rst:141
+msgid "You should write"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:125
+msgid ""
+"``Optional`` should be  avoided in favor of the shorter ``| None``, so "
+"instead of"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:133
+msgid "or"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:149
+msgid ""
+"In some cases in the code base classes may define class variables that "
+"shadow builtins. This causes an issue as described in `Mypy 1775 "
+"<https://github.com/python/mypy/issues/1775#issuecomment-310969854>`_. "
+"The defensive solution here is to create an unambiguous alias of the "
+"builtin and use that without your annotation. For example, if you come "
+"across a definition like"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:156
+msgid "The appropriate way to annotate this would be as follows"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:167
+msgid "Validating type hints"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:169
+msgid ""
+"Xorbits uses `mypy <http://mypy-lang.org>`_ and `pyright "
+"<https://github.com/microsoft/pyright>`_ to statically analyze the code "
+"base and type hints. After making any change you can ensure your type "
+"hints are correct by running"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:179
+msgid ""
+"in your activated python environment. A recent version of ``numpy`` "
+"(>=1.22.0) is required for type validation."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:184
+msgid "Testing with continuous integration"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:186
+msgid ""
+"The Xorbits test suite will run automatically on `GitHub Actions "
+"<https://github.com/features/actions/>`__ continuous integration "
+"services, once your pull request is submitted. However, if you wish to "
+"run the test suite on a branch prior to submitting the pull request, then"
+" the continuous integration services need to be hooked to your GitHub "
+"repository. Instructions are here for `GitHub Actions "
+"<https://docs.github.com/en/actions/>`__."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:192
+msgid ""
+"A pull-request will be considered for merging when you have an all "
+"'green' build. If any tests are failing, then you will get a red 'X', "
+"where you can click through to see the individual failed tests. This is "
+"an example of a green build."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:202
+msgid "Test-driven development"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:204
+msgid ""
+"Xorbits is serious about testing and strongly encourages contributors to "
+"embrace `test-driven development (TDD) <https://en.wikipedia.org/wiki"
+"/Test-driven_development>`_. This development process \"relies on the "
+"repetition of a very short development cycle: first the developer writes "
+"an (initially failing) automated test case that defines a desired "
+"improvement or new function, then produces the minimum amount of code to "
+"pass that test.\" So, before actually writing any code, you should write "
+"your tests.  Often the test can be taken from the original GitHub issue."
+"  However, it is always worth considering additional use cases and "
+"writing corresponding tests."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:213
+msgid ""
+"Adding tests is one of the most common requests after code is pushed to "
+"Xorbits.  Therefore, it is worth getting in the habit of writing tests "
+"ahead of time so this is never an issue."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:217
+msgid "Writing tests"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:219
+msgid ""
+"All tests should go into the ``tests`` subdirectory of the specific "
+"package. This folder contains many current examples of tests, and we "
+"suggest looking to these for inspiration."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:223
+msgid ""
+"As a general tip, you can use the search functionality in your integrated"
+" development environment (IDE) or the git grep command in a terminal to "
+"find test files in which the method is called. If you are unsure of the "
+"best location to put your test, take your best guess, but note that "
+"reviewers may request that you move the test to a different location."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:228
+msgid "To use git grep, you can run the following command in a terminal:"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:230
+msgid "``git grep \"function_name(\"``"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:232
+msgid ""
+"This will search through all files in your repository for the text "
+"``function_name(``. This can be a useful way to quickly locate the "
+"function in the codebase and determine the best location to add a test "
+"for it."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:236
+msgid ""
+"Ideally, there should be one, and only one, obvious place for a test to "
+"reside. Until we reach that ideal, these are some rules of thumb for "
+"where a test should be located."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:241
+msgid "Using ``pytest``"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:244
+msgid "Test structure"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:246
+msgid ""
+"We prefer a more *functional* style using the `pytest "
+"<https://docs.pytest.org/en/latest/>`__ framework, which offers a richer "
+"testing framework that will facilitate testing and developing. Thus, "
+"instead of writing test classes, we will write test functions like this:"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:255
+msgid "Preferred ``pytest`` idioms"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:257
+msgid ""
+"Functional tests named ``def test_*`` and *only* take arguments that are "
+"either fixtures or parameters."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:258
+msgid "Use a bare ``assert`` for testing scalars and truth-testing"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:259
+msgid ""
+"Use ``tm.assert_series_equal(result, expected)`` and "
+"``tm.assert_frame_equal(result, expected)`` for comparing :class:`Series`"
+" and :class:`DataFrame` results respectively."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:260
+msgid ""
+"Use `@pytest.mark.parameterize <https://docs.pytest.org/en/latest/how-"
+"to/parametrize.html>`__ when testing multiple cases."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:261
+msgid ""
+"Use `pytest.mark.xfail "
+"<https://docs.pytest.org/en/latest/reference/reference.html?#pytest.mark.xfail>`__"
+" when a test case is expected to fail."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:262
+msgid ""
+"Use `pytest.mark.skip "
+"<https://docs.pytest.org/en/latest/reference/reference.html?#pytest.mark.skip>`__"
+" when a test case is never expected to pass."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:263
+msgid ""
+"Use `pytest.param "
+"<https://docs.pytest.org/en/latest/reference/reference.html?#pytest-"
+"param>`__ when a test case needs a particular mark."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:264
+msgid ""
+"Use `@pytest.fixture "
+"<https://docs.pytest.org/en/latest/reference/reference.html?#pytest-"
+"fixture>`__ if multiple tests can share a setup object."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:268
+msgid ""
+"Do not use ``pytest.xfail`` (which is different than "
+"``pytest.mark.xfail``) since it immediately stops the test and does not "
+"check if the test will fail. If this is the behavior you desire, use "
+"``pytest.skip`` instead."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:271
+msgid ""
+"If a test is known to fail but the manner in which it fails is not meant "
+"to be captured, use ``pytest.mark.xfail`` It is common to use this method"
+" for a test that exhibits buggy behavior or a non-implemented feature. If"
+" the failing test has flaky behavior, use the argument ``strict=False``. "
+"This will make it so pytest does not fail if the test happens to pass."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:277
+msgid ""
+"Prefer the decorator ``@pytest.mark.xfail`` and the argument "
+"``pytest.param`` over usage within a test so that the test is "
+"appropriately marked during the collection phase of pytest. For xfailing "
+"a test that involves multiple parameters, a fixture, or a combination of "
+"these, it is only possible to xfail during the testing phase. To do so, "
+"use the ``request`` fixture:"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:289
+msgid ""
+"xfail is not to be used for tests involving failure due to invalid user "
+"arguments. For these tests, we need to verify the correct exception type "
+"and error message is being raised, using ``pytest.raises`` instead."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:296
+msgid "Testing a warning"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:298
+msgid ""
+"Use ``tm.assert_produces_warning`` as a context manager to check that a "
+"block of code raises a warning."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:305
+msgid ""
+"If a warning should specifically not happen in a block of code, pass "
+"``False`` into the context manager."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:312
+msgid ""
+"If you have a test that would emit a warning, but you aren't actually "
+"testing the warning itself (say because it's going to be removed in the "
+"future, or because we're matching a 3rd-party library's behavior), then "
+"use ``pytest.mark.filterwarnings`` to ignore the error."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:323
+msgid ""
+"If you need finer-grained control, you can use Python's `warnings module "
+"<https://docs.python.org/3/library/warnings.html>`__ to control whether a"
+" warning is ignored or raised at different places within a single test."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:334
+msgid "Testing an exception"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:336
+msgid ""
+"Use `pytest.raises "
+"<https://docs.pytest.org/en/latest/reference/reference.html#pytest-"
+"raises>`_ as a context manager with the specific exception subclass (i.e."
+" never use :py:class:`Exception`) and the exception message in ``match``."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:345
+msgid "Testing involving files"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:347
+msgid ""
+"The ``tm.ensure_clean`` context manager creates a temporary file for "
+"testing, with a generated filename (or your filename if provided), that "
+"is automatically deleted when the context block is exited."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:357
+msgid "Testing involving network connectivity"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:359
+msgid ""
+"It is highly discouraged to add a test that connects to the internet due "
+"to flakiness of network connections and lack of ownership of the server "
+"that is being connected to. If network connectivity is absolutely "
+"required, use the ``tm.network`` decorator."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:369
+msgid ""
+"If the test requires data from a specific website, specify "
+"``check_before_test=True`` and the site in the decorator."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:381
+msgid "Running the test suite"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:383
+msgid ""
+"The tests can then be run directly inside your Git clone (without having "
+"to install Xorbits) by typing::"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:390
+msgid ""
+"If a handful of tests don't pass, it may not be an issue with your "
+"Xorbits installation. Some tests (e.g. some SQLAlchemy ones) require "
+"additional setup, others might start failing because a non-pinned library"
+" released a new version, and others might be flaky if run in parallel. As"
+" long as you can import Xorbits from your locally built version, your "
+"installation is probably fine and you can start contributing!"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:396
+msgid ""
+"Often it is worth running only a subset of tests first around your "
+"changes before running the entire suite."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:399
+msgid "The easiest way to do this is with::"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:403
+msgid "Or with one of the following constructs::"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:410
+msgid ""
+"The ``-r`` report flag will display a short summary info (see `pytest "
+"documentation <https://docs.pytest.org/en/4.6.x/usage.html#detailed-"
+"summary-report>`_) . Here we are displaying the number of:"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:414
+msgid "s: skipped tests"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:415
+msgid "x: xfailed tests"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:416
+msgid "X: xpassed tests"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:418
+msgid ""
+"The summary is optional and can be removed if you don't need the added "
+"information. Using the parallelization option can significantly reduce "
+"the time it takes to locally run tests before submitting a pull request."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:422
+msgid ""
+"For more, see the `pytest <https://docs.pytest.org/en/latest/>`_ "
+"documentation."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:425
+msgid "Documenting your code"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:427
+msgid ""
+"When mentioning parts of the API, use a Sphinx ``:func:``, ``:meth:``, or"
+" ``:class:`` directive as appropriate. Not all public API functions and "
+"methods have a documentation page; ideally links would only be added if "
+"they resolve. You can usually find similar examples by checking the "
+"release notes for one of the previous versions."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:433
+msgid ""
+"If your code is a bugfix, add your entry to the relevant bugfix section. "
+"Avoid adding to the ``Other`` section; only in rare cases should entries "
+"go there. Being as concise as possible, the description of the bug should"
+" include how the user may encounter it and an indication of the bug "
+"itself, e.g. \"produces incorrect results\" or \"incorrectly raises\". It"
+" may be necessary to also indicate the new behavior."
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:440
+msgid ""
+"If your code is an enhancement, it is most likely necessary to add usage "
+"examples to the existing documentation.  This can be done following the "
+"section regarding :ref:`documentation <contributing_documentation>`. "
+"Further, to let users know when this feature was added, the "
+"``versionadded`` directive is used. The sphinx syntax for that is:"
+msgstr ""
+
+#: ../../source/development/contributing_codebase.rst:450
+msgid ""
+"This will put the text *New in version 0.1.0* wherever you put the sphinx"
+" directive. This should also be put in the docstring when adding a new "
+"function or method or a new keyword argument."
+msgstr ""
+

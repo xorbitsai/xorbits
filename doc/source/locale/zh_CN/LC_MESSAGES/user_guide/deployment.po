@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-02-03 14:44+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: ../../source/reference/index.rst:5
-msgid "API Reference"
-msgstr "API参考手册"
+#: ../../source/user_guide/deployment.rst:5
+msgid "Deployment"
+msgstr "部署"
+
+#: ../../source/user_guide/deployment.rst:7
+msgid ""
+"Xorbits can be deployed on your local machine, largely deployed to a "
+"cluster via command lines, or deploy via Kubernetes and clouds."
+msgstr ""
+"Xorbits 能够部署到单机、通过命令行大规模部署到集群，或者部署到 Kubernetes"
+" 以及云上。"
 
