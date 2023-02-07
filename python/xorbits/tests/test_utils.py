@@ -15,6 +15,7 @@
 import unittest.mock as mock
 
 from ..core.execution import need_to_execute
+from ..utils import get_local_package_version, get_local_py_version
 from .mock_pydevd_xml import var_to_xml
 
 
@@ -29,3 +30,16 @@ def test_safe_repr_str(setup, dummy_df):
 def test_safe_repr_str_for_mock_pydevd_xml(setup, dummy_df):
     df = dummy_df + 1
     assert "xorbits.core.data.DataRef object" in var_to_xml(df)
+
+
+def test_get_local_py_version():
+    ret = get_local_py_version()
+    assert ret.startswith("3")
+
+
+def test_get_local_package_version():
+    pytest_version = get_local_package_version("pytest")
+    assert pytest_version is not None
+
+    ret = get_local_package_version("yptset")
+    assert ret is None
