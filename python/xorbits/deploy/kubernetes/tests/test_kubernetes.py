@@ -147,7 +147,7 @@ def _start_kube_cluster(**kwargs):
             api_client,
             image=image_name,
             worker_spill_paths=[temp_spill_dir],
-            timeout=300,
+            timeout=600,
             log_when_fail=True,
             **kwargs,
         )
@@ -195,7 +195,7 @@ def test_run_in_kubernetes():
         worker_mem="1G",
         worker_cache_mem="64m",
         use_local_image=True,
-        pip=["Faker", "cloudpickle==2.2.0"],
+        pip=["Faker"],
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
