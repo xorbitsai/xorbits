@@ -18,7 +18,7 @@ repos:
     rev: 5.12.0
     hooks:
       - id: isort
-        args: [--profile=black]
+        args: [--sp, python/setup.cfg]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.991
     hooks:
@@ -30,3 +30,4 @@ repos:
     hooks:
       - id: prettier
         types_or: [html, javascript]
+        args: [--ignore-path, python/xorbits/_mars]
