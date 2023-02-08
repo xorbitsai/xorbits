@@ -127,6 +127,7 @@ python/xorbits/_mars/learn/cluster/*.c*
 python/xorbits/_mars/learn/utils/*.c*
 python/xorbits/_mars/lib/*.c*
 python/xorbits/_mars/oscar/**/*.c*
+python/xorbits/_mars/serialization/*.c*
 
 # mypy
 .mypy_cache/
