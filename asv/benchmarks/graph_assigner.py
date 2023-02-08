@@ -17,7 +17,11 @@ import tracemalloc
 
 import xorbits._mars.tensor as mt
 import xorbits._mars.dataframe as md
-from xorbits._mars.core.graph import TileableGraph, TileableGraphBuilder, ChunkGraphBuilder
+from xorbits._mars.core.graph import (
+    TileableGraph,
+    TileableGraphBuilder,
+    ChunkGraphBuilder,
+)
 from xorbits._mars.resource import Resource
 from xorbits._mars.services.task.analyzer import GraphAnalyzer
 from xorbits._mars.services.task.analyzer.assigner import GraphAssigner

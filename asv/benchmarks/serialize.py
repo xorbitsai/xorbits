@@ -20,7 +20,11 @@ from xorbits._mars.core.operand import MapReduceOperand
 from xorbits._mars.dataframe.operands import DataFrameOperandMixin
 from xorbits._mars.oscar.core import ActorRef
 
-from xorbits._mars.oscar.backends.message import SendMessage, new_message_id, ActorRefMessage
+from xorbits._mars.oscar.backends.message import (
+    SendMessage,
+    new_message_id,
+    ActorRefMessage,
+)
 from xorbits._mars.serialization import serialize, deserialize
 from xorbits._mars.serialization.serializables import (
     Serializable,
@@ -43,9 +47,9 @@ from xorbits._mars.serialization.serializables import (
     Complex64Field,
     Complex128Field,
 )
-from mars.services.subtask import Subtask, SubtaskResult, SubtaskStatus
-from mars.services.task import new_task_id
-from mars.utils import tokenize
+from xorbits._mars.services.subtask import Subtask, SubtaskResult, SubtaskStatus
+from xorbits._mars.services.task import new_task_id
+from xorbits._mars.utils import tokenize
 
 # do warm up
 serialize(None)
@@ -189,9 +193,9 @@ class MockDFOperand(MapReduceOperand, DataFrameOperandMixin):
 
 class SerializeFetchShuffleSuite:
     def setup(self):
-        from mars.core import OutputType
-        from mars.core.operand import OperandStage
-        from mars.dataframe.operands import DataFrameShuffleProxy
+        from xorbits._mars.core import OutputType
+        from xorbits._mars.core.operand import OperandStage
+        from xorbits._mars.dataframe.operands import DataFrameShuffleProxy
 
         source_chunks = []
         for i in range(1000):
@@ -206,7 +210,7 @@ class SerializeFetchShuffleSuite:
             output_types=[OutputType.dataframe]
         ).new_chunk(source_chunks)
 
-        from mars.utils import build_fetch_shuffle
+        from xorbits._mars.utils import build_fetch_shuffle
 
         fetch_chunk = build_fetch_shuffle(shuffle_chunk, n_reducers=10)
 

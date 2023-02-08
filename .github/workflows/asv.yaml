@@ -35,11 +35,13 @@ jobs:
 
       - name: Install dependencies
         id: build
+        shell: bash -el {0}
         run: |
-          pip install numpy scipy cython oss2 asv coverage
+          pip install numpy scipy cython asv coverage
           cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
+        shell: bash -el {0}
         run: |
           unset CI
           cd asv
