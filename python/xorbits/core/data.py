@@ -185,7 +185,7 @@ class DataRef(metaclass=DataRefMeta):
     def __iter__(self):
         # Mars entity hasn't implemented __iter__, however `iter(mars_entity)`
         # still works, it's because iteration is supported by `__getitem__` that
-        # accepts intergers 0,1,.., it can be seen as a "legacy feature" that not
+        # accepts integers 0,1,.., it can be seen as a "legacy feature" that not
         # recommended. Here we implement __iter__ for some data types, others keep
         # behaviors with Mars.
         if self._own_data():

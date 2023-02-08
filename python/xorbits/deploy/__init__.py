@@ -51,7 +51,7 @@ def init(
     session_id: str, optional
         Session ID, if not specified, a new ID will be auto generated.
     timeout: float
-        Timeout about creating a new runtime or connecting to an exising cluster.
+        Timeout about creating a new runtime or connecting to an existing cluster.
     n_worker: int, optional
         How many workers to start when creating a local runtime.
 

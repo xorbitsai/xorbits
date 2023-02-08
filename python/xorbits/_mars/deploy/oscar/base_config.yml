@@ -1,0 +1,86 @@
+services:
+  - cluster
+  - session
+  - storage
+  - meta
+  - lifecycle
+  - scheduling
+  - subtask
+  - task
+  - mutable
+cluster:
+  backend: fixed
+  node_timeout: 120
+  node_check_interval: 1
+  log_dir: null
+session:
+  custom_log_dir: null
+storage:
+  default_config:
+    transfer_block_size: 5 * 1024 ** 2
+  plasma:
+    store_memory: 20%
+  "@overriding_fields": ["backends"]
+meta:
+  store: dict
+task:
+  default_config:
+    optimize_tileable_graph: yes
+    optimize_chunk_graph: yes
+    fuse_enabled: yes
+    initial_same_color_num: null
+    as_broadcaster_successor_num: null
+  execution_config:
+    backend: mars
+scheduling:
+  autoscale:
+    enabled: false
+    min_workers: 1  # Must >=1, mars need at least 1 worker to fetch data
+    max_workers: 100
+    scheduler_backlog_timeout: 60
+    worker_idle_timeout: 120
+  speculation:
+    # Enables (yes) or disables (no) speculative execution of subtasks.
+    # If enabled, `initial_same_color_num` will be set to 1 to ensure enough homogeneous subtasks to
+    # calculate statistics
+    enabled: no
+    # Don't submit subtasks actually for slow subtasks
+    dry: no
+    # The time interval seconds to use before checking for speculative subtasks.
+    interval: 5
+    # The percentage of subtasks that has not finished yet at which to start speculation.
+    threshold: 75%
+    # Minimum amount of time seconds a task runs before being considered for speculation.
+    # This can be used to avoid launching speculative copies of tasks that are very short.
+    min_task_runtime: 3
+    # How many times slower a task is than the median to be considered for speculation.
+    multiplier: 1.5
+    # Max number of concurrent speculative run for a subtask.
+    max_concurrent_run: 3
+  subtask_cancel_timeout: 5
+metrics:
+  backend: console
+  # If backend is prometheus, then we can add prometheus config as follows:
+  # prometheus:
+  #   port: 8988
+oscar:
+  numa:
+    # external address scheme, default null,
+    # available value including: null, ucx
+    external_addr_scheme: null
+    # enable internal address for in-process communication
+    enable_internal_addr: yes
+  gpu:
+    # external address scheme, default null,
+    # available value including: null, ucx
+    external_addr_scheme: null
+    # enable internal address for in-process communication
+    enable_internal_addr: yes
+  extra_conf:
+    ucx:
+      tcp: null
+      nvlink: null
+      infiniband: null
+      rdmacm: null
+      cuda-copy: null
+      create-cuda-contex: null

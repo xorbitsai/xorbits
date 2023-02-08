@@ -243,7 +243,7 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     if isinstance(inp, DataRef):
         mars_entity = getattr(inp.data, "_mars_entity", None)
         if mars_entity is None:  # pragma: no cover
-            raise TypeError(f"Can't covert {inp} to mars entity")
+            raise TypeError(f"Can't convert {inp} to mars entity")
         conditions = _TO_MARS_EXECUTION_CONDITION[type(mars_entity).__name__]
         for cond in conditions:
             if cond(mars_entity):

@@ -4,5 +4,4 @@
 */.mypy_cache
 */.pytest_cache
 */build
-*/*/_mars
 **/node_modules

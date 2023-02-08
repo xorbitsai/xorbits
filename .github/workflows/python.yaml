@@ -43,9 +43,11 @@ jobs:
       - uses: isort/isort-action@master
         with:
           sortPaths: "python/xorbits"
-          configuration: "--check-only --profile black --diff --skip-glob xorbits/_mars/"
+          configuration: "--check-only --profile black --diff --skip python/xorbits/_mars/"
       - name: mypy
         run: pip install mypy && cd python && mypy xorbits
+      - name: codespell
+        run: pip install codespell && cd python && codespell xorbits
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
