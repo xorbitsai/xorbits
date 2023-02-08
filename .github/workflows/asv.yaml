@@ -1,0 +1,59 @@
+name: Xorbits Continuous Benchmark
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  asv-benchmarks:
+    name: ASV Benchmarks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    concurrency:
+      # https://github.community/t/concurrecy-not-work-for-push/183068/7
+      group: ${{ github.event_name == 'push' && github.run_number || github.ref }}-asv-benchmarks
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up conda python3.9
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        id: build
+        run: |
+          pip install numpy scipy cython oss2 asv coverage
+          pip install -e ".[dev,extra]"
+
+      - name: Run ASV benchmarks
+        run: |
+          unset CI
+          cd asv
+          asv check -E existing
+          git remote add upstream https://github.com/xprobe-inc/xorbits.git
+          git fetch upstream
+          git merge upstream/main
+          asv machine --yes
+          asv continuous -f 1.1 --strict upstream/main HEAD
+        if: ${{ steps.build.outcome == 'success' }}
+
+      - name: Publish benchmarks artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Benchmarks log
+          path: benchmarks/asv_bench/results
+        if: failure()
