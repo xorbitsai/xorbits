@@ -85,6 +85,18 @@ else:
             "icon": "fa-brands fa-github",
             "type": "fontawesome",
         },
+        {
+            "name": "Gitee",
+            "url": "https://gitee.com/xprobe-inc/xorbits",
+            "icon": "https://gitee.com/static/images/logo-en.svg",
+            "type": "url",
+        },
+        {
+            "name": "Zhihu",
+            "url": "https://zhihu.com/org/xorbits",
+            "icon": "fa-brands fa-zhihu",
+            "type": "fontawesome",
+        },
     ]
 
 html_favicon = "_static/favicon.svg"

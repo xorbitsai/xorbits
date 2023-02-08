@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-07 12:52+0800\n"
+"POT-Creation-Date: 2023-02-08 13:46+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -333,4 +333,11 @@ msgstr "获取最新特性的更新"
 #: ../../source/index.rst:154
 msgid "`Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_"
 msgstr ""
+
+#: ../../source/index.rst:157
+msgid ""
+"Visit `Xorbits community <https://xorbits.cn/community>`_ to join Wechat,"
+" Zhihu and so on."
+msgstr ""
+"访问 `Xorbits 社区 <https://xorbits.cn/community>`_ 获取微信公众号、知乎等联系方式。"
 
