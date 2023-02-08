@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,22 +17,22 @@ from typing import List, Tuple
 import numpy as np
 
 from .... import opcodes as OperandDef
+from ....config import options
 from ....core import recursive_tile
 from ....core.operand import OperandStage
 from ....serialization.serializables import (
-    FieldTypes,
-    KeyField,
     AnyField,
+    FieldTypes,
     Float16Field,
     Int32Field,
+    KeyField,
     TupleField,
 )
-from ....utils import has_unknown_shape, require_module, ensure_own_data
-from ....config import options
-from ...operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
-from ...array_utils import as_same_device, device, cp
+from ....utils import ensure_own_data, has_unknown_shape, require_module
+from ...array_utils import as_same_device, cp, device
 from ...core import TensorOrder
 from ...datasource.array import tensor as astensor
+from ...operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
 
 
 class TensorPdist(TensorMapReduceOperand, TensorOperandMixin):
@@ -304,7 +304,7 @@ class TensorPdist(TensorMapReduceOperand, TensorOperandMixin):
 
     @classmethod
     def _execute_map(cls, ctx, op):
-        from scipy.spatial.distance import pdist, cdist
+        from scipy.spatial.distance import cdist, pdist
 
         inputs, device_id, xp = as_same_device(
             [ctx[inp.key] for inp in op.inputs], device=op.device, ret_extra=True

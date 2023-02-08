@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...serialization.serializables import AnyField, StringField
-from ..array_utils import as_same_device, device
 from ..arithmetic.utils import chunk_tree_add
+from ..array_utils import as_same_device, device
 from ..core import TensorOrder
 from ..operands import TensorOperand, TensorOperandMixin
 from ..utils import decide_unify_split
-from .einsumfunc import parse_einsum_input, einsum_path
+from .einsumfunc import einsum_path, parse_einsum_input
 
 
 class TensorEinsum(TensorOperand, TensorOperandMixin):

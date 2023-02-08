@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@ import os
 import pytest
 
 from ..... import oscar as mo
-from .....tests.core import require_ray, mock
+from .....tests.core import mock, require_ray
 from .....utils import lazy_import
 from ....context import get_context
 from ....errors import ServerClosed
-from ...allocate_strategy import ProcessIndex, MainPool
+from ...allocate_strategy import MainPool, ProcessIndex
 from ..backend import RayActorBackend
-from ..pool import RayMainActorPool, create_actor_pool, RayPoolState
-from ..utils import process_placement_to_address, kill_and_wait
+from ..pool import RayMainActorPool, RayPoolState, create_actor_pool
+from ..utils import kill_and_wait, process_placement_to_address
 
 ray = lazy_import("ray")
 

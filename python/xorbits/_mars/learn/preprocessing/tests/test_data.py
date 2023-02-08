@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 import pytest
 from sklearn.datasets import load_iris
 from sklearn.utils import gen_batches
-from sklearn.utils._testing import assert_array_almost_equal, assert_allclose
+from sklearn.utils._testing import assert_allclose, assert_array_almost_equal
 
 from .... import tensor as mt
 from .. import MinMaxScaler, minmax_scale

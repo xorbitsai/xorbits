@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,26 +20,24 @@ import pandas as pd
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, recursive_tile
 from ...serialization.serializables import (
-    KeyField,
     AnyField,
-    StringField,
-    DataTypeField,
     BoolField,
+    DataTypeField,
     Int32Field,
+    KeyField,
+    StringField,
 )
-from ...tensor.core import TENSOR_TYPE, TENSOR_CHUNK_TYPE
-from ...tensor.datasource import (
-    empty,
-    tensor as astensor,
-    from_series as tensor_from_series,
-    from_dataframe as tensor_from_dataframe,
-)
+from ...tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
+from ...tensor.datasource import empty
+from ...tensor.datasource import from_dataframe as tensor_from_dataframe
+from ...tensor.datasource import from_series as tensor_from_series
+from ...tensor.datasource import tensor as astensor
 from ...tensor.statistics.quantile import quantile as tensor_quantile
-from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..core import DATAFRAME_TYPE
-from ..datasource.from_tensor import series_from_tensor, dataframe_from_tensor
+from ..datasource.from_tensor import dataframe_from_tensor, series_from_tensor
 from ..initializer import DataFrame as create_df
-from ..utils import parse_index, build_empty_df, find_common_type, validate_axis
+from ..operands import DataFrameOperand, DataFrameOperandMixin
+from ..utils import build_empty_df, find_common_type, parse_index, validate_axis
 
 
 class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):

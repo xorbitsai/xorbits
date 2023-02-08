@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ from sklearn.utils._testing import assert_array_almost_equal, assert_array_less
 
 from .... import tensor as mt
 from .. import TruncatedSVD
-
 
 # Make an X that looks somewhat like a small tf-idf matrix.
 # XXX newer versions of SciPy >0.16 have scipy.sparse.rand for this.

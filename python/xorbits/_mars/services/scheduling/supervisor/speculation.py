@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
 import asyncio
 import logging
 import time
-import numpy as np
 from collections import defaultdict
 from typing import Dict
 
-from ....utils import parse_readable_size, create_task_with_error_log
+import numpy as np
+
+from ....utils import create_task_with_error_log, parse_readable_size
 from ..errors import NoAvailableBand
 from .manager import SubtaskScheduleInfo
 

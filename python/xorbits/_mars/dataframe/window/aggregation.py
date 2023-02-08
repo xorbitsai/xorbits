@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict, namedtuple
 from collections.abc import Iterable
 from typing import Dict
 
@@ -23,16 +23,16 @@ from ...core.operand import OperandStage
 from ...serialization.serializables import (
     AnyField,
     BoolField,
+    DictField,
     Int32Field,
     Int64Field,
-    DictField,
     StringField,
 )
 from ...utils import tokenize
 from ..core import DATAFRAME_TYPE
 from ..merge import DataFrameConcat
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_df, parse_index, build_empty_series, filter_dtypes_by_index
+from ..utils import build_df, build_empty_series, filter_dtypes_by_index, parse_index
 
 _stage_info = namedtuple(
     "_stage_info",

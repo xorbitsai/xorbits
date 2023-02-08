@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,15 +22,15 @@ from ...core import OutputType
 from ...serialization.serializables import (
     AnyField,
     BoolField,
-    ListField,
     Int64Field,
+    ListField,
     ReferenceField,
 )
-from ..utils import parse_index, lazy_import, tokenize
+from ..utils import lazy_import, parse_index, tokenize
 from .core import (
+    HeadOptimizedDataSource,
     IncrementalIndexDatasource,
     IncrementalIndexDataSourceMixin,
-    HeadOptimizedDataSource,
 )
 
 ray = lazy_import("ray")

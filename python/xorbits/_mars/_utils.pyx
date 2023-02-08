@@ -1,5 +1,5 @@
 # distutils: language = c++
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,21 +29,26 @@ from functools import lru_cache, partial
 from random import getrandbits
 from weakref import WeakSet
 
+import cloudpickle
 import numpy as np
 import pandas as pd
-import cloudpickle
+
 cimport cython
 from cpython cimport PyBytes_FromStringAndSize
-from libc.stdint cimport uint_fast64_t, uint32_t, uint8_t
-from libc.stdlib cimport malloc, free
+from libc.stdint cimport uint8_t, uint32_t, uint_fast64_t
+from libc.stdlib cimport free, malloc
+
 from .lib.cython.libcpp cimport mt19937_64
+
 try:
     from pandas.tseries.offsets import Tick as PDTick
 except ImportError:
     PDTick = None
 
-from .lib.mmh3 import hash as mmh_hash, hash_bytes as mmh_hash_bytes, \
-    hash_from_buffer as mmh3_hash_from_buffer
+from .lib.mmh3 import hash as mmh_hash
+from .lib.mmh3 import hash_bytes as mmh_hash_bytes
+from .lib.mmh3 import hash_from_buffer as mmh3_hash_from_buffer
+
 
 cdef bint _has_cupy = bool(pkgutil.find_loader('cupy'))
 cdef bint _has_cudf = bool(pkgutil.find_loader('cudf'))

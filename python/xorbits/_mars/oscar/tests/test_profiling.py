@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,16 +17,17 @@ import dataclasses
 import os
 
 import pytest
+
+from ...tests.core import check_dict_structure_same, mock
+from ..backends.message import SendMessage
 from ..profiling import (
+    DummyOperator,
     ProfilingData,
     ProfilingDataOperator,
-    DummyOperator,
-    _ProfilingOptions,
     _CallStats,
+    _ProfilingOptions,
     _SubtaskStats,
 )
-from ..backends.message import SendMessage
-from ...tests.core import check_dict_structure_same, mock
 
 
 def test_profiling_data():

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,13 +19,11 @@ from typing import List, Set
 
 import numpy as np
 
-from ...core import ChunkType, ChunkGraph
-from ...tensor import arithmetic
-from ...tensor import reduction
+from ...core import ChunkGraph, ChunkType
+from ...tensor import arithmetic, reduction
 from ...tensor.fuse import TensorNeFuseChunk
 from ...tensor.fuse.numexpr import NUMEXPR_INSTALLED
 from .core import RuntimeOptimizer, register_optimizer
-
 
 logger = logging.getLogger(__name__)
 

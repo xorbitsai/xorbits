@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ from ....tests import test_session
 from ....tests.core import DICT_NOT_EMPTY, require_ray
 from ....utils import lazy_import
 from ..local import new_cluster
-from ..session import new_session, get_default_async_session
+from ..session import get_default_async_session, new_session
 from ..tests import test_local
 from ..tests.session import new_test_session
-from ..tests.test_local import _cancel_when_tile, _cancel_when_execute
+from ..tests.test_local import _cancel_when_execute, _cancel_when_tile
 from .modules.utils import (  # noqa: F401; pylint: disable=unused-variable
     cleanup_third_party_modules_output,
     get_output_filenames,

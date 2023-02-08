@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ except ImportError:
 
 from ...config import option_context
 from ...core import enter_mode
-from .. import ArrowStringDtype, ArrowStringArray, ArrowListDtype, ArrowListArray
+from .. import ArrowListArray, ArrowListDtype, ArrowStringArray, ArrowStringDtype
 from ..arrays import _use_bool_any_all
 from ..utils import arrow_table_to_pandas_dataframe
 

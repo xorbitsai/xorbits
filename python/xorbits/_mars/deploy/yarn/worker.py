@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ class YarnWorkerCommandRunner(YarnServiceMixin, WorkerCommandRunner):
         return super().__call__(*args, **kwargs)
 
     async def start_services(self):
-        from ..oscar.worker import start_worker
         from ...services.cluster import ClusterAPI
+        from ..oscar.worker import start_worker
 
         self.register_endpoint()
 

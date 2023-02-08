@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,21 +17,19 @@ import re
 import numpy as np
 import pytest
 from numpy.testing import (
+    assert_allclose,
+    assert_almost_equal,
     assert_array_almost_equal,
     assert_array_equal,
-    assert_almost_equal,
-    assert_allclose,
 )
-from scipy import sparse
-from scipy import linalg
-from sklearn.datasets import make_sparse_uncorrelated, make_regression, load_iris
+from scipy import linalg, sparse
+from sklearn.datasets import load_iris, make_regression, make_sparse_uncorrelated
 from sklearn.linear_model import LinearRegression as sklearn_LR
 from sklearn.linear_model._base import make_dataset
 from sklearn.utils import check_random_state
 
 from .. import LinearRegression
 from .._base import _preprocess_data, _rescale_data
-
 
 rng = np.random.RandomState(0)
 rtol = 1e-6

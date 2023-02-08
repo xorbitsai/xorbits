@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@ import logging
 import os
 import sys
 import tempfile
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 from ... import oscar as mo
-from ...constants import MARS_TMP_DIR_PREFIX, MARS_LOG_PREFIX, MARS_LOG_PATH_KEY
-from ...resource import cuda_count, Resource
+from ...constants import MARS_LOG_PATH_KEY, MARS_LOG_PREFIX, MARS_TMP_DIR_PREFIX
+from ...resource import Resource, cuda_count
 
 logger = logging.getLogger(__name__)
 

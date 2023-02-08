@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 import math
 
 import numpy as np
-from numpy.core.numerictypes import find_common_type
 from numpy.core.numeric import ScalarType
+from numpy.core.numerictypes import find_common_type
 from numpy.lib.index_tricks import ndindex
 
 from .. import datasource as _nx
-from ..core import Tensor
 from ..base import ndim
+from ..core import Tensor
 from ..merge import concatenate
 
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ from sklearn import datasets, svm
 from sklearn.exceptions import UndefinedMetricWarning
 from sklearn.metrics import accuracy_score as sklearn_accuracy_score
 from sklearn.utils import check_random_state
+from sklearn.utils._mocking import MockDataFrame
 from sklearn.utils._testing import (
     assert_almost_equal,
-    assert_array_equal,
     assert_array_almost_equal,
+    assert_array_equal,
 )
-from sklearn.utils._mocking import MockDataFrame
 
 from .... import execute, fetch
 from .... import tensor as mt
@@ -31,12 +31,12 @@ from ....lib.sparse import SparseNDArray
 from .. import accuracy_score, log_loss
 from .._classification import (
     _check_targets,
+    f1_score,
+    fbeta_score,
     multilabel_confusion_matrix,
     precision_recall_fscore_support,
     precision_score,
     recall_score,
-    f1_score,
-    fbeta_score,
 )
 
 IND = "multilabel-indicator"
@@ -288,7 +288,7 @@ def test_log_loss_pandas_input(setup):
     y_pr = np.array([[0.2, 0.7], [0.6, 0.5], [0.4, 0.1], [0.7, 0.2]])
     types = [(MockDataFrame, MockDataFrame)]
     try:
-        from pandas import Series, DataFrame
+        from pandas import DataFrame, Series
 
         types.append((Series, DataFrame))
     except ImportError:

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ in oss key, such like oss glob: oss://bucket/[key]/*, the key
 oss://bucket/[key]/a exactly exists.
 
 Notes:
-    OSS need a bucket to specify the file or dir, the "**" patten is
+    OSS need a bucket to specify the file or dir, the "**" pattern is
     not supported. So _isrecursive(pattern) is removed.
 """
 

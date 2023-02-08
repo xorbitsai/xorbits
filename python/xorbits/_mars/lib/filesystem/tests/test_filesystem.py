@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ except ImportError:  # pragma: no cover
 
 from ....tests.core import require_hadoop
 from ....utils import lazy_import
-from .. import glob, FileSystem, LocalFileSystem, FSMap
+from .. import FileSystem, FSMap, LocalFileSystem, glob
 
 if pa is not None:
     from ..arrow import ArrowBasedLocalFileSystem, HadoopFileSystem

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import psutil
 import pyarrow as pa
 
 from ..resource import virtual_memory
-from ..serialization import AioSerializer, AioDeserializer
-from ..utils import implements, dataslots, calc_size_by_str, lazy_import
-from .base import StorageBackend, StorageLevel, ObjectInfo, register_storage_backend
+from ..serialization import AioDeserializer, AioSerializer
+from ..utils import calc_size_by_str, dataslots, implements, lazy_import
+from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import BufferWrappedFileObject, StorageFileObject
 from .errors import DataNotExist
 

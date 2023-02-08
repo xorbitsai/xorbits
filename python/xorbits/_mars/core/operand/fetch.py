@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ import enum
 from ... import opcodes
 from ...serialization.serializables import (
     FieldTypes,
-    StringField,
-    ListField,
     Int32Field,
+    ListField,
     ReferenceField,
+    StringField,
 )
 from .base import Operand
 from .core import TileableOperandMixin

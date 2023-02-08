@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .fft import fft, TensorFFT
-from .ifft import ifft, TensorIFFT
-from .fft2 import fft2, TensorFFT2
-from .ifft2 import ifft2, TensorIFFT2
-from .fftn import fftn, TensorFFTN
-from .ifftn import ifftn, TensorIFFTN
-from .rfft import rfft, TensorRFFT
-from .irfft import irfft, TensorIRFFT
-from .rfft2 import rfft2, TensorRFFT2
-from .irfft2 import irfft2, TensorIRFFT2
-from .rfftn import rfftn, TensorRFFTN
-from .irfftn import irfftn, TensorIRFFTN
-from .hfft import hfft, TensorHFFT
-from .ihfft import ihfft, TensorIHFFT
-from .fftfreq import fftfreq, TensorFFTFreq
-from .rfftfreq import rfftfreq, TensorRFFTFreq
-from .fftshift import fftshift, TensorFFTShift
-from .ifftshift import ifftshift, TensorIFFTShift
+from .fft import TensorFFT, fft
+from .fft2 import TensorFFT2, fft2
+from .fftfreq import TensorFFTFreq, fftfreq
+from .fftn import TensorFFTN, fftn
+from .fftshift import TensorFFTShift, fftshift
+from .hfft import TensorHFFT, hfft
+from .ifft import TensorIFFT, ifft
+from .ifft2 import TensorIFFT2, ifft2
+from .ifftn import TensorIFFTN, ifftn
+from .ifftshift import TensorIFFTShift, ifftshift
+from .ihfft import TensorIHFFT, ihfft
+from .irfft import TensorIRFFT, irfft
+from .irfft2 import TensorIRFFT2, irfft2
+from .irfftn import TensorIRFFTN, irfftn
+from .rfft import TensorRFFT, rfft
+from .rfft2 import TensorRFFT2, rfft2
+from .rfftfreq import TensorRFFTFreq, rfftfreq
+from .rfftn import TensorRFFTN, rfftn

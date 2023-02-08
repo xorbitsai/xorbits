@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,28 +18,28 @@ from functools import reduce
 import numpy as np
 import pandas as pd
 
-from ..core import FuseChunkData, FuseChunk, ENTITY_TYPE, OutputType
+from ..core import ENTITY_TYPE, FuseChunk, FuseChunkData, OutputType
 from ..core.operand import (
-    Operand,
-    TileableOperandMixin,
     Fuse,
-    ShuffleProxy,
     FuseChunkMixin,
+    Operand,
+    ShuffleProxy,
+    TileableOperandMixin,
 )
 from ..tensor.core import TENSOR_TYPE
 from ..tensor.datasource import tensor as astensor
 from ..tensor.operands import TensorOperandMixin
 from ..utils import calc_nsplits
 from .core import (
-    DATAFRAME_CHUNK_TYPE,
-    SERIES_CHUNK_TYPE,
-    INDEX_CHUNK_TYPE,
-    DATAFRAME_TYPE,
-    SERIES_TYPE,
-    INDEX_TYPE,
-    DATAFRAME_GROUPBY_TYPE,
-    SERIES_GROUPBY_TYPE,
     CATEGORICAL_TYPE,
+    DATAFRAME_CHUNK_TYPE,
+    DATAFRAME_GROUPBY_TYPE,
+    DATAFRAME_TYPE,
+    INDEX_CHUNK_TYPE,
+    INDEX_TYPE,
+    SERIES_CHUNK_TYPE,
+    SERIES_GROUPBY_TYPE,
+    SERIES_TYPE,
 )
 from .utils import parse_index
 

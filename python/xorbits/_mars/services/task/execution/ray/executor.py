@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,43 +21,34 @@ import logging
 import operator
 import time
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Callable
+from typing import Any, Callable, Dict, List
 
 import numpy as np
 
-from .....core import ChunkGraph, Chunk, TileContext
+from .....core import Chunk, ChunkGraph, TileContext
 from .....core.context import set_context
-from .....core.operand import (
-    Fetch,
-    Fuse,
-    VirtualOperand,
-    execute,
-)
+from .....core.operand import Fetch, Fuse, VirtualOperand, execute
 from .....core.operand.fetch import FetchShuffle
 from .....lib.aio import alru_cache
-from .....metrics.api import init_metrics, Metrics
+from .....metrics.api import Metrics, init_metrics
 from .....resource import Resource
-from .....serialization import serialize, deserialize
+from .....serialization import deserialize, serialize
 from .....typing import BandType
 from .....utils import (
     aiotask_wrapper,
     calc_data_size,
-    lazy_import,
-    get_chunk_params,
     classproperty,
+    get_chunk_params,
+    lazy_import,
 )
 from ....lifecycle.api import LifecycleAPI
 from ....meta.api import MetaAPI
 from ....subtask import Subtask, SubtaskGraph
 from ....subtask.utils import iter_output_data
 from ...core import Task
-from ..api import (
-    TaskExecutor,
-    ExecutionChunkResult,
-    register_executor_cls,
-)
+from ..api import ExecutionChunkResult, TaskExecutor, register_executor_cls
 from ..utils import ResultTileablesLifecycle
-from .config import RayExecutionConfig, IN_RAY_CI
+from .config import IN_RAY_CI, RayExecutionConfig
 from .context import (
     RayExecutionContext,
     RayExecutionWorkerContext,

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ except (ImportError, OSError):  # pragma: no cover
 from ....core import tile
 from ... import random
 from .. import totiledb
-from ..utils import get_tiledb_schema_from_tensor, check_tiledb_array_with_tensor
+from ..utils import check_tiledb_array_with_tensor, get_tiledb_schema_from_tensor
 
 
 @pytest.mark.skipif(tiledb is None, reason="TileDB not installed")

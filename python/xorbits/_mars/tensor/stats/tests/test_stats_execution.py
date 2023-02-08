@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,33 +17,31 @@ import functools
 import numpy as np
 import pytest
 import scipy
-from scipy.stats import (
-    entropy as sp_entropy,
-    power_divergence as sp_power_divergence,
-    chisquare as sp_chisquare,
-    ks_1samp as sp_ks_1samp,
-    ks_2samp as sp_ks_2samp,
-    norm as sp_norm,
-    ttest_rel as sp_ttest_rel,
-    ttest_ind as sp_ttest_ind,
-    ttest_ind_from_stats as sp_ttest_ind_from_stats,
-    ttest_1samp as sp_ttest_1samp,
-    rankdata as sp_rankdata,
-)
+from scipy.stats import chisquare as sp_chisquare
+from scipy.stats import entropy as sp_entropy
+from scipy.stats import ks_1samp as sp_ks_1samp
+from scipy.stats import ks_2samp as sp_ks_2samp
+from scipy.stats import norm as sp_norm
+from scipy.stats import power_divergence as sp_power_divergence
+from scipy.stats import rankdata as sp_rankdata
+from scipy.stats import ttest_1samp as sp_ttest_1samp
+from scipy.stats import ttest_ind as sp_ttest_ind
+from scipy.stats import ttest_ind_from_stats as sp_ttest_ind_from_stats
+from scipy.stats import ttest_rel as sp_ttest_rel
 
 from ....lib.version import parse as parse_version
 from ... import tensor
 from .. import (
-    entropy,
-    power_divergence,
     chisquare,
-    ttest_ind,
-    ttest_rel,
-    ttest_1samp,
-    ttest_ind_from_stats,
+    entropy,
     ks_1samp,
     ks_2samp,
+    power_divergence,
     rankdata,
+    ttest_1samp,
+    ttest_ind,
+    ttest_ind_from_stats,
+    ttest_rel,
 )
 
 

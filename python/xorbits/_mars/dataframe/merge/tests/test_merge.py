@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ from ....core import tile
 from ....core.operand import OperandStage
 from ...core import IndexValue
 from ...datasource.dataframe import from_pandas
-from .. import DataFrameMergeAlign, DataFrameMerge, concat
+from .. import DataFrameMerge, DataFrameMergeAlign, concat
 
 
 def test_merge():

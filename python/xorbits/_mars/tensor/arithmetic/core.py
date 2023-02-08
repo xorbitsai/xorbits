@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,25 +20,25 @@ import numpy as np
 
 from ...core import ExecutableTuple
 from ...serialization.serializables import (
-    FieldTypes,
     AnyField,
     DictField,
+    FieldTypes,
     KeyField,
-    StringField,
     ListField,
+    StringField,
 )
 from ...utils import has_unknown_shape
+from ..array_utils import as_same_device, convert_order, device
 from ..core import Tensor, TensorOrder
 from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorOperandMixin
 from ..utils import (
-    unify_chunks,
     broadcast_shape,
+    check_order,
     check_out_param,
     filter_inputs,
-    check_order,
+    unify_chunks,
 )
-from ..operands import TensorOperandMixin, TensorOperand
-from ..array_utils import device, as_same_device, convert_order
 
 
 class TensorElementWise(TensorOperandMixin):

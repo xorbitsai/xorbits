@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,22 +21,22 @@ from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
+    AnyField,
+    BoolField,
     FieldTypes,
     Int32Field,
     ListField,
     StringField,
-    BoolField,
-    AnyField,
 )
 from ...utils import flatten, stack_back
+from ..array_utils import as_same_device, cp, device
 from ..core import TensorOrder
 from ..operands import (
-    TensorOperand,
     TensorMapReduceOperand,
-    TensorShuffleProxy,
+    TensorOperand,
     TensorOperandMixin,
+    TensorShuffleProxy,
 )
-from ..array_utils import as_same_device, device, cp
 
 
 class PSRSOperandMixin:

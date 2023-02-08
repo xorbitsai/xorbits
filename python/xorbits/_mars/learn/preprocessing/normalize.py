@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ except ImportError:  # pragma: no cover
     sklearn_normalize = None
 
 from ... import opcodes as OperandDef
-from ...core import ExecutableTuple, recursive_tile
-from ...serialization.serializables import KeyField, StringField, Int32Field, BoolField
-from ...tensor.operands import TensorOperand, TensorOperandMixin
-from ...tensor.core import TensorOrder
-from ...tensor.array_utils import as_same_device, device, sparse, issparse
 from ... import tensor as mt
+from ...core import ExecutableTuple, recursive_tile
+from ...serialization.serializables import BoolField, Int32Field, KeyField, StringField
+from ...tensor.array_utils import as_same_device, device, issparse, sparse
+from ...tensor.core import TensorOrder
+from ...tensor.operands import TensorOperand, TensorOperandMixin
 from ..utils import check_array
 
 

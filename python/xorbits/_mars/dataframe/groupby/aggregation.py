@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,47 +24,43 @@ import pandas as pd
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core import ENTITY_TYPE, OutputType
-from ...core.custom_log import redirect_custom_log
 from ...core.context import get_context
+from ...core.custom_log import redirect_custom_log
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
-    Int32Field,
-    Int64Field,
     AnyField,
     BoolField,
-    StringField,
-    ListField,
     DictField,
+    Int32Field,
+    Int64Field,
+    ListField,
+    StringField,
 )
 from ...typing import ChunkType, TileableType
 from ...utils import (
     enter_current_session,
+    estimate_pandas_size,
     lazy_import,
     pd_release_version,
-    estimate_pandas_size,
 )
 from ..arrays import ArrowArray
 from ..core import GROUPBY_TYPE
 from ..merge import DataFrameConcat
 from ..operands import DataFrameOperand, DataFrameOperandMixin, DataFrameShuffleProxy
-from ..reduction.core import (
-    ReductionCompiler,
-    ReductionSteps,
-    ReductionAggStep,
-)
 from ..reduction.aggregation import is_funcs_aggregate, normalize_reduction_funcs
+from ..reduction.core import ReductionAggStep, ReductionCompiler, ReductionSteps
 from ..utils import (
-    parse_index,
     build_concatenated_rows_frame,
-    is_cudf,
     concat_on_columns,
+    is_cudf,
+    parse_index,
 )
 from .core import DataFrameGroupByOperand
 from .custom_aggregation import custom_agg_functions
 from .sort import (
-    DataFramePSRSGroupbySample,
     DataFrameGroupbyConcatPivot,
     DataFrameGroupbySortShuffle,
+    DataFramePSRSGroupbySample,
 )
 
 cp = lazy_import("cupy", rename="cp")
@@ -490,9 +486,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 by = []
                 for v in map_op.groupby_params["by"]:
                     if isinstance(v, ENTITY_TYPE):
-                        by_chunk = v.cix[
-                            chunk.index[0],
-                        ]
+                        by_chunk = v.cix[chunk.index[0],]
                         chunk_inputs.append(by_chunk)
                         by.append(by_chunk)
                     else:

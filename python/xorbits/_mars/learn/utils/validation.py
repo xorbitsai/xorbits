@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import warnings
 import numbers
+import warnings
 
 import numpy as np
 from numpy.core.numeric import ComplexWarning
 
 try:
-    from sklearn.utils.validation import check_is_fitted
     from sklearn.exceptions import DataConversionWarning
+    from sklearn.utils.validation import check_is_fitted
 except ImportError:  # pragma: no cover
     check_is_fitted = None
     DataConversionWarning = UserWarning
@@ -31,9 +31,9 @@ from ...core import ExecutableTuple
 from ...lib.sparse import issparse
 from ...tensor import Tensor
 from .checks import (
-    check_non_negative_then_return_value,
-    assert_all_finite,
     AssertAllFinite,
+    assert_all_finite,
+    check_non_negative_then_return_value,
 )
 
 FLOAT_DTYPES = (mt.float64, mt.float32, mt.float16)

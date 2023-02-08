@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,22 +15,22 @@
 # limitations under the License.
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
-from ...datasource import tensor, empty, eye, ones, zeros
 from ... import (
-    concatenate,
-    stack,
-    hstack,
-    vstack,
-    dstack,
-    column_stack,
-    union1d,
+    append,
     array,
     block,
-    append,
+    column_stack,
+    concatenate,
+    dstack,
+    hstack,
+    stack,
+    union1d,
+    vstack,
 )
+from ...datasource import empty, eye, ones, tensor, zeros
 
 
 def test_concatenate_execution(setup):

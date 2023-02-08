@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,32 +21,32 @@ import numpy as np
 import pandas as pd
 
 from ...core import (
-    OutputType,
     ENTITY_TYPE,
+    OutputType,
+    enter_mode,
     is_build_mode,
     is_kernel_mode,
-    enter_mode,
     recursive_tile,
 )
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
-    BoolField,
     AnyField,
+    BoolField,
     DataTypeField,
     Int32Field,
     StringField,
 )
 from ...utils import pd_release_version, tokenize
 from ..core import SERIES_TYPE
+from ..operands import DATAFRAME_TYPE, DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
-    parse_index,
     build_df,
     build_empty_df,
-    build_series,
     build_empty_series,
+    build_series,
+    parse_index,
     validate_axis,
 )
-from ..operands import DataFrameOperandMixin, DataFrameOperand, DATAFRAME_TYPE
 
 # in pandas<1.3, when aggregating with multiple levels and numeric_only is True,
 # object cols not ignored with min-max funcs
@@ -874,7 +874,7 @@ class ReductionCompiler:
             self._update_col_dict(self._output_key_to_post_cols, step.output_key, cols)
 
     def _compile_expr_function(self, py_src: str, local_consts: dict):
-        from ... import tensor, dataframe
+        from ... import dataframe, tensor
 
         result_store = dict()
         global_vars = globals().copy()
@@ -890,7 +890,8 @@ class ReductionCompiler:
 
     @staticmethod
     def _build_mock_return_object(func, input_dtype, ndim):
-        from ..initializer import DataFrame as MarsDataFrame, Series as MarsSeries
+        from ..initializer import DataFrame as MarsDataFrame
+        from ..initializer import Series as MarsSeries
 
         if ndim == 1:
             mock_series = build_empty_series(np.dtype(input_dtype))
@@ -911,8 +912,8 @@ class ReductionCompiler:
         from ...tensor.base import TensorWhere
         from ..arithmetic.core import DataFrameBinOp, DataFrameUnaryOp
         from ..datasource.dataframe import DataFrameDataSource
-        from ..indexing.where import DataFrameWhere
         from ..datasource.series import SeriesDataSource
+        from ..indexing.where import DataFrameWhere
 
         func_token = tokenize(func, self._axis, func_name, ndim)
         if func_token in _func_compile_cache:

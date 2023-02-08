@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ from ....core import tile
 from ....session import execute, fetch
 from .. import NearestNeighbors
 from .._faiss import (
-    build_faiss_index,
-    _load_index,
-    faiss_query,
     _gen_index_string_and_sample_count,
+    _load_index,
+    build_faiss_index,
+    faiss_query,
 )
 
 

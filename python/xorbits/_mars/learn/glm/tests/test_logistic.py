@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@ import re
 import pytest
 from sklearn.datasets import load_iris
 
-from .._logistic import _check_solver, _check_multi_class, LogisticRegression
-
+from .._logistic import LogisticRegression, _check_multi_class, _check_solver
 
 # general data load
 X, y = load_iris(return_X_y=True)

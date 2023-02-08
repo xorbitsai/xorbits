@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import numpy as np
 from pandas.api.types import is_scalar
 
 from .... import dataframe as md
-from ....core import Tileable, get_output_types, ENTITY_TYPE
-from ....dataframe.arithmetic.core import DataFrameUnaryUfunc, DataFrameBinopUfunc
+from ....core import ENTITY_TYPE, Tileable, get_output_types
+from ....dataframe.arithmetic.core import DataFrameBinopUfunc, DataFrameUnaryUfunc
 from ....dataframe.base.eval import DataFrameEval
 from ....dataframe.indexing.getitem import DataFrameIndex
 from ....dataframe.indexing.setitem import DataFrameSetitem

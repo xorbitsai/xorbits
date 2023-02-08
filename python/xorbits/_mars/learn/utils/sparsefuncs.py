@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@ from typing import Optional
 
 import numpy as np
 
-from ... import opcodes, tensor as mt
+from ... import opcodes
+from ... import tensor as mt
 from ...core import OutputType, recursive_tile
 from ...serialization.serializables import Int16Field, ReferenceField
 from ...utils import has_unknown_shape

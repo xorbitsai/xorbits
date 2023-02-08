@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,31 +34,26 @@ except ImportError:
 
 from ... import opcodes as OperandDef
 from ...config import options
-from ...lib.filesystem import file_size, get_fs, glob, open_file, FileSystem
+from ...lib.filesystem import FileSystem, file_size, get_fs, glob, open_file
 from ...serialization.serializables import (
     AnyField,
     BoolField,
     DictField,
-    ListField,
-    StringField,
     Int32Field,
     Int64Field,
+    ListField,
+    StringField,
 )
 from ...utils import is_object_dtype, lazy_import
 from ..arrays import ArrowStringDtype
 from ..operands import OutputType
-from ..utils import (
-    parse_index,
-    to_arrow_dtypes,
-    contain_arrow_dtype,
-)
+from ..utils import contain_arrow_dtype, parse_index, to_arrow_dtypes
 from .core import (
-    IncrementalIndexDatasource,
     ColumnPruneSupportedDataSourceMixin,
+    IncrementalIndexDatasource,
     IncrementalIndexDataSourceMixin,
     merge_small_files,
 )
-
 
 PARQUET_MEMORY_SCALE = 15
 STRING_FIELD_OVERHEAD = 50

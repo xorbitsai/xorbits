@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,18 +20,12 @@ from typing import Callable, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from sklearn.base import (
-    BaseEstimator,
-    ClassifierMixin,
-    RegressorMixin,
-    clone as clone_estimator,
-)
+from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
+from sklearn.base import clone as clone_estimator
 from sklearn.utils import check_random_state as sklearn_check_random_state
 
-from ..utils import column_or_1d, convert_to_tensor_or_dataframe
-from ..utils.multiclass import check_classification_targets
-from ..utils.validation import check_is_fitted
-from ... import opcodes, tensor as mt
+from ... import opcodes
+from ... import tensor as mt
 from ...core import OutputType, get_output_types, recursive_tile
 from ...core.context import Context
 from ...core.operand import OperandStage
@@ -42,13 +36,13 @@ from ...serialization.serializables import (
     AnyField,
     BoolField,
     DictField,
+    FieldTypes,
+    Float32Field,
+    FunctionField,
     Int8Field,
     Int64Field,
-    Float32Field,
-    TupleField,
-    FunctionField,
     ReferenceField,
-    FieldTypes,
+    TupleField,
 )
 from ...tensor.core import TENSOR_CHUNK_TYPE
 from ...tensor.random import RandomStateField
@@ -56,7 +50,10 @@ from ...tensor.utils import gen_random_seeds
 from ...typing import TileableType
 from ...utils import has_unknown_shape
 from ..operands import LearnOperand, LearnOperandMixin, LearnShuffleProxy
+from ..utils import column_or_1d, convert_to_tensor_or_dataframe
+from ..utils.multiclass import check_classification_targets
 from ..utils.shuffle import LearnShuffle
+from ..utils.validation import check_is_fitted
 
 
 def _extract_bagging_io(io_list: Iterable, op: LearnOperand, output: bool = False):

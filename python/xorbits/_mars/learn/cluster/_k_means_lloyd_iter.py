@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ from sklearn.utils.extmath import row_norms as sklearn_row_norms
 from ... import opcodes
 from ...core import OutputType, recursive_tile
 from ...core.operand import OperandStage
-from ...serialization.serializables import KeyField, BoolField, Int32Field
+from ...serialization.serializables import BoolField, Int32Field, KeyField
 from ...tensor.array_utils import as_same_device, device, sparse
 from ...tensor.core import TensorOrder
 from ...utils import has_unknown_shape
@@ -148,15 +148,9 @@ class KMeansLloydUpdate(LearnOperand, LearnOperandMixin):
         labels_chunks, centers_new_chunks, weight_in_clusters_chunks = [], [], []
         for i in range(x.chunk_shape[0]):
             x_chunk = x.cix[i, 0]
-            sample_weight_chunk = sample_weight.cix[
-                i,
-            ]
-            x_squared_norms_chunk = x_squared_norms.cix[
-                i,
-            ]
-            labels_chunk = labels.cix[
-                i,
-            ]
+            sample_weight_chunk = sample_weight.cix[i,]
+            x_squared_norms_chunk = x_squared_norms.cix[i,]
+            labels_chunk = labels.cix[i,]
             chunk_op = op.copy().reset_key()
             chunk_op.stage = OperandStage.map
             chunk_kws = [

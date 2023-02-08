@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,27 +19,27 @@ from ... import opcodes
 from ...core import OutputType
 from ...core.context import get_context
 from ...core.custom_log import redirect_custom_log
+from ...core.operand import OperatorLogicKeyGeneratorMixin
 from ...serialization.serializables import (
     AnyField,
     BoolField,
-    TupleField,
     DictField,
     FunctionField,
     StringField,
+    TupleField,
 )
-from ...core.operand import OperatorLogicKeyGeneratorMixin
-from ...utils import enter_current_session, quiet_stdio, get_func_token, tokenize
-from ..operands import DataFrameOperandMixin, DataFrameOperand
+from ...utils import enter_current_session, get_func_token, quiet_stdio, tokenize
+from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
     auto_merge_chunks,
     build_empty_df,
     build_empty_series,
-    parse_index,
-    validate_output_types,
-    make_dtypes,
-    make_dtype,
     clean_up_func,
+    make_dtype,
+    make_dtypes,
+    parse_index,
     restore_func,
+    validate_output_types,
 )
 
 

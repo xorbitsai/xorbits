@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ from collections.abc import Iterable
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import TupleField
 from ...config import options
+from ...serialization.serializables import TupleField
 from ..utils import decide_chunk_sizes, gen_random_seeds
-from .core import TensorRandomOperandMixin, TensorDistribution
+from .core import TensorDistribution, TensorRandomOperandMixin
 
 
 class TensorDirichlet(TensorDistribution, TensorRandomOperandMixin):

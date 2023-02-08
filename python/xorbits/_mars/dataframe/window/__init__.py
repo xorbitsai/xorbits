@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 
 def _install():
     from ..core import DATAFRAME_TYPE, SERIES_TYPE
-    from .rolling.aggregation import DataFrameRollingAgg
-    from .rolling.core import rolling
-    from .expanding.aggregation import DataFrameExpandingAgg
-    from .expanding.core import expanding
     from .ewm.aggregation import DataFrameEwmAgg
     from .ewm.core import ewm
+    from .expanding.aggregation import DataFrameExpandingAgg
+    from .expanding.core import expanding
+    from .rolling.aggregation import DataFrameRollingAgg
+    from .rolling.core import rolling
 
     for t in DATAFRAME_TYPE + SERIES_TYPE:
         t.rolling = rolling

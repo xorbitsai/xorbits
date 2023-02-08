@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import math
 import re
 
 from ... import __version__ as mars_version
-from ...utils import parse_readable_size, calc_size_by_str
+from ...utils import calc_size_by_str, parse_readable_size
 
 DEFAULT_IMAGE = "marsproject/mars:v" + mars_version
 DEFAULT_WORKER_CACHE_MEM = "40%"

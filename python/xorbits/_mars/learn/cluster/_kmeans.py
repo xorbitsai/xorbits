@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,15 +25,14 @@ from ..metrics.pairwise import euclidean_distances
 from ..utils.extmath import row_norms
 from ..utils.validation import (
     _check_sample_weight,
-    check_array,
     _num_samples,
+    check_array,
     check_is_fitted,
 )
 from ._k_means_common import _inertia
-from ._k_means_elkan_iter import init_bounds, elkan_iter
+from ._k_means_elkan_iter import elkan_iter, init_bounds
 from ._k_means_init import _k_init, _scalable_k_init
 from ._k_means_lloyd_iter import lloyd_iter
-
 
 ###############################################################################
 # K-means batch estimation by EM (expectation maximization)

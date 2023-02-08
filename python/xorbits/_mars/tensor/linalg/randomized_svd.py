@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..utils import check_random_state
 from ..datasource import tensor as astensor
+from ..utils import check_random_state
 from .lu import lu
 from .qr import qr
 from .svd import svd
 from .utils import svd_flip
-
 
 # ---------------------------------------------------------------------
 # Original implementation is in `sklearn.utils.extmath.randomized_svd`.

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ from ....core import tile
 from ....core.operand import OperandStage
 from ...indexing.getitem import DataFrameIndex
 from ...initializer import DataFrame
-from ..sort_index import sort_index, DataFrameSortIndex
-from ..sort_values import dataframe_sort_values, DataFrameSortValues
+from ..sort_index import DataFrameSortIndex, sort_index
+from ..sort_values import DataFrameSortValues, dataframe_sort_values
 
 
 def test_sort_values():

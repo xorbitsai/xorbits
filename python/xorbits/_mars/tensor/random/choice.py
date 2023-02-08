@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,19 +22,19 @@ from ... import opcodes as OperandDef
 from ...config import options
 from ...core import recursive_tile
 from ...serialization.serializables import (
-    FieldTypes,
     AnyField,
-    KeyField,
     BoolField,
+    FieldTypes,
+    KeyField,
     TupleField,
 )
-from ...utils import has_unknown_shape, ceildiv
-from ..operands import TensorOperandMixin
-from ..core import TENSOR_TYPE, TENSOR_CHUNK_TYPE, TensorOrder
-from ..datasource import arange, array
-from ..utils import decide_chunk_sizes, normalize_chunk_sizes, gen_random_seeds
+from ...utils import ceildiv, has_unknown_shape
 from ..array_utils import as_same_device, device
-from .core import TensorRandomOperand, RandomState
+from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, TensorOrder
+from ..datasource import arange, array
+from ..operands import TensorOperandMixin
+from ..utils import decide_chunk_sizes, gen_random_seeds, normalize_chunk_sizes
+from .core import RandomState, TensorRandomOperand
 
 
 class TensorChoice(TensorRandomOperand, TensorOperandMixin):
@@ -128,8 +128,8 @@ class TensorChoice(TensorRandomOperand, TensorOperandMixin):
     @classmethod
     def _tile_sample_without_replacement(cls, op, a, nsplits):
         from ..base import searchsorted
-        from ..merge.stack import TensorStack
         from ..indexing.getitem import TensorIndex
+        from ..merge.stack import TensorStack
 
         out = op.outputs[0]
         out_shape = tuple(sum(ns) for ns in nsplits)

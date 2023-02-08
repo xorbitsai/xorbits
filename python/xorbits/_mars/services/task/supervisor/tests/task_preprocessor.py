@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ from typing import Callable, Dict, List
 import numpy as np
 
 from .....core import (
-    TileableType,
-    ChunkGraph,
     OBJECT_TYPE,
+    ChunkGraph,
+    TileableType,
     enter_mode,
     register,
     unregister,
@@ -30,7 +30,7 @@ from .....core import (
 from .....core.operand import Fetch, ShuffleProxy
 from .....core.operand.shuffle import ShuffleFetchType
 from .....resource import Resource
-from .....tests.core import _check_args, ObjectCheckMixin
+from .....tests.core import ObjectCheckMixin, _check_args
 from .....typing import BandType, ChunkType
 from ....subtask import Subtask, SubtaskGraph
 from ...analyzer import GraphAnalyzer
@@ -230,7 +230,7 @@ class CheckedTaskPreprocessor(ObjectCheckMixin, TaskPreprocessor):
         chunks = [c for c in chunks or [] if c not in checked_chunks]
         if not chunks:
             return
-        from .....core.operand import MapReduceOperand, ShuffleProxy, OperandStage
+        from .....core.operand import MapReduceOperand, OperandStage, ShuffleProxy
 
         reduce_chunks = defaultdict(list)
         for c in chunks:

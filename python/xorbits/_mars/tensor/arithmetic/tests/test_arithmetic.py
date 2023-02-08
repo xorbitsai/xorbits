@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,30 +19,30 @@ import pytest
 import scipy.sparse as sps
 
 from ....core import enter_mode, tile
-from ...datasource import array, ones, tensor, empty
+from ...core import SparseTensor, Tensor
+from ...datasource import array, empty, ones, tensor
 from ...fetch import TensorFetch
 from ...linalg import matmul
-from ...core import Tensor, SparseTensor
 from .. import (
-    add,
-    subtract,
-    truediv,
-    log,
-    frexp,
-    around,
-    isclose,
-    isfinite,
-    negative,
-    cos,
-    tree_add,
-    tree_multiply,
     TensorAdd,
+    TensorGreaterThan,
+    TensorIsclose,
+    TensorLog,
+    TensorSubtract,
     TensorTreeAdd,
     TensorTreeMultiply,
-    TensorSubtract,
-    TensorLog,
-    TensorIsclose,
-    TensorGreaterThan,
+    add,
+    around,
+    cos,
+    frexp,
+    isclose,
+    isfinite,
+    log,
+    negative,
+    subtract,
+    tree_add,
+    tree_multiply,
+    truediv,
 )
 
 

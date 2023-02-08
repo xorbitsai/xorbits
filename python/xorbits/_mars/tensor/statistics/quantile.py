@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, recursive_tile
 from ...core.context import get_context
-from ...serialization.serializables import KeyField, AnyField, StringField, BoolField
+from ...serialization.serializables import AnyField, BoolField, KeyField, StringField
 from ...utils import has_unknown_shape
-from ..datasource import tensor as astensor
-from ..base import moveaxis, where
-from ..indexing import take
-from ..arithmetic import isnan, add
-from ..reduction import any as tensor_any
-from ..operands import TensorOperand, TensorOperandMixin
-from ..core import TENSOR_TYPE, TENSOR_CHUNK_TYPE, TensorOrder
-from ..utils import check_out_param
+from ..arithmetic import add, isnan
 from ..array_utils import as_same_device, device
+from ..base import moveaxis, where
+from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, TensorOrder
+from ..datasource import tensor as astensor
+from ..indexing import take
+from ..operands import TensorOperand, TensorOperandMixin
+from ..reduction import any as tensor_any
+from ..utils import check_out_param
 from .core import _ureduce
 
 

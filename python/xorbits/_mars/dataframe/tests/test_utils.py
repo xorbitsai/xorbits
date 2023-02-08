@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 import operator
 from collections import OrderedDict
 from numbers import Integral
-from typing import List, Dict
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -25,22 +25,22 @@ from ...config import option_context
 from ...core import tile
 from ...utils import Timer
 from ..core import IndexValue
-from ..initializer import DataFrame, Series, Index
+from ..initializer import DataFrame, Index, Series
 from ..utils import (
+    auto_merge_chunks,
+    build_concatenated_rows_frame,
+    build_split_idx_to_origin_idx,
     decide_dataframe_chunk_sizes,
     decide_series_chunk_size,
-    split_monotonic_index_min_max,
-    build_split_idx_to_origin_idx,
-    parse_index,
+    fetch_corner_data,
     filter_index_value,
     infer_dtypes,
     infer_index_value,
-    validate_axis,
-    fetch_corner_data,
     make_dtypes,
-    build_concatenated_rows_frame,
     merge_index_value,
-    auto_merge_chunks,
+    parse_index,
+    split_monotonic_index_min_max,
+    validate_axis,
     whether_to_clean_up,
 )
 

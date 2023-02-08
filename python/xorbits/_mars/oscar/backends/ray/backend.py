@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 import logging
 from typing import Dict
 
-from ....utils import lazy_import, Timer
+from ....utils import Timer, lazy_import
 from ...backend import BaseActorBackend, register_backend
 from ..context import MarsActorContext
 from .driver import RayActorDriver
 from .pool import RayMainPool
-from .utils import process_address_to_placement, get_placement_group
+from .utils import get_placement_group, process_address_to_placement
 
 ray = lazy_import("ray")
 

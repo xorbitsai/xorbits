@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ import asyncio
 import logging
 import time
 from collections import defaultdict
-from typing import List, DefaultDict, Dict, Tuple
+from typing import DefaultDict, Dict, List, Tuple
 
 from .... import oscar as mo
 from ....resource import Resource, ZeroResource

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,7 @@ import pytest
 from .... import tensor as mt
 from ....tests.core import require_ray
 from ....utils import lazy_import
-from ..ray import (
-    _load_config,
-    new_cluster,
-)
+from ..ray import _load_config, new_cluster
 from ..session import get_default_session, new_session
 from .modules.utils import (  # noqa: F401  # pylint: disable=unused-variable
     cleanup_third_party_modules_output,

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ import pandas as pd
 
 from ... import opcodes
 from ...core import OutputType
-from ...serialization.serializables import AnyField, DictField, StringField, Int64Field
-from ..utils import parse_index, build_empty_df, build_empty_series
-from ..operands import DataFrameOperandMixin, DataFrameOperand
+from ...serialization.serializables import AnyField, DictField, Int64Field, StringField
+from ..operands import DataFrameOperand, DataFrameOperandMixin
+from ..utils import build_empty_df, build_empty_series, parse_index
 
 
 class GroupByFillOperand(DataFrameOperand, DataFrameOperandMixin):

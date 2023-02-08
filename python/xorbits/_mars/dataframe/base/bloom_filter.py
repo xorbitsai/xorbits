@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,24 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union, List, Any
+from typing import Any, List, Union
 
 import numpy as np
 import pandas as pd
 
+from ... import opcodes as OperandDef
 from ...config import options
 from ...core import OutputType
 from ...core.context import Context
 from ...lib.bloom_filter import BloomFilter
 from ...serialization.serializables import (
     AnyField,
-    Int64Field,
     Float64Field,
+    Int64Field,
     StringField,
 )
-from ... import opcodes as OperandDef
 from ...typing import TileableType
-from ..operands import DataFrameOperandMixin, DataFrameOperand
+from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import parse_index
 
 

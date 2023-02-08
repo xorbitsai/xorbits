@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ from .... import dataframe as md
 from .... import tensor as mt
 from ....utils import pd_release_version
 from ...datasource.read_csv import DataFrameReadCSV
-from ...datasource.read_sql import DataFrameReadSQL
 from ...datasource.read_parquet import DataFrameReadParquet
+from ...datasource.read_sql import DataFrameReadSQL
 
 _allow_set_missing_list = pd_release_version[:2] >= (1, 1)
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,18 +20,18 @@ except (ImportError, OSError):  # pragma: no cover
     tildb = None
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import (
-    FieldTypes,
-    DictField,
-    TupleField,
-    StringField,
-    Int64Field,
-    KeyField,
-)
 from ...lib.sparse import SparseNDArray
 from ...lib.sparse.core import sps
+from ...serialization.serializables import (
+    DictField,
+    FieldTypes,
+    Int64Field,
+    KeyField,
+    StringField,
+    TupleField,
+)
 from ..datasource import tensor as astensor
-from ..operands import TensorOperandMixin, TensorOperand
+from ..operands import TensorOperand, TensorOperandMixin
 from ..utils import get_tiledb_ctx
 from .core import TensorDataStore
 from .utils import check_tiledb_array_with_tensor, get_tiledb_schema_from_tensor

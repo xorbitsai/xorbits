@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
 # limitations under the License.
 
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from ... import opcodes as OperandDef
-from ...core import OutputType, ENTITY_TYPE
+from ...core import ENTITY_TYPE, OutputType
 from ...tensor.core import TensorOrder
 from ...utils import lazy_import
 from ..initializer import Series as asseries
-from .core import DataFrameReductionOperand, DataFrameReductionMixin, CustomReduction
+from .core import CustomReduction, DataFrameReductionMixin, DataFrameReductionOperand
 
 cudf = lazy_import("cudf")
 

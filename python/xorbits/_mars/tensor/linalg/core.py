@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ class SFQR:
 
         Q [R_1 R_2 ...] = [A_1 A_2 ...]
         """
-        from .qr import TensorQR
-        from .dot import TensorDot
         from ..base import TensorTranspose
+        from .dot import TensorDot
+        from .qr import TensorQR
 
         a = op.input
         q, r = op.outputs
@@ -119,8 +119,8 @@ class TSQR:
 
     @classmethod
     def tile(cls, op):
-        from ..merge.concatenate import TensorConcatenate
         from ..indexing.slice import TensorSlice
+        from ..merge.concatenate import TensorConcatenate
         from .dot import TensorDot
         from .qr import TensorQR
         from .svd import TensorSVD

@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ import random
 import time
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import List, Set, Dict, Optional, Any
+from typing import Any, Dict, List, Optional, Set
 
 from .... import oscar as mo
-from ....typing import BandType
 from ....lib.aio import alru_cache
+from ....typing import BandType
 from ...cluster.api import ClusterAPI
 from ...cluster.core import NodeRole, NodeStatus
 from ..errors import NoAvailableBand

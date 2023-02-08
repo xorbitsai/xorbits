@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...core import ExecutableTuple, recursive_tile
 from ...lib.sparse.core import get_array_module
-from ...serialization.serializables import KeyField, AnyField, Int32Field
+from ...serialization.serializables import AnyField, Int32Field, KeyField
 from ..core import Tensor
 from ..datasource import tensor as astensor
-from ..utils import calc_sliced_size
 from ..operands import TensorHasInput, TensorOperandMixin
+from ..utils import calc_sliced_size
 
 
 class TensorSplit(TensorHasInput, TensorOperandMixin):

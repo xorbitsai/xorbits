@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,16 +19,15 @@ import pytest
 import scipy as sp
 from sklearn import datasets
 from sklearn.utils._testing import (
-    assert_array_almost_equal,
     assert_almost_equal,
-    assert_raises_regex,
+    assert_array_almost_equal,
     assert_raise_message,
     assert_raises,
+    assert_raises_regex,
 )
 
 from .... import tensor as mt
 from .._pca import PCA, _assess_dimension, _infer_dimension
-
 
 iris = mt.tensor(datasets.load_iris().data)
 # solver_list not includes arpack

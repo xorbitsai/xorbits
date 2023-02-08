@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ from .... import oscar as mo
 from ....resource import Resource
 from ....typing import BandType
 from ...core import NodeRole
-from ..core import NodeInfo, WatchNotifier, NodeStatus
+from ..core import NodeInfo, NodeStatus, WatchNotifier
 
 DEFAULT_NODE_DEAD_TIMEOUT = 120
 DEFAULT_NODE_CHECK_INTERVAL = 1

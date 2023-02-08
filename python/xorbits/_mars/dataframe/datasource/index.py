@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import pandas as pd
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core import OutputType
-from ...serialization.serializables import IndexField, DataTypeField, BoolField
+from ...serialization.serializables import BoolField, DataTypeField, IndexField
 from ...tensor.utils import get_chunk_slices
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, decide_series_chunk_size, is_cudf
+from ..utils import decide_series_chunk_size, is_cudf, parse_index
 
 
 class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):

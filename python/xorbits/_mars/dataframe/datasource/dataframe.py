@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ from ...core import OutputType
 from ...serialization.serializables import DataFrameField, SeriesField
 from ...tensor.utils import get_chunk_slices
 from ...utils import estimate_pandas_size
-from ..utils import decide_dataframe_chunk_sizes, parse_index, is_cudf
 from ..operands import DataFrameOperand, DataFrameOperandMixin
+from ..utils import decide_dataframe_chunk_sizes, is_cudf, parse_index
 
 
 class DataFrameDataSource(DataFrameOperand, DataFrameOperandMixin):

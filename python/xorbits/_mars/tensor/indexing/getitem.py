@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,16 +21,16 @@ from ...core import ENTITY_TYPE
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
     FieldTypes,
+    Int32Field,
     KeyField,
     ListField,
     TupleField,
-    Int32Field,
 )
-from ..core import TENSOR_TYPE, TensorOrder
-from ..utils import split_indexes_into_chunks, calc_pos, filter_inputs
-from ..operands import TensorHasInput, TensorOperandMixin, TensorMapReduceOperand
 from ..array_utils import get_array_module
-from .core import process_index, calc_shape
+from ..core import TENSOR_TYPE, TensorOrder
+from ..operands import TensorHasInput, TensorMapReduceOperand, TensorOperandMixin
+from ..utils import calc_pos, filter_inputs, split_indexes_into_chunks
+from .core import calc_shape, process_index
 from .index_lib import TensorIndexesHandler
 
 FANCY_INDEX_TYPES = TENSOR_TYPE + (np.ndarray,)

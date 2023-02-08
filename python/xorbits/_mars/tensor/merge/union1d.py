@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ def union1d(ar1, ar2, aggregate_size=None):
     array([1, 2, 3, 4, 6])
     """
 
-    from ..base import unique, sort
+    from ..base import sort, unique
     from .concatenate import concatenate
 
     result = unique(concatenate((ar1, ar2), axis=None), aggregate_size=aggregate_size)

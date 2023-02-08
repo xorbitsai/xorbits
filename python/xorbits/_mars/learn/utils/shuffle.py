@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,23 +21,21 @@ import numpy as np
 import pandas as pd
 
 from ... import opcodes as OperandDef
-from ...core import get_output_types, recursive_tile
-from ...core.operand import OperandStage, MapReduceOperand
+from ...core import ExecutableTuple, get_output_types, recursive_tile
+from ...core.operand import MapReduceOperand, OperandStage
 from ...dataframe.utils import parse_index
 from ...lib import sparse
-from ...serialization.serializables import FieldTypes, TupleField, KeyField
-from ...tensor.utils import (
-    validate_axis,
-    check_random_state,
-    gen_random_seeds,
-    decide_unify_split,
-)
+from ...serialization.serializables import FieldTypes, KeyField, TupleField
 from ...tensor.array_utils import get_array_module
-from ...utils import tokenize, lazy_import, has_unknown_shape
-from ...core import ExecutableTuple
-from ..operands import LearnOperandMixin, OutputType, LearnShuffleProxy
+from ...tensor.utils import (
+    check_random_state,
+    decide_unify_split,
+    gen_random_seeds,
+    validate_axis,
+)
+from ...utils import has_unknown_shape, lazy_import, tokenize
+from ..operands import LearnOperandMixin, LearnShuffleProxy, OutputType
 from ..utils import convert_to_tensor_or_dataframe
-
 
 cudf = lazy_import("cudf")
 

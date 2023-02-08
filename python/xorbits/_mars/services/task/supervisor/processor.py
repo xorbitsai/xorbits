@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,21 +17,18 @@ import logging
 import os
 import tempfile
 import time
-from typing import Dict, Iterator, Optional, List, Set
+from typing import Dict, Iterator, List, Optional, Set
 
-from ....core import ChunkGraph, TileableGraph, Chunk, TileContext
+from ....core import Chunk, ChunkGraph, TileableGraph, TileContext
 from ....core.operand import Fetch
 from ....metrics import Metrics
 from ....optimization.logical import OptimizationRecords
-from ....oscar.profiling import (
-    ProfilingData,
-    MARS_ENABLE_PROFILING,
-)
-from ....typing import TileableType, ChunkType
+from ....oscar.profiling import MARS_ENABLE_PROFILING, ProfilingData
+from ....typing import ChunkType, TileableType
 from ....utils import Timer
-from ...subtask import SubtaskResult, Subtask
-from ..core import Task, TaskResult, TaskStatus, new_task_id, MapReduceInfo
-from ..execution.api import TaskExecutor, ExecutionChunkResult
+from ...subtask import Subtask, SubtaskResult
+from ..core import MapReduceInfo, Task, TaskResult, TaskStatus, new_task_id
+from ..execution.api import ExecutionChunkResult, TaskExecutor
 from .preprocessor import TaskPreprocessor
 
 logger = logging.getLogger(__name__)

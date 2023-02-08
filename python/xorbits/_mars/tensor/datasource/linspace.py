@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...core import ExecutableTuple
-from ...serialization.serializables import Int64Field, BoolField, AnyField
 from ...config import options
+from ...core import ExecutableTuple
+from ...serialization.serializables import AnyField, BoolField, Int64Field
+from ..array_utils import create_array
 from ..utils import decide_chunk_sizes
 from .core import TensorNoInput
-from ..array_utils import create_array
 
 
 class TensorLinspace(TensorNoInput):

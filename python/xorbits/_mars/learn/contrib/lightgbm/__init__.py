@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ from ._predict import predict, predict_proba
 
 
 def register_op():
-    from ._train import train
     from ._align import align_data_set
+    from ._train import train
 
     del train, align_data_set
 

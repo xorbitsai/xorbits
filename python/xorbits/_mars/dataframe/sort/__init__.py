@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .sort_values import DataFrameSortValues
 from .sort_index import DataFrameSortIndex
+from .sort_values import DataFrameSortValues
 
 
 def _install():
     from ..core import DATAFRAME_TYPE, SERIES_TYPE
-    from .sort_values import dataframe_sort_values, series_sort_values
     from .sort_index import sort_index
+    from .sort_values import dataframe_sort_values, series_sort_values
 
     for cls in DATAFRAME_TYPE:
         setattr(cls, "sort_values", dataframe_sort_values)

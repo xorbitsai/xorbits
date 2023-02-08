@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,27 +16,21 @@ from collections import namedtuple
 
 import numpy as np
 from scipy import __version__ as sp_version
-from scipy.stats import (
-    ttest_ind as sp_ttest_ind,
-    ttest_ind_from_stats as sp_ttest_ind_from_stats,
-    ttest_rel as sp_ttest_rel,
-    ttest_1samp as sp_ttest_1samp,
-)
 from scipy.stats import distributions as sp_distributions
+from scipy.stats import ttest_1samp as sp_ttest_1samp
+from scipy.stats import ttest_ind as sp_ttest_ind
+from scipy.stats import ttest_ind_from_stats as sp_ttest_ind_from_stats
+from scipy.stats import ttest_rel as sp_ttest_rel
 
 from ...core import ExecutableTuple
 from ...lib.version import parse as parse_version
-from ..arithmetic import (
-    divide as mt_divide,
-    sqrt as mt_sqrt,
-    absolute as mt_abs,
-    isnan as mt_isnan,
-)
+from ..arithmetic import absolute as mt_abs
+from ..arithmetic import divide as mt_divide
+from ..arithmetic import isnan as mt_isnan
+from ..arithmetic import sqrt as mt_sqrt
 from ..base import where as mt_where
-from ..reduction import (
-    var as mt_var,
-    mean as mt_mean,
-)
+from ..reduction import mean as mt_mean
+from ..reduction import var as mt_var
 from ..utils import implement_scipy
 
 

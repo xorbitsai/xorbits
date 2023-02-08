@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .fillna import fillna, ffill, bfill, index_fillna
-from .checkna import isna, notna, isnull, notnull
-from .dropna import df_dropna, series_dropna, index_dropna
+from .checkna import isna, isnull, notna, notnull
+from .dropna import df_dropna, index_dropna, series_dropna
+from .fillna import bfill, ffill, fillna, index_fillna
 from .replace import df_replace, series_replace
 
 
 def _install():
-    from ..core import DATAFRAME_TYPE, SERIES_TYPE, INDEX_TYPE
+    from ..core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
 
     for cls in DATAFRAME_TYPE + SERIES_TYPE:
         setattr(cls, "fillna", fillna)

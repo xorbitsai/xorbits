@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,25 +20,18 @@ from typing import Dict, List, Optional, Set
 
 from ..... import oscar as mo
 from .....core import ChunkGraph, TileContext
-from .....core.operand import (
-    Fetch,
-    MapReduceOperand,
-    OperandStage,
-    ShuffleProxy,
-)
+from .....core.operand import Fetch, MapReduceOperand, OperandStage, ShuffleProxy
 from .....lib.aio import alru_cache
-from .....oscar.profiling import (
-    ProfilingData,
-)
+from .....oscar.profiling import ProfilingData
 from .....resource import Resource
-from .....typing import TileableType, BandType
+from .....typing import BandType, TileableType
 from .....utils import Timer
-from ....context import ThreadedServiceContext
 from ....cluster.api import ClusterAPI
+from ....context import ThreadedServiceContext
 from ....lifecycle.api import LifecycleAPI
 from ....meta.api import MetaAPI
 from ....scheduling import SchedulingAPI
-from ....subtask import Subtask, SubtaskResult, SubtaskStatus, SubtaskGraph
+from ....subtask import Subtask, SubtaskGraph, SubtaskResult, SubtaskStatus
 from ...core import Task
 from ..api import TaskExecutor, register_executor_cls
 from ..utils import ResultTileablesLifecycle

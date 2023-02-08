@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 
 import asyncio
 import itertools
-import numpy as np
 from collections import defaultdict
 from typing import Dict, List, Set
+
+import numpy as np
 
 from .... import oscar as mo
 from ....core.operand import Fetch, FetchShuffle
 from ....typing import BandType
 from ...core import NodeRole
 from ...subtask import Subtask
-from ..errors import NoMatchingSlots, NoAvailableBand
+from ..errors import NoAvailableBand, NoMatchingSlots
 
 
 class AssignerActor(mo.Actor):

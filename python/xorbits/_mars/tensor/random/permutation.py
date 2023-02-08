@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...core.operand import OperandStage
-from ...serialization.serializables import KeyField, Int32Field
+from ...serialization.serializables import Int32Field, KeyField
+from ..array_utils import as_same_device, device
+from ..datasource import tensor as astensor
 from ..operands import TensorOperandMixin, TensorShuffleProxy
 from ..utils import gen_random_seeds, validate_axis
-from ..datasource import tensor as astensor
-from ..array_utils import as_same_device, device
 from .core import TensorRandomMapReduceOperand
 
 

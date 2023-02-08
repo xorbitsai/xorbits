@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,17 +13,17 @@
 # limitations under the License.
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 try:
     import faiss
 except ImportError:  # pragma: no cover
     faiss = None
 try:
-    from sklearn.neighbors import NearestNeighbors as SkNearestNeighbors
     from sklearn.neighbors import BallTree as SkBallTree
     from sklearn.neighbors import KDTree as SkKDTree
+    from sklearn.neighbors import NearestNeighbors as SkNearestNeighbors
 except ImportError:  # pragma: no cover
     SkNearestNeighbors = None
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,19 +18,19 @@ import sys
 import time
 from typing import Tuple
 
+import pandas as pd
 import psutil
 import pytest
-import pandas as pd
 
 from ..... import oscar as mo
 from .....oscar import ServerClosed
-from .....oscar.errors import NoFreeSlot, SlotStateError
 from .....oscar.backends.allocate_strategy import IdleLabel
+from .....oscar.errors import NoFreeSlot, SlotStateError
 from .....resource import Resource
 from .....tests.core import wait_for_condition
 from .....utils import get_next_port
 from ...supervisor import GlobalResourceManagerActor
-from ...worker import BandSlotManagerActor, BandSlotControlActor
+from ...worker import BandSlotControlActor, BandSlotManagerActor
 
 
 class MockGlobalResourceManagerActor(mo.Actor):

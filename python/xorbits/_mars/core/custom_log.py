@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ import os
 import sys
 import textwrap
 import weakref
-from typing import List, Callable, Type
+from typing import Callable, List, Type
 
-from ..typing import OperandType, TileableType, SessionType
+from ..typing import OperandType, SessionType, TileableType
 from .context import Context
 
 

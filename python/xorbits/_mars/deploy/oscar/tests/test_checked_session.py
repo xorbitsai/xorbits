@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ import pytest
 
 from .... import tensor as mt
 from ....config import option_context
-from ....core import TileableType, OperandType
-from ....services.task.supervisor.tests import CheckedTaskPreprocessor
+from ....core import OperandType, TileableType
 from ....services.subtask.worker.tests import CheckedSubtaskProcessor
+from ....services.task.supervisor.tests import CheckedTaskPreprocessor
 from ..local import _load_config
-from ..tests.session import new_test_session, CONFIG_FILE
+from ..tests.session import CONFIG_FILE, new_test_session
 
 
 class FakeCheckedTaskPreprocessor(CheckedTaskPreprocessor):

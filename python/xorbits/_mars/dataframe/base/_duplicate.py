@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ from pandas.api.types import is_list_like
 
 from ...config import options
 from ...core import OutputType, recursive_tile
-from ...core.operand import OperandStage, MapReduceOperand
-from ...serialization.serializables import AnyField, Int32Field, StringField, KeyField
+from ...core.operand import MapReduceOperand, OperandStage
+from ...serialization.serializables import AnyField, Int32Field, KeyField, StringField
 from ...utils import ceildiv, has_unknown_shape, lazy_import
 from ..initializer import DataFrame as asdataframe
 from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 import numpy as np
 
-from ..datasource import tensor as astensor
 from ..base.broadcast_to import broadcast_to
 from ..base.swapaxes import swapaxes
+from ..datasource import tensor as astensor
 
 
 def average(a, axis=None, weights=None, returned=False):
@@ -99,7 +99,7 @@ def average(a, axis=None, weights=None, returned=False):
     TypeError: Axis must be specified when shapes of a and weights differ.
 
     """
-    from ..arithmetic import truediv, multiply
+    from ..arithmetic import multiply, truediv
 
     a = astensor(a)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...core.operand import OperandStage
-from ...serialization.serializables import FieldTypes, KeyField, TupleField, StringField
+from ...serialization.serializables import FieldTypes, KeyField, StringField, TupleField
 from ...utils import has_unknown_shape
 from ..array_utils import as_same_device, device
 from ..datasource import tensor as astensor
-from ..operands import TensorOperandMixin, TensorMapReduceOperand, TensorShuffleProxy
-from ..utils import get_order, decide_chunk_sizes
+from ..operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
+from ..utils import decide_chunk_sizes, get_order
 
 logger = logging.getLogger(__name__)
 

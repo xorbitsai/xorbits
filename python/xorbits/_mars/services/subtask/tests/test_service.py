@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ import numpy as np
 import pytest
 
 from .... import oscar as mo
-from .... import tensor as mt
 from .... import remote as mr
-from ....core.graph import TileableGraph, TileableGraphBuilder, ChunkGraphBuilder
+from .... import tensor as mt
+from ....core.graph import ChunkGraphBuilder, TileableGraph, TileableGraphBuilder
 from ....resource import Resource
 from ....utils import Timer
-from ... import start_services, stop_services, NodeRole
+from ... import NodeRole, start_services, stop_services
 from ...meta import MetaAPI
 from ...session import SessionAPI
 from ...storage import MockStorageAPI
 from ...task import new_task_id
 from ...task.supervisor.manager import TaskManagerActor
-from .. import SubtaskAPI, Subtask, SubtaskResult
+from .. import Subtask, SubtaskAPI, SubtaskResult
 
 
 class FakeTaskManager(TaskManagerActor):

@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ from ...tensor.datasource.from_vineyard import resolve_vineyard_socket
 from ...utils import calc_nsplits, has_unknown_shape, lazy_import
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import parse_index
-
 
 vineyard = lazy_import("vineyard")
 vy_data_utils = lazy_import("vineyard.data.utils", rename="vy_data_utils")

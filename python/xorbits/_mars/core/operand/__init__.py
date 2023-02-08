@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,22 +13,22 @@
 # limitations under the License.
 
 from .base import (
+    HasInput,
+    LogicKeyGenerator,
     Operand,
     OperandStage,
-    HasInput,
-    VirtualOperand,
     OperatorLogicKeyGeneratorMixin,
-    LogicKeyGenerator,
+    VirtualOperand,
 )
-from .core import TileableOperandMixin, execute, estimate_size
+from .core import TileableOperandMixin, estimate_size, execute
 from .fetch import Fetch, FetchMixin, FetchShuffle, ShuffleFetchType
 from .fuse import Fuse, FuseChunkMixin
 from .objects import (
-    ObjectOperand,
-    ObjectOperandMixin,
+    MergeDictOperand,
     ObjectFetch,
     ObjectFuseChunk,
     ObjectFuseChunkMixin,
-    MergeDictOperand,
+    ObjectOperand,
+    ObjectOperandMixin,
 )
-from .shuffle import ShuffleProxy, MapReduceOperand
+from .shuffle import MapReduceOperand, ShuffleProxy

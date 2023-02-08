@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
 import pickle
 import sys
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from ...tests.core import assert_groupby_equal
 from ...utils import calc_data_size, estimate_pandas_size
 from ..groupby_wrapper import wrapped_groupby
-from ..tbcode import load_traceback_code, dump_traceback_code
+from ..tbcode import dump_traceback_code, load_traceback_code
 
 
 def test_groupby_wrapper():

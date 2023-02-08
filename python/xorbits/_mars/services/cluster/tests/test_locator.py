@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ from typing import List
 import pytest
 
 from .... import oscar as mo
-from ....utils import Timer
 from ....tests.core import flaky
+from ....utils import Timer
 from ..core import NodeRole, NodeStatus
 from ..supervisor.locator import SupervisorPeerLocatorActor
 from ..supervisor.node_info import NodeInfoCollectorActor

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import tempfile
 import textwrap
 import time
 from concurrent.futures import ThreadPoolExecutor
+from enum import Enum
 from functools import partial
 from io import BytesIO
-from enum import Enum
 
 import numpy as np
 import pandas as pd
@@ -35,8 +35,8 @@ import pytest
 from .. import dataframe as md
 from .. import tensor as mt
 from .. import utils
-from ..core import tile, TileableGraph
-from .core import require_ray, require_cudf
+from ..core import TileableGraph, tile
+from .core import require_cudf, require_ray
 
 
 def test_string_conversion():

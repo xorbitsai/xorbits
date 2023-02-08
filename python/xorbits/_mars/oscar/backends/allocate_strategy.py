@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,16 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from random import choice
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple, Optional
+from random import choice
+from typing import Dict, Optional, Tuple
 
 from ...utils import implements
 from ..core import ActorRef
 from ..errors import NoIdleSlot
 from .config import ActorPoolConfig
 from .message import _MessageBase
-
 
 allocated_value = Tuple["AllocateStrategy", Optional[_MessageBase]]
 allocated_values = Dict[Optional[ActorRef], allocated_value]

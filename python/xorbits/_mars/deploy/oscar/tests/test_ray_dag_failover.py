@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 import operator
 from functools import reduce
 
+import mars
 import pandas as pd
 import pytest
 
-import mars
 from .... import dataframe as md
 from .... import tensor as mt
 from ....tests.core import require_ray

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2017 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +17,8 @@ import ast
 import binascii
 import operator
 import sys
-import tokenize
 import textwrap
+import tokenize
 from collections import OrderedDict
 from functools import reduce
 from io import StringIO

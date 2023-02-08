@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ from ...core import tile
 from ...lib.groupby_wrapper import wrapped_groupby
 from ...utils import pd_release_version
 from .. import cut
-from ..initializer import DataFrame, Series, Index
+from ..initializer import DataFrame, Index, Series
 
 _with_inclusive_bounds = pd_release_version >= (1, 3, 0)
 

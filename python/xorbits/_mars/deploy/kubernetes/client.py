@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,12 +27,12 @@ from ...session import new_session
 from ...utils import calc_size_by_str
 from ..utils import wait_services_ready
 from .config import (
-    NamespaceConfig,
-    RoleConfig,
-    RoleBindingConfig,
-    ServiceConfig,
     MarsSupervisorsConfig,
     MarsWorkersConfig,
+    NamespaceConfig,
+    RoleBindingConfig,
+    RoleConfig,
+    ServiceConfig,
 )
 
 try:

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,17 +38,18 @@ except ImportError:  # pragma: no cover
     sqlalchemy = None
 
 
-from .... import tensor as mt
 from .... import dataframe as md
+from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_ray
 from ....utils import arrow_array_to_objects, lazy_import, pd_release_version
 from ...utils import ray_deprecate_ml_dataset
 from ..dataframe import from_pandas as from_pandas_df
-from ..series import from_pandas as from_pandas_series
-from ..index import from_pandas as from_pandas_index, from_tileable
-from ..from_tensor import dataframe_from_tensor, dataframe_from_1d_tileables
 from ..from_records import from_records
+from ..from_tensor import dataframe_from_1d_tileables, dataframe_from_tensor
+from ..index import from_pandas as from_pandas_index
+from ..index import from_tileable
+from ..series import from_pandas as from_pandas_series
 
 ray = lazy_import("ray")
 _date_range_use_inclusive = pd_release_version[:2] >= (1, 4)

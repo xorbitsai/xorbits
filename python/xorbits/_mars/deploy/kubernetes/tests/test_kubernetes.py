@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,8 @@ from .. import new_cluster
 from ..config import HostPathVolumeConfig
 
 try:
-    from kubernetes import config as k8s_config, client as k8s_client
+    from kubernetes import client as k8s_client
+    from kubernetes import config as k8s_config
 except ImportError:
     k8s_client = k8s_config = None
 

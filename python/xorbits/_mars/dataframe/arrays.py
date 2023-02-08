@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,28 +17,28 @@ import operator
 import re
 from copy import copy as copy_obj
 from numbers import Integral
-from typing import Type, Sequence
+from typing import Sequence, Type
 
 import numpy as np
 import pandas as pd
 from pandas._libs import lib
-from pandas.api.indexers import check_array_indexer
-from pandas.api.types import (
-    pandas_dtype,
-    is_scalar,
-    is_array_like,
-    is_string_dtype,
-    is_list_like,
-)
 from pandas.api.extensions import (
     ExtensionArray,
     ExtensionDtype,
     register_extension_dtype,
 )
+from pandas.api.indexers import check_array_indexer
+from pandas.api.types import (
+    is_array_like,
+    is_list_like,
+    is_scalar,
+    is_string_dtype,
+    pandas_dtype,
+)
 from pandas.arrays import StringArray as StringArrayBase
+from pandas.compat import set_function_name
 from pandas.core import ops
 from pandas.core.algorithms import take
-from pandas.compat import set_function_name
 
 try:
     from pandas._libs.arrays import NDArrayBacked

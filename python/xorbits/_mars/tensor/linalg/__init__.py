@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,19 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .cholesky import cholesky, TensorCholesky
-from .dot import dot, TensorDot
+from .cholesky import TensorCholesky, cholesky
+from .dot import TensorDot, dot
 from .inner import inner, innerproduct
-from .inv import inv, TensorInv
-from .lu import lu, TensorLU
-from .matmul import matmul, TensorMatmul
-from .norm import norm, TensorNorm
-from .qr import qr, TensorQR
-from .solve import solve
-from .solve_triangular import solve_triangular, TensorSolveTriangular
-from .svd import svd, TensorSVD
+from .inv import TensorInv, inv
+from .lu import TensorLU, lu
+from .matmul import TensorMatmul, matmul
+from .norm import TensorNorm, norm
+from .qr import TensorQR, qr
 from .randomized_svd import randomized_svd
-from .tensordot import tensordot, TensorTensorDot
+from .solve import solve
+from .solve_triangular import TensorSolveTriangular, solve_triangular
+from .svd import TensorSVD, svd
+from .tensordot import TensorTensorDot, tensordot
 from .vdot import vdot
 
 

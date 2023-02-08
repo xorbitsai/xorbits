@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import bisect
-from collections import defaultdict
 import sys
+from collections import defaultdict
 from typing import List, Union
 
 import numpy as np
@@ -48,8 +48,8 @@ class MutableTensorChunkActor(mo.Actor):
         return f"mutable-tensor-chunk-{session_id}-{name}-{index}"
 
     async def __post_create__(self):
-        from ...storage import StorageAPI
         from ...meta import MetaAPI
+        from ...storage import StorageAPI
 
         self._storage_api = await StorageAPI.create(self._session_id, self.address)
         self._meta_api = await MetaAPI.create(self._session_id, self._manager_address)

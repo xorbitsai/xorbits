@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,26 +14,15 @@
 
 import dataclasses
 import functools
-from typing import (
-    Callable,
-    Dict,
-    Generator,
-    Iterable,
-    List,
-    Optional,
-    Set,
-    Type,
-    Union,
-)
+from typing import Callable, Dict, Generator, Iterable, List, Optional, Set, Type, Union
 
-from ....core import FUSE_CHUNK_TYPE, CHUNK_TYPE, TILEABLE_TYPE
-from ....typing import EntityType, TileableType, ChunkType
-from ....utils import copy_tileables, build_fetch
+from ....core import CHUNK_TYPE, FUSE_CHUNK_TYPE, TILEABLE_TYPE
+from ....typing import ChunkType, EntityType, TileableType
+from ....utils import build_fetch, copy_tileables
 from ...entity.tileables import handler
 from ...mode import enter_mode
-from ..entity import TileableGraph, ChunkGraph
+from ..entity import ChunkGraph, TileableGraph
 from .base import AbstractGraphBuilder
-
 
 tile_gen_type = Generator[List[ChunkType], List[ChunkType], List[TileableType]]
 DEFAULT_UPDATED_PROGRESS = 0.4
@@ -342,7 +331,7 @@ class Tiler:
 
 
 def prune_chunk_graph(chunk_graph: ChunkGraph):
-    from ....core.operand import Fetch, VirtualOperand, ShuffleProxy
+    from ....core.operand import Fetch, ShuffleProxy, VirtualOperand
 
     result_set = set(chunk_graph.result_chunks)
     stack = list(chunk_graph.result_chunks)

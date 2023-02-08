@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ from ... import opcodes as OperandDef
 from ...core import OutputType
 from ...serialization.serializables import ListField
 from ...tensor.base.sort import _validate_sort_psrs_kinds
-from ..utils import parse_index, validate_axis, build_concatenated_rows_frame
 from ..core import IndexValue
+from ..utils import build_concatenated_rows_frame, parse_index, validate_axis
 from .core import DataFrameSortOperand
 from .psrs import DataFramePSRSOperandMixin, execute_sort_values
 

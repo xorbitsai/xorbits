@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ._data import MinMaxScaler
-from ._data import minmax_scale
-from ._label import LabelBinarizer, label_binarize, LabelEncoder
+from ._data import MinMaxScaler, minmax_scale
+from ._label import LabelBinarizer, LabelEncoder, label_binarize
 from .normalize import normalize

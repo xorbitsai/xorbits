@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ from typing import Any, List, Tuple, Type
 import numpy as np
 
 from ... import opcodes as OperandDef
+from ...config import options
 from ...core import TILEABLE_TYPE
 from ...core.operand import OperandStage
-from ...serialization.serializables import StringField, AnyField, Int64Field, Int32Field
-from ...typing import TileableType, ChunkType
-from ...config import options
+from ...serialization.serializables import AnyField, Int32Field, Int64Field, StringField
+from ...typing import ChunkType, TileableType
 from ...utils import has_unknown_shape
-from ..operands import TensorOperand, TensorOperandMixin
+from ..array_utils import as_same_device, device
 from ..core import TENSOR_TYPE, TensorOrder
 from ..datasource.array import tensor as astensor
-from ..array_utils import as_same_device, device
+from ..operands import TensorOperand, TensorOperandMixin
 
 
 class TensorSearchsorted(TensorOperand, TensorOperandMixin):

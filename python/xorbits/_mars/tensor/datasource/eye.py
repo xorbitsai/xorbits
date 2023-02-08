@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import Int32Field, StringField
 from ...config import options
-from ..utils import decide_chunk_sizes, get_order
-from .diag import TensorDiagBase
-from .core import TensorNoInput
 from ...lib import sparse
+from ...serialization.serializables import Int32Field, StringField
 from ..array_utils import create_array
+from ..utils import decide_chunk_sizes, get_order
+from .core import TensorNoInput
+from .diag import TensorDiagBase
 
 
 class TensorEye(TensorNoInput, TensorDiagBase):

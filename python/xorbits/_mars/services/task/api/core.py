@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ from abc import ABC, abstractmethod
 from typing import List, Union
 
 from ....core import Tileable
-from ..core import TileableGraph, TaskResult
+from ..core import TaskResult, TileableGraph
 
 
 class AbstractTaskAPI(ABC):

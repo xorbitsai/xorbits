@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,21 +14,18 @@
 
 from ..core import OutputType
 from ..core.operand import (
-    Operand,
-    TileableOperandMixin,
     Fuse,
     FuseChunkMixin,
+    Operand,
     ShuffleProxy,
+    TileableOperandMixin,
 )
-from ..tensor.core import TENSOR_TYPE, TENSOR_CHUNK_TYPE
-from ..tensor.operands import TensorOperandMixin
+from ..dataframe.core import CHUNK_TYPE as DATAFRAME_CHUNK_TYPE
+from ..dataframe.core import TILEABLE_TYPE as DATAFRAME_TYPE
+from ..dataframe.operands import DataFrameFuseChunk, DataFrameOperandMixin
+from ..tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
 from ..tensor.fuse import TensorFuseChunk
-from ..dataframe.core import (
-    TILEABLE_TYPE as DATAFRAME_TYPE,
-    CHUNK_TYPE as DATAFRAME_CHUNK_TYPE,
-)
-from ..dataframe.operands import DataFrameOperandMixin, DataFrameFuseChunk
-
+from ..tensor.operands import TensorOperandMixin
 
 LearnOperand = Operand
 

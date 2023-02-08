@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,23 +13,22 @@
 # limitations under the License.
 import operator
 import weakref
-from typing import Dict, List, Type, Tuple
+from typing import Dict, List, Tuple, Type
 
 import cloudpickle
 
-from ..core import Serializer, Placeholder, buffered
+from ..core import Placeholder, Serializer, buffered
 from .field import Field
 from .field_type import (
-    PrimitiveFieldType,
-    ListType,
-    TupleType,
+    DatetimeType,
     DictType,
     DtypeType,
-    DatetimeType,
+    ListType,
+    PrimitiveFieldType,
     TimedeltaType,
+    TupleType,
     TZInfoType,
 )
-
 
 _primitive_field_types = (
     PrimitiveFieldType,

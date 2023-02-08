@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -227,8 +227,8 @@ def test_replace():
 
 @pytest.mark.parametrize("inf_as_na", [True, False])
 def test_isna(setup, inf_as_na):
-    from ..checkna import isna
     from ....config import options
+    from ..checkna import isna
 
     old_mars_inf_as_na = options.dataframe.mode.use_inf_as_na
     options.dataframe.mode.use_inf_as_na = inf_as_na
@@ -334,8 +334,8 @@ def test_isna(setup, inf_as_na):
 
 @pytest.mark.parametrize("inf_as_na", [True, False])
 def test_notna(setup, inf_as_na):
-    from ..checkna import notna
     from ....config import options
+    from ..checkna import notna
 
     old_mars_inf_as_na = options.dataframe.mode.use_inf_as_na
     options.dataframe.mode.use_inf_as_na = inf_as_na

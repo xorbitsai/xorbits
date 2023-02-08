@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -65,7 +65,8 @@ class Dummy:
 
 
 def test_patch_super():
-    from ...tests.core import patch_cls, patch_super as super
+    from ...tests.core import patch_cls
+    from ...tests.core import patch_super as super
 
     @patch_cls(B)
     class D(B):

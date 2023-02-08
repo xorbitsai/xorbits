@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ from typing import AsyncGenerator, Dict, List, Optional, TypeVar
 
 from ...services.cluster import WebClusterAPI
 from ...services.cluster.backends import (
-    register_cluster_backend,
     AbstractClusterBackend,
+    register_cluster_backend,
 )
 from ...services.cluster.core import NodeRole
-from ..utils import wait_all_supervisors_ready, next_in_thread
+from ..utils import next_in_thread, wait_all_supervisors_ready
 from .config import MarsReplicationConfig
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class K8SClusterBackend(AbstractClusterBackend):
     async def create(
         cls, node_role: NodeRole, lookup_address: Optional[str], pool_address: str
     ) -> "AbstractClusterBackend":
-        from kubernetes import config, client
+        from kubernetes import client, config
 
         if lookup_address is None:
             k8s_namespace = None
@@ -116,8 +116,8 @@ class K8SClusterBackend(AbstractClusterBackend):
     async def _watch_supervisors_by_service_api(
         self,
     ) -> AsyncGenerator[List[str], None]:
-        from urllib3.exceptions import ReadTimeoutError
         from kubernetes.watch import Watch as K8SWatch
+        from urllib3.exceptions import ReadTimeoutError
 
         w = K8SWatch()
 

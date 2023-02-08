@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ from .... import oscar as mo
 from ....core import Tileable
 from ....lib.aio import alru_cache
 from ...subtask import SubtaskResult
-from ..core import TileableGraph, TaskResult, MapReduceInfo
+from ..core import MapReduceInfo, TaskResult, TileableGraph
 from ..supervisor.manager import TaskManagerActor
 from .core import AbstractTaskAPI
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 
 import asyncio
 import os
-import sys
 import subprocess
+import sys
 import tempfile
 
 import psutil
@@ -25,7 +25,6 @@ from .. import new_session
 from .. import tensor as mt
 from ..services.cluster import NodeRole, WebClusterAPI
 from ..utils import get_next_port
-
 
 CONFIG_CONTENT = """\
 "@inherits": "@mars/config.yml"

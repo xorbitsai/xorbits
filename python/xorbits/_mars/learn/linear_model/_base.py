@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@ import numbers
 from abc import ABCMeta, abstractmethod
 
 from numpy.linalg import LinAlgError
-from sklearn.utils.validation import check_is_fitted, _deprecate_positional_args
 from sklearn.base import MultiOutputMixin
+from sklearn.utils.validation import _deprecate_positional_args, check_is_fitted
 
 from ... import execute
 from ... import tensor as mt
 from ...tensor.datasource import tensor as astensor
-from ..base import BaseEstimator, RegressorMixin, ClassifierMixin
+from ..base import BaseEstimator, ClassifierMixin, RegressorMixin
 from ..preprocessing import normalize as f_normalize
-from ..utils.validation import _check_sample_weight, check_array, FLOAT_DTYPES
+from ..utils.validation import FLOAT_DTYPES, _check_sample_weight, check_array
 
 
 def _preprocess_data(

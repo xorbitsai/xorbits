@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,33 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .sum import sum, TensorSum
-from .nansum import nansum, TensorNanSum
-from .prod import prod, TensorProd
-from .nanprod import nanprod, TensorNanProd
-from .max import max, TensorMax
-from .nanmax import nanmax, TensorNanMax
-from .min import min, TensorMin
-from .nanmin import nanmin, TensorNanMin
-from .all import all, TensorAll
-from .any import any, TensorAny
-from .mean import mean, TensorMean
-from .nanmean import nanmean, TensorNanMean
-from .argmax import argmax, TensorArgmax
-from .nanargmax import nanargmax, TensorNanArgmax
-from .argmin import argmin, TensorArgmin
-from .nanargmin import nanargmin, TensorNanArgmin
-from .cumsum import cumsum, TensorCumsum
-from .cumprod import cumprod, TensorCumprod
-from .var import var, TensorVar, TensorMoment
-from .std import std
-from .nanvar import nanvar, TensorNanVar, TensorNanMoment
-from .nanstd import nanstd
-from .nancumsum import nancumsum, TensorNanCumsum
-from .nancumprod import nancumprod, TensorNanCumprod
-from .count_nonzero import count_nonzero, TensorCountNonzero
+from .all import TensorAll, all
 from .allclose import allclose
+from .any import TensorAny, any
+from .argmax import TensorArgmax, argmax
+from .argmin import TensorArgmin, argmin
 from .array_equal import array_equal
+from .count_nonzero import TensorCountNonzero, count_nonzero
+from .cumprod import TensorCumprod, cumprod
+from .cumsum import TensorCumsum, cumsum
+from .max import TensorMax, max
+from .mean import TensorMean, mean
+from .min import TensorMin, min
+from .nanargmax import TensorNanArgmax, nanargmax
+from .nanargmin import TensorNanArgmin, nanargmin
+from .nancumprod import TensorNanCumprod, nancumprod
+from .nancumsum import TensorNanCumsum, nancumsum
+from .nanmax import TensorNanMax, nanmax
+from .nanmean import TensorNanMean, nanmean
+from .nanmin import TensorNanMin, nanmin
+from .nanprod import TensorNanProd, nanprod
+from .nanstd import nanstd
+from .nansum import TensorNanSum, nansum
+from .nanvar import TensorNanMoment, TensorNanVar, nanvar
+from .prod import TensorProd, prod
+from .std import std
+from .sum import TensorSum, sum
+from .var import TensorMoment, TensorVar, var
 
 
 def _install():

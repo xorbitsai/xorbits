@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,18 +23,18 @@ except ImportError:  # pragma: no cover
     UFuncTypeError = None
 
 from ...metrics import Metrics
-from ...typing import TileableType, ChunkType, OperandType
+from ...typing import ChunkType, OperandType, TileableType
 from ...utils import calc_data_size
 from ..context import Context
-from ..mode import is_eager_mode
 from ..entity import (
-    OutputType,
     ExecutableTuple,
+    OutputType,
     get_chunk_types,
-    get_tileable_types,
-    get_output_types,
     get_fetch_class,
+    get_output_types,
+    get_tileable_types,
 )
+from ..mode import is_eager_mode
 
 _op_type_to_executor: Dict[Type[OperandType], Callable] = dict()
 _op_type_to_size_estimator: Dict[Type[OperandType], Callable] = dict()

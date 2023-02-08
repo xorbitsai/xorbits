@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import pytest
 
 from ....dataframe import core  # noqa: F401  # pylint: disable=unused-variable
 from ... import OutputType
-from .. import Operand, TileableOperandMixin, execute, estimate_size, ShuffleProxy
+from .. import Operand, ShuffleProxy, TileableOperandMixin, estimate_size, execute
 
 
 class MyOperand(Operand, TileableOperandMixin):

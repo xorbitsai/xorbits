@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datetime import datetime
 import itertools
+import uuid
+from datetime import datetime
 from numbers import Integral
 from typing import Optional
-import uuid
 
 import numpy as np
 
@@ -53,7 +53,7 @@ def compute_output_of_indexing(tensor, tensor_index):
     """
     Compute the output information of `__{set,get}item__` on tensor for every chunk.
     """
-    from ...tensor.indexing.core import process_index, calc_shape
+    from ...tensor.indexing.core import calc_shape, process_index
     from ...tensor.indexing.getitem import TensorIndex
 
     tensor_index = process_index(tensor.ndim, tensor_index)

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import itertools
 import functools
+import itertools
 from typing import Optional
 
 import numpy as np
 import pandas as pd
 
-from ... import opcodes, options, get_context
-from ...core import recursive_tile, OutputType
+from ... import get_context, opcodes, options
+from ...core import OutputType, recursive_tile
 from ...core.operand import OperandStage
 from ...serialization.serializables import Int64Field, ReferenceField
 from ...utils import ceildiv, has_unknown_shape
 from ..datasource import tensor as astensor
-from ..operands import TensorOperandMixin, TensorMapReduceOperand
+from ..operands import TensorMapReduceOperand, TensorOperandMixin
 
 
 class TensorBinCount(TensorMapReduceOperand, TensorOperandMixin):

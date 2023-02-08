@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -23,8 +24,8 @@ from .....deploy.oscar.ray import new_cluster
 from .....deploy.oscar.session import new_session
 from .....tests.core import require_ray
 from .....utils import lazy_import
-from ....utils import ray_deprecate_ml_dataset
 from ....contrib import raydataset as mdd
+from ....utils import ray_deprecate_ml_dataset
 
 ray = lazy_import("ray")
 ml_dataset = lazy_import("ray.util.data", rename="ml_dataset")
@@ -106,8 +107,8 @@ async def test_convert_to_ray_mldataset(
     reason="Ray (>=2.0) has deprecated MLDataset.",
 )
 async def test_mars_with_xgboost(ray_start_regular_shared, create_cluster):
-    from xgboost_ray import RayDMatrix, RayParams, train, predict
     from sklearn.datasets import load_breast_cancer
+    from xgboost_ray import RayDMatrix, RayParams, predict, train
 
     assert create_cluster.session
     session = new_session(address=create_cluster.address, backend="ray")

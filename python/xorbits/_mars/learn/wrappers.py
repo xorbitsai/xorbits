@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,18 +15,16 @@
 from typing import Callable, Union
 
 import numpy as np
-from sklearn.base import (
-    MetaEstimatorMixin,
-    BaseEstimator as SklearnBaseEstimator,
-    RegressorMixin as SklearnRegressorMixin,
-    ClassifierMixin as SklearnClassifierMixin,
-)
+from sklearn.base import BaseEstimator as SklearnBaseEstimator
+from sklearn.base import ClassifierMixin as SklearnClassifierMixin
+from sklearn.base import MetaEstimatorMixin
+from sklearn.base import RegressorMixin as SklearnRegressorMixin
 
 from .. import remote as mr
 from .. import tensor as mt
-from .base import BaseEstimator, RegressorMixin, ClassifierMixin
+from .base import BaseEstimator, ClassifierMixin, RegressorMixin
 from .metrics import get_scorer
-from .utils import copy_learned_attributes, check_array
+from .utils import check_array, copy_learned_attributes
 
 
 def _wrap(estimator: SklearnBaseEstimator, method, X, y, **kwargs):

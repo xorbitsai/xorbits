@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import pandas as pd
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, OutputType, recursive_tile
 from ...core.context import Context
-from ...serialization.serializables import KeyField, AnyField
+from ...serialization.serializables import AnyField, KeyField
 from ...tensor.core import Tensor
 from ...tensor.datasource import tensor as astensor
 from ...tensor.utils import unify_chunks
@@ -310,9 +310,7 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
                 index_value = parse_index(pd_index, store_data=True)
             else:
                 assert op.index is not None
-                index_chunk = in_tensors[-1].cix[
-                    i,
-                ]
+                index_chunk = in_tensors[-1].cix[i,]
                 index_value = parse_index(
                     pd.Index([], dtype=index_chunk.dtype),
                     index_chunk,

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,18 +19,16 @@ from typing import Union
 import numpy as np
 from sklearn.base import OutlierMixin
 from sklearn.tree import ExtraTreeRegressor
-from sklearn.utils import (
-    check_array as sklearn_check_array,
-    gen_batches as sklearn_gen_batches,
-)
+from sklearn.utils import check_array as sklearn_check_array
+from sklearn.utils import gen_batches as sklearn_gen_batches
 
 from ... import tensor as mt
 from ...deploy.oscar.session import execute
 from ...lib.sparse import issparse
 from ...tensor.utils import check_random_state
-from ..utils import get_chunk_n_rows, convert_to_tensor_or_dataframe
+from ..utils import convert_to_tensor_or_dataframe, get_chunk_n_rows
 from ..utils.validation import _num_samples, check_is_fitted
-from ._bagging import BaseBagging, BaggingPredictionOperand, PredictionType
+from ._bagging import BaggingPredictionOperand, BaseBagging, PredictionType
 
 
 def _average_path_length(n_samples_leaf):

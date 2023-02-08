@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,20 +20,21 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import label_binarize as sklearn_label_binarize
 from sklearn.utils.sparsefuncs import min_max_axis
 
-from ... import execute as execute_tileable, fetch as fetch_tileable
+from ... import execute as execute_tileable
+from ... import fetch as fetch_tileable
 from ... import opcodes
 from ... import tensor as mt
 from ...core import ENTITY_TYPE, OutputType, recursive_tile
-from ...core.context import get_context, Context
+from ...core.context import Context, get_context
 from ...lib.sparse import SparseNDArray
 from ...serialization.serializables import AnyField, BoolField, Int32Field, StringField
 from ...tensor.core import TensorOrder
 from ...typing import TileableType
 from ..operands import LearnOperand, LearnOperandMixin
 from ..utils import column_or_1d
-from ..utils._encode import _unique, _encode
-from ..utils.multiclass import unique_labels, type_of_target
-from ..utils.validation import _num_samples, check_is_fitted, check_array
+from ..utils._encode import _encode, _unique
+from ..utils.multiclass import type_of_target, unique_labels
+from ..utils.validation import _num_samples, check_array, check_is_fitted
 
 
 class LabelEncoder(TransformerMixin, BaseEstimator):

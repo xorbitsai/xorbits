@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ from ...core.context import get_context
 from ...serialization.serializables import AnyField
 from ...tensor.core import TENSOR_TYPE, TensorOrder
 from ..operands import LearnOperand, LearnOperandMixin, OutputType
-from ..utils.multiclass import type_of_target
 from ..utils import check_consistent_length, column_or_1d
+from ..utils.multiclass import type_of_target
 
 
 class CheckTargets(LearnOperand, LearnOperandMixin):

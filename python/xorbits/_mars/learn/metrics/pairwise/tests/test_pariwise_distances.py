@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
 
 import numpy as np
 import pytest
+from sklearn.exceptions import DataConversionWarning
 from sklearn.metrics import pairwise_distances as sk_pairwise_distances
 from sklearn.neighbors import NearestNeighbors as SkNearestNeighbors
-from sklearn.exceptions import DataConversionWarning
-
 
 from ..... import tensor as mt
 from .....session import execute, fetch

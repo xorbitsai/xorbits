@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 
 import math
 import warnings
-from math import gcd
 from collections import namedtuple
+from math import gcd
 from typing import Callable, Tuple, Union
 
 import numpy as np
@@ -25,7 +25,6 @@ from scipy.stats import distributions
 from ... import tensor as mt
 from ...core import ExecutableTuple
 from ...typing import TileableType
-
 
 KstestResult = namedtuple("KstestResult", ("statistic", "pvalue"))
 Ks_2sampResult = KstestResult

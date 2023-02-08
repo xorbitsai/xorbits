@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ import pandas as pd
 
 from ... import opcodes
 from ...core import OutputType, get_output_types, recursive_tile
-from ...serialization.serializables import DictField, Int64Field, BoolField
+from ...serialization.serializables import BoolField, DictField, Int64Field
 from ...utils import pd_release_version
 from ..core import IndexValue
-from ..operands import DataFrameOperandMixin, DataFrameOperand
+from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_concatenated_rows_frame, parse_index
 
 _pandas_enable_negative = pd_release_version >= (1, 4, 0)

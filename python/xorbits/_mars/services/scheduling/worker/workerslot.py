@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ from typing import Dict, List, NamedTuple, Set, Tuple
 import psutil
 
 from .... import oscar as mo
-from ....oscar.errors import NoFreeSlot, SlotStateError
 from ....oscar.backends.allocate_strategy import IdleLabel
+from ....oscar.errors import NoFreeSlot, SlotStateError
 from ....resource import Resource
 from ....typing import BandType
-from ...cluster import WorkerSlotInfo, ClusterAPI
+from ...cluster import ClusterAPI, WorkerSlotInfo
 
 logger = logging.getLogger(__name__)
 

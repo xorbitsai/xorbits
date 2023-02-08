@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
 import numpy as np
 import pytest
 from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
 from sklearn.exceptions import ConvergenceWarning
+from sklearn.model_selection import train_test_split
 from sklearn.utils._testing import assert_no_warnings
 
 from .... import tensor as mt
 from ...metrics.pairwise import rbf_kernel
 from ...neighbors import NearestNeighbors
 from .. import LabelPropagation
-
 
 estimators = [
     (LabelPropagation, {"kernel": "rbf"}),

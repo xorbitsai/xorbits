@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ..sort import DataFrameGroupbySortShuffle
 from .... import dataframe as md
 from .... import opcodes
 from ....config import option_context
 from ....core import OutputType, tile
 from ....core.operand import OperandStage
-from ...core import DataFrameGroupBy, SeriesGroupBy, DataFrame
-from ..core import DataFrameGroupByOperand, DataFrameShuffleProxy
+from ...core import DataFrame, DataFrameGroupBy, SeriesGroupBy
 from ..aggregation import DataFrameGroupByAgg
+from ..core import DataFrameGroupByOperand, DataFrameShuffleProxy
 from ..getitem import GroupByIndex
+from ..sort import DataFrameGroupbySortShuffle
 
 
 def test_groupby():

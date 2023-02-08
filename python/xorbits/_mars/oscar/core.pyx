@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,9 +22,10 @@ from typing import AsyncGenerator
 cimport cython
 
 from .context cimport get_context
-from .errors import Return, ActorNotExist
-from .utils cimport is_async_generator
 
+from .errors import ActorNotExist, Return
+
+from .utils cimport is_async_generator
 
 CALL_METHOD_DEFAULT = 0
 CALL_METHOD_BATCH = 1
@@ -437,7 +438,7 @@ cdef class _BaseActor:
         cdef object res
         cdef object message_trace = None, pop_message_trace = None, set_message_trace = None
 
-        from .debug import pop_message_trace, set_message_trace, debug_async_timeout
+        from .debug import debug_async_timeout, pop_message_trace, set_message_trace
         try:
             res = None
             while True:
@@ -517,6 +518,7 @@ cdef class _BaseActor:
         except Exception as ex:
             if _log_unhandled_errors:
                 from .debug import logger as debug_logger
+
                 # use `%.500` to avoid print too long messages
                 debug_logger.exception('Got unhandled error when handling message %.500r '
                                        'in actor %s at %s', message, self.uid, self.address)

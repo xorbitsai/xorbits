@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,17 +13,16 @@
 # limitations under the License.
 
 import asyncio
-import uuid
 import sys
+import uuid
 
-import pytest
 import numpy as np
+import pytest
 
 from ....deploy.oscar.local import new_cluster
 from ....deploy.oscar.session import AsyncSession, SyncSession
 from ..core import MutableTensor
 from ..utils import normalize_timestamp
-
 
 _is_windows = sys.platform.lower().startswith("win")
 

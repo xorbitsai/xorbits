@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -127,10 +127,10 @@ class SchedulingSupervisorService(AbstractService):
         await autoscaler_ref.register_session(session_id, self._address)
 
     async def destroy_session(self, session_id: str):
-        from .queueing import SubtaskQueueingActor
-        from .manager import SubtaskManagerActor
         from .assigner import AssignerActor
         from .autoscale import AutoscalerActor
+        from .manager import SubtaskManagerActor
+        from .queueing import SubtaskQueueingActor
 
         autoscaler_ref = await mo.actor_ref(
             AutoscalerActor.default_uid(), address=self._address

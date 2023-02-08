@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 import asyncio
 import concurrent.futures
 import itertools
-import logging
 import json
+import logging
 import random
 import string
 import threading
@@ -27,21 +27,20 @@ from collections import defaultdict
 from dataclasses import dataclass
 from functools import wraps
 from numbers import Integral
-from urllib.parse import urlparse
-from weakref import ref, WeakKeyDictionary, WeakSet
 from typing import Any, Callable, Coroutine, Dict, List, Optional, Tuple, Union
+from urllib.parse import urlparse
+from weakref import WeakKeyDictionary, WeakSet, ref
 
 import numpy as np
 
 from ... import oscar as mo
-from ...utils import Timer
 from ...config import options
-from ...core import ChunkType, TileableType, TileableGraph, enter_mode
+from ...core import ChunkType, TileableGraph, TileableType, enter_mode
 from ...core.entrypoints import init_extension_entrypoints
 from ...core.operand import Fetch
 from ...lib.aio import (
-    alru_cache,
     Isolation,
+    alru_cache,
     get_isolation,
     new_isolation,
     stop_isolation,
@@ -49,22 +48,23 @@ from ...lib.aio import (
 from ...metrics import Metrics
 from ...services.cluster import AbstractClusterAPI, ClusterAPI
 from ...services.lifecycle import AbstractLifecycleAPI, LifecycleAPI
-from ...services.meta import MetaAPI, AbstractMetaAPI
-from ...services.session import AbstractSessionAPI, SessionAPI
+from ...services.meta import AbstractMetaAPI, MetaAPI
 from ...services.mutable import MutableAPI, MutableTensor
+from ...services.session import AbstractSessionAPI, SessionAPI
 from ...services.storage import StorageAPI
 from ...services.task import AbstractTaskAPI, TaskAPI, TaskResult
 from ...services.task.execution.api import Fetcher
 from ...services.web import OscarWebAPI
-from ...typing import ClientType, BandType
+from ...typing import BandType, ClientType
 from ...utils import (
+    Timer,
+    build_fetch,
+    classproperty,
+    copy_tileables,
     implements,
     merge_chunks,
     merged_chunk_as_tileable_type,
     register_asyncio_task_timeout_detector,
-    classproperty,
-    copy_tileables,
-    build_fetch,
 )
 
 logger = logging.getLogger(__name__)
@@ -1016,8 +1016,8 @@ class _IsolatedSession(AbstractAsyncSession):
     def _get_to_fetch_tileable(
         self, tileable: TileableType
     ) -> Tuple[TileableType, List[Union[slice, Integral]]]:
-        from ...tensor.indexing import TensorIndex
         from ...dataframe.indexing.iloc import DataFrameIlocGetItem, SeriesIlocGetItem
+        from ...tensor.indexing import TensorIndex
 
         slice_op_types = TensorIndex, DataFrameIlocGetItem, SeriesIlocGetItem
 
@@ -1341,12 +1341,12 @@ class _IsolatedWebSession(_IsolatedSession):
         timeout: float = None,
         request_rewriter: Callable = None,
     ):
-        from ...services.session import WebSessionAPI
+        from ...services.cluster import WebClusterAPI
         from ...services.lifecycle import WebLifecycleAPI
         from ...services.meta import WebMetaAPI
-        from ...services.task import WebTaskAPI
         from ...services.mutable import WebMutableAPI
-        from ...services.cluster import WebClusterAPI
+        from ...services.session import WebSessionAPI
+        from ...services.task import WebTaskAPI
 
         session_api = WebSessionAPI(address, request_rewriter)
         if new:

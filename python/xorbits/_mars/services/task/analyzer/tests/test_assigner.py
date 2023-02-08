@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ from .....config import Config
 from .....core import ChunkGraph
 from .....core.graph.builder.utils import build_graph
 from .....core.operand import OperandStage
-from .....tensor.random import TensorRand
+from .....resource import Resource
 from .....tensor.arithmetic import TensorAdd
 from .....tensor.fetch import TensorFetch
-from .....resource import Resource
+from .....tensor.random import TensorRand
 from ...core import Task
 from ..analyzer import GraphAnalyzer, need_reassign_worker
 from ..assigner import GraphAssigner

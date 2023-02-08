@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,30 +16,30 @@ import itertools
 import operator
 
 import numpy as np
-
 import pandas as pd
 
 from .. import opcodes as OperandDef
 from ..core import OutputType
-from ..core.operand import OperandStage, MapReduceOperand
+from ..core.operand import MapReduceOperand, OperandStage
 from ..serialization.serializables import (
-    FieldTypes,
     AnyField,
     BoolField,
+    FieldTypes,
     Int32Field,
     KeyField,
     ListField,
 )
 from .core import SERIES_CHUNK_TYPE
-from .utils import hash_dtypes, filter_dtypes
 from .operands import DataFrameOperandMixin, DataFrameShuffleProxy
 from .utils import (
-    parse_index,
-    split_monotonic_index_min_max,
     build_split_idx_to_origin_idx,
+    filter_dtypes,
     filter_index_value,
+    hash_dtypes,
     hash_index,
     is_index_value_identical,
+    parse_index,
+    split_monotonic_index_min_max,
     validate_axis,
 )
 

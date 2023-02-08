@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .take import take
+from .choose import TensorChoose, choose
 from .compress import compress
 from .extract import extract
-from .choose import choose, TensorChoose
-from .unravel_index import unravel_index, TensorUnravelIndex
-from .nonzero import nonzero, TensorNonzero
+from .fill_diagonal import TensorFillDiagonal, fill_diagonal
 from .flatnonzero import flatnonzero
-from .slice import TensorSlice
-from .getitem import TensorIndex, FancyIndexingDistribute, FancyIndexingConcat
+from .getitem import FancyIndexingConcat, FancyIndexingDistribute, TensorIndex
+from .nonzero import TensorNonzero, nonzero
 from .setitem import TensorIndexSetValue
-from .fill_diagonal import fill_diagonal, TensorFillDiagonal
+from .slice import TensorSlice
+from .take import take
+from .unravel_index import TensorUnravelIndex, unravel_index
 
 
 def _install():

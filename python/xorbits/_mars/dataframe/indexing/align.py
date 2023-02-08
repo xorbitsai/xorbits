@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,23 +17,23 @@ from typing import Any, Optional, Union
 import numpy as np
 
 from ... import opcodes
-from ...core import get_output_types, recursive_tile, OutputType
+from ...core import OutputType, get_output_types, recursive_tile
 from ...serialization.serializables import (
     AnyField,
-    KeyField,
-    StringField,
     Int16Field,
     Int64Field,
+    KeyField,
+    StringField,
 )
 from ...typing import TileableType
-from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..align import (
     align_dataframe_dataframe,
     align_dataframe_series,
     align_series_series,
 )
 from ..core import IndexValue
-from ..utils import validate_axis, parse_index, build_empty_df
+from ..operands import DataFrameOperand, DataFrameOperandMixin
+from ..utils import build_empty_df, parse_index, validate_axis
 
 
 class _NoNeedToAlign(Exception):

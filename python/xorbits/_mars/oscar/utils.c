@@ -936,8 +936,8 @@ struct __pyx_opt_args_7xorbits_5_mars_6_utils_to_binary;
 struct __pyx_opt_args_7xorbits_5_mars_6_utils_to_text;
 
 /* "_utils.pxd":28
- * 
- * 
+ *
+ *
  * cpdef str to_str(s, encoding=*)             # <<<<<<<<<<<<<<
  * cpdef bytes to_binary(s, encoding=*)
  * cpdef unicode to_text(s, encoding=*)
@@ -948,7 +948,7 @@ struct __pyx_opt_args_7xorbits_5_mars_6_utils_to_str {
 };
 
 /* "_utils.pxd":29
- * 
+ *
  * cpdef str to_str(s, encoding=*)
  * cpdef bytes to_binary(s, encoding=*)             # <<<<<<<<<<<<<<
  * cpdef unicode to_text(s, encoding=*)
@@ -972,8 +972,8 @@ struct __pyx_opt_args_7xorbits_5_mars_6_utils_to_text {
 };
 
 /* "_utils.pxd":16
- * 
- * 
+ *
+ *
  * cdef class TypeDispatcher:             # <<<<<<<<<<<<<<
  *     cdef dict _handlers
  *     cdef dict _lazy_handlers
@@ -989,8 +989,8 @@ struct __pyx_obj_7xorbits_5_mars_6_utils_TypeDispatcher {
 
 
 /* "core.pxd":16
- * 
- * 
+ *
+ *
  * cdef class ActorRef:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef public str address
@@ -1005,8 +1005,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core_ActorRef {
 
 
 /* "core.pxd":23
- * 
- * 
+ *
+ *
  * cdef class LocalActorRef(ActorRef):             # <<<<<<<<<<<<<<
  *     cdef object _actor_weakref
  *     cdef _weakref_local_actor(self)
@@ -1019,8 +1019,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core_LocalActorRef {
 
 
 /* "core.pxd":28
- * 
- * 
+ *
+ *
  * cdef class _BaseActor:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef str _address
@@ -1036,8 +1036,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core__BaseActor {
 
 
 /* "core.pxd":37
- * 
- * 
+ *
+ *
  * cdef class ActorEnvironment:             # <<<<<<<<<<<<<<
  *     cdef public dict actor_locks
  *     cdef public object address
@@ -1051,8 +1051,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core_ActorEnvironment {
 
 
 /* "_utils.pxd":16
- * 
- * 
+ *
+ *
  * cdef class TypeDispatcher:             # <<<<<<<<<<<<<<
  *     cdef dict _handlers
  *     cdef dict _lazy_handlers
@@ -1068,8 +1068,8 @@ static struct __pyx_vtabstruct_7xorbits_5_mars_6_utils_TypeDispatcher *__pyx_vta
 
 
 /* "core.pxd":23
- * 
- * 
+ *
+ *
  * cdef class LocalActorRef(ActorRef):             # <<<<<<<<<<<<<<
  *     cdef object _actor_weakref
  *     cdef _weakref_local_actor(self)
@@ -1082,8 +1082,8 @@ static struct __pyx_vtabstruct_7xorbits_5_mars_5oscar_4core_LocalActorRef *__pyx
 
 
 /* "core.pxd":28
- * 
- * 
+ *
+ *
  * cdef class _BaseActor:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef str _address
@@ -1488,11 +1488,11 @@ static PyObject *__pyx_codeobj__5;
 /* Late includes */
 
 /* "xorbits/_mars/oscar/utils.pyx":21
- * 
- * 
+ *
+ *
  * cpdef bytes new_actor_id():             # <<<<<<<<<<<<<<
  *     return new_random_id(32)
- * 
+ *
  */
 
 static PyObject *__pyx_pw_7xorbits_5_mars_5oscar_5utils_1new_actor_id(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -1506,11 +1506,11 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_5utils_new_actor_id(CYTHON_UNUSE
   __Pyx_RefNannySetupContext("new_actor_id", 0);
 
   /* "xorbits/_mars/oscar/utils.pyx":22
- * 
+ *
  * cpdef bytes new_actor_id():
  *     return new_random_id(32)             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7xorbits_5_mars_6_utils_new_random_id(32, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
@@ -1520,11 +1520,11 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_5utils_new_actor_id(CYTHON_UNUSE
   goto __pyx_L0;
 
   /* "xorbits/_mars/oscar/utils.pyx":21
- * 
- * 
+ *
+ *
  * cpdef bytes new_actor_id():             # <<<<<<<<<<<<<<
  *     return new_random_id(32)
- * 
+ *
  */
 
   /* function exit code */
@@ -1578,8 +1578,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_new_actor_id(CYTHON_UNUS
 }
 
 /* "xorbits/_mars/oscar/utils.pyx":25
- * 
- * 
+ *
+ *
  * def create_actor_ref(*args, **kwargs):             # <<<<<<<<<<<<<<
  *     """
  *     Create an actor reference.
@@ -1629,10 +1629,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
 
   /* "xorbits/_mars/oscar/utils.pyx":38
  *     cdef ActorRef existing_ref
- * 
+ *
  *     address = to_str(kwargs.pop('address', None))             # <<<<<<<<<<<<<<
  *     uid = kwargs.pop('uid', None)
- * 
+ *
  */
   __pyx_t_1 = __Pyx_PyDict_Pop(__pyx_v_kwargs, __pyx_n_u_address, Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -1643,10 +1643,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
   __pyx_t_2 = 0;
 
   /* "xorbits/_mars/oscar/utils.pyx":39
- * 
+ *
  *     address = to_str(kwargs.pop('address', None))
  *     uid = kwargs.pop('uid', None)             # <<<<<<<<<<<<<<
- * 
+ *
  *     if kwargs:
  */
   __pyx_t_2 = __Pyx_PyDict_Pop(__pyx_v_kwargs, __pyx_n_u_uid, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 39, __pyx_L1_error)
@@ -1656,19 +1656,19 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
 
   /* "xorbits/_mars/oscar/utils.pyx":41
  *     uid = kwargs.pop('uid', None)
- * 
+ *
  *     if kwargs:             # <<<<<<<<<<<<<<
  *         raise ValueError('Only `address` or `uid` keywords are supported')
- * 
+ *
  */
   __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_v_kwargs); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 41, __pyx_L1_error)
   if (unlikely(__pyx_t_3)) {
 
     /* "xorbits/_mars/oscar/utils.pyx":42
- * 
+ *
  *     if kwargs:
  *         raise ValueError('Only `address` or `uid` keywords are supported')             # <<<<<<<<<<<<<<
- * 
+ *
  *     if len(args) == 2:
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 42, __pyx_L1_error)
@@ -1679,16 +1679,16 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
 
     /* "xorbits/_mars/oscar/utils.pyx":41
  *     uid = kwargs.pop('uid', None)
- * 
+ *
  *     if kwargs:             # <<<<<<<<<<<<<<
  *         raise ValueError('Only `address` or `uid` keywords are supported')
- * 
+ *
  */
   }
 
   /* "xorbits/_mars/oscar/utils.pyx":44
  *         raise ValueError('Only `address` or `uid` keywords are supported')
- * 
+ *
  *     if len(args) == 2:             # <<<<<<<<<<<<<<
  *         if address:
  *             raise ValueError('address has been specified')
@@ -1698,7 +1698,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
   if (__pyx_t_3) {
 
     /* "xorbits/_mars/oscar/utils.pyx":45
- * 
+ *
  *     if len(args) == 2:
  *         if address:             # <<<<<<<<<<<<<<
  *             raise ValueError('address has been specified')
@@ -1721,7 +1721,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
       __PYX_ERR(0, 46, __pyx_L1_error)
 
       /* "xorbits/_mars/oscar/utils.pyx":45
- * 
+ *
  *     if len(args) == 2:
  *         if address:             # <<<<<<<<<<<<<<
  *             raise ValueError('address has been specified')
@@ -1758,7 +1758,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
 
     /* "xorbits/_mars/oscar/utils.pyx":44
  *         raise ValueError('Only `address` or `uid` keywords are supported')
- * 
+ *
  *     if len(args) == 2:             # <<<<<<<<<<<<<<
  *         if address:
  *             raise ValueError('address has been specified')
@@ -1874,7 +1874,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
  *             address = to_str(address or existing_ref.address)
  *         else:
  *             uid = args[0]             # <<<<<<<<<<<<<<
- * 
+ *
  *     if uid is None:
  */
     /*else*/ {
@@ -1897,20 +1897,20 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
 
   /* "xorbits/_mars/oscar/utils.pyx":58
  *             uid = args[0]
- * 
+ *
  *     if uid is None:             # <<<<<<<<<<<<<<
  *         raise ValueError('Actor uid should be provided')
- * 
+ *
  */
   __pyx_t_3 = (__pyx_v_uid == Py_None);
   __pyx_t_5 = (__pyx_t_3 != 0);
   if (unlikely(__pyx_t_5)) {
 
     /* "xorbits/_mars/oscar/utils.pyx":59
- * 
+ *
  *     if uid is None:
  *         raise ValueError('Actor uid should be provided')             # <<<<<<<<<<<<<<
- * 
+ *
  *     return ActorRef(address, uid)
  */
     __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
@@ -1921,19 +1921,19 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
 
     /* "xorbits/_mars/oscar/utils.pyx":58
  *             uid = args[0]
- * 
+ *
  *     if uid is None:             # <<<<<<<<<<<<<<
  *         raise ValueError('Actor uid should be provided')
- * 
+ *
  */
   }
 
   /* "xorbits/_mars/oscar/utils.pyx":61
  *         raise ValueError('Actor uid should be provided')
- * 
+ *
  *     return ActorRef(address, uid)             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
@@ -1952,8 +1952,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
   goto __pyx_L0;
 
   /* "xorbits/_mars/oscar/utils.pyx":25
- * 
- * 
+ *
+ *
  * def create_actor_ref(*args, **kwargs):             # <<<<<<<<<<<<<<
  *     """
  *     Create an actor reference.
@@ -1976,8 +1976,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_5utils_2create_actor_ref(CYTHON
 }
 
 /* "xorbits/_mars/oscar/utils.pyx":67
- * 
- * 
+ *
+ *
  * cdef bint is_async_generator(obj):             # <<<<<<<<<<<<<<
  *     cdef type tp = type(obj)
  *     if tp in _is_async_generator_typecache:
@@ -1998,7 +1998,7 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
   __Pyx_RefNannySetupContext("is_async_generator", 0);
 
   /* "xorbits/_mars/oscar/utils.pyx":68
- * 
+ *
  * cdef bint is_async_generator(obj):
  *     cdef type tp = type(obj)             # <<<<<<<<<<<<<<
  *     if tp in _is_async_generator_typecache:
@@ -2012,7 +2012,7 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
  *     cdef type tp = type(obj)
  *     if tp in _is_async_generator_typecache:             # <<<<<<<<<<<<<<
  *         return True
- * 
+ *
  */
   if (unlikely(__pyx_v_7xorbits_5_mars_5oscar_5utils__is_async_generator_typecache == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
@@ -2026,7 +2026,7 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
  *     cdef type tp = type(obj)
  *     if tp in _is_async_generator_typecache:
  *         return True             # <<<<<<<<<<<<<<
- * 
+ *
  *     if isinstance(obj, AsyncGenerator):
  */
     __pyx_r = 1;
@@ -2037,13 +2037,13 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
  *     cdef type tp = type(obj)
  *     if tp in _is_async_generator_typecache:             # <<<<<<<<<<<<<<
  *         return True
- * 
+ *
  */
   }
 
   /* "xorbits/_mars/oscar/utils.pyx":72
  *         return True
- * 
+ *
  *     if isinstance(obj, AsyncGenerator):             # <<<<<<<<<<<<<<
  *         if len(_is_async_generator_typecache) < 100:
  *             _is_async_generator_typecache.add(tp)
@@ -2056,7 +2056,7 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
   if (__pyx_t_1) {
 
     /* "xorbits/_mars/oscar/utils.pyx":73
- * 
+ *
  *     if isinstance(obj, AsyncGenerator):
  *         if len(_is_async_generator_typecache) < 100:             # <<<<<<<<<<<<<<
  *             _is_async_generator_typecache.add(tp)
@@ -2087,7 +2087,7 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
       __pyx_t_5 = PySet_Add(__pyx_v_7xorbits_5_mars_5oscar_5utils__is_async_generator_typecache, ((PyObject *)__pyx_v_tp)); if (unlikely(__pyx_t_5 == ((int)-1))) __PYX_ERR(0, 74, __pyx_L1_error)
 
       /* "xorbits/_mars/oscar/utils.pyx":73
- * 
+ *
  *     if isinstance(obj, AsyncGenerator):
  *         if len(_is_async_generator_typecache) < 100:             # <<<<<<<<<<<<<<
  *             _is_async_generator_typecache.add(tp)
@@ -2107,7 +2107,7 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
 
     /* "xorbits/_mars/oscar/utils.pyx":72
  *         return True
- * 
+ *
  *     if isinstance(obj, AsyncGenerator):             # <<<<<<<<<<<<<<
  *         if len(_is_async_generator_typecache) < 100:
  *             _is_async_generator_typecache.add(tp)
@@ -2125,8 +2125,8 @@ static int __pyx_f_7xorbits_5_mars_5oscar_5utils_is_async_generator(PyObject *__
   }
 
   /* "xorbits/_mars/oscar/utils.pyx":67
- * 
- * 
+ *
+ *
  * cdef bint is_async_generator(obj):             # <<<<<<<<<<<<<<
  *     cdef type tp = type(obj)
  *     if tp in _is_async_generator_typecache:
@@ -2228,10 +2228,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
   /* "xorbits/_mars/oscar/utils.pyx":42
- * 
+ *
  *     if kwargs:
  *         raise ValueError('Only `address` or `uid` keywords are supported')             # <<<<<<<<<<<<<<
- * 
+ *
  *     if len(args) == 2:
  */
   __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_Only_address_or_uid_keywords_are); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 42, __pyx_L1_error)
@@ -2250,10 +2250,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__2);
 
   /* "xorbits/_mars/oscar/utils.pyx":59
- * 
+ *
  *     if uid is None:
  *         raise ValueError('Actor uid should be provided')             # <<<<<<<<<<<<<<
- * 
+ *
  *     return ActorRef(address, uid)
  */
   __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_Actor_uid_should_be_provided); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 59, __pyx_L1_error)
@@ -2261,8 +2261,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__3);
 
   /* "xorbits/_mars/oscar/utils.pyx":25
- * 
- * 
+ *
+ *
  * def create_actor_ref(*args, **kwargs):             # <<<<<<<<<<<<<<
  *     """
  *     Create an actor reference.
@@ -2602,9 +2602,9 @@ if (!__Pyx_RefNanny) {
 
   /* "xorbits/_mars/oscar/utils.pyx":15
  * # limitations under the License.
- * 
+ *
  * from typing import AsyncGenerator             # <<<<<<<<<<<<<<
- * 
+ *
  * from .._utils cimport to_str, new_random_id
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
@@ -2622,8 +2622,8 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "xorbits/_mars/oscar/utils.pyx":25
- * 
- * 
+ *
+ *
  * def create_actor_ref(*args, **kwargs):             # <<<<<<<<<<<<<<
  *     """
  *     Create an actor reference.
@@ -2634,11 +2634,11 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "xorbits/_mars/oscar/utils.pyx":64
- * 
- * 
+ *
+ *
  * cdef set _is_async_generator_typecache = set()             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -2648,7 +2648,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = 0;
 
   /* "xorbits/_mars/oscar/utils.pyx":1
- * # Copyright 1999-2021 Alibaba Group Holding Ltd.             # <<<<<<<<<<<<<<
+ * # Copyright 2022-2023 XProbe Inc.             # <<<<<<<<<<<<<<
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  */

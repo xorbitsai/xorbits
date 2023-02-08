@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,8 @@ except ImportError:  # pragma: no cover
     proxima = None
 
 from ... import tensor as mt
-from ...tensor.merge import TensorConcatenate
 from ...tensor.indexing import TensorSlice
-
+from ...tensor.merge import TensorConcatenate
 
 available_numpy_dtypes = [
     np.dtype(np.float16),

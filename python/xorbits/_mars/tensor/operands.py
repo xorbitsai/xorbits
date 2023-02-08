@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 
 from ..core import OutputType
 from ..core.operand import (
-    Operand,
-    TileableOperandMixin,
-    HasInput,
-    ShuffleProxy,
-    MapReduceOperand,
     Fuse,
+    HasInput,
+    MapReduceOperand,
+    Operand,
+    ShuffleProxy,
+    TileableOperandMixin,
 )
 from ..serialization.serializables import DataTypeField
 from ..utils import calc_nsplits

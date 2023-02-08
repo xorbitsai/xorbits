@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 import itertools
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import SeriesField, DataTypeField
 from ...config import options
 from ...core import OutputType
+from ...serialization.serializables import DataTypeField, SeriesField
 from ...tensor.utils import get_chunk_slices
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, decide_series_chunk_size, is_cudf
+from ..utils import decide_series_chunk_size, is_cudf, parse_index
 
 
 class SeriesDataSource(DataFrameOperand, DataFrameOperandMixin):

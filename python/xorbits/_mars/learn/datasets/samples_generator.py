@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ from collections.abc import Iterable
 import numpy as np
 
 from ... import tensor as mt
-from ...tensor.utils import check_random_state
 from ...tensor import linalg
-from ..utils import shuffle as util_shuffle, check_array
-
+from ...tensor.utils import check_random_state
+from ..utils import check_array
+from ..utils import shuffle as util_shuffle
 
 # -------------------------------------------------------------------
 # Original implementation is in `sklearn.datasets.samples_generator`.

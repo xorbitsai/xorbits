@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import threading
 
 import pytest
 
-from ..config import options, option_context, is_integer, is_string, Config
+from ..config import Config, is_integer, is_string, option_context, options
 
 
 def test_config_context():

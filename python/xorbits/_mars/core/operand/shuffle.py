@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import ShuffleFetchType, FetchShuffle
 from ... import opcodes
 from ...serialization.serializables import (
+    FieldTypes,
     Int32Field,
     StringField,
     TupleField,
-    FieldTypes,
 )
-from .base import Operand, VirtualOperand, OperandStage
+from . import FetchShuffle, ShuffleFetchType
+from .base import Operand, OperandStage, VirtualOperand
 
 
 class ShuffleProxy(VirtualOperand):

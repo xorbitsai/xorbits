@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ from tornado import httpclient, web
 from tornado.simple_httpclient import HTTPRequest, HTTPTimeoutError
 
 from ...lib.aio import alru_cache
-from ...utils import serialize_serializable, deserialize_serializable
+from ...utils import deserialize_serializable, serialize_serializable
 
 if sys.version_info[:2] == (3, 6):
     # make sure typing works

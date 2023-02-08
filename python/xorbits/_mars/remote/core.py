@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,30 +16,30 @@ from collections import UserDict
 from collections.abc import Iterable
 from functools import partial
 
+import numpy as np
+
 from .. import opcodes
-from ..core import ENTITY_TYPE, ChunkData, Tileable, OutputType
+from ..core import ENTITY_TYPE, ChunkData, OutputType, Tileable
 from ..core.custom_log import redirect_custom_log
 from ..core.operand import Operand
-from ..dataframe.core import DATAFRAME_TYPE, SERIES_TYPE, INDEX_TYPE
+from ..dataframe.core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
 from ..serialization.serializables import (
-    FunctionField,
-    ListField,
-    DictField,
     BoolField,
+    DictField,
+    FunctionField,
     Int32Field,
+    ListField,
 )
 from ..tensor.core import TENSOR_TYPE
 from ..utils import (
     build_fetch_tileable,
     enter_current_session,
     find_objects,
-    replace_objects,
     merge_chunks,
     merged_chunk_as_tileable_type,
+    replace_objects,
 )
 from .operands import RemoteOperandMixin
-
-import numpy as np
 
 
 class RemoteFunction(RemoteOperandMixin, Operand):

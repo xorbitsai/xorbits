@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ except ImportError:  # pragma: no cover
 
 from .... import opcodes as OperandDef
 from ....core import recursive_tile
-from ....serialization.serializables import KeyField, BoolField
+from ....serialization.serializables import BoolField, KeyField
+from ....tensor.array_utils import as_same_device, device
 from ....tensor.core import TensorOrder
 from ....tensor.indexing import fill_diagonal
-from ....tensor.array_utils import as_same_device, device
 from .core import PairwiseDistances
 
 

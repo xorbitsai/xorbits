@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..utils import validate_axis, check_out_param
-from ..datasource import tensor as astensor
 from ..base.ravel import ravel
 from ..core import Tensor
+from ..datasource import tensor as astensor
+from ..utils import check_out_param, validate_axis
 
 
 def ptp(a, axis=None, out=None, keepdims=None):

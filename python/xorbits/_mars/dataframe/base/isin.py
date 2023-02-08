@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ from pandas.api.types import is_list_like
 
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE
-from ...serialization.serializables import KeyField, AnyField
+from ...serialization.serializables import AnyField, KeyField
 from ...tensor.core import TENSOR_TYPE
-from ..core import DATAFRAME_TYPE, SERIES_TYPE, INDEX_TYPE, OutputType
+from ..core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE, OutputType
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from .drop_duplicates import DataFrameDropDuplicates
 
@@ -82,8 +82,8 @@ class DataFrameIsin(DataFrameOperand, DataFrameOperandMixin):
     def _tile_entity_values(cls, op):
         from ...core.context import get_context
         from ...tensor.base.unique import TensorUnique
-        from ..utils import auto_merge_chunks
         from ..arithmetic.bitwise_or import tree_dataframe_or
+        from ..utils import auto_merge_chunks
 
         in_elements = op.input
         out_elements = op.outputs[0]

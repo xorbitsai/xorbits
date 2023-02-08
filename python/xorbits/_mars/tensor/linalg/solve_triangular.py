@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...serialization.serializables import BoolField, KeyField
 from ...utils import has_unknown_shape
-from ..array_utils import device, as_same_device, cp
-from ..operands import TensorOperand, TensorOperandMixin
-from ..datasource import tensor as astensor
-from ..utils import decide_unify_split
+from ..array_utils import as_same_device, cp, device
 from ..core import TensorOrder
+from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorOperandMixin
+from ..utils import decide_unify_split
 
 
 class TensorSolveTriangular(TensorOperand, TensorOperandMixin):

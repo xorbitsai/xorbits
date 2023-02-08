@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +13,14 @@
 # limitations under the License.
 
 import json
+
 import numpy as np
 
 from ... import opcodes as OperandDef
+from ...core.context import get_context
 from ...serialization.serializables import Int32Field, StringField
 from ...storage.base import StorageLevel
 from ...utils import calc_nsplits, has_unknown_shape, lazy_import
-from ...core.context import get_context
 from ..operands import TensorOperand, TensorOperandMixin
 from .core import TensorNoInput
 

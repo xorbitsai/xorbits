@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@ import builtins
 import inspect
 import itertools
 from operator import attrgetter
-from typing import List, Callable, Generator
-from weakref import WeakSet, WeakKeyDictionary
+from typing import Callable, Generator, List
+from weakref import WeakKeyDictionary, WeakSet
 
 import numpy as np
 
-from ...serialization.serializables import FieldTypes, BoolField, TupleField
-from ...typing import OperandType, TileableType, ChunkType
-from ...utils import on_serialize_shape, on_deserialize_shape, on_serialize_nsplits
+from ...serialization.serializables import BoolField, FieldTypes, TupleField
+from ...typing import ChunkType, OperandType, TileableType
+from ...utils import on_deserialize_shape, on_serialize_nsplits, on_serialize_shape
 from ..base import Base
 from ..mode import enter_mode
 from .chunks import Chunk
-from .core import EntityData, Entity
+from .core import Entity, EntityData
 from .executable import _ExecutableMixin
 
 

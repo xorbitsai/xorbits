@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,30 +17,25 @@ from pandas.core.dtypes.common import pandas_dtype
 
 from ..core import ENTITY_TYPE
 from ..serialization.serializables import SerializableMeta
-from ..tensor import tensor as astensor, stack
+from ..tensor import stack
+from ..tensor import tensor as astensor
 from ..tensor.array_utils import is_cupy
 from ..tensor.core import TENSOR_TYPE
 from ..utils import ceildiv, lazy_import
-from .core import (
-    DATAFRAME_TYPE,
-    SERIES_TYPE,
-    INDEX_TYPE,
-    DataFrame as _Frame,
-    Series as _Series,
-    Index as _Index,
-)
+from .core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
+from .core import DataFrame as _Frame
+from .core import Index as _Index
+from .core import Series as _Series
 from .datasource.dataframe import from_pandas as from_pandas_df
-from .datasource.series import from_pandas as from_pandas_series
-from .datasource.index import (
-    from_pandas as from_pandas_index,
-    from_tileable as from_tileable_index,
-)
 from .datasource.from_tensor import (
+    dataframe_from_1d_tileables,
     dataframe_from_tensor,
     series_from_tensor,
-    dataframe_from_1d_tileables,
 )
-from .utils import is_index, is_cudf
+from .datasource.index import from_pandas as from_pandas_index
+from .datasource.index import from_tileable as from_tileable_index
+from .datasource.series import from_pandas as from_pandas_series
+from .utils import is_cudf, is_index
 
 cudf = lazy_import("cudf")
 

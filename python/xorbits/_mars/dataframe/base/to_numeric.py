@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +13,14 @@
 # limitations under the License.
 import numpy as np
 import pandas as pd
-from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ...serialization.serializables import StringField
-from ..initializer import Series as asseries
-from ...tensor import tensor as astensor
-from ..core import SERIES_TYPE
-from ...tensor.core import TENSOR_TYPE, TensorOrder
+
 from ...core import ENTITY_TYPE, OutputType
+from ...serialization.serializables import StringField
+from ...tensor import tensor as astensor
+from ...tensor.core import TENSOR_TYPE, TensorOrder
+from ..core import SERIES_TYPE
+from ..initializer import Series as asseries
+from ..operands import DataFrameOperand, DataFrameOperandMixin
 
 
 class DataFrameToNumeric(DataFrameOperand, DataFrameOperandMixin):

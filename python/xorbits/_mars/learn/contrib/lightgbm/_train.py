@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,14 +26,14 @@ from ....core import ExecutableTuple, OutputType, recursive_tile
 from ....core.context import get_context
 from ....core.operand import MergeDictOperand
 from ....serialization.serializables import (
-    FieldTypes,
     DictField,
+    FieldTypes,
     Int32Field,
     KeyField,
     ListField,
     StringField,
 )
-from ...utils import concat_chunks, collect_ports
+from ...utils import collect_ports, concat_chunks
 from ._align import align_data_set
 from .core import LGBMModelType, get_model_cls_from_type
 
@@ -321,7 +321,7 @@ class LGBMTrain(MergeDictOperand):
         if op.merge:
             return super().execute(ctx, op)
 
-        from lightgbm.basic import _safe_call, _LIB
+        from lightgbm.basic import _LIB, _safe_call
 
         data_val = ctx[op.data.key]
         data_val = data_val.spmatrix if hasattr(data_val, "spmatrix") else data_val

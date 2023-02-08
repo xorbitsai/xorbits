@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
 
 import os
 import socket
-
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from ....utils import lazy_import
 from ..metric import (
-    AbstractMetric,
     AbstractCounter,
     AbstractGauge,
-    AbstractMeter,
     AbstractHistogram,
+    AbstractMeter,
+    AbstractMetric,
 )
 
 pc = lazy_import("prometheus_client", rename="pc")

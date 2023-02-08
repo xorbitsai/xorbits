@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 # limitations under the License.
 
 from ...core import OutputType, register_fetch_class
-from ...core.operand import Fetch, FetchShuffle, FetchMixin
+from ...core.operand import Fetch, FetchMixin, FetchShuffle
 from ...serialization.serializables import FieldTypes, TupleField
-from ...utils import on_serialize_shape, on_deserialize_shape
+from ...utils import on_deserialize_shape, on_serialize_shape
 from ..operands import DataFrameOperandMixin
 
 

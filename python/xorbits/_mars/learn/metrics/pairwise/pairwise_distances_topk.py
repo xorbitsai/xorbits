@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,21 +16,20 @@ from functools import partial
 
 import numpy as np
 
-from .... import opcodes
-from .... import options
+from .... import opcodes, options
 from ....core import recursive_tile
 from ....core.operand import OperandStage
 from ....serialization.serializables import (
-    KeyField,
+    AnyField,
     BoolField,
     DictField,
     Int64Field,
-    AnyField,
+    KeyField,
 )
+from ....tensor.array_utils import as_same_device, device, get_array_module
 from ....tensor.core import TensorOrder
 from ....tensor.merge import TensorConcatenate
-from ....tensor.array_utils import as_same_device, device, get_array_module
-from ....utils import has_unknown_shape, ensure_own_data
+from ....utils import ensure_own_data, has_unknown_shape
 from ...utils import gen_batches, get_chunk_n_rows
 from ...utils.validation import _num_samples
 from .core import PairwiseDistances

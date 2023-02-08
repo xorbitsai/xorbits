@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import scipy.sparse as sps
 import scipy.special as spspecial
 
 from ....lib.version import parse as parse_version
-from ... import tensor
 from ... import special as mt_special
+from ... import tensor
 
 
 @pytest.mark.parametrize(

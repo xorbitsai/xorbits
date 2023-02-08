@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ import numpy as np
 from ... import opcodes
 from ...core import OutputType, recursive_tile
 from ...core.operand import OperandStage
-from ...serialization.serializables import KeyField, Int32Field, BoolField
-from ...tensor.array_utils import as_same_device, device, cp, sparse
+from ...serialization.serializables import BoolField, Int32Field, KeyField
+from ...tensor.array_utils import as_same_device, cp, device, sparse
 from ...tensor.core import TensorOrder
 from ...utils import has_unknown_shape
 from ..operands import LearnOperand, LearnOperandMixin
@@ -402,15 +402,9 @@ class KMeansElkanUpdate(LearnOperand, LearnOperandMixin):
         out_chunks = [list() for _ in range(op.output_limit)]
         for i in range(x.chunk_shape[0]):
             x_chunk = x.cix[i, 0]
-            sample_weight_chunk = sample_weight.cix[
-                i,
-            ]
-            labels_chunk = labels.cix[
-                i,
-            ]
-            upper_bounds_chunk = upper_bounds.cix[
-                i,
-            ]
+            sample_weight_chunk = sample_weight.cix[i,]
+            labels_chunk = labels.cix[i,]
+            upper_bounds_chunk = upper_bounds.cix[i,]
             lower_bounds_chunk = lower_bounds.cix[i, 0]
             chunk_op = op.copy().reset_key()
             chunk_op.stage = OperandStage.map

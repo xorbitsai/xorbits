@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,19 +18,19 @@
 import numpy as np
 
 from ... import opcodes as OperandDef
+from ...lib import sparse
+from ...lib.sparse.core import get_array_module, get_sparse_module, naked
 from ...serialization.serializables import (
-    FieldTypes,
     AnyField,
-    TupleField,
+    FieldTypes,
     KeyField,
     StringField,
+    TupleField,
 )
-from ...lib import sparse
-from ...lib.sparse.core import get_sparse_module, get_array_module, naked
 from ..array_utils import create_array
 from ..utils import get_order
-from .core import TensorNoInput, TensorLike
 from .array import tensor
+from .core import TensorLike, TensorNoInput
 
 
 class TensorZeros(TensorNoInput):

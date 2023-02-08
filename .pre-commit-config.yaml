@@ -24,7 +24,8 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [tokenize-rt==3.2.0]
-        args: [--config-file, python/setup.cfg]
+        exclude: _mars
+        args: [--ignore-missing-imports, --follow-imports, skip]
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.0.0-alpha.4 # Use the sha or tag you want to point at
     hooks:

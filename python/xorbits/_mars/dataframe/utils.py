@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,22 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
-import cloudpickle
 import functools
-import itertools
 import inspect
+import itertools
 import logging
 import operator
+import os
+import sys
 from contextlib import contextmanager
 from numbers import Integral
-from typing import List, Union, Any
+from typing import Any, List, Union
 
+import cloudpickle
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_string_dtype
 from pandas.api.extensions import ExtensionDtype
+from pandas.api.types import is_string_dtype
 from pandas.core.dtypes.cast import find_common_type
 
 from ..config import options
@@ -37,14 +37,14 @@ from ..lib.mmh3 import hash as mmh_hash
 from ..tensor.utils import dictify_chunk_size, normalize_chunk_sizes
 from ..typing import ChunkType, TileableType
 from ..utils import (
-    tokenize,
-    sbytes,
-    lazy_import,
     ModulePlaceholder,
     is_full_slice,
-    parse_readable_size,
     is_on_ray,
+    lazy_import,
+    parse_readable_size,
     parse_version,
+    sbytes,
+    tokenize,
 )
 
 try:
@@ -1239,7 +1239,7 @@ def arrow_table_to_pandas_dataframe(arrow_table, use_arrow_dtype=True, **kw):
         # if not use arrow string, just return
         return arrow_table.to_pandas(**kw)
 
-    from .arrays import ArrowStringArray, ArrowListArray
+    from .arrays import ArrowListArray, ArrowStringArray
 
     table: pa.Table = arrow_table
     schema: pa.Schema = arrow_table.schema
@@ -1482,8 +1482,8 @@ def whether_to_clean_up(op, threshold):
     counted_bytes = 0
     max_recursion_depth = 2
 
-    from numbers import Number
     from collections import deque
+    from numbers import Number
 
     BYPASS_CLASSES = (str, bytes, Number, range, bytearray, pd.DataFrame, pd.Series)
 

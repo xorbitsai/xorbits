@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import warnings
 import operator
+import warnings
 
 import numpy as np
 
@@ -21,14 +21,14 @@ from ... import opcodes as OperandDef
 from ... import tensor as mt
 from ...core import recursive_tile
 from ...core.context import get_context
-from ...serialization.serializables import AnyField, TupleField, KeyField, BoolField
+from ...serialization.serializables import AnyField, BoolField, KeyField, TupleField
 from ...utils import has_unknown_shape
-from ..core import TENSOR_TYPE, TENSOR_CHUNK_TYPE, TensorOrder
-from ..operands import TensorOperand, TensorOperandMixin
-from ..datasource import tensor as astensor
 from ..arithmetic.utils import chunk_tree_add
-from ..utils import is_asc_sorted
 from ..array_utils import as_same_device, device
+from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, TensorOrder
+from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorOperandMixin
+from ..utils import is_asc_sorted
 
 # note: some logic of this file were adopted from `numpy/lib/histograms`
 

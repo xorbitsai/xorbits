@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ import weakref
 from typing import Any, Callable, Coroutine, Dict, Type
 from urllib.parse import urlparse
 
-from ....utils import implements, classproperty, abc_type_require_weakref_slot
+from ....utils import abc_type_require_weakref_slot, classproperty, implements
 from ...errors import ServerClosed
-from .base import Channel, ChannelType, Server, Client
+from .base import Channel, ChannelType, Client, Server
 from .core import register_client, register_server
 from .errors import ChannelClosed
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,23 +18,18 @@ import warnings
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.metrics import (
-    roc_curve as sklearn_roc_curve,
-    auc as sklearn_auc,
-    accuracy_score as sklearn_accuracy_score,
-)
-from sklearn.metrics.tests.test_ranking import make_prediction, _auc
 from sklearn.exceptions import UndefinedMetricWarning
+from sklearn.metrics import accuracy_score as sklearn_accuracy_score
+from sklearn.metrics import auc as sklearn_auc
+from sklearn.metrics import roc_curve as sklearn_roc_curve
+from sklearn.metrics.tests.test_ranking import _auc, make_prediction
 from sklearn.utils import check_random_state
-from sklearn.utils._testing import (
-    assert_almost_equal,
-    assert_array_almost_equal,
-)
+from sklearn.utils._testing import assert_almost_equal, assert_array_almost_equal
 
 from .... import dataframe as md
 from .... import tensor as mt
 from ...utils.extmath import softmax
-from .. import roc_curve, auc, accuracy_score, roc_auc_score
+from .. import accuracy_score, auc, roc_auc_score, roc_curve
 
 
 def _partial_roc_auc_score(y_true, y_predict, max_fpr):

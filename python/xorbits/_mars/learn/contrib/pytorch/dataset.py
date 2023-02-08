@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,10 +27,9 @@ except ImportError:  # pragma: no cover
 
 from .... import execute
 from ....core.context import get_context
-from ....tensor.core import TENSOR_TYPE
 from ....dataframe.core import DATAFRAME_TYPE, SERIES_TYPE
+from ....tensor.core import TENSOR_TYPE
 from ....utils import require_not_none
-
 
 ACCEPT_TYPE = (
     TENSOR_TYPE,

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,7 @@
 # limitations under the License.
 
 from ..utils import make_import_error_func
-from .core import xgboost, XGBScikitLearnBase
-
+from .core import XGBScikitLearnBase, xgboost
 
 XGBClassifier = make_import_error_func("xgboost")
 if xgboost:
@@ -22,8 +21,8 @@ if xgboost:
 
     from .... import tensor as mt
     from .core import wrap_evaluation_matrices
-    from .train import train
     from .predict import predict
+    from .train import train
 
     class XGBClassifier(XGBScikitLearnBase, XGBClassifierBase):
         """

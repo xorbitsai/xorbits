@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 # limitations under the License.
 
 import os
+import pkgutil
 import sys
 import tempfile
-import pkgutil
 
 import numpy as np
 import pandas as pd
@@ -25,16 +25,16 @@ import pytest
 import scipy.sparse as sps
 
 from ...lib.filesystem import LocalFileSystem
-from ...lib.sparse import SparseNDArray, SparseMatrix
-from ...serialization import AioSerializer, AioDeserializer
-from ...tests.core import require_ray, require_cudf, require_cupy
+from ...lib.sparse import SparseMatrix, SparseNDArray
+from ...serialization import AioDeserializer, AioSerializer
+from ...tests.core import require_cudf, require_cupy, require_ray
 from ..base import StorageLevel
 from ..cuda import CudaStorage
 from ..filesystem import DiskStorage
 from ..plasma import PlasmaStorage
+from ..ray import RayStorage
 from ..shared_memory import SharedMemoryStorage
 from ..vineyard import VineyardStorage
-from ..ray import RayStorage
 
 try:
     import vineyard
@@ -282,8 +282,8 @@ async def test_reader_and_writer_vineyard(ray_start_regular, storage_context):
 @require_cudf
 @pytest.mark.asyncio
 async def test_cuda_backend():
-    import cupy
     import cudf
+    import cupy
 
     params, teardown_params = await CudaStorage.setup()
     storage = CudaStorage(**params)

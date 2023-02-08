@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,17 +18,15 @@ from typing import List
 
 import numpy as np
 from scipy.sparse.base import spmatrix
-from sklearn.utils.multiclass import (
-    is_multilabel as sklearn_is_multilabel,
-    type_of_target as sklearn_type_of_target,
-)
+from sklearn.utils.multiclass import is_multilabel as sklearn_is_multilabel
+from sklearn.utils.multiclass import type_of_target as sklearn_type_of_target
 
 from ... import opcodes as OperandDef
 from ... import tensor as mt
 from ...core import ENTITY_TYPE, TILEABLE_TYPE, recursive_tile
 from ...core.context import get_context
 from ...serialization.serializables import AnyField, ListField
-from ...tensor.core import TensorOrder, TENSOR_TYPE
+from ...tensor.core import TENSOR_TYPE, TensorOrder
 from ...typing import TileableType
 from ...utils import has_unknown_shape
 from ..operands import LearnOperand, LearnOperandMixin, OutputType

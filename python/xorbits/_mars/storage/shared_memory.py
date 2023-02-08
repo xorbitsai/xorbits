@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ import os
 import random
 import struct
 import sys
-from string import ascii_letters, digits
-from typing import Any, Dict, List, Tuple, Optional
 from dataclasses import dataclass
+from string import ascii_letters, digits
+from typing import Any, Dict, List, Optional, Tuple
 
 try:
     if sys.version_info[:2] >= (3, 8):
@@ -40,9 +40,9 @@ except ImportError:  # pragma: no cover
     # allow shared_memory package to be absent
     SharedMemory = SharedMemoryForRead = None
 
-from ..serialization import AioSerializer, AioDeserializer
-from ..utils import implements, dataslots
-from .base import StorageBackend, StorageLevel, ObjectInfo, register_storage_backend
+from ..serialization import AioDeserializer, AioSerializer
+from ..utils import dataslots, implements
+from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import BufferWrappedFileObject, StorageFileObject
 
 _is_windows: bool = sys.platform.startswith("win")

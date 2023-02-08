@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,20 +18,19 @@ import numpy as np
 import pandas as pd
 
 from ... import opcodes as OperandDef
-from ...core.operand import OperandStage, MapReduceOperand
-from ...utils import lazy_import, calc_nsplits
+from ...core.operand import MapReduceOperand, OperandStage
 from ...serialization.serializables import (
     AnyField,
+    BoolField,
     Int32Field,
     ListField,
     StringField,
-    BoolField,
 )
 from ...tensor.base.psrs import PSRSOperandMixin
+from ...utils import calc_nsplits, lazy_import
 from ..core import IndexValue, OutputType
-from ..utils import standardize_range_index, parse_index, is_cudf
-from ..operands import DataFrameOperandMixin, DataFrameOperand, DataFrameShuffleProxy
-
+from ..operands import DataFrameOperand, DataFrameOperandMixin, DataFrameShuffleProxy
+from ..utils import is_cudf, parse_index, standardize_range_index
 
 cudf = lazy_import("cudf")
 

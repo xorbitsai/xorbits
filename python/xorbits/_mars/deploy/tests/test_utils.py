@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import pytest
 
 from ...services import NodeRole
 from ..utils import (
-    load_service_config_file,
     get_third_party_modules_from_config,
+    load_service_config_file,
     next_in_thread,
 )
 

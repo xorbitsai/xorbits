@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ from ... import get_context
 from ... import oscar as mo
 from ... import tensor as mt
 from ...core import tile
-from ...dataframe.core import DATAFRAME_TYPE, SERIES_TYPE, DATAFRAME_OR_SERIES_TYPE
+from ...dataframe.core import DATAFRAME_OR_SERIES_TYPE, DATAFRAME_TYPE, SERIES_TYPE
 from ...deploy.oscar.session import get_default_session
 from ...learn.utils import shuffle
 from ...lib.mmh3 import hash as mmh3_hash
 from ...tensor.core import TENSOR_TYPE
-from .. import spawn, ExecutableTuple
+from .. import ExecutableTuple, spawn
 
 
 def test_params():

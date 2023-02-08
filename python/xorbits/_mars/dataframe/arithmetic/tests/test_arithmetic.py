@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,38 +23,39 @@ import pandas as pd
 import pytest
 
 from .... import tensor as mt
-from ....core import OutputType, OperandType, tile
+from ....core import OperandType, OutputType, tile
 from ....core.operand import OperandStage
 from ....utils import dataslots
 from ...align import DataFrameIndexAlign, DataFrameShuffleProxy
 from ...core import IndexValue
-from ...datasource.dataframe import from_pandas, DataFrameDataSource
+from ...datasource.dataframe import DataFrameDataSource, from_pandas
 from ...datasource.from_tensor import dataframe_from_tensor
-from ...datasource.series import from_pandas as from_pandas_series, SeriesDataSource
-from ...utils import hash_dtypes
+from ...datasource.series import SeriesDataSource
+from ...datasource.series import from_pandas as from_pandas_series
 from ...utils import (
-    split_monotonic_index_min_max,
     build_split_idx_to_origin_idx,
     filter_index_value,
+    hash_dtypes,
+    split_monotonic_index_min_max,
 )
 from .. import (
     DataFrameAbs,
     DataFrameAdd,
-    DataFrameSubtract,
-    DataFrameMul,
-    DataFrameFloorDiv,
-    DataFrameTrueDiv,
-    DataFrameMod,
-    DataFramePower,
-    DataFrameEqual,
-    DataFrameNotEqual,
-    DataFrameGreater,
-    DataFrameLess,
-    DataFrameGreaterEqual,
-    DataFrameLessEqual,
-    DataFrameNot,
     DataFrameAnd,
+    DataFrameEqual,
+    DataFrameFloorDiv,
+    DataFrameGreater,
+    DataFrameGreaterEqual,
+    DataFrameLess,
+    DataFrameLessEqual,
+    DataFrameMod,
+    DataFrameMul,
+    DataFrameNot,
+    DataFrameNotEqual,
     DataFrameOr,
+    DataFramePower,
+    DataFrameSubtract,
+    DataFrameTrueDiv,
     DataFrameXor,
 )
 

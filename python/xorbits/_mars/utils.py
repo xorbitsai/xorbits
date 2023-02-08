@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,10 +27,9 @@ import logging
 import numbers
 import operator
 import os
-import shutil
-import weakref
 import pkgutil
 import random
+import shutil
 import socket
 import struct
 import sys
@@ -39,46 +38,47 @@ import time
 import types
 import uuid
 import warnings
+import weakref
 import zlib
 from abc import ABC
 from contextlib import contextmanager
+from types import TracebackType
 from typing import (
     Any,
-    List,
+    Callable,
     Dict,
+    List,
+    Mapping,
     NamedTuple,
+    Optional,
     Set,
     Tuple,
     Type,
     Union,
-    Callable,
-    Optional,
-    Mapping,
 )
-from types import TracebackType
 from urllib.parse import urlparse
 
 import cloudpickle as pickle
 import numpy as np
 import pandas as pd
 
-from .constants import MARS_LOG_PATH_KEY
 from ._utils import (  # noqa: F401 # pylint: disable=unused-import
+    NamedType,
+    Timer,
+    TypeDispatcher,
+    ceildiv,
+    new_random_id,
+    register_tokenizer,
+    reset_id_random_seed,
     to_binary,
     to_str,
     to_text,
-    NamedType,
-    TypeDispatcher,
     tokenize,
     tokenize_int,
-    register_tokenizer,
-    ceildiv,
-    reset_id_random_seed,
-    new_random_id,
-    Timer,
 )
+from .constants import MARS_LOG_PATH_KEY
 from .lib.version import parse as parse_version
-from .typing import ChunkType, TileableType, EntityType, OperandType
+from .typing import ChunkType, EntityType, OperandType, TileableType
 
 logger = logging.getLogger(__name__)
 random.seed(int(time.time()) * os.getpid())
@@ -116,8 +116,8 @@ if sys.platform.startswith("win"):
 
 
 try:
-    from pandas._libs.lib import NoDefault, no_default
     from pandas._libs import lib as _pd__libs_lib
+    from pandas._libs.lib import NoDefault, no_default
 
     _raw__reduce__ = type(NoDefault).__reduce__
 
@@ -582,8 +582,7 @@ def estimate_pandas_size(
 def build_fetch_shuffle(
     chunk: ChunkType, n_reducers=None, shuffle_fetch_type=None
 ) -> ChunkType:
-    from .core.operand import ShuffleProxy
-    from .core.operand import ShuffleFetchType
+    from .core.operand import ShuffleFetchType, ShuffleProxy
 
     chunk_op = chunk.op
     assert isinstance(chunk_op, ShuffleProxy)
@@ -693,11 +692,11 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
     from sklearn.base import BaseEstimator
 
     from .dataframe.utils import (
+        concat_on_columns,
+        get_xdf,
         is_dataframe,
         is_index,
         is_series,
-        get_xdf,
-        concat_on_columns,
     )
     from .lib.groupby_wrapper import GroupByWrapper
     from .tensor.array_utils import get_array_module, is_array
@@ -789,8 +788,8 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
 
 
 def merged_chunk_as_tileable_type(merged, tileable: TileableType):
-    from .tensor.core import TensorOrder
     from .tensor.array_utils import get_array_module
+    from .tensor.core import TensorOrder
 
     if hasattr(tileable, "order") and tileable.ndim > 0:
         module = get_array_module(merged)
@@ -1152,8 +1151,8 @@ def get_dtype(dtype: Union[np.dtype, pd.api.extensions.ExtensionDtype]):
 def calc_object_overhead(chunk: ChunkType, shape: Tuple[int]) -> int:
     from .dataframe.core import (
         DATAFRAME_CHUNK_TYPE,
-        SERIES_CHUNK_TYPE,
         INDEX_CHUNK_TYPE,
+        SERIES_CHUNK_TYPE,
     )
 
     if not shape or np.isnan(shape[0]) or getattr(chunk, "dtypes", None) is None:

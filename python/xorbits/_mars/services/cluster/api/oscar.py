@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 import asyncio
 import logging
-from typing import List, Dict, Optional, Set, Type, TypeVar
+from typing import Dict, List, Optional, Set, Type, TypeVar
 
 from .... import oscar as mo
 from ....lib.aio import alru_cache
@@ -22,12 +22,12 @@ from ....resource import Resource
 from ....typing import BandType
 from ...core import NodeRole
 from ..core import (
-    watch_method,
-    NodeStatus,
-    WorkerSlotInfo,
-    QuotaInfo,
     DiskInfo,
+    NodeStatus,
+    QuotaInfo,
     StorageInfo,
+    WorkerSlotInfo,
+    watch_method,
 )
 from .core import AbstractClusterAPI
 
@@ -387,8 +387,8 @@ class MockClusterAPI(ClusterAPI):
     async def cleanup(cls, address: str):
         from ..file_logger import FileLoggerActor
         from ..supervisor.locator import SupervisorPeerLocatorActor
-        from ..uploader import NodeInfoUploaderActor
         from ..supervisor.node_info import NodeInfoCollectorActor
+        from ..uploader import NodeInfoUploaderActor
 
         await asyncio.gather(
             mo.destroy_actor(

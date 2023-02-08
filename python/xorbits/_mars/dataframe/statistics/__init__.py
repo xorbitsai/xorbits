@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ from .quantile import DataFrameQuantile
 
 
 def _install():
-    from ..core import SERIES_TYPE, DATAFRAME_TYPE
-    from .quantile import quantile_series, quantile_dataframe
-    from .corr import df_corr, df_corrwith, series_corr, series_autocorr
+    from ..core import DATAFRAME_TYPE, SERIES_TYPE
+    from .corr import df_corr, df_corrwith, series_autocorr, series_corr
+    from .quantile import quantile_dataframe, quantile_series
 
     for t in SERIES_TYPE:
         t.quantile = quantile_series

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 import asyncio
 import atexit
+import logging
 import os
 import sys
-import logging
 from concurrent.futures import Future as SyncFuture
 from typing import Dict, List, Union
 
@@ -30,15 +30,10 @@ from ...oscar.backends.router import Router
 from ...resource import cpu_count, cuda_count, mem_total
 from ...services import NodeRole
 from ...services.task.execution.api import ExecutionConfig
-from ...typing import ClusterType, ClientType
+from ...typing import ClientType, ClusterType
 from ..utils import get_third_party_modules_from_config, load_config
 from .pool import create_supervisor_actor_pool, create_worker_actor_pool
-from .service import (
-    start_supervisor,
-    start_worker,
-    stop_supervisor,
-    stop_worker,
-)
+from .service import start_supervisor, start_worker, stop_supervisor, stop_worker
 from .session import AbstractSession, _new_session, ensure_isolation_created
 
 logger = logging.getLogger(__name__)

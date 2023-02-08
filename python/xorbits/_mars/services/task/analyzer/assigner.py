@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from operator import itemgetter
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 import numpy as np
 
-from ....core import ChunkGraph, ChunkData
-from ....core.operand import Operand, Fetch
+from ....core import ChunkData, ChunkGraph
+from ....core.operand import Fetch, Operand
 from ....lib.ordered_set import OrderedSet
 from ....resource import Resource
 from ....typing import BandType

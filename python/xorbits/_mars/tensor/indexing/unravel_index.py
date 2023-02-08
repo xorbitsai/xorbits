@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ from collections.abc import Iterable
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import FieldTypes, KeyField, TupleField, StringField
 from ...core import ExecutableTuple
-from ..operands import TensorHasInput, TensorOperandMixin
-from ..datasource import tensor as astensor
+from ...serialization.serializables import FieldTypes, KeyField, StringField, TupleField
 from ..array_utils import as_same_device, device
 from ..core import TensorOrder
+from ..datasource import tensor as astensor
+from ..operands import TensorHasInput, TensorOperandMixin
 
 
 class TensorUnravelIndex(TensorHasInput, TensorOperandMixin):

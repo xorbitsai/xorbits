@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ import itertools
 from abc import ABC, abstractmethod
 from collections import OrderedDict, namedtuple
 from enum import Enum
-from operator import itemgetter
-from typing import Tuple, List, Union
 from numbers import Integral
+from operator import itemgetter
+from typing import List, Tuple, Union
 
 import numpy as np
 
@@ -29,13 +29,13 @@ from ...utils import calc_nsplits, has_unknown_shape
 from ..core import TENSOR_TYPE, Chunk, TensorOrder
 from ..operands import TensorShuffleProxy
 from ..utils import (
-    slice_split,
-    calc_sliced_size,
     broadcast_shape,
-    unify_chunks,
-    split_indexes_into_chunks,
-    filter_inputs,
     calc_pos,
+    calc_sliced_size,
+    filter_inputs,
+    slice_split,
+    split_indexes_into_chunks,
+    unify_chunks,
 )
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,29 +15,29 @@
 # limitations under the License.
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 from ....utils import ignore_warning
 from ...datasource import ones, tensor
 from .. import (
-    mean,
-    nansum,
-    nanmax,
-    nanmin,
-    nanmean,
-    nanprod,
-    nanargmax,
-    nanargmin,
-    nanvar,
-    nanstd,
-    count_nonzero,
     allclose,
     array_equal,
-    var,
-    std,
-    nancumsum,
+    count_nonzero,
+    mean,
+    nanargmax,
+    nanargmin,
     nancumprod,
+    nancumsum,
+    nanmax,
+    nanmean,
+    nanmin,
+    nanprod,
+    nanstd,
+    nansum,
+    nanvar,
+    std,
+    var,
 )
 
 

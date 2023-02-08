@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ..utils import gen_random_seeds
-from .core import TensorRandomOperandMixin, TensorDistribution
+from .core import TensorDistribution, TensorRandomOperandMixin
 
 
 class TensorStandardNormal(TensorDistribution, TensorRandomOperandMixin):

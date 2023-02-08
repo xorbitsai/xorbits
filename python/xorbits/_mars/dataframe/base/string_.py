@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import pandas as pd
 
 from ... import opcodes as OperandDef
 from ...core import OutputType, recursive_tile
-from ...serialization.serializables import KeyField, StringField, TupleField, DictField
+from ...serialization.serializables import DictField, KeyField, StringField, TupleField
 from ...tensor import tensor as astensor
 from ...tensor.core import TENSOR_TYPE
 from ...utils import has_unknown_shape
@@ -27,7 +27,7 @@ from ..align import align_series_series
 from ..core import SERIES_TYPE
 from ..initializer import Series as asseries
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_empty_series, parse_index, infer_index_value
+from ..utils import build_empty_series, infer_index_value, parse_index
 
 
 class SeriesStringMethod(DataFrameOperand, DataFrameOperandMixin):

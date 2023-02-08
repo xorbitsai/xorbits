@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 
 def _install():
     from ..core import DataFrame, Series
-    from .ufunc import _array_ufunc
     from .tensor import _tensor_ufunc
+    from .ufunc import _array_ufunc
 
     for Entity in (DataFrame, Series):
         Entity.__array_ufunc__ = _array_ufunc

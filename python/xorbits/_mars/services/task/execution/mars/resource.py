@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,9 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Dict, Type, Any
+from typing import Any, Dict, Type
 
 from .....resource import Resource
-
 
 _name_to_resource_evaluator: Dict[str, Type["ResourceEvaluator"]] = {}
 

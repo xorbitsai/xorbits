@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ from ..core import Tensor
 from ..datasource import tensor as astensor
 from ..operands import TensorOperand, TensorOperandMixin
 from ..utils import calc_sliced_size
-from .core import chunk_size_type, get_nsplits, gen_rechunk_infos
+from .core import chunk_size_type, gen_rechunk_infos, get_nsplits
 
 
 class TensorRechunk(TensorOperand, TensorOperandMixin):

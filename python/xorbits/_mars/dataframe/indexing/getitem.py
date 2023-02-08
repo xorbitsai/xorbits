@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,27 +15,27 @@
 import itertools
 from numbers import Integral
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core import ENTITY_TYPE, OutputType, recursive_tile
-from ...serialization.serializables import AnyField, Int32Field, BoolField
-from ...tensor.core import TENSOR_TYPE, TENSOR_CHUNK_TYPE
+from ...serialization.serializables import AnyField, BoolField, Int32Field
+from ...tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
 from ...tensor.datasource import tensor as astensor
 from ...utils import has_unknown_shape
-from ..align import align_dataframe_series, align_dataframe_dataframe
+from ..align import align_dataframe_dataframe, align_dataframe_series
 from ..core import (
-    SERIES_TYPE,
-    SERIES_CHUNK_TYPE,
-    DATAFRAME_TYPE,
     DATAFRAME_CHUNK_TYPE,
+    DATAFRAME_TYPE,
+    SERIES_CHUNK_TYPE,
+    SERIES_TYPE,
     is_chunk_meta_lazy,
 )
 from ..merge import DataFrameConcat
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, in_range_index
+from ..utils import in_range_index, parse_index
 from .utils import calc_columns_index
 
 

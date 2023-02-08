@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ from ....core import tile
 from ....core.operand import OperandStage
 from ...datasource import ones, tensor
 from ...merge import TensorConcatenate
-from .. import all, TensorMean, TensorArgmax, TensorArgmin
+from .. import TensorArgmax, TensorArgmin, TensorMean, all
 
 
 def test_base_reduction():

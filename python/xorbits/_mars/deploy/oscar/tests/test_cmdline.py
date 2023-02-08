@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,16 +30,15 @@ import psutil
 import pytest
 
 from .... import tensor as mt
-from ....lib.aio import new_isolation, get_isolation, stop_isolation
+from ....lib.aio import get_isolation, new_isolation, stop_isolation
 from ....services import NodeRole
 from ....services.cluster import ClusterAPI
 from ....session import new_session
 from ....tests import flaky
 from ....utils import clean_mars_tmp_dir, get_next_port
 from ..cmdline import OscarCommandRunner
-from ..worker import WorkerCommandRunner
 from ..supervisor import SupervisorCommandRunner
-
+from ..worker import WorkerCommandRunner
 
 logger = logging.getLogger(__name__)
 

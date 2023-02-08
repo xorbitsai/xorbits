@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,19 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from ... import opcodes as OperandDef
 from ...core import OutputType
 from ...serialization.serializables import AnyField, BoolField
-from ...utils import no_default, calc_nsplits
+from ...utils import calc_nsplits, no_default
 from ..core import IndexValue
-from ..operands import DataFrameOperandMixin, DataFrameOperand, DATAFRAME_TYPE
+from ..operands import DATAFRAME_TYPE, DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
-    parse_index,
     build_empty_df,
     build_empty_series,
+    parse_index,
     standardize_range_index,
 )
 

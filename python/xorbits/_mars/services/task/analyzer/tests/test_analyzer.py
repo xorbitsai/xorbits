@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ from .....core.operand.shuffle import ShuffleFetchType, ShuffleProxy
 from .....resource import Resource
 from ...core import Task
 from ..analyzer import GraphAnalyzer
-
 
 t1 = mt.random.RandomState(0).rand(31, 27, chunk_size=10)
 t2 = t1.reshape(27, 31)

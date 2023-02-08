@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,18 +21,18 @@ import sys
 import uuid
 from collections import namedtuple
 from ctypes import (
+    CDLL,
+    POINTER,
+    Structure,
+    byref,
     c_char,
     c_char_p,
     c_int,
     c_uint,
     c_ulonglong,
-    byref,
     create_string_buffer,
-    Structure,
-    POINTER,
-    CDLL,
 )
-from typing import List, Tuple, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from ..utils import parse_readable_size
 
@@ -631,7 +631,7 @@ def get_compute_running_processes(handle: _nvmlDevice_t) -> List[nvmlFriendlyObj
         return []
     elif ret == NVML_ERROR_INSUFFICIENT_SIZE:
         # typical case
-        # oversize the array incase more processes are created
+        # oversize the array in case more processes are created
         c_count.value = c_count.value * 2 + 5
         proc_array = _nvmlProcessInfo_t * c_count.value
         c_procs = proc_array()

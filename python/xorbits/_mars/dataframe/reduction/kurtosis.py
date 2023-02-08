@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ import numpy as np
 
 from ... import opcodes
 from ...config import options
-from ...core import OutputType, ENTITY_TYPE
+from ...core import ENTITY_TYPE, OutputType
 from ...serialization.serializables import BoolField
-from .core import DataFrameReductionOperand, DataFrameReductionMixin
+from .core import DataFrameReductionMixin, DataFrameReductionOperand
 
 
 class DataFrameKurtosis(DataFrameReductionOperand, DataFrameReductionMixin):

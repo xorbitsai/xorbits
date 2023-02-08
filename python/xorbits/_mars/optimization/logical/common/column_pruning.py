@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any, List
 
+from ....core import CHUNK_TYPE, OperandType, TileableType
+from ....dataframe.datasource.core import ColumnPruneSupportedDataSourceMixin
+from ....dataframe.utils import parse_index
+from ....utils import implements
 from ..core import (
     OperandBasedOptimizationRule,
     OptimizationRecord,
     OptimizationRecordType,
 )
-from ....core import OperandType, TileableType, CHUNK_TYPE
-from ....dataframe.datasource.core import ColumnPruneSupportedDataSourceMixin
-from ....dataframe.utils import parse_index
-from ....utils import implements
 
 
 class PruneDataSource(OperandBasedOptimizationRule, metaclass=ABCMeta):

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,26 +13,24 @@
 # limitations under the License.
 
 # noinspection PyUnresolvedReferences
-from ..core import GroupBy, DataFrameGroupBy, SeriesGroupBy
+from ..core import DataFrameGroupBy, GroupBy, SeriesGroupBy
 
 
 def _install():
-    from ..core import DATAFRAME_TYPE, SERIES_TYPE, GROUPBY_TYPE, DATAFRAME_GROUPBY_TYPE
-    from .core import groupby
+    from ..core import DATAFRAME_GROUPBY_TYPE, DATAFRAME_TYPE, GROUPBY_TYPE, SERIES_TYPE
     from .aggregation import agg
     from .apply import groupby_apply
-    from .cum import cumcount, cummin, cummax, cumprod, cumsum
+    from .core import groupby
+    from .cum import cumcount, cummax, cummin, cumprod, cumsum
+    from .fill import bfill, ffill, fillna
     from .getitem import df_groupby_getitem
     from .head import head
-    from .transform import groupby_transform
-    from .sample import groupby_sample
-    from .fill import ffill, bfill, fillna
 
     # Just for enabling custom agg function registration.
     # Therefore, del this immediately after import.
-    from .nunique import (
-        DataFrameCustomGroupByNuniqueMixin,
-    )
+    from .nunique import DataFrameCustomGroupByNuniqueMixin
+    from .sample import groupby_sample
+    from .transform import groupby_transform
 
     del DataFrameCustomGroupByNuniqueMixin
 

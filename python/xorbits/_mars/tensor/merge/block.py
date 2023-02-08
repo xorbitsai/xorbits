@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,11 @@
 import functools
 import itertools
 import operator
+
 import numpy as np
 
-from ..datasource.empty import empty
 from ..datasource.array import array
+from ..datasource.empty import empty
 
 # Internal functions to eliminate the overhead of repeated dispatch in one of
 # the two possible paths inside mt.block.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 from math import factorial
+
+import numpy as np
 
 from ... import opcodes as OperandDef
 from ...serialization.serializables import Int32Field
-from ..datasource import tensor as astensor
 from ..array_utils import as_same_device, device, get_array_module
+from ..datasource import tensor as astensor
 from .core import TensorReduction, TensorReductionMixin, numel
 
 

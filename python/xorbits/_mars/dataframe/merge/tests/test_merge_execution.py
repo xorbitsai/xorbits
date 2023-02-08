@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ from ....core.graph.builder.utils import build_graph
 from ...datasource.dataframe import from_pandas
 from ...datasource.series import from_pandas as series_from_pandas
 from ...utils import sort_dataframe_inplace
-from .. import concat, DataFrameConcat, DataFrameMergeAlign
+from .. import DataFrameConcat, DataFrameMergeAlign, concat
 
 
 def test_merge(setup):

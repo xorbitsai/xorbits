@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,25 +15,30 @@
 
 def _install():
     from pandas.util import cache_readonly
-    from ..operands import DATAFRAME_TYPE, SERIES_TYPE, INDEX_TYPE
+
+    from ..operands import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
+    from .add_prefix_suffix import (
+        df_add_prefix,
+        df_add_suffix,
+        series_add_prefix,
+        series_add_suffix,
+    )
+    from .align import align
     from .at import at
     from .getitem import dataframe_getitem, series_getitem
     from .iat import iat
-    from .iloc import iloc, head, tail, index_getitem, index_setitem
+    from .iloc import head, iloc, index_getitem, index_setitem, tail
     from .insert import df_insert
     from .loc import loc
     from .reindex import reindex, reindex_like
-    from .rename import df_rename, series_rename, index_rename, index_set_names
+    from .rename import df_rename, index_rename, index_set_names, series_rename
     from .rename_axis import rename_axis
     from .reset_index import df_reset_index, series_reset_index
+    from .sample import sample
+    from .set_axis import df_set_axis, series_set_axis
     from .set_index import set_index
     from .setitem import dataframe_setitem
     from .where import mask, where
-    from .set_axis import df_set_axis, series_set_axis
-    from .sample import sample
-    from .add_prefix_suffix import df_add_prefix, series_add_prefix
-    from .add_prefix_suffix import df_add_suffix, series_add_suffix
-    from .align import align
 
     for cls in DATAFRAME_TYPE + SERIES_TYPE:
         setattr(cls, "iloc", cache_readonly(iloc))

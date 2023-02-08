@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,22 +15,18 @@
 import os
 import subprocess
 import weakref
+from typing import BinaryIO, Dict, Iterator, List, TextIO, Tuple, Union
 from urllib.parse import urlparse
-from typing import List, Dict, Union, Tuple, Iterator, BinaryIO, TextIO
 
 import pyarrow as pa
-from pyarrow.fs import (
-    FileSystem as ArrowFileSystem,
-    LocalFileSystem as ArrowLocalFileSystem,
-    HadoopFileSystem as ArrowHadoopFileSystem,
-    FileSelector,
-    FileInfo,
-    FileType,
-)
+from pyarrow.fs import FileInfo, FileSelector
+from pyarrow.fs import FileSystem as ArrowFileSystem
+from pyarrow.fs import FileType
+from pyarrow.fs import HadoopFileSystem as ArrowHadoopFileSystem
+from pyarrow.fs import LocalFileSystem as ArrowLocalFileSystem
 
 from ...utils import implements, stringify_path
 from .core import FileSystem, path_type
-
 
 __all__ = ("ArrowBasedLocalFileSystem", "HadoopFileSystem")
 

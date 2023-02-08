@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, recursive_tile
-from ...serialization.serializables import KeyField, AnyField, BoolField, Int32Field
-from ...utils import has_unknown_shape, ceildiv
-from ..operands import TensorOperand, TensorOperandMixin
-from ..datasource import tensor as astensor
+from ...serialization.serializables import AnyField, BoolField, Int32Field, KeyField
+from ...utils import ceildiv, has_unknown_shape
 from ..array_utils import as_same_device, device
-from ..core import Tensor, TENSOR_TYPE
+from ..core import TENSOR_TYPE, Tensor
+from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorOperandMixin
 from ..utils import decide_unify_split
 
 
@@ -76,8 +76,8 @@ class TensorFillDiagonal(TensorOperand, TensorOperandMixin):
         2. if val is a Tensor, rechunk it into one chunk.
         """
 
-        from ..datasource import diag
         from ..base import tile
+        from ..datasource import diag
 
         is_val_tensor = isinstance(val, TENSOR_TYPE)
 

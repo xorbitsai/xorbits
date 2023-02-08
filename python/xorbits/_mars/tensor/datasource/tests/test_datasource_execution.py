@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import tempfile
-import shutil
 import os
+import shutil
+import tempfile
 import time
 
 import numpy as np
@@ -40,34 +40,34 @@ try:
 except ImportError:  # pragma: no cover
     zarr = None
 
-from .... import tensor as mt
 from .... import dataframe as md
+from .... import tensor as mt
 from ....lib.sparse import SparseNDArray
 from ....tests.core import require_cupy
 from ....utils import lazy_import
 from ...lib import nd_grid
 from .. import (
-    tensor,
-    ones_like,
-    zeros,
-    zeros_like,
-    full,
-    full_like,
     arange,
-    empty,
-    empty_like,
     diag,
     diagflat,
+    empty,
+    empty_like,
     eye,
+    from_dataframe,
+    fromhdf5,
+    fromtiledb,
+    fromzarr,
+    full,
+    full_like,
+    indices,
     linspace,
     meshgrid,
-    indices,
-    triu,
+    ones_like,
+    tensor,
     tril,
-    from_dataframe,
-    fromtiledb,
-    fromhdf5,
-    fromzarr,
+    triu,
+    zeros,
+    zeros_like,
 )
 
 cupy = lazy_import("cupy")

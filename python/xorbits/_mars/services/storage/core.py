@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ import asyncio
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ... import oscar as mo
 from ...lib.aio import AioFileObject
@@ -501,7 +501,7 @@ class StorageManagerActor(mo.StatelessActor):
 
     async def _create_storage_handler_actors(self):
         from .handler import StorageHandlerActor
-        from .transfer import SenderManagerActor, ReceiverManagerActor
+        from .transfer import ReceiverManagerActor, SenderManagerActor
 
         for band_name in self._init_params:
             strategy = IdleLabel(band_name, "StorageHandler")
@@ -547,7 +547,7 @@ class StorageManagerActor(mo.StatelessActor):
 
     async def _create_transfer_actors(self):
         from .handler import StorageHandlerActor
-        from .transfer import SenderManagerActor, ReceiverManagerActor
+        from .transfer import ReceiverManagerActor, SenderManagerActor
 
         default_band_name = "numa-0"
         sender_strategy = IdleLabel("io", "sender")

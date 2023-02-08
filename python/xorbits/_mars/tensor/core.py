@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,28 +23,28 @@ from typing import Any, Dict
 import numpy as np
 
 from ..core import (
-    HasShapeTileable,
-    ChunkData,
     Chunk,
+    ChunkData,
+    HasShapeTileable,
     HasShapeTileableData,
     OutputType,
-    register_output_types,
     _ExecuteAndFetchMixin,
     is_build_mode,
+    register_output_types,
 )
 from ..core.entity.utils import refresh_tileable_shape
 from ..serialization.serializables import (
-    Serializable,
-    FieldTypes,
-    DataTypeField,
-    ListField,
-    TupleField,
-    StringField,
     AnyField,
+    DataTypeField,
+    FieldTypes,
+    ListField,
     ReferenceField,
+    Serializable,
+    StringField,
+    TupleField,
 )
-from ..utils import on_serialize_shape, on_deserialize_shape
-from .utils import get_chunk_slices, fetch_corner_data
+from ..utils import on_deserialize_shape, on_serialize_shape
+from .utils import fetch_corner_data, get_chunk_slices
 
 logger = logging.getLogger(__name__)
 

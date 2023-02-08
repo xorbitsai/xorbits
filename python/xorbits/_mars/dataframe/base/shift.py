@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ import pandas as pd
 
 from ... import opcodes as OperandDef
 from ...core import OutputType
-from ...serialization.serializables import KeyField, AnyField, Int8Field, Int64Field
+from ...serialization.serializables import AnyField, Int8Field, Int64Field, KeyField
 from ...utils import has_unknown_shape, no_default, pd_release_version
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, build_df, build_series, validate_axis
+from ..utils import build_df, build_series, parse_index, validate_axis
 
 _need_consolidate = pd.__version__ in ("1.1.0", "1.3.0", "1.3.1")
 _enable_no_default = pd_release_version[:2] > (1, 1)
@@ -299,9 +299,7 @@ class DataFrameShift(DataFrameOperand, DataFrameOperandMixin):
                 to_concats = [c]
                 left = abs(op.periods)
                 while left > 0 and 0 <= prev_i < inp.chunk_shape[0]:
-                    prev_chunk = inp.cix[
-                        prev_i,
-                    ]
+                    prev_chunk = inp.cix[prev_i,]
                     size = min(left, prev_chunk.shape[0])
                     left -= size
                     prev_i = prev_i - 1 if inc else prev_i + 1

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
 import cloudpickle
 import numpy as np
 
-from ...core import Object, OBJECT_TYPE, OBJECT_CHUNK_TYPE, recursive_tile
+from ...core import OBJECT_CHUNK_TYPE, OBJECT_TYPE, Object, recursive_tile
 from ...serialization.serializables import (
-    KeyField,
-    Int32Field,
-    DictField,
     AnyField,
     BoolField,
+    DictField,
+    Int32Field,
+    KeyField,
 )
 from ...tensor.core import TensorOrder
 from ...utils import has_unknown_shape, tokenize

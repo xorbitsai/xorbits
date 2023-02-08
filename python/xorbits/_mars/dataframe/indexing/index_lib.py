@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,41 +14,44 @@
 
 import itertools
 from collections import namedtuple
-from typing import List, Union, Tuple
+from typing import List, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from pandas.core.dtypes.cast import find_common_type
 
-from ...core import Tileable, Chunk, OutputType, recursive_tile
+from ...core import Chunk, OutputType, Tileable, recursive_tile
 from ...core.operand import OperandStage
 from ...tensor.core import TENSOR_TYPE
+from ...tensor.indexing.index_lib import ChunkIndexInfo as ChunkIndexInfoBase
 from ...tensor.indexing.index_lib import (
-    IndexHandlerContext,
+    IndexesHandler,
     IndexHandler,
+    IndexHandlerContext,
     IndexInfo,
     IndexType,
-    ChunkIndexInfo as ChunkIndexInfoBase,
-    SliceIndexHandler as SliceIndexHandlerBase,
-    NDArrayBoolIndexHandler as NDArrayBoolIndexHandlerBase,
-    TensorBoolIndexHandler as TensorBoolIndexHandlerBase,
     IntegralIndexHandler,
-    IndexesHandler,
+)
+from ...tensor.indexing.index_lib import (
+    NDArrayBoolIndexHandler as NDArrayBoolIndexHandlerBase,
+)
+from ...tensor.indexing.index_lib import SliceIndexHandler as SliceIndexHandlerBase
+from ...tensor.indexing.index_lib import (
+    TensorBoolIndexHandler as TensorBoolIndexHandlerBase,
 )
 from ...tensor.utils import (
-    split_indexes_into_chunks,
     calc_pos,
-    filter_inputs,
-    slice_split,
     calc_sliced_size,
-    to_numpy,
+    filter_inputs,
     normalize_chunk_sizes,
+    slice_split,
+    split_indexes_into_chunks,
+    to_numpy,
 )
 from ...utils import classproperty, has_unknown_shape, is_full_slice
 from ..core import SERIES_CHUNK_TYPE, SERIES_TYPE, IndexValue
 from ..utils import parse_index
 from .utils import convert_labels_into_positions
-
 
 ChunkIndexAxisInfo = namedtuple(
     "chunk_index_axis_info",

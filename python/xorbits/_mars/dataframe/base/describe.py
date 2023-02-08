@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,13 +19,12 @@ from ... import opcodes as OperandDef
 from ... import tensor as mt
 from ...core import recursive_tile
 from ...core.operand import OperandStage
-from ...serialization.serializables import FieldTypes, KeyField, ListField, AnyField
-from ...utils import lazy_import, has_unknown_shape
+from ...serialization.serializables import AnyField, FieldTypes, KeyField, ListField
+from ...utils import has_unknown_shape, lazy_import
 from ..core import SERIES_TYPE
 from ..initializer import DataFrame, Series
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, build_empty_df
-
+from ..utils import build_empty_df, parse_index
 
 cudf = lazy_import("cudf")
 

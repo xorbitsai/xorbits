@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict, Any, Type, Union
+from typing import Any, Dict, List, Type, Union
 
-from ....core import ChunkGraph, Chunk, TileContext
+from ....core import Chunk, ChunkGraph, TileContext
 from ....core.operand.shuffle import ShuffleFetchType
 from ....resource import Resource
 from ....typing import BandType

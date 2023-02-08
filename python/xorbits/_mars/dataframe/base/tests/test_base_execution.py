@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,33 +15,34 @@
 import random
 from collections import OrderedDict
 
+import mars
 import numpy as np
 import pandas as pd
 import pytest
-
-import mars
 
 try:
     import pyarrow as pa
 except ImportError:  # pragma: no cover
     pa = None
 
-from ....config import options, option_context
+from ....config import option_context, options
 from ....dataframe import DataFrame, Series
 from ....tensor import arange, tensor
 from ....tensor.random import rand
 from ....tests.core import require_cudf
-from ....utils import lazy_import, pd_release_version, no_default
-from ... import eval as mars_eval, cut, qcut, get_dummies
+from ....utils import lazy_import, no_default, pd_release_version
+from ... import cut
+from ... import eval as mars_eval
+from ... import get_dummies, qcut
 from ...core import DATAFRAME_OR_SERIES_TYPE
 from ...datasource.dataframe import from_pandas as from_pandas_df
-from ...datasource.series import from_pandas as from_pandas_series
 from ...datasource.index import from_pandas as from_pandas_index
-from .. import to_gpu, to_cpu
+from ...datasource.series import from_pandas as from_pandas_series
+from .. import to_cpu, to_gpu
 from ..bloom_filter import filter_by_bloom_filter
+from ..rebalance import DataFrameRebalance
 from ..shift import _enable_no_default, _with_column_freq_bug
 from ..to_numeric import to_numeric
-from ..rebalance import DataFrameRebalance
 
 pytestmark = pytest.mark.pd_compat
 

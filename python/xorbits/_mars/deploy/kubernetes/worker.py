@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ class K8SWorkerCommandRunner(K8SServiceMixin, WorkerCommandRunner):
         super().__init__(*args, **kwargs)
 
     async def start_services(self):
-        from ..oscar.worker import start_worker
         from ...services.cluster import ClusterAPI
+        from ..oscar.worker import start_worker
 
         self.write_pid_file()
         await start_worker(

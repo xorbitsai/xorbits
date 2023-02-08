@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...serialization.serializables import KeyField
 from ..array_utils import as_same_device, device
+from ..core import TensorOrder
 from ..datasource import tensor as astensor
 from ..operands import TensorHasInput, TensorOperandMixin
-from ..core import TensorOrder
 
 
 class TensorInv(TensorHasInput, TensorOperandMixin):
@@ -60,11 +60,11 @@ class TensorInv(TensorHasInput, TensorOperandMixin):
         L * (U * A_inv) = P.T * b_eye
         use `solve_triangular` twice to compute the inverse of matrix A.
         """
-        from .lu import lu
-        from ..datasource import eye
         from ..base.transpose import TensorTranspose
-        from .tensordot import tensordot
+        from ..datasource import eye
+        from .lu import lu
         from .solve_triangular import solve_triangular
+        from .tensordot import tensordot
 
         in_tensor = op.input
         is_sparse = in_tensor.is_sparse()

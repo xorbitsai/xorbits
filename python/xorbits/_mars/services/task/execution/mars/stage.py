@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ from collections import defaultdict
 from typing import Dict, List
 
 from ..... import oscar as mo
-from .....core import ChunkGraph, Chunk
-from .....core.operand import Fuse, Fetch
+from .....core import Chunk, ChunkGraph
+from .....core.operand import Fetch, Fuse
 from .....metrics import Metrics
-from .....utils import get_chunk_params
 from .....typing import BandType, TileableType
+from .....utils import get_chunk_params
 from ....meta import MetaAPI, WorkerMetaAPI
 from ....scheduling import SchedulingAPI
 from ....subtask import Subtask, SubtaskGraph, SubtaskResult, SubtaskStatus

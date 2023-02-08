@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,20 +15,20 @@
 import numpy as np
 
 from ... import opcodes
-from ...core import ENTITY_TYPE, CHUNK_TYPE, recursive_tile
+from ...core import CHUNK_TYPE, ENTITY_TYPE, recursive_tile
 from ...core.custom_log import redirect_custom_log
 from ...serialization.serializables import (
-    FunctionField,
     BoolField,
-    TupleField,
     DictField,
+    FunctionField,
+    TupleField,
 )
 from ...utils import (
     enter_current_session,
-    quiet_stdio,
     find_objects,
-    replace_objects,
     has_unknown_shape,
+    quiet_stdio,
+    replace_objects,
 )
 from ..operands import TensorOperand, TensorOperandMixin
 

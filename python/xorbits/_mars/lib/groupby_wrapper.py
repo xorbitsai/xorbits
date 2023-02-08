@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import cloudpickle
 import numpy as np
 from pandas.core.groupby import DataFrameGroupBy, SeriesGroupBy
 
-from ..utils import estimate_pandas_size, pd_release_version, no_default
+from ..utils import estimate_pandas_size, no_default, pd_release_version
 
 _HAS_SQUEEZE = pd_release_version < (1, 1, 0)
 _HAS_DROPNA = pd_release_version >= (1, 1, 0)

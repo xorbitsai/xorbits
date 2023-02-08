@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Type, Set
+from typing import Dict, List, Optional, Set, Type
 
-from ...core import OperandType, EntityType, enter_mode
+from ...core import EntityType, OperandType, enter_mode
 from ...core.graph import EntityGraph
 from ...utils import implements
 

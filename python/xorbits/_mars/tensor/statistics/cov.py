@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +18,11 @@ import warnings
 
 import numpy as np
 
-from ..core import Tensor
-from ..datasource import tensor as astensor, array
 from ..base.squeeze import squeeze
 from ..base.where import where
+from ..core import Tensor
+from ..datasource import array
+from ..datasource import tensor as astensor
 from .average import average
 
 
@@ -133,8 +134,8 @@ def cov(m, y=None, rowvar=True, bias=False, ddof=None, fweights=None, aweights=N
     11.71
 
     """
-    from ..merge import vstack
     from ..linalg import dot
+    from ..merge import vstack
 
     if ddof is not None and ddof != int(ddof):
         raise ValueError("ddof must be integer")

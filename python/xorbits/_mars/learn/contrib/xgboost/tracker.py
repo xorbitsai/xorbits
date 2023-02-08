@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@ This script is a variant of dmlc-core/dmlc_tracker/tracker.py,
 which is a specialized version for xgboost tasks.
 """
 
+import argparse
+import logging
+
 # pylint: disable=invalid-name, missing-docstring, too-many-arguments, too-many-locals
 # pylint: disable=too-many-branches, too-many-statements, too-many-instance-attributes
 import socket
 import struct
-import logging
-from threading import Thread
-import argparse
 import sys
-
-from typing import Dict, List, Tuple, Union, Optional, Set
+from threading import Thread
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 _RingMap = Dict[int, Tuple[int, int]]
 _TreeMap = Dict[int, List[int]]

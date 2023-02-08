@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ import pandas as pd
 from pandas.api.types import (
     is_datetime64_dtype,
     is_datetime64tz_dtype,
-    is_timedelta64_dtype,
     is_period_dtype,
+    is_timedelta64_dtype,
 )
 
 from ...utils import adapt_mars_docstring
-from .string_ import _string_method_to_handlers, SeriesStringMethod
-from .datetimes import _datetime_method_to_handlers, SeriesDatetimeMethod
+from .datetimes import SeriesDatetimeMethod, _datetime_method_to_handlers
+from .string_ import SeriesStringMethod, _string_method_to_handlers
 
 
 class StringAccessor:

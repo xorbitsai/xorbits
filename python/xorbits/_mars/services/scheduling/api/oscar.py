@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -159,7 +159,7 @@ class SchedulingAPI(AbstractSchedulingAPI):
 class MockSchedulingAPI(SchedulingAPI):
     @classmethod
     async def create(cls: Type[APIType], session_id: str, address: str) -> APIType:
-        from ..supervisor import GlobalResourceManagerActor, AutoscalerActor
+        from ..supervisor import AutoscalerActor, GlobalResourceManagerActor
 
         await mo.create_actor(
             GlobalResourceManagerActor,
@@ -173,8 +173,8 @@ class MockSchedulingAPI(SchedulingAPI):
         from .... import resource as mars_resource
         from ..worker import (
             SubtaskExecutionActor,
-            WorkerSlotManagerActor,
             WorkerQuotaManagerActor,
+            WorkerSlotManagerActor,
         )
 
         await mo.create_actor(

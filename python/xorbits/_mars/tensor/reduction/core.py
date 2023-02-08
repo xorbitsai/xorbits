@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,12 +27,12 @@ import numpy as np
 
 from ...config import options
 from ...core.operand import OperandStage
-from ...serialization.serializables import KeyField, AnyField, BoolField, Int32Field
+from ...serialization.serializables import AnyField, BoolField, Int32Field, KeyField
+from ..array_utils import as_same_device, cp, device, get_array_module
 from ..core import Tensor, TensorOrder
-from ..array_utils import get_array_module, as_same_device, device, cp
-from ..utils import check_out_param, validate_axis
-from ..operands import TensorHasInput, TensorOperandMixin
 from ..datasource import tensor as astensor
+from ..operands import TensorHasInput, TensorOperandMixin
+from ..utils import check_out_param, validate_axis
 
 
 def numel(x, **kwargs):

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,20 +19,20 @@ from collections import defaultdict
 import numpy as np
 import pytest
 
-from ..api.web import WebSchedulingAPI
 from .... import oscar as mo
 from .... import remote as mr
 from .... import tensor as mt
-from ....core.graph import TileableGraph, TileableGraphBuilder, ChunkGraphBuilder
+from ....core.graph import ChunkGraphBuilder, TileableGraph, TileableGraphBuilder
 from ....resource import Resource
-from ... import start_services, stop_services, NodeRole
+from ... import NodeRole, start_services, stop_services
 from ...session import SessionAPI
-from ...storage import StorageAPI, MockStorageAPI
+from ...storage import MockStorageAPI, StorageAPI
 from ...subtask import Subtask, SubtaskResult, SubtaskStatus
 from ...task import new_task_id
 from ...task.supervisor.manager import TaskManagerActor
 from ...web import WebActor
 from .. import SchedulingAPI
+from ..api.web import WebSchedulingAPI
 from ..supervisor import GlobalResourceManagerActor
 
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,30 +17,30 @@ import weakref
 from copy import deepcopy
 from enum import Enum
 from functools import partial
-from typing import Any, List, Tuple, Dict, Type, Union
+from typing import Any, Dict, List, Tuple, Type, Union
 
+from ...serialization.core import Placeholder
 from ...serialization.serializables import (
-    SerializableMeta,
-    FieldTypes,
     BoolField,
     DictField,
+    FieldTypes,
     Float32Field,
     Int32Field,
     ListField,
     ReferenceField,
+    Serializable,
+    SerializableMeta,
     StringField,
     TupleField,
 )
-from ...serialization.core import Placeholder
-from ...serialization.serializables import Serializable
 from ...serialization.serializables.core import SerializableSerializer
 from ...typing import OperandType
 from ...utils import AttributeDict, classproperty, tokenize
 from ..base import Base
-from ..entity.core import Entity, EntityData, ENTITY_TYPE
 from ..entity.chunks import Chunk
-from ..entity.tileables import Tileable
+from ..entity.core import ENTITY_TYPE, Entity, EntityData
 from ..entity.output_types import OutputType
+from ..entity.tileables import Tileable
 from ..mode import enter_mode
 
 

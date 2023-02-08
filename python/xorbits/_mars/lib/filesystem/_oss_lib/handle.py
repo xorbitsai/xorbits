@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 from io import IOBase
 
 from ....utils import lazy_import
-from .common import parse_osspath, oss_stat
+from .common import oss_stat, parse_osspath
 
 oss2 = lazy_import("oss2", placeholder=True)
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ import os
 import time
 
 from .. import DiskInfo
-from ..gather import gather_node_env, gather_node_resource, gather_node_details
+from ..gather import gather_node_details, gather_node_env, gather_node_resource
 
 
 def test_gather_node_env():

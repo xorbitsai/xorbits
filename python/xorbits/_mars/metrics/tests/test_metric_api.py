@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 from random import random
+
+import pytest
 
 from .. import api
 from ..api import (
-    init_metrics,
     Metrics,
-    _percentile_builder,
     Percentile,
+    _percentile_builder,
+    init_metrics,
     record_time_cost_percentile,
     shutdown_metrics,
 )

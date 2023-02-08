@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ from typing import Dict, List
 from urllib.parse import urlparse
 
 from ..compression import compress
-from .base import path_type, FileSystem
+from .base import FileSystem, path_type
 from .local import LocalFileSystem
 from .oss import OSSFileSystem
-
 
 _filesystems = {"file": LocalFileSystem, "oss": OSSFileSystem}
 _scheme_to_dependencies = {

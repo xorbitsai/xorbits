@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,29 +13,28 @@
 # limitations under the License.
 import asyncio
 import time
+from collections import Counter
 
+import numpy as np
 import pandas as pd
 import pytest
-import numpy as np
-
-from collections import Counter
 
 from ...... import dataframe as md
 from ...... import tensor as mt
 from ......config import Config
 from ......core import TileContext
 from ......core.context import get_context
-from ......core.graph import TileableGraph, TileableGraphBuilder, ChunkGraphBuilder
+from ......core.graph import ChunkGraphBuilder, TileableGraph, TileableGraphBuilder
 from ......core.operand import ShuffleFetchType
 from ......lib.aio.isolation import new_isolation, stop_isolation
 from ......resource import Resource
 from ......serialization import serialize
-from ......tests.core import require_ray, mock
-from ......utils import lazy_import, get_chunk_params
+from ......tests.core import mock, require_ray
+from ......utils import get_chunk_params, lazy_import
 from .....context import ThreadedServiceContext
 from .....subtask import Subtask
 from ....analyzer import GraphAnalyzer
-from ....core import new_task_id, Task
+from ....core import Task, new_task_id
 from ..config import RayExecutionConfig
 from ..context import (
     RayExecutionContext,
@@ -44,13 +43,13 @@ from ..context import (
     _RayRemoteObjectContext,
 )
 from ..executor import (
-    execute_subtask,
     OrderedSet,
     RayTaskExecutor,
     RayTaskState,
     _RayChunkMeta,
-    _RaySubtaskRuntime,
     _RaySlowSubtaskChecker,
+    _RaySubtaskRuntime,
+    execute_subtask,
 )
 from ..fetcher import RayFetcher
 from ..shuffle import ShuffleManager

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ import itertools
 
 import numpy as np
 
-from ...lib import sparse
 from ... import opcodes as OperandDef
-from ...serialization.serializables import KeyField, Int32Field
+from ...lib import sparse
+from ...serialization.serializables import Int32Field, KeyField
 from ...utils import has_unknown_shape
 from ..array_utils import create_array
 from ..core import TensorOrder
+from .array import tensor as astensor
 from .core import TensorHasInput
 from .zeros import TensorZeros
-from .array import tensor as astensor
 
 
 class TensorTri(TensorHasInput):

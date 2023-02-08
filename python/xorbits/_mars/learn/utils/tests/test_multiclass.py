@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,14 +20,11 @@ import scipy.sparse as sps
 from scipy.sparse import csr_matrix
 from sklearn.utils._testing import assert_array_equal
 from sklearn.utils.estimator_checks import _NotAnArray
-from sklearn.utils.multiclass import (
-    is_multilabel as sklearn_is_multilabel,
-    type_of_target as sklearn_type_of_target,
-)
+from sklearn.utils.multiclass import is_multilabel as sklearn_is_multilabel
+from sklearn.utils.multiclass import type_of_target as sklearn_type_of_target
 
 from .... import tensor as mt
-from ..multiclass import is_multilabel, unique_labels, type_of_target
-
+from ..multiclass import is_multilabel, type_of_target, unique_labels
 
 EXAMPLES = {
     "multilabel-indicator": [

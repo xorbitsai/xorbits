@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 import scipy.special as spspecial
 
-from ..utils import infer_dtype, implement_scipy
+from ..utils import implement_scipy, infer_dtype
 from .core import TensorSpecialBinOp, _register_special_op
 
 

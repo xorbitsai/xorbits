@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@ import itertools
 import numpy as np
 
 from .... import opcodes as OperandDef
+from ....config import options
 from ....core import recursive_tile
 from ....core.operand import OperandStage
-from ....serialization.serializables import FieldTypes, KeyField, BoolField, TupleField
-from ....config import options
+from ....serialization.serializables import BoolField, FieldTypes, KeyField, TupleField
 from ....utils import has_unknown_shape, require_module
-from ...core import TensorOrder
-from ...operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
-from ...datasource import ascontiguousarray, array, zeros
 from ...arithmetic import equal
+from ...array_utils import as_same_device, cp, device
+from ...core import TensorOrder
+from ...datasource import array, ascontiguousarray, zeros
+from ...operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
 from ...utils import decide_chunk_sizes
-from ...array_utils import as_same_device, device, cp
 
 
 class TensorSquareform(TensorMapReduceOperand, TensorOperandMixin):

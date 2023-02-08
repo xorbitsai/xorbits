@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,29 +17,25 @@ import logging
 import sys
 import time
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Set, Type, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Type
 
 from .... import oscar as mo
-from ....core import ChunkGraph, OperandType, enter_mode, ExecutionError
+from ....core import ChunkGraph, ExecutionError, OperandType, enter_mode
 from ....core.context import get_context
-from ....core.operand import (
-    Fetch,
-    FetchShuffle,
-    execute,
-)
+from ....core.operand import Fetch, FetchShuffle, execute
 from ....lib.aio import alru_cache
 from ....metrics import Metrics
 from ....optimization.physical import optimize
 from ....serialization import AioSerializer
 from ....typing import BandType, ChunkType
-from ....utils import get_chunk_key_to_data_keys, calc_data_size
+from ....utils import calc_data_size, get_chunk_key_to_data_keys
 from ...context import ThreadedServiceContext
 from ...meta.api import MetaAPI, WorkerMetaAPI
 from ...session import SessionAPI
 from ...storage import StorageAPI
 from ...task import TaskAPI, task_options
-from ..core import Subtask, SubtaskStatus, SubtaskResult
-from ..utils import iter_input_data_keys, iter_output_data, get_mapper_data_keys
+from ..core import Subtask, SubtaskResult, SubtaskStatus
+from ..utils import get_mapper_data_keys, iter_input_data_keys, iter_output_data
 
 logger = logging.getLogger(__name__)
 

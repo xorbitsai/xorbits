@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ from ...lib import sparse
 from ...lib.sparse.core import get_array_module as get_sparse_array_module
 from ...serialization.serializables import BoolField, Int32Field, Int64Field
 from ...utils import has_unknown_shape
-from ..operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
 from ..array_utils import as_same_device, device
 from ..core import TensorOrder
-from ..utils import validate_axis, hash_on_axis
+from ..operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
+from ..utils import hash_on_axis, validate_axis
 
 
 class TensorUnique(TensorMapReduceOperand, TensorOperandMixin):

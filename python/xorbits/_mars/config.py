@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@ import contextlib
 import functools
 import operator
 import os
-import warnings
 import threading
+import warnings
 from copy import deepcopy
-from typing import Union, Dict
-
+from typing import Dict, Union
 
 _DEFAULT_REDIRECT_WARN = (
     "Option {source} has been replaced by {target} and "

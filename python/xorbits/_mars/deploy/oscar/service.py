@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 # limitations under the License.
 
 import logging
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 from ...oscar import ServerClosed
 from ...resource import Resource
-from ...services import start_services, stop_services, NodeRole
+from ...services import NodeRole, start_services, stop_services
 
 logger = logging.getLogger(__name__)
 

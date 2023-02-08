@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import pytest
 from ..... import dataframe as md
 from ..... import tensor as mt
 from ...core import proxima
-from .. import build_index, search_index, recall
+from .. import build_index, recall, search_index
 
 
 def proxima_build_and_query(

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,20 +18,20 @@ import numpy as np
 import pytest
 
 from ....core import tile
-from ....serialization import serialize, deserialize
+from ....serialization import deserialize, serialize
 from ....serialization.serializables import Serializable
 from ...datasource import tensor as from_ndarray
 from .. import (
+    RandomState,
+    TensorPermutation,
     beta,
-    rand,
     choice,
     multivariate_normal,
+    permutation,
+    rand,
     randint,
     randn,
-    permutation,
-    TensorPermutation,
     shuffle,
-    RandomState,
 )
 from ..core import RandomStateField
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,24 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, OutputType, recursive_tile
 from ...serialization.serializables import (
+    AnyField,
+    BoolField,
     FieldTypes,
     ListField,
     StringField,
-    BoolField,
-    AnyField,
 )
-from ...utils import lazy_import, has_unknown_shape
-from ..operands import DataFrameOperand, DataFrameOperandMixin, SERIES_TYPE
+from ...utils import has_unknown_shape, lazy_import
+from ..operands import SERIES_TYPE, DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
-    parse_index,
     build_empty_df,
     build_empty_series,
+    parse_index,
     standardize_range_index,
     validate_axis,
 )
@@ -131,7 +131,7 @@ class DataFrameConcat(DataFrameOperand, DataFrameOperandMixin):
     @classmethod
     def _tile_series(cls, op: "DataFrameConcat"):
         from ..datasource.from_tensor import DataFrameFromTensor
-        from ..indexing.iloc import SeriesIlocGetItem, DataFrameIlocGetItem
+        from ..indexing.iloc import DataFrameIlocGetItem, SeriesIlocGetItem
 
         out = op.outputs[0]
         inputs = op.inputs

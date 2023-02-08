@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ mimesis_installed = lazy_import("mimesis") is not None
 
 @pytest.mark.skipif(not dask_installed, reason="dask not installed")
 def test_delayed(setup_cluster):
-    from dask import delayed
     import numpy as np
+    from dask import delayed
 
     def calc_chunk(n: int, i: int):
         rs = np.random.RandomState(i)
@@ -72,9 +72,9 @@ def test_partitioned_dataframe(setup_cluster):
 
 @pytest.mark.skipif(not dask_installed, reason="dask not installed")
 def test_unpartitioned_dataframe(setup_cluster):
+    import pandas as pd
     from dask import dataframe as dd
     from pandas._testing import assert_frame_equal
-    import pandas as pd
     from sklearn.datasets import load_iris
 
     boston = load_iris()

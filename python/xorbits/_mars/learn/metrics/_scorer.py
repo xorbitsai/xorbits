@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ from typing import Callable, Union
 from sklearn.metrics import make_scorer
 
 from . import accuracy_score, log_loss, r2_score
-
 
 accuracy_score = make_scorer(accuracy_score)
 r2_score = make_scorer(r2_score)

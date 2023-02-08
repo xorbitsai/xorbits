@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import pandas as pd
 from ... import opcodes as OperandDef
 from ...core import OutputType, recursive_tile
 from ...core.custom_log import redirect_custom_log
-from ...serialization.serializables import KeyField, AnyField, StringField
-from ...utils import has_unknown_shape, enter_current_session, quiet_stdio
+from ...serialization.serializables import AnyField, KeyField, StringField
+from ...utils import enter_current_session, has_unknown_shape, quiet_stdio
 from ..core import SERIES_TYPE
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_series

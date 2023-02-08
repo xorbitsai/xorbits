@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,17 +21,16 @@ from pandas.core.dtypes.cast import find_common_type
 from pandas.core.indexing import IndexingError
 
 from ... import opcodes as OperandDef
-from ...core import ENTITY_TYPE, OutputType, recursive_tile
 from ...config import options
+from ...core import ENTITY_TYPE, OutputType, recursive_tile
 from ...serialization.serializables import AnyField, KeyField, ListField
 from ...tensor import asarray
 from ...tensor.datasource.empty import empty
 from ...tensor.indexing.core import calc_shape
 from ...utils import ceildiv
-from ..operands import DataFrameOperand, DataFrameOperandMixin, DATAFRAME_TYPE
+from ..operands import DATAFRAME_TYPE, DataFrameOperand, DataFrameOperandMixin
 from ..utils import indexing_index_value, is_cudf
 from .index_lib import DataFrameIlocIndexesHandler
-
 
 _ILOC_ERROR_MSG = (
     "Location based indexing can only have [integer, "

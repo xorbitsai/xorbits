@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
 # limitations under the License.
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple, Union, Type
+from typing import Any, Dict, List, Tuple, Type, Union
 
 import numpy as np
 import pandas as pd
 
 from ...typing import BandType
-from ...utils import dataslots, TypeDispatcher
+from ...utils import TypeDispatcher, dataslots
 
 PandasDtypeType = Union[np.dtype, pd.api.extensions.ExtensionDtype]
 

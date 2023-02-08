@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,21 +15,21 @@
 # limitations under the License.
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 from ....config import options
-from ... import mod, stack, hstack
-from ...datasource import tensor, arange, zeros
+from ... import hstack, mod, stack
+from ...datasource import arange, tensor, zeros
 from .. import (
-    take,
+    choose,
     compress,
     extract,
-    choose,
-    unravel_index,
-    nonzero,
-    flatnonzero,
     fill_diagonal,
+    flatnonzero,
+    nonzero,
+    take,
+    unravel_index,
 )
 
 

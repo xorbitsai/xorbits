@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 # limitations under the License.
 import operator
 from functools import reduce
+from typing import Dict, List
 
 from ....utils import lazy_import
 from .mldataset import _rechunk_if_needed
-from typing import Dict, List
 
 ray = lazy_import("ray")
 # Ray Datasets is available in early preview at ray.data with Ray 1.6+

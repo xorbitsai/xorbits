@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 import builtins
 import operator
-from functools import partial, reduce
 from collections.abc import Iterable
+from functools import partial, reduce
 
 from .array import SparseNDArray, call_sparse
+from .core import get_sparse_module, issparse
 from .matrix import SparseMatrix
 from .vector import SparseVector
-from .core import issparse, get_sparse_module
 
 
 def asarray(x, shape=None):
@@ -107,7 +107,7 @@ def mod(a, b, **_):
 
 
 def _call_bin(method, a, b, **kwargs):
-    from .core import get_array_module, cp, issparse
+    from .core import cp, get_array_module, issparse
 
     # order does not take effect for sparse
     kwargs.pop("order", None)

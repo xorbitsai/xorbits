@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@ import pandas as pd
 
 from ... import opcodes as OperandDef
 from ...core import OutputType, recursive_tile
-from ...serialization.serializables import ListField, BoolField
+from ...serialization.serializables import BoolField, ListField
 from ...tensor.base.sort import _validate_sort_psrs_kinds
 from ...utils import calc_nsplits
-from ..utils import (
-    parse_index,
-    validate_axis,
-    build_concatenated_rows_frame,
-    standardize_range_index,
-)
 from ..operands import DATAFRAME_TYPE
+from ..utils import (
+    build_concatenated_rows_frame,
+    parse_index,
+    standardize_range_index,
+    validate_axis,
+)
 from .core import DataFrameSortOperand
 from .psrs import DataFramePSRSOperandMixin, execute_sort_index
 

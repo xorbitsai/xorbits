@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@ def get_model():
 
 
 def main(feature_data, labels):
-    import torch.nn as nn
     import torch.distributed as dist
+    import torch.nn as nn
     import torch.optim as optim
     import torch.utils.data
-    from mars.learn.contrib.pytorch import MarsDataset, DistributedSampler
+    from mars.learn.contrib.pytorch import DistributedSampler, MarsDataset
 
     dist.init_process_group(backend="gloo")
     torch.manual_seed(42)

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 # limitations under the License.
 
 from .execution import SubtaskExecutionActor
-from .quota import QuotaActor, MemQuotaActor, WorkerQuotaManagerActor
-from .workerslot import (
-    WorkerSlotManagerActor,
-    BandSlotManagerActor,
-    BandSlotControlActor,
-)
+from .quota import MemQuotaActor, QuotaActor, WorkerQuotaManagerActor
 from .service import SchedulingWorkerService
+from .workerslot import (
+    BandSlotControlActor,
+    BandSlotManagerActor,
+    WorkerSlotManagerActor,
+)

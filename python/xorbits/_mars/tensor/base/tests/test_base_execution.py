@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,56 +15,56 @@
 # limitations under the License.
 
 import numpy as np
-import scipy.sparse as sps
 import pandas as pd
 import pytest
+import scipy.sparse as sps
 
 from .... import dataframe as md
-from .... import tensor as mt
 from .... import execute, fetch
+from .... import tensor as mt
 from ....tests.core import require_cupy
-from ...datasource import tensor, ones, zeros, arange
+from ...datasource import arange, ones, tensor, zeros
 from .. import (
-    copyto,
-    transpose,
-    moveaxis,
-    broadcast_to,
-    broadcast_arrays,
-    where,
-    expand_dims,
-    rollaxis,
+    argpartition,
+    argsort,
+    argtopk,
+    argwhere,
+    array_split,
     atleast_1d,
     atleast_2d,
     atleast_3d,
-    argwhere,
-    array_split,
-    split,
-    hsplit,
-    vsplit,
-    dsplit,
-    roll,
-    squeeze,
+    broadcast_arrays,
+    broadcast_to,
+    copyto,
     diff,
+    dsplit,
     ediff1d,
+    expand_dims,
     flip,
-    flipud,
     fliplr,
-    repeat,
-    tile,
+    flipud,
+    hsplit,
     isin,
-    searchsorted,
-    unique,
-    sort,
-    argsort,
+    moveaxis,
     partition,
-    argpartition,
-    topk,
-    argtopk,
-    trapz,
+    repeat,
+    roll,
+    rollaxis,
+    searchsorted,
     shape,
-    to_gpu,
-    to_cpu,
+    sort,
+    split,
+    squeeze,
     swapaxes,
+    tile,
+    to_cpu,
+    to_gpu,
+    topk,
+    transpose,
+    trapz,
+    unique,
+    vsplit,
+    where,
 )
 
 

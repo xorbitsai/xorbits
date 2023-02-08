@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import math
 import numpy as np
 
 from .... import remote as mr
-from .knn import sample_data, linear_build_and_search
+from .knn import linear_build_and_search, sample_data
 
 
 def recall_one(linear_score, ann_score, topk_ids, epsilon=1e-6):

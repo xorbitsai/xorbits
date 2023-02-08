@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 from ...utils import check_consistent_length
 from ..utils import make_import_error_func
-from .core import LGBMScikitLearnBase, LGBMModelType
-from ._train import train
 from ._predict import predict_base
+from ._train import train
+from .core import LGBMModelType, LGBMScikitLearnBase
 
 try:
     import lightgbm

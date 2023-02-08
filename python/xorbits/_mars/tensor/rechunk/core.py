@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
 
 import itertools
 from dataclasses import dataclass
-from typing import Tuple, Union, List
+from typing import List, Tuple, Union
 
 import numpy as np
 
 from ...typing import ChunkType, TileableType
 from ..utils import decide_chunk_sizes
-
 
 chunk_size_type = Union[int, Tuple[int], Tuple[Tuple[int], ...]]
 

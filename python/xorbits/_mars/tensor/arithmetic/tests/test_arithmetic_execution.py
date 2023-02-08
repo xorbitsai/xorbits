@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,25 +18,25 @@ import functools
 import operator
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 from ....config import option_context
 from ....session import execute, fetch
 from ....tests.core import require_cupy
 from ....utils import ignore_warning
-from ...datasource import ones, tensor, zeros, arange
+from ...datasource import arange, ones, tensor, zeros
 from .. import (
     add,
-    cos,
-    truediv,
-    frexp,
-    modf,
-    clip,
-    isclose,
     arctan2,
+    clip,
+    cos,
+    frexp,
+    isclose,
+    modf,
     tree_add,
     tree_multiply,
+    truediv,
 )
 
 
@@ -112,18 +112,18 @@ def test_base_order_execution(setup):
 
 def test_ufunc_execution(setup):
     from .. import (
-        UNARY_UFUNC,
         BIN_UFUNC,
+        UNARY_UFUNC,
         arccosh,
-        invert,
-        mod,
-        fmod,
         bitand,
         bitor,
         bitxor,
-        lshift,
-        rshift,
+        fmod,
+        invert,
         ldexp,
+        lshift,
+        mod,
+        rshift,
     )
 
     _sp_unary_ufunc = {arccosh, invert}
@@ -199,7 +199,7 @@ def test_ufunc_execution(setup):
 
 
 def test_sparse_ufunc_execution(setup):
-    from .. import add, square, arccosh, mod
+    from .. import add, arccosh, mod, square
 
     _normal_unary_ufunc = [square]
     _normal_bin_ufunc = [add]

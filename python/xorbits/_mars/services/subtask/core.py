@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,23 +15,23 @@
 from enum import Enum
 from typing import Iterable, List, Optional, Set, Tuple
 
-from ...core import ChunkGraph, DAG, ChunkData
+from ...core import DAG, ChunkData, ChunkGraph
 from ...resource import Resource
-from ...serialization.serializables.field_type import TupleType
 from ...serialization.serializables import (
-    Serializable,
-    StringField,
-    ReferenceField,
+    AnyField,
+    BoolField,
+    DictField,
+    FieldTypes,
+    Float64Field,
     Int32Field,
     Int64Field,
-    Float64Field,
-    BoolField,
-    AnyField,
-    DictField,
     ListField,
+    ReferenceField,
+    Serializable,
+    StringField,
     TupleField,
-    FieldTypes,
 )
+from ...serialization.serializables.field_type import TupleType
 from ...typing import BandType, ChunkType
 
 

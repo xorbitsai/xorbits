@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ from sklearn.linear_model import LogisticRegression
 from .... import dataframe as md
 from .... import tensor as mt
 from .. import BlockwiseVotingClassifier, BlockwiseVotingRegressor
-
 
 fit_raw_X, fit_raw_y = make_classification()
 fit_X, fit_y = mt.tensor(fit_raw_X, chunk_size=25), mt.tensor(fit_raw_y, chunk_size=25)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,13 +30,12 @@ try:
 except ImportError:  # pragma: no cover
     pa = None
 
-from .. import tensor as mt
 from .. import dataframe as md
 from .. import remote as mr
+from .. import tensor as mt
 from ..config import option_context
 from ..deploy.utils import load_service_config_file
 from ..session import execute, fetch, fetch_log
-
 
 test_namedtuple_type = namedtuple("TestNamedTuple", "a b")
 

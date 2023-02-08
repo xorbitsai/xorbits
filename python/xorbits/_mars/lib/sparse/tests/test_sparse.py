@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,9 +21,8 @@ import pytest
 import scipy.sparse as sps
 
 from ... import sparse as mls
-from .. import SparseNDArray, SparseVector, SparseMatrix
+from .. import SparseMatrix, SparseNDArray, SparseVector
 from ..core import issparse
-
 
 s1_data = sps.csr_matrix([[1, 0, 1], [0, 0, 1]])
 s2_data = sps.csr_matrix([[0, 1, 1], [1, 0, 1]])

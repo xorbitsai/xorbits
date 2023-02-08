@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...core import recursive_tile
-from ...lib.sparse.array import get_sparse_module, SparseNDArray
-from ...serialization.serializables import KeyField, Int64Field
+from ...lib.sparse.array import SparseNDArray, get_sparse_module
+from ...serialization.serializables import Int64Field, KeyField
 from ...tensor.array_utils import as_same_device, device
 from ...tensor.core import TensorOrder
 from ...tensor.utils import decide_unify_split

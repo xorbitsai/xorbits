@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ from numbers import Integral
 
 import numpy as np
 
-from ..core import TENSOR_TYPE, TENSOR_CHUNK_TYPE
+from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
 from ..datasource import tensor as astensor
-from ..utils import calc_sliced_size, broadcast_shape, replace_ellipsis, index_ndim
-
+from ..utils import broadcast_shape, calc_sliced_size, index_ndim, replace_ellipsis
 
 _INDEX_ERROR_MSG = (
     "only integers, slices (`:`), ellipsis (`...`), "

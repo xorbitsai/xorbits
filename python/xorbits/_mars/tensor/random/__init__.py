@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,51 +14,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import RandomState, _random_state, RandomStateField
-from .rand import rand, TensorRand
-from .randn import randn, TensorRandn
-from .randint import randint, TensorRandint
-from .random_integers import random_integers, TensorRandomIntegers
-from .random_sample import random_sample, TensorRandomSample
-from .choice import choice, TensorChoice
+from .beta import TensorRandBeta, beta
+from .binomial import TensorBinomial, binomial
 from .bytes import bytes
-from .beta import beta, TensorRandBeta
-from .binomial import binomial, TensorBinomial
-from .chisquare import chisquare, TensorChisquareDist
-from .dirichlet import dirichlet, TensorDirichlet
-from .exponential import exponential, TensorExponential
-from .f import f, TensorF
-from .gamma import gamma, TensorRandGamma
-from .geometric import geometric, TensorGeometric
-from .gumbel import gumbel, TensorGumbel
-from .hypergeometric import hypergeometric, TensorHypergeometric
-from .laplace import laplace, TensorLaplace
-from .logistic import logistic, TensorLogistic
-from .lognormal import lognormal, TensorLognormal
-from .logseries import logseries, TensorLogseries
-from .multinomial import multinomial, TensorMultinomial
-from .multivariate_normal import multivariate_normal, TensorMultivariateNormal
-from .negative_binomial import negative_binomial, TensorNegativeBinomial
-from .noncentral_chisquare import noncentral_chisquare, TensorNoncentralChisquare
-from .noncentral_f import noncentral_f, TensorNoncentralF
-from .normal import normal, TensorNormal
-from .pareto import pareto, TensorPareto
-from .poisson import poisson, TensorPoisson
-from .power import power, TensorRandomPower
-from .rayleigh import rayleigh, TensorRayleigh
-from .standard_cauchy import standard_cauchy, TensorStandardCauchy
-from .standard_exponential import standard_exponential, TensorStandardExponential
-from .standard_gamma import standard_gamma, TensorStandardGamma
-from .standard_normal import standard_normal, TensorStandardNormal
-from .standard_t import standard_t, TensorStandardT
-from .triangular import triangular, TensorTriangular
-from .uniform import uniform, TensorUniform
-from .vonmises import vonmises, TensorVonmises
-from .wald import wald, TensorWald
-from .weibull import weibull, TensorWeibull
-from .zipf import zipf, TensorZipf
-from .permutation import permutation, TensorPermutation
+from .chisquare import TensorChisquareDist, chisquare
+from .choice import TensorChoice, choice
+from .core import RandomState, RandomStateField, _random_state
+from .dirichlet import TensorDirichlet, dirichlet
+from .exponential import TensorExponential, exponential
+from .f import TensorF, f
+from .gamma import TensorRandGamma, gamma
+from .geometric import TensorGeometric, geometric
+from .gumbel import TensorGumbel, gumbel
+from .hypergeometric import TensorHypergeometric, hypergeometric
+from .laplace import TensorLaplace, laplace
+from .logistic import TensorLogistic, logistic
+from .lognormal import TensorLognormal, lognormal
+from .logseries import TensorLogseries, logseries
+from .multinomial import TensorMultinomial, multinomial
+from .multivariate_normal import TensorMultivariateNormal, multivariate_normal
+from .negative_binomial import TensorNegativeBinomial, negative_binomial
+from .noncentral_chisquare import TensorNoncentralChisquare, noncentral_chisquare
+from .noncentral_f import TensorNoncentralF, noncentral_f
+from .normal import TensorNormal, normal
+from .pareto import TensorPareto, pareto
+from .permutation import TensorPermutation, permutation
+from .poisson import TensorPoisson, poisson
+from .power import TensorRandomPower, power
+from .rand import TensorRand, rand
+from .randint import TensorRandint, randint
+from .randn import TensorRandn, randn
+from .random_integers import TensorRandomIntegers, random_integers
+from .random_sample import TensorRandomSample, random_sample
+from .rayleigh import TensorRayleigh, rayleigh
 from .shuffle import shuffle
+from .standard_cauchy import TensorStandardCauchy, standard_cauchy
+from .standard_exponential import TensorStandardExponential, standard_exponential
+from .standard_gamma import TensorStandardGamma, standard_gamma
+from .standard_normal import TensorStandardNormal, standard_normal
+from .standard_t import TensorStandardT, standard_t
+from .triangular import TensorTriangular, triangular
+from .uniform import TensorUniform, uniform
+from .vonmises import TensorVonmises, vonmises
+from .wald import TensorWald, wald
+from .weibull import TensorWeibull, weibull
+from .zipf import TensorZipf, zipf
 
 
 def _install():

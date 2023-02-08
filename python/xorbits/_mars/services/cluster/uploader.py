@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ from ...lib.aio import alru_cache
 from ...resource import Resource
 from ...storage import StorageLevel
 from ...typing import BandType
-from .core import NodeInfo, NodeStatus, WorkerSlotInfo, QuotaInfo, DiskInfo, StorageInfo
-from .gather import gather_node_env, gather_node_resource, gather_node_details
+from .core import DiskInfo, NodeInfo, NodeStatus, QuotaInfo, StorageInfo, WorkerSlotInfo
+from .gather import gather_node_details, gather_node_env, gather_node_resource
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -179,7 +179,8 @@ def test_cdist_execution(setup):
 
 @pytest.mark.skipif(distance.cdist is None, reason="scipy not installed")
 def test_squareform_execution(setup):
-    from scipy.spatial.distance import pdist as sp_pdist, squareform as sp_squareform
+    from scipy.spatial.distance import pdist as sp_pdist
+    from scipy.spatial.distance import squareform as sp_squareform
 
     raw_a = np.random.rand(80, 10)
     raw_pdsit = sp_pdist(raw_a)

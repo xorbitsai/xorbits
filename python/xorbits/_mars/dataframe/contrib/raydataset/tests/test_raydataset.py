@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -24,7 +25,6 @@ from .....deploy.oscar.session import new_session
 from .....tests.core import require_ray
 from .....utils import lazy_import
 from ....contrib import raydataset as mdd
-
 
 ray = lazy_import("ray")
 # Ray Datasets is available in early preview at ray.data with Ray 1.6+
@@ -77,8 +77,8 @@ async def test_convert_to_ray_dataset(
 @pytest.mark.asyncio
 @pytest.mark.skipif(xgboost_ray is None, reason="xgboost_ray not installed")
 async def test_mars_with_xgboost(ray_start_regular_shared, create_cluster):
-    from xgboost_ray import RayDMatrix, RayParams, train
     from sklearn.datasets import load_breast_cancer
+    from xgboost_ray import RayDMatrix, RayParams, train
 
     assert create_cluster.session
     session = new_session(address=create_cluster.address, backend="ray")
@@ -119,8 +119,8 @@ async def test_mars_with_xgboost(ray_start_regular_shared, create_cluster):
 @pytest.mark.skipif(sklearn is None, reason="sklearn not installed")
 @pytest.mark.skipif(xgboost_ray is None, reason="xgboost_ray not installed")
 async def test_mars_with_xgboost_sklearn_clf(ray_start_regular_shared, create_cluster):
-    from xgboost_ray import RayDMatrix, RayParams, RayXGBClassifier
     from sklearn.datasets import load_breast_cancer
+    from xgboost_ray import RayDMatrix, RayParams, RayXGBClassifier
 
     assert create_cluster.session
     session = new_session(address=create_cluster.address, backend="ray")
@@ -161,8 +161,8 @@ async def test_mars_with_xgboost_sklearn_clf(ray_start_regular_shared, create_cl
 @pytest.mark.skipif(sklearn is None, reason="sklearn not installed")
 @pytest.mark.skipif(xgboost_ray is None, reason="xgboost_ray not installed")
 async def test_mars_with_xgboost_sklearn_reg(ray_start_regular_shared, create_cluster):
-    from xgboost_ray import RayDMatrix, RayParams, RayXGBRegressor
     from sklearn.datasets import make_regression
+    from xgboost_ray import RayDMatrix, RayParams, RayXGBRegressor
 
     assert create_cluster.session
     session = new_session(address=create_cluster.address, backend="ray")

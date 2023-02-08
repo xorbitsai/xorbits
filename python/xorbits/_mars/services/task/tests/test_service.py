@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,15 +29,15 @@ from ....resource import Resource
 from ....tensor.core import TensorOrder
 from ....tensor.operands import TensorOperand, TensorOperandMixin
 from ....utils import Timer, build_fetch
-from ... import start_services, stop_services, NodeRole
+from ... import NodeRole, start_services, stop_services
+from ...meta import MetaAPI
 from ...session import SessionAPI
 from ...storage import MockStorageAPI
 from ...subtask import SubtaskStatus
 from ...web import WebActor
-from ...meta import MetaAPI
 from .. import TaskAPI, TaskStatus, WebTaskAPI
-from ..supervisor.processor import TaskProcessor
 from ..errors import TaskNotExist
+from ..supervisor.processor import TaskProcessor
 
 
 @pytest.fixture

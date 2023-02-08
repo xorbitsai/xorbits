@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,50 +25,50 @@ import numpy as np
 import pandas as pd
 
 from ..core import (
-    ChunkData,
-    Chunk,
-    Tileable,
-    HasShapeTileableData,
-    HasShapeTileable,
-    OutputType,
-    register_output_types,
-    _ExecuteAndFetchMixin,
     ENTITY_TYPE,
+    Chunk,
+    ChunkData,
+    HasShapeTileable,
+    HasShapeTileableData,
+    OutputType,
+    Tileable,
+    _ExecuteAndFetchMixin,
     is_build_mode,
+    register_output_types,
 )
 from ..core.entity.utils import refresh_tileable_shape
+from ..deploy.oscar.session import get_default_session
 from ..lib.groupby_wrapper import GroupByWrapper
 from ..serialization.serializables import (
-    Serializable,
-    FieldTypes,
-    DataTypeField,
     AnyField,
-    SeriesField,
     BoolField,
+    DataTypeField,
+    DictField,
+    FieldTypes,
     Int8Field,
     Int32Field,
-    StringField,
+    IntervalArrayField,
     ListField,
-    SliceField,
-    TupleField,
+    NDArrayField,
     OneOfField,
     ReferenceField,
-    NDArrayField,
-    IntervalArrayField,
-    DictField,
+    Serializable,
+    SeriesField,
+    SliceField,
+    StringField,
+    TupleField,
 )
+from ..tensor import statistics
 from ..utils import (
-    on_serialize_shape,
+    calc_nsplits,
+    ceildiv,
+    estimate_pandas_size,
     on_deserialize_shape,
     on_serialize_numpy_type,
-    ceildiv,
+    on_serialize_shape,
     tokenize,
-    estimate_pandas_size,
-    calc_nsplits,
 )
-from ..deploy.oscar.session import get_default_session
-from ..tensor import statistics
-from .utils import fetch_corner_data, ReprSeries, parse_index, merge_index_value
+from .utils import ReprSeries, fetch_corner_data, merge_index_value, parse_index
 
 
 class IndexValue(Serializable):

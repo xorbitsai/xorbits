@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 import glob
 import os
 import shutil
-from typing import List, Dict, Union, Tuple, Iterator, BinaryIO, TextIO
+from typing import BinaryIO, Dict, Iterator, List, TextIO, Tuple, Union
 
 from ...utils import implements, stringify_path
 from .base import FileSystem, path_type

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
 # limitations under the License.
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import (
-    FieldTypes,
-    DictField,
-    TupleField,
-    StringField,
-    Int64Field,
-)
-from ...lib.sparse.core import sps
 from ...lib.sparse import SparseNDArray
+from ...lib.sparse.core import sps
+from ...serialization.serializables import (
+    DictField,
+    FieldTypes,
+    Int64Field,
+    StringField,
+    TupleField,
+)
 from ..core import TensorOrder
 from .core import TensorNoInput
 

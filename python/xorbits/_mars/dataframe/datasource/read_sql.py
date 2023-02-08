@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,30 +18,30 @@ import pickle
 import uuid
 from typing import List, Union
 
+import cloudpickle
 import numpy as np
 import pandas as pd
-import cloudpickle
 
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core.context import Context
 from ...core.operand import OperatorLogicKeyGeneratorMixin
 from ...serialization.serializables import (
-    StringField,
     AnyField,
     BoolField,
-    ListField,
-    Int64Field,
-    Float64Field,
     BytesField,
+    Float64Field,
+    Int64Field,
+    ListField,
+    StringField,
 )
 from ...tensor.utils import normalize_chunk_sizes
 from ...typing import OperandType, TileableType
 from ..arrays import ArrowStringDtype
-from ..utils import parse_index, create_sa_connection, to_arrow_dtypes
+from ..utils import create_sa_connection, parse_index, to_arrow_dtypes
 from .core import (
-    IncrementalIndexDatasource,
     ColumnPruneSupportedDataSourceMixin,
+    IncrementalIndexDatasource,
     IncrementalIndexDataSourceMixin,
 )
 

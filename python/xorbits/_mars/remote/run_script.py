@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ from typing import Any, BinaryIO, Dict, List, TextIO, Union
 import numpy as np
 
 from .. import opcodes
-from ..core import OutputType, TILEABLE_TYPE
+from ..core import TILEABLE_TYPE, OutputType
 from ..core.context import Context
 from ..core.operand import MergeDictOperand
 from ..serialization.serializables import (
-    BytesField,
-    ListField,
-    Int32Field,
-    DictField,
     BoolField,
+    BytesField,
+    DictField,
+    Int32Field,
+    ListField,
 )
-from ..typing import TileableType, SessionType
-from ..utils import to_binary, build_fetch_tileable
+from ..typing import SessionType, TileableType
+from ..utils import build_fetch_tileable, to_binary
 
 
 class RunScript(MergeDictOperand):

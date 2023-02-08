@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...serialization.serializables import KeyField
 from ...utils import has_unknown_shape
-from ..utils import broadcast_shape, unify_chunks
 from ..array_utils import as_same_device, device
 from ..core import TENSOR_TYPE
-from ..operands import TensorOperand, TensorOperandMixin
 from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorOperandMixin
+from ..utils import broadcast_shape, unify_chunks
 from .broadcast_to import broadcast_to
 
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 import os
 
-from ..... import tensor as mt
+import pytest
+
 from ..... import dataframe as md
+from ..... import tensor as mt
 from .....utils import lazy_import
 from .. import (
+    DistributedSampler,
     MarsDataset,
     RandomSampler,
     SequentialSampler,
     SubsetRandomSampler,
-    DistributedSampler,
     run_pytorch_script,
 )
 
@@ -32,9 +33,9 @@ torch_installed = lazy_import("torch") is not None
 
 @pytest.mark.skipif(not torch_installed, reason="pytorch not installed")
 def test_mars_dataset(setup):
-    from torch.utils.data import Dataset
     import numpy as np
     import pandas as pd
+    from torch.utils.data import Dataset
 
     # Mars tensor
     data = mt.random.rand(1000, 32, dtype="f4")

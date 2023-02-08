@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,22 +13,24 @@
 # limitations under the License.
 
 import asyncio
-import pytest
 from collections import defaultdict
-from typing import Tuple, List
+from typing import List, Tuple
+
+import pytest
+
 from ..... import oscar as mo
 from .....resource import Resource
 from ....cluster import ClusterAPI
 from ....cluster.core import NodeRole, NodeStatus
-from ....cluster.uploader import NodeInfoUploaderActor
 from ....cluster.supervisor.locator import SupervisorPeerLocatorActor
 from ....cluster.supervisor.node_info import NodeInfoCollectorActor
+from ....cluster.uploader import NodeInfoUploaderActor
 from ....subtask import Subtask
 from ...supervisor import (
     AssignerActor,
+    GlobalResourceManagerActor,
     SubtaskManagerActor,
     SubtaskQueueingActor,
-    GlobalResourceManagerActor,
 )
 
 

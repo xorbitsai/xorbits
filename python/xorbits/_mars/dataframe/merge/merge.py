@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,43 +13,42 @@
 # limitations under the License.
 
 import itertools
+import logging
 from collections import namedtuple
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
 
 from ... import opcodes as OperandDef
-from ...core import OutputType, recursive_tile, TileStatus
+from ...core import OutputType, TileStatus, recursive_tile
 from ...core.context import get_context
-from ...core.operand import OperandStage, MapReduceOperand
+from ...core.operand import MapReduceOperand, OperandStage
 from ...serialization.serializables import (
     AnyField,
     BoolField,
     DictField,
+    Int32Field,
+    KeyField,
+    NamedTupleField,
     StringField,
     TupleField,
-    KeyField,
-    Int32Field,
-    NamedTupleField,
 )
 from ...typing import TileableType
 from ...utils import has_unknown_shape, lazy_import
 from ..base.bloom_filter import filter_by_bloom_filter
-from ..core import DataFrame, Series, DataFrameChunk
+from ..core import DataFrame, DataFrameChunk, Series
 from ..operands import DataFrameOperand, DataFrameOperandMixin, DataFrameShuffleProxy
 from ..utils import (
     auto_merge_chunks,
     build_concatenated_rows_frame,
     build_df,
-    parse_index,
     hash_dataframe_on,
     infer_index_value,
     is_cudf,
+    parse_index,
 )
-
-import logging
 
 logger = logging.getLogger(__name__)
 DEFAULT_BLOOM_FILTER_CHUNK_THRESHOLD = 10

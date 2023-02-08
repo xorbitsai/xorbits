@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,12 +19,11 @@ import time
 
 import psutil
 import pytest
-
 from mars.config import option_context
-from mars.core.mode import is_kernel_mode, is_build_mode
+from mars.core.mode import is_build_mode, is_kernel_mode
 from mars.lib.aio.lru import clear_all_alru_caches
-from mars.oscar.backends.router import Router
 from mars.oscar.backends.ray.communication import RayServer
+from mars.oscar.backends.router import Router
 from mars.utils import lazy_import
 
 ray = lazy_import("ray")
@@ -150,7 +149,7 @@ def stop_ray(request):  # pragma: no cover
 
 @pytest.fixture
 async def ray_create_mars_cluster(request, check_router_cleaned):
-    from mars.deploy.oscar.ray import new_cluster, _load_config
+    from mars.deploy.oscar.ray import _load_config, new_cluster
 
     ray_config = _load_config()
     param = getattr(request, "param", {})

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,37 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import itertools
 import copy
+import itertools
 from functools import reduce
 
 import numpy as np
 import pandas as pd
 
-from ...core import ENTITY_TYPE, CHUNK_TYPE, recursive_tile
+from ...core import CHUNK_TYPE, ENTITY_TYPE, recursive_tile
 from ...serialization.serializables import AnyField
-from ...tensor.core import TENSOR_TYPE, TENSOR_CHUNK_TYPE, ChunkData, Chunk
+from ...tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, Chunk, ChunkData
 from ...utils import classproperty, get_dtype
 from ..align import (
-    align_series_series,
-    align_dataframe_series,
     align_dataframe_dataframe,
+    align_dataframe_series,
+    align_series_series,
 )
 from ..core import (
-    DATAFRAME_TYPE,
-    SERIES_TYPE,
     DATAFRAME_CHUNK_TYPE,
+    DATAFRAME_TYPE,
     SERIES_CHUNK_TYPE,
+    SERIES_TYPE,
     is_chunk_meta_lazy,
 )
-from ..operands import DataFrameOperandMixin, DataFrameOperand
+from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..ufunc.tensor import TensorUfuncMixin
 from ..utils import (
-    parse_index,
-    infer_dtypes,
-    infer_dtype,
-    infer_index_value,
     build_empty_df,
+    infer_dtype,
+    infer_dtypes,
+    infer_index_value,
+    parse_index,
 )
 
 

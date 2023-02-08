@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ from numbers import Number
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import KeyField, AnyField
 from ...core import ENTITY_TYPE
+from ...serialization.serializables import AnyField, KeyField
 from ..array_utils import as_same_device, device
 from ..core import Tensor
-from ..utils import broadcast_shape
 from ..datasource import tensor as astensor
-from .core import TensorOperand, TensorElementWise, filter_inputs
+from ..utils import broadcast_shape
+from .core import TensorElementWise, TensorOperand, filter_inputs
 
 
 class TensorClip(TensorOperand, TensorElementWise):

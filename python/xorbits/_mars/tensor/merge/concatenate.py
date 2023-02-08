@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,15 +23,15 @@ from ... import opcodes as OperandDef
 from ...serialization.serializables import (
     AnyField,
     BoolField,
+    SliceField,
     StringField,
     TupleField,
-    SliceField,
 )
-from ..array_utils import device, as_same_device
-from ..utils import validate_axis, unify_chunks
+from ..array_utils import as_same_device, device
 from ..datasource import tensor as astensor
-from ..operands import TensorOperand, TensorOperandMixin
 from ..indexing.slice import TensorSlice
+from ..operands import TensorOperand, TensorOperandMixin
+from ..utils import unify_chunks, validate_axis
 
 
 def _get_index(chunk):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...serialization.serializables import KeyField, StringField
 from ...utils import has_unknown_shape
-from ..core import Tensor, TensorOrder
-from ..utils import broadcast_shape, check_out_param, unify_chunks, check_order
-from ..array_utils import device, as_same_device, is_sparse_module
-from ..operands import TensorOperand, TensorOperandMixin
 from ..arithmetic.utils import chunk_tree_add
+from ..array_utils import as_same_device, device, is_sparse_module
+from ..core import Tensor, TensorOrder
 from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorOperandMixin
+from ..utils import broadcast_shape, check_order, check_out_param, unify_chunks
 
 
 class TensorMatmul(TensorOperand, TensorOperandMixin):

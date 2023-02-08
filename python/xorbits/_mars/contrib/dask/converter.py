@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 from dask import is_dask_collection, optimize
 from dask.bag import Bag
 
+from ...remote import spawn
 from .scheduler import mars_dask_get
 from .utils import reduce
-from ...remote import spawn
 
 
 def convert_dask_collection(dc):

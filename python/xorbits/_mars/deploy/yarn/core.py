@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,21 +24,19 @@ from typing import AsyncGenerator, Dict, List, Optional, TypeVar
 from ... import oscar as mo
 from ...services import NodeRole
 from ...services.cluster.backends import (
-    register_cluster_backend,
     AbstractClusterBackend,
+    register_cluster_backend,
 )
 from ...utils import to_binary, to_str
 from ..utils import wait_all_supervisors_ready
 from .config import MarsSupervisorConfig, MarsWorkerConfig
 
 try:
-    from skein import (
-        ApplicationClient,
-        Client as SkeinClient,
-        properties as skein_props,
-        ConnectionError as SkeinConnectionError,
-        SkeinError,
-    )
+    from skein import ApplicationClient
+    from skein import Client as SkeinClient
+    from skein import ConnectionError as SkeinConnectionError
+    from skein import SkeinError
+    from skein import properties as skein_props
 except ImportError:  # pragma: no cover
     ApplicationClient, SkeinClient, skein_props = None, None, None
     SkeinConnectionError, SkeinError = None, None

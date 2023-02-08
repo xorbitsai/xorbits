@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .concatenate import concatenate, TensorConcatenate
-from .stack import stack, TensorStack
-from .hstack import hstack
-from .vstack import vstack
-from .dstack import dstack
-from .column_stack import column_stack
-from .union1d import union1d
-from .block import block
 from .append import append
+from .block import block
+from .column_stack import column_stack
+from .concatenate import TensorConcatenate, concatenate
+from .dstack import dstack
+from .hstack import hstack
+from .stack import TensorStack, stack
+from .union1d import union1d
+from .vstack import vstack

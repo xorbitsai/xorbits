@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import numpy as np
 
 from ....utils import ignore_warning
 from ...arithmetic import abs as mt_abs
-from ...datasource import tensor, arange
+from ...datasource import arange, tensor
 from ...reduction import sum as mt_sum
 
 
@@ -62,7 +62,7 @@ def _gen_pairs(seq):
 
 @ignore_warning
 def test_unary_execution(setup):
-    from ...arithmetic import UNARY_UFUNC, arccosh, invert, sin, conj, logical_not
+    from ...arithmetic import UNARY_UFUNC, arccosh, conj, invert, logical_not, sin
 
     _sp_unary_ufunc = {arccosh, invert, conj, logical_not}
     _new_unary_ufunc = list(UNARY_UFUNC - _sp_unary_ufunc)[:3]
@@ -96,16 +96,16 @@ def test_unary_execution(setup):
 def test_bin_execution(setup):
     from ...arithmetic import (
         BIN_UFUNC,
-        mod,
-        fmod,
         bitand,
         bitor,
         bitxor,
-        lshift,
-        rshift,
+        fmod,
         ldexp,
         logical_and,
         logical_or,
+        lshift,
+        mod,
+        rshift,
     )
 
     _sp_bin_ufunc = [

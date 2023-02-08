@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...core import ExecutableTuple, recursive_tile
 from ...serialization.serializables import KeyField
-from ..operands import TensorHasInput, TensorOperandMixin
-from ..datasource import tensor as astensor
 from ..core import TensorOrder
+from ..datasource import tensor as astensor
+from ..operands import TensorHasInput, TensorOperandMixin
 from .unravel_index import unravel_index
 
 

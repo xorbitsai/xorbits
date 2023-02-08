@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 import numpy as np
 
 from .... import opcodes as OperandDef
+from .... import tensor as mt
 from ....core import recursive_tile
 from ....serialization.serializables import KeyField
-from .... import tensor as mt
 from ....tensor.core import TensorOrder
 from ...preprocessing import normalize
 from .core import PairwiseDistances

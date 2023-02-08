@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 import asyncio
 import logging
 from functools import partial
-from typing import Callable, Dict, List, Iterable, Set
+from typing import Callable, Dict, Iterable, List, Set
 
 from ....config import Config
-from ....core import TileableGraph, ChunkGraph, ChunkGraphBuilder, TileContext
+from ....core import ChunkGraph, ChunkGraphBuilder, TileableGraph, TileContext
 from ....core.graph.builder.chunk import Tiler, _TileableHandler
 from ....core.operand import Fetch, ShuffleFetchType
 from ....resource import Resource
-from ....typing import BandType, TileableType, ChunkType
+from ....typing import BandType, ChunkType, TileableType
 from ...subtask import Subtask, SubtaskGraph
 from ..analyzer import GraphAnalyzer
-from ..core import Task, MapReduceInfo
+from ..core import MapReduceInfo, Task
 
 logger = logging.getLogger(__name__)
 

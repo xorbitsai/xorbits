@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ from ... import opcodes
 from ... import tensor as mt
 from ...core import OutputType, recursive_tile
 from ...core.operand import OperandStage
-from ...serialization.serializables import KeyField, Int32Field
+from ...serialization.serializables import Int32Field, KeyField
 from ...tensor.array_utils import as_same_device, device
 from ...tensor.core import TensorOrder
 from ...tensor.random import RandomStateField

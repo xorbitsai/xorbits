@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .base import Client, Server, Channel
-from .core import get_client_type, get_server_type, gen_local_address
-from .dummy import DummyClient, DummyServer, DummyChannel
+from .base import Channel, Client, Server
+from .core import gen_local_address, get_client_type, get_server_type
+from .dummy import DummyChannel, DummyClient, DummyServer
 from .socket import (
+    SocketChannel,
     SocketClient,
     SocketServer,
     UnixSocketClient,
     UnixSocketServer,
-    SocketChannel,
 )
-from .ucx import (
+from .ucx import (  # noqa: F401 # pylint: disable=unused-import
+    UCXChannel,
     UCXClient,
     UCXServer,
-    UCXChannel,
-)  # noqa: F401 # pylint: disable=unused-import
+)

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ import cloudpickle
 from .... import opcodes
 from ....core import OutputType, recursive_tile
 from ....core.context import get_context
-from ....core.operand import OperandStage, MergeDictOperand
+from ....core.operand import MergeDictOperand, OperandStage
 from ....serialization.serializables import (
-    KeyField,
     BytesField,
     DictField,
-    Int32Field,
     Float32Field,
     FunctionField,
+    Int32Field,
+    KeyField,
 )
 from ....utils import has_unknown_shape
 

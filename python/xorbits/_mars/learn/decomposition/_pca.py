@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,23 +13,23 @@
 # limitations under the License.
 
 
-from math import log, sqrt
 import numbers
+from math import log, sqrt
 
 import numpy as np
 from scipy.special import gammaln
-from sklearn.utils.validation import check_is_fitted
 from sklearn.utils.extmath import fast_logdet
+from sklearn.utils.validation import check_is_fitted
 
-from ... import tensor as mt
 from ... import remote as mr
+from ... import tensor as mt
+from ...core import ExecutableTuple
+from ...lib.sparse import issparse
 from ...tensor.array_utils import get_array_module
 from ...tensor.core import TENSOR_TYPE
-from ...tensor.utils import check_random_state
 from ...tensor.linalg import randomized_svd
 from ...tensor.linalg.randomized_svd import svd_flip
-from ...lib.sparse import issparse
-from ...core import ExecutableTuple
+from ...tensor.utils import check_random_state
 from ..utils import check_array
 from ._base import _BasePCA
 

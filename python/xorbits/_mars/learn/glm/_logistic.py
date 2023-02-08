@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ import numbers
 from sklearn.utils.validation import _deprecate_positional_args
 
 from ... import tensor as mt
-from ..linear_model._base import LinearClassifierMixin
 from ..base import BaseEstimator
-from ..utils.validation import check_is_fitted
-from ..utils.multiclass import check_classification_targets
+from ..linear_model._base import LinearClassifierMixin
 from ..utils.extmath import softmax
+from ..utils.multiclass import check_classification_targets
+from ..utils.validation import check_is_fitted
 from ._optimizers import gradient_descent
 
 

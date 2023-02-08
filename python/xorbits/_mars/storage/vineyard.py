@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
 # limitations under the License.
 
 import asyncio
-from io import UnsupportedOperation
 import logging
 import sys
+from io import UnsupportedOperation
 from typing import Dict, List, Optional, Tuple
 
 from ..lib import sparse
 from ..resource import virtual_memory
-from ..utils import implements, lazy_import, calc_size_by_str
-from .base import StorageBackend, StorageLevel, ObjectInfo, register_storage_backend
+from ..utils import calc_size_by_str, implements, lazy_import
+from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import BufferWrappedFileObject, StorageFileObject
 
 vineyard = lazy_import("vineyard")

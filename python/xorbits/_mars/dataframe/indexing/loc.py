@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,19 +20,18 @@ import pandas as pd
 from pandas.core.dtypes.cast import find_common_type
 from pandas.core.indexing import IndexingError
 
-from .iloc import DataFrameIlocSetItem
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, OutputType
 from ...core.operand import OperandStage
-from ...serialization.serializables import KeyField, ListField, AnyField
+from ...serialization.serializables import AnyField, KeyField, ListField
 from ...tensor.datasource import asarray
 from ...tensor.utils import calc_sliced_size, filter_inputs
-from ...utils import lazy_import, is_full_slice
-from ..core import IndexValue, DATAFRAME_TYPE
+from ...utils import is_full_slice, lazy_import
+from ..core import DATAFRAME_TYPE, IndexValue
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, is_index_value_identical
+from ..utils import is_index_value_identical, parse_index
+from .iloc import DataFrameIlocSetItem
 from .index_lib import DataFrameLocIndexesHandler
-
 
 cudf = lazy_import("cudf")
 

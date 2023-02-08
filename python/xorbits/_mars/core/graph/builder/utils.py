@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ from typing import List, Union
 
 from ....typing import TileableType
 from ...mode import enter_mode
-from ..entity import TileableGraph, ChunkGraph
-from .tileable import TileableGraphBuilder
+from ..entity import ChunkGraph, TileableGraph
 from .chunk import ChunkGraphBuilder
+from .tileable import TileableGraphBuilder
 
 
 @enter_mode(kernel=True)

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,14 +23,14 @@ import pandas as pd
 
 from ... import opcodes
 from ...core import ENTITY_TYPE, OutputType, get_output_types, recursive_tile
-from ...core.operand import OperandStage, MapReduceOperand
+from ...core.operand import MapReduceOperand, OperandStage
 from ...serialization.serializables import (
     BoolField,
     DictField,
     Float32Field,
-    KeyField,
     Int32Field,
     Int64Field,
+    KeyField,
     NDArrayField,
     StringField,
 )
@@ -39,7 +39,7 @@ from ...tensor.random import RandomStateField
 from ...tensor.utils import gen_random_seeds
 from ...utils import has_unknown_shape
 from ..initializer import Series as asseries
-from ..operands import DataFrameOperandMixin, DataFrameOperand
+from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import parse_index
 
 _ILOC_COL_HEADER = "_gsamp_iloc_col_"

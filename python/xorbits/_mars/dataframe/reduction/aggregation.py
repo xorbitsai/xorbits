@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,34 +17,30 @@ import functools
 import itertools
 from collections import OrderedDict
 from collections.abc import Iterable
-from typing import List, Dict
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd
 
-from ... import opcodes, tensor as mars_tensor
+from ... import opcodes
+from ... import tensor as mars_tensor
 from ...config import options
-from ...core import OutputType, ENTITY_TYPE, enter_mode, recursive_tile
+from ...core import ENTITY_TYPE, OutputType, enter_mode, recursive_tile
 from ...core.custom_log import redirect_custom_log
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
-    BoolField,
     AnyField,
+    BoolField,
+    DictField,
     Int32Field,
     ListField,
-    DictField,
 )
-from ...utils import ceildiv, lazy_import, enter_current_session, pd_release_version
+from ...utils import ceildiv, enter_current_session, lazy_import, pd_release_version
 from ..core import INDEX_CHUNK_TYPE
 from ..merge import DataFrameConcat
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_df, build_empty_df, build_series, parse_index, validate_axis
-from .core import (
-    CustomReduction,
-    ReductionCompiler,
-    ReductionSteps,
-    ReductionAggStep,
-)
+from .core import CustomReduction, ReductionAggStep, ReductionCompiler, ReductionSteps
 
 cp = lazy_import("cupy", rename="cp")
 cudf = lazy_import("cudf")

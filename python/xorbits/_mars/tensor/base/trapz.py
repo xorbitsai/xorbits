@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ import numpy as np
 
 from ... import opcodes
 from ...core import recursive_tile
-from ...serialization.serializables import KeyField, Float64Field, Int8Field
+from ...serialization.serializables import Float64Field, Int8Field, KeyField
 from ...utils import has_unknown_shape
 from ..array_utils import as_same_device, device
 from ..core import TensorOrder

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,17 +21,17 @@ except ImportError:  # pragma: no cover
 
 from ... import opcodes as OperandDef
 from ... import tensor as mt
+from ...config import options
 from ...core import ENTITY_TYPE, get_output_types, recursive_tile
 from ...core.operand import OperandStage
-from ...config import options
 from ...serialization.serializables import (
-    KeyField,
-    StringField,
     BoolField,
     DataTypeField,
+    KeyField,
+    StringField,
 )
-from ...tensor.core import TensorOrder, TENSOR_CHUNK_TYPE
-from ...tensor.array_utils import as_same_device, device, issparse, get_array_module
+from ...tensor.array_utils import as_same_device, device, get_array_module, issparse
+from ...tensor.core import TENSOR_CHUNK_TYPE, TensorOrder
 from ...utils import ceildiv
 from ..operands import LearnOperand, LearnOperandMixin, OutputType
 

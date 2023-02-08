@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,16 +22,18 @@ from sklearn.datasets import make_classification, make_regression
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.svm import SVC
 
-from .... import tensor as mt, dataframe as md, execute
+from .... import dataframe as md
+from .... import execute
+from .... import tensor as mt
 from ....conftest import MARS_CI_BACKEND
 from ....core import enter_mode
 from ....services.task.execution.api import Fetcher
 from .._bagging import (
-    _extract_bagging_io,
-    BaggingSample,
-    BaggingSampleReindex,
     BaggingClassifier,
     BaggingRegressor,
+    BaggingSample,
+    BaggingSampleReindex,
+    _extract_bagging_io,
 )
 
 

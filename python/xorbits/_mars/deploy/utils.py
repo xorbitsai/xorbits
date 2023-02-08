@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ import asyncio
 import os
 import time
 import warnings
-from typing import Callable, Dict, List, Union, TextIO
+from typing import Callable, Dict, List, TextIO, Union
 
 import yaml
 
 from ..services import NodeRole
-from ..utils import merge_dict, flatten_dict_to_nested_dict
+from ..utils import flatten_dict_to_nested_dict, merge_dict
 
 DEFAULT_CONFIG_FILE = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "oscar/config.yml"

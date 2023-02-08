@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
 import numpy as np
 import pytest
 import scipy.sparse as sp
-from sklearn.preprocessing._label import _inverse_binarize_thresholding
-from sklearn.preprocessing._label import _inverse_binarize_multiclass
+from sklearn.preprocessing._label import (
+    _inverse_binarize_multiclass,
+    _inverse_binarize_thresholding,
+)
 from sklearn.utils._testing import assert_array_equal, ignore_warnings
 from sklearn.utils.multiclass import type_of_target
 
 from .... import tensor as mt
-from .. import LabelBinarizer, label_binarize, LabelEncoder
+from .. import LabelBinarizer, LabelEncoder, label_binarize
 
 
 def test_label_binarizer(setup):

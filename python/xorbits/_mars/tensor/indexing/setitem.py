@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,16 +24,12 @@ from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, recursive_tile
 from ...core.context import Context
 from ...core.operand import OperandStage
-from ...serialization.serializables import KeyField, TupleField, AnyField, BoolField
+from ...serialization.serializables import AnyField, BoolField, KeyField, TupleField
 from ...tensor import tensor as astensor
 from ...utils import has_unknown_shape
 from ..base import broadcast_to
 from ..core import TENSOR_TYPE, TensorOrder
-from ..operands import (
-    TensorMapReduceOperand,
-    TensorOperandMixin,
-    TensorShuffleProxy,
-)
+from ..operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
 from ..utils import broadcast_shape, filter_inputs
 from .core import process_index
 

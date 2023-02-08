@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,20 +14,19 @@
 
 import scipy.special as spspecial
 
-from ...core import ExecutableTuple
 from ... import opcodes
-from ..datasource import tensor as astensor
-from ..arithmetic.core import TensorUnaryOp, TensorBinOp, TensorMultiOp
+from ...core import ExecutableTuple
+from ..arithmetic.core import TensorBinOp, TensorMultiOp, TensorUnaryOp
 from ..array_utils import (
-    np,
-    cp,
-    issparse,
-    sparse,
-    convert_order,
     as_same_device,
+    convert_order,
+    cp,
     device,
+    issparse,
+    np,
+    sparse,
 )
-
+from ..datasource import tensor as astensor
 
 _func_name_to_special_cls = {}
 

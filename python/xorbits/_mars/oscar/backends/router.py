@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 # limitations under the License.
 
 import threading
-from typing import Dict, List, Tuple, Type, Any, Optional
+from typing import Any, Dict, List, Optional, Tuple, Type
 
-from .communication import get_client_type, Client
+from .communication import Client, get_client_type
 
 
 class Router:

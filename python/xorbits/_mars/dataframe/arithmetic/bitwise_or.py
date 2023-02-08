@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 import operator
 
 from ... import opcodes as OperandDef
-from ...utils import classproperty, TreeReductionBuilder
-from .core import DataFrameBinopUfunc, DataFrameArithmeticTreeMixin
+from ...utils import TreeReductionBuilder, classproperty
+from .core import DataFrameArithmeticTreeMixin, DataFrameBinopUfunc
 
 
 class DataFrameOr(DataFrameBinopUfunc):

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,16 +20,15 @@ from sklearn.base import BaseEstimator, MultiOutputMixin
 
 from ... import tensor as mt
 from ...tensor.reshape.reshape import _reshape as reshape_unchecked
-from ..metrics.pairwise import PAIRWISE_DISTANCE_FUNCTIONS
 from ..metrics import pairwise_distances_topk
+from ..metrics.pairwise import PAIRWISE_DISTANCE_FUNCTIONS
 from ..utils import check_array
 from ..utils.validation import check_is_fitted
-from ._ball_tree import create_ball_tree, ball_tree_query, SklearnBallTree
-from ._kd_tree import create_kd_tree, kd_tree_query, SklearnKDTree
-from ._faiss import build_faiss_index, faiss_query, METRIC_TO_FAISS_METRIC_TYPE
-from ._proxima import build_proxima_index, proxima_query, METRIC_TO_PROXIMA_METRIC_TYPE
+from ._ball_tree import SklearnBallTree, ball_tree_query, create_ball_tree
+from ._faiss import METRIC_TO_FAISS_METRIC_TYPE, build_faiss_index, faiss_query
+from ._kd_tree import SklearnKDTree, create_kd_tree, kd_tree_query
 from ._kneighbors_graph import KNeighborsGraph
-
+from ._proxima import METRIC_TO_PROXIMA_METRIC_TYPE, build_proxima_index, proxima_query
 
 VALID_METRICS = dict(
     ball_tree=SklearnBallTree.valid_metrics,

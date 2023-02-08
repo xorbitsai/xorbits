@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,31 +18,33 @@ import pandas as pd
 import pytest
 
 from .... import opcodes
-from ....config import options, option_context
-from ....core import OutputType, tile, Tileable
+from ....config import option_context, options
+from ....core import OutputType, Tileable, tile
 from ....core.graph import (
+    ChunkGraphBuilder,
     TileableGraph,
     TileableGraphBuilder,
     TileContext,
-    ChunkGraphBuilder,
 )
 from ....core.operand import OperandStage
 from ....tensor.core import TENSOR_TYPE
-from ... import eval as mars_eval, cut, get_dummies, to_numeric
+from ... import cut
+from ... import eval as mars_eval
+from ... import get_dummies, to_numeric
 from ...core import (
-    DATAFRAME_TYPE,
-    SERIES_TYPE,
-    SERIES_CHUNK_TYPE,
-    INDEX_TYPE,
-    CATEGORICAL_TYPE,
     CATEGORICAL_CHUNK_TYPE,
+    CATEGORICAL_TYPE,
+    DATAFRAME_TYPE,
+    INDEX_TYPE,
+    SERIES_CHUNK_TYPE,
+    SERIES_TYPE,
     DataFrameData,
     SeriesData,
 )
 from ...datasource.dataframe import from_pandas as from_pandas_df
-from ...datasource.series import from_pandas as from_pandas_series
 from ...datasource.index import from_pandas as from_pandas_index
-from .. import to_gpu, to_cpu, astype
+from ...datasource.series import from_pandas as from_pandas_series
+from .. import astype, to_cpu, to_gpu
 
 
 def _get_df_after_tile(

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,24 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 import asyncio
+
+import numpy as np
 import pytest
 
 from ..... import oscar as mo
 from .....core import ChunkGraph
-from .....tensor.fetch import TensorFetch
 from .....tensor.arithmetic import TensorTreeAdd
+from .....tensor.fetch import TensorFetch
 from ....cluster import ClusterAPI
 from ....cluster.core import NodeRole, NodeStatus
-from ....cluster.uploader import NodeInfoUploaderActor
 from ....cluster.supervisor.locator import SupervisorPeerLocatorActor
 from ....cluster.supervisor.node_info import NodeInfoCollectorActor
+from ....cluster.uploader import NodeInfoUploaderActor
 from ....meta import MockMetaAPI
 from ....session import MockSessionAPI
 from ....subtask import Subtask
+from ...errors import NoAvailableBand, NoMatchingSlots
 from ...supervisor import AssignerActor
-from ...errors import NoMatchingSlots, NoAvailableBand
 
 
 class MockNodeInfoCollectorActor(NodeInfoCollectorActor):

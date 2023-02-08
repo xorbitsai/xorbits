@@ -956,11 +956,11 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_14___aenter__;
 struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_15___aexit__;
 
 /* "context.pxd":16
- * 
- * 
+ *
+ *
  * cdef class BaseActorContext:             # <<<<<<<<<<<<<<
  *     cdef public str _address
- * 
+ *
  */
 struct __pyx_obj_7xorbits_5_mars_5oscar_7context_BaseActorContext {
   PyObject_HEAD
@@ -969,8 +969,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_7context_BaseActorContext {
 
 
 /* "xorbits/_mars/oscar/core.pxd":16
- * 
- * 
+ *
+ *
  * cdef class ActorRef:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef public str address
@@ -985,8 +985,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core_ActorRef {
 
 
 /* "xorbits/_mars/oscar/core.pxd":23
- * 
- * 
+ *
+ *
  * cdef class LocalActorRef(ActorRef):             # <<<<<<<<<<<<<<
  *     cdef object _actor_weakref
  *     cdef _weakref_local_actor(self)
@@ -999,8 +999,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core_LocalActorRef {
 
 
 /* "xorbits/_mars/oscar/core.pxd":28
- * 
- * 
+ *
+ *
  * cdef class _BaseActor:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef str _address
@@ -1016,8 +1016,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core__BaseActor {
 
 
 /* "xorbits/_mars/oscar/core.pxd":37
- * 
- * 
+ *
+ *
  * cdef class ActorEnvironment:             # <<<<<<<<<<<<<<
  *     cdef public dict actor_locks
  *     cdef public object address
@@ -1030,11 +1030,11 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core_ActorEnvironment {
 
 
 /* "xorbits/_mars/oscar/core.pyx":144
- * 
- * 
+ *
+ *
  * cdef class _DelayedArgument:             # <<<<<<<<<<<<<<
  *     cdef readonly tuple arguments
- * 
+ *
  */
 struct __pyx_obj_7xorbits_5_mars_5oscar_4core__DelayedArgument {
   PyObject_HEAD
@@ -1043,8 +1043,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core__DelayedArgument {
 
 
 /* "xorbits/_mars/oscar/core.pyx":151
- * 
- * 
+ *
+ *
  * cdef class ActorRefMethod:             # <<<<<<<<<<<<<<
  *     """
  *     Wrapper for an Actor method at client
@@ -1058,8 +1058,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core_ActorRefMethod {
 
 
 /* "xorbits/_mars/oscar/core.pyx":273
- * 
- * 
+ *
+ *
  * cdef class LocalActorRefMethod:             # <<<<<<<<<<<<<<
  *     cdef LocalActorRef _local_actor_ref
  *     cdef object _method_name
@@ -1085,8 +1085,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core__Actor {
 
 
 /* "xorbits/_mars/oscar/core.pyx":534
- * 
- * 
+ *
+ *
  * cdef class _FakeLock:             # <<<<<<<<<<<<<<
  *     async def __aenter__(self):
  *         pass
@@ -1109,8 +1109,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core__StatelessActor {
 
 
 /* "xorbits/_mars/oscar/core.pyx":67
- * 
- * 
+ *
+ *
  * def register_local_pool(address, pool):             # <<<<<<<<<<<<<<
  *     """
  *     Register local actor pool for local actor lookup.
@@ -1123,7 +1123,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct__register_local
 
 /* "xorbits/_mars/oscar/core.pyx":214
  *         return get_context().send(self.ref, message, wait_response=send, **self._options)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             try:
@@ -1139,7 +1139,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_1_tell_delay {
 
 
 /* "xorbits/_mars/oscar/core.pyx":215
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             try:
@@ -1157,7 +1157,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_2_delay_fun {
 
 
 /* "xorbits/_mars/oscar/core.pyx":232
- * 
+ *
  * cdef class LocalActorRef(ActorRef):
  *     def __init__(self, _BaseActor actor):             # <<<<<<<<<<<<<<
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -1171,7 +1171,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_3___init__ {
 
 /* "xorbits/_mars/oscar/core.pyx":237
  *         self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())
- * 
+ *
  *     cdef _weakref_local_actor(self):             # <<<<<<<<<<<<<<
  *         actor = _get_local_actor(self.address, self.uid)
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -1183,8 +1183,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_4__weakref_loca
 
 
 /* "xorbits/_mars/oscar/core.pyx":262
- * 
- * 
+ *
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):             # <<<<<<<<<<<<<<
  *     async with lock:
  *         result = method(*args, **kwargs)
@@ -1210,7 +1210,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_5___pyx_actor_m
 
 /* "xorbits/_mars/oscar/core.pyx":322
  *             return asyncio.sleep(0)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             await asyncio.sleep(delay)
@@ -1225,7 +1225,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_6_tell_delay {
 
 
 /* "xorbits/_mars/oscar/core.pyx":323
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             await asyncio.sleep(delay)
@@ -1239,7 +1239,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_7_delay_fun {
 
 /* "xorbits/_mars/oscar/core.pyx":365
  *         return create_actor_ref(self._address, self._uid)
- * 
+ *
  *     async def _handle_actor_result(self, result):             # <<<<<<<<<<<<<<
  *         cdef int idx
  *         cdef tuple res_tuple
@@ -1293,7 +1293,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_9_genexpr {
 
 /* "xorbits/_mars/oscar/core.pyx":431
  *         return result
- * 
+ *
  *     async def _run_actor_async_generator(self, gen: AsyncGenerator):             # <<<<<<<<<<<<<<
  *         """
  *         Run an async generator under Actor lock
@@ -1326,7 +1326,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_10__run_actor_a
 
 /* "xorbits/_mars/oscar/core.pyx":468
  *             return
- * 
+ *
  *     async def __post_create__(self):             # <<<<<<<<<<<<<<
  *         """
  *         Method called after actor creation
@@ -1339,7 +1339,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_11___post_creat
 
 /* "xorbits/_mars/oscar/core.pyx":474
  *         pass
- * 
+ *
  *     async def __pre_destroy__(self):             # <<<<<<<<<<<<<<
  *         """
  *         Method called before actor destroy
@@ -1352,7 +1352,7 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_12___pre_destro
 
 /* "xorbits/_mars/oscar/core.pyx":480
  *         pass
- * 
+ *
  *     async def __on_receive__(self, tuple message):             # <<<<<<<<<<<<<<
  *         """
  *         Handle message from other actors and dispatch them to user methods
@@ -1387,11 +1387,11 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_13___on_receive
 
 
 /* "xorbits/_mars/oscar/core.pyx":535
- * 
+ *
  * cdef class _FakeLock:
  *     async def __aenter__(self):             # <<<<<<<<<<<<<<
  *         pass
- * 
+ *
  */
 struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_14___aenter__ {
   PyObject_HEAD
@@ -1401,10 +1401,10 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_14___aenter__ {
 
 /* "xorbits/_mars/oscar/core.pyx":538
  *         pass
- * 
+ *
  *     async def __aexit__(self, exc_type, exc_val, exc_tb):             # <<<<<<<<<<<<<<
  *         pass
- * 
+ *
  */
 struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_15___aexit__ {
   PyObject_HEAD
@@ -1417,8 +1417,8 @@ struct __pyx_obj_7xorbits_5_mars_5oscar_4core___pyx_scope_struct_15___aexit__ {
 
 
 /* "xorbits/_mars/oscar/core.pyx":231
- * 
- * 
+ *
+ *
  * cdef class LocalActorRef(ActorRef):             # <<<<<<<<<<<<<<
  *     def __init__(self, _BaseActor actor):
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -1431,8 +1431,8 @@ static struct __pyx_vtabstruct_7xorbits_5_mars_5oscar_4core_LocalActorRef *__pyx
 
 
 /* "xorbits/_mars/oscar/core.pyx":330
- * 
- * 
+ *
+ *
  * cdef class _BaseActor:             # <<<<<<<<<<<<<<
  *     """
  *     Base Mars actor class, user methods implemented as methods
@@ -1445,8 +1445,8 @@ static struct __pyx_vtabstruct_7xorbits_5_mars_5oscar_4core__BaseActor *__pyx_vt
 
 
 /* "xorbits/_mars/oscar/core.pyx":273
- * 
- * 
+ *
+ *
  * cdef class LocalActorRefMethod:             # <<<<<<<<<<<<<<
  *     cdef LocalActorRef _local_actor_ref
  *     cdef object _method_name
@@ -2905,8 +2905,8 @@ static PyObject *__pyx_codeobj__42;
 /* Late includes */
 
 /* "xorbits/_mars/oscar/core.pyx":41
- * 
- * 
+ *
+ *
  * def set_debug_options(options):             # <<<<<<<<<<<<<<
  *     global _log_unhandled_errors, _log_cycle_send
  *     if options is None:
@@ -2973,7 +2973,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_set_debug_options(CYTHON_
  *     else:
  *         _log_unhandled_errors = options.log_unhandled_errors             # <<<<<<<<<<<<<<
  *         _log_cycle_send = options.log_cycle_send
- * 
+ *
  */
   /*else*/ {
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_options, __pyx_n_s_log_unhandled_errors); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error)
@@ -2986,8 +2986,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_set_debug_options(CYTHON_
  *     else:
  *         _log_unhandled_errors = options.log_unhandled_errors
  *         _log_cycle_send = options.log_cycle_send             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_options, __pyx_n_s_log_cycle_send); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -2998,8 +2998,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_set_debug_options(CYTHON_
   __pyx_L3:;
 
   /* "xorbits/_mars/oscar/core.pyx":41
- * 
- * 
+ *
+ *
  * def set_debug_options(options):             # <<<<<<<<<<<<<<
  *     global _log_unhandled_errors, _log_cycle_send
  *     if options is None:
@@ -3019,8 +3019,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_set_debug_options(CYTHON_
 }
 
 /* "xorbits/_mars/oscar/core.pyx":50
- * 
- * 
+ *
+ *
  * cdef _get_local_actor(address, uid):             # <<<<<<<<<<<<<<
  *     # Do not expose this method to Python to avoid actor being
  *     # referenced everywhere.
@@ -3180,7 +3180,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core__get_local_actor(PyObject 
  *         if actor is not None:
  *             return actor             # <<<<<<<<<<<<<<
  *     return None
- * 
+ *
  */
       __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_v_actor);
@@ -3209,16 +3209,16 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core__get_local_actor(PyObject 
  *         if actor is not None:
  *             return actor
  *     return None             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
   goto __pyx_L0;
 
   /* "xorbits/_mars/oscar/core.pyx":50
- * 
- * 
+ *
+ *
  * cdef _get_local_actor(address, uid):             # <<<<<<<<<<<<<<
  *     # Do not expose this method to Python to avoid actor being
  *     # referenced everywhere.
@@ -3242,8 +3242,8 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core__get_local_actor(PyObject 
 }
 
 /* "xorbits/_mars/oscar/core.pyx":67
- * 
- * 
+ *
+ *
  * def register_local_pool(address, pool):             # <<<<<<<<<<<<<<
  *     """
  *     Register local actor pool for local actor lookup.
@@ -3320,7 +3320,7 @@ static PyObject *__pyx_pw_7xorbits_5_mars_5oscar_4core_3register_local_pool(PyOb
  *     _local_pool_map[address] = weakref.ref(
  *         pool, lambda _: _local_pool_map.pop(address, None)             # <<<<<<<<<<<<<<
  *     )
- * 
+ *
  */
 
 /* Python wrapper */
@@ -3373,8 +3373,8 @@ static PyObject *__pyx_lambda_funcdef_lambda(PyObject *__pyx_self, CYTHON_UNUSED
 }
 
 /* "xorbits/_mars/oscar/core.pyx":67
- * 
- * 
+ *
+ *
  * def register_local_pool(address, pool):             # <<<<<<<<<<<<<<
  *     """
  *     Register local actor pool for local actor lookup.
@@ -3424,7 +3424,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_2register_local_pool(CYTH
  *     _local_pool_map[address] = weakref.ref(
  *         pool, lambda _: _local_pool_map.pop(address, None)             # <<<<<<<<<<<<<<
  *     )
- * 
+ *
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7xorbits_5_mars_5oscar_4core_19register_local_pool_lambda, 0, __pyx_n_s_register_local_pool_locals_lambd, ((PyObject*)__pyx_cur_scope), __pyx_n_s_xorbits__mars_oscar_core, __pyx_d, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3491,8 +3491,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_2register_local_pool(CYTH
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":67
- * 
- * 
+ *
+ *
  * def register_local_pool(address, pool):             # <<<<<<<<<<<<<<
  *     """
  *     Register local actor pool for local actor lookup.
@@ -3517,8 +3517,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_2register_local_pool(CYTH
 }
 
 /* "xorbits/_mars/oscar/core.pyx":76
- * 
- * 
+ *
+ *
  * cpdef create_local_actor_ref(address, uid):             # <<<<<<<<<<<<<<
  *     """
  *     Create a reference to local actor.
@@ -3565,7 +3565,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_create_local_actor_ref(PyO
  *     if actor is not None:
  *         return LocalActorRef(actor)             # <<<<<<<<<<<<<<
  *     return None
- * 
+ *
  */
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)__pyx_ptype_7xorbits_5_mars_5oscar_4core_LocalActorRef), __pyx_v_actor); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
@@ -3587,16 +3587,16 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_create_local_actor_ref(PyO
  *     if actor is not None:
  *         return LocalActorRef(actor)
  *     return None             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
   goto __pyx_L0;
 
   /* "xorbits/_mars/oscar/core.pyx":76
- * 
- * 
+ *
+ *
  * cpdef create_local_actor_ref(address, uid):             # <<<<<<<<<<<<<<
  *     """
  *     Create a reference to local actor.
@@ -3706,8 +3706,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_4create_local_actor_ref(C
 }
 
 /* "xorbits/_mars/oscar/core.pyx":90
- * 
- * 
+ *
+ *
  * cpdef create_actor_ref(address, uid):             # <<<<<<<<<<<<<<
  *     """
  *     Create an actor reference.
@@ -3732,7 +3732,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_create_actor_ref(PyObject 
  *     """
  *     actor = _get_local_actor(address, uid)             # <<<<<<<<<<<<<<
  *     return ActorRef(address, uid) if actor is None else LocalActorRef(actor)
- * 
+ *
  */
   __pyx_t_1 = __pyx_f_7xorbits_5_mars_5oscar_4core__get_local_actor(__pyx_v_address, __pyx_v_uid); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3743,8 +3743,8 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_create_actor_ref(PyObject 
  *     """
  *     actor = _get_local_actor(address, uid)
  *     return ActorRef(address, uid) if actor is None else LocalActorRef(actor)             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2 = (__pyx_v_actor == Py_None);
@@ -3773,8 +3773,8 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_create_actor_ref(PyObject 
   goto __pyx_L0;
 
   /* "xorbits/_mars/oscar/core.pyx":90
- * 
- * 
+ *
+ *
  * cpdef create_actor_ref(address, uid):             # <<<<<<<<<<<<<<
  *     """
  *     Create an actor reference.
@@ -3983,7 +3983,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef___init__(struct __pyx
  *             uid = uid.encode()
  *         self.uid = uid
  */
-  __pyx_t_1 = PyUnicode_Check(__pyx_v_uid); 
+  __pyx_t_1 = PyUnicode_Check(__pyx_v_uid);
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
@@ -4041,7 +4041,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef___init__(struct __pyx
  *         self.uid = uid
  *         self.address = address             # <<<<<<<<<<<<<<
  *         self._methods = dict()
- * 
+ *
  */
   __Pyx_INCREF(__pyx_v_address);
   __Pyx_GIVEREF(__pyx_v_address);
@@ -4053,7 +4053,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef___init__(struct __pyx
  *         self.uid = uid
  *         self.address = address
  *         self._methods = dict()             # <<<<<<<<<<<<<<
- * 
+ *
  *     def destroy(self, object callback=None):
  */
   __pyx_t_3 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
@@ -4089,7 +4089,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef___init__(struct __pyx
 
 /* "xorbits/_mars/oscar/core.pyx":114
  *         self._methods = dict()
- * 
+ *
  *     def destroy(self, object callback=None):             # <<<<<<<<<<<<<<
  *         ctx = get_context()
  *         return ctx.destroy_actor(self)
@@ -4167,11 +4167,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_2destroy(struct
   __Pyx_RefNannySetupContext("destroy", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":115
- * 
+ *
  *     def destroy(self, object callback=None):
  *         ctx = get_context()             # <<<<<<<<<<<<<<
  *         return ctx.destroy_actor(self)
- * 
+ *
  */
   __pyx_t_1 = __pyx_f_7xorbits_5_mars_5oscar_7context_get_context(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4182,7 +4182,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_2destroy(struct
  *     def destroy(self, object callback=None):
  *         ctx = get_context()
  *         return ctx.destroy_actor(self)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __reduce__(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4209,7 +4209,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_2destroy(struct
 
   /* "xorbits/_mars/oscar/core.pyx":114
  *         self._methods = dict()
- * 
+ *
  *     def destroy(self, object callback=None):             # <<<<<<<<<<<<<<
  *         ctx = get_context()
  *         return ctx.destroy_actor(self)
@@ -4231,10 +4231,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_2destroy(struct
 
 /* "xorbits/_mars/oscar/core.pyx":118
  *         return ctx.destroy_actor(self)
- * 
+ *
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
  *         return create_actor_ref, (self.address, self.uid)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -4262,10 +4262,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_4__reduce__(str
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":119
- * 
+ *
  *     def __reduce__(self):
  *         return create_actor_ref, (self.address, self.uid)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __getattr__(self, item):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4293,10 +4293,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_4__reduce__(str
 
   /* "xorbits/_mars/oscar/core.pyx":118
  *         return ctx.destroy_actor(self)
- * 
+ *
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
  *         return create_actor_ref, (self.address, self.uid)
- * 
+ *
  */
 
   /* function exit code */
@@ -4314,7 +4314,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_4__reduce__(str
 
 /* "xorbits/_mars/oscar/core.pyx":121
  *         return create_actor_ref, (self.address, self.uid)
- * 
+ *
  *     def __getattr__(self, item):             # <<<<<<<<<<<<<<
  *         if item.startswith('_'):
  *             return object.__getattribute__(self, item)
@@ -4353,11 +4353,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
   __Pyx_RefNannySetupContext("__getattr__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":122
- * 
+ *
  *     def __getattr__(self, item):
  *         if item.startswith('_'):             # <<<<<<<<<<<<<<
  *             return object.__getattribute__(self, item)
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_item, __pyx_n_s_startswith); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -4384,7 +4384,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
  *     def __getattr__(self, item):
  *         if item.startswith('_'):
  *             return object.__getattribute__(self, item)             # <<<<<<<<<<<<<<
- * 
+ *
  *         try:
  */
     __Pyx_XDECREF(__pyx_r);
@@ -4440,17 +4440,17 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
     goto __pyx_L0;
 
     /* "xorbits/_mars/oscar/core.pyx":122
- * 
+ *
  *     def __getattr__(self, item):
  *         if item.startswith('_'):             # <<<<<<<<<<<<<<
  *             return object.__getattribute__(self, item)
- * 
+ *
  */
   }
 
   /* "xorbits/_mars/oscar/core.pyx":125
  *             return object.__getattribute__(self, item)
- * 
+ *
  *         try:             # <<<<<<<<<<<<<<
  *             return self._methods[item]
  *         except KeyError:
@@ -4465,7 +4465,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
     /*try:*/ {
 
       /* "xorbits/_mars/oscar/core.pyx":126
- * 
+ *
  *         try:
  *             return self._methods[item]             # <<<<<<<<<<<<<<
  *         except KeyError:
@@ -4484,7 +4484,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
 
       /* "xorbits/_mars/oscar/core.pyx":125
  *             return object.__getattribute__(self, item)
- * 
+ *
  *         try:             # <<<<<<<<<<<<<<
  *             return self._methods[item]
  *         except KeyError:
@@ -4516,7 +4516,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
  *         except KeyError:
  *             method = self._methods[item] = ActorRefMethod(self, item)             # <<<<<<<<<<<<<<
  *             return method
- * 
+ *
  */
       __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L6_except_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -4542,7 +4542,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
  *         except KeyError:
  *             method = self._methods[item] = ActorRefMethod(self, item)
  *             return method             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __hash__(self):
  */
       __Pyx_XDECREF(__pyx_r);
@@ -4558,7 +4558,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
 
     /* "xorbits/_mars/oscar/core.pyx":125
  *             return object.__getattribute__(self, item)
- * 
+ *
  *         try:             # <<<<<<<<<<<<<<
  *             return self._methods[item]
  *         except KeyError:
@@ -4584,7 +4584,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
 
   /* "xorbits/_mars/oscar/core.pyx":121
  *         return create_actor_ref, (self.address, self.uid)
- * 
+ *
  *     def __getattr__(self, item):             # <<<<<<<<<<<<<<
  *         if item.startswith('_'):
  *             return object.__getattribute__(self, item)
@@ -4608,10 +4608,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_6__getattr__(st
 
 /* "xorbits/_mars/oscar/core.pyx":131
  *             return method
- * 
+ *
  *     def __hash__(self):             # <<<<<<<<<<<<<<
  *         return hash((self.address, self.uid))
- * 
+ *
  */
 
 /* Python wrapper */
@@ -4638,10 +4638,10 @@ static Py_hash_t __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_8__hash__(struc
   __Pyx_RefNannySetupContext("__hash__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":132
- * 
+ *
  *     def __hash__(self):
  *         return hash((self.address, self.uid))             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __eq__(self, other):
  */
   __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
@@ -4659,10 +4659,10 @@ static Py_hash_t __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_8__hash__(struc
 
   /* "xorbits/_mars/oscar/core.pyx":131
  *             return method
- * 
+ *
  *     def __hash__(self):             # <<<<<<<<<<<<<<
  *         return hash((self.address, self.uid))
- * 
+ *
  */
 
   /* function exit code */
@@ -4678,7 +4678,7 @@ static Py_hash_t __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_8__hash__(struc
 
 /* "xorbits/_mars/oscar/core.pyx":134
  *         return hash((self.address, self.uid))
- * 
+ *
  *     def __eq__(self, other):             # <<<<<<<<<<<<<<
  *         other_type = type(other)
  *         if other_type is ActorRef or other_type is LocalActorRef:
@@ -4713,7 +4713,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_10__eq__(struct
   __Pyx_RefNannySetupContext("__eq__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":135
- * 
+ *
  *     def __eq__(self, other):
  *         other_type = type(other)             # <<<<<<<<<<<<<<
  *         if other_type is ActorRef or other_type is LocalActorRef:
@@ -4747,7 +4747,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_10__eq__(struct
  *         if other_type is ActorRef or other_type is LocalActorRef:
  *             return self.address == other.address and self.uid == other.uid             # <<<<<<<<<<<<<<
  *         return False
- * 
+ *
  */
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_address); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L1_error)
@@ -4788,7 +4788,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_10__eq__(struct
  *         if other_type is ActorRef or other_type is LocalActorRef:
  *             return self.address == other.address and self.uid == other.uid
  *         return False             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __repr__(self):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4798,7 +4798,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_10__eq__(struct
 
   /* "xorbits/_mars/oscar/core.pyx":134
  *         return hash((self.address, self.uid))
- * 
+ *
  *     def __eq__(self, other):             # <<<<<<<<<<<<<<
  *         other_type = type(other)
  *         if other_type is ActorRef or other_type is LocalActorRef:
@@ -4820,10 +4820,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_10__eq__(struct
 
 /* "xorbits/_mars/oscar/core.pyx":140
  *         return False
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'ActorRef(uid={!r}, address={!r})'.format(self.uid, self.address)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -4853,11 +4853,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_12__repr__(stru
   __Pyx_RefNannySetupContext("__repr__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":141
- * 
+ *
  *     def __repr__(self):
  *         return 'ActorRef(uid={!r}, address={!r})'.format(self.uid, self.address)             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_ActorRef_uid_r_address_r, __pyx_n_s_format); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
@@ -4913,10 +4913,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_12__repr__(stru
 
   /* "xorbits/_mars/oscar/core.pyx":140
  *         return False
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'ActorRef(uid={!r}, address={!r})'.format(self.uid, self.address)
- * 
+ *
  */
 
   /* function exit code */
@@ -5046,7 +5046,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_7address_4__del__(str
  *     cdef public str address
  *     cdef public object uid             # <<<<<<<<<<<<<<
  *     cdef dict _methods
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5138,10 +5138,10 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_8ActorRef_3uid_4__del__(struct 
 
 /* "xorbits/_mars/oscar/core.pyx":147
  *     cdef readonly tuple arguments
- * 
+ *
  *     def __init__(self, tuple arguments):             # <<<<<<<<<<<<<<
  *         self.arguments = arguments
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5208,11 +5208,11 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_16_DelayedArgument___init__(str
   __Pyx_RefNannySetupContext("__init__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":148
- * 
+ *
  *     def __init__(self, tuple arguments):
  *         self.arguments = arguments             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_INCREF(__pyx_v_arguments);
   __Pyx_GIVEREF(__pyx_v_arguments);
@@ -5222,10 +5222,10 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_16_DelayedArgument___init__(str
 
   /* "xorbits/_mars/oscar/core.pyx":147
  *     cdef readonly tuple arguments
- * 
+ *
  *     def __init__(self, tuple arguments):             # <<<<<<<<<<<<<<
  *         self.arguments = arguments
- * 
+ *
  */
 
   /* function exit code */
@@ -5235,10 +5235,10 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_16_DelayedArgument___init__(str
 }
 
 /* "xorbits/_mars/oscar/core.pyx":145
- * 
+ *
  * cdef class _DelayedArgument:
  *     cdef readonly tuple arguments             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __init__(self, tuple arguments):
  */
 
@@ -5566,7 +5566,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_16_DelayedArgument_4__set
 
 /* "xorbits/_mars/oscar/core.pyx":159
  *     cdef object _options
- * 
+ *
  *     def __init__(self, ref, method_name, options=None):             # <<<<<<<<<<<<<<
  *         self.ref = ref
  *         self.method_name = method_name
@@ -5663,7 +5663,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod___init__(struc
   __Pyx_RefNannySetupContext("__init__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":160
- * 
+ *
  *     def __init__(self, ref, method_name, options=None):
  *         self.ref = ref             # <<<<<<<<<<<<<<
  *         self.method_name = method_name
@@ -5683,7 +5683,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod___init__(struc
  *         self.ref = ref
  *         self.method_name = method_name             # <<<<<<<<<<<<<<
  *         self._options = options or {}
- * 
+ *
  */
   __Pyx_INCREF(__pyx_v_method_name);
   __Pyx_GIVEREF(__pyx_v_method_name);
@@ -5695,7 +5695,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod___init__(struc
  *         self.ref = ref
  *         self.method_name = method_name
  *         self._options = options or {}             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __call__(self, *args, **kwargs):
  */
   __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_options); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 162, __pyx_L1_error)
@@ -5719,7 +5719,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod___init__(struc
 
   /* "xorbits/_mars/oscar/core.pyx":159
  *     cdef object _options
- * 
+ *
  *     def __init__(self, ref, method_name, options=None):             # <<<<<<<<<<<<<<
  *         self.ref = ref
  *         self.method_name = method_name
@@ -5740,10 +5740,10 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod___init__(struc
 
 /* "xorbits/_mars/oscar/core.pyx":164
  *         self._options = options or {}
- * 
+ *
  *     def __call__(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         return self.send(*args, **kwargs)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5780,10 +5780,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_2__call_
   __Pyx_RefNannySetupContext("__call__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":165
- * 
+ *
  *     def __call__(self, *args, **kwargs):
  *         return self.send(*args, **kwargs)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def options(self, **options):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5801,10 +5801,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_2__call_
 
   /* "xorbits/_mars/oscar/core.pyx":164
  *         self._options = options or {}
- * 
+ *
  *     def __call__(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         return self.send(*args, **kwargs)
- * 
+ *
  */
 
   /* function exit code */
@@ -5822,10 +5822,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_2__call_
 
 /* "xorbits/_mars/oscar/core.pyx":167
  *         return self.send(*args, **kwargs)
- * 
+ *
  *     def options(self, **options):             # <<<<<<<<<<<<<<
  *         return ActorRefMethod(self.ref, self.method_name, options)
- * 
+ *
  */
 
 /* Python wrapper */
@@ -5859,10 +5859,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_4options
   __Pyx_RefNannySetupContext("options", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":168
- * 
+ *
  *     def options(self, **options):
  *         return ActorRefMethod(self.ref, self.method_name, options)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def send(self, *args, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5886,10 +5886,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_4options
 
   /* "xorbits/_mars/oscar/core.pyx":167
  *         return self.send(*args, **kwargs)
- * 
+ *
  *     def options(self, **options):             # <<<<<<<<<<<<<<
  *         return ActorRefMethod(self.ref, self.method_name, options)
- * 
+ *
  */
 
   /* function exit code */
@@ -5906,7 +5906,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_4options
 
 /* "xorbits/_mars/oscar/core.pyx":170
  *         return ActorRefMethod(self.ref, self.method_name, options)
- * 
+ *
  *     def send(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return get_context().send(self.ref, arg_tuple, **self._options)
@@ -5948,11 +5948,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_6send(st
   __Pyx_RefNannySetupContext("send", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":171
- * 
+ *
  *     def send(self, *args, **kwargs):
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)             # <<<<<<<<<<<<<<
  *         return get_context().send(self.ref, arg_tuple, **self._options)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_CALL_METHOD_DEFAULT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -5977,7 +5977,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_6send(st
  *     def send(self, *args, **kwargs):
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return get_context().send(self.ref, arg_tuple, **self._options)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def tell(self, *args, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6016,7 +6016,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_6send(st
 
   /* "xorbits/_mars/oscar/core.pyx":170
  *         return ActorRefMethod(self.ref, self.method_name, options)
- * 
+ *
  *     def send(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return get_context().send(self.ref, arg_tuple, **self._options)
@@ -6039,7 +6039,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_6send(st
 
 /* "xorbits/_mars/oscar/core.pyx":174
  *         return get_context().send(self.ref, arg_tuple, **self._options)
- * 
+ *
  *     def tell(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return get_context().send(self.ref, arg_tuple, wait_response=False, **self._options)
@@ -6081,11 +6081,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_8tell(st
   __Pyx_RefNannySetupContext("tell", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":175
- * 
+ *
  *     def tell(self, *args, **kwargs):
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)             # <<<<<<<<<<<<<<
  *         return get_context().send(self.ref, arg_tuple, wait_response=False, **self._options)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_CALL_METHOD_DEFAULT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 175, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6110,7 +6110,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_8tell(st
  *     def tell(self, *args, **kwargs):
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return get_context().send(self.ref, arg_tuple, wait_response=False, **self._options)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def delay(self, *args, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6148,7 +6148,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_8tell(st
 
   /* "xorbits/_mars/oscar/core.pyx":174
  *         return get_context().send(self.ref, arg_tuple, **self._options)
- * 
+ *
  *     def tell(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return get_context().send(self.ref, arg_tuple, wait_response=False, **self._options)
@@ -6171,7 +6171,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_8tell(st
 
 /* "xorbits/_mars/oscar/core.pyx":178
  *         return get_context().send(self.ref, arg_tuple, wait_response=False, **self._options)
- * 
+ *
  *     def delay(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return _DelayedArgument(arg_tuple)
@@ -6211,11 +6211,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10delay(
   __Pyx_RefNannySetupContext("delay", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":179
- * 
+ *
  *     def delay(self, *args, **kwargs):
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)             # <<<<<<<<<<<<<<
  *         return _DelayedArgument(arg_tuple)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_CALL_METHOD_DEFAULT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6240,7 +6240,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10delay(
  *     def delay(self, *args, **kwargs):
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return _DelayedArgument(arg_tuple)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def batch(self, *delays, send=True):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6252,7 +6252,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10delay(
 
   /* "xorbits/_mars/oscar/core.pyx":178
  *         return get_context().send(self.ref, arg_tuple, wait_response=False, **self._options)
- * 
+ *
  *     def delay(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         arg_tuple = (self.method_name, CALL_METHOD_DEFAULT, args, kwargs)
  *         return _DelayedArgument(arg_tuple)
@@ -6273,7 +6273,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10delay(
 
 /* "xorbits/_mars/oscar/core.pyx":182
  *         return _DelayedArgument(arg_tuple)
- * 
+ *
  *     def batch(self, *delays, send=True):             # <<<<<<<<<<<<<<
  *         cdef:
  *             long n_delays = len(delays)
@@ -6396,10 +6396,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
 
   /* "xorbits/_mars/oscar/core.pyx":190
  *             _DelayedArgument delay
- * 
+ *
  *         args_list = [None] * n_delays             # <<<<<<<<<<<<<<
  *         kwargs_list = [None] * n_delays
- * 
+ *
  */
   __pyx_t_2 = PyList_New(1 * ((__pyx_v_n_delays<0) ? 0:__pyx_v_n_delays)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -6414,10 +6414,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
   __pyx_t_2 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":191
- * 
+ *
  *         args_list = [None] * n_delays
  *         kwargs_list = [None] * n_delays             # <<<<<<<<<<<<<<
- * 
+ *
  *         last_method = None
  */
   __pyx_t_2 = PyList_New(1 * ((__pyx_v_n_delays<0) ? 0:__pyx_v_n_delays)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
@@ -6434,7 +6434,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
 
   /* "xorbits/_mars/oscar/core.pyx":193
  *         kwargs_list = [None] * n_delays
- * 
+ *
  *         last_method = None             # <<<<<<<<<<<<<<
  *         for idx in range(n_delays):
  *             delay = delays[idx]
@@ -6443,7 +6443,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
   __pyx_v_last_method = Py_None;
 
   /* "xorbits/_mars/oscar/core.pyx":194
- * 
+ *
  *         last_method = None
  *         for idx in range(n_delays):             # <<<<<<<<<<<<<<
  *             delay = delays[idx]
@@ -6485,10 +6485,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
         __PYX_ERR(0, 196, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      __pyx_t_6 = PyTuple_GET_ITEM(sequence, 0); 
-      __pyx_t_7 = PyTuple_GET_ITEM(sequence, 1); 
-      __pyx_t_8 = PyTuple_GET_ITEM(sequence, 2); 
-      __pyx_t_9 = PyTuple_GET_ITEM(sequence, 3); 
+      __pyx_t_6 = PyTuple_GET_ITEM(sequence, 0);
+      __pyx_t_7 = PyTuple_GET_ITEM(sequence, 1);
+      __pyx_t_8 = PyTuple_GET_ITEM(sequence, 2);
+      __pyx_t_9 = PyTuple_GET_ITEM(sequence, 3);
       __Pyx_INCREF(__pyx_t_6);
       __Pyx_INCREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_t_8);
@@ -6543,7 +6543,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             if last_method is not None and method != last_method:
  *                 raise ValueError('Does not support calling multiple methods in batch')             # <<<<<<<<<<<<<<
  *             last_method = method
- * 
+ *
  */
       __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 198, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
@@ -6564,7 +6564,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             if last_method is not None and method != last_method:
  *                 raise ValueError('Does not support calling multiple methods in batch')
  *             last_method = method             # <<<<<<<<<<<<<<
- * 
+ *
  *             args_list[idx] = args
  */
     __Pyx_INCREF(__pyx_v_method);
@@ -6572,7 +6572,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
 
     /* "xorbits/_mars/oscar/core.pyx":201
  *             last_method = method
- * 
+ *
  *             args_list[idx] = args             # <<<<<<<<<<<<<<
  *             kwargs_list[idx] = kwargs
  *             if kwargs:
@@ -6580,7 +6580,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
     if (unlikely(__Pyx_SetItemInt(__pyx_v_args_list, __pyx_v_idx, __pyx_v_args, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) __PYX_ERR(0, 201, __pyx_L1_error)
 
     /* "xorbits/_mars/oscar/core.pyx":202
- * 
+ *
  *             args_list[idx] = args
  *             kwargs_list[idx] = kwargs             # <<<<<<<<<<<<<<
  *             if kwargs:
@@ -6593,7 +6593,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             kwargs_list[idx] = kwargs
  *             if kwargs:             # <<<<<<<<<<<<<<
  *                 has_kw = True
- * 
+ *
  */
     __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_v_kwargs); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 203, __pyx_L1_error)
     if (__pyx_t_10) {
@@ -6602,7 +6602,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             kwargs_list[idx] = kwargs
  *             if kwargs:
  *                 has_kw = True             # <<<<<<<<<<<<<<
- * 
+ *
  *         if not has_kw:
  */
       __pyx_v_has_kw = 1;
@@ -6612,14 +6612,14 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             kwargs_list[idx] = kwargs
  *             if kwargs:             # <<<<<<<<<<<<<<
  *                 has_kw = True
- * 
+ *
  */
     }
   }
 
   /* "xorbits/_mars/oscar/core.pyx":206
  *                 has_kw = True
- * 
+ *
  *         if not has_kw:             # <<<<<<<<<<<<<<
  *             kwargs_list = None
  *         if last_method is None:
@@ -6628,7 +6628,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
   if (__pyx_t_10) {
 
     /* "xorbits/_mars/oscar/core.pyx":207
- * 
+ *
  *         if not has_kw:
  *             kwargs_list = None             # <<<<<<<<<<<<<<
  *         if last_method is None:
@@ -6639,7 +6639,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
 
     /* "xorbits/_mars/oscar/core.pyx":206
  *                 has_kw = True
- * 
+ *
  *         if not has_kw:             # <<<<<<<<<<<<<<
  *             kwargs_list = None
  *         if last_method is None:
@@ -6651,7 +6651,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             kwargs_list = None
  *         if last_method is None:             # <<<<<<<<<<<<<<
  *             last_method = self.method_name
- * 
+ *
  */
   __pyx_t_10 = (__pyx_v_last_method == Py_None);
   __pyx_t_12 = (__pyx_t_10 != 0);
@@ -6661,7 +6661,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             kwargs_list = None
  *         if last_method is None:
  *             last_method = self.method_name             # <<<<<<<<<<<<<<
- * 
+ *
  *         message = (last_method, CALL_METHOD_BATCH, (args_list, kwargs_list), None)
  */
     __pyx_t_2 = __pyx_v_self->method_name;
@@ -6674,16 +6674,16 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
  *             kwargs_list = None
  *         if last_method is None:             # <<<<<<<<<<<<<<
  *             last_method = self.method_name
- * 
+ *
  */
   }
 
   /* "xorbits/_mars/oscar/core.pyx":211
  *             last_method = self.method_name
- * 
+ *
  *         message = (last_method, CALL_METHOD_BATCH, (args_list, kwargs_list), None)             # <<<<<<<<<<<<<<
  *         return get_context().send(self.ref, message, wait_response=send, **self._options)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_CALL_METHOD_BATCH); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 211, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -6713,10 +6713,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
   __pyx_t_8 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":212
- * 
+ *
  *         message = (last_method, CALL_METHOD_BATCH, (args_list, kwargs_list), None)
  *         return get_context().send(self.ref, message, wait_response=send, **self._options)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6754,7 +6754,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
 
   /* "xorbits/_mars/oscar/core.pyx":182
  *         return _DelayedArgument(arg_tuple)
- * 
+ *
  *     def batch(self, *delays, send=True):             # <<<<<<<<<<<<<<
  *         cdef:
  *             long n_delays = len(delays)
@@ -6786,7 +6786,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_12batch(
 
 /* "xorbits/_mars/oscar/core.pyx":214
  *         return get_context().send(self.ref, message, wait_response=send, **self._options)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             try:
@@ -6869,7 +6869,7 @@ static PyObject *__pyx_pw_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_15tell_d
 static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_delay_2generator8(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
 /* "xorbits/_mars/oscar/core.pyx":215
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             try:
@@ -7192,7 +7192,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
  *             except Exception as ex:
  *                 if ignore_conn_fail and isinstance(ex, ConnectionRefusedError):             # <<<<<<<<<<<<<<
  *                     return
- * 
+ *
  */
         if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_ignore_conn_fail)) { __Pyx_RaiseClosureNameError("ignore_conn_fail"); __PYX_ERR(0, 221, __pyx_L17_error) }
         __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_ignore_conn_fail); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 221, __pyx_L17_error)
@@ -7214,7 +7214,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
  *             except Exception as ex:
  *                 if ignore_conn_fail and isinstance(ex, ConnectionRefusedError):
  *                     return             # <<<<<<<<<<<<<<
- * 
+ *
  *                 logger.error(f'Error {type(ex)} occurred when calling {self.method_name} '
  */
           __Pyx_XDECREF(__pyx_r);
@@ -7229,13 +7229,13 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
  *             except Exception as ex:
  *                 if ignore_conn_fail and isinstance(ex, ConnectionRefusedError):             # <<<<<<<<<<<<<<
  *                     return
- * 
+ *
  */
         }
 
         /* "xorbits/_mars/oscar/core.pyx":224
  *                     return
- * 
+ *
  *                 logger.error(f'Error {type(ex)} occurred when calling {self.method_name} '             # <<<<<<<<<<<<<<
  *                              f'on {self.ref.uid} at {self.ref.address} with tell_delay')
  *                 raise
@@ -7278,11 +7278,11 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
         PyTuple_SET_ITEM(__pyx_t_12, 4, __pyx_kp_u_on);
 
         /* "xorbits/_mars/oscar/core.pyx":225
- * 
+ *
  *                 logger.error(f'Error {type(ex)} occurred when calling {self.method_name} '
  *                              f'on {self.ref.uid} at {self.ref.address} with tell_delay')             # <<<<<<<<<<<<<<
  *                 raise
- * 
+ *
  */
         if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self)) { __Pyx_RaiseClosureNameError("self"); __PYX_ERR(0, 225, __pyx_L17_error) }
         __pyx_t_16 = __Pyx_PyObject_FormatSimple(__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self->ref->uid, __pyx_empty_unicode); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 225, __pyx_L17_error)
@@ -7311,7 +7311,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
 
         /* "xorbits/_mars/oscar/core.pyx":224
  *                     return
- * 
+ *
  *                 logger.error(f'Error {type(ex)} occurred when calling {self.method_name} '             # <<<<<<<<<<<<<<
  *                              f'on {self.ref.uid} at {self.ref.address} with tell_delay')
  *                 raise
@@ -7341,14 +7341,14 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
  *                 logger.error(f'Error {type(ex)} occurred when calling {self.method_name} '
  *                              f'on {self.ref.uid} at {self.ref.address} with tell_delay')
  *                 raise             # <<<<<<<<<<<<<<
- * 
+ *
  *         return asyncio.create_task(delay_fun())
  */
         __Pyx_GIVEREF(__pyx_t_7);
         __Pyx_GIVEREF(__pyx_t_5);
         __Pyx_XGIVEREF(__pyx_t_6);
         __Pyx_ErrRestoreWithState(__pyx_t_7, __pyx_t_5, __pyx_t_6);
-        __pyx_t_7 = 0; __pyx_t_5 = 0; __pyx_t_6 = 0; 
+        __pyx_t_7 = 0; __pyx_t_5 = 0; __pyx_t_6 = 0;
         __PYX_ERR(0, 226, __pyx_L17_error)
       }
 
@@ -7455,7 +7455,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
   /* "xorbits/_mars/oscar/core.pyx":215
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             try:
@@ -7487,7 +7487,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_10tell_d
 
 /* "xorbits/_mars/oscar/core.pyx":214
  *         return get_context().send(self.ref, message, wait_response=send, **self._options)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             try:
@@ -7532,7 +7532,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_14tell_d
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_kwargs);
 
   /* "xorbits/_mars/oscar/core.pyx":215
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             try:
@@ -7545,10 +7545,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_14tell_d
 
   /* "xorbits/_mars/oscar/core.pyx":228
  *                 raise
- * 
+ *
  *         return asyncio.create_task(delay_fun())             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 228, __pyx_L1_error)
@@ -7580,7 +7580,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_14tell_d
 
   /* "xorbits/_mars/oscar/core.pyx":214
  *         return get_context().send(self.ref, message, wait_response=send, **self._options)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             try:
@@ -7921,7 +7921,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_14ActorRefMethod_18__sets
 }
 
 /* "xorbits/_mars/oscar/core.pyx":232
- * 
+ *
  * cdef class LocalActorRef(ActorRef):
  *     def __init__(self, _BaseActor actor):             # <<<<<<<<<<<<<<
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -7990,7 +7990,7 @@ static int __pyx_pw_7xorbits_5_mars_5oscar_4core_13LocalActorRef_1__init__(PyObj
  *         # Make sure the input actor is an instance of _BaseActor.
  *         super().__init__(actor._address, actor._uid)
  *         self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())             # <<<<<<<<<<<<<<
- * 
+ *
  *     cdef _weakref_local_actor(self):
  */
 
@@ -8046,7 +8046,7 @@ static PyObject *__pyx_lambda_funcdef_lambda1(PyObject *__pyx_self, CYTHON_UNUSE
 }
 
 /* "xorbits/_mars/oscar/core.pyx":232
- * 
+ *
  * cdef class LocalActorRef(ActorRef):
  *     def __init__(self, _BaseActor actor):             # <<<<<<<<<<<<<<
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -8084,7 +8084,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef___init__(struct
  *         # Make sure the input actor is an instance of _BaseActor.
  *         super().__init__(actor._address, actor._uid)             # <<<<<<<<<<<<<<
  *         self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())
- * 
+ *
  */
   __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -8151,7 +8151,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef___init__(struct
  *         # Make sure the input actor is an instance of _BaseActor.
  *         super().__init__(actor._address, actor._uid)
  *         self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())             # <<<<<<<<<<<<<<
- * 
+ *
  *     cdef _weakref_local_actor(self):
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_weakref); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 235, __pyx_L1_error)
@@ -8215,7 +8215,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef___init__(struct
   __pyx_t_1 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":232
- * 
+ *
  * cdef class LocalActorRef(ActorRef):
  *     def __init__(self, _BaseActor actor):             # <<<<<<<<<<<<<<
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -8300,7 +8300,7 @@ static PyObject *__pyx_lambda_funcdef_lambda2(PyObject *__pyx_self, CYTHON_UNUSE
 
 /* "xorbits/_mars/oscar/core.pyx":237
  *         self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())
- * 
+ *
  *     cdef _weakref_local_actor(self):             # <<<<<<<<<<<<<<
  *         actor = _get_local_actor(self.address, self.uid)
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -8337,7 +8337,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_13LocalActorRef__weakref_l
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
 
   /* "xorbits/_mars/oscar/core.pyx":238
- * 
+ *
  *     cdef _weakref_local_actor(self):
  *         actor = _get_local_actor(self.address, self.uid)             # <<<<<<<<<<<<<<
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -8368,7 +8368,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_13LocalActorRef__weakref_l
     __pyx_t_4 = __pyx_t_6;
     goto __pyx_L4_bool_binop_done;
   }
-  __pyx_t_6 = __Pyx_TypeCheck(__pyx_v_actor, __pyx_ptype_7xorbits_5_mars_5oscar_4core__BaseActor); 
+  __pyx_t_6 = __Pyx_TypeCheck(__pyx_v_actor, __pyx_ptype_7xorbits_5_mars_5oscar_4core__BaseActor);
   __pyx_t_5 = (__pyx_t_6 != 0);
   __pyx_t_4 = __pyx_t_5;
   __pyx_L4_bool_binop_done:;
@@ -8446,7 +8446,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_13LocalActorRef__weakref_l
  *             self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())
  *             return actor             # <<<<<<<<<<<<<<
  *         return None
- * 
+ *
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_INCREF(__pyx_v_actor);
@@ -8466,7 +8466,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_13LocalActorRef__weakref_l
  *             self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())
  *             return actor
  *         return None             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __getattr__(self, item):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -8475,7 +8475,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_13LocalActorRef__weakref_l
 
   /* "xorbits/_mars/oscar/core.pyx":237
  *         self._actor_weakref = weakref.ref(actor, lambda _: self._methods.clear())
- * 
+ *
  *     cdef _weakref_local_actor(self):             # <<<<<<<<<<<<<<
  *         actor = _get_local_actor(self.address, self.uid)
  *         # Make sure the input actor is an instance of _BaseActor.
@@ -8500,7 +8500,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_13LocalActorRef__weakref_l
 
 /* "xorbits/_mars/oscar/core.pyx":245
  *         return None
- * 
+ *
  *     def __getattr__(self, item):             # <<<<<<<<<<<<<<
  *         try:
  *             return self._methods[item]
@@ -8545,7 +8545,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_2__getatt
   __Pyx_RefNannySetupContext("__getattr__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":246
- * 
+ *
  *     def __getattr__(self, item):
  *         try:             # <<<<<<<<<<<<<<
  *             return self._methods[item]
@@ -8579,7 +8579,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_2__getatt
       goto __pyx_L7_try_return;
 
       /* "xorbits/_mars/oscar/core.pyx":246
- * 
+ *
  *     def __getattr__(self, item):
  *         try:             # <<<<<<<<<<<<<<
  *             return self._methods[item]
@@ -8732,7 +8732,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_2__getatt
  *             getattr(actor, item)
  *             method = self._methods[item] = LocalActorRefMethod(self, item)             # <<<<<<<<<<<<<<
  *             return method
- * 
+ *
  */
       __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 254, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
@@ -8758,7 +8758,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_2__getatt
  *             getattr(actor, item)
  *             method = self._methods[item] = LocalActorRefMethod(self, item)
  *             return method             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __repr__(self):
  */
       __Pyx_XDECREF(__pyx_r);
@@ -8773,7 +8773,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_2__getatt
     __pyx_L5_except_error:;
 
     /* "xorbits/_mars/oscar/core.pyx":246
- * 
+ *
  *     def __getattr__(self, item):
  *         try:             # <<<<<<<<<<<<<<
  *             return self._methods[item]
@@ -8800,7 +8800,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_2__getatt
 
   /* "xorbits/_mars/oscar/core.pyx":245
  *         return None
- * 
+ *
  *     def __getattr__(self, item):             # <<<<<<<<<<<<<<
  *         try:
  *             return self._methods[item]
@@ -8827,7 +8827,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_2__getatt
 
 /* "xorbits/_mars/oscar/core.pyx":257
  *             return method
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'LocalActorRef(uid={!r}, address={!r}), actor_weakref={!r}'.format(
  *             self.uid, self.address, self._actor_weakref)
@@ -8860,11 +8860,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_4__repr__
   __Pyx_RefNannySetupContext("__repr__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":258
- * 
+ *
  *     def __repr__(self):
  *         return 'LocalActorRef(uid={!r}, address={!r}), actor_weakref={!r}'.format(             # <<<<<<<<<<<<<<
  *             self.uid, self.address, self._actor_weakref)
- * 
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_LocalActorRef_uid_r_address_r_ac, __pyx_n_s_format); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 258, __pyx_L1_error)
@@ -8874,8 +8874,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_4__repr__
  *     def __repr__(self):
  *         return 'LocalActorRef(uid={!r}, address={!r}), actor_weakref={!r}'.format(
  *             self.uid, self.address, self._actor_weakref)             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -8931,7 +8931,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_4__repr__
 
   /* "xorbits/_mars/oscar/core.pyx":257
  *             return method
- * 
+ *
  *     def __repr__(self):             # <<<<<<<<<<<<<<
  *         return 'LocalActorRef(uid={!r}, address={!r}), actor_weakref={!r}'.format(
  *             self.uid, self.address, self._actor_weakref)
@@ -8953,8 +8953,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_13LocalActorRef_4__repr__
 static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
 /* "xorbits/_mars/oscar/core.pyx":262
- * 
- * 
+ *
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):             # <<<<<<<<<<<<<<
  *     async with lock:
  *         result = method(*args, **kwargs)
@@ -9141,7 +9141,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_Corouti
   if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 262, __pyx_L1_error)
 
   /* "xorbits/_mars/oscar/core.pyx":263
- * 
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):
  *     async with lock:             # <<<<<<<<<<<<<<
  *         result = method(*args, **kwargs)
@@ -9263,7 +9263,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_Corouti
  *         if asyncio.iscoroutine(result):
  *             result = await result             # <<<<<<<<<<<<<<
  *     return await result_handler(result)
- * 
+ *
  */
             __pyx_r = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_cur_scope->__pyx_v_result);
             __Pyx_XGOTREF(__pyx_r);
@@ -9317,7 +9317,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_Corouti
           }
 
           /* "xorbits/_mars/oscar/core.pyx":263
- * 
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):
  *     async with lock:             # <<<<<<<<<<<<<<
  *         result = method(*args, **kwargs)
@@ -9414,7 +9414,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_Corouti
             __Pyx_GIVEREF(__pyx_t_2);
             __Pyx_XGIVEREF(__pyx_t_3);
             __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_2, __pyx_t_3);
-            __pyx_t_4 = 0; __pyx_t_2 = 0; __pyx_t_3 = 0; 
+            __pyx_t_4 = 0; __pyx_t_2 = 0; __pyx_t_3 = 0;
             __PYX_ERR(0, 263, __pyx_L11_except_error)
           }
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -9490,7 +9490,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_Corouti
  *         if asyncio.iscoroutine(result):
  *             result = await result
  *     return await result_handler(result)             # <<<<<<<<<<<<<<
- * 
+ *
  * # Avoid global lookup.
  */
   __Pyx_XDECREF(__pyx_r);
@@ -9535,8 +9535,8 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_Corouti
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
   /* "xorbits/_mars/oscar/core.pyx":262
- * 
- * 
+ *
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):             # <<<<<<<<<<<<<<
  *     async with lock:
  *         result = method(*args, **kwargs)
@@ -9562,7 +9562,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10generator(__pyx_Corouti
 
 /* "xorbits/_mars/oscar/core.pyx":277
  *     cdef object _method_name
- * 
+ *
  *     def __init__(self, LocalActorRef local_actor_ref, method_name):             # <<<<<<<<<<<<<<
  *         self._local_actor_ref = local_actor_ref
  *         self._method_name = method_name
@@ -9643,11 +9643,11 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod___init__(
   __Pyx_RefNannySetupContext("__init__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":278
- * 
+ *
  *     def __init__(self, LocalActorRef local_actor_ref, method_name):
  *         self._local_actor_ref = local_actor_ref             # <<<<<<<<<<<<<<
  *         self._method_name = method_name
- * 
+ *
  */
   __Pyx_INCREF(((PyObject *)__pyx_v_local_actor_ref));
   __Pyx_GIVEREF(((PyObject *)__pyx_v_local_actor_ref));
@@ -9659,7 +9659,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod___init__(
  *     def __init__(self, LocalActorRef local_actor_ref, method_name):
  *         self._local_actor_ref = local_actor_ref
  *         self._method_name = method_name             # <<<<<<<<<<<<<<
- * 
+ *
  *     cdef tuple _get_referent(self):
  */
   __Pyx_INCREF(__pyx_v_method_name);
@@ -9670,7 +9670,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod___init__(
 
   /* "xorbits/_mars/oscar/core.pyx":277
  *     cdef object _method_name
- * 
+ *
  *     def __init__(self, LocalActorRef local_actor_ref, method_name):             # <<<<<<<<<<<<<<
  *         self._local_actor_ref = local_actor_ref
  *         self._method_name = method_name
@@ -9684,7 +9684,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod___init__(
 
 /* "xorbits/_mars/oscar/core.pyx":281
  *         self._method_name = method_name
- * 
+ *
  *     cdef tuple _get_referent(self):             # <<<<<<<<<<<<<<
  *         actor = self._local_actor_ref._actor_weakref() or self._local_actor_ref._weakref_local_actor()
  *         if actor is None:
@@ -9709,7 +9709,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod__get
   __Pyx_RefNannySetupContext("_get_referent", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":282
- * 
+ *
  *     cdef tuple _get_referent(self):
  *         actor = self._local_actor_ref._actor_weakref() or self._local_actor_ref._weakref_local_actor()             # <<<<<<<<<<<<<<
  *         if actor is None:
@@ -9825,7 +9825,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod__get
  *             raise ActorNotExist(f"Actor {self._local_actor_ref.uid} does not exist.")
  *         method = getattr(actor, self._method_name)             # <<<<<<<<<<<<<<
  *         return actor, method
- * 
+ *
  */
   __pyx_t_1 = __pyx_v_self->_method_name;
   __Pyx_INCREF(__pyx_t_1);
@@ -9839,7 +9839,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod__get
  *             raise ActorNotExist(f"Actor {self._local_actor_ref.uid} does not exist.")
  *         method = getattr(actor, self._method_name)
  *         return actor, method             # <<<<<<<<<<<<<<
- * 
+ *
  *     def __call__(self, *args, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -9857,7 +9857,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod__get
 
   /* "xorbits/_mars/oscar/core.pyx":281
  *         self._method_name = method_name
- * 
+ *
  *     cdef tuple _get_referent(self):             # <<<<<<<<<<<<<<
  *         actor = self._local_actor_ref._actor_weakref() or self._local_actor_ref._weakref_local_actor()
  *         if actor is None:
@@ -9881,7 +9881,7 @@ static PyObject *__pyx_f_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod__get
 
 /* "xorbits/_mars/oscar/core.pyx":288
  *         return actor, method
- * 
+ *
  *     def __call__(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(
@@ -9926,7 +9926,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_2__
   __Pyx_RefNannySetupContext("__call__", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":289
- * 
+ *
  *     def __call__(self, *args, **kwargs):
  *         actor, method = self._get_referent()             # <<<<<<<<<<<<<<
  *         return _actor_method_wrapper(
@@ -9943,8 +9943,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_2__
       __PYX_ERR(0, 289, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1); 
+    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1);
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
@@ -9967,7 +9967,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_2__
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(             # <<<<<<<<<<<<<<
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
- * 
+ *
  */
   __Pyx_XDECREF(__pyx_r);
 
@@ -9975,7 +9975,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_2__
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def options(self, **options):
  */
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_actor, __pyx_n_s_handle_actor_result); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 291, __pyx_L1_error)
@@ -10043,7 +10043,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_2__
 
   /* "xorbits/_mars/oscar/core.pyx":288
  *         return actor, method
- * 
+ *
  *     def __call__(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(
@@ -10068,10 +10068,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_2__
 
 /* "xorbits/_mars/oscar/core.pyx":293
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
- * 
+ *
  *     def options(self, **options):             # <<<<<<<<<<<<<<
  *         return self
- * 
+ *
  */
 
 /* Python wrapper */
@@ -10098,10 +10098,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_4op
   __Pyx_RefNannySetupContext("options", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":294
- * 
+ *
  *     def options(self, **options):
  *         return self             # <<<<<<<<<<<<<<
- * 
+ *
  *     def send(self, *args, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -10111,10 +10111,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_4op
 
   /* "xorbits/_mars/oscar/core.pyx":293
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
- * 
+ *
  *     def options(self, **options):             # <<<<<<<<<<<<<<
  *         return self
- * 
+ *
  */
 
   /* function exit code */
@@ -10126,7 +10126,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_4op
 
 /* "xorbits/_mars/oscar/core.pyx":296
  *         return self
- * 
+ *
  *     def send(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(
@@ -10171,7 +10171,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_6se
   __Pyx_RefNannySetupContext("send", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":297
- * 
+ *
  *     def send(self, *args, **kwargs):
  *         actor, method = self._get_referent()             # <<<<<<<<<<<<<<
  *         return _actor_method_wrapper(
@@ -10188,8 +10188,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_6se
       __PYX_ERR(0, 297, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1); 
+    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1);
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
@@ -10212,7 +10212,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_6se
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(             # <<<<<<<<<<<<<<
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
- * 
+ *
  */
   __Pyx_XDECREF(__pyx_r);
 
@@ -10220,7 +10220,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_6se
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def tell(self, *args, **kwargs):
  */
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_actor, __pyx_n_s_handle_actor_result); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 299, __pyx_L1_error)
@@ -10288,7 +10288,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_6se
 
   /* "xorbits/_mars/oscar/core.pyx":296
  *         return self
- * 
+ *
  *     def send(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         return _actor_method_wrapper(
@@ -10313,7 +10313,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_6se
 
 /* "xorbits/_mars/oscar/core.pyx":301
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
- * 
+ *
  *     def tell(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         coro = _actor_method_wrapper(
@@ -10359,7 +10359,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_8te
   __Pyx_RefNannySetupContext("tell", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":302
- * 
+ *
  *     def tell(self, *args, **kwargs):
  *         actor, method = self._get_referent()             # <<<<<<<<<<<<<<
  *         coro = _actor_method_wrapper(
@@ -10376,8 +10376,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_8te
       __PYX_ERR(0, 302, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1); 
+    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1);
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
@@ -10469,7 +10469,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_8te
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
  *         asyncio.create_task(coro)             # <<<<<<<<<<<<<<
  *         return asyncio.sleep(0)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -10497,7 +10497,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_8te
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
  *         asyncio.create_task(coro)
  *         return asyncio.sleep(0)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def delay(self, *args, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -10527,7 +10527,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_8te
 
   /* "xorbits/_mars/oscar/core.pyx":301
  *             method, actor._handle_actor_result, (<_BaseActor>actor)._lock, args, kwargs)
- * 
+ *
  *     def tell(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         coro = _actor_method_wrapper(
@@ -10553,7 +10553,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_8te
 
 /* "xorbits/_mars/oscar/core.pyx":308
  *         return asyncio.sleep(0)
- * 
+ *
  *     def delay(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         return method.delay(*args, **kwargs)
@@ -10595,11 +10595,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10d
   __Pyx_RefNannySetupContext("delay", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":309
- * 
+ *
  *     def delay(self, *args, **kwargs):
  *         actor, method = self._get_referent()             # <<<<<<<<<<<<<<
  *         return method.delay(*args, **kwargs)
- * 
+ *
  */
   __pyx_t_1 = ((struct __pyx_vtabstruct_7xorbits_5_mars_5oscar_4core_LocalActorRefMethod *)__pyx_v_self->__pyx_vtab)->_get_referent(__pyx_v_self); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 309, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -10612,8 +10612,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10d
       __PYX_ERR(0, 309, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1); 
+    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1);
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
@@ -10635,7 +10635,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10d
  *     def delay(self, *args, **kwargs):
  *         actor, method = self._get_referent()
  *         return method.delay(*args, **kwargs)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def batch(self, *delays, send=True):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -10653,7 +10653,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10d
 
   /* "xorbits/_mars/oscar/core.pyx":308
  *         return asyncio.sleep(0)
- * 
+ *
  *     def delay(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         return method.delay(*args, **kwargs)
@@ -10676,7 +10676,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10d
 
 /* "xorbits/_mars/oscar/core.pyx":312
  *         return method.delay(*args, **kwargs)
- * 
+ *
  *     def batch(self, *delays, send=True):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         coro = _actor_method_wrapper(
@@ -10767,7 +10767,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_12b
   __Pyx_RefNannySetupContext("batch", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":313
- * 
+ *
  *     def batch(self, *delays, send=True):
  *         actor, method = self._get_referent()             # <<<<<<<<<<<<<<
  *         coro = _actor_method_wrapper(
@@ -10784,8 +10784,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_12b
       __PYX_ERR(0, 313, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1); 
+    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 1);
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
@@ -10916,7 +10916,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_12b
  *         else:
  *             asyncio.create_task(coro)             # <<<<<<<<<<<<<<
  *             return asyncio.sleep(0)
- * 
+ *
  */
   /*else*/ {
     __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 319, __pyx_L1_error)
@@ -10945,7 +10945,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_12b
  *         else:
  *             asyncio.create_task(coro)
  *             return asyncio.sleep(0)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  */
     __Pyx_XDECREF(__pyx_r);
@@ -10976,7 +10976,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_12b
 
   /* "xorbits/_mars/oscar/core.pyx":312
  *         return method.delay(*args, **kwargs)
- * 
+ *
  *     def batch(self, *delays, send=True):             # <<<<<<<<<<<<<<
  *         actor, method = self._get_referent()
  *         coro = _actor_method_wrapper(
@@ -11004,7 +11004,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_12b
 
 /* "xorbits/_mars/oscar/core.pyx":322
  *             return asyncio.sleep(0)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             await asyncio.sleep(delay)
@@ -11087,7 +11087,7 @@ static PyObject *__pyx_pw_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_15t
 static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10tell_delay_2generator9(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
 /* "xorbits/_mars/oscar/core.pyx":323
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             await asyncio.sleep(delay)
@@ -11172,7 +11172,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10t
  *         async def delay_fun():
  *             await asyncio.sleep(delay)             # <<<<<<<<<<<<<<
  *             await self.tell(*args, **kwargs)
- * 
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 324, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -11219,7 +11219,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10t
  *         async def delay_fun():
  *             await asyncio.sleep(delay)
  *             await self.tell(*args, **kwargs)             # <<<<<<<<<<<<<<
- * 
+ *
  *         return asyncio.create_task(delay_fun())
  */
   if (unlikely(!__pyx_cur_scope->__pyx_outer_scope->__pyx_v_self)) { __Pyx_RaiseClosureNameError("self"); __PYX_ERR(0, 325, __pyx_L1_error) }
@@ -11263,7 +11263,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10t
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
   /* "xorbits/_mars/oscar/core.pyx":323
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             await asyncio.sleep(delay)
@@ -11291,7 +11291,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_10t
 
 /* "xorbits/_mars/oscar/core.pyx":322
  *             return asyncio.sleep(0)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             await asyncio.sleep(delay)
@@ -11333,7 +11333,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_14t
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_kwargs);
 
   /* "xorbits/_mars/oscar/core.pyx":323
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             await asyncio.sleep(delay)
@@ -11346,10 +11346,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_14t
 
   /* "xorbits/_mars/oscar/core.pyx":327
  *             await self.tell(*args, **kwargs)
- * 
+ *
  *         return asyncio.create_task(delay_fun())             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 327, __pyx_L1_error)
@@ -11381,7 +11381,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_14t
 
   /* "xorbits/_mars/oscar/core.pyx":322
  *             return asyncio.sleep(0)
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):             # <<<<<<<<<<<<<<
  *         async def delay_fun():
  *             await asyncio.sleep(delay)
@@ -11716,7 +11716,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_19LocalActorRefMethod_18_
  *     """
  *     def __cinit__(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         self._lock = self._create_lock()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -11754,7 +11754,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor___cinit__(struct _
  *     """
  *     def __cinit__(self, *args, **kwargs):
  *         self._lock = self._create_lock()             # <<<<<<<<<<<<<<
- * 
+ *
  *     def _create_lock(self):
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_create_lock); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 335, __pyx_L1_error)
@@ -11785,7 +11785,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor___cinit__(struct _
  *     """
  *     def __cinit__(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         self._lock = self._create_lock()
- * 
+ *
  */
 
   /* function exit code */
@@ -11804,10 +11804,10 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor___cinit__(struct _
 
 /* "xorbits/_mars/oscar/core.pyx":337
  *         self._lock = self._create_lock()
- * 
+ *
  *     def _create_lock(self):             # <<<<<<<<<<<<<<
  *         raise NotImplementedError
- * 
+ *
  */
 
 /* Python wrapper */
@@ -11832,10 +11832,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_2_create_loc
   __Pyx_RefNannySetupContext("_create_lock", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":338
- * 
+ *
  *     def _create_lock(self):
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
+ *
  *     @property
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
@@ -11843,10 +11843,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_2_create_loc
 
   /* "xorbits/_mars/oscar/core.pyx":337
  *         self._lock = self._create_lock()
- * 
+ *
  *     def _create_lock(self):             # <<<<<<<<<<<<<<
  *         raise NotImplementedError
- * 
+ *
  */
 
   /* function exit code */
@@ -11859,11 +11859,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_2_create_loc
 }
 
 /* "xorbits/_mars/oscar/core.pyx":341
- * 
+ *
  *     @property
  *     def uid(self):             # <<<<<<<<<<<<<<
  *         return self._uid
- * 
+ *
  */
 
 /* Python wrapper */
@@ -11888,7 +11888,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_3uid___get__
  *     @property
  *     def uid(self):
  *         return self._uid             # <<<<<<<<<<<<<<
- * 
+ *
  *     @uid.setter
  */
   __Pyx_XDECREF(__pyx_r);
@@ -11897,11 +11897,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_3uid___get__
   goto __pyx_L0;
 
   /* "xorbits/_mars/oscar/core.pyx":341
- * 
+ *
  *     @property
  *     def uid(self):             # <<<<<<<<<<<<<<
  *         return self._uid
- * 
+ *
  */
 
   /* function exit code */
@@ -11912,11 +11912,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_3uid___get__
 }
 
 /* "xorbits/_mars/oscar/core.pyx":345
- * 
+ *
  *     @uid.setter
  *     def uid(self, uid):             # <<<<<<<<<<<<<<
  *         self._uid = uid
- * 
+ *
  */
 
 /* Python wrapper */
@@ -11941,7 +11941,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_3uid_2__set__(stru
  *     @uid.setter
  *     def uid(self, uid):
  *         self._uid = uid             # <<<<<<<<<<<<<<
- * 
+ *
  *     def _set_uid(self, uid):
  */
   __Pyx_INCREF(__pyx_v_uid);
@@ -11951,11 +11951,11 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_3uid_2__set__(stru
   __pyx_v_self->_uid = __pyx_v_uid;
 
   /* "xorbits/_mars/oscar/core.pyx":345
- * 
+ *
  *     @uid.setter
  *     def uid(self, uid):             # <<<<<<<<<<<<<<
  *         self._uid = uid
- * 
+ *
  */
 
   /* function exit code */
@@ -11966,10 +11966,10 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_3uid_2__set__(stru
 
 /* "xorbits/_mars/oscar/core.pyx":348
  *         self._uid = uid
- * 
+ *
  *     def _set_uid(self, uid):             # <<<<<<<<<<<<<<
  *         self._uid = uid
- * 
+ *
  */
 
 /* Python wrapper */
@@ -11991,10 +11991,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_4_set_uid(st
   __Pyx_RefNannySetupContext("_set_uid", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":349
- * 
+ *
  *     def _set_uid(self, uid):
  *         self._uid = uid             # <<<<<<<<<<<<<<
- * 
+ *
  *     @property
  */
   __Pyx_INCREF(__pyx_v_uid);
@@ -12005,10 +12005,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_4_set_uid(st
 
   /* "xorbits/_mars/oscar/core.pyx":348
  *         self._uid = uid
- * 
+ *
  *     def _set_uid(self, uid):             # <<<<<<<<<<<<<<
  *         self._uid = uid
- * 
+ *
  */
 
   /* function exit code */
@@ -12019,11 +12019,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_4_set_uid(st
 }
 
 /* "xorbits/_mars/oscar/core.pyx":352
- * 
+ *
  *     @property
  *     def address(self):             # <<<<<<<<<<<<<<
  *         return self._address
- * 
+ *
  */
 
 /* Python wrapper */
@@ -12048,7 +12048,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_7address___g
  *     @property
  *     def address(self):
  *         return self._address             # <<<<<<<<<<<<<<
- * 
+ *
  *     @address.setter
  */
   __Pyx_XDECREF(__pyx_r);
@@ -12057,11 +12057,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_7address___g
   goto __pyx_L0;
 
   /* "xorbits/_mars/oscar/core.pyx":352
- * 
+ *
  *     @property
  *     def address(self):             # <<<<<<<<<<<<<<
  *         return self._address
- * 
+ *
  */
 
   /* function exit code */
@@ -12072,11 +12072,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_7address___g
 }
 
 /* "xorbits/_mars/oscar/core.pyx":356
- * 
+ *
  *     @address.setter
  *     def address(self, addr):             # <<<<<<<<<<<<<<
  *         self._address = addr
- * 
+ *
  */
 
 /* Python wrapper */
@@ -12105,7 +12105,7 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_7address_2__set__(
  *     @address.setter
  *     def address(self, addr):
  *         self._address = addr             # <<<<<<<<<<<<<<
- * 
+ *
  *     def _set_address(self, addr):
  */
   if (!(likely(PyUnicode_CheckExact(__pyx_v_addr))||((__pyx_v_addr) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_addr)->tp_name), 0))) __PYX_ERR(0, 357, __pyx_L1_error)
@@ -12118,11 +12118,11 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_7address_2__set__(
   __pyx_t_1 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":356
- * 
+ *
  *     @address.setter
  *     def address(self, addr):             # <<<<<<<<<<<<<<
  *         self._address = addr
- * 
+ *
  */
 
   /* function exit code */
@@ -12139,10 +12139,10 @@ static int __pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_7address_2__set__(
 
 /* "xorbits/_mars/oscar/core.pyx":359
  *         self._address = addr
- * 
+ *
  *     def _set_address(self, addr):             # <<<<<<<<<<<<<<
  *         self._address = addr
- * 
+ *
  */
 
 /* Python wrapper */
@@ -12168,10 +12168,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_6_set_addres
   __Pyx_RefNannySetupContext("_set_address", 0);
 
   /* "xorbits/_mars/oscar/core.pyx":360
- * 
+ *
  *     def _set_address(self, addr):
  *         self._address = addr             # <<<<<<<<<<<<<<
- * 
+ *
  *     cpdef ActorRef ref(self):
  */
   if (!(likely(PyUnicode_CheckExact(__pyx_v_addr))||((__pyx_v_addr) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_addr)->tp_name), 0))) __PYX_ERR(0, 360, __pyx_L1_error)
@@ -12185,10 +12185,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_6_set_addres
 
   /* "xorbits/_mars/oscar/core.pyx":359
  *         self._address = addr
- * 
+ *
  *     def _set_address(self, addr):             # <<<<<<<<<<<<<<
  *         self._address = addr
- * 
+ *
  */
 
   /* function exit code */
@@ -12206,10 +12206,10 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_6_set_addres
 
 /* "xorbits/_mars/oscar/core.pyx":362
  *         self._address = addr
- * 
+ *
  *     cpdef ActorRef ref(self):             # <<<<<<<<<<<<<<
  *         return create_actor_ref(self._address, self._uid)
- * 
+ *
  */
 
 static PyObject *__pyx_pw_7xorbits_5_mars_5oscar_4core_10_BaseActor_9ref(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -12273,10 +12273,10 @@ static struct __pyx_obj_7xorbits_5_mars_5oscar_4core_ActorRef *__pyx_f_7xorbits_
   }
 
   /* "xorbits/_mars/oscar/core.pyx":363
- * 
+ *
  *     cpdef ActorRef ref(self):
  *         return create_actor_ref(self._address, self._uid)             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def _handle_actor_result(self, result):
  */
   __Pyx_XDECREF(((PyObject *)__pyx_r));
@@ -12295,10 +12295,10 @@ static struct __pyx_obj_7xorbits_5_mars_5oscar_4core_ActorRef *__pyx_f_7xorbits_
 
   /* "xorbits/_mars/oscar/core.pyx":362
  *         self._address = addr
- * 
+ *
  *     cpdef ActorRef ref(self):             # <<<<<<<<<<<<<<
  *         return create_actor_ref(self._address, self._uid)
- * 
+ *
  */
 
   /* function exit code */
@@ -12357,7 +12357,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
 /* "xorbits/_mars/oscar/core.pyx":365
  *         return create_actor_ref(self._address, self._uid)
- * 
+ *
  *     async def _handle_actor_result(self, result):             # <<<<<<<<<<<<<<
  *         cdef int idx
  *         cdef tuple res_tuple
@@ -12521,7 +12521,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_20_handle_ac
 
 /* "xorbits/_mars/oscar/core.pyx":365
  *         return create_actor_ref(self._address, self._uid)
- * 
+ *
  *     async def _handle_actor_result(self, result):             # <<<<<<<<<<<<<<
  *         cdef int idx
  *         cdef tuple res_tuple
@@ -12620,13 +12620,13 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *         cdef bint extract_tuple = False
  *         cdef bint cancelled = False             # <<<<<<<<<<<<<<
  *         cdef set dones, pending
- * 
+ *
  */
   __pyx_cur_scope->__pyx_v_cancelled = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":374
  *         cdef set dones, pending
- * 
+ *
  *         if inspect.isawaitable(result):             # <<<<<<<<<<<<<<
  *             result = await result
  *         elif is_async_generator(result):
@@ -12656,7 +12656,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
   if (__pyx_t_4) {
 
     /* "xorbits/_mars/oscar/core.pyx":375
- * 
+ *
  *         if inspect.isawaitable(result):
  *             result = await result             # <<<<<<<<<<<<<<
  *         elif is_async_generator(result):
@@ -12686,7 +12686,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
     /* "xorbits/_mars/oscar/core.pyx":374
  *         cdef set dones, pending
- * 
+ *
  *         if inspect.isawaitable(result):             # <<<<<<<<<<<<<<
  *             result = await result
  *         elif is_async_generator(result):
@@ -12709,7 +12709,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *         elif is_async_generator(result):
  *             result = (result,)             # <<<<<<<<<<<<<<
  *             extract_tuple = True
- * 
+ *
  */
     __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -12725,7 +12725,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *         elif is_async_generator(result):
  *             result = (result,)
  *             extract_tuple = True             # <<<<<<<<<<<<<<
- * 
+ *
  *         if type(result) is tuple:
  */
     __pyx_cur_scope->__pyx_v_extract_tuple = 1;
@@ -12742,7 +12742,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
   /* "xorbits/_mars/oscar/core.pyx":380
  *             extract_tuple = True
- * 
+ *
  *         if type(result) is tuple:             # <<<<<<<<<<<<<<
  *             res_tuple = result
  *             coros = []
@@ -12752,7 +12752,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
   if (__pyx_t_5) {
 
     /* "xorbits/_mars/oscar/core.pyx":381
- * 
+ *
  *         if type(result) is tuple:
  *             res_tuple = result             # <<<<<<<<<<<<<<
  *             coros = []
@@ -12977,7 +12977,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *                 else:
  *                     value = res_item             # <<<<<<<<<<<<<<
  *                 values.append(value)
- * 
+ *
  */
       /*else*/ {
         __Pyx_INCREF(__pyx_cur_scope->__pyx_v_res_item);
@@ -12991,7 +12991,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *                 else:
  *                     value = res_item
  *                 values.append(value)             # <<<<<<<<<<<<<<
- * 
+ *
  *             # when there is only one coroutine, we do not need to use
  */
       __pyx_t_9 = __Pyx_PyList_Append(__pyx_cur_scope->__pyx_v_values, __pyx_cur_scope->__pyx_v_value); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 396, __pyx_L1_error)
@@ -13271,11 +13271,11 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
             }
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
             if (likely(PyTuple_CheckExact(sequence))) {
-              __pyx_t_8 = PyTuple_GET_ITEM(sequence, 0); 
-              __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1); 
+              __pyx_t_8 = PyTuple_GET_ITEM(sequence, 0);
+              __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1);
             } else {
-              __pyx_t_8 = PyList_GET_ITEM(sequence, 0); 
-              __pyx_t_1 = PyList_GET_ITEM(sequence, 1); 
+              __pyx_t_8 = PyList_GET_ITEM(sequence, 0);
+              __pyx_t_1 = PyList_GET_ITEM(sequence, 1);
             }
             __Pyx_INCREF(__pyx_t_8);
             __Pyx_INCREF(__pyx_t_1);
@@ -13429,7 +13429,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *                         task.cancel()
  *                     # wait till all tasks return cancelled
  *                     dones, pending = await asyncio.wait(tasks)             # <<<<<<<<<<<<<<
- * 
+ *
  *                 if extract_tuple:
  */
           __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 415, __pyx_L17_except_error)
@@ -13510,11 +13510,11 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
             }
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
             if (likely(PyTuple_CheckExact(sequence))) {
-              __pyx_t_15 = PyTuple_GET_ITEM(sequence, 0); 
-              __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1); 
+              __pyx_t_15 = PyTuple_GET_ITEM(sequence, 0);
+              __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1);
             } else {
-              __pyx_t_15 = PyList_GET_ITEM(sequence, 0); 
-              __pyx_t_10 = PyList_GET_ITEM(sequence, 1); 
+              __pyx_t_15 = PyList_GET_ITEM(sequence, 0);
+              __pyx_t_10 = PyList_GET_ITEM(sequence, 1);
             }
             __Pyx_INCREF(__pyx_t_15);
             __Pyx_INCREF(__pyx_t_10);
@@ -13586,7 +13586,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
       /* "xorbits/_mars/oscar/core.pyx":417
  *                     dones, pending = await asyncio.wait(tasks)
- * 
+ *
  *                 if extract_tuple:             # <<<<<<<<<<<<<<
  *                     result = list(dones)[0].result()
  *                 else:
@@ -13595,7 +13595,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
       if (__pyx_t_5) {
 
         /* "xorbits/_mars/oscar/core.pyx":418
- * 
+ *
  *                 if extract_tuple:
  *                     result = list(dones)[0].result()             # <<<<<<<<<<<<<<
  *                 else:
@@ -13631,7 +13631,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
         /* "xorbits/_mars/oscar/core.pyx":417
  *                     dones, pending = await asyncio.wait(tasks)
- * 
+ *
  *                 if extract_tuple:             # <<<<<<<<<<<<<<
  *                     result = list(dones)[0].result()
  *                 else:
@@ -13680,7 +13680,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *                         task = tasks[pos]
  *                         values[pos] = task.result()             # <<<<<<<<<<<<<<
  *                     result = tuple(values)
- * 
+ *
  */
           __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_task, __pyx_n_s_result); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 422, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
@@ -13716,7 +13716,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *                         task = tasks[pos]
  *                         values[pos] = task.result()
  *                     result = tuple(values)             # <<<<<<<<<<<<<<
- * 
+ *
  *                 if cancelled:
  */
         __pyx_t_3 = PyList_AsTuple(__pyx_cur_scope->__pyx_v_values); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 423, __pyx_L1_error)
@@ -13730,7 +13730,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
       /* "xorbits/_mars/oscar/core.pyx":425
  *                     result = tuple(values)
- * 
+ *
  *                 if cancelled:             # <<<<<<<<<<<<<<
  *                     # raise in case no CancelledError raised
  *                     raise asyncio.CancelledError
@@ -13742,7 +13742,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
  *                 if cancelled:
  *                     # raise in case no CancelledError raised
  *                     raise asyncio.CancelledError             # <<<<<<<<<<<<<<
- * 
+ *
  *         return result
  */
         __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 427, __pyx_L1_error)
@@ -13756,7 +13756,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
         /* "xorbits/_mars/oscar/core.pyx":425
  *                     result = tuple(values)
- * 
+ *
  *                 if cancelled:             # <<<<<<<<<<<<<<
  *                     # raise in case no CancelledError raised
  *                     raise asyncio.CancelledError
@@ -13775,7 +13775,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
     /* "xorbits/_mars/oscar/core.pyx":380
  *             extract_tuple = True
- * 
+ *
  *         if type(result) is tuple:             # <<<<<<<<<<<<<<
  *             res_tuple = result
  *             coros = []
@@ -13784,9 +13784,9 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
   /* "xorbits/_mars/oscar/core.pyx":429
  *                     raise asyncio.CancelledError
- * 
+ *
  *         return result             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def _run_actor_async_generator(self, gen: AsyncGenerator):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -13796,7 +13796,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_12generator1
 
   /* "xorbits/_mars/oscar/core.pyx":365
  *         return create_actor_ref(self._address, self._uid)
- * 
+ *
  *     async def _handle_actor_result(self, result):             # <<<<<<<<<<<<<<
  *         cdef int idx
  *         cdef tuple res_tuple
@@ -13826,7 +13826,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
 
 /* "xorbits/_mars/oscar/core.pyx":431
  *         return result
- * 
+ *
  *     async def _run_actor_async_generator(self, gen: AsyncGenerator):             # <<<<<<<<<<<<<<
  *         """
  *         Run an async generator under Actor lock
@@ -13946,7 +13946,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
  *         cdef bint is_exception = False
  *         cdef object res
  *         cdef object message_trace = None, pop_message_trace = None, set_message_trace = None             # <<<<<<<<<<<<<<
- * 
+ *
  *         from .debug import pop_message_trace, set_message_trace, debug_async_timeout
  */
   __Pyx_INCREF(Py_None);
@@ -13961,7 +13961,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
 
   /* "xorbits/_mars/oscar/core.pyx":440
  *         cdef object message_trace = None, pop_message_trace = None, set_message_trace = None
- * 
+ *
  *         from .debug import pop_message_trace, set_message_trace, debug_async_timeout             # <<<<<<<<<<<<<<
  *         try:
  *             res = None
@@ -14003,7 +14003,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":441
- * 
+ *
  *         from .debug import pop_message_trace, set_message_trace, debug_async_timeout
  *         try:             # <<<<<<<<<<<<<<
  *             res = None
@@ -14469,7 +14469,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
                           __Pyx_GIVEREF(__pyx_t_1);
                           __Pyx_XGIVEREF(__pyx_t_2);
                           __Pyx_ErrRestoreWithState(__pyx_t_12, __pyx_t_1, __pyx_t_2);
-                          __pyx_t_12 = 0; __pyx_t_1 = 0; __pyx_t_2 = 0; 
+                          __pyx_t_12 = 0; __pyx_t_1 = 0; __pyx_t_2 = 0;
                           __PYX_ERR(0, 445, __pyx_L35_except_error)
                         }
                         __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
@@ -14625,7 +14625,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
                   __Pyx_GIVEREF(__pyx_t_1);
                   __Pyx_XGIVEREF(__pyx_t_12);
                   __Pyx_ErrRestoreWithState(__pyx_t_2, __pyx_t_1, __pyx_t_12);
-                  __pyx_t_2 = 0; __pyx_t_1 = 0; __pyx_t_12 = 0; 
+                  __pyx_t_2 = 0; __pyx_t_1 = 0; __pyx_t_12 = 0;
                   __PYX_ERR(0, 444, __pyx_L21_except_error)
                 }
                 __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -14732,7 +14732,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
  *                 try:
  *                     if _log_cycle_send:             # <<<<<<<<<<<<<<
  *                         message_trace = pop_message_trace()
- * 
+ *
  */
               __pyx_t_17 = (__pyx_v_7xorbits_5_mars_5oscar_4core__log_cycle_send != 0);
               if (__pyx_t_17) {
@@ -14741,7 +14741,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
  *                 try:
  *                     if _log_cycle_send:
  *                         message_trace = pop_message_trace()             # <<<<<<<<<<<<<<
- * 
+ *
  *                     res = await self._handle_actor_result(res)
  */
                 __Pyx_INCREF(__pyx_cur_scope->__pyx_v_pop_message_trace);
@@ -14770,13 +14770,13 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
  *                 try:
  *                     if _log_cycle_send:             # <<<<<<<<<<<<<<
  *                         message_trace = pop_message_trace()
- * 
+ *
  */
               }
 
               /* "xorbits/_mars/oscar/core.pyx":455
  *                         message_trace = pop_message_trace()
- * 
+ *
  *                     res = await self._handle_actor_result(res)             # <<<<<<<<<<<<<<
  *                     is_exception = False
  *                 except:
@@ -14852,7 +14852,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
               __pyx_t_12 = 0;
 
               /* "xorbits/_mars/oscar/core.pyx":456
- * 
+ *
  *                     res = await self._handle_actor_result(res)
  *                     is_exception = False             # <<<<<<<<<<<<<<
  *                 except:
@@ -15095,7 +15095,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
       }
 
       /* "xorbits/_mars/oscar/core.pyx":441
- * 
+ *
  *         from .debug import pop_message_trace, set_message_trace, debug_async_timeout
  *         try:             # <<<<<<<<<<<<<<
  *             res = None
@@ -15239,7 +15239,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
  *             return ex.value
  *         except StopAsyncIteration as ex:             # <<<<<<<<<<<<<<
  *             return
- * 
+ *
  */
     __pyx_t_11 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)__Pyx_PyExc_StopAsyncIteration)[0])));
     if (__pyx_t_11) {
@@ -15257,7 +15257,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
  *             return ex.value
  *         except StopAsyncIteration as ex:
  *             return             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def __post_create__(self):
  */
         __Pyx_XDECREF(__pyx_r);
@@ -15273,7 +15273,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
  *             return ex.value
  *         except StopAsyncIteration as ex:             # <<<<<<<<<<<<<<
  *             return
- * 
+ *
  */
       /*finally:*/ {
         __pyx_L92_return: {
@@ -15313,7 +15313,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
     __pyx_L6_except_error:;
 
     /* "xorbits/_mars/oscar/core.pyx":441
- * 
+ *
  *         from .debug import pop_message_trace, set_message_trace, debug_async_timeout
  *         try:             # <<<<<<<<<<<<<<
  *             res = None
@@ -15336,7 +15336,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_15generator2
 
   /* "xorbits/_mars/oscar/core.pyx":431
  *         return result
- * 
+ *
  *     async def _run_actor_async_generator(self, gen: AsyncGenerator):             # <<<<<<<<<<<<<<
  *         """
  *         Run an async generator under Actor lock
@@ -15367,7 +15367,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_18generator3
 
 /* "xorbits/_mars/oscar/core.pyx":468
  *             return
- * 
+ *
  *     async def __post_create__(self):             # <<<<<<<<<<<<<<
  *         """
  *         Method called after actor creation
@@ -15461,7 +15461,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_21generator4
 
 /* "xorbits/_mars/oscar/core.pyx":474
  *         pass
- * 
+ *
  *     async def __pre_destroy__(self):             # <<<<<<<<<<<<<<
  *         """
  *         Method called before actor destroy
@@ -15555,7 +15555,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
 
 /* "xorbits/_mars/oscar/core.pyx":480
  *         pass
- * 
+ *
  *     async def __on_receive__(self, tuple message):             # <<<<<<<<<<<<<<
  *         """
  *         Handle message from other actors and dispatch them to user methods
@@ -15731,10 +15731,10 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
           __PYX_ERR(0, 491, __pyx_L4_error)
         }
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-        __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1); 
-        __pyx_t_6 = PyTuple_GET_ITEM(sequence, 2); 
-        __pyx_t_7 = PyTuple_GET_ITEM(sequence, 3); 
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+        __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1);
+        __pyx_t_6 = PyTuple_GET_ITEM(sequence, 2);
+        __pyx_t_7 = PyTuple_GET_ITEM(sequence, 3);
         __Pyx_INCREF(__pyx_t_2);
         __Pyx_INCREF(__pyx_t_1);
         __Pyx_INCREF(__pyx_t_6);
@@ -16169,7 +16169,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
                           __Pyx_GIVEREF(__pyx_t_6);
                           __Pyx_XGIVEREF(__pyx_t_1);
                           __Pyx_ErrRestoreWithState(__pyx_t_14, __pyx_t_6, __pyx_t_1);
-                          __pyx_t_14 = 0; __pyx_t_6 = 0; __pyx_t_1 = 0; 
+                          __pyx_t_14 = 0; __pyx_t_6 = 0; __pyx_t_1 = 0;
                           __PYX_ERR(0, 495, __pyx_L28_except_error)
                         }
                         __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
@@ -16326,7 +16326,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
                   __Pyx_GIVEREF(__pyx_t_6);
                   __Pyx_XGIVEREF(__pyx_t_14);
                   __Pyx_ErrRestoreWithState(__pyx_t_1, __pyx_t_6, __pyx_t_14);
-                  __pyx_t_1 = 0; __pyx_t_6 = 0; __pyx_t_14 = 0; 
+                  __pyx_t_1 = 0; __pyx_t_6 = 0; __pyx_t_14 = 0;
                   __PYX_ERR(0, 494, __pyx_L18_except_error)
                 }
                 __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -16659,11 +16659,11 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
                           }
                           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
                           if (likely(PyTuple_CheckExact(sequence))) {
-                            __pyx_t_6 = PyTuple_GET_ITEM(sequence, 0); 
-                            __pyx_t_7 = PyTuple_GET_ITEM(sequence, 1); 
+                            __pyx_t_6 = PyTuple_GET_ITEM(sequence, 0);
+                            __pyx_t_7 = PyTuple_GET_ITEM(sequence, 1);
                           } else {
-                            __pyx_t_6 = PyList_GET_ITEM(sequence, 0); 
-                            __pyx_t_7 = PyList_GET_ITEM(sequence, 1); 
+                            __pyx_t_6 = PyList_GET_ITEM(sequence, 0);
+                            __pyx_t_7 = PyList_GET_ITEM(sequence, 1);
                           }
                           __Pyx_INCREF(__pyx_t_6);
                           __Pyx_INCREF(__pyx_t_7);
@@ -16968,7 +16968,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
                           __Pyx_GIVEREF(__pyx_t_1);
                           __Pyx_XGIVEREF(__pyx_t_7);
                           __Pyx_ErrRestoreWithState(__pyx_t_6, __pyx_t_1, __pyx_t_7);
-                          __pyx_t_6 = 0; __pyx_t_1 = 0; __pyx_t_7 = 0; 
+                          __pyx_t_6 = 0; __pyx_t_1 = 0; __pyx_t_7 = 0;
                           __PYX_ERR(0, 504, __pyx_L61_except_error)
                         }
                         __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -17126,7 +17126,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
                   __Pyx_GIVEREF(__pyx_t_1);
                   __Pyx_XGIVEREF(__pyx_t_6);
                   __Pyx_ErrRestoreWithState(__pyx_t_7, __pyx_t_1, __pyx_t_6);
-                  __pyx_t_7 = 0; __pyx_t_1 = 0; __pyx_t_6 = 0; 
+                  __pyx_t_7 = 0; __pyx_t_1 = 0; __pyx_t_6 = 0;
                   __PYX_ERR(0, 503, __pyx_L51_except_error)
                 }
                 __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -17227,7 +17227,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
  *                             result = await result
  *             else:  # pragma: no cover
  *                 raise ValueError(f'call_method {call_method} not valid')             # <<<<<<<<<<<<<<
- * 
+ *
  *             return await self._handle_actor_result(result)
  */
       /*else*/ {
@@ -17264,7 +17264,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
 
       /* "xorbits/_mars/oscar/core.pyx":516
  *                 raise ValueError(f'call_method {call_method} not valid')
- * 
+ *
  *             return await self._handle_actor_result(result)             # <<<<<<<<<<<<<<
  *         except Exception as ex:
  *             if _log_unhandled_errors:
@@ -17342,7 +17342,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
 
     /* "xorbits/_mars/oscar/core.pyx":517
- * 
+ *
  *             return await self._handle_actor_result(result)
  *         except Exception as ex:             # <<<<<<<<<<<<<<
  *             if _log_unhandled_errors:
@@ -17408,7 +17408,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
  *                 debug_logger.exception('Got unhandled error when handling message %.500r '
  *                                        'in actor %s at %s', message, self.uid, self.address)             # <<<<<<<<<<<<<<
  *             raise ex
- * 
+ *
  */
           __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_cur_scope->__pyx_v_self), __pyx_n_s_uid); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 522, __pyx_L86_error)
           __Pyx_GOTREF(__pyx_t_2);
@@ -17484,15 +17484,15 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
  *                 debug_logger.exception('Got unhandled error when handling message %.500r '
  *                                        'in actor %s at %s', message, self.uid, self.address)
  *             raise ex             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
         __Pyx_Raise(__pyx_cur_scope->__pyx_v_ex, 0, 0, 0);
         __PYX_ERR(0, 523, __pyx_L86_error)
       }
 
       /* "xorbits/_mars/oscar/core.pyx":517
- * 
+ *
  *             return await self._handle_actor_result(result)
  *         except Exception as ex:             # <<<<<<<<<<<<<<
  *             if _log_unhandled_errors:
@@ -17565,7 +17565,7 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_10_BaseActor_24generator5
 
   /* "xorbits/_mars/oscar/core.pyx":480
  *         pass
- * 
+ *
  *     async def __on_receive__(self, tuple message):             # <<<<<<<<<<<<<<
  *         """
  *         Handle message from other actors and dispatch them to user methods
@@ -17712,7 +17712,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_10_BaseActor_27__setstate
  * cdef class _Actor(_BaseActor):
  *     def _create_lock(self):             # <<<<<<<<<<<<<<
  *         return asyncio.locks.Lock()
- * 
+ *
  */
 
 /* Python wrapper */
@@ -17744,8 +17744,8 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_6_Actor__create_lock(CYTH
  * cdef class _Actor(_BaseActor):
  *     def _create_lock(self):
  *         return asyncio.locks.Lock()             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 531, __pyx_L1_error)
@@ -17780,7 +17780,7 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_6_Actor__create_lock(CYTH
  * cdef class _Actor(_BaseActor):
  *     def _create_lock(self):             # <<<<<<<<<<<<<<
  *         return asyncio.locks.Lock()
- * 
+ *
  */
 
   /* function exit code */
@@ -17913,11 +17913,11 @@ static PyObject *__pyx_pf_7xorbits_5_mars_5oscar_4core_6_Actor_4__setstate_cytho
 static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_9_FakeLock_2generator6(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
 /* "xorbits/_mars/oscar/core.pyx":535
- * 
+ *
  * cdef class _FakeLock:
  *     async def __aenter__(self):             # <<<<<<<<<<<<<<
  *         pass
- * 
+ *
  */
 
 /* Python wrapper */
@@ -18007,10 +18007,10 @@ static PyObject *__pyx_gb_7xorbits_5_mars_5oscar_4core_9_FakeLock_5generator7(__
 
 /* "xorbits/_mars/oscar/core.pyx":538
  *         pass
- * 
+ *
  *     async def __aexit__(self, exc_type, exc_val, exc_tb):             # <<<<<<<<<<<<<<
  *         pass
- * 
+ *
  */
 
 /* Python wrapper */
@@ -24020,14 +24020,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *             if last_method is not None and method != last_method:
  *                 raise ValueError('Does not support calling multiple methods in batch')             # <<<<<<<<<<<<<<
  *             last_method = method
- * 
+ *
  */
   __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_Does_not_support_calling_multipl); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
   /* "xorbits/_mars/oscar/core.pyx":215
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             try:
@@ -24039,7 +24039,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_xorbits__mars_oscar_core_pyx, __pyx_n_s_delay_fun, 215, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 215, __pyx_L1_error)
 
   /* "xorbits/_mars/oscar/core.pyx":263
- * 
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):
  *     async with lock:             # <<<<<<<<<<<<<<
  *         result = method(*args, **kwargs)
@@ -24050,7 +24050,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__6);
 
   /* "xorbits/_mars/oscar/core.pyx":323
- * 
+ *
  *     def tell_delay(self, *args, delay=None, ignore_conn_fail=True, **kwargs):
  *         async def delay_fun():             # <<<<<<<<<<<<<<
  *             await asyncio.sleep(delay)
@@ -24128,8 +24128,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__17);
 
   /* "xorbits/_mars/oscar/core.pyx":41
- * 
- * 
+ *
+ *
  * def set_debug_options(options):             # <<<<<<<<<<<<<<
  *     global _log_unhandled_errors, _log_cycle_send
  *     if options is None:
@@ -24140,8 +24140,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_xorbits__mars_oscar_core_pyx, __pyx_n_s_set_debug_options, 41, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 41, __pyx_L1_error)
 
   /* "xorbits/_mars/oscar/core.pyx":67
- * 
- * 
+ *
+ *
  * def register_local_pool(address, pool):             # <<<<<<<<<<<<<<
  *     """
  *     Register local actor pool for local actor lookup.
@@ -24152,8 +24152,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_xorbits__mars_oscar_core_pyx, __pyx_n_s_register_local_pool, 67, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 67, __pyx_L1_error)
 
   /* "xorbits/_mars/oscar/core.pyx":262
- * 
- * 
+ *
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):             # <<<<<<<<<<<<<<
  *     async with lock:
  *         result = method(*args, **kwargs)
@@ -24168,7 +24168,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * cdef class _Actor(_BaseActor):
  *     def _create_lock(self):             # <<<<<<<<<<<<<<
  *         return asyncio.locks.Lock()
- * 
+ *
  */
   __pyx_tuple__23 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 530, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
@@ -24826,7 +24826,7 @@ if (!__Pyx_RefNanny) {
 
   /* "xorbits/_mars/oscar/core.pyx":15
  * # limitations under the License.
- * 
+ *
  * import asyncio             # <<<<<<<<<<<<<<
  * import inspect
  * import logging
@@ -24837,7 +24837,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":16
- * 
+ *
  * import asyncio
  * import inspect             # <<<<<<<<<<<<<<
  * import logging
@@ -24877,7 +24877,7 @@ if (!__Pyx_RefNanny) {
  * import sys
  * import weakref             # <<<<<<<<<<<<<<
  * from typing import AsyncGenerator
- * 
+ *
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_weakref, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 19, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -24888,7 +24888,7 @@ if (!__Pyx_RefNanny) {
  * import sys
  * import weakref
  * from typing import AsyncGenerator             # <<<<<<<<<<<<<<
- * 
+ *
  * cimport cython
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
@@ -24906,11 +24906,11 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":25
- * 
+ *
  * from .context cimport get_context
  * from .errors import Return, ActorNotExist             # <<<<<<<<<<<<<<
  * from .utils cimport is_async_generator
- * 
+ *
  */
   __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -24934,28 +24934,28 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":29
- * 
- * 
+ *
+ *
  * CALL_METHOD_DEFAULT = 0             # <<<<<<<<<<<<<<
  * CALL_METHOD_BATCH = 1
- * 
+ *
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_CALL_METHOD_DEFAULT, __pyx_int_0) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
 
   /* "xorbits/_mars/oscar/core.pyx":30
- * 
+ *
  * CALL_METHOD_DEFAULT = 0
  * CALL_METHOD_BATCH = 1             # <<<<<<<<<<<<<<
- * 
+ *
  * logger = logging.getLogger(__name__)
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_CALL_METHOD_BATCH, __pyx_int_1) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
 
   /* "xorbits/_mars/oscar/core.pyx":32
  * CALL_METHOD_BATCH = 1
- * 
+ *
  * logger = logging.getLogger(__name__)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef:
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_logging); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
@@ -24973,7 +24973,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":35
- * 
+ *
  * cdef:
  *     bint _log_unhandled_errors = False             # <<<<<<<<<<<<<<
  *     bint _log_cycle_send = False
@@ -24995,7 +24995,7 @@ if (!__Pyx_RefNanny) {
  *     bint _log_cycle_send = False
  *     dict _local_pool_map = dict()             # <<<<<<<<<<<<<<
  *     object _actor_method_wrapper
- * 
+ *
  */
   __pyx_t_3 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -25005,8 +25005,8 @@ if (!__Pyx_RefNanny) {
   __pyx_t_3 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":41
- * 
- * 
+ *
+ *
  * def set_debug_options(options):             # <<<<<<<<<<<<<<
  *     global _log_unhandled_errors, _log_cycle_send
  *     if options is None:
@@ -25017,8 +25017,8 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":67
- * 
- * 
+ *
+ *
  * def register_local_pool(address, pool):             # <<<<<<<<<<<<<<
  *     """
  *     Register local actor pool for local actor lookup.
@@ -25029,8 +25029,8 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":262
- * 
- * 
+ *
+ *
  * async def __pyx_actor_method_wrapper(method, result_handler, lock, args, kwargs):             # <<<<<<<<<<<<<<
  *     async with lock:
  *         result = method(*args, **kwargs)
@@ -25041,11 +25041,11 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":270
- * 
+ *
  * # Avoid global lookup.
  * _actor_method_wrapper = __pyx_actor_method_wrapper             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_pyx_actor_method_wrapper); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -25059,7 +25059,7 @@ if (!__Pyx_RefNanny) {
  * cdef class _Actor(_BaseActor):
  *     def _create_lock(self):             # <<<<<<<<<<<<<<
  *         return asyncio.locks.Lock()
- * 
+ *
  */
   __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_7xorbits_5_mars_5oscar_4core_6_Actor_1_create_lock, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Actor__create_lock, NULL, __pyx_n_s_xorbits__mars_oscar_core, __pyx_d, ((PyObject *)__pyx_codeobj__24)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 530, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -25166,7 +25166,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "xorbits/_mars/oscar/core.pyx":1
- * # Copyright 1999-2021 Alibaba Group Holding Ltd.             # <<<<<<<<<<<<<<
+ * # Copyright 2022-2023 XProbe Inc.             # <<<<<<<<<<<<<<
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  */

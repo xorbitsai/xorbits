@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,52 +12,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .map import series_map, index_map
-from .to_gpu import to_gpu
-from .to_cpu import to_cpu
-from .rechunk import rechunk
-from .describe import describe
 from .apply import df_apply, series_apply
-from .transform import df_transform, series_transform
-from .isin import series_isin, df_isin
-from .cut import cut
-from .qcut import qcut
-from .shift import shift, tshift
-from .diff import df_diff, series_diff
-from .value_counts import value_counts
 from .astype import astype, index_astype
-from .drop import df_drop, df_pop, series_drop, index_drop
-from .drop_duplicates import (
-    df_drop_duplicates,
-    series_drop_duplicates,
-    index_drop_duplicates,
-)
-from .duplicated import df_duplicated, series_duplicated, index_duplicated
-from .melt import melt
-from .memory_usage import df_memory_usage, series_memory_usage, index_memory_usage
-from .select_dtypes import select_dtypes
-from .map_chunk import map_chunk
 from .cartesian_chunk import cartesian_chunk
-from .rebalance import rebalance
-from .stack import stack
-from .explode import df_explode, series_explode
-from .eval import df_eval, df_query
 from .check_monotonic import (
     check_monotonic,
     is_monotonic,
-    is_monotonic_increasing,
     is_monotonic_decreasing,
+    is_monotonic_increasing,
 )
+from .cut import cut
+from .describe import describe
+from .diff import df_diff, series_diff
+from .drop import df_drop, df_pop, index_drop, series_drop
+from .drop_duplicates import (
+    df_drop_duplicates,
+    index_drop_duplicates,
+    series_drop_duplicates,
+)
+from .duplicated import df_duplicated, index_duplicated, series_duplicated
+from .eval import df_eval, df_query
+from .explode import df_explode, series_explode
+from .isin import df_isin, series_isin
+from .map import index_map, series_map
+from .map_chunk import map_chunk
+from .melt import melt
+from .memory_usage import df_memory_usage, index_memory_usage, series_memory_usage
 from .pct_change import pct_change
+from .qcut import qcut
+from .rebalance import rebalance
+from .rechunk import rechunk
+from .select_dtypes import select_dtypes
+from .shift import shift, tshift
+from .stack import stack
+from .to_cpu import to_cpu
+from .to_gpu import to_gpu
+from .transform import df_transform, series_transform
 from .transpose import transpose
+from .value_counts import value_counts
 
 
 def _install():
-    from ..core import DATAFRAME_TYPE, SERIES_TYPE, INDEX_TYPE
+    from ..core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
+    from .accessor import CachedAccessor, DatetimeAccessor, StringAccessor
+    from .datetimes import _datetime_method_to_handlers
     from .standardize_range_index import ChunkStandardizeRangeIndex
     from .string_ import _string_method_to_handlers
-    from .datetimes import _datetime_method_to_handlers
-    from .accessor import StringAccessor, DatetimeAccessor, CachedAccessor
 
     for t in DATAFRAME_TYPE:
         setattr(t, "to_gpu", to_gpu)

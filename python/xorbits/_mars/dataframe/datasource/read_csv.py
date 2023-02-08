@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 from io import BytesIO
 from urllib.parse import urlparse
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 try:
     from pyarrow import NativeFile
@@ -28,26 +28,25 @@ except ImportError:  # pragma: no cover
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core import OutputType
-from ...lib.filesystem import get_fs, open_file, file_size, glob
+from ...lib.filesystem import file_size, get_fs, glob, open_file
 from ...serialization.serializables import (
-    StringField,
+    AnyField,
+    BoolField,
     DictField,
-    ListField,
     Int32Field,
     Int64Field,
-    BoolField,
-    AnyField,
+    ListField,
+    StringField,
 )
-from ...utils import parse_readable_size, lazy_import, FixedSizeFileObject
+from ...utils import FixedSizeFileObject, lazy_import, parse_readable_size
 from ..arrays import ArrowStringDtype
-from ..utils import parse_index, build_empty_df, to_arrow_dtypes, contain_arrow_dtype
+from ..utils import build_empty_df, contain_arrow_dtype, parse_index, to_arrow_dtypes
 from .core import (
-    IncrementalIndexDatasource,
     ColumnPruneSupportedDataSourceMixin,
+    IncrementalIndexDatasource,
     IncrementalIndexDataSourceMixin,
     merge_small_files,
 )
-
 
 cudf = lazy_import("cudf")
 

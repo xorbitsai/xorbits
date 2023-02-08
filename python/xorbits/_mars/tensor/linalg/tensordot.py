@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...serialization.serializables import FieldTypes, KeyField, TupleField
 from ...utils import has_unknown_shape
-from ..utils import unify_chunks
-from ..array_utils import as_same_device, device, is_sparse_module
-from ..operands import TensorOperand, TensorOperandMixin
 from ..arithmetic.utils import chunk_tree_add
-from ..datasource import tensor as astensor
+from ..array_utils import as_same_device, device, is_sparse_module
 from ..core import TensorOrder
+from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorOperandMixin
+from ..utils import unify_chunks
 
 
 class TensorTensorDot(TensorOperand, TensorOperandMixin):

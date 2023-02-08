@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,20 +18,20 @@ import pandas as pd
 from .... import opcodes
 from ....core import recursive_tile
 from ....serialization.serializables import (
-    FieldTypes,
     AnyField,
-    Int64Field,
     BoolField,
-    StringField,
-    Int32Field,
-    KeyField,
-    TupleField,
     DictField,
+    FieldTypes,
+    Int32Field,
+    Int64Field,
+    KeyField,
     ListField,
+    StringField,
+    TupleField,
 )
-from ....utils import lazy_import, has_unknown_shape, pd_release_version, calc_nsplits
-from ...operands import DataFrameOperand, DataFrameOperandMixin
+from ....utils import calc_nsplits, has_unknown_shape, lazy_import, pd_release_version
 from ...core import DATAFRAME_TYPE
+from ...operands import DataFrameOperand, DataFrameOperandMixin
 from ...utils import build_empty_df, build_empty_series, parse_index
 
 cudf = lazy_import("cudf")

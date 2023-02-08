@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,22 +15,22 @@
 import random
 from enum import Enum
 from string import ascii_letters, digits
-from typing import Any, Optional, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ...core import TileableGraph
-from ...typing import BandType
 from ...serialization.serializables import (
-    Int32Field,
-    Serializable,
-    FieldTypes,
-    StringField,
-    ReferenceField,
-    BoolField,
     AnyField,
+    BoolField,
     DictField,
-    ListField,
+    FieldTypes,
     Float64Field,
+    Int32Field,
+    ListField,
+    ReferenceField,
+    Serializable,
+    StringField,
 )
+from ...typing import BandType
 
 
 class TaskStatus(Enum):

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,15 +31,14 @@ from types import TracebackType
 from typing import List
 
 from ....utils import (
+    clean_mars_tmp_dir,
     dataslots,
     ensure_coverage,
     reset_id_random_seed,
-    clean_mars_tmp_dir,
 )
 from ..config import ActorPoolConfig
 from ..message import CreateActorMessage
 from ..pool import MainActorPoolBase, SubActorPoolBase, _register_message_handler
-
 
 atexit.register(clean_mars_tmp_dir)
 
@@ -52,8 +51,9 @@ if sys.version_info[:2] == (3, 9):
 
         popen_forkserver = popen_fork = synchronize = None
     else:
+        from multiprocessing import popen_fork, popen_forkserver
         from multiprocessing import popen_spawn_posix as popen_spawn
-        from multiprocessing import popen_forkserver, popen_fork, synchronize
+        from multiprocessing import synchronize
     _ = popen_spawn, popen_forkserver, popen_fork, synchronize
     del _
 elif sys.version_info[:2] == (3, 6):  # pragma: no cover

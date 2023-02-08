@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ import numpy as np
 
 from ...config import options
 from ...serialization.serializables import FieldTypes, StringField, TupleField
-from ..utils import normalize_shape, decide_chunk_sizes
 from ..core import TensorOrder
 from ..operands import TensorOperand, TensorOperandMixin
+from ..utils import decide_chunk_sizes, normalize_shape
 
 
 class TensorDataSource(TensorOperand, TensorOperandMixin):

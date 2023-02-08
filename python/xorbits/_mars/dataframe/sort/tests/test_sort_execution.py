@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import pandas as pd
 import pytest
 
 from ....tests.core import require_cudf
-from ... import DataFrame, Series, ArrowStringDtype
+from ... import ArrowStringDtype, DataFrame, Series
 
 
 @pytest.mark.parametrize(

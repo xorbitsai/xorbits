@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 import asyncio
 import multiprocessing
-from typing import List, Dict
+from typing import Dict, List
 
+from ..communication import DummyServer, gen_local_address
 from ..config import ActorPoolConfig
-from ..communication import gen_local_address, DummyServer
 from ..mars.pool import MainActorPool, SubActorPool, SubpoolStatus
 from ..pool import ActorPoolType
 

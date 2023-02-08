@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 from .... import oscar as mo
 from ....utils import calc_size_by_str
 from ...core import AbstractService
-from .workerslot import WorkerSlotManagerActor
+from .execution import DEFAULT_SUBTASK_MAX_RETRIES, SubtaskExecutionActor
 from .quota import WorkerQuotaManagerActor
-from .execution import SubtaskExecutionActor, DEFAULT_SUBTASK_MAX_RETRIES
+from .workerslot import WorkerSlotManagerActor
 
 
 class SchedulingWorkerService(AbstractService):

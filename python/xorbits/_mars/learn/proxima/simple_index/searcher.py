@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ import logging
 import os
 import pickle  # nosec  # pylint: disable=import_pickle
 import random
-from hashlib import md5
 from collections import defaultdict
+from hashlib import md5
 
 import numpy as np
 
@@ -28,21 +28,21 @@ from ....config import options
 from ....core import ENTITY_TYPE, OutputType, recursive_tile
 from ....core.context import get_context
 from ....core.operand import OperandStage
-from ....lib.filesystem import get_fs, FileSystem
+from ....lib.filesystem import FileSystem, get_fs
 from ....serialization.serializables import (
-    KeyField,
-    StringField,
+    AnyField,
+    BoolField,
+    BytesField,
+    DictField,
     Int32Field,
     Int64Field,
-    DictField,
-    AnyField,
-    BytesField,
-    BoolField,
+    KeyField,
+    StringField,
 )
 from ....tensor.core import TensorOrder
-from ....utils import has_unknown_shape, Timer, ceildiv
+from ....utils import Timer, ceildiv, has_unknown_shape
 from ...operands import LearnOperand, LearnOperandMixin
-from ..core import proxima, validate_tensor, get_proxima_type
+from ..core import get_proxima_type, proxima, validate_tensor
 
 logger = logging.getLogger(__name__)
 

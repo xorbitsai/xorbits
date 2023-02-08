@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,25 +14,25 @@
 import asyncio
 import logging
 import os
+import time
 
 import numpy as np
-import pytest
 import pandas as pd
-import time
+import pytest
 
 from .... import dataframe as md
 from .... import oscar as mo
 from .... import tensor as mt
 from ....oscar.backends.ray.utils import (
+    kill_and_wait,
     process_address_to_placement,
     process_placement_to_address,
-    kill_and_wait,
 )
 from ....services.cluster import ClusterAPI
 from ....services.scheduling.supervisor.autoscale import AutoscalerActor
 from ....tests.core import require_ray
 from ....utils import lazy_import
-from ..ray import new_cluster, _load_config
+from ..ray import _load_config, new_cluster
 from ..tests import test_local
 
 ray = lazy_import("ray")

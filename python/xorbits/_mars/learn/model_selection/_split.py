@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ from math import ceil, floor
 
 import numpy as np
 
-from ...core import ExecutableTuple
 from ... import tensor as mt
+from ...core import ExecutableTuple
 from ...tensor.utils import check_random_state
 from ..utils import shuffle as shuffle_arrays
-from ..utils.validation import indexable, _num_samples
+from ..utils.validation import _num_samples, indexable
 
 
 def train_test_split(*arrays, **options):

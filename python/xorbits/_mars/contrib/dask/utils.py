@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ from typing import List
 from dask import is_dask_collection
 from dask.array.core import _concatenate2 as array_concat
 from dask.dataframe import concat as df_concat
-from dask.utils import is_arraylike, is_dataframe_like, is_series_like, is_index_like
+from dask.utils import is_arraylike, is_dataframe_like, is_index_like, is_series_like
 
 from ...remote import spawn
 

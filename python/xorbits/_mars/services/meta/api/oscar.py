@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from .... import oscar as mo
 from ....core import ChunkType
@@ -23,7 +23,7 @@ from ....typing import BandType
 from ....utils import get_chunk_params
 from ..core import get_meta_type
 from ..store import AbstractMetaStore
-from ..supervisor.core import MetaStoreManagerActor, MetaStoreActor
+from ..supervisor.core import MetaStoreActor, MetaStoreManagerActor
 from ..worker.core import WorkerMetaStoreManagerActor
 from .core import AbstractMetaAPI
 
@@ -43,8 +43,8 @@ class BaseMetaAPI(AbstractMetaAPI):
         self, tileable, memory_size: int = None, store_size: int = None, **extra
     ):
         from ....dataframe.core import (
-            DATAFRAME_TYPE,
             DATAFRAME_GROUPBY_TYPE,
+            DATAFRAME_TYPE,
             SERIES_GROUPBY_TYPE,
         )
 

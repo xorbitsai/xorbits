@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ except ImportError:  # pragma: no cover
 
 from ... import resource as mars_resource
 from ...config import options
-from ...utils import git_info, lazy_import
 from ...storage import StorageLevel
-from .core import WorkerSlotInfo, QuotaInfo, DiskInfo, StorageInfo
+from ...utils import git_info, lazy_import
+from .core import DiskInfo, QuotaInfo, StorageInfo, WorkerSlotInfo
 
 cp = lazy_import("cupy", rename="cp")
 cudf = lazy_import("cudf")
@@ -44,9 +44,9 @@ _is_initial = True
 
 
 def gather_node_env():
+    from ... import __version__ as mars_version
     from ...lib.mkl_interface import mkl_get_version
     from ...lib.nvutils import NVError
-    from ... import __version__ as mars_version
 
     global _is_initial
     if _is_initial:

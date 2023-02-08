@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,46 +23,46 @@ import pytest
 
 from ....core import EntityData
 from ....utils import no_default
-from ... import serialize, deserialize
+from ... import deserialize, serialize
 from .. import (
-    Serializable,
-    FieldTypes,
-    IdentityField,
-    BoolField,
     AnyField,
+    BoolField,
+    BytesField,
+    Complex64Field,
+    Complex128Field,
+    DataFrameField,
+    DataTypeField,
+    Datetime64Field,
+    DictField,
+    FieldTypes,
+    Float16Field,
+    Float32Field,
+    Float64Field,
+    FunctionField,
+    IdentityField,
+    IndexField,
     Int8Field,
     Int16Field,
     Int32Field,
     Int64Field,
+    IntervalArrayField,
+    KeyField,
+    ListField,
+    NamedTupleField,
+    NDArrayField,
+    OneOfField,
+    ReferenceField,
+    Serializable,
+    SeriesField,
+    SliceField,
+    StringField,
+    Timedelta64Field,
+    TupleField,
+    TZInfoField,
     UInt8Field,
     UInt16Field,
     UInt32Field,
     UInt64Field,
-    Float16Field,
-    Float32Field,
-    Float64Field,
-    Complex64Field,
-    Complex128Field,
-    StringField,
-    BytesField,
-    KeyField,
-    NDArrayField,
-    Datetime64Field,
-    Timedelta64Field,
-    DataTypeField,
-    IndexField,
-    SeriesField,
-    DataFrameField,
-    IntervalArrayField,
-    SliceField,
-    FunctionField,
-    NamedTupleField,
-    TZInfoField,
-    ListField,
-    TupleField,
-    DictField,
-    ReferenceField,
-    OneOfField,
 )
 
 my_namedtuple = namedtuple("my_namedtuple", "a, b")

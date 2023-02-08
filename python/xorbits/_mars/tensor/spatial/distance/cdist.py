@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ import numpy as np
 
 from .... import opcodes as OperandDef
 from ....core import recursive_tile
-from ....serialization.serializables import KeyField, AnyField, Float16Field
-from ....utils import has_unknown_shape, require_module, ensure_own_data
-from ...operands import TensorOperand, TensorOperandMixin
+from ....serialization.serializables import AnyField, Float16Field, KeyField
+from ....utils import ensure_own_data, has_unknown_shape, require_module
+from ...array_utils import as_same_device, cp, device
 from ...core import TensorOrder
 from ...datasource import tensor as astensor
-from ...array_utils import as_same_device, cp, device
+from ...operands import TensorOperand, TensorOperandMixin
 
 
 class TensorCdist(TensorOperand, TensorOperandMixin):

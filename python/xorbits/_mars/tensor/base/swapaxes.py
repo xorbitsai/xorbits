@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 # limitations under the License.
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import KeyField, Int32Field
+from ...serialization.serializables import Int32Field, KeyField
 from ..array_utils import as_same_device, device
 from ..core import TensorOrder
 from ..datasource import tensor as astensor
 from ..operands import TensorHasInput, TensorOperandMixin
-from ..utils import validate_axis, reverse_order
+from ..utils import reverse_order, validate_axis
 
 
 def _swap(it, axis1, axis2):

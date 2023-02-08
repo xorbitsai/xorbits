@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from .... import opcodes as OperandDef
 from ....core import OutputType
 from ....core.context import get_context
 from ....core.operand import MergeDictOperand
-from ....serialization.serializables import FieldTypes, DictField, KeyField, ListField
+from ....serialization.serializables import DictField, FieldTypes, KeyField, ListField
 from ....utils import ensure_own_data
 from .dmatrix import ToDMatrix, to_dmatrix
 from .start_tracker import StartTracker
@@ -164,7 +164,7 @@ class XGBTrain(MergeDictOperand):
         if op.merge:
             return super().execute(ctx, op)
 
-        from xgboost import train, rabit
+        from xgboost import rabit, train
 
         params = op.params.copy()
 

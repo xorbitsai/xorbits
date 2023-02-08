@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,21 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 from collections.abc import Iterable
 from typing import List
 
+import numpy as np
+
+from .array import SparseArray, SparseNDArray
 from .core import (
-    issparse,
-    get_array_module,
     cp,
     cps,
+    get_array_module,
     get_sparse_module,
+    issparse,
     naked,
-    sps,
     splinalg,
+    sps,
 )
-from .array import SparseNDArray, SparseArray
 
 
 def zeros_sparse_matrix(shape, dtype=float, gpu=False):

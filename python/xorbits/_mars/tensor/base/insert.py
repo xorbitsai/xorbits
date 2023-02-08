@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, recursive_tile
-from ...serialization.serializables import Int32Field, TupleField, AnyField, KeyField
+from ...serialization.serializables import AnyField, Int32Field, KeyField, TupleField
 from ...utils import has_unknown_shape
 from ..datasource import tensor as astensor
 from ..operands import TensorHasInput, TensorOperandMixin
-from ..utils import filter_inputs, validate_axis, calc_object_length
+from ..utils import calc_object_length, filter_inputs, validate_axis
 
 
 class TensorInsert(TensorHasInput, TensorOperandMixin):

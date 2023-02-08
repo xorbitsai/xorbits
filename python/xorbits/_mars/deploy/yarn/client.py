@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import time
 import uuid
 
 from ...session import new_session
-from ...utils import to_str, calc_size_by_str
+from ...utils import calc_size_by_str, to_str
 from ..utils import wait_services_ready
 from .config import MarsApplicationConfig, MarsSupervisorConfig, MarsWorkerConfig
 
@@ -87,6 +87,7 @@ def new_cluster(
     **kwargs,
 ):
     import skein
+
     from .supervisor import YarnSupervisorCommandRunner
 
     def _override_envs(src, updates):

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ import numpy as np
 
 from .... import opcodes as OperandDef
 from ....core import get_output_types, recursive_tile
-from ....core.context import get_context, Context
+from ....core.context import Context, get_context
 from ....dataframe.core import DATAFRAME_TYPE
-from ....serialization.serializables import KeyField, Float64Field, ListField, BoolField
-from ....tensor.core import TENSOR_TYPE, TENSOR_CHUNK_TYPE
+from ....serialization.serializables import BoolField, Float64Field, KeyField, ListField
 from ....tensor import tensor as astensor
-from ....typing import TileableType, ChunkType
-from ....utils import has_unknown_shape, ensure_own_data, build_fetch
+from ....tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
+from ....typing import ChunkType, TileableType
+from ....utils import build_fetch, ensure_own_data, has_unknown_shape
 from ...operands import LearnOperand, LearnOperandMixin
-from ...utils import convert_to_tensor_or_dataframe, concat_chunks
+from ...utils import concat_chunks, convert_to_tensor_or_dataframe
 
 
 class ToDMatrix(LearnOperand, LearnOperandMixin):
@@ -117,9 +117,7 @@ class ToDMatrix(LearnOperand, LearnOperandMixin):
             for type_name, inp in zip(types[1:], [label, weight, base_margin]):
                 if inp is None:
                     continue
-                inp_chunk = inp.cix[
-                    i,
-                ]
+                inp_chunk = inp.cix[i,]
                 setattr(chunk_op, type_name, inp_chunk)
                 inps.append(inp_chunk)
                 kw = cls._get_kw(inp_chunk)

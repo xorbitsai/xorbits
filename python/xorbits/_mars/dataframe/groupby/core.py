@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,23 +20,22 @@ import pandas as pd
 
 from ... import opcodes as OperandDef
 from ...core import ENTITY_TYPE, Entity, OutputType
-from ...core.operand import OperandStage, MapReduceOperand
+from ...core.operand import MapReduceOperand, OperandStage
 from ...lib.groupby_wrapper import wrapped_groupby
-from ...serialization.serializables import BoolField, Int32Field, AnyField
-from ...utils import lazy_import, pd_release_version, no_default
+from ...serialization.serializables import AnyField, BoolField, Int32Field
+from ...utils import lazy_import, no_default, pd_release_version
 from ..align import align_dataframe_series, align_series_series
+from ..core import SERIES_CHUNK_TYPE, SERIES_TYPE
 from ..initializer import Series as asseries
-from ..core import SERIES_TYPE, SERIES_CHUNK_TYPE
+from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
 from ..utils import (
     build_concatenated_rows_frame,
-    hash_dataframe_on,
     build_df,
     build_series,
-    parse_index,
+    hash_dataframe_on,
     is_cudf,
+    parse_index,
 )
-from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
-
 
 cudf = lazy_import("cudf")
 
@@ -277,9 +276,7 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
                 chunk_by = []
                 for k in by:
                     if isinstance(k, SERIES_TYPE):
-                        by_chunk = k.cix[
-                            chunk.index[0],
-                        ]
+                        by_chunk = k.cix[chunk.index[0],]
                         chunk_by.append(by_chunk)
                         chunk_inputs.append(by_chunk)
                     else:

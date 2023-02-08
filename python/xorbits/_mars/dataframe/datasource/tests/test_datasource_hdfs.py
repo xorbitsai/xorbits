@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
 import random
 from io import BytesIO, StringIO
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 
 from .... import dataframe as md
 from ....tests.core import require_hadoop
-
 
 TEST_DIR = "/tmp/test"
 

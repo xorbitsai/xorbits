@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import asyncio
 import copy
-import json
 import heapq
+import json
 import logging
 import operator
+import os
 from collections import Counter
 from collections.abc import Mapping
-from .backends.message import SendMessage, TellMessage
-from ..typing import BandType
 
+from ..typing import BandType
+from .backends.message import SendMessage, TellMessage
 
 logger = logging.getLogger(__name__)
 

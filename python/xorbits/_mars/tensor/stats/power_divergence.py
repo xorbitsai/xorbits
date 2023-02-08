@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ from ...core import ExecutableTuple
 from ...utils import require_not_none
 from .. import special
 from ..datasource import asarray
-
 
 # Map from names to lambda_ values used in power_divergence().
 _power_div_lambda_names = {

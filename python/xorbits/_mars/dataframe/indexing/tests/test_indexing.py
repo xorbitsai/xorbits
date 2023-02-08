@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,19 +21,19 @@ from .... import tensor as mt
 from ....core import tile
 from ....tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, Tensor
 from ...core import (
+    DATAFRAME_CHUNK_TYPE,
+    DATAFRAME_TYPE,
     SERIES_CHUNK_TYPE,
     SERIES_TYPE,
-    Series,
-    DATAFRAME_TYPE,
     DataFrame,
-    DATAFRAME_CHUNK_TYPE,
+    Series,
 )
 from ...datasource.from_tensor import dataframe_from_tensor
 from ..iloc import (
     DataFrameIlocGetItem,
     DataFrameIlocSetItem,
-    IndexingError,
     HeadTailOptimizedOperandMixin,
+    IndexingError,
 )
 from ..loc import DataFrameLocGetItem
 

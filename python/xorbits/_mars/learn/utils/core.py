@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ except ImportError:  # pragma: no cover
 
 from ... import options
 from ...core import enter_mode
-from ...typing import TileableType
 from ...dataframe import DataFrame, Series
 from ...dataframe.core import DATAFRAME_TYPE, SERIES_TYPE
 from ...tensor import tensor as astensor
+from ...typing import TileableType
 from ...utils import parse_readable_size
 
 

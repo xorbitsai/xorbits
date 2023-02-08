@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 # limitations under the License.
 
 from .... import oscar as mo
-from ...core import NodeRole, AbstractService
+from ...core import AbstractService, NodeRole
+from ..file_logger import FileLoggerActor
 from ..procinfo import ProcessInfoManagerActor
 from ..uploader import NodeInfoUploaderActor
 from .locator import WorkerSupervisorLocatorActor
-from ..file_logger import FileLoggerActor
 
 
 class ClusterWorkerService(AbstractService):

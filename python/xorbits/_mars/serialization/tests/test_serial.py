@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import threading
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
@@ -30,10 +30,10 @@ except ImportError:
     sps = None
 
 from ...lib.sparse import SparseMatrix
-from ...tests.core import require_cupy, require_cudf
+from ...tests.core import require_cudf, require_cupy
 from ...utils import lazy_import
-from .. import serialize, serialize_with_spawn, deserialize
-from ..core import Placeholder, ListSerializer
+from .. import deserialize, serialize, serialize_with_spawn
+from ..core import ListSerializer, Placeholder
 
 cupy = lazy_import("cupy")
 cudf = lazy_import("cudf")

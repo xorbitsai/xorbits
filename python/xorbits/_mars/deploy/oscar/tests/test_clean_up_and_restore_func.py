@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,17 +18,16 @@ import pandas as pd
 import pytest
 
 from .... import dataframe as md
-from ....dataframe.base.apply import ApplyOperand
 from ....config import option_context
-from ....core import TileableGraph, OperandType
-from ....services.task.supervisor.tests import CheckedTaskPreprocessor
+from ....core import OperandType, TileableGraph
+from ....dataframe.base.apply import ApplyOperand
+from ....services.subtask.worker.processor import SubtaskProcessor
 from ....services.subtask.worker.tests import CheckedSubtaskProcessor
 from ....services.task.supervisor.preprocessor import TaskPreprocessor
-from ....services.subtask.worker.processor import SubtaskProcessor
-
+from ....services.task.supervisor.tests import CheckedTaskPreprocessor
 from ....utils import lazy_import
 from ..local import _load_config as _load_mars_config
-from ..tests.session import new_test_session, CONFIG_FILE
+from ..tests.session import CONFIG_FILE, new_test_session
 
 ray = lazy_import("ray")
 

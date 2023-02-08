@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ from sklearn.exceptions import UndefinedMetricWarning
 from ... import execute
 from ... import tensor as mt
 from ..utils.validation import (
+    _num_samples,
     check_array,
     check_consistent_length,
     column_or_1d,
-    _num_samples,
 )
 
 

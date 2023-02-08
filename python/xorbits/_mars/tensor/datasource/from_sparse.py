@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 # limitations under the License.
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import KeyField, StringField, AnyField
+from ...serialization.serializables import AnyField, KeyField, StringField
 from ..array_utils import as_same_device, device, get_array_module
 from ..utils import get_order
-from .core import TensorHasInput
 from .array import tensor
+from .core import TensorHasInput
 
 
 class SparseToDense(TensorHasInput):

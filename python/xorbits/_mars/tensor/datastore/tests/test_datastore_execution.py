@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import tempfile
 import time
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 try:
     import tiledb
@@ -31,7 +31,7 @@ except ImportError:  # pragma: no cover
     h5py = None
 try:
     import zarr
-    from numcodecs import Zstd, Delta, Blosc
+    from numcodecs import Blosc, Delta, Zstd
 except ImportError:  # pragma: no cover
     zarr = None
 try:
@@ -39,7 +39,7 @@ try:
 except ImportError:
     vineyard = None
 
-from ... import tensor, arange, totiledb, tohdf5, tozarr, tovineyard
+from ... import arange, tensor, tohdf5, totiledb, tovineyard, tozarr
 from ...datasource import fromvineyard
 
 _exec_timeout = 120 if "CI" in os.environ else -1

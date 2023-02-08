@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ from typing import Dict
 
 from ....utils import lazy_import
 from ...driver import BaseActorDriver
-from .utils import process_placement_to_address, addresses_to_placement_group_info
+from .utils import addresses_to_placement_group_info, process_placement_to_address
 
 ray = lazy_import("ray")
 logger = logging.getLogger(__name__)

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ import pandas as pd
 from ... import opcodes
 from ...core.operand import OperandStage
 from ...serialization.serializables import BoolField
-from ...utils import lazy_import, calc_nsplits
+from ...utils import calc_nsplits, lazy_import
 from ..operands import OutputType
 from ..utils import (
-    parse_index,
-    hash_dataframe_on,
     gen_unknown_index_value,
+    hash_dataframe_on,
+    parse_index,
     standardize_range_index,
 )
 from ._duplicate import DuplicateOperand, validate_subset

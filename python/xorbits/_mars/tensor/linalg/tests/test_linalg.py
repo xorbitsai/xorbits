@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 # limitations under the License.
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 from .... import tensor as mt
 from ....core import tile
-from ... import ones, tensor, dot, empty
+from ... import dot, empty, ones, tensor
 from ...core import SparseTensor, Tensor
 from .. import matmul
 from ..inv import TensorInv
@@ -364,7 +364,7 @@ def test_inv():
 
 
 def test_tensordot():
-    from .. import tensordot, dot, inner
+    from .. import dot, inner, tensordot
 
     t1 = ones((3, 4, 6), chunk_size=2)
     t2 = ones((4, 3, 5), chunk_size=2)

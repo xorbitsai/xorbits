@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ except ImportError:  # pragma: no cover
     pa = None
 
 from ... import opcodes as OperandDef
-from ...core import OutputType
 from ...config import options
+from ...core import OutputType
 from ...serialization.serializables import BoolField
 from ...utils import lazy_import
 from ..arrays import ArrowListArray, ArrowListDtype
-from .core import DataFrameReductionOperand, DataFrameReductionMixin, CustomReduction
+from .core import CustomReduction, DataFrameReductionMixin, DataFrameReductionOperand
 
 cudf = lazy_import("cudf")
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import numpy as np
 
 from ...config import options
 from ...core import recursive_tile
-from ...serialization.serializables import FieldTypes, TupleField, Int32Field
-from ..core import TENSOR_TYPE, TENSOR_CHUNK_TYPE
-from ..utils import decide_chunk_sizes, gen_random_seeds, broadcast_shape
+from ...serialization.serializables import FieldTypes, Int32Field, TupleField
 from ..array_utils import array_module, device
-from ..operands import TensorOperand, TensorMapReduceOperand, TensorOperandMixin
-from ..datasource import tensor as astensor
 from ..base import broadcast_to
+from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
+from ..datasource import tensor as astensor
+from ..operands import TensorMapReduceOperand, TensorOperand, TensorOperandMixin
+from ..utils import broadcast_shape, decide_chunk_sizes, gen_random_seeds
 
 
 class RandomState:

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,38 +13,32 @@
 # limitations under the License.
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict, Any
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from ...core import OBJECT_TYPE, OBJECT_CHUNK_TYPE
+from ...core import OBJECT_CHUNK_TYPE, OBJECT_TYPE
 from ...dataframe.core import (
+    CATEGORICAL_CHUNK_TYPE,
+    CATEGORICAL_TYPE,
+    DATAFRAME_CHUNK_TYPE,
+    DATAFRAME_GROUPBY_CHUNK_TYPE,
+    DATAFRAME_GROUPBY_TYPE,
+    DATAFRAME_OR_SERIES_CHUNK_TYPE,
+    DATAFRAME_OR_SERIES_TYPE,
+    DATAFRAME_TYPE,
+    INDEX_CHUNK_TYPE,
+    INDEX_TYPE,
+    SERIES_CHUNK_TYPE,
+    SERIES_GROUPBY_CHUNK_TYPE,
+    SERIES_GROUPBY_TYPE,
+    SERIES_TYPE,
     DtypesValue,
     IndexValue,
-    DATAFRAME_TYPE,
-    SERIES_TYPE,
-    INDEX_TYPE,
-    DATAFRAME_GROUPBY_TYPE,
-    SERIES_GROUPBY_TYPE,
-    DATAFRAME_CHUNK_TYPE,
-    SERIES_CHUNK_TYPE,
-    INDEX_CHUNK_TYPE,
-    DATAFRAME_GROUPBY_CHUNK_TYPE,
-    SERIES_GROUPBY_CHUNK_TYPE,
-    CATEGORICAL_TYPE,
-    CATEGORICAL_CHUNK_TYPE,
-    DATAFRAME_OR_SERIES_TYPE,
-    DATAFRAME_OR_SERIES_CHUNK_TYPE,
 )
-from ...tensor.core import TensorOrder, TENSOR_TYPE, TENSOR_CHUNK_TYPE
+from ...tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, TensorOrder
 from ...utils import dataslots
-from .core import (
-    _TileableMeta,
-    _ChunkMeta,
-    PandasDtypeType,
-    register_meta_type,
-)
-
+from .core import PandasDtypeType, _ChunkMeta, _TileableMeta, register_meta_type
 
 """
 Create a separate module for metas to avoid direct

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ except (ImportError, OSError):  # pragma: no cover
     tildb = None
 
 from ..core import ExecutableTuple, recursive_tile
-from ..utils import lazy_import
 from ..lib.mmh3 import hash_from_buffer
+from ..utils import lazy_import
 
 cp = lazy_import("cupy", rename="cp")
 
@@ -661,8 +661,9 @@ def check_random_state(seed):
         Otherwise raise ValueError.
     :return:
     """
-    from . import random as mtrand
     from numpy import random as np_mtrand
+
+    from . import random as mtrand
 
     if seed is None or seed is mtrand or seed is np_mtrand:
         return mtrand._random_state

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 from collections.abc import Iterable
 
-from ...serialization.serializables import FieldTypes, KeyField, TupleField
 from ... import opcodes as OperandDef
-from ..operands import TensorHasInput, TensorOperandMixin
+from ...serialization.serializables import FieldTypes, KeyField, TupleField
 from ..array_utils import as_same_device, device
+from ..operands import TensorHasInput, TensorOperandMixin
 
 
 def _get_squeeze_shape(shape, axis):

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@ from .average import average
 from .bincount import bincount
 from .corrcoef import corrcoef
 from .cov import cov
-from .digitize import digitize, TensorDigitize
-from .ptp import ptp
+from .digitize import TensorDigitize, digitize
 from .histogram import (
-    histogram_bin_edges,
+    TensorHistogram,
     TensorHistogramBinEdges,
     histogram,
-    TensorHistogram,
+    histogram_bin_edges,
 )
-from .quantile import quantile
-from .percentile import percentile
 from .median import median
+from .percentile import percentile
+from .ptp import ptp
+from .quantile import quantile
 
 
 def _install():

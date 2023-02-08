@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import itertools
 import importlib
 import inspect
+import itertools
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Any, Callable, Optional, Type, Union
 
-from ...utils import no_default, _is_ci
+from ...utils import _is_ci, no_default
 from .field_type import (
     AbstractFieldType,
+    DictType,
     FieldTypes,
     ListType,
-    TupleType,
-    DictType,
     ReferenceType,
+    TupleType,
 )
 
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,56 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import CustomReduction
 from .aggregation import DataFrameAggregate
-
-from .sum import DataFrameSum
-from .prod import DataFrameProd
-from .max import DataFrameMax
-from .min import DataFrameMin
-from .count import DataFrameCount
-from .mean import DataFrameMean
-from .var import DataFrameVar
 from .all import DataFrameAll
 from .any import DataFrameAny
-from .skew import DataFrameSkew
-from .kurtosis import DataFrameKurtosis
-from .sem import DataFrameSem
-from .reduction_size import DataFrameSize
-from .str_concat import DataFrameStrConcat, build_str_concat_object
-from .custom_reduction import DataFrameCustomReduction
-
+from .core import CustomReduction
+from .count import DataFrameCount
 from .cummax import DataFrameCummax
 from .cummin import DataFrameCummin
 from .cumprod import DataFrameCumprod
 from .cumsum import DataFrameCumsum
-
+from .custom_reduction import DataFrameCustomReduction
+from .kurtosis import DataFrameKurtosis
+from .max import DataFrameMax
+from .mean import DataFrameMean
+from .min import DataFrameMin
 from .nunique import DataFrameNunique
+from .prod import DataFrameProd
+from .reduction_size import DataFrameSize
+from .sem import DataFrameSem
+from .skew import DataFrameSkew
+from .str_concat import DataFrameStrConcat, build_str_concat_object
+from .sum import DataFrameSum
 from .unique import DataFrameUnique, unique
+from .var import DataFrameVar
 
 
 def _install():
-    from ..core import DATAFRAME_TYPE, SERIES_TYPE, INDEX_TYPE
+    from ..core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
     from .aggregation import aggregate
-    from .sum import sum_series, sum_dataframe
-    from .prod import prod_series, prod_dataframe
-    from .max import max_series, max_dataframe, max_index
-    from .min import min_series, min_dataframe, min_index
-    from .count import count_series, count_dataframe
-    from .mean import mean_series, mean_dataframe
-    from .var import var_series, var_dataframe
-    from .std import std_series, std_dataframe
-    from .all import all_series, all_dataframe, all_index
-    from .any import any_series, any_dataframe, any_index
+    from .all import all_dataframe, all_index, all_series
+    from .any import any_dataframe, any_index, any_series
+    from .count import count_dataframe, count_series
     from .cummax import cummax
     from .cummin import cummin
     from .cumprod import cumprod
     from .cumsum import cumsum
+    from .kurtosis import kurt_dataframe, kurt_series
+    from .max import max_dataframe, max_index, max_series
+    from .mean import mean_dataframe, mean_series
+    from .min import min_dataframe, min_index, min_series
     from .nunique import nunique_dataframe, nunique_series
+    from .prod import prod_dataframe, prod_series
+    from .reduction_size import size_dataframe, size_series
     from .sem import sem_dataframe, sem_series
     from .skew import skew_dataframe, skew_series
-    from .kurtosis import kurt_dataframe, kurt_series
-    from .reduction_size import size_dataframe, size_series
+    from .std import std_dataframe, std_series
+    from .sum import sum_dataframe, sum_series
+    from .var import var_dataframe, var_series
 
     funcs = [
         ("sum", sum_series, sum_dataframe),

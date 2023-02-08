@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@ import contextlib
 import sys
 
 from .file import AioFileObject, AioFilesystem
-from .isolation import Isolation, new_isolation, get_isolation, stop_isolation
+from .isolation import Isolation, get_isolation, new_isolation, stop_isolation
 from .lru import alru_cache
 from .parallelism import AioEvent
-
 
 if sys.version_info[:2] < (3, 9):
     from ._threads import to_thread

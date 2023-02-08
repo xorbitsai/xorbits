@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from typing import List
 import pytest
 
 from ..... import oscar as mo
-from ....debug import reload_debug_opts_from_env, get_debug_options
+from ....debug import get_debug_options, reload_debug_opts_from_env
 
 
 class DebugActor(mo.Actor):

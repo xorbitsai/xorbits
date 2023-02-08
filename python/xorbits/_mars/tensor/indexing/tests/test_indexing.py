@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import pytest
 from ....config import option_context
 from ....core import tile
 from ...base.broadcast_to import TensorBroadcastTo
-from ...datasource import ones, tensor, array, empty
+from ...datasource import array, empty, ones, tensor
 from ...datasource.ones import TensorOnes
 from ...merge.concatenate import TensorConcatenate
-from .. import choose, unravel_index, nonzero, compress, fill_diagonal
+from .. import choose, compress, fill_diagonal, nonzero, unravel_index
 from ..setitem import TensorIndexSetValue
 
 

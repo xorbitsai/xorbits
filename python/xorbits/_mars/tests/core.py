@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ _mock = mock
 
 from ..core.operand import OperandStage
 from ..utils import lazy_import
-
 
 cupy = lazy_import("cupy")
 cudf = lazy_import("cudf")
@@ -413,21 +412,21 @@ class ObjectCheckMixin:
 
     def assert_groupby_consistent(self, expected, real):
         from pandas.core.groupby import DataFrameGroupBy, SeriesGroupBy
-        from ..lib.groupby_wrapper import GroupByWrapper
-        from ..dataframe.core import DATAFRAME_GROUPBY_TYPE, SERIES_GROUPBY_TYPE
+
         from ..dataframe.core import (
             DATAFRAME_GROUPBY_CHUNK_TYPE,
+            DATAFRAME_GROUPBY_TYPE,
             SERIES_GROUPBY_CHUNK_TYPE,
+            SERIES_GROUPBY_TYPE,
         )
+        from ..lib.groupby_wrapper import GroupByWrapper
 
         df_groupby_types = (DataFrameGroupBy,)
         series_groupby_types = (SeriesGroupBy,)
 
         try:
-            from cudf.core.groupby.groupby import (
-                DataFrameGroupBy as CUDataFrameGroupBy,
-                SeriesGroupBy as CUSeriesGroupBy,
-            )
+            from cudf.core.groupby.groupby import DataFrameGroupBy as CUDataFrameGroupBy
+            from cudf.core.groupby.groupby import SeriesGroupBy as CUSeriesGroupBy
 
             df_groupby_types += (CUDataFrameGroupBy,)
             series_groupby_types += (CUSeriesGroupBy,)
@@ -481,23 +480,19 @@ class ObjectCheckMixin:
         self.assert_index_value_consistent(expected.categories_value, real.categories)
 
     def assert_object_consistent(self, expected, real):
-        from ..tensor.core import TENSOR_TYPE
         from ..dataframe.core import (
-            DATAFRAME_TYPE,
-            SERIES_TYPE,
-            GROUPBY_TYPE,
-            INDEX_TYPE,
-            CATEGORICAL_TYPE,
-        )
-
-        from ..tensor.core import TENSOR_CHUNK_TYPE
-        from ..dataframe.core import (
-            DATAFRAME_CHUNK_TYPE,
-            SERIES_CHUNK_TYPE,
-            GROUPBY_CHUNK_TYPE,
-            INDEX_CHUNK_TYPE,
             CATEGORICAL_CHUNK_TYPE,
+            CATEGORICAL_TYPE,
+            DATAFRAME_CHUNK_TYPE,
+            DATAFRAME_TYPE,
+            GROUPBY_CHUNK_TYPE,
+            GROUPBY_TYPE,
+            INDEX_CHUNK_TYPE,
+            INDEX_TYPE,
+            SERIES_CHUNK_TYPE,
+            SERIES_TYPE,
         )
+        from ..tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
 
         op = getattr(expected, "op", None)
         if op and getattr(op, "stage", None) == OperandStage.map:

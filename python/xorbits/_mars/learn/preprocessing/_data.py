@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 import numpy as np
 from sklearn.base import TransformerMixin
-from sklearn.utils.validation import check_is_fitted, FLOAT_DTYPES
+from sklearn.utils.validation import FLOAT_DTYPES, check_is_fitted
 
 from ... import tensor as mt
 from ...tensor.core import TENSOR_TYPE

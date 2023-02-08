@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,18 +15,18 @@
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...lib.sparse.core import issparse, get_array_module, cp, cps, sps
 from ...lib.sparse import SparseNDArray
+from ...lib.sparse.core import cp, cps, get_array_module, issparse, sps
 from ...serialization.serializables import (
-    FieldTypes,
     AnyField,
+    FieldTypes,
     NDArrayField,
     TupleField,
 )
-from ...utils import on_serialize_shape, on_deserialize_shape
-from ..core import TENSOR_TYPE, TensorOrder, TensorData, Tensor
-from ..utils import get_chunk_slices
+from ...utils import on_deserialize_shape, on_serialize_shape
 from ..array_utils import array_module, is_array, is_cupy
+from ..core import TENSOR_TYPE, Tensor, TensorData, TensorOrder
+from ..utils import get_chunk_slices
 from .core import TensorNoInput
 from .scalar import scalar
 

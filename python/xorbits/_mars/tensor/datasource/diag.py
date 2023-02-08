@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,16 @@ import itertools
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...serialization.serializables import KeyField, Int32Field
-from ...utils import has_unknown_shape
-from ..core import TENSOR_TYPE
-from ...lib.sparse import diag as sparse_diag
-from ...lib.sparse.core import issparse, get_array_module, get_sparse_module
 from ...lib import sparse
-from ..core import TensorOrder
+from ...lib.sparse import diag as sparse_diag
+from ...lib.sparse.core import get_array_module, get_sparse_module, issparse
+from ...serialization.serializables import Int32Field, KeyField
+from ...utils import has_unknown_shape
 from ..array_utils import create_array
+from ..core import TENSOR_TYPE, TensorOrder
+from .array import tensor
 from .core import TensorHasInput
 from .zeros import TensorZeros
-from .array import tensor
 
 
 def _get_diag_shape(v_shape, k):

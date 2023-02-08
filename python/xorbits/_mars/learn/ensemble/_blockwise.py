@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,29 +15,29 @@
 from typing import List, Union
 
 import numpy as np
-from sklearn.base import BaseEstimator as SklearnBaseEstimator, clone
+from sklearn.base import BaseEstimator as SklearnBaseEstimator
+from sklearn.base import clone
 from sklearn.utils.validation import check_is_fitted
 
-from ... import opcodes
-from ... import execute
+from ... import execute, opcodes
 from ... import tensor as mt
-from ...core import OutputType, ENTITY_TYPE, recursive_tile
+from ...core import ENTITY_TYPE, OutputType, recursive_tile
 from ...core.context import Context
 from ...serialization.serializables import (
-    FieldTypes,
     AnyField,
     BoolField,
     DictField,
+    FieldTypes,
     Int64Field,
+    KeyField,
     ListField,
     StringField,
-    KeyField,
 )
-from ...typing import SessionType
 from ...tensor.core import Tensor, TensorOrder
 from ...tensor.utils import decide_unify_split
-from ..operands import LearnOperand, LearnOperandMixin
+from ...typing import SessionType
 from ..base import BaseEstimator, ClassifierMixin, RegressorMixin
+from ..operands import LearnOperand, LearnOperandMixin
 from ..utils import check_array
 
 

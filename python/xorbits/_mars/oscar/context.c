@@ -943,8 +943,8 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_6_wait_actor_pool_reco
 struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_7_get_pool_config;
 
 /* "core.pxd":16
- * 
- * 
+ *
+ *
  * cdef class ActorRef:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef public str address
@@ -959,8 +959,8 @@ struct __pyx_obj_4mars_5oscar_4core_ActorRef {
 
 
 /* "core.pxd":23
- * 
- * 
+ *
+ *
  * cdef class LocalActorRef(ActorRef):             # <<<<<<<<<<<<<<
  *     cdef object _actor_weakref
  *     cdef _weakref_local_actor(self)
@@ -973,8 +973,8 @@ struct __pyx_obj_4mars_5oscar_4core_LocalActorRef {
 
 
 /* "core.pxd":28
- * 
- * 
+ *
+ *
  * cdef class _BaseActor:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef str _address
@@ -990,8 +990,8 @@ struct __pyx_obj_4mars_5oscar_4core__BaseActor {
 
 
 /* "core.pxd":37
- * 
- * 
+ *
+ *
  * cdef class ActorEnvironment:             # <<<<<<<<<<<<<<
  *     cdef public dict actor_locks
  *     cdef public object address
@@ -1004,11 +1004,11 @@ struct __pyx_obj_4mars_5oscar_4core_ActorEnvironment {
 
 
 /* "mars/oscar/context.pxd":16
- * 
- * 
+ *
+ *
  * cdef class BaseActorContext:             # <<<<<<<<<<<<<<
  *     cdef public str _address
- * 
+ *
  */
 struct __pyx_obj_4mars_5oscar_7context_BaseActorContext {
   PyObject_HEAD
@@ -1017,8 +1017,8 @@ struct __pyx_obj_4mars_5oscar_7context_BaseActorContext {
 
 
 /* "mars/oscar/context.pyx":182
- * 
- * 
+ *
+ *
  * cdef class ClientActorContext(BaseActorContext):             # <<<<<<<<<<<<<<
  *     """
  *     Default actor context. This context will keep references to other contexts
@@ -1032,7 +1032,7 @@ struct __pyx_obj_4mars_5oscar_7context_ClientActorContext {
 
 /* "mars/oscar/context.pyx":38
  *         self._address = address
- * 
+ *
  *     async def create_actor(             # <<<<<<<<<<<<<<
  *         self,
  *         object actor_cls,
@@ -1050,7 +1050,7 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct__create_actor {
 
 /* "mars/oscar/context.pyx":69
  *         raise NotImplementedError
- * 
+ *
  *     async def has_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Check if actor exists in current context
@@ -1064,7 +1064,7 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_1_has_actor {
 
 /* "mars/oscar/context.pyx":84
  *         raise NotImplementedError
- * 
+ *
  *     async def destroy_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Destroy an actor by its reference
@@ -1078,7 +1078,7 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_2_destroy_actor {
 
 /* "mars/oscar/context.pyx":99
  *         raise NotImplementedError
- * 
+ *
  *     async def kill_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Force to kill an actor, take care this is a dangerous operation,
@@ -1092,7 +1092,7 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_3_kill_actor {
 
 /* "mars/oscar/context.pyx":116
  *         """
- * 
+ *
  *     async def send(             # <<<<<<<<<<<<<<
  *         self,
  *         ActorRef actor_ref,
@@ -1109,7 +1109,7 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_4_send {
 
 /* "mars/oscar/context.pyx":143
  *         raise NotImplementedError
- * 
+ *
  *     async def actor_ref(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         """
  *         Create a reference to an actor
@@ -1124,7 +1124,7 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_5_actor_ref {
 
 /* "mars/oscar/context.pyx":153
  *         raise NotImplementedError
- * 
+ *
  *     async def wait_actor_pool_recovered(self, str address, str main_address = None):             # <<<<<<<<<<<<<<
  *         """
  *         Wait until an actor pool is recovered
@@ -1139,7 +1139,7 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_6_wait_actor_pool_reco
 
 /* "mars/oscar/context.pyx":166
  *         raise NotImplementedError
- * 
+ *
  *     async def get_pool_config(self, str address):             # <<<<<<<<<<<<<<
  *         """
  *         Get config of actor pool with given address
@@ -1153,8 +1153,8 @@ struct __pyx_obj_4mars_5oscar_7context___pyx_scope_struct_7_get_pool_config {
 
 
 /* "core.pxd":23
- * 
- * 
+ *
+ *
  * cdef class LocalActorRef(ActorRef):             # <<<<<<<<<<<<<<
  *     cdef object _actor_weakref
  *     cdef _weakref_local_actor(self)
@@ -1167,8 +1167,8 @@ static struct __pyx_vtabstruct_4mars_5oscar_4core_LocalActorRef *__pyx_vtabptr_4
 
 
 /* "core.pxd":28
- * 
- * 
+ *
+ *
  * cdef class _BaseActor:             # <<<<<<<<<<<<<<
  *     cdef object __weakref__
  *     cdef str _address
@@ -1181,8 +1181,8 @@ static struct __pyx_vtabstruct_4mars_5oscar_4core__BaseActor *__pyx_vtabptr_4mar
 
 
 /* "mars/oscar/context.pyx":182
- * 
- * 
+ *
+ *
  * cdef class ClientActorContext(BaseActorContext):             # <<<<<<<<<<<<<<
  *     """
  *     Default actor context. This context will keep references to other contexts
@@ -2016,10 +2016,10 @@ static PyObject *__pyx_codeobj__10;
 
 /* "mars/oscar/context.pyx":35
  *     """
- * 
+ *
  *     def __init__(self, address: str = None):             # <<<<<<<<<<<<<<
  *         self._address = address
- * 
+ *
  */
 
 /* Python wrapper */
@@ -2092,10 +2092,10 @@ static int __pyx_pf_4mars_5oscar_7context_16BaseActorContext___init__(struct __p
   __Pyx_RefNannySetupContext("__init__", 0);
 
   /* "mars/oscar/context.pyx":36
- * 
+ *
  *     def __init__(self, address: str = None):
  *         self._address = address             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def create_actor(
  */
   __Pyx_INCREF(__pyx_v_address);
@@ -2106,10 +2106,10 @@ static int __pyx_pf_4mars_5oscar_7context_16BaseActorContext___init__(struct __p
 
   /* "mars/oscar/context.pyx":35
  *     """
- * 
+ *
  *     def __init__(self, address: str = None):             # <<<<<<<<<<<<<<
  *         self._address = address
- * 
+ *
  */
 
   /* function exit code */
@@ -2121,7 +2121,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_4generator(__
 
 /* "mars/oscar/context.pyx":38
  *         self._address = address
- * 
+ *
  *     async def create_actor(             # <<<<<<<<<<<<<<
  *         self,
  *         object actor_cls,
@@ -2225,7 +2225,7 @@ static PyObject *__pyx_pw_4mars_5oscar_7context_16BaseActorContext_3create_actor
 
   /* "mars/oscar/context.pyx":38
  *         self._address = address
- * 
+ *
  *     async def create_actor(             # <<<<<<<<<<<<<<
  *         self,
  *         object actor_cls,
@@ -2308,10 +2308,10 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_4generator(__
   if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 38, __pyx_L1_error)
 
   /* "mars/oscar/context.pyx":67
- * 
+ *
  *         """
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def has_actor(self, ActorRef actor_ref):
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
@@ -2320,7 +2320,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_4generator(__
 
   /* "mars/oscar/context.pyx":38
  *         self._address = address
- * 
+ *
  *     async def create_actor(             # <<<<<<<<<<<<<<
  *         self,
  *         object actor_cls,
@@ -2342,7 +2342,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_7generator1(_
 
 /* "mars/oscar/context.pyx":69
  *         raise NotImplementedError
- * 
+ *
  *     async def has_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Check if actor exists in current context
@@ -2431,7 +2431,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_7generator1(_
  *         bool
  *         """
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def destroy_actor(self, ActorRef actor_ref):
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
@@ -2440,7 +2440,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_7generator1(_
 
   /* "mars/oscar/context.pyx":69
  *         raise NotImplementedError
- * 
+ *
  *     async def has_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Check if actor exists in current context
@@ -2462,7 +2462,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_10generator2(
 
 /* "mars/oscar/context.pyx":84
  *         raise NotImplementedError
- * 
+ *
  *     async def destroy_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Destroy an actor by its reference
@@ -2551,7 +2551,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_10generator2(
  *         bool
  *         """
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def kill_actor(self, ActorRef actor_ref):
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
@@ -2560,7 +2560,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_10generator2(
 
   /* "mars/oscar/context.pyx":84
  *         raise NotImplementedError
- * 
+ *
  *     async def destroy_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Destroy an actor by its reference
@@ -2582,7 +2582,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_13generator3(
 
 /* "mars/oscar/context.pyx":99
  *         raise NotImplementedError
- * 
+ *
  *     async def kill_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         """
  *         Force to kill an actor, take care this is a dangerous operation,
@@ -2687,7 +2687,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_16generator4(
 
 /* "mars/oscar/context.pyx":116
  *         """
- * 
+ *
  *     async def send(             # <<<<<<<<<<<<<<
  *         self,
  *         ActorRef actor_ref,
@@ -2803,7 +2803,7 @@ static PyObject *__pyx_pw_4mars_5oscar_7context_16BaseActorContext_15send(PyObje
 
   /* "mars/oscar/context.pyx":116
  *         """
- * 
+ *
  *     async def send(             # <<<<<<<<<<<<<<
  *         self,
  *         ActorRef actor_ref,
@@ -2886,7 +2886,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_16generator4(
  *         object
  *         """
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def actor_ref(self, *args, **kwargs):
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
@@ -2895,7 +2895,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_16generator4(
 
   /* "mars/oscar/context.pyx":116
  *         """
- * 
+ *
  *     async def send(             # <<<<<<<<<<<<<<
  *         self,
  *         ActorRef actor_ref,
@@ -2917,7 +2917,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_19generator5(
 
 /* "mars/oscar/context.pyx":143
  *         raise NotImplementedError
- * 
+ *
  *     async def actor_ref(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         """
  *         Create a reference to an actor
@@ -3008,7 +3008,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_19generator5(
  *         ActorRef
  *         """
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def wait_actor_pool_recovered(self, str address, str main_address = None):
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
@@ -3017,7 +3017,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_19generator5(
 
   /* "mars/oscar/context.pyx":143
  *         raise NotImplementedError
- * 
+ *
  *     async def actor_ref(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         """
  *         Create a reference to an actor
@@ -3039,7 +3039,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_22generator6(
 
 /* "mars/oscar/context.pyx":153
  *         raise NotImplementedError
- * 
+ *
  *     async def wait_actor_pool_recovered(self, str address, str main_address = None):             # <<<<<<<<<<<<<<
  *         """
  *         Wait until an actor pool is recovered
@@ -3184,7 +3184,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_22generator6(
  *             address of the main pool
  *         """
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
+ *
  *     async def get_pool_config(self, str address):
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
@@ -3193,7 +3193,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_22generator6(
 
   /* "mars/oscar/context.pyx":153
  *         raise NotImplementedError
- * 
+ *
  *     async def wait_actor_pool_recovered(self, str address, str main_address = None):             # <<<<<<<<<<<<<<
  *         """
  *         Wait until an actor pool is recovered
@@ -3215,7 +3215,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_25generator7(
 
 /* "mars/oscar/context.pyx":166
  *         raise NotImplementedError
- * 
+ *
  *     async def get_pool_config(self, str address):             # <<<<<<<<<<<<<<
  *         """
  *         Get config of actor pool with given address
@@ -3301,11 +3301,11 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_25generator7(
   if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 166, __pyx_L1_error)
 
   /* "mars/oscar/context.pyx":179
- * 
+ *
  *         """
  *         raise NotImplementedError             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_Raise(__pyx_builtin_NotImplementedError, 0, 0, 0);
   __PYX_ERR(0, 179, __pyx_L1_error)
@@ -3313,7 +3313,7 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_25generator7(
 
   /* "mars/oscar/context.pyx":166
  *         raise NotImplementedError
- * 
+ *
  *     async def get_pool_config(self, str address):             # <<<<<<<<<<<<<<
  *         """
  *         Get config of actor pool with given address
@@ -3333,11 +3333,11 @@ static PyObject *__pyx_gb_4mars_5oscar_7context_16BaseActorContext_25generator7(
 }
 
 /* "mars/oscar/context.pxd":17
- * 
+ *
  * cdef class BaseActorContext:
  *     cdef public str _address             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
 
 /* Python wrapper */
@@ -3735,7 +3735,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_16BaseActorContext_28__setstate_
 
 /* "mars/oscar/context.pyx":189
  *     cdef dict _backend_contexts
- * 
+ *
  *     def __init__(self, address: str = None):             # <<<<<<<<<<<<<<
  *         BaseActorContext.__init__(self, address)
  *         self._backend_contexts = dict()
@@ -3819,11 +3819,11 @@ static int __pyx_pf_4mars_5oscar_7context_18ClientActorContext___init__(struct _
   __Pyx_RefNannySetupContext("__init__", 0);
 
   /* "mars/oscar/context.pyx":190
- * 
+ *
  *     def __init__(self, address: str = None):
  *         BaseActorContext.__init__(self, address)             # <<<<<<<<<<<<<<
  *         self._backend_contexts = dict()
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_4mars_5oscar_7context_BaseActorContext), __pyx_n_s_init); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3878,7 +3878,7 @@ static int __pyx_pf_4mars_5oscar_7context_18ClientActorContext___init__(struct _
  *     def __init__(self, address: str = None):
  *         BaseActorContext.__init__(self, address)
  *         self._backend_contexts = dict()             # <<<<<<<<<<<<<<
- * 
+ *
  *     cdef inline object _get_backend_context(self, object address):
  */
   __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)
@@ -3891,7 +3891,7 @@ static int __pyx_pf_4mars_5oscar_7context_18ClientActorContext___init__(struct _
 
   /* "mars/oscar/context.pyx":189
  *     cdef dict _backend_contexts
- * 
+ *
  *     def __init__(self, address: str = None):             # <<<<<<<<<<<<<<
  *         BaseActorContext.__init__(self, address)
  *         self._backend_contexts = dict()
@@ -3914,7 +3914,7 @@ static int __pyx_pf_4mars_5oscar_7context_18ClientActorContext___init__(struct _
 
 /* "mars/oscar/context.pyx":193
  *         self._backend_contexts = dict()
- * 
+ *
  *     cdef inline object _get_backend_context(self, object address):             # <<<<<<<<<<<<<<
  *         if address is None:
  *             raise ValueError('address has to be provided')
@@ -3943,7 +3943,7 @@ static CYTHON_INLINE PyObject *__pyx_f_4mars_5oscar_7context_18ClientActorContex
   __Pyx_RefNannySetupContext("_get_backend_context", 0);
 
   /* "mars/oscar/context.pyx":194
- * 
+ *
  *     cdef inline object _get_backend_context(self, object address):
  *         if address is None:             # <<<<<<<<<<<<<<
  *             raise ValueError('address has to be provided')
@@ -3967,7 +3967,7 @@ static CYTHON_INLINE PyObject *__pyx_f_4mars_5oscar_7context_18ClientActorContex
     __PYX_ERR(0, 195, __pyx_L1_error)
 
     /* "mars/oscar/context.pyx":194
- * 
+ *
  *     cdef inline object _get_backend_context(self, object address):
  *         if address is None:             # <<<<<<<<<<<<<<
  *             raise ValueError('address has to be provided')
@@ -4119,7 +4119,7 @@ static CYTHON_INLINE PyObject *__pyx_f_4mars_5oscar_7context_18ClientActorContex
  *             context = self._backend_contexts[scheme] = \
  *                 _backend_context_cls[scheme](address)             # <<<<<<<<<<<<<<
  *             return context
- * 
+ *
  */
       if (unlikely(__pyx_v_4mars_5oscar_7context__backend_context_cls == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -4163,7 +4163,7 @@ static CYTHON_INLINE PyObject *__pyx_f_4mars_5oscar_7context_18ClientActorContex
  *             context = self._backend_contexts[scheme] = \
  *                 _backend_context_cls[scheme](address)
  *             return context             # <<<<<<<<<<<<<<
- * 
+ *
  *     def create_actor(
  */
       __Pyx_XDECREF(__pyx_r);
@@ -4205,7 +4205,7 @@ static CYTHON_INLINE PyObject *__pyx_f_4mars_5oscar_7context_18ClientActorContex
 
   /* "mars/oscar/context.pyx":193
  *         self._backend_contexts = dict()
- * 
+ *
  *     cdef inline object _get_backend_context(self, object address):             # <<<<<<<<<<<<<<
  *         if address is None:
  *             raise ValueError('address has to be provided')
@@ -4231,7 +4231,7 @@ static CYTHON_INLINE PyObject *__pyx_f_4mars_5oscar_7context_18ClientActorContex
 
 /* "mars/oscar/context.pyx":207
  *             return context
- * 
+ *
  *     def create_actor(             # <<<<<<<<<<<<<<
  *         self,
  *         object actor_cls,
@@ -4334,7 +4334,7 @@ static PyObject *__pyx_pw_4mars_5oscar_7context_18ClientActorContext_3create_act
 
   /* "mars/oscar/context.pyx":207
  *             return context
- * 
+ *
  *     def create_actor(             # <<<<<<<<<<<<<<
  *         self,
  *         object actor_cls,
@@ -4379,7 +4379,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_2create_act
  *         context = self._get_backend_context(address)
  *         uid = uid or new_actor_id()             # <<<<<<<<<<<<<<
  *         return context.create_actor(actor_cls, *args, uid=uid, address=address, **kwargs)
- * 
+ *
  */
   __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_uid); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 216, __pyx_L1_error)
   if (!__pyx_t_2) {
@@ -4401,7 +4401,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_2create_act
  *         context = self._get_backend_context(address)
  *         uid = uid or new_actor_id()
  *         return context.create_actor(actor_cls, *args, uid=uid, address=address, **kwargs)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def has_actor(self, ActorRef actor_ref):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4433,7 +4433,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_2create_act
 
   /* "mars/oscar/context.pyx":207
  *             return context
- * 
+ *
  *     def create_actor(             # <<<<<<<<<<<<<<
  *         self,
  *         object actor_cls,
@@ -4457,7 +4457,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_2create_act
 
 /* "mars/oscar/context.pyx":219
  *         return context.create_actor(actor_cls, *args, uid=uid, address=address, **kwargs)
- * 
+ *
  *     def has_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.has_actor(actor_ref)
@@ -4497,11 +4497,11 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_4has_actor(
   __Pyx_RefNannySetupContext("has_actor", 0);
 
   /* "mars/oscar/context.pyx":220
- * 
+ *
  *     def has_actor(self, ActorRef actor_ref):
  *         context = self._get_backend_context(actor_ref.address)             # <<<<<<<<<<<<<<
  *         return context.has_actor(actor_ref)
- * 
+ *
  */
   __pyx_t_1 = __pyx_v_actor_ref->address;
   __Pyx_INCREF(__pyx_t_1);
@@ -4515,7 +4515,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_4has_actor(
  *     def has_actor(self, ActorRef actor_ref):
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.has_actor(actor_ref)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def destroy_actor(self, ActorRef actor_ref):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4542,7 +4542,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_4has_actor(
 
   /* "mars/oscar/context.pyx":219
  *         return context.create_actor(actor_cls, *args, uid=uid, address=address, **kwargs)
- * 
+ *
  *     def has_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.has_actor(actor_ref)
@@ -4564,7 +4564,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_4has_actor(
 
 /* "mars/oscar/context.pyx":223
  *         return context.has_actor(actor_ref)
- * 
+ *
  *     def destroy_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.destroy_actor(actor_ref)
@@ -4604,11 +4604,11 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_6destroy_ac
   __Pyx_RefNannySetupContext("destroy_actor", 0);
 
   /* "mars/oscar/context.pyx":224
- * 
+ *
  *     def destroy_actor(self, ActorRef actor_ref):
  *         context = self._get_backend_context(actor_ref.address)             # <<<<<<<<<<<<<<
  *         return context.destroy_actor(actor_ref)
- * 
+ *
  */
   __pyx_t_1 = __pyx_v_actor_ref->address;
   __Pyx_INCREF(__pyx_t_1);
@@ -4622,7 +4622,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_6destroy_ac
  *     def destroy_actor(self, ActorRef actor_ref):
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.destroy_actor(actor_ref)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def kill_actor(self, ActorRef actor_ref):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4649,7 +4649,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_6destroy_ac
 
   /* "mars/oscar/context.pyx":223
  *         return context.has_actor(actor_ref)
- * 
+ *
  *     def destroy_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.destroy_actor(actor_ref)
@@ -4671,7 +4671,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_6destroy_ac
 
 /* "mars/oscar/context.pyx":227
  *         return context.destroy_actor(actor_ref)
- * 
+ *
  *     def kill_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.kill_actor(actor_ref)
@@ -4711,11 +4711,11 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_8kill_actor
   __Pyx_RefNannySetupContext("kill_actor", 0);
 
   /* "mars/oscar/context.pyx":228
- * 
+ *
  *     def kill_actor(self, ActorRef actor_ref):
  *         context = self._get_backend_context(actor_ref.address)             # <<<<<<<<<<<<<<
  *         return context.kill_actor(actor_ref)
- * 
+ *
  */
   __pyx_t_1 = __pyx_v_actor_ref->address;
   __Pyx_INCREF(__pyx_t_1);
@@ -4729,7 +4729,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_8kill_actor
  *     def kill_actor(self, ActorRef actor_ref):
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.kill_actor(actor_ref)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def actor_ref(self, *args, **kwargs):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4756,7 +4756,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_8kill_actor
 
   /* "mars/oscar/context.pyx":227
  *         return context.destroy_actor(actor_ref)
- * 
+ *
  *     def kill_actor(self, ActorRef actor_ref):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.kill_actor(actor_ref)
@@ -4778,7 +4778,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_8kill_actor
 
 /* "mars/oscar/context.pyx":231
  *         return context.kill_actor(actor_ref)
- * 
+ *
  *     def actor_ref(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor_ref = create_actor_ref(*args, **kwargs)
  *         context = self._get_backend_context(actor_ref.address)
@@ -4820,7 +4820,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_10actor_ref
   __Pyx_RefNannySetupContext("actor_ref", 0);
 
   /* "mars/oscar/context.pyx":232
- * 
+ *
  *     def actor_ref(self, *args, **kwargs):
  *         actor_ref = create_actor_ref(*args, **kwargs)             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(actor_ref.address)
@@ -4842,7 +4842,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_10actor_ref
  *         actor_ref = create_actor_ref(*args, **kwargs)
  *         context = self._get_backend_context(actor_ref.address)             # <<<<<<<<<<<<<<
  *         return context.actor_ref(actor_ref)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_actor_ref, __pyx_n_s_address); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 233, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -4856,7 +4856,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_10actor_ref
  *         actor_ref = create_actor_ref(*args, **kwargs)
  *         context = self._get_backend_context(actor_ref.address)
  *         return context.actor_ref(actor_ref)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def send(
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4883,7 +4883,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_10actor_ref
 
   /* "mars/oscar/context.pyx":231
  *         return context.kill_actor(actor_ref)
- * 
+ *
  *     def actor_ref(self, *args, **kwargs):             # <<<<<<<<<<<<<<
  *         actor_ref = create_actor_ref(*args, **kwargs)
  *         context = self._get_backend_context(actor_ref.address)
@@ -4906,7 +4906,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_10actor_ref
 
 /* "mars/oscar/context.pyx":236
  *         return context.actor_ref(actor_ref)
- * 
+ *
  *     def send(             # <<<<<<<<<<<<<<
  *         self,
  *         ActorRef actor_ref,
@@ -5021,7 +5021,7 @@ static PyObject *__pyx_pw_4mars_5oscar_7context_18ClientActorContext_13send(PyOb
 
   /* "mars/oscar/context.pyx":236
  *         return context.actor_ref(actor_ref)
- * 
+ *
  *     def send(             # <<<<<<<<<<<<<<
  *         self,
  *         ActorRef actor_ref,
@@ -5110,7 +5110,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_12send(stru
  *             wait_response=wait_response,
  *             profiling_context=profiling_context,             # <<<<<<<<<<<<<<
  *         )
- * 
+ *
  */
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_profiling_context, __pyx_v_profiling_context) < 0) __PYX_ERR(0, 247, __pyx_L1_error)
 
@@ -5132,7 +5132,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_12send(stru
 
   /* "mars/oscar/context.pyx":236
  *         return context.actor_ref(actor_ref)
- * 
+ *
  *     def send(             # <<<<<<<<<<<<<<
  *         self,
  *         ActorRef actor_ref,
@@ -5155,7 +5155,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_12send(stru
 
 /* "mars/oscar/context.pyx":251
  *         )
- * 
+ *
  *     def wait_actor_pool_recovered(self, str address, str main_address = None):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(address)
  *         return context.wait_actor_pool_recovered(address, main_address)
@@ -5250,11 +5250,11 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_14wait_acto
   __Pyx_RefNannySetupContext("wait_actor_pool_recovered", 0);
 
   /* "mars/oscar/context.pyx":252
- * 
+ *
  *     def wait_actor_pool_recovered(self, str address, str main_address = None):
  *         context = self._get_backend_context(address)             # <<<<<<<<<<<<<<
  *         return context.wait_actor_pool_recovered(address, main_address)
- * 
+ *
  */
   __pyx_t_1 = __pyx_f_4mars_5oscar_7context_18ClientActorContext__get_backend_context(__pyx_v_self, __pyx_v_address); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -5265,7 +5265,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_14wait_acto
  *     def wait_actor_pool_recovered(self, str address, str main_address = None):
  *         context = self._get_backend_context(address)
  *         return context.wait_actor_pool_recovered(address, main_address)             # <<<<<<<<<<<<<<
- * 
+ *
  *     def get_pool_config(self, str address):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5322,7 +5322,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_14wait_acto
 
   /* "mars/oscar/context.pyx":251
  *         )
- * 
+ *
  *     def wait_actor_pool_recovered(self, str address, str main_address = None):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(address)
  *         return context.wait_actor_pool_recovered(address, main_address)
@@ -5345,7 +5345,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_14wait_acto
 
 /* "mars/oscar/context.pyx":255
  *         return context.wait_actor_pool_recovered(address, main_address)
- * 
+ *
  *     def get_pool_config(self, str address):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(address)
  *         return context.get_pool_config(address)
@@ -5385,11 +5385,11 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_16get_pool_
   __Pyx_RefNannySetupContext("get_pool_config", 0);
 
   /* "mars/oscar/context.pyx":256
- * 
+ *
  *     def get_pool_config(self, str address):
  *         context = self._get_backend_context(address)             # <<<<<<<<<<<<<<
  *         return context.get_pool_config(address)
- * 
+ *
  */
   __pyx_t_1 = __pyx_f_4mars_5oscar_7context_18ClientActorContext__get_backend_context(__pyx_v_self, __pyx_v_address); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 256, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -5400,8 +5400,8 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_16get_pool_
  *     def get_pool_config(self, str address):
  *         context = self._get_backend_context(address)
  *         return context.get_pool_config(address)             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_context, __pyx_n_s_get_pool_config); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L1_error)
@@ -5427,7 +5427,7 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_16get_pool_
 
   /* "mars/oscar/context.pyx":255
  *         return context.wait_actor_pool_recovered(address, main_address)
- * 
+ *
  *     def get_pool_config(self, str address):             # <<<<<<<<<<<<<<
  *         context = self._get_backend_context(address)
  *         return context.get_pool_config(address)
@@ -5755,8 +5755,8 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_18ClientActorContext_20__setstat
 }
 
 /* "mars/oscar/context.pyx":260
- * 
- * 
+ *
+ *
  * def register_backend_context(scheme, cls):             # <<<<<<<<<<<<<<
  *     assert issubclass(cls, BaseActorContext)
  *     _backend_context_cls[scheme] = cls
@@ -5837,11 +5837,11 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_register_backend_context(CYTHON_
   __Pyx_RefNannySetupContext("register_backend_context", 0);
 
   /* "mars/oscar/context.pyx":261
- * 
+ *
  * def register_backend_context(scheme, cls):
  *     assert issubclass(cls, BaseActorContext)             # <<<<<<<<<<<<<<
  *     _backend_context_cls[scheme] = cls
- * 
+ *
  */
   #ifndef CYTHON_WITHOUT_ASSERTIONS
   if (unlikely(!Py_OptimizeFlag)) {
@@ -5857,8 +5857,8 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_register_backend_context(CYTHON_
  * def register_backend_context(scheme, cls):
  *     assert issubclass(cls, BaseActorContext)
  *     _backend_context_cls[scheme] = cls             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   if (unlikely(__pyx_v_4mars_5oscar_7context__backend_context_cls == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -5867,8 +5867,8 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_register_backend_context(CYTHON_
   if (unlikely(PyDict_SetItem(__pyx_v_4mars_5oscar_7context__backend_context_cls, __pyx_v_scheme, __pyx_v_cls) < 0)) __PYX_ERR(0, 262, __pyx_L1_error)
 
   /* "mars/oscar/context.pyx":260
- * 
- * 
+ *
+ *
  * def register_backend_context(scheme, cls):             # <<<<<<<<<<<<<<
  *     assert issubclass(cls, BaseActorContext)
  *     _backend_context_cls[scheme] = cls
@@ -5887,8 +5887,8 @@ static PyObject *__pyx_pf_4mars_5oscar_7context_register_backend_context(CYTHON_
 }
 
 /* "mars/oscar/context.pyx":265
- * 
- * 
+ *
+ *
  * cpdef get_context():             # <<<<<<<<<<<<<<
  *     """
  *     Get an actor context. If not in an actor environment,
@@ -5950,8 +5950,8 @@ static PyObject *__pyx_f_4mars_5oscar_7context_get_context(CYTHON_UNUSED int __p
   goto __pyx_L0;
 
   /* "mars/oscar/context.pyx":265
- * 
- * 
+ *
+ *
  * cpdef get_context():             # <<<<<<<<<<<<<<
  *     """
  *     Get an actor context. If not in an actor environment,
@@ -8173,8 +8173,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__4);
 
   /* "mars/oscar/context.pyx":260
- * 
- * 
+ *
+ *
  * def register_backend_context(scheme, cls):             # <<<<<<<<<<<<<<
  *     assert issubclass(cls, BaseActorContext)
  *     _backend_context_cls[scheme] = cls
@@ -8620,9 +8620,9 @@ if (!__Pyx_RefNanny) {
 
   /* "mars/oscar/context.pyx":15
  * # limitations under the License.
- * 
+ *
  * from urllib.parse import urlparse             # <<<<<<<<<<<<<<
- * 
+ *
  * from .core cimport ActorRef
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
@@ -8643,7 +8643,7 @@ if (!__Pyx_RefNanny) {
  * from .core cimport ActorRef
  * from .utils cimport new_actor_id
  * from .utils import create_actor_ref             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef dict _backend_context_cls = dict()
  */
   __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
@@ -8662,9 +8662,9 @@ if (!__Pyx_RefNanny) {
 
   /* "mars/oscar/context.pyx":21
  * from .utils import create_actor_ref
- * 
+ *
  * cdef dict _backend_context_cls = dict()             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef object _context = None
  */
   __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 21, __pyx_L1_error)
@@ -8676,10 +8676,10 @@ if (!__Pyx_RefNanny) {
 
   /* "mars/oscar/context.pyx":23
  * cdef dict _backend_context_cls = dict()
- * 
+ *
  * cdef object _context = None             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __Pyx_INCREF(Py_None);
   __Pyx_XGOTREF(__pyx_v_4mars_5oscar_7context__context);
@@ -8690,15 +8690,15 @@ if (!__Pyx_RefNanny) {
  * cdef class BaseActorContext:
  *     # allocate strategy is for Mars backend only
  *     support_allocate_strategy = False             # <<<<<<<<<<<<<<
- * 
+ *
  *     """
  */
   if (PyDict_SetItem((PyObject *)__pyx_ptype_4mars_5oscar_7context_BaseActorContext->tp_dict, __pyx_n_s_support_allocate_strategy, Py_False) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
   PyType_Modified(__pyx_ptype_4mars_5oscar_7context_BaseActorContext);
 
   /* "mars/oscar/context.pyx":260
- * 
- * 
+ *
+ *
  * def register_backend_context(scheme, cls):             # <<<<<<<<<<<<<<
  *     assert issubclass(cls, BaseActorContext)
  *     _backend_context_cls[scheme] = cls
@@ -8731,7 +8731,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "mars/oscar/context.pyx":1
- * # Copyright 1999-2021 Alibaba Group Holding Ltd.             # <<<<<<<<<<<<<<
+ * # Copyright 2022-2023 XProbe Inc.             # <<<<<<<<<<<<<<
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  */

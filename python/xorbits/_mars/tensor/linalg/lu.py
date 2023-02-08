@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ from ... import opcodes as OperandDef
 from ...core import ExecutableTuple, recursive_tile
 from ...serialization.serializables import KeyField
 from ...utils import has_unknown_shape
-from ..array_utils import device, as_same_device, is_sparse_module
-from ..operands import TensorHasInput, TensorOperandMixin
+from ..array_utils import as_same_device, device, is_sparse_module
 from ..datasource import tensor as astensor
+from ..operands import TensorHasInput, TensorOperandMixin
 
 
 class TensorLU(TensorHasInput, TensorOperandMixin):
@@ -111,12 +111,12 @@ class TensorLU(TensorHasInput, TensorOperandMixin):
         if len(op.input.chunks) == 1:
             return cls._tile_one_chunk(op)
 
-        from ..arithmetic.subtract import TensorSubtract
         from ..arithmetic.add import TensorTreeAdd
+        from ..arithmetic.subtract import TensorSubtract
         from ..base.transpose import TensorTranspose
-        from ..merge.vstack import vstack
-        from ..merge.hstack import hstack
         from ..datasource.zeros import TensorZeros, zeros
+        from ..merge.hstack import hstack
+        from ..merge.vstack import vstack
         from .dot import TensorDot
         from .solve_triangular import TensorSolveTriangular
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import operator
+import os
 import tempfile
 from enum import Enum
 
@@ -28,17 +28,17 @@ from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
-    KeyField,
-    StringField,
-    Int64Field,
-    Int32Field,
     BoolField,
     Int8Field,
+    Int32Field,
+    Int64Field,
+    KeyField,
+    StringField,
 )
 from ...tensor import tensor as astensor
+from ...tensor.array_utils import as_same_device, device
 from ...tensor.core import TensorOrder
 from ...tensor.random import RandomState
-from ...tensor.array_utils import as_same_device, device
 from ...tensor.utils import check_random_state, gen_random_seeds
 from ...utils import has_unknown_shape, require_not_none
 from ..operands import LearnOperand, LearnOperandMixin, OutputType

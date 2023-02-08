@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,22 +17,21 @@ import itertools
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...core import recursive_tile
+from ...core import ENTITY_TYPE, ExecutableTuple, recursive_tile
 from ...serialization.serializables import (
-    FieldTypes,
-    KeyField,
-    Int32Field,
-    StringField,
-    ListField,
-    BoolField,
     AnyField,
+    BoolField,
+    FieldTypes,
+    Int32Field,
+    KeyField,
+    ListField,
+    StringField,
 )
-from ...utils import has_unknown_shape, flatten, stack_back
-from ...core import ENTITY_TYPE, ExecutableTuple
-from ..operands import TensorOperand, TensorShuffleProxy
-from ..core import TENSOR_TYPE, TENSOR_CHUNK_TYPE, TensorOrder
+from ...utils import flatten, has_unknown_shape, stack_back
 from ..array_utils import as_same_device, device
+from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, TensorOrder
 from ..datasource import tensor as astensor
+from ..operands import TensorOperand, TensorShuffleProxy
 from ..utils import validate_axis, validate_order
 from .psrs import TensorPSRSOperandMixin
 

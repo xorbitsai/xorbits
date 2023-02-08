@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,18 +18,13 @@ import pandas as pd
 from ... import opcodes
 from ...core import recursive_tile
 from ...core.operand import OperandStage
-from ...serialization.serializables import (
-    FieldTypes,
-    AnyField,
-    Int32Field,
-    ListField,
-)
+from ...serialization.serializables import AnyField, FieldTypes, Int32Field, ListField
 from ...utils import no_default
 from ..operands import (
+    SERIES_CHUNK_TYPE,
+    SERIES_TYPE,
     DataFrameOperand,
     DataFrameOperandMixin,
-    SERIES_TYPE,
-    SERIES_CHUNK_TYPE,
 )
 from ..utils import build_df, build_series, parse_index
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ from typing import Dict, List
 
 from .... import oscar as mo
 from ....lib.ordered_set import OrderedSet
-from ....utils import implements
 from ....typing import BandType
-from ..core import _CommonMeta, _ChunkMeta
+from ....utils import implements
+from ..core import _ChunkMeta, _CommonMeta
 from .base import AbstractMetaStore, register_meta_store
 
 

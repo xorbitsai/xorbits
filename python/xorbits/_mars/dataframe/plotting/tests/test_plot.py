@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import warnings
 import tempfile
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -24,12 +24,13 @@ try:
 except ImportError:  # pragma: no cover
     matplotlib = None
 
-from .... import tensor as mt
 from .... import dataframe as md
+from .... import tensor as mt
 
 
 def close(fignum=None):  # pragma: no cover
-    from matplotlib.pyplot import get_fignums, close as _close
+    from matplotlib.pyplot import close as _close
+    from matplotlib.pyplot import get_fignums
 
     if fignum is None:
         for fignum in get_fignums():

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ from ...tensor import arithmetic
 from ...tensor.fuse import TensorCpFuseChunk
 from ...utils import lazy_import
 from .core import RuntimeOptimizer, register_optimizer
-
 
 cp = lazy_import("cupy", rename="cp")
 CP_INSTALLED = cp is not None

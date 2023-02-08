@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,19 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any, Dict
+
 import numpy as np
 import pytest
 
-from typing import Dict, Any
-
 from ...... import dataframe as md
 from ...... import tensor as mt
-from .... import Task
 from ......config import Config
-from ......core import Tileable, TileableGraph, ChunkGraphBuilder
+from ......core import ChunkGraphBuilder, Tileable, TileableGraph
 from ......resource import Resource
+from .... import Task
 from ....analyzer import GraphAnalyzer
-from ..resource import ResourceEvaluator, register_resource_evaluator, DefaultEvaluator
+from ..resource import DefaultEvaluator, ResourceEvaluator, register_resource_evaluator
 from ..stage import TaskStageProcessor
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@ from collections.abc import Iterable
 from ...core import recursive_tile
 from ...serialization.serializables import (
     FieldTypes,
-    KeyField,
-    StringField,
     Int32Field,
     Int64Field,
+    KeyField,
+    StringField,
     TupleField,
 )
 from ...utils import has_unknown_shape
-from ..utils import validate_axis, decide_chunk_sizes
-from ..operands import TensorHasInput, TensorOperandMixin
 from ..array_utils import get_array_module
+from ..operands import TensorHasInput, TensorOperandMixin
+from ..utils import decide_chunk_sizes, validate_axis
 
 
 class TensorFFTBaseMixin(TensorOperandMixin):

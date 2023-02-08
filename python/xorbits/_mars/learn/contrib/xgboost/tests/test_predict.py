@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ try:
 except ImportError:
     xgboost = None
 
-from ..... import tensor as mt
 from ..... import dataframe as md
-from .. import MarsDMatrix, train, predict
+from ..... import tensor as mt
+from .. import MarsDMatrix, predict, train
 
 n_rows = 1000
 n_columns = 10

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,28 +23,28 @@ import numpy as np
 
 from .... import opcodes
 from .... import tensor as mt
-from ....lib.filesystem import get_fs
 from ....core import OutputType
 from ....core.context import get_context
 from ....core.operand import OperandStage
+from ....lib.filesystem import get_fs
 from ....serialization.serializables import (
-    StringField,
+    BytesField,
+    DataTypeField,
+    DictField,
     Int32Field,
     Int64Field,
-    DictField,
-    BytesField,
+    StringField,
     TupleField,
-    DataTypeField,
 )
-from ....utils import has_unknown_shape, Timer
+from ....utils import Timer, has_unknown_shape
 from ...operands import LearnOperand, LearnOperandMixin
 from ..core import (
-    proxima,
-    get_proxima_type,
-    validate_tensor,
     available_numpy_dtypes,
-    rechunk_tensor,
     build_mmap_chunks,
+    get_proxima_type,
+    proxima,
+    rechunk_tensor,
+    validate_tensor,
 )
 
 logger = logging.getLogger(__name__)

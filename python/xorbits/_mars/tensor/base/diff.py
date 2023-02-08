@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ...serialization.serializables import Int64Field, Int32Field
 from ...core import recursive_tile
+from ...serialization.serializables import Int32Field, Int64Field
+from ..datasource import tensor as astensor
 from ..operands import TensorOperand, TensorOperandMixin
 from ..utils import validate_axis
-from ..datasource import tensor as astensor
 
 
 class TensorDiff(TensorOperand, TensorOperandMixin):

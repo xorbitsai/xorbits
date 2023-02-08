@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,26 +13,26 @@
 # limitations under the License.
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 from ....utils import ignore_warning
-from ...datasource import arange, tensor, empty
 from ...base import sort
+from ...datasource import arange, empty, tensor
 from ...merge import stack
 from ...reduction import all as tall
 from .. import (
     average,
     bincount,
-    cov,
     corrcoef,
-    ptp,
+    cov,
     digitize,
-    histogram_bin_edges,
     histogram,
-    quantile,
-    percentile,
+    histogram_bin_edges,
     median,
+    percentile,
+    ptp,
+    quantile,
 )
 from ..quantile import INTERPOLATION_TYPES
 

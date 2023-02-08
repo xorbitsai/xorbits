@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union, Generator
+from typing import Generator, List, Union
 
-from ...typing import TileableType, ChunkType
-from ...utils import has_unknown_shape, calc_nsplits
+from ...typing import ChunkType, TileableType
+from ...utils import calc_nsplits, has_unknown_shape
 
 
 def refresh_tileable_shape(tileable):
@@ -29,9 +29,9 @@ def refresh_tileable_shape(tileable):
 
 def tile(tileable, *tileables: TileableType):
     from ..graph import (
+        ChunkGraphBuilder,
         TileableGraph,
         TileableGraphBuilder,
-        ChunkGraphBuilder,
         TileContext,
     )
 

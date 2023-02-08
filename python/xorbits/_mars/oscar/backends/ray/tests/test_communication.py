@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from ....core import ActorRef
 from ....errors import ServerClosed
 from ...communication.base import ChannelType
 from ...message import SendMessage
-from ..communication import ChannelID, Channel, RayServer, RayClient, msg_to_simple_str
+from ..communication import Channel, ChannelID, RayClient, RayServer, msg_to_simple_str
 
 ray = lazy_import("ray")
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,18 +17,19 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_scalar, is_dict_like
+from pandas.api.types import is_dict_like, is_scalar
 
 from ... import opcodes
 from ...core import recursive_tile
-from ...serialization.serializables import KeyField, StringField, BoolField, AnyField
+from ...serialization.serializables import AnyField, BoolField, KeyField, StringField
 from ...tensor import tensor as astensor
 from ...tensor.core import TENSOR_CHUNK_TYPE
-from ..core import DATAFRAME_TYPE, SERIES_TYPE, INDEX_TYPE, INDEX_CHUNK_TYPE
-from ..initializer import DataFrame as asdataframe, Series as asseries, Index as asindex
+from ..core import DATAFRAME_TYPE, INDEX_CHUNK_TYPE, INDEX_TYPE, SERIES_TYPE
+from ..initializer import DataFrame as asdataframe
+from ..initializer import Index as asindex
+from ..initializer import Series as asseries
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, lazy_import
-
+from ..utils import lazy_import, parse_index
 
 cudf = lazy_import("cudf")
 

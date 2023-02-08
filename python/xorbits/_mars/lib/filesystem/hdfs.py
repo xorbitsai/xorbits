@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 try:
     from pyarrow.fs import HadoopFileSystem as _ArrowHadoopFileSystem
+
     from .arrow import HadoopFileSystem
 
     del _ArrowHadoopFileSystem
@@ -25,7 +26,6 @@ except ImportError:  # pragma: no cover
         HadoopFileSystem = None
 
 from .core import register_filesystem
-
 
 if HadoopFileSystem is not None:  # pragma: no branch
     register_filesystem("hdfs", HadoopFileSystem)

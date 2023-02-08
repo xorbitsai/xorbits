@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ import pandas as pd
 
 from ... import opcodes
 from ...core import ENTITY_TYPE, recursive_tile
-from ...serialization.serializables import AnyField, Int32Field, BoolField, StringField
+from ...serialization.serializables import AnyField, BoolField, Int32Field, StringField
 from ...tensor.utils import filter_inputs
 from ..core import DATAFRAME_TYPE, SERIES_TYPE
-from ..operands import DataFrameOperandMixin, DataFrameOperand
+from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_df, build_series, validate_axis
 
 
@@ -174,9 +174,7 @@ class DataFrameWhere(DataFrameOperand, DataFrameOperandMixin):
                 return obj.cix[index[0], index[1]]
             elif isinstance(obj, SERIES_TYPE):
                 axis = axis if axis is not None else op.axis
-                return obj.cix[
-                    index[axis],
-                ]
+                return obj.cix[index[axis],]
             else:
                 return obj
 

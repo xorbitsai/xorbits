@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 import logging
 import time
 import weakref
-
 from contextlib import contextmanager
 from enum import Enum
 from queue import PriorityQueue
@@ -53,6 +52,7 @@ def init_metrics(backend="console", config: Dict[str, Any] = None):
     if _metric_backend == "prometheus":
         try:
             from prometheus_client import start_http_server
+
             from ..utils import get_next_port
 
             port = config.get("port", 0) if config else 0

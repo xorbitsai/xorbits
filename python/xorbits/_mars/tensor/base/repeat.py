@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...core import recursive_tile
-from ...serialization.serializables import KeyField, AnyField, Int32Field
+from ...serialization.serializables import AnyField, Int32Field, KeyField
 from ...utils import has_unknown_shape
-from ..core import Tensor, TENSOR_TYPE, TENSOR_CHUNK_TYPE, TensorOrder
-from ..utils import broadcast_shape, unify_chunks
-from ..operands import TensorHasInput, TensorOperandMixin
-from ..datasource import tensor as astensor
 from ..array_utils import as_same_device, device
+from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, Tensor, TensorOrder
+from ..datasource import tensor as astensor
+from ..operands import TensorHasInput, TensorOperandMixin
+from ..utils import broadcast_shape, unify_chunks
 from .ravel import ravel
 
 
@@ -133,9 +133,7 @@ class TensorRepeat(TensorHasInput, TensorOperandMixin):
                 rp = repeats[start:stop]
                 size = int(rp.sum())
             elif not isinstance(repeats, Integral):
-                rp = repeats.cix[
-                    ax_idx,
-                ]
+                rp = repeats.cix[ax_idx,]
                 size = np.nan
             else:
                 rp = repeats

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import pytest
 from ..... import oscar as mo
 from .....oscar.core import ActorRef, LocalActorRef
 from ....backends.allocate_strategy import RandomSubPool
-from ....debug import set_debug_options, get_debug_options, DebugOptions
+from ....debug import DebugOptions, get_debug_options, set_debug_options
 from ...router import Router
 
 logger = logging.getLogger(__name__)

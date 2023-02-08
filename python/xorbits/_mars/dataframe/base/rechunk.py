@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,11 +20,13 @@ import pandas as pd
 from ... import opcodes as OperandDef
 from ...core import OutputType
 from ...serialization.serializables import AnyField
-from ...tensor.rechunk.core import get_nsplits, gen_rechunk_infos, chunk_size_type
+from ...tensor.rechunk.core import chunk_size_type, gen_rechunk_infos, get_nsplits
 from ...typing import TileableType
 from ...utils import has_unknown_shape
-from ..initializer import DataFrame as asdataframe, Series as asseries, Index as asindex
-from ..operands import DataFrameOperand, DataFrameOperandMixin, DATAFRAME_TYPE
+from ..initializer import DataFrame as asdataframe
+from ..initializer import Index as asindex
+from ..initializer import Series as asseries
+from ..operands import DATAFRAME_TYPE, DataFrameOperand, DataFrameOperandMixin
 from ..utils import indexing_index_value, merge_index_value
 
 
@@ -61,8 +63,8 @@ class DataFrameRechunk(DataFrameOperand, DataFrameOperandMixin):
     def tile(cls, op: "DataFrameRechunk"):
         from ..indexing.iloc import (
             DataFrameIlocGetItem,
-            SeriesIlocGetItem,
             IndexIlocGetItem,
+            SeriesIlocGetItem,
         )
         from ..merge.concat import DataFrameConcat
 

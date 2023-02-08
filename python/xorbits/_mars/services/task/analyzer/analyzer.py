@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,26 +14,26 @@
 
 import itertools
 import logging
-from collections import deque, defaultdict
+from collections import defaultdict, deque
 from typing import Dict, List, Tuple, Type, Union
 
 from ....config import Config
 from ....core import ChunkGraph, ChunkType, enter_mode
 from ....core.operand import (
     Fetch,
-    VirtualOperand,
     LogicKeyGenerator,
     MapReduceOperand,
     OperandStage,
-    ShuffleProxy,
     ShuffleFetchType,
+    ShuffleProxy,
+    VirtualOperand,
 )
 from ....lib.ordered_set import OrderedSet
 from ....resource import Resource
 from ....typing import BandType, OperandType
 from ....utils import build_fetch, build_fetch_shuffle, tokenize
-from ...subtask import SubtaskGraph, Subtask
-from ..core import Task, new_task_id, MapReduceInfo
+from ...subtask import Subtask, SubtaskGraph
+from ..core import MapReduceInfo, Task, new_task_id
 from .assigner import AbstractGraphAssigner, GraphAssigner
 from .fusion import Coloring
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,10 +19,9 @@ import pandas as pd
 
 from ..... import dataframe as md
 from ..... import execute, fetch
-from .....core import enter_mode, TileableGraph, TileableGraphBuilder
+from .....core import TileableGraph, TileableGraphBuilder, enter_mode
 from .....dataframe.base.eval import DataFrameEval
 from .. import optimize
-
 
 _var_pattern = re.compile(r"@__eval_scalar_var\d+")
 

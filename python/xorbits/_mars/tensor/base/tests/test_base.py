@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,32 +19,32 @@ import pytest
 
 from ....core import tile
 from ....core.operand import OperandStage
-from ...datasource import ones, tensor, arange
+from ...datasource import arange, ones, tensor
 from .. import (
-    transpose,
-    broadcast_to,
-    where,
+    TensorCopyTo,
     argwhere,
     array_split,
-    split,
-    squeeze,
-    result_type,
-    repeat,
-    copyto,
-    isin,
-    moveaxis,
-    TensorCopyTo,
     atleast_1d,
     atleast_2d,
     atleast_3d,
-    ravel,
-    searchsorted,
-    unique,
-    sort,
+    broadcast_to,
+    copyto,
+    isin,
+    moveaxis,
     partition,
-    topk,
-    to_gpu,
+    ravel,
+    repeat,
+    result_type,
+    searchsorted,
+    sort,
+    split,
+    squeeze,
     to_cpu,
+    to_gpu,
+    topk,
+    transpose,
+    unique,
+    where,
 )
 
 

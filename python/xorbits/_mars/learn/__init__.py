@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,17 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from . import cluster, ensemble, neighbors, preprocessing, proxima, utils
+
 # register operands
 # import torch first, or some issue emerges,
 # see https://github.com/pytorch/pytorch/issues/2575
-from .contrib import pytorch, tensorflow, xgboost, lightgbm, statsmodels
+from .contrib import lightgbm, pytorch, statsmodels, tensorflow, xgboost
 from .metrics import pairwise
-from . import cluster
-from . import ensemble
-from . import preprocessing
-from . import proxima
-from . import neighbors
-from . import utils
 
 for _mod in [xgboost, tensorflow, pytorch, lightgbm, proxima, neighbors, statsmodels]:
     _mod.register_op()

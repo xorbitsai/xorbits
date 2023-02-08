@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ from itertools import product
 import numpy as np
 import pytest
 import scipy.sparse as sp
-from sklearn.utils.estimator_checks import _NotAnArray
 from sklearn.utils._mocking import MockDataFrame
 from sklearn.utils._testing import assert_raise_message, assert_raises_regex
+from sklearn.utils.estimator_checks import _NotAnArray
 
-from .... import tensor as mt
 from .... import dataframe as md
+from .... import tensor as mt
 from ....tensor.core import Tensor
 from ..validation import check_array, check_consistent_length
 

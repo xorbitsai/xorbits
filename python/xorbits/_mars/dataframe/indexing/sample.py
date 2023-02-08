@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,21 +20,22 @@ import numpy as np
 from ... import opcodes
 from ...core import ENTITY_TYPE, get_output_types, recursive_tile
 from ...serialization.serializables import (
-    BoolField,
     AnyField,
+    BoolField,
+    Float64Field,
     Int8Field,
     Int64Field,
-    Float64Field,
     KeyField,
 )
 from ...tensor import searchsorted
 from ...tensor.base import TensorMapChunk
 from ...tensor.merge import TensorConcatenate
-from ...tensor.random import RandomState as TensorRandomState, RandomStateField
-from ...tensor.utils import normalize_chunk_sizes, gen_random_seeds
-from ...utils import has_unknown_shape, ceildiv
-from ..operands import DataFrameOperandMixin, DataFrameOperand
-from ..utils import validate_axis, parse_index
+from ...tensor.random import RandomState as TensorRandomState
+from ...tensor.random import RandomStateField
+from ...tensor.utils import gen_random_seeds, normalize_chunk_sizes
+from ...utils import ceildiv, has_unknown_shape
+from ..operands import DataFrameOperand, DataFrameOperandMixin
+from ..utils import parse_index, validate_axis
 
 
 class DataFrameSample(DataFrameOperand, DataFrameOperandMixin):

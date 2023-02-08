@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,25 +18,25 @@ import numpy as np
 import scipy.sparse as sps
 
 from ....learn.datasets.samples_generator import make_low_rank_matrix
-from ....lib.sparse import issparse, SparseNDArray
+from ....lib.sparse import SparseNDArray, issparse
 from ....utils import ignore_warning
-from ...datasource import tensor, diag, ones, arange
+from ...datasource import arange, diag, ones, tensor
 from ...random import uniform
 from .. import (
-    qr,
-    svd,
     cholesky,
-    norm,
-    lu,
-    solve_triangular,
-    solve,
-    inv,
-    tensordot,
     dot,
     inner,
-    vdot,
+    inv,
+    lu,
     matmul,
+    norm,
+    qr,
     randomized_svd,
+    solve,
+    solve_triangular,
+    svd,
+    tensordot,
+    vdot,
 )
 
 

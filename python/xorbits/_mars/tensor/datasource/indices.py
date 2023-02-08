@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...serialization.serializables import FieldTypes, ListField
-from .core import TensorNoInput
 from .arange import arange
+from .core import TensorNoInput
 from .empty import empty
 from .meshgrid import meshgrid
 

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 import pytest
 
 from .... import oscar as mo
-from ... import start_services, stop_services, NodeRole
+from ... import NodeRole, start_services, stop_services
 from ...session.api import SessionAPI
 from ..api import MetaAPI, WorkerMetaAPI
 from ..supervisor import MetaSupervisorService

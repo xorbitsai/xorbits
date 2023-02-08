@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,30 +23,30 @@ import pytest
 
 from .....tests.core import mock, require_ucx
 from .....utils import get_next_port
-from .... import create_actor_ref, Actor, kill_actor
+from .... import Actor, create_actor_ref, kill_actor
 from ....context import get_context
-from ....errors import NoIdleSlot, ActorNotExist, ServerClosed, SendMessageFailed
+from ....errors import ActorNotExist, NoIdleSlot, SendMessageFailed, ServerClosed
 from ...allocate_strategy import (
     AddressSpecified,
     IdleLabel,
     MainPool,
-    RandomSubPool,
     ProcessIndex,
+    RandomSubPool,
 )
 from ...config import ActorPoolConfig
 from ...message import (
-    new_message_id,
+    ActorRefMessage,
+    CancelMessage,
+    ControlMessage,
+    ControlMessageType,
     CreateActorMessage,
     DestroyActorMessage,
+    ErrorMessage,
     HasActorMessage,
-    ActorRefMessage,
+    MessageType,
     SendMessage,
     TellMessage,
-    ControlMessage,
-    CancelMessage,
-    ErrorMessage,
-    ControlMessageType,
-    MessageType,
+    new_message_id,
 )
 from ...pool import create_actor_pool
 from ...router import Router

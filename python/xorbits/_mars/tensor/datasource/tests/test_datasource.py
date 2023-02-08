@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ import tempfile
 from copy import copy
 
 import numpy as np
-import scipy.sparse as sps
 import pytest
+import scipy.sparse as sps
 
 try:
     import tiledb
@@ -27,23 +27,23 @@ except (ImportError, OSError):  # pragma: no cover
 
 from .... import dataframe as md
 from ....core import enter_mode, tile
-from ... import ones, zeros, tensor, full, arange, diag, linspace, triu, tril, ones_like
-from ...core import Tensor, SparseTensor
+from ... import arange, diag, full, linspace, ones, ones_like, tensor, tril, triu, zeros
+from ...core import SparseTensor, Tensor
 from .. import (
-    array,
-    fromtiledb,
     TensorTileDBDataSource,
-    fromdense,
+    array,
     asarray,
     ascontiguousarray,
     asfortranarray,
+    fromdense,
+    fromtiledb,
 )
-from ..tri import TensorTriu, TensorTril
-from ..zeros import TensorZeros
-from ..from_dense import DenseToSparse
 from ..array import CSRMatrixDataSource
-from ..ones import TensorOnes, TensorOnesLike
 from ..from_dataframe import from_dataframe
+from ..from_dense import DenseToSparse
+from ..ones import TensorOnes, TensorOnesLike
+from ..tri import TensorTril, TensorTriu
+from ..zeros import TensorZeros
 
 
 def test_array():

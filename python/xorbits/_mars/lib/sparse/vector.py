@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 # limitations under the License.
 
 from .array import SparseArray, SparseNDArray
-from .core import get_array_module, get_sparse_module, naked, issparse, np, is_cupy
+from .core import get_array_module, get_sparse_module, is_cupy, issparse, naked, np
 
 
 class SparseVector(SparseArray):

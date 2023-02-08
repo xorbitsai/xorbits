@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 from urllib.parse import urlparse
 
-from ...utils import parse_readable_size, calc_size_by_str
+from ...utils import calc_size_by_str, parse_readable_size
 from ..kubernetes.config import ContainerEnvConfig
 
 DEFAULT_SERVICE_ACCOUNT_NAME = "kubedl-sa"

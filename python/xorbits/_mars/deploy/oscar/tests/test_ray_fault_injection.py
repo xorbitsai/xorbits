@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ from ....services.tests.fault_injection_manager import (
 from ....tensor.base.psrs import PSRSConcatPivot
 from ....tests.core import require_ray
 from ....utils import lazy_import
-from ..ray import new_cluster, _load_config
+from ..ray import _load_config, new_cluster
 from ..tests import test_fault_injection
 
 ray = lazy_import("ray")

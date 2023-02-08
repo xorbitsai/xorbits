@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 import warnings
 
 from ... import opcodes
-from ...core import get_output_types, OutputType
+from ...core import OutputType, get_output_types
 from ...serialization.serializables import AnyField, StringField
 from ..core import SERIES_TYPE
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_df, build_series, validate_axis, parse_index
+from ..utils import build_df, build_series, parse_index, validate_axis
 
 
 class DataFrameRename(DataFrameOperand, DataFrameOperandMixin):

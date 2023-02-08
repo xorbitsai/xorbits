@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 from functools import reduce
+
+import numpy as np
 
 from ... import opcodes as OperandDef
 from ...serialization.serializables import BoolField
-from ..array_utils import device, as_same_device
+from ..array_utils import as_same_device, device
 from ..datasource import scalar
 from ..utils import infer_dtype
 from .core import TensorBinOp, TensorMultiOp
-from .utils import arithmetic_operand, tree_op_estimate_size, TreeReductionBuilder
+from .utils import TreeReductionBuilder, arithmetic_operand, tree_op_estimate_size
 
 
 @arithmetic_operand(sparse_mode="binary_or")
