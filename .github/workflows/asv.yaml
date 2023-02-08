@@ -37,7 +37,7 @@ jobs:
         id: build
         run: |
           pip install numpy scipy cython oss2 asv coverage
-          pip install -e ".[dev,extra]"
+          cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
         run: |
@@ -46,7 +46,6 @@ jobs:
           asv check -E existing
           git remote add upstream https://github.com/xprobe-inc/xorbits.git
           git fetch upstream
-          git merge upstream/main
           asv machine --yes
           asv continuous -f 1.1 --strict upstream/main HEAD
         if: ${{ steps.build.outcome == 'success' }}
