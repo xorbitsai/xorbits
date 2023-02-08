@@ -115,7 +115,6 @@ msgstr ""
 "``<xorbits version>`` 的镜像，形式为 ``xprobe/xorbits:<xorbits version>``。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:68
-#, fuzzy
 msgid ""
 "Since ``v0.1.2``, each release image of xorbits supports python ``3.7``, "
 "``3.8``, ``3.9`` and ``3.10``, with ``-py<python_version>`` as the suffix"
@@ -141,7 +140,6 @@ msgstr ""
 "构建。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:75
-#, fuzzy
 msgid ""
 "Since ``v0.2.0``, Xorbits automatically selects the deployment image "
 "according to your local python version by default. For example, if your "
