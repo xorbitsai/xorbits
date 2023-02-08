@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from bisect import bisect
 
 from .ring_ketama import KetamaRing

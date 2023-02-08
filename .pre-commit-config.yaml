@@ -36,4 +36,5 @@ repos:
     rev: v2.2.2
     hooks:
       - id: codespell
+        exclude: _mars/lib
         args: [ --config, python/setup.cfg]

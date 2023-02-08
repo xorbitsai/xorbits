@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from bisect import insort
 from collections import Counter
 from hashlib import md5

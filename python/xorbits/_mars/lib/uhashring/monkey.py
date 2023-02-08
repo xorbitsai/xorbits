@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import HashRing
 
 __all__ = ["patch_memcache"]
