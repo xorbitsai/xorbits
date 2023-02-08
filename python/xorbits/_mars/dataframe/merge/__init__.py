@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .append import DataFrameAppend, append
 from .concat import DataFrameConcat, concat
-from .merge import DataFrameMerge, DataFrameMergeAlign, join, merge
+from .merge import join, merge, DataFrameMerge, DataFrameMergeAlign
+from .append import DataFrameAppend, append  # isort: skip
 
 
 def _install():

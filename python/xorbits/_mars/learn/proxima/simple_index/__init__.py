@@ -13,5 +13,5 @@
 # limitations under the License.
 
 from .builder import build_index
-from .recall import recall
 from .searcher import search_index
+from .recall import recall  # isort: skip

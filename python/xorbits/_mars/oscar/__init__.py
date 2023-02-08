@@ -1,3 +1,4 @@
+# isort: skip_file
 # Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,33 +22,34 @@ del aio
 
 from . import debug
 from .api import (
-    Actor,
-    StatelessActor,
     actor_ref,
     create_actor,
-    create_actor_pool,
-    destroy_actor,
-    get_pool_config,
     has_actor,
+    destroy_actor,
     kill_actor,
+    Actor,
+    StatelessActor,
+    create_actor_pool,
     setup_cluster,
     wait_actor_pool_recovered,
+    get_pool_config,
 )
-
-# make sure methods are registered
-from .backends import allocate_strategy, mars, ray, test
+from .backends import allocate_strategy
 from .backends.pool import MainActorPoolType
 from .batch import extensible
 from .core import ActorRef
-from .debug import DebugOptions, get_debug_options, set_debug_options
+from .debug import set_debug_options, get_debug_options, DebugOptions
 from .errors import (
-    ActorAlreadyExist,
     ActorNotExist,
-    Return,
-    SendMessageFailed,
+    ActorAlreadyExist,
     ServerClosed,
+    SendMessageFailed,
+    Return,
 )
 from .utils import create_actor_ref
+
+# make sure methods are registered
+from .backends import mars, ray, test
 
 del mars, ray, test
 
