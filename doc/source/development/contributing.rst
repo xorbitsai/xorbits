@@ -206,6 +206,7 @@ some common prefixes along with general guidelines for when to use them:
 * PERF: Performance improvement
 * TYP: Type annotations
 * CLN: Code cleanup
+* REF: Refactor
 * CHORE: chore
 
 The following defines how a commit message should be structured.  Please reference the

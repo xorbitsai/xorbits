@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-03 14:44+0800\n"
+"POT-Creation-Date: 2023-02-08 13:46+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -346,66 +346,70 @@ msgid "CLN: Code cleanup"
 msgstr ""
 
 #: ../../source/development/contributing.rst:209
+msgid "REF: Refactor"
+msgstr ""
+
+#: ../../source/development/contributing.rst:210
 msgid "CHORE: chore"
 msgstr ""
 
-#: ../../source/development/contributing.rst:211
+#: ../../source/development/contributing.rst:212
 msgid ""
 "The following defines how a commit message should be structured.  Please "
 "reference the relevant GitHub issues in your commit message using GH1234 "
 "or #1234.  Either style is fine, but the former is generally preferred:"
 msgstr ""
 
-#: ../../source/development/contributing.rst:215
+#: ../../source/development/contributing.rst:216
 msgid "a subject line with ``< 80`` chars."
 msgstr ""
 
-#: ../../source/development/contributing.rst:216
+#: ../../source/development/contributing.rst:217
 msgid "One blank line."
 msgstr ""
 
-#: ../../source/development/contributing.rst:217
+#: ../../source/development/contributing.rst:218
 msgid "Optionally, a commit message body."
 msgstr ""
 
-#: ../../source/development/contributing.rst:219
+#: ../../source/development/contributing.rst:220
 msgid "Now you can commit your changes in your local repository::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:226
+#: ../../source/development/contributing.rst:227
 msgid "Pushing your changes"
 msgstr ""
 
-#: ../../source/development/contributing.rst:228
+#: ../../source/development/contributing.rst:229
 msgid ""
 "When you want your changes to appear publicly on your GitHub page, push "
 "your forked feature branch's commits::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:233
+#: ../../source/development/contributing.rst:234
 msgid ""
 "Here ``origin`` is the default name given to your remote repository on "
 "GitHub. You can see the remote repositories::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:238
+#: ../../source/development/contributing.rst:239
 msgid ""
 "If you added the upstream repository as described above you will see "
 "something like::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:246
+#: ../../source/development/contributing.rst:247
 msgid ""
 "Now your code is on GitHub, but it is not yet a part of the Xorbits "
 "project. For that to happen, a pull request needs to be submitted on "
 "GitHub."
 msgstr ""
 
-#: ../../source/development/contributing.rst:250
+#: ../../source/development/contributing.rst:251
 msgid "Review your code"
 msgstr ""
 
-#: ../../source/development/contributing.rst:252
+#: ../../source/development/contributing.rst:253
 msgid ""
 "When you're ready to ask for a code review, file a pull request. Before "
 "you do, once again make sure that you have followed all the guidelines "
@@ -414,31 +418,31 @@ msgid ""
 "against the branch it was based on:"
 msgstr ""
 
-#: ../../source/development/contributing.rst:257
+#: ../../source/development/contributing.rst:258
 msgid ""
 "Navigate to your repository on GitHub -- https://github.com/your-user-"
 "name/xorbits"
 msgstr ""
 
-#: ../../source/development/contributing.rst:258
+#: ../../source/development/contributing.rst:259
 msgid "Click on ``Branches``"
 msgstr ""
 
-#: ../../source/development/contributing.rst:259
+#: ../../source/development/contributing.rst:260
 msgid "Click on the ``Compare`` button for your feature branch"
 msgstr ""
 
-#: ../../source/development/contributing.rst:260
+#: ../../source/development/contributing.rst:261
 msgid ""
 "Select the ``base`` and ``compare`` branches, if necessary. This will be "
 "``main`` and ``shiny-new-feature``, respectively."
 msgstr ""
 
-#: ../../source/development/contributing.rst:264
+#: ../../source/development/contributing.rst:265
 msgid "Finally, make the pull request"
 msgstr ""
 
-#: ../../source/development/contributing.rst:266
+#: ../../source/development/contributing.rst:267
 msgid ""
 "If everything looks good, you are ready to make a pull request.  A pull "
 "request is how code from a local repository becomes available to the "
@@ -448,39 +452,39 @@ msgid ""
 "submit a pull request:"
 msgstr ""
 
-#: ../../source/development/contributing.rst:272
+#: ../../source/development/contributing.rst:273
 msgid "Navigate to your repository on GitHub"
 msgstr ""
 
-#: ../../source/development/contributing.rst:273
+#: ../../source/development/contributing.rst:274
 msgid "Click on the ``Pull Request`` button"
 msgstr ""
 
-#: ../../source/development/contributing.rst:274
+#: ../../source/development/contributing.rst:275
 msgid ""
 "You can then click on ``Commits`` and ``Files Changed`` to make sure "
 "everything looks okay one last time"
 msgstr ""
 
-#: ../../source/development/contributing.rst:276
+#: ../../source/development/contributing.rst:277
 msgid "Write a description of your changes in the ``Preview Discussion`` tab"
 msgstr ""
 
-#: ../../source/development/contributing.rst:277
+#: ../../source/development/contributing.rst:278
 msgid "Click ``Send Pull Request``."
 msgstr ""
 
-#: ../../source/development/contributing.rst:279
+#: ../../source/development/contributing.rst:280
 msgid ""
 "This request then goes to the repository maintainers, and they will "
 "review the code."
 msgstr ""
 
-#: ../../source/development/contributing.rst:285
+#: ../../source/development/contributing.rst:286
 msgid "Updating your pull request"
 msgstr ""
 
-#: ../../source/development/contributing.rst:287
+#: ../../source/development/contributing.rst:288
 msgid ""
 "Based on the review you get on your pull request, you will probably need "
 "to make some changes to the code. In that case, you can make them in your"
@@ -489,31 +493,31 @@ msgid ""
 "done by::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:294
+#: ../../source/development/contributing.rst:295
 msgid ""
 "This will automatically update your pull request with the latest code and"
 " restart the :any:`Continuous Integration <contributing.ci>` tests."
 msgstr ""
 
-#: ../../source/development/contributing.rst:297
+#: ../../source/development/contributing.rst:298
 msgid ""
 "Another reason you might need to update your pull request is to solve "
 "conflicts with changes that have been merged into the main branch since "
 "you opened your pull request."
 msgstr ""
 
-#: ../../source/development/contributing.rst:301
+#: ../../source/development/contributing.rst:302
 msgid "To do this, you need to \"merge upstream main\" in your branch::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:307
+#: ../../source/development/contributing.rst:308
 msgid ""
 "If there are no conflicts (or they could be fixed automatically), a file "
 "with a default commit message will open, and you can simply save and quit"
 " this file."
 msgstr ""
 
-#: ../../source/development/contributing.rst:310
+#: ../../source/development/contributing.rst:311
 msgid ""
 "If there are merge conflicts, you need to solve those conflicts. See for "
 "example at https://help.github.com/articles/resolving-a-merge-conflict-"
@@ -522,7 +526,7 @@ msgid ""
 "added, you can run ``git commit`` to save those fixes."
 msgstr ""
 
-#: ../../source/development/contributing.rst:316
+#: ../../source/development/contributing.rst:317
 msgid ""
 "If you have uncommitted changes at the moment you want to update the "
 "branch with main, you will need to ``stash`` them prior to updating (see "
@@ -531,23 +535,23 @@ msgid ""
 "reapplied after updating."
 msgstr ""
 
-#: ../../source/development/contributing.rst:321
+#: ../../source/development/contributing.rst:322
 msgid ""
 "After the feature branch has been update locally, you can now update your"
 " pull request by pushing to the branch on GitHub::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:327
+#: ../../source/development/contributing.rst:328
 msgid "Autofixing formatting errors"
 msgstr ""
 
-#: ../../source/development/contributing.rst:329
+#: ../../source/development/contributing.rst:330
 msgid ""
 "We use several styling checks (e.g. ``black``, ``flake8``, ``isort``) "
 "which are run after you make a pull request."
 msgstr ""
 
-#: ../../source/development/contributing.rst:332
+#: ../../source/development/contributing.rst:333
 msgid ""
 "To automatically fix formatting errors on each commit you make, you can "
 "set up pre-commit yourself. First, create a Python :ref:`environment "
@@ -555,36 +559,36 @@ msgid ""
 "<contributing.pre-commit>`."
 msgstr ""
 
-#: ../../source/development/contributing.rst:337
+#: ../../source/development/contributing.rst:338
 msgid "Delete your merged branch (optional)"
 msgstr ""
 
-#: ../../source/development/contributing.rst:339
+#: ../../source/development/contributing.rst:340
 msgid ""
 "Once your feature branch is accepted into upstream, you'll probably want "
 "to get rid of the branch. First, merge upstream main into your branch so "
 "git knows it is safe to delete your branch::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:347
+#: ../../source/development/contributing.rst:348
 msgid "Then you can do::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:351
+#: ../../source/development/contributing.rst:352
 msgid ""
 "Make sure you use a lower-case ``-d``, or else git won't warn you if your"
 " feature branch has not actually been merged."
 msgstr ""
 
-#: ../../source/development/contributing.rst:354
+#: ../../source/development/contributing.rst:355
 msgid "The branch will still exist on GitHub, so to delete it there do::"
 msgstr ""
 
-#: ../../source/development/contributing.rst:360
+#: ../../source/development/contributing.rst:361
 msgid "Tips for a successful pull request"
 msgstr ""
 
-#: ../../source/development/contributing.rst:362
+#: ../../source/development/contributing.rst:363
 msgid ""
 "If you have made it to the `Review your code`_ phase, one of the core "
 "contributors may take a look. Please note however that a handful of "
@@ -592,35 +596,35 @@ msgid ""
 "often lead to bottlenecks."
 msgstr ""
 
-#: ../../source/development/contributing.rst:366
+#: ../../source/development/contributing.rst:367
 msgid "To improve the chances of your pull request being reviewed, you should:"
 msgstr ""
 
-#: ../../source/development/contributing.rst:368
+#: ../../source/development/contributing.rst:369
 msgid ""
 "**Reference an open issue** for non-trivial changes to clarify the PR's "
 "purpose"
 msgstr ""
 
-#: ../../source/development/contributing.rst:369
+#: ../../source/development/contributing.rst:370
 msgid ""
 "**Ensure you have appropriate tests**. These should be the first part of "
 "any PR"
 msgstr ""
 
-#: ../../source/development/contributing.rst:370
+#: ../../source/development/contributing.rst:371
 msgid ""
 "**Keep your pull requests as simple as possible**. Larger PRs take longer"
 " to review"
 msgstr ""
 
-#: ../../source/development/contributing.rst:371
+#: ../../source/development/contributing.rst:372
 msgid ""
 "**Ensure that CI is in a green state**. Reviewers may not even look "
 "otherwise"
 msgstr ""
 
-#: ../../source/development/contributing.rst:372
+#: ../../source/development/contributing.rst:373
 msgid ""
 "**Keep** `Updating your pull request`_, either by request or every few "
 "days"

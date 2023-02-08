@@ -154,6 +154,8 @@ Getting involved
     | `Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_                                    | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 
+    Visit `Xorbits community <https://xorbits.cn/community>`_ to join us on Wechat, Zhihu and so on.
+
 
 .. toctree::
    :maxdepth: 2
