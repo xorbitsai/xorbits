@@ -65,12 +65,15 @@ By default, the image tagged by ``xprobe/xorbits:<xorbits version>`` on `our Doc
 is used in the kubernetes deployment. Each released version of Xorbits has its image, distinguished by the ``<xorbits version>``.
 
 .. note::
-   Since v0.1.2, each release image of xorbits supports python ``3.7``, ``3.8``, ``3.9`` and ``3.10``,
+   Since ``v0.1.2``, each release image of xorbits supports python ``3.7``, ``3.8``, ``3.9`` and ``3.10``,
    with ``-py<python_version>`` as the suffix of the image tag.
 
    For example, ``xprobe/xorbits:v0.1.2-py3.10`` means the image is built on python ``3.10``.
 
    By default, the image tagged by ``xprobe/xorbits:<xorbits version>`` still exists, and it is built on python ``3.9``.
+
+   Since ``v0.2.0``, Xorbits automatically selects the deployment image according to your local python version by default.
+   For example, if your local python version is ``3.9``, Xorbits uses the image tagged by ``xprobe/xorbits:<xorbits version>-py3.9`` during deployment.
 
 
 If you need to build an image from source, the related Dockerfiles exists at `this position <https://github.com/xprobe-inc/xorbits/tree/main/python/xorbits/deploy/docker>`_ for reference.
