@@ -15,6 +15,7 @@
 
 from .... import oscar as mo
 from ...core import AbstractService
+from ..task_info_collector import TaskInfoCollectorActor
 from .manager import TaskConfigurationActor, TaskManagerActor
 
 
@@ -55,11 +56,21 @@ class TaskSupervisorService(AbstractService):
             address=self._address,
             uid=TaskConfigurationActor.default_uid(),
         )
+        await mo.create_actor(
+            TaskInfoCollectorActor,
+            uid=TaskInfoCollectorActor.default_uid(),
+            address=self._address,
+        )
 
     async def stop(self):
         await mo.destroy_actor(
             mo.create_actor_ref(
                 uid=TaskConfigurationActor.default_uid(), address=self._address
+            )
+        )
+        await mo.destroy_actor(
+            mo.create_actor_ref(
+                uid=TaskInfoCollectorActor.default_uid(), address=self._address
             )
         )
 

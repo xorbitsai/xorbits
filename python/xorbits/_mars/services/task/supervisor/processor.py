@@ -30,6 +30,7 @@ from ....utils import Timer
 from ...subtask import Subtask, SubtaskResult
 from ..core import MapReduceInfo, Task, TaskResult, TaskStatus, new_task_id
 from ..execution.api import ExecutionChunkResult, TaskExecutor
+from ..task_info_collector import TaskInfoCollector
 from .preprocessor import TaskPreprocessor
 
 logger = logging.getLogger(__name__)
@@ -48,6 +49,7 @@ class TaskProcessor:
         task: Task,
         preprocessor: TaskPreprocessor,
         executor: TaskExecutor,
+        address: Optional[str],
     ):
         self._task = task
         self._preprocessor = preprocessor
@@ -68,6 +70,10 @@ class TaskProcessor:
             task.extra_config and task.extra_config.get("dump_subtask_graph")
         ):
             self._dump_subtask_graph = True
+        self._collect_task_info = task.extra_config and task.extra_config.get(
+            "collect_task_info", False
+        )
+        self._task_info_collector = TaskInfoCollector(address, self._collect_task_info)
 
         self.result = TaskResult(
             task_id=task.task_id,
@@ -119,7 +125,11 @@ class TaskProcessor:
         return self._preprocessor.get_tiled(tileable)
 
     def get_subtasks(self, chunks: List[ChunkType]) -> List[Subtask]:
-        return [self._chunk_to_subtasks[chunk] for chunk in chunks]
+        subtasks = []
+        for chunk in chunks:
+            if chunk in self._chunk_to_subtasks:
+                subtasks.append(self._chunk_to_subtasks[chunk])
+        return subtasks
 
     def get_tileable_to_subtasks(self) -> Dict[TileableType, List[Subtask]]:
         tile_context = self.tile_context
@@ -220,9 +230,13 @@ class TaskProcessor:
                 op_to_bands=fetch_op_to_bands,
                 shuffle_fetch_type=shuffle_fetch_type,
             )
-            if self._dump_subtask_graph:
+            if self._dump_subtask_graph or self._collect_task_info:
                 self._subtask_graphs.append(subtask_graph)
         stage_profiler.set(f"gen_subtask_graph({len(subtask_graph)})", timer.duration)
+        await self._task_info_collector.collect_subtask_operand_structure(
+            self._task, subtask_graph, stage_id
+        )
+
         logger.info(
             "Time consuming to gen a subtask graph is %ss with session id %s, task id %s, stage id %s",
             timer.duration,
@@ -369,6 +383,12 @@ class TaskProcessor:
             async with self._executor:
                 async for stage_args in self._iter_stage_chunk_graph():
                     await self._process_stage_chunk_graph(*stage_args)
+            await self._task_info_collector.collect_last_node_info(
+                self._task, self._subtask_graphs
+            )
+            await self._task_info_collector.collect_tileable_structure(
+                self._task, self.get_tileable_to_subtasks()
+            )
         except Exception as ex:
             self.result.error = ex
             self.result.traceback = ex.__traceback__
