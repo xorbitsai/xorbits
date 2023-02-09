@@ -49,7 +49,7 @@ jobs:
           git remote add upstream https://github.com/xprobe-inc/xorbits.git
           git fetch upstream
           asv machine --yes
-          asv continuous -f 1.1 --strict upstream/main HEAD
+          asv continuous -f 1.1 --strict --show-stderr upstream/main HEAD
         if: ${{ steps.build.outcome == 'success' }}
 
       - name: Publish benchmarks artifact
