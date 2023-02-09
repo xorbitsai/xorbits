@@ -36,5 +36,5 @@ class ImportPackageSuite:
         proc.wait(120)
 
     def time_import_xorbits_pandas(self):
-        proc = subprocess.Popen([sys.executable, "-c", "import xorbits.tensor"])
+        proc = subprocess.Popen([sys.executable, "-c", "import xorbits.pandas"])
         proc.wait(120)

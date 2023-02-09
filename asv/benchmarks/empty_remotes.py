@@ -32,4 +32,4 @@ class EmptyRemotesExecutionSuite:
             pass
 
         remotes = [xr.spawn(empty_fun, args=(i,)) for i in range(1000)]
-        run(*remotes)
+        run(remotes)
