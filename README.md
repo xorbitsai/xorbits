@@ -9,6 +9,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/xprobe-inc/xorbits/python.yaml?branch=main&style=for-the-badge&label=GITHUB%20ACTIONS&logo=github)](https://actions-badge.atrox.dev/xprobe-inc/xorbits/goto?ref=main)
 [![Doc](https://readthedocs.org/projects/xorbits/badge/?version=latest&style=for-the-badge)](https://doc.xorbits.io)
 [![Slack](https://img.shields.io/badge/join_Slack-781FF5.svg?logo=slack&style=for-the-badge)](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg)
+[![Twitter](https://img.shields.io/twitter/follow/xorbitsio?logo=twitter&style=for-the-badge)](https://twitter.com/xorbitsio)
 
 ## What is it?
 Xorbits is a scalable Python data science framework that aims to **scale the whole Python data science world,
