@@ -13,15 +13,12 @@
 # limitations under the License.
 
 from collections import defaultdict
-from typing import Callable, Dict, Any, Set
+from typing import Any, Callable, Dict, Set
 
 from .....core import TileableData
 from .....dataframe import NamedAgg
 from .....dataframe.arithmetic.core import DataFrameBinOp, DataFrameUnaryOp
-from .....dataframe.core import (
-    BaseDataFrameData,
-    BaseSeriesData,
-)
+from .....dataframe.core import BaseDataFrameData, BaseSeriesData
 from .....dataframe.groupby.aggregation import DataFrameGroupByAgg
 from .....dataframe.indexing.getitem import DataFrameIndex
 from .....dataframe.indexing.setitem import DataFrameSetitem
@@ -169,7 +166,7 @@ def df_groupby_agg_select_function(
     groupby_series = False
     if isinstance(by, list) and len(by) == 1 and isinstance(by[0], BaseSeriesData):
         groupby_series = True
-        ret[by[0]] = by[0].name
+        ret[by[0]] = {by[0].name}
 
     if isinstance(inp, BaseSeriesData):
         ret[inp] = {inp.name}
