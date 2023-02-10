@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Any, Set, List, Union
+from typing import Any, Dict, List, Set, Union
 
 import pytest
 
-from ..input_column_selector import InputColumnSelector
-from ......core import TileableData, ENTITY_TYPE
+from ......core import ENTITY_TYPE, TileableData
 from ......core.operand import Operand
 from ......dataframe import DataFrame, Series
 from ......tensor import tensor
+from ..input_column_selector import InputColumnSelector
 
 
 class MockOperand(Operand):
@@ -97,6 +97,24 @@ def test_df_groupby_agg():
     assert len(input_columns) == 1
     assert df.data in input_columns
     assert input_columns[df.data] == {"foo", "bar", "baz"}
+
+    labels = Series([1, 1, 1, 1])
+    s = df.groupby(by=labels).sum()
+    input_columns = InputColumnSelector.select(s.data, {"foo"})
+    assert len(input_columns) == 2
+    assert df.data in input_columns
+    assert input_columns[df.data] == {"foo"}
+    assert labels.data in input_columns
+    assert input_columns[labels.data] == {None}
+
+    labels = Series([1, 1, 1, 1], name="label")
+    s = df.groupby(by=labels).sum()
+    input_columns = InputColumnSelector.select(s.data, {"foo"})
+    assert len(input_columns) == 2
+    assert df.data in input_columns
+    assert input_columns[df.data] == {"foo"}
+    assert labels.data in input_columns
+    assert input_columns[labels.data] == {"label"}
 
 
 @pytest.mark.skip(reason="group by index is not supported yet")
