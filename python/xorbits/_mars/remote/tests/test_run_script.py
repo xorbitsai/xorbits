@@ -31,8 +31,8 @@ assert session is not None
 """
 
 script3 = b"""
-from mars.core.operand import Fetch
-from mars.deploy.oscar.session import AbstractSession
+from xorbits._mars.core.operand import Fetch
+from xorbits._mars.deploy.oscar.session import AbstractSession
 
 assert AbstractSession.default is not None
 assert isinstance(tensor.op, Fetch)

@@ -117,6 +117,9 @@ jobs:
         if [[ "$PYTHON" == "3.9" ]]; then
           conda install numba
         fi
+        if [[ "$MODULE" == "xorbits" ]]; then
+          pip install openpyxl
+        fi
         if [[ "$MODULE" == "_mars/dataframe" ]]; then
           pip install sqlalchemy\<2
         fi

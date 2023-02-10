@@ -19,12 +19,13 @@ import time
 
 import psutil
 import pytest
-from mars.config import option_context
-from mars.core.mode import is_build_mode, is_kernel_mode
-from mars.lib.aio.lru import clear_all_alru_caches
-from mars.oscar.backends.ray.communication import RayServer
-from mars.oscar.backends.router import Router
-from mars.utils import lazy_import
+
+from .config import option_context
+from .core.mode import is_build_mode, is_kernel_mode
+from .lib.aio.lru import clear_all_alru_caches
+from .oscar.backends.ray.communication import RayServer
+from .oscar.backends.router import Router
+from .utils import lazy_import
 
 ray = lazy_import("ray")
 MARS_CI_BACKEND = os.environ.get("MARS_CI_BACKEND", "mars")
@@ -149,7 +150,7 @@ def stop_ray(request):  # pragma: no cover
 
 @pytest.fixture
 async def ray_create_mars_cluster(request, check_router_cleaned):
-    from mars.deploy.oscar.ray import _load_config, new_cluster
+    from .deploy.oscar.ray import _load_config, new_cluster
 
     ray_config = _load_config()
     param = getattr(request, "param", {})
@@ -177,9 +178,9 @@ def stop_mars():
     try:
         yield
     finally:
-        import mars
+        import xorbits._mars
 
-        mars.stop_server()
+        xorbits._mars.stop_server()
 
 
 @pytest.fixture(scope="module")

@@ -187,7 +187,7 @@ def test_lazy_import():
     )
     mock_mod2 = textwrap.dedent(
         """
-        from mars.utils import lazy_import
+        from xorbits._mars.utils import lazy_import
         mock_mod = lazy_import("mock_mod")
 
         def get_version():
