@@ -23,9 +23,8 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
-from mars._utils import Timer
-
 from .... import oscar as mo
+from ...._utils import Timer
 from ....core import ExecutionError
 from ....core.graph import DAG
 from ....core.operand import Fetch, FetchShuffle
