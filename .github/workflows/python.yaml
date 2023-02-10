@@ -140,11 +140,11 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest -s -o --ignore xorbits/_mars/ --log-level=DEBUG --timeout=1500 \
+          pytest -s --ignore xorbits/_mars/ -o --log-level=DEBUG --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
-          pytest -s -o --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
+          pytest -s --ignore xorbits/_mars/dataframe -o --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
             --log-level=DEBUG --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
@@ -154,7 +154,7 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
         else
-          pytest -s -o log_cli=true --log-cli-level=INFO --timeout=1500 \
+          pytest -s log_cli=true -o --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/$(matrix.module)
         fi
