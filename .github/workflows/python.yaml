@@ -154,7 +154,7 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
         else
-          pytest -s log_cli=true -o --log-cli-level=INFO --timeout=1500 \
+          pytest -s -o log_cli=true --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/$MODULE
         fi
