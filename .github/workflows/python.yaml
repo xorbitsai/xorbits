@@ -142,21 +142,21 @@ jobs:
         if [[ "$MODULE" == "xorbits" ]]; then
           pytest --ignore xorbits/_mars/ --log-level=DEBUG --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml xorbits
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
           pytest --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
             --log-level=DEBUG --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml xorbits/_mars
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars
         elif [[ "$MODULE" == "kubernetes" ]]; then
-          pytest -s --ignore xorbits/_mars/ -o log_cli=true --log-cli-level=INFO --timeout=1500 \
+          pytest -s --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/deploy/kubernetes
         else
-          pytest -s -o log_cli=true --log-cli-level=INFO --timeout=1500 \
+          pytest -s --timeout=1500 --log-level=DEBUG \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/$MODULE
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
         fi
       working-directory: ./python
 
