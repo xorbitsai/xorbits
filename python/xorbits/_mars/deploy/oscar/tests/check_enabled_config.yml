@@ -2,6 +2,6 @@
 task:
   default_config:
       reserved_finish_tasks: 0
-  task_preprocessor_cls: mars.services.task.supervisor.tests.CheckedTaskPreprocessor
+  task_preprocessor_cls: xorbits._mars.services.task.supervisor.tests.CheckedTaskPreprocessor
 subtask:
-  subtask_processor_cls: mars.services.subtask.worker.tests.CheckedSubtaskProcessor
+  subtask_processor_cls: xorbits._mars.services.subtask.worker.tests.CheckedSubtaskProcessor

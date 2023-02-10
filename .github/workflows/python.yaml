@@ -150,11 +150,11 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits/_mars
         elif [[ "$MODULE" == "kubernetes" ]]; then
-          pytest -s --ignore xorbits/_mars/ -o log_cli=true --log-cli-level=INFO --timeout=1500 \
+          pytest --ignore xorbits/_mars/ log_cli=true --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
         else
-          pytest -s -o log_cli=true --log-cli-level=INFO --timeout=1500 \
+          pytest log_cli=true --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/$(matrix.module)
         fi
