@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +14,8 @@
 # limitations under the License.
 
 from .concat import DataFrameConcat, concat
-from .merge import join, merge, DataFrameMerge, DataFrameMergeAlign
+from .merge import DataFrameMerge, DataFrameMergeAlign, join, merge
+
 from .append import DataFrameAppend, append  # isort: skip
 
 
