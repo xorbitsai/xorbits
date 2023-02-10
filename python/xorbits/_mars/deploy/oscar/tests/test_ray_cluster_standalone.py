@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mars
 import pytest
 
 from .... import dataframe as md
+from .... import execute
 from .... import tensor as mt
 from ....tests.core import mock, require_ray
 from ....utils import lazy_import
@@ -29,10 +29,10 @@ def test_new_cluster_in_ray(stop_ray):
     cluster = new_cluster_in_ray(worker_num=2)
     mt.random.RandomState(0).rand(100, 5).sum().execute()
     cluster.session.execute(mt.random.RandomState(0).rand(100, 5).sum())
-    mars.execute(mt.random.RandomState(0).rand(100, 5).sum())
+    execute(mt.random.RandomState(0).rand(100, 5).sum())
     session = new_ray_session(address=cluster.address, session_id="abcd", default=True)
     session.execute(mt.random.RandomState(0).rand(100, 5).sum())
-    mars.execute(mt.random.RandomState(0).rand(100, 5).sum())
+    execute(mt.random.RandomState(0).rand(100, 5).sum())
     cluster.stop()
 
 
@@ -54,7 +54,7 @@ def new_ray_session_test(backend):
     )
     mt.random.RandomState(0).rand(100, 5).sum().execute()
     session.execute(mt.random.RandomState(0).rand(100, 5).sum())
-    mars.execute(mt.random.RandomState(0).rand(100, 5).sum())
+    execute(mt.random.RandomState(0).rand(100, 5).sum())
     session = new_ray_session(
         session_id="abcd",
         worker_num=2,
@@ -63,7 +63,7 @@ def new_ray_session_test(backend):
         backend=backend,
     )
     session.execute(mt.random.RandomState(0).rand(100, 5).sum())
-    mars.execute(mt.random.RandomState(0).rand(100, 5).sum())
+    execute(mt.random.RandomState(0).rand(100, 5).sum())
     df = md.DataFrame(mt.random.rand(100, 4), columns=list("abcd"))
     # Convert mars dataframe to ray dataset
     ds = md.to_ray_dataset(df)
@@ -77,7 +77,7 @@ def new_ray_session_test(backend):
     import gc
 
     gc.collect()
-    mars.execute(mt.random.RandomState(0).rand(100, 5).sum())
+    execute(mt.random.RandomState(0).rand(100, 5).sum())
 
 
 @require_ray
@@ -125,14 +125,14 @@ async def test_new_ray_session_config(stop_ray):
             return original_placement_group(*args, **kwargs)
 
         mock_placement_group.side_effect = _wrap_original_placement_group
-        mars.new_ray_session(
+        new_ray_session(
             supervisor_cpu=3,
             worker_cpu=5,
             backend="ray",
             default=True,
             config={
                 "third_party_modules": [
-                    "mars.deploy.oscar.tests.modules.check_ray_remote_function_options"
+                    "xorbits._mars.deploy.oscar.tests.modules.check_ray_remote_function_options"
                 ]
             },
         )
@@ -145,7 +145,7 @@ async def test_new_ray_session_config(stop_ray):
         # assert len(actors) == 1
         # assert list(actors.values())[0]["State"] == "DEAD"
 
-        mars.new_ray_session(
+        new_ray_session(
             supervisor_cpu=3,
             worker_cpu=4,
             backend="ray",
