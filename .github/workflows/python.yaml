@@ -109,43 +109,51 @@ jobs:
         kubernetes-version: v1.23.12
 
     - name: Install dependencies
+      env:
+        MODULE: ${{ matrix.module }}
       run: |
         pip install numpy scipy cython
         
         if [[ "$PYTHON" == "3.9" ]]; then
           conda install numba
         fi
-        if [[ "$(matrix.module)" == "dataframe" ]]; then
+        if [[ "$MODULE" == "_mars/dataframe" ]]; then
           pip install sqlalchemy\<2
         fi
         if [[ "$PYTHON" == "3.9" ]]; then
-            pip install h5py zarr matplotlib fastparquet
-            conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
-              "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
+          pip install h5py zarr matplotlib fastparquet
+          conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
+            "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
+        fi
+        if [[ "$MODULE" == "_mars/dataframe" ]]; then
+          pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
+            statsmodels tsfresh
         fi
         pip install -e ".[dev,extra]"
       working-directory: ./python
 
     - name: Test with pytest
+      env:
+        MODULE: ${{ matrix.module }}
       run: |
-        if [[ "$(matrix.module)" == "xorbits" ]]; then
+        if [[ "$MODULE" == "xorbits" ]]; then
           pytest --ignore xorbits/_mars/ --log-level=DEBUG --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits
-        elif [[ "$(matrix.module)" == "mars-core" ]]; then
+        elif [[ "$MODULE" == "mars-core" ]]; then
           pytest --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
             --log-level=DEBUG --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits/_mars
-        elif [[ "$(matrix.module)" == "kubernetes" ]]; then
+        elif [[ "$MODULE" == "kubernetes" ]]; then
           pytest -s --ignore xorbits/_mars/ -o log_cli=true --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
         else
-          pytest -s --ignore -o log_cli=true --log-cli-level=INFO --timeout=1500 \
+          pytest -s -o log_cli=true --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/deploy/kubernetes
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/$(matrix.module)
         fi
       working-directory: ./python
 
