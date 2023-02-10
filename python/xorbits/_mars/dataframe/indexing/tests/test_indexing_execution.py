@@ -15,7 +15,6 @@
 import os
 import tempfile
 
-import mars
 import numpy as np
 import pandas as pd
 import pytest
@@ -30,6 +29,7 @@ except ImportError:  # pragma: no cover
     fp = None
 
 from .... import dataframe as md
+from .... import execute, fetch
 from .... import tensor as mt
 from ....utils import pd_release_version
 from ...datasource.read_csv import DataFrameReadCSV
@@ -1742,21 +1742,21 @@ def test_align_execution(setup, join):
     s5 = df1.iloc[0, :]
 
     # test dataframe vs dataframe
-    r1, r2 = mars.fetch(
-        mars.execute(*df1.align(df1, join=join), extra_config={"check_nsplits": False})
+    r1, r2 = fetch(
+        execute(*df1.align(df1, join=join), extra_config={"check_nsplits": False})
     )
     pd.testing.assert_frame_equal(r1, raw_df1)
     pd.testing.assert_frame_equal(r2, raw_df1)
 
-    r1, r2 = mars.fetch(
-        mars.execute(*df1.align(df2, join=join), extra_config={"check_nsplits": False})
+    r1, r2 = fetch(
+        execute(*df1.align(df2, join=join), extra_config={"check_nsplits": False})
     )
     exp1, exp2 = raw_df1.align(raw_df2, join=join)
     pd.testing.assert_frame_equal(r1, exp1)
     pd.testing.assert_frame_equal(r2, exp2)
 
-    r1, r2 = mars.fetch(
-        mars.execute(
+    r1, r2 = fetch(
+        execute(
             *df1.align(df2, join=join, axis=0), extra_config={"check_nsplits": False}
         )
     )
@@ -1764,8 +1764,8 @@ def test_align_execution(setup, join):
     pd.testing.assert_frame_equal(r1.sort_index(axis=1), exp1)
     pd.testing.assert_frame_equal(r2.sort_index(axis=1), exp2)
 
-    r2, r1 = mars.fetch(
-        mars.execute(
+    r2, r1 = fetch(
+        execute(
             *df2.align(df1, join=join, axis=0, fill_value=0.0),
             extra_config={"check_nsplits": False},
         )
@@ -1774,8 +1774,8 @@ def test_align_execution(setup, join):
     pd.testing.assert_frame_equal(r1.sort_index(axis=1), exp1)
     pd.testing.assert_frame_equal(r2.sort_index(axis=1), exp2)
 
-    r1, r2 = mars.fetch(
-        mars.execute(
+    r1, r2 = fetch(
+        execute(
             *df1.align(df2, join=join, axis=1), extra_config={"check_nsplits": False}
         )
     )
@@ -1788,8 +1788,8 @@ def test_align_execution(setup, join):
         # must specify align axis
         df1.align(s1)
 
-    r1, r2 = mars.fetch(
-        mars.execute(
+    r1, r2 = fetch(
+        execute(
             *df1.align(s1, join=join, axis=0, method="ffill"),
             extra_config={"check_nsplits": False},
         )
@@ -1798,8 +1798,8 @@ def test_align_execution(setup, join):
     pd.testing.assert_frame_equal(r1.sort_index(), exp1)
     pd.testing.assert_series_equal(r2.sort_index(), exp2)
 
-    r1, r2 = mars.fetch(
-        mars.execute(
+    r1, r2 = fetch(
+        execute(
             *df1.align(s1, join=join, axis=0, broadcast_axis=1),
             extra_config={"check_nsplits": False},
         )
@@ -1808,8 +1808,8 @@ def test_align_execution(setup, join):
     pd.testing.assert_frame_equal(r1.sort_index(), exp1)
     pd.testing.assert_frame_equal(r2.sort_index(), exp2)
 
-    r1, r2 = mars.fetch(
-        mars.execute(
+    r1, r2 = fetch(
+        execute(
             *df1.align(s3, join=join, axis=1), extra_config={"check_nsplits": False}
         )
     )
@@ -1817,8 +1817,8 @@ def test_align_execution(setup, join):
     pd.testing.assert_frame_equal(r1.sort_index(axis=1), exp1)
     pd.testing.assert_series_equal(r2.sort_index(), exp2)
 
-    r1, r2 = mars.fetch(
-        mars.execute(
+    r1, r2 = fetch(
+        execute(
             *df1.align(s4, join=join, axis=1), extra_config={"check_nsplits": False}
         )
     )
@@ -1826,8 +1826,8 @@ def test_align_execution(setup, join):
     pd.testing.assert_frame_equal(r1.sort_index(axis=1), exp1)
     pd.testing.assert_series_equal(r2.sort_index(), exp2)
 
-    r1, r2 = mars.fetch(
-        mars.execute(
+    r1, r2 = fetch(
+        execute(
             *s1.align(df1, join=join, axis=0), extra_config={"check_nsplits": False}
         )
     )
@@ -1836,15 +1836,15 @@ def test_align_execution(setup, join):
     pd.testing.assert_frame_equal(r2.sort_index(), exp2)
 
     # test series vs series
-    r1, r2 = mars.fetch(
-        mars.execute(*s1.align(s2, join=join), extra_config={"check_nsplits": False})
+    r1, r2 = fetch(
+        execute(*s1.align(s2, join=join), extra_config={"check_nsplits": False})
     )
     exp1, exp2 = raw_s1.align(raw_s2, join=join)
     pd.testing.assert_series_equal(r1.sort_index(), exp1)
     pd.testing.assert_series_equal(r2.sort_index(), exp2)
 
-    r1, r2 = mars.fetch(
-        mars.execute(*s4.align(s5, join=join), extra_config={"check_nsplits": False})
+    r1, r2 = fetch(
+        execute(*s4.align(s5, join=join), extra_config={"check_nsplits": False})
     )
     exp1, exp2 = raw_s4.align(raw_s5, join=join)
     pd.testing.assert_series_equal(r1.sort_index(), exp1)
