@@ -482,17 +482,17 @@ async def test_cancel_without_kill(actor_pool):
     )
 
     def delay_fun(delay):
-        import mars
+        import xorbits._mars
 
         open(executed_file, "w").close()
         time.sleep(delay)
-        mars._slot_marker = 1
+        xorbits._mars._slot_marker = 1
         return delay
 
     def check_fun():
-        import mars
+        import xorbits._mars
 
-        return getattr(mars, "_slot_marker", False)
+        return getattr(xorbits._mars, "_slot_marker", False)
 
     remote_result = RemoteFunction(
         function=delay_fun, function_args=[2], function_kwargs={}

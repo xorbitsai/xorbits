@@ -167,10 +167,10 @@ class MarsServiceConfig(AppServiceConfig):
         self._env_scheme = parsed.scheme
 
         if parsed.scheme:
-            import mars
+            import xorbits._mars
 
             self._source_path = os.path.dirname(
-                os.path.dirname(os.path.abspath(mars.__file__))
+                os.path.dirname(os.path.abspath(xorbits._mars.__file__))
             )
 
             self._env_path = environment[len(parsed.scheme) + 3 :]

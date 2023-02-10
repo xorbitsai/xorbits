@@ -16,11 +16,11 @@
 import operator
 from functools import reduce
 
-import mars
 import pandas as pd
 import pytest
 
 from .... import dataframe as md
+from .... import new_session
 from .... import tensor as mt
 from ....tests.core import require_ray
 from ....utils import lazy_import
@@ -68,7 +68,7 @@ def test_basic_object_reconstruction(
     ray.init(address=cluster.address)
     # Node to place the initial object.
     node_to_kill = cluster.add_node(num_cpus=1, object_store_memory=10**8)
-    mars.new_session(
+    new_session(
         backend="ray",
         config={"scheduling.subtask_max_retries": subtask_max_retries},
         default=True,

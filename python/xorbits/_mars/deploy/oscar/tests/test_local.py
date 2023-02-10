@@ -1101,11 +1101,11 @@ async def test_task_speculation_execution(speculative_cluster):
 
 def test_naive_code_file():
     code_file = """
-    import mars
-    import mars.tensor as mt
+    from xorbits._mars import new_session
+    import xorbits._mars.tensor as mt
     import os
 
-    mars.new_session()
+    new_session()
     try:
         result_path = os.environ["RESULTPATH"]
         with open(result_path, "w") as outf:

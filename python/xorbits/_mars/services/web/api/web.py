@@ -19,9 +19,9 @@ from ..core import MarsRequestHandler
 
 class MarsApiEntryHandler(MarsRequestHandler):
     def get(self):
-        import mars
+        import xorbits._mars
 
-        version = mars.__version__
+        version = xorbits._mars.__version__
         self.write(json.dumps({"mars_version": version}))
 
 
