@@ -156,7 +156,7 @@ jobs:
         else
           pytest -s log_cli=true -o --log-cli-level=INFO --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/$(matrix.module)
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy xorbits/$MODULE
         fi
       working-directory: ./python
 
