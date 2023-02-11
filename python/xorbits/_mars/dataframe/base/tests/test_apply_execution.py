@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +13,10 @@
 # limitations under the License.
 import numpy as np
 import pandas as pd
-
 import pytest
 
 from .... import dataframe as md
-from ....dataframe.core import DataFrame, DATAFRAME_OR_SERIES_TYPE
+from ....dataframe.core import DATAFRAME_OR_SERIES_TYPE, DataFrame
 from ....dataframe.fetch.core import DataFrameFetch
 
 

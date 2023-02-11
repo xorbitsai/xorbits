@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 from ...tests.core import require_cupy
 from ...utils import lazy_import
 from .. import nvutils
-
 
 cupy = lazy_import("cupy")
 

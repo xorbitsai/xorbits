@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,15 +13,12 @@
 # limitations under the License.
 
 from collections import defaultdict
-from typing import Callable, Dict, Any, Set
+from typing import Any, Callable, Dict, Set
 
 from .....core import TileableData
 from .....dataframe import NamedAgg
 from .....dataframe.arithmetic.core import DataFrameBinOp, DataFrameUnaryOp
-from .....dataframe.core import (
-    BaseDataFrameData,
-    BaseSeriesData,
-)
+from .....dataframe.core import BaseDataFrameData, BaseSeriesData
 from .....dataframe.groupby.aggregation import DataFrameGroupByAgg
 from .....dataframe.indexing.getitem import DataFrameIndex
 from .....dataframe.indexing.setitem import DataFrameSetitem

@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,32 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Dict, Set, Any, Type, Union, Optional
+from typing import Any, Dict, List, Optional, Set, Type, Union
 
 import pandas as pd
 
-from .input_column_selector import InputColumnSelector
-from .self_column_selector import SelfColumnSelector
-from ..core import register_optimization_rule
-from ...core import (
-    OptimizationRecord,
-    OptimizationRecordType,
-    OptimizationRule,
-    OptimizationRecords,
-    Optimizer,
-)
 from .....core import TileableData
 from .....core.graph import EntityGraph
-from .....dataframe.core import (
-    parse_index,
-    BaseSeriesData,
-    BaseDataFrameData,
-)
+from .....dataframe.core import BaseDataFrameData, BaseSeriesData, parse_index
 from .....dataframe.datasource.core import ColumnPruneSupportedDataSourceMixin
 from .....dataframe.groupby.aggregation import DataFrameGroupByAgg
 from .....dataframe.indexing.getitem import DataFrameIndex
 from .....dataframe.merge import DataFrameMerge
 from .....utils import implements
+from ...core import (
+    OptimizationRecord,
+    OptimizationRecords,
+    OptimizationRecordType,
+    OptimizationRule,
+    Optimizer,
+)
+from ..core import register_optimization_rule
+from .input_column_selector import InputColumnSelector
+from .self_column_selector import SelfColumnSelector
 
 OPTIMIZABLE_OP_TYPES = (DataFrameMerge, DataFrameGroupByAgg)
 
