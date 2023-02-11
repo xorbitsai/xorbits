@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 # from https://github.com/numba/numba/blob/master/numba/core/entrypoints.py
 # Must put this here to avoid extensions re-triggering initialization
 @functools.lru_cache(maxsize=None)
-def init_extension_entrypoints():
+def init_extension_entrypoints():  # pragma: no cover
     """Execute all `mars_extensions` entry points with the name `init`
     If extensions have already been initialized, this function does nothing.
     """

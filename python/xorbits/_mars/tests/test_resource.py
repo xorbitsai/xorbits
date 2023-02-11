@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,7 +51,7 @@ _v2_memory_max_content = "1073741824\n"
 
 
 def test_stats():
-    from mars import resource
+    from .. import resource
 
     resource = importlib.reload(resource)
     resource.cpu_percent()
@@ -88,7 +89,7 @@ def test_stats():
 
 
 def test_use_process_stats():
-    from mars import resource
+    from .. import resource
 
     cpu_total = resource.cpu_count()
     mem_total = resource.virtual_memory().total
@@ -121,7 +122,7 @@ def test_use_process_stats():
 
 @pytest.mark.parametrize("cgroup_ver", ["v1", "v2"])
 def test_use_c_group_stats(cgroup_ver):
-    from mars import resource
+    from .. import resource
 
     def write_tmp_text_file(prefix, content):
         fd, file_name = tempfile.mkstemp(prefix)

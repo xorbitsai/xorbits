@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +16,6 @@
 import random
 from collections import OrderedDict
 
-import mars
 import numpy as np
 import pandas as pd
 import pytest
@@ -25,6 +25,7 @@ try:
 except ImportError:  # pragma: no cover
     pa = None
 
+from .... import execute, fetch
 from ....config import option_context, options
 from ....dataframe import DataFrame, Series
 from ....tensor import arange, tensor
@@ -2459,7 +2460,7 @@ def test_bloom_filter(setup):
     df2 = from_pandas_df(raw2, chunk_size=20)
 
     filtered = filter_by_bloom_filter(df1, df2, "col1", "col1")
-    r1, r2, filtered_r = mars.fetch(mars.execute(df1, df2, filtered))
+    r1, r2, filtered_r = fetch(execute(df1, df2, filtered))
     assert r1.shape[0] > filtered_r.shape[0]
     assert len(filtered_r[filtered_r["col1"] > 10]) < 10
 

@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -187,7 +188,7 @@ def test_lazy_import():
     )
     mock_mod2 = textwrap.dedent(
         """
-        from mars.utils import lazy_import
+        from xorbits._mars.utils import lazy_import
         mock_mod = lazy_import("mock_mod")
 
         def get_version():

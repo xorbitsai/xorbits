@@ -73,11 +73,20 @@ jobs:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
+        module: ["xorbits", "kubernetes"]
         exclude:
           - { os: macos-latest, python-version: 3.8}
           - { os: macos-latest, python-version: 3.9}
           - { os: windows-latest, python-version: 3.8}
           - { os: windows-latest, python-version: 3.9}
+          - { os: windows-latest, module: kubernetes}
+          - { os: macos-latest, module: kubernetes}
+        include:
+          - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
+          - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
+          - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
+          - { os: ubuntu-latest, module: _mars/core, python-version: 3.9 }
+
 
     steps:
     - name: Check out code
@@ -91,47 +100,64 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         activate-environment: ${{ env.CONDA_ENV }}
-        use-only-tar-bz2: true
 
-    - name: Get Date
-      id: get-date
-      run: echo "::set-output name=today::$(/bin/date -u '+%Y%m%d')"
-      shell: bash
-
-    - name: Get conda prefix
-      id: get-conda-prefix
-      run: echo "::set-output name=conda_prefix::$(conda info --base)"
-
-    - name: Cache conda env
-      id: conda
-      uses: actions/cache@v2
-      env:
-        # Increase this value to reset cache if CI/conda-environment.yml has not changed
-        CACHE_NUMBER: 1
+    - name: Start minikube
+      uses: medyagh/setup-minikube@master
+      if: ${{ matrix.module == 'kubernetes' }}
       with:
-        path: |
-          ${{ steps.get-conda-prefix.outputs.conda_prefix }}/envs/${{ env.CONDA_ENV }}
-        key:
-          # using date to refresh the cache every 24 hours
-          ${{ runner.os }}-conda-${{ matrix.python-version }}-${{ env.CACHE_NUMBER }}-${{
-          hashFiles('CI/conda-environment.yml') }}-${{ steps.get-date.outputs.today }}
+        driver: none
+        kubernetes-version: v1.23.12
 
     - name: Install dependencies
-      # Only need to run install when deps have been changed
-      if: steps.conda.outputs.cache-hit != 'true'
+      env:
+        MODULE: ${{ matrix.module }}
       run: |
-          conda env update -f CI/conda-environment.yml
-
-    - name: Install xorbits
-      run: |
+        pip install numpy scipy cython
+        
+        if [[ "$PYTHON" == "3.9" ]]; then
+          conda install numba
+        fi
+        if [[ "$MODULE" == "xorbits" ]]; then
+          pip install openpyxl
+        fi
+        if [[ "$MODULE" == "_mars/dataframe" ]]; then
+          pip install sqlalchemy\<2
+        fi
+        if [[ "$PYTHON" == "3.9" ]]; then
+          pip install h5py zarr matplotlib fastparquet
+          conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
+            "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
+        fi
+        if [[ "$MODULE" == "_mars/dataframe" ]]; then
+          pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
+            statsmodels tsfresh
+        fi
         pip install -e ".[dev,extra]"
       working-directory: ./python
 
     - name: Test with pytest
+      env:
+        MODULE: ${{ matrix.module }}
       run: |
-        pytest --ignore xorbits/_mars/ --log-level=DEBUG --timeout=1500 \
-          -W ignore::PendingDeprecationWarning \
-          --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
+        if [[ "$MODULE" == "xorbits" ]]; then
+          pytest --ignore xorbits/_mars/ --log-level=INFO --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
+        elif [[ "$MODULE" == "mars-core" ]]; then
+          pytest --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
+            --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
+            --log-level=INFO --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars
+        elif [[ "$MODULE" == "kubernetes" ]]; then
+          pytest -s --ignore xorbits/_mars/ --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/deploy/kubernetes
+        else
+          pytest -s --timeout=1500 --log-level=INFO \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
+        fi
       working-directory: ./python
 
     - name: Report coverage data

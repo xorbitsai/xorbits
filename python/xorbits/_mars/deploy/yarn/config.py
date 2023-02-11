@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -167,10 +168,10 @@ class MarsServiceConfig(AppServiceConfig):
         self._env_scheme = parsed.scheme
 
         if parsed.scheme:
-            import mars
+            import xorbits._mars
 
             self._source_path = os.path.dirname(
-                os.path.dirname(os.path.abspath(mars.__file__))
+                os.path.dirname(os.path.abspath(xorbits._mars.__file__))
             )
 
             self._env_path = environment[len(parsed.scheme) + 3 :]

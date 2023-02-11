@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,8 +32,8 @@ assert session is not None
 """
 
 script3 = b"""
-from mars.core.operand import Fetch
-from mars.deploy.oscar.session import AbstractSession
+from xorbits._mars.core.operand import Fetch
+from xorbits._mars.deploy.oscar.session import AbstractSession
 
 assert AbstractSession.default is not None
 assert isinstance(tensor.op, Fetch)

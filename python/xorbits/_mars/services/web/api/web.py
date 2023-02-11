@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +20,9 @@ from ..core import MarsRequestHandler
 
 class MarsApiEntryHandler(MarsRequestHandler):
     def get(self):
-        import mars
+        import xorbits._mars
 
-        version = mars.__version__
+        version = xorbits._mars.__version__
         self.write(json.dumps({"mars_version": version}))
 
 

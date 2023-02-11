@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+# Copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -482,17 +483,17 @@ async def test_cancel_without_kill(actor_pool):
     )
 
     def delay_fun(delay):
-        import mars
+        import xorbits._mars
 
         open(executed_file, "w").close()
         time.sleep(delay)
-        mars._slot_marker = 1
+        xorbits._mars._slot_marker = 1
         return delay
 
     def check_fun():
-        import mars
+        import xorbits._mars
 
-        return getattr(mars, "_slot_marker", False)
+        return getattr(xorbits._mars, "_slot_marker", False)
 
     remote_result = RemoteFunction(
         function=delay_fun, function_args=[2], function_kwargs={}
