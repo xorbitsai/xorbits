@@ -125,6 +125,9 @@ jobs:
         if [[ "$MODULE" == "_mars/dataframe" ]]; then
           pip install sqlalchemy\<2
         fi
+        if [[ "$MODULE" == "mars-core" ]]; then
+          pip install oss2
+        fi
         if [[ "$MODULE" == "kubernetes" ]]; then
           pip install kubernetes
         fi
@@ -153,7 +156,7 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
-          pytest --forked --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
+          pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
             --timeout=1500 \
             -W ignore::PendingDeprecationWarning \

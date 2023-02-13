@@ -65,7 +65,7 @@ def test_profiling_data():
 
 
 @pytest.mark.asyncio
-@mock.patch("mars.oscar.profiling.logger.warning")
+@mock.patch("xorbits._mars.oscar.profiling.logger.warning")
 async def test_profiling_debug(fake_warning):
     ProfilingData.init("abc", {"debug_interval_seconds": 0.1})
     assert len(ProfilingData._debug_task) == 1

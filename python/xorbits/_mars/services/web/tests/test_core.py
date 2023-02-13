@@ -85,7 +85,9 @@ async def actor_pool():
                 "/api": MarsApiEntryHandler,
                 TestAPIHandler.get_root_pattern(): TestAPIHandler,
             },
-            "extra_discovery_modules": ["mars.services.web.tests.extra_handler"],
+            "extra_discovery_modules": [
+                "xorbits._mars.services.web.tests.extra_handler"
+            ],
         }
         await mo.create_actor(WebActor, web_config, address=pool.external_address)
         yield pool, web_config["port"]

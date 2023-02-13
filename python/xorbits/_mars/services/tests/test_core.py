@@ -45,7 +45,7 @@ async def test_start_service(actor_pool_context):
     web_port = get_next_port()
     config = {
         "services": [["test_svc1"], "test_svc2", "test_warn_svc", "web"],
-        "modules": "mars.services.tests.test_svcs",
+        "modules": "xorbits._mars.services.tests.test_svcs",
         "test_svc1": {"uid": "TestActor1", "arg1": "val1"},
         "test_svc2": {"uid": "TestActor2", "arg2": "val2", "ref": "TestActor1"},
         "web": {"port": web_port},

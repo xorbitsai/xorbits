@@ -81,7 +81,7 @@ async def actor_pool():
 @pytest.fixture
 async def debug_logger():
     log_file = StringIO()
-    logger = logging.getLogger("mars.oscar.debug")
+    logger = logging.getLogger("xorbits._mars.oscar.debug")
 
     log_handler = logging.StreamHandler(log_file)
     log_handler.setLevel(logging.DEBUG)

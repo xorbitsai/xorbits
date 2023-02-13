@@ -150,7 +150,7 @@ async def start_test_service_with_mock(actor_pools, request):
         sv_pool,
         worker_pool,
         request,
-        task_processor_cls="mars.services.task.tests.test_service.MockTaskProcessor",
+        task_processor_cls="xorbits._mars.services.task.tests.test_service.MockTaskProcessor",
     )
 
     try:

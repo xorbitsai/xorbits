@@ -28,7 +28,7 @@ class EntityData(Base):
     type_name = None
 
     # required fields
-    _op = ReferenceField("op", "mars.core.operand.base.Operand")
+    _op = ReferenceField("op", "xorbits._mars.core.operand.base.Operand")
     # optional fields
     _extra_params = DictField("extra_params", key_type=FieldTypes.string)
 

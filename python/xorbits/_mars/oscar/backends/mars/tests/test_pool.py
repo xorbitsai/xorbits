@@ -125,8 +125,12 @@ def clear_routers():
 
 
 @pytest.mark.asyncio
-@mock.patch("mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_create")
-@mock.patch("mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_destroy")
+@mock.patch(
+    "xorbits._mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_create"
+)
+@mock.patch(
+    "xorbits._mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_destroy"
+)
 async def test_sub_actor_pool(notify_main_pool_to_create, notify_main_pool_to_destroy):
     notify_main_pool_to_create.return_value = None
     notify_main_pool_to_destroy.return_value = None
