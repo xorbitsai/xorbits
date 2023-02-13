@@ -85,7 +85,9 @@ jobs:
           - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
           - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
           - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
-          - { os: ubuntu-latest, module: _mars/core, python-version: 3.9 }
+          - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
+          - { os: ubuntu-latest, module: ray-dag, python-version: 3.9 }
+          - { os: ubuntu-latest, module: ray-deploy, python-version: 3.9 }
 
 
     steps:
@@ -128,10 +130,14 @@ jobs:
           conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
             "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
         fi
-        if [[ "$MODULE" == "_mars/dataframe" ]]; then
+        if [[ "$MODULE" == "_mars/learn" ]]; then
           pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
-            statsmodels tsfresh
+            statsmodels tsfresh dask[complete] mimesis
         fi
+        if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
+          pip install "xgboost_ray" "protobuf<4" "sqlalchemy<2"
+        fi
+
         pip install -e ".[dev,extra]"
       working-directory: ./python
 
@@ -140,21 +146,49 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ --log-level=INFO --timeout=1500 \
+          pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
           pytest --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
-            --log-level=INFO --timeout=1500 \
+            --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars
         elif [[ "$MODULE" == "kubernetes" ]]; then
           pytest -s --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/deploy/kubernetes
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
+        elif [[ "$MODULE" == "_mars/learn" ]]; then
+          pytest -s --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+            xorbits/$MODULE xorbits/_mars/contrib/dask/tests/test_dask.py
+        elif [ "$MODULE" == "ray-deploy" ]; then
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 --timeout=200 \ 
+            -v -s -m ray
+        elif [ "$MODULE" == "ray-dag" ]; then
+          export MARS_CI_BACKEND=ray
+          export RAY_idle_worker_killing_time_threshold_ms=60000
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 \ 
+            xorbits/_mars/dataframe -v -s -m "not skip_ray_dag" --ignore=xorbits/_mars/dataframe/contrib/raydataset
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 \ 
+            xorbits/_mars/dataframe/contrib/raydataset -v -s -m "not skip_ray_dag"
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 \ 
+            xorbits/_mars/tensor -v -s -m "not skip_ray_dag"
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 \
+            xorbits/_mars/learn --ignore xorbits/_mars/learn/contrib --ignore \
+            xorbits/_mars/learn/utils/tests/test_collect_ports.py -v -s -m "not skip_ray_dag"
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=200 \ 
+            -v -s -m ray_dag
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=200 \
+            -v -s xorbits/_mars/deploy/oscar/tests/test_ray_dag.py
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=200 \
+            -v -s xorbits/_mars/deploy/oscar/tests/test_ray_dag_failover.py
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=200 \
+            -v -s xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         else
-          pytest -s --timeout=1500 --log-level=INFO \
+          pytest -s --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
         fi
