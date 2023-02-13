@@ -219,8 +219,11 @@ def modfresnelm(x, out=None, **kwargs):
     return op(x, out=out)
 
 
-@implement_scipy(spspecial.voigt_profile)
-@infer_dtype(spspecial.voigt_profile)
 def voigt_profile(x, sigma, gamma, **kwargs):
     op = TensorVoigtProfile(**kwargs)
     return op(x, sigma, gamma)
+
+
+if hasattr(spspecial, 'voigt_profile'):
+    func = spspecial.voigt_profile
+    voigt_profile = implement_scipy(func)(infer_dtype(func)(voigt_profile))
