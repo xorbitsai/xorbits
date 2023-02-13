@@ -143,8 +143,8 @@ def _stop_processes(procs: List[subprocess.Popen]):
             pass
 
 
-supervisor_cmd_start = [sys.executable, "-m", "mars.deploy.oscar.supervisor"]
-worker_cmd_start = [sys.executable, "-m", "mars.deploy.oscar.worker"]
+supervisor_cmd_start = [sys.executable, "-m", "xorbits._mars.deploy.oscar.supervisor"]
+worker_cmd_start = [sys.executable, "-m", "xorbits._mars.deploy.oscar.worker"]
 
 
 def _reload_args(args):

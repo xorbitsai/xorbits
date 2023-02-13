@@ -119,10 +119,10 @@ def test_mars_backend_clean_up_and_restore_func(setup):
     config = _load_mars_config(CONFIG_FILE)
     config["task"][
         "task_preprocessor_cls"
-    ] = "mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedTaskPreprocessor"
+    ] = "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedTaskPreprocessor"
     config["subtask"][
         "subtask_processor_cls"
-    ] = "mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedSubtaskProcessor"
+    ] = "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedSubtaskProcessor"
 
     sess = new_test_session(default=True, config=config)
 
@@ -154,10 +154,10 @@ def test_clean_up_and_restore_callable(setup, multiplier):
     config = _load_mars_config(CONFIG_FILE)
     config["task"][
         "task_preprocessor_cls"
-    ] = "mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedTaskPreprocessor"
+    ] = "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedTaskPreprocessor"
     config["subtask"][
         "subtask_processor_cls"
-    ] = "mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedSubtaskProcessor"
+    ] = "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func.MarsBackendFuncCheckedSubtaskProcessor"
 
     sess = new_test_session(default=True, config=config)
 
