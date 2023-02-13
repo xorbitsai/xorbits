@@ -153,7 +153,7 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
-          pytest --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
+          pytest --forked --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
             --timeout=1500 \
             -W ignore::PendingDeprecationWarning \

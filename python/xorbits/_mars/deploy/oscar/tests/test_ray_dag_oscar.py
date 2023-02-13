@@ -76,8 +76,10 @@ async def test_execute_callable_closure(
     [
         {
             "config": {
-                "task.task_preprocessor_cls": "mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncTaskPreprocessor",
-                "subtask.subtask_processor_cls": "mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncSubtaskProcessor",
+                "task.task_preprocessor_cls": "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func."
+                "RayBackendFuncTaskPreprocessor",
+                "subtask.subtask_processor_cls": "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func."
+                "RayBackendFuncSubtaskProcessor",
             }
         }
     ],
