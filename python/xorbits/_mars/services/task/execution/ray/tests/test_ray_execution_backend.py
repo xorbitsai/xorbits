@@ -127,8 +127,10 @@ class MockTileContext(TileContext):
 
 @require_ray
 @pytest.mark.asyncio
-@mock.patch("mars.services.task.execution.ray.executor.RayTaskState.create")
-@mock.patch("mars.services.task.execution.ray.context.RayExecutionContext.init")
+@mock.patch("xorbits._mars.services.task.execution.ray.executor.RayTaskState.create")
+@mock.patch(
+    "xorbits._mars.services.task.execution.ray.context.RayExecutionContext.init"
+)
 @mock.patch("ray.get")
 async def test_ray_executor_create(
     mock_ray_get, mock_execution_context_init, mock_task_state_actor_create
