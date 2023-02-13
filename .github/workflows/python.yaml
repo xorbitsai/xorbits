@@ -165,37 +165,37 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/$MODULE xorbits/_mars/contrib/dask/tests/test_dask.py
         elif [ "$MODULE" == "ray-deploy" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --timeout=200 xorbits/_mars --ignore=xorbits/_mars/deploy/oscar/ -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_load_modules.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_cluster_standalone.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_client.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_fault_injection.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_scheduling.py -m ray
         elif [ "$MODULE" == "ray-dag" ]; then
           export MARS_CI_BACKEND=ray
           export RAY_idle_worker_killing_time_threshold_ms=60000
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 xorbits/_mars/dataframe \
-            -m "not skip_ray_dag" --ignore=xorbits/_mars/dataframe/contrib/raydataset
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \ 
-            --timeout=500 xorbits/_mars/dataframe/contrib/raydataset -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \ 
+            -v -s -m "not skip_ray_dag" --ignore=xorbits/_mars/dataframe/contrib/raydataset
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=500 xorbits/_mars/dataframe/contrib/raydataset -v -s -m "not skip_ray_dag"
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=500 xorbits/_mars/tensor -v -s -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=500 xorbits/_mars/learn --ignore xorbits/_mars/learn/contrib \
             --ignore xorbits/_mars/learn/utils/tests/test_collect_ports.py -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \ 
-            --timeout=200 xorbits -m ray_dag
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=200 xorbits -v -s -m ray_dag
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag.py
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \ 
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_failover.py
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
