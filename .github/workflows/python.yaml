@@ -125,6 +125,9 @@ jobs:
         if [[ "$MODULE" == "_mars/dataframe" ]]; then
           pip install sqlalchemy\<2
         fi
+        if [[ "$MODULE" == "kubernetes" ]]; then
+          pip install kubernetes
+        fi
         if [[ "$PYTHON" == "3.9" ]]; then
           pip install h5py zarr matplotlib fastparquet
           conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
