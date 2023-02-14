@@ -251,12 +251,12 @@ class MarsServiceConfig(AppServiceConfig):
 
 
 class MarsSupervisorConfig(MarsServiceConfig):
-    service_name = "mars.supervisor"
+    service_name = "xorbits._mars.supervisor"
     web_service_name = "mars.web"
 
 
 class MarsWorkerConfig(MarsServiceConfig):
-    service_name = "mars.worker"
+    service_name = "xorbits._mars.worker"
 
     def __init__(self, environment, worker_cache_mem=None, spill_dirs=None, **kwargs):
         kwargs["depends"] = MarsSupervisorConfig.service_name
