@@ -185,6 +185,7 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
         elif [[ "$MODULE" == "hadoop" ]]; then
+          export WITH_HADOOp="1"
           export HADOOP_HOME="/usr/local/hadoop"
           export HADOOP_INSTALL=$HADOOP_HOME
           export HADOOP_MAPRED_HOME=$HADOOP_HOME
