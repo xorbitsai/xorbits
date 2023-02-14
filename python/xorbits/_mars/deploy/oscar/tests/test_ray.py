@@ -147,8 +147,8 @@ async def test_execute_callable_closure(
     [
         {
             "config": {
-                "task.task_preprocessor_cls": "mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncTaskPreprocessor",
-                "subtask.subtask_processor_cls": "mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncSubtaskProcessor",
+                "task.task_preprocessor_cls": "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncTaskPreprocessor",
+                "subtask.subtask_processor_cls": "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncSubtaskProcessor",
             }
         }
     ],
@@ -268,7 +268,7 @@ def test_load_config():
 
 @require_ray
 @pytest.mark.asyncio
-@mock.patch("mars.deploy.oscar.ray.stop_worker")
+@mock.patch("xorbits._mars.deploy.oscar.ray.stop_worker")
 async def test_reconstruct_worker_during_releasing_worker(fake_stop_worker):
     stop_worker = asyncio.Event()
     lock = asyncio.Event()
@@ -288,7 +288,7 @@ async def test_reconstruct_worker_during_releasing_worker(fake_stop_worker):
 
 @require_ray
 @pytest.mark.asyncio
-@mock.patch("mars.deploy.oscar.ray.stop_worker")
+@mock.patch("xorbits._mars.deploy.oscar.ray.stop_worker")
 @mock.patch("ray.get_actor")
 async def test_release_worker_during_reconstructing_worker(
     fake_get_actor, fake_stop_worker
