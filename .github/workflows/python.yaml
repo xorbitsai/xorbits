@@ -87,7 +87,7 @@ jobs:
           - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-latest, module: ray-dag, python-version: 3.9 }
-          - { os: ubuntu-latest, module: ray-deploy, python-version: 3.9 }
+          - { os: ubuntu-latest, module: ray-deploy, python-version: 3.8 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
 
@@ -116,7 +116,7 @@ jobs:
       env:
         MODULE: ${{ matrix.module }}
       run: |
-        pip install numpy scipy cython
+        pip install numpy scipy cython coverage
         
         if [[ "$PYTHON" == "3.9" ]]; then
           conda install numba

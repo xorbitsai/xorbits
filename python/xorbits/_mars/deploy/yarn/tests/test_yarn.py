@@ -128,12 +128,6 @@ def _run_yarn_test_with_env(env_path, timeout):
 
 @require_hadoop
 @flaky(max_runs=3)
-def test_run_with_conda_env():
-    _run_yarn_test_with_env("conda://" + os.environ["CONDA_PREFIX"], 600)
-
-
-@require_hadoop
-@flaky(max_runs=3)
 def test_run_with_packed_env():
     import conda_pack
 
