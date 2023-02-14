@@ -31,7 +31,9 @@ from ....tests.core import flaky, require_hadoop
 from ...yarn import new_cluster
 
 logger = logging.getLogger(__name__)
-MARS_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(mt.__file__)))
+MARS_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(mt.__file__)))
+)
 
 
 def _collect_coverage():
@@ -86,7 +88,7 @@ def _run_yarn_test_with_env(env_path, timeout):
         )
 
         cmd_tmpl = (
-            '"{executable}" -m coverage run --source=%s/mars --rcfile=%s/setup.cfg'
+            '"{executable}" -m coverage run --source=%s/xorbits --rcfile=%s/setup.cfg'
             % (MARS_ROOT, MARS_ROOT)
         )
         extra_env = {
