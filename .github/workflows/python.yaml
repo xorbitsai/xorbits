@@ -134,7 +134,7 @@ jobs:
           pip install kubernetes
         fi
         if [[ "$MODULE" == "hadoop" ]]; then
-          ./ci/install-hadoop.sh
+          ./CI/install-hadoop.sh
           echo "import coverage; coverage.process_startup()" > \
             $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
           conda install --quiet --yes -c conda-forge skein libffi conda-pack
@@ -185,14 +185,14 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
         elif [[ "$MODULE" == "hadoop" ]]; then
-          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits -m hadoop
         if [[ "$MODULE" == "vineyard" ]]; then
-          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits/_mars/storage/tests/test_libs.py
-          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits/_mars/deploy/oscar/tests/test_local.py
-          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml -k "vineyard" \
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
