@@ -143,7 +143,7 @@ async def test_server_closed(ray_start_regular):
 
 @require_ray
 @pytest.mark.asyncio
-@pytest.mark.parametrize("auto_recover", [False, True, "actor", "process"])
+@pytest.mark.parametrize("auto_recover", [True, False, "actor", "process"])
 async def test_auto_recover(ray_start_regular, auto_recover):
     pg_name, n_process = "ray_cluster", 1
     pg = ray.util.placement_group(name=pg_name, bundles=[{"CPU": n_process}])
