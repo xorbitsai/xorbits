@@ -94,9 +94,6 @@ def _ray_start_regular(request):  # pragma: no cover
             ray.shutdown()
             Router.set_instance(None)
             RayServer.clear()
-            if "COV_CORE_SOURCE" in os.environ:
-                # Remove this when https://github.com/ray-project/ray/issues/16802 got fixed
-                subprocess.check_call(["ray", "stop", "--force"])
 
 
 @pytest.fixture(scope="module")
