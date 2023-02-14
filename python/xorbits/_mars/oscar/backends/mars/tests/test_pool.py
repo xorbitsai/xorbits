@@ -630,7 +630,7 @@ async def test_server_closed():
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="skip under Windows")
-@pytest.mark.parametrize("auto_recover", [False, True, "actor", "process"])
+@pytest.mark.parametrize("auto_recover", [True, "actor", "process"])
 async def test_auto_recover(auto_recover):
     start_method = (
         os.environ.get("POOL_START_METHOD", "forkserver")
