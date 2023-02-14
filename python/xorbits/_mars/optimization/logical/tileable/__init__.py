@@ -13,10 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .arithmetic_query import SeriesArithmeticToEval
-
 # TODO: the order of applying optimization rules depends on the order of import
 # Column pruning must be applied first for now.
 from .column_pruning import ColumnPruningRule
+from .arithmetic_query import SeriesArithmeticToEval
 from .core import optimize
 from .head import HeadPushDown
