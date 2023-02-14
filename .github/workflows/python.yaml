@@ -160,7 +160,7 @@ jobs:
             statsmodels tsfresh dask[complete] mimesis
         fi
         if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
-          pip install "xgboost_ray" "protobuf<4" "sqlalchemy<2"
+          pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
         fi
 
         pip install -e ".[dev,extra]"
