@@ -98,6 +98,24 @@ def test_df_groupby_agg():
     assert df.data in input_columns
     assert input_columns[df.data] == {"foo", "bar", "baz"}
 
+    labels = Series([1, 1, 1, 1])
+    s = df.groupby(by=labels).sum()
+    input_columns = InputColumnSelector.select(s.data, {"foo"})
+    assert len(input_columns) == 2
+    assert df.data in input_columns
+    assert input_columns[df.data] == {"foo"}
+    assert labels.data in input_columns
+    assert input_columns[labels.data] == {None}
+
+    labels = Series([1, 1, 1, 1], name="label")
+    s = df.groupby(by=labels).sum()
+    input_columns = InputColumnSelector.select(s.data, {"foo"})
+    assert len(input_columns) == 2
+    assert df.data in input_columns
+    assert input_columns[df.data] == {"foo"}
+    assert labels.data in input_columns
+    assert input_columns[labels.data] == {"label"}
+
 
 @pytest.mark.skip(reason="group by index is not supported yet")
 def test_df_groupby_index_agg():

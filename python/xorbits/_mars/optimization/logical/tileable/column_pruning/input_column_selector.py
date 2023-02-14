@@ -166,7 +166,7 @@ def df_groupby_agg_select_function(
     groupby_series = False
     if isinstance(by, list) and len(by) == 1 and isinstance(by[0], BaseSeriesData):
         groupby_series = True
-        ret[by[0]] = by[0].name
+        ret[by[0]] = {by[0].name}
 
     if isinstance(inp, BaseSeriesData):
         ret[inp] = {inp.name}
