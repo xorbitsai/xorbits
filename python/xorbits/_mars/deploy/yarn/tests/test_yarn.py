@@ -100,7 +100,7 @@ def _run_yarn_test_with_env(env_path, timeout):
             worker_mem="1G",
             extra_env=extra_env,
             log_config=log_config_file,
-            extra_args=f"--config-file {MARS_ROOT}/mars/deploy/yarn/tests/test_yarn_config.yml",
+            extra_args=f"--config-file {MARS_ROOT}/xorbits/_mars/deploy/yarn/tests/test_yarn_config.yml",
             log_when_fail=True,
             cmd_tmpl=cmd_tmpl,
         )
