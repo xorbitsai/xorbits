@@ -88,6 +88,8 @@ jobs:
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-latest, module: ray-dag, python-version: 3.9 }
           - { os: ubuntu-latest, module: ray-deploy, python-version: 3.9 }
+          - { os: ubuntu-latest, module: hadoop, python-version: 3.9 }
+          - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
 
 
     steps:
@@ -131,6 +133,23 @@ jobs:
         if [[ "$MODULE" == "kubernetes" ]]; then
           pip install kubernetes
         fi
+        if [[ "$MODULE" == "hadoop" ]]; then
+          ./ci/install-hadoop.sh
+          echo "import coverage; coverage.process_startup()" > \
+            $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
+          conda install --quiet --yes -c conda-forge skein libffi conda-pack
+        fi
+        if [[ "$MODULE" == "vineyard" ]]; then
+          pip install "vineyard>=0.11.1" -i https://pypi.org/simple
+          mkdir -p /tmp/etcd-download-test
+          export ETCD_VER=v3.4.13
+          export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
+          curl -L $ETCD_DOWNLOAD_URL/$ETCD_VER/etcd-$ETCD_VER-linux-amd64.tar.gz -o /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz
+          tar xzvf /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+          sudo mv /tmp/etcd-download-test/etcd /usr/local/bin/
+          sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
+          rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
+        fi
         if [[ "$PYTHON" == "3.9" ]]; then
           pip install h5py zarr matplotlib fastparquet
           conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
@@ -165,6 +184,19 @@ jobs:
           pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
+        elif [[ "$MODULE" == "hadoop" ]]; then
+          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits -m hadoop
+        if [[ "$MODULE" == "vineyard" ]]; then
+          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml xorbits/_mars/storage/tests/test_libs.py
+          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml xorbits/_mars/deploy/oscar/tests/test_local.py
+          pytest --ignore xorbits/_mars/ --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml -k "vineyard" \
+            xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
+            xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
+        fi
         elif [[ "$MODULE" == "_mars/learn" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
