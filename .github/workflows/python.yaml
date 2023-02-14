@@ -187,7 +187,7 @@ jobs:
         elif [[ "$MODULE" == "hadoop" ]]; then
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits -m hadoop
-        if [[ "$MODULE" == "vineyard" ]]; then
+        elif [[ "$MODULE" == "vineyard" ]]; then
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits/_mars/storage/tests/test_libs.py
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
@@ -196,7 +196,6 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml -k "vineyard" \
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
-        fi
         elif [[ "$MODULE" == "_mars/learn" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
