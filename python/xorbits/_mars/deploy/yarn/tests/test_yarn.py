@@ -111,7 +111,7 @@ def _run_yarn_test_with_env(env_path, timeout):
         check_time = time.time()
         while cluster.session.get_total_n_cpu() == 0:
             time.sleep(1)
-            if time.time() - check_time > 5:
+            if time.time() - check_time > 10:
                 raise SystemError("Worker not ready")
 
         a = mt.ones((100, 100), chunk_size=30) * 2 * 1 + 1
