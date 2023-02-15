@@ -49,6 +49,7 @@ class SubtaskRunnerManagerActor(mo.Actor):
                 SubtaskRunnerActor,
                 band,
                 worker_address=self._worker_address,
+                slot_id=slot_id,
                 subtask_processor_cls=self._subtask_processor_cls,
                 uid=SubtaskRunnerActor.gen_uid(band_name, slot_id),
                 address=self.address,

@@ -29,12 +29,13 @@ from ....metrics import Metrics
 from ....optimization.physical import optimize
 from ....serialization import AioSerializer
 from ....typing import BandType, ChunkType
-from ....utils import calc_data_size, get_chunk_key_to_data_keys
+from ....utils import Timer, calc_data_size, get_chunk_key_to_data_keys
 from ...context import ThreadedServiceContext
 from ...meta.api import MetaAPI, WorkerMetaAPI
 from ...session import SessionAPI
 from ...storage import StorageAPI
 from ...task import TaskAPI, task_options
+from ...task.task_info_collector import TaskInfoCollector
 from ..core import Subtask, SubtaskResult, SubtaskStatus
 from ..utils import get_mapper_data_keys, iter_input_data_keys, iter_output_data
 
@@ -74,6 +75,7 @@ class SubtaskProcessor:
         meta_api: MetaAPI,
         worker_meta_api: WorkerMetaAPI,
         band: BandType,
+        slot_id: int,
         supervisor_address: str,
         engines: List[str] = None,
     ):
@@ -88,6 +90,7 @@ class SubtaskProcessor:
             ]
         )
         self._band = band
+        self._slot_id = slot_id
         self._supervisor_address = supervisor_address
         self._engines = engines if engines is not None else task_options.runtime_engines
 
@@ -117,6 +120,10 @@ class SubtaskProcessor:
         self._storage_api = storage_api
         self._meta_api = meta_api
         self._worker_meta_api = worker_meta_api
+        collect_task_info = subtask.extra_config and subtask.extra_config.get(
+            "collect_task_info", False
+        )
+        self._task_info_collector = TaskInfoCollector(self._band[0], collect_task_info)
 
         # add metrics
         self._subtask_execution_time = Metrics.gauge(
@@ -231,35 +238,41 @@ class SubtaskProcessor:
                             to_wait.set_result(fut.result())
 
                 future.add_done_callback(cb)
-
-                try:
-                    await to_wait
-                    logger.debug(
-                        "Finish executing operand: %s, chunk: %s, subtask id: %s",
-                        chunk.op,
-                        chunk,
-                        self.subtask.subtask_id,
-                    )
-                except asyncio.CancelledError:
-                    logger.debug(
-                        "Receive cancel instruction for operand: %s,"
-                        "chunk: %s, subtask id: %s",
-                        chunk.op,
-                        chunk,
-                        self.subtask.subtask_id,
-                    )
-                    # wait for this computation to finish
-                    await future
-                    # if cancelled, stop next computation
-                    logger.debug(
-                        "Cancelled operand: %s, chunk: %s, subtask id: %s",
-                        chunk.op,
-                        chunk,
-                        self.subtask.subtask_id,
-                    )
-                    self.result.status = SubtaskStatus.cancelled
-                    raise
-
+                with Timer() as timer:
+                    try:
+                        await to_wait
+                        logger.debug(
+                            "Finish executing operand: %s, chunk: %s, subtask id: %s",
+                            chunk.op,
+                            chunk,
+                            self.subtask.subtask_id,
+                        )
+                    except asyncio.CancelledError:  # pragma: no cover
+                        logger.debug(
+                            "Receive cancel instruction for operand: %s,"
+                            "chunk: %s, subtask id: %s",
+                            chunk.op,
+                            chunk,
+                            self.subtask.subtask_id,
+                        )
+                        # wait for this computation to finish
+                        await future
+                        # if cancelled, stop next computation
+                        logger.debug(
+                            "Cancelled operand: %s, chunk: %s, subtask id: %s",
+                            chunk.op,
+                            chunk,
+                            self.subtask.subtask_id,
+                        )
+                        self.result.status = SubtaskStatus.cancelled
+                        raise
+                await self._task_info_collector.collect_runtime_operand_info(
+                    self.subtask,
+                    timer.start,
+                    timer.start + timer.duration,
+                    chunk,
+                    self._processor_context,
+                )
             self.set_op_progress(chunk.op.key, 1.0)
 
             for inp in chunk_graph.iter_predecessors(chunk):
@@ -557,29 +570,56 @@ class SubtaskProcessor:
                 result_chunk_to_optimized[c] for c in raw_update_meta_chunks
             }
 
+            cost_times = defaultdict(tuple)
             # load inputs data
-            input_keys = await self._load_input_data()
+            with Timer() as timer:
+                input_keys = await self._load_input_data()
+            cost_times["load_data_time"] = (timer.start, timer.start + timer.duration)
+
             try:
                 # execute chunk graph
-                await self._execute_graph(chunk_graph)
+                with Timer() as timer:
+                    await self._execute_graph(chunk_graph)
+                cost_times["execute_time"] = (timer.start, timer.start + timer.duration)
             finally:
                 # unpin inputs data
                 unpinned = True
-                await self._unpin_data(input_keys)
+                with Timer() as timer:
+                    await self._unpin_data(input_keys)
+                cost_times["unpin_time"] = (timer.start, timer.start + timer.duration)
+
             # store results data
-            (
+            with Timer() as timer:
+                (
+                    stored_keys,
+                    store_sizes,
+                    memory_sizes,
+                    data_key_to_object_id,
+                ) = await self._store_data(chunk_graph)
+            cost_times["store_result_time"] = (
+                timer.start,
+                timer.start + timer.duration,
+            )
+
+            # store meta
+            with Timer() as timer:
+                await self._store_meta(
+                    chunk_graph,
+                    store_sizes,
+                    memory_sizes,
+                    data_key_to_object_id,
+                    update_meta_chunks,
+                )
+            cost_times["store_meta_time"] = (timer.start, timer.start + timer.duration)
+
+            await self._task_info_collector.collect_runtime_subtask_info(
+                self.subtask,
+                self._band,
+                self._slot_id,
                 stored_keys,
                 store_sizes,
                 memory_sizes,
-                data_key_to_object_id,
-            ) = await self._store_data(chunk_graph)
-            # store meta
-            await self._store_meta(
-                chunk_graph,
-                store_sizes,
-                memory_sizes,
-                data_key_to_object_id,
-                update_meta_chunks,
+                cost_times,
             )
         except asyncio.CancelledError:
             self.result.status = SubtaskStatus.cancelled
@@ -705,7 +745,7 @@ class SubtaskProcessorActor(mo.Actor):
         await context.init()
         return context
 
-    async def run(self, subtask: Subtask):
+    async def run(self, subtask: Subtask, slot_id: int):
         logger.info(
             "Start to run subtask: %r on %s. chunk graph contains %s",
             subtask,
@@ -725,6 +765,7 @@ class SubtaskProcessorActor(mo.Actor):
                 self._meta_api,
                 self._worker_meta_api,
                 self._band,
+                slot_id,
                 self._supervisor_address,
             )
             self._processor = self._last_processor = processor

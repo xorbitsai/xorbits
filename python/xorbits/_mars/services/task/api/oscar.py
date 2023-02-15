@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Union
+from typing import Dict, List, Union
 
 from .... import oscar as mo
 from ....core import Tileable
@@ -21,38 +21,57 @@ from ....lib.aio import alru_cache
 from ...subtask import SubtaskResult
 from ..core import MapReduceInfo, TaskResult, TileableGraph
 from ..supervisor.manager import TaskManagerActor
+from ..task_info_collector import TaskInfoCollectorActor
 from .core import AbstractTaskAPI
 
 
 class TaskAPI(AbstractTaskAPI):
     def __init__(
-        self, session_id: str, task_manager_ref: mo.ActorRefType[TaskManagerActor]
+        self,
+        session_id: str,
+        task_info_collector_ref: mo.ActorRefType[TaskInfoCollectorActor],
+        task_manager_ref: mo.ActorRefType[TaskManagerActor],
     ):
         self._session_id = session_id
+        self._task_info_collector_ref = task_info_collector_ref
         self._task_manager_ref = task_manager_ref
 
     @classmethod
     @alru_cache(cache_exceptions=False)
-    async def create(cls, session_id: str, address: str) -> "TaskAPI":
+    async def create(
+        cls, session_id: str, supervisor_address: str = None, local_address: str = None
+    ) -> "TaskAPI":
         """
         Create Task API.
 
         Parameters
         ----------
         session_id : str
-            Session ID
-        address : str
+            Session ID.
+        supervisor_address : str
             Supervisor address.
+        local_address : str
+            Local address.
 
         Returns
         -------
         task_api
             Task API.
         """
-        task_manager_ref = await mo.actor_ref(
-            address, TaskManagerActor.gen_uid(session_id)
-        )
-        return TaskAPI(session_id, task_manager_ref)
+        try:
+            task_manager_ref = await mo.actor_ref(
+                supervisor_address, TaskManagerActor.gen_uid(session_id)
+            )
+        except (mo.ActorNotExist, ValueError):
+            task_manager_ref = None
+        try:
+            task_info_collector_ref = await mo.actor_ref(
+                local_address, TaskInfoCollectorActor.default_uid()
+            )
+        except (mo.ActorNotExist, ValueError):
+            task_info_collector_ref = None
+
+        return TaskAPI(session_id, task_info_collector_ref, task_manager_ref)
 
     async def get_task_results(self, progress: bool = False) -> List[TaskResult]:
         return await self._task_manager_ref.get_task_results(progress)
@@ -111,3 +130,6 @@ class TaskAPI(AbstractTaskAPI):
         self, task_id: str, map_reduce_id: int
     ) -> MapReduceInfo:
         return await self._task_manager_ref.get_map_reduce_info(task_id, map_reduce_id)
+
+    async def save_task_info(self, task_info: Dict, path: str):
+        await self._task_info_collector_ref.save_task_info(task_info, path)

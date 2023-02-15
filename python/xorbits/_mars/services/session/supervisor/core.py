@@ -191,7 +191,7 @@ class SessionActor(mo.Actor):
         )
         if "task" in self._service_config["services"]:
             self._task_api = await TaskAPI.create(
-                session_id=self._session_id, address=self.address
+                session_id=self._session_id, supervisor_address=self.address
             )
 
     async def get_last_idle_time(self):

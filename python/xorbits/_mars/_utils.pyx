@@ -453,15 +453,15 @@ cpdef long long ceildiv(long long x, long long y) nogil:
 
 
 cdef class Timer:
-    cdef object _start
+    cdef readonly object start
     cdef readonly object duration
 
     def __enter__(self):
-        self._start = time.time()
+        self.start = time.time()
         return self
 
     def __exit__(self, *_):
-        self.duration = time.time() - self._start
+        self.duration = time.time() - self.start
 
 
 cdef mt19937_64 _rnd_gen

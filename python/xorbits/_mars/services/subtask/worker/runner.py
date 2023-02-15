@@ -42,9 +42,14 @@ class SubtaskRunnerActor(mo.Actor):
         return f"slot_{band_name}_{slot_id}_subtask_runner"
 
     def __init__(
-        self, band: BandType, worker_address: str, subtask_processor_cls: Type = None
+        self,
+        band: BandType,
+        worker_address: str,
+        slot_id: int,
+        subtask_processor_cls: Type = None,
     ):
         self._band = band
+        self._slot_id = slot_id
         self._worker_address = worker_address
         self._subtask_processor_cls = self._get_subtask_processor_cls(
             subtask_processor_cls
@@ -123,7 +128,7 @@ class SubtaskRunnerActor(mo.Actor):
         processor = self._session_id_to_processors[session_id]
         try:
             self._running_processor = self._last_processor = processor
-            result = yield self._running_processor.run(subtask)
+            result = yield self._running_processor.run(subtask, self._slot_id)
         finally:
             self._running_processor = None
         raise mo.Return(result)

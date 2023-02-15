@@ -316,9 +316,7 @@ class TaskProcessorActor(mo.Actor, _TaskInfoProcessorMixin):
             tile_context=task_preprocessor.tile_context,
         )
         processor = self._task_processor_cls(
-            task,
-            task_preprocessor,
-            task_executor,
+            task, task_preprocessor, task_executor, self.address
         )
         self._task_id_to_processor[task.task_id] = processor
 
