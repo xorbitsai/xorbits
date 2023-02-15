@@ -89,7 +89,7 @@ async def test_load_third_party_modules(ray_start_regular, config_exception):
         {
             "config": {
                 "third_party_modules": {
-                    "worker": ["mars.deploy.oscar.tests.modules.replace_op"]
+                    "worker": ["xorbits._mars.deploy.oscar.tests.modules.replace_op"]
                 },
             },
         }
