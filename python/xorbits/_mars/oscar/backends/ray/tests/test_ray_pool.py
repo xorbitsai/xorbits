@@ -197,7 +197,11 @@ async def test_auto_recover(ray_start_regular, auto_recover):
             # must save the local reference until this is fixed:
             # https://github.com/ray-project/ray/issues/7815
             ray_actor = ray.get_actor(addr)
-            ray.get(ray_actor.cleanup.remote())
+            try:
+                # must clean up first, or coverage info lost
+                ray.get(ray_actor.cleanup.remote())
+            except:  # noqa: E722  # nosec  # pylint: disable=bare-except
+                pass
 
 
 @require_ray
