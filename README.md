@@ -56,6 +56,7 @@ All Xorbits APIs implemented or planned include:
 | xorbits.lightgbm                                                               | Planned in the near future  |
 | xorbits.xarray                                                                 | Planned in the future       |
 | xorbits.scipy                                                                  | Planned in the future       |
+| xorbits.statsmodels                                                            | Planned in the future       |
 
 ## Lightning fast speed
 Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
