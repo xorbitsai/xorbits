@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional
 
 from .... import oscar as mo
+from ...._utils import Timer
 from ....core import ExecutionError
 from ....core.graph import DAG
 from ....core.operand import Fetch, FetchShuffle
@@ -36,6 +37,7 @@ from ...cluster import ClusterAPI
 from ...meta import MetaAPI
 from ...storage import StorageAPI
 from ...subtask import Subtask, SubtaskAPI, SubtaskResult, SubtaskStatus
+from ...task.task_info_collector import TaskInfoCollector
 from .quota import QuotaActor
 from .workerslot import BandSlotManagerActor
 
@@ -354,13 +356,25 @@ class SubtaskExecutionActor(mo.StatelessActor):
         )
         try:
             logger.debug("Preparing data for subtask %s", subtask.subtask_id)
-            prepare_data_task = asyncio.create_task(
-                _retry_run(
-                    subtask, subtask_info, self._prepare_input_data, subtask, band_name
+            with Timer() as timer:
+                prepare_data_task = asyncio.create_task(
+                    _retry_run(
+                        subtask,
+                        subtask_info,
+                        self._prepare_input_data,
+                        subtask,
+                        band_name,
+                    )
                 )
+                await asyncio.wait_for(
+                    prepare_data_task, timeout=self._data_prepare_timeout
+                )
+            collect_task_info = subtask.extra_config and subtask.extra_config.get(
+                "collect_task_info", False
             )
-            await asyncio.wait_for(
-                prepare_data_task, timeout=self._data_prepare_timeout
+            task_info_collector = TaskInfoCollector(self.address, collect_task_info)
+            await task_info_collector.collect_fetch_time(
+                subtask, timer.start, timer.start + timer.duration
             )
 
             input_sizes = await self._collect_input_sizes(

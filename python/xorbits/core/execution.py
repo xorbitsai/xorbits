@@ -28,7 +28,7 @@ def _get_mars_entity(ref: DataRef) -> MarsEntity:
         )
 
 
-def run(obj: Union[DataRef, List[DataRef], Tuple[DataRef]]) -> None:
+def run(obj: Union[DataRef, List[DataRef], Tuple[DataRef]], **kwargs) -> None:
     """
     Manually trigger execution.
 
@@ -39,11 +39,11 @@ def run(obj: Union[DataRef, List[DataRef], Tuple[DataRef]]) -> None:
     """
     if isinstance(obj, DataRef):
         if need_to_execute(obj):
-            mars_execute(_get_mars_entity(obj))
+            mars_execute(_get_mars_entity(obj), **kwargs)
     else:
         refs_to_execute = [_get_mars_entity(ref) for ref in obj if need_to_execute(ref)]
         if refs_to_execute:
-            mars_execute(refs_to_execute)
+            mars_execute(refs_to_execute, **kwargs)
 
 
 def need_to_execute(ref: DataRef):
