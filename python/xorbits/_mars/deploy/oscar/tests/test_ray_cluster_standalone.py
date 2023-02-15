@@ -153,7 +153,7 @@ async def test_new_ray_session_config(stop_ray):
             default=True,
             config={
                 "third_party_modules": [
-                    "mars.deploy.oscar.tests.modules.check_ray_remote_function_options"
+                    "xorbits._mars.deploy.oscar.tests.modules.check_ray_remote_function_options"
                 ]
             },
         )
