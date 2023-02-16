@@ -77,11 +77,11 @@ def _find_hdfs_start_end(f, offset, size):
     return start, end
 
 
-def _find_chunk_start_end(f, offset, size, is_first=False):
+def _find_chunk_start_end(f, offset, size, is_first):
     if NativeFile is not None and isinstance(f, NativeFile):
         return _find_hdfs_start_end(f, offset, size)
     f.seek(offset)
-    if is_first:
+    if is_first or offset == 0:
         start = offset
     else:
         f.readline()
