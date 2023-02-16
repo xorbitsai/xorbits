@@ -39,11 +39,11 @@ jobs:
         uses: psf/black@stable
         with:
           src: "python/xorbits"
-          options: "--check --verbose --exclude xorbits/_mars/"
+          options: "--check --verbose"
       - uses: isort/isort-action@master
         with:
           sortPaths: "python/xorbits"
-          configuration: "--check-only --profile black --diff --skip python/xorbits/_mars/"
+          configuration: "--check-only --diff --sp python/xorbits/setup.cfg"
       - name: mypy
         run: pip install mypy && cd python && mypy xorbits
       - name: codespell
