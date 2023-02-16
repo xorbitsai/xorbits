@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
+
 from ...pandas import get_dummies
 from ..execution import need_to_execute, run
 
@@ -114,3 +116,25 @@ def test_manual_execution(setup, dummy_int_series):
     assert all([need_to_execute(ref) for ref in series_to_execute])
     run(series_to_execute)
     assert not any([need_to_execute(ref) for ref in series_to_execute])
+
+
+@pytest.fixture()
+def ip():
+    from IPython.testing.globalipapp import start_ipython
+
+    yield start_ipython()
+
+
+def test_interactive_execution(setup, ip):
+    ip.run_cell(raw_cell="import xorbits")
+    ip.run_cell(raw_cell="import xorbits.pandas as pd")
+
+    r = ip.run_cell(raw_cell="xorbits.core.execution._is_interactive()")
+    assert r.result
+    r = ip.run_cell(raw_cell="xorbits.core.execution._is_ipython_available()")
+    assert r.result
+
+    ip.run_cell(raw_cell="df = pd.DataFrame({'foo': [1, 2, 3]})")
+    ip.run_cell(raw_cell="xorbits.run(df + 1)")
+    r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(df)")
+    assert not r.result
