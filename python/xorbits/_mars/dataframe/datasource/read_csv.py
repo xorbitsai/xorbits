@@ -81,7 +81,7 @@ def _find_chunk_start_end(f, offset, size, is_first):
     if NativeFile is not None and isinstance(f, NativeFile):
         return _find_hdfs_start_end(f, offset, size)
     f.seek(offset)
-    if is_first or offset == 0:
+    if is_first:
         start = offset
     else:
         f.readline()
@@ -255,7 +255,7 @@ class DataFrameReadCSV(
                 # convert to Series, if usecols is a scalar
                 df = df[op.usecols]
         else:
-            if out_df.index[0] == 0:
+            if out_df.index[0] == 0 or start == 0:
                 # The first chunk contains header
                 # As we specify names and dtype, we need to skip header rows
                 csv_kwargs["header"] = op.header
