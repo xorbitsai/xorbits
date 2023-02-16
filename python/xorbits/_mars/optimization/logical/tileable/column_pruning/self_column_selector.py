@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Set, Any, Callable
+from typing import Any, Callable, Set
 
-from .utils import get_cols_exclude_index
 from .....core import TileableData
 from .....dataframe.core import BaseDataFrameData, BaseSeriesData
 from .....dataframe.groupby.aggregation import DataFrameGroupByAgg
@@ -22,6 +21,7 @@ from .....dataframe.indexing.getitem import DataFrameIndex
 from .....dataframe.indexing.setitem import DataFrameSetitem
 from .....dataframe.merge import DataFrameMerge
 from .....typing import OperandType
+from .utils import get_cols_exclude_index
 
 
 class SelfColumnSelector:
