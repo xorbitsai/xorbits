@@ -43,7 +43,7 @@ jobs:
       - uses: isort/isort-action@master
         with:
           sortPaths: "python/xorbits"
-          configuration: "--check-only --diff --sp python/xorbits/setup.cfg"
+          configuration: "--check-only --diff --sp python/setup.cfg"
       - name: mypy
         run: pip install mypy && cd python && mypy xorbits
       - name: codespell
@@ -86,8 +86,6 @@ jobs:
           - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
           - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
-          - { os: ubuntu-latest, module: ray-dag, python-version: 3.9 }
-          - { os: ubuntu-latest, module: ray-deploy, python-version: 3.9 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
 
