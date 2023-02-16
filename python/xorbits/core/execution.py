@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Tuple, Union
+from __future__ import annotations
+
+import builtins
 
 from .adapter import MarsEntity, mars_execute
 from .data import DataRef
@@ -28,7 +30,7 @@ def _get_mars_entity(ref: DataRef) -> MarsEntity:
         )
 
 
-def run(obj: Union[DataRef, List[DataRef], Tuple[DataRef]], **kwargs) -> None:
+def run(obj: DataRef | list[DataRef] | tuple[DataRef], **kwargs) -> None:
     """
     Manually trigger execution.
 
@@ -37,18 +39,57 @@ def run(obj: Union[DataRef, List[DataRef], Tuple[DataRef]], **kwargs) -> None:
     obj : DataRef or collection of DataRefs
         DataRef or collection of DataRefs to execute.
     """
+    refs_to_execute = _collect_user_ns_refs()
+
+    refs = []
     if isinstance(obj, DataRef):
-        if need_to_execute(obj):
-            mars_execute(_get_mars_entity(obj), **kwargs)
+        refs.append(obj)
     else:
-        refs_to_execute = [_get_mars_entity(ref) for ref in obj if need_to_execute(ref)]
-        if refs_to_execute:
-            mars_execute(refs_to_execute, **kwargs)
+        refs.extend(obj)
+
+    for ref in refs:
+        if id(ref) not in refs_to_execute:
+            refs_to_execute[id(ref)] = ref
+
+    mars_tileables = [
+        _get_mars_entity(ref)
+        for ref in refs_to_execute.values()
+        if need_to_execute(ref)
+    ]
+    if mars_tileables:
+        mars_execute(mars_tileables, **kwargs)
 
 
-def need_to_execute(ref: DataRef):
+def need_to_execute(ref: DataRef) -> bool:
     mars_entity = _get_mars_entity(ref)
     return (
         hasattr(mars_entity, "_executed_sessions")
         and len(getattr(mars_entity, "_executed_sessions")) == 0
+    )
+
+
+def _collect_user_ns_refs() -> dict[int, DataRef]:
+    """
+    Collect DataRefs defined in user's interactive namespace.
+    """
+    if not _is_interactive() or not _is_ipython_available():
+        return {}
+
+    ipython = getattr(builtins, "get_ipython")()
+    return dict(
+        (id(v), v) for k, v in ipython.user_ns.items() if isinstance(v, DataRef)
+    )
+
+
+def _is_interactive() -> bool:
+    import sys
+
+    # See: https://stackoverflow.com/a/64523765/7098025
+    return hasattr(sys, "ps1")
+
+
+def _is_ipython_available() -> bool:
+    return (
+        hasattr(builtins, "get_ipython")
+        and getattr(builtins, "get_ipython", None) is not None
     )
