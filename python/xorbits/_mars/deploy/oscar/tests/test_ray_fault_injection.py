@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ RAY_CONFIG_FILE = os.path.join(
     os.path.dirname(__file__), "local_test_with_ray_config.yml"
 )
 FAULT_INJECTION_CONFIG = {
-    "third_party_modules": ["mars.services.tests.fault_injection_patch"],
+    "third_party_modules": ["xorbits._mars.services.tests.fault_injection_patch"],
 }
 SUBTASK_RERUN_CONFIG = {
     "scheduling": {

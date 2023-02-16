@@ -66,6 +66,8 @@ API                                     Implemented version or plan
 ``xorbits.xgboost``                     Planned in the near future
 ``xorbits.lightgbm``                    Planned in the near future
 ``xorbits.xarray``                      Planned in the future
+``xorbits.scipy``                       Planned in the future
+``xorbits.statsmodels``                 Planned in the future
 ======================================= =========================================================
 
 Lightning fast speed

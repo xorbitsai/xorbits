@@ -85,7 +85,11 @@ jobs:
           - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
           - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
           - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
-          - { os: ubuntu-latest, module: _mars/core, python-version: 3.9 }
+          - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
+          - { os: ubuntu-latest, module: ray-dag, python-version: 3.9 }
+          - { os: ubuntu-latest, module: ray-deploy, python-version: 3.9 }
+          - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
+          - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
 
 
     steps:
@@ -112,7 +116,7 @@ jobs:
       env:
         MODULE: ${{ matrix.module }}
       run: |
-        pip install numpy scipy cython
+        pip install numpy scipy cython coverage
         
         if [[ "$PYTHON" == "3.9" ]]; then
           conda install numba
@@ -123,15 +127,42 @@ jobs:
         if [[ "$MODULE" == "_mars/dataframe" ]]; then
           pip install sqlalchemy\<2
         fi
+        if [[ "$MODULE" == "mars-core" ]]; then
+          pip install oss2
+        fi
+        if [[ "$MODULE" == "kubernetes" ]]; then
+          pip install kubernetes
+        fi
+        if [[ "$MODULE" == "hadoop" ]]; then
+          ../CI/install-hadoop.sh
+          echo "import coverage; coverage.process_startup()" > \
+            $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
+          conda install --quiet --yes -c conda-forge skein libffi conda-pack
+        fi
+        if [[ "$MODULE" == "vineyard" ]]; then
+          pip install "vineyard>=0.11.1" -i https://pypi.org/simple
+          mkdir -p /tmp/etcd-download-test
+          export ETCD_VER=v3.4.13
+          export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
+          curl -L $ETCD_DOWNLOAD_URL/$ETCD_VER/etcd-$ETCD_VER-linux-amd64.tar.gz -o /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz
+          tar xzvf /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+          sudo mv /tmp/etcd-download-test/etcd /usr/local/bin/
+          sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
+          rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
+        fi
         if [[ "$PYTHON" == "3.9" ]]; then
           pip install h5py zarr matplotlib fastparquet
           conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
             "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
         fi
-        if [[ "$MODULE" == "_mars/dataframe" ]]; then
+        if [[ "$MODULE" == "_mars/learn" ]]; then
           pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
-            statsmodels tsfresh
+            statsmodels tsfresh dask[complete] mimesis
         fi
+        if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
+          pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
+        fi
+
         pip install -e ".[dev,extra]"
       working-directory: ./python
 
@@ -140,21 +171,82 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ --log-level=INFO --timeout=1500 \
+          pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
-          pytest --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
+          pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
-            --log-level=INFO --timeout=1500 \
+            --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars
         elif [[ "$MODULE" == "kubernetes" ]]; then
-          pytest -s --ignore xorbits/_mars/ --timeout=1500 \
+          pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/deploy/kubernetes
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
+        elif [[ "$MODULE" == "hadoop" ]]; then
+          export WITH_HADOOP="1"
+          export HADOOP_HOME="/usr/local/hadoop"
+          export HADOOP_INSTALL=$HADOOP_HOME
+          export HADOOP_MAPRED_HOME=$HADOOP_HOME
+          export HADOOP_COMMON_HOME=$HADOOP_HOME
+          export HADOOP_HDFS_HOME=$HADOOP_HOME
+          export YARN_HOME=$HADOOP_HOME
+          export HADOOP_COMMON_LIB_NATIVE_DIR="$HADOOP_HOME/lib/native"
+          export PATH="$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin"
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits -m hadoop
+        elif [[ "$MODULE" == "vineyard" ]]; then
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml xorbits/_mars/storage/tests/test_libs.py
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml xorbits/_mars/deploy/oscar/tests/test_local.py
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml -k "vineyard" \
+            xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
+            xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
+        elif [[ "$MODULE" == "_mars/learn" ]]; then
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+            xorbits/$MODULE xorbits/_mars/contrib/dask/tests/test_dask.py
+        elif [ "$MODULE" == "ray-deploy" ]; then
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
+            --log-level=DEBUG --timeout=200 xorbits/_mars --ignore=xorbits/_mars/deploy/oscar/ -m ray
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
+            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray.py -m ray
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
+            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_load_modules.py -m ray
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
+            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_cluster_standalone.py -m ray
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
+            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_client.py -m ray
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
+            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_fault_injection.py -m ray
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
+            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_scheduling.py -m ray
+        elif [ "$MODULE" == "ray-dag" ]; then
+          export MARS_CI_BACKEND=ray
+          export RAY_idle_worker_killing_time_threshold_ms=60000
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 xorbits/_mars/dataframe \
+            -v -s -m "not skip_ray_dag" --ignore=xorbits/_mars/dataframe/contrib/raydataset
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=500 xorbits/_mars/dataframe/contrib/raydataset -v -s -m "not skip_ray_dag"
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=500 xorbits/_mars/tensor -v -s -m "not skip_ray_dag"
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=500 xorbits/_mars/learn --ignore xorbits/_mars/learn/contrib \
+            --ignore xorbits/_mars/learn/utils/tests/test_collect_ports.py -m "not skip_ray_dag"
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=200 xorbits -v -s -m ray_dag
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag.py
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_failover.py
+          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
+            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         else
-          pytest -s --timeout=1500 --log-level=INFO \
+          pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
         fi

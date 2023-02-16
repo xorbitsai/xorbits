@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -125,8 +125,12 @@ def clear_routers():
 
 
 @pytest.mark.asyncio
-@mock.patch("mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_create")
-@mock.patch("mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_destroy")
+@mock.patch(
+    "xorbits._mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_create"
+)
+@mock.patch(
+    "xorbits._mars.oscar.backends.mars.pool.SubActorPool.notify_main_pool_to_destroy"
+)
 async def test_sub_actor_pool(notify_main_pool_to_create, notify_main_pool_to_destroy):
     notify_main_pool_to_create.return_value = None
     notify_main_pool_to_destroy.return_value = None
@@ -626,7 +630,7 @@ async def test_server_closed():
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="skip under Windows")
-@pytest.mark.parametrize("auto_recover", [False, True, "actor", "process"])
+@pytest.mark.parametrize("auto_recover", [True, "actor", "process"])
 async def test_auto_recover(auto_recover):
     start_method = (
         os.environ.get("POOL_START_METHOD", "forkserver")

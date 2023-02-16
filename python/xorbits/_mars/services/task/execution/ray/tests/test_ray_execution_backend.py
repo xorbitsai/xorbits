@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -127,8 +127,10 @@ class MockTileContext(TileContext):
 
 @require_ray
 @pytest.mark.asyncio
-@mock.patch("mars.services.task.execution.ray.executor.RayTaskState.create")
-@mock.patch("mars.services.task.execution.ray.context.RayExecutionContext.init")
+@mock.patch("xorbits._mars.services.task.execution.ray.executor.RayTaskState.create")
+@mock.patch(
+    "xorbits._mars.services.task.execution.ray.context.RayExecutionContext.init"
+)
 @mock.patch("ray.get")
 async def test_ray_executor_create(
     mock_ray_get, mock_execution_context_init, mock_task_state_actor_create
@@ -701,7 +703,7 @@ async def test_execute_slow_task(ray_start_regular_shared2):
 
     def mock_execute_subtask(subtask_id, *args):
         if subtask_id == slow_subtask_id:
-            time.sleep(1)
+            time.sleep(3)
         return execute_subtask(subtask_id, *args)
 
     executor._ray_executor = ray.remote(mock_execute_subtask)

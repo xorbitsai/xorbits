@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -981,7 +981,9 @@ def test_load_third_party_modules(cleanup_third_party_modules_output):  # noqa: 
     with pytest.raises(ModuleNotFoundError, match="not_exists_for_worker"):
         new_session(n_cpu=2, web=False, config=config)
 
-    config["third_party_modules"] = ["mars.deploy.oscar.tests.modules.replace_op"]
+    config["third_party_modules"] = [
+        "xorbits._mars.deploy.oscar.tests.modules.replace_op"
+    ]
     session = new_session(n_cpu=2, web=False, config=config)
     # web not started
     assert session._session.client.web_address is None
@@ -1102,7 +1104,7 @@ async def test_task_speculation_execution(speculative_cluster):
 
 def test_naive_code_file():
     code_file = """
-    from xorbits._mars import new_session
+    from xorbits._mars import new_session, stop_server
     import xorbits._mars.tensor as mt
     import os
 
@@ -1112,7 +1114,7 @@ def test_naive_code_file():
         with open(result_path, "w") as outf:
             outf.write(str(mt.ones((10, 10)).sum().execute()))
     finally:
-        mars.stop_server()
+        stop_server()
     """
 
     with tempfile.TemporaryDirectory() as temp_dir:

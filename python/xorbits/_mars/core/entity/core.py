@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ class EntityData(Base):
     type_name = None
 
     # required fields
-    _op = ReferenceField("op", "mars.core.operand.base.Operand")
+    _op = ReferenceField("op", "xorbits._mars.core.operand.base.Operand")
     # optional fields
     _extra_params = DictField("extra_params", key_type=FieldTypes.string)
 

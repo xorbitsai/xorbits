@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -153,7 +153,7 @@ async def test_new_ray_session_config(stop_ray):
             default=True,
             config={
                 "third_party_modules": [
-                    "mars.deploy.oscar.tests.modules.check_ray_remote_function_options"
+                    "xorbits._mars.deploy.oscar.tests.modules.check_ray_remote_function_options"
                 ]
             },
         )

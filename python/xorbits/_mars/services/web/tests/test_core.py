@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -85,7 +85,9 @@ async def actor_pool():
                 "/api": MarsApiEntryHandler,
                 TestAPIHandler.get_root_pattern(): TestAPIHandler,
             },
-            "extra_discovery_modules": ["mars.services.web.tests.extra_handler"],
+            "extra_discovery_modules": [
+                "xorbits._mars.services.web.tests.extra_handler"
+            ],
         }
         await mo.create_actor(WebActor, web_config, address=pool.external_address)
         yield pool, web_config["port"]

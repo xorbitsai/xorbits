@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ async def test_mem_quota_allocation(actor_pool, enable_kill_slot):
         address=actor_pool.external_address,
     )  # type: mo.ActorRefType[QuotaActor]
 
-    with mock.patch("mars.resource.virtual_memory", new=lambda: mock_mem_stat):
+    with mock.patch("xorbits._mars.resource.virtual_memory", new=lambda: mock_mem_stat):
         time_recs = [time.time()]
 
         async def task_fun():

@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Iterator, Tuple, Union, BinaryIO, TextIO, Dict
-from urllib.parse import urlparse, urlunparse, ParseResult
+from typing import BinaryIO, Dict, Iterator, List, TextIO, Tuple, Union
+from urllib.parse import ParseResult, urlparse, urlunparse
 
 from fsspec import filesystem
 from fsspec.core import stringify_path
 
 from ...utils import implements
-from .core import FileSystem
-from .core import path_type
+from .core import FileSystem, path_type
 
 
 class FsSpecAdapter(FileSystem):

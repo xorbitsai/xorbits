@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ async def actor_pool():
 @pytest.fixture
 async def debug_logger():
     log_file = StringIO()
-    logger = logging.getLogger("mars.oscar.debug")
+    logger = logging.getLogger("xorbits._mars.oscar.debug")
 
     log_handler = logging.StreamHandler(log_file)
     log_handler.setLevel(logging.DEBUG)

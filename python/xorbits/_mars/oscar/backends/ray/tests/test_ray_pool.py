@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -143,7 +143,7 @@ async def test_server_closed(ray_start_regular):
 
 @require_ray
 @pytest.mark.asyncio
-@pytest.mark.parametrize("auto_recover", [False, True, "actor", "process"])
+@pytest.mark.parametrize("auto_recover", [True, False, "actor", "process"])
 async def test_auto_recover(ray_start_regular, auto_recover):
     pg_name, n_process = "ray_cluster", 1
     pg = ray.util.placement_group(name=pg_name, bundles=[{"CPU": n_process}])
@@ -197,7 +197,11 @@ async def test_auto_recover(ray_start_regular, auto_recover):
             # must save the local reference until this is fixed:
             # https://github.com/ray-project/ray/issues/7815
             ray_actor = ray.get_actor(addr)
-            ray.get(ray_actor.cleanup.remote())
+            try:
+                # must clean up first, or coverage info lost
+                ray.get(ray_actor.cleanup.remote())
+            except:  # noqa: E722  # nosec  # pylint: disable=bare-except
+                pass
 
 
 @require_ray

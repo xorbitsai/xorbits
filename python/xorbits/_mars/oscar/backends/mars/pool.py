@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -244,7 +244,7 @@ class MainActorPool(MainActorPoolBase):
             logging.config.fileConfig(logging_conf["file"])
         elif logging_conf.get("level"):
             logging.getLogger("__main__").setLevel(logging_conf["level"])
-            logging.getLogger("mars").setLevel(logging_conf["level"])
+            logging.getLogger("xorbits._mars").setLevel(logging_conf["level"])
             if logging_conf.get("format"):
                 logging.basicConfig(format=logging_conf["format"])
 

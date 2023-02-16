@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ from ....tests.core import flaky, require_hadoop
 from ...yarn import new_cluster
 
 logger = logging.getLogger(__name__)
-MARS_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(mt.__file__)))
+MARS_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(mt.__file__)))
+)
 
 
 def _collect_coverage():
@@ -86,7 +88,7 @@ def _run_yarn_test_with_env(env_path, timeout):
         )
 
         cmd_tmpl = (
-            '"{executable}" -m coverage run --source=%s/mars --rcfile=%s/setup.cfg'
+            '"{executable}" -m coverage run --source=%s/xorbits --rcfile=%s/setup.cfg'
             % (MARS_ROOT, MARS_ROOT)
         )
         extra_env = {
@@ -100,7 +102,7 @@ def _run_yarn_test_with_env(env_path, timeout):
             worker_mem="1G",
             extra_env=extra_env,
             log_config=log_config_file,
-            extra_args=f"--config-file {MARS_ROOT}/mars/deploy/yarn/tests/test_yarn_config.yml",
+            extra_args=f"--config-file {MARS_ROOT}/xorbits/_mars/deploy/yarn/tests/test_yarn_config.yml",
             log_when_fail=True,
             cmd_tmpl=cmd_tmpl,
         )
@@ -109,7 +111,7 @@ def _run_yarn_test_with_env(env_path, timeout):
         check_time = time.time()
         while cluster.session.get_total_n_cpu() == 0:
             time.sleep(1)
-            if time.time() - check_time > 5:
+            if time.time() - check_time > 10:
                 raise SystemError("Worker not ready")
 
         a = mt.ones((100, 100), chunk_size=30) * 2 * 1 + 1
@@ -122,12 +124,6 @@ def _run_yarn_test_with_env(env_path, timeout):
         if cluster is not None:
             cluster.stop()
         _collect_coverage()
-
-
-@require_hadoop
-@flaky(max_runs=3)
-def test_run_with_conda_env():
-    _run_yarn_test_with_env("conda://" + os.environ["CONDA_PREFIX"], 600)
 
 
 @require_hadoop

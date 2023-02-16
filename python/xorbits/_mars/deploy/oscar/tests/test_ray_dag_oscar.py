@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -76,8 +76,10 @@ async def test_execute_callable_closure(
     [
         {
             "config": {
-                "task.task_preprocessor_cls": "mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncTaskPreprocessor",
-                "subtask.subtask_processor_cls": "mars.deploy.oscar.tests.test_clean_up_and_restore_func.RayBackendFuncSubtaskProcessor",
+                "task.task_preprocessor_cls": "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func."
+                "RayBackendFuncTaskPreprocessor",
+                "subtask.subtask_processor_cls": "xorbits._mars.deploy.oscar.tests.test_clean_up_and_restore_func."
+                "RayBackendFuncSubtaskProcessor",
             }
         }
     ],

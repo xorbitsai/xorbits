@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -94,9 +94,6 @@ def _ray_start_regular(request):  # pragma: no cover
             ray.shutdown()
             Router.set_instance(None)
             RayServer.clear()
-            if "COV_CORE_SOURCE" in os.environ:
-                # Remove this when https://github.com/ray-project/ray/issues/16802 got fixed
-                subprocess.check_call(["ray", "stop", "--force"])
 
 
 @pytest.fixture(scope="module")

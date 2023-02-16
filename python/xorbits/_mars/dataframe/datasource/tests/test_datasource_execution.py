@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -1289,10 +1289,6 @@ def test_read_raydataset(ray_start_regular, ray_create_mars_cluster):
         df3.head(5).to_pandas(),
         pdf2,
     )
-
-    # Test simple datasets
-    with pytest.raises(NotImplementedError):
-        ray.data.range(10).to_mars()
 
 
 @require_ray

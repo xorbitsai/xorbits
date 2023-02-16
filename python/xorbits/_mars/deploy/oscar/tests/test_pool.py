@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import pytest
 from ....constants import MARS_LOG_PATH_KEY, MARS_TMP_DIR_PREFIX
 from ....utils import clean_mars_tmp_dir
 from ..pool import (
-    _parse_file_logging_config,
     _config_logging,
     _get_root_logger_level_and_format,
+    _parse_file_logging_config,
 )
 
 

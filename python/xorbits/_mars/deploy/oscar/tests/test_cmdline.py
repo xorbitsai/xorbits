@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-# Copyright 1999-2021 Alibaba Group Holding Ltd.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -143,8 +143,8 @@ def _stop_processes(procs: List[subprocess.Popen]):
             pass
 
 
-supervisor_cmd_start = [sys.executable, "-m", "mars.deploy.oscar.supervisor"]
-worker_cmd_start = [sys.executable, "-m", "mars.deploy.oscar.worker"]
+supervisor_cmd_start = [sys.executable, "-m", "xorbits._mars.deploy.oscar.supervisor"]
+worker_cmd_start = [sys.executable, "-m", "xorbits._mars.deploy.oscar.worker"]
 
 
 def _reload_args(args):

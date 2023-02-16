@@ -1,4 +1,4 @@
-# Copyright 2022 XProbe Inc.
+# Copyright 2022-2023 XProbe Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from ...... import tensor as mt
 from ......dataframe.arithmetic import DataFrameMul
 from ......dataframe.base.eval import DataFrameEval
 from ......dataframe.base.isin import DataFrameIsin
-from ......dataframe.core import DataFrameData, SeriesData, DataFrameGroupByData
+from ......dataframe.core import DataFrameData, DataFrameGroupByData, SeriesData
 from ......dataframe.datasource.dataframe import DataFrameDataSource
 from ......dataframe.datasource.read_csv import DataFrameReadCSV
 from ......dataframe.datasource.read_parquet import DataFrameReadParquet
