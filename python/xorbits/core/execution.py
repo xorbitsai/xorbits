@@ -56,7 +56,8 @@ def run(obj: DataRef | list[DataRef] | tuple[DataRef], **kwargs) -> None:
         for ref in refs_to_execute.values()
         if need_to_execute(ref)
     ]
-    mars_execute(mars_tileables, **kwargs)
+    if mars_tileables:
+        mars_execute(mars_tileables, **kwargs)
 
 
 def need_to_execute(ref: DataRef) -> bool:
