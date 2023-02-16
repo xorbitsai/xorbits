@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from io import BytesIO
+from typing import Dict, List, Tuple, Union
 from urllib.parse import urlparse
 
 import numpy as np
@@ -76,12 +77,12 @@ def _find_hdfs_start_end(f, offset, size):
     return start, end
 
 
-def _find_chunk_start_end(f, offset, size):
+def _find_chunk_start_end(f, offset, size, is_first=False):
     if NativeFile is not None and isinstance(f, NativeFile):
         return _find_hdfs_start_end(f, offset, size)
     f.seek(offset)
-    if f.tell() == 0:
-        start = 0
+    if is_first:
+        start = offset
     else:
         f.readline()
         start = f.tell()
@@ -103,6 +104,7 @@ class DataFrameReadCSV(
     sep = StringField("sep")
     header = AnyField("header")
     index_col = Int32Field("index_col")
+    skiprows = Int32Field("skiprows")
     compression = StringField("compression")
     usecols = AnyField("usecols")
     offset = Int64Field("offset")
@@ -187,8 +189,20 @@ class DataFrameReadCSV(
         for path in paths:
             path = path_prefix + path
             total_bytes = file_size(path, storage_options=op.storage_options)
-            offset = 0
-            for _ in range(int(np.ceil(total_bytes * 1.0 / chunk_bytes))):
+            start_pos = 0
+            if op.skiprows is not None:
+                with open_file(
+                    op.path,
+                    compression=op.compression,
+                    storage_options=op.storage_options,
+                ) as f:
+                    for i in range(op.skiprows):
+                        f.readline()
+                    offset = f.tell()
+                    start_pos = offset
+            else:
+                offset = 0
+            for _ in range(int(np.ceil((total_bytes - start_pos) * 1.0 / chunk_bytes))):
                 chunk_op = op.copy().reset_key()
                 chunk_op.path = path
                 chunk_op.offset = offset
@@ -226,7 +240,7 @@ class DataFrameReadCSV(
     def _pandas_read_csv(cls, f, op):
         csv_kwargs = op.extra_params.copy()
         out_df = op.outputs[0]
-        start, end = _find_chunk_start_end(f, op.offset, op.size)
+        start, end = _find_chunk_start_end(f, op.offset, op.size, out_df.index[0] == 0)
         f.seek(start)
         b = FixedSizeFileObject(f, end - start)
         if hasattr(out_df, "dtypes"):
@@ -241,7 +255,7 @@ class DataFrameReadCSV(
                 # convert to Series, if usecols is a scalar
                 df = df[op.usecols]
         else:
-            if start == 0:
+            if out_df.index[0] == 0:
                 # The first chunk contains header
                 # As we specify names and dtype, we need to skip header rows
                 csv_kwargs["header"] = op.header
@@ -364,19 +378,20 @@ class DataFrameReadCSV(
 
 
 def read_csv(
-    path,
-    names=None,
+    path: str,
+    names: Union[List, Tuple] = None,
     sep: str = ",",
-    index_col=None,
-    compression=None,
-    header="infer",
-    dtype=None,
-    usecols=None,
-    nrows=None,
-    chunk_bytes="64M",
-    gpu=None,
-    head_bytes="100k",
-    head_lines=None,
+    index_col: int = None,
+    compression: str = None,
+    header: Union[str, List] = "infer",
+    dtype: Union[str, Dict] = None,
+    usecols: List = None,
+    nrows: int = None,
+    skiprows: int = None,
+    chunk_bytes: Union[str, int] = "64M",
+    gpu: bool = None,
+    head_bytes: Union[str, int] = "100k",
+    head_lines: int = None,
     incremental_index: bool = True,
     use_arrow_dtype: bool = None,
     storage_options: dict = None,
@@ -480,12 +495,8 @@ def read_csv(
         Values to consider as False.
     skipinitialspace : bool, default False
         Skip spaces after delimiter.
-    skiprows : list-like, int or callable, optional
-        Line numbers to skip (0-indexed) or number of lines to skip (int)
-        at the start of the file.
-        If callable, the callable function will be evaluated against the row
-        indices, returning True if the row should be skipped and False otherwise.
-        An example of a valid callable argument would be ``lambda x: x in [0, 2]``.
+    skiprows : int
+        Number of lines to skip (int) at the start of the file.
     skipfooter : int, default 0
         Number of lines at bottom of file to skip (Unsupported with engine='c').
     nrows : int, optional
@@ -696,7 +707,7 @@ def read_csv(
             b = b"".join([f.readline() for _ in range(head_lines)])
         else:
             head_bytes = int(parse_readable_size(head_bytes)[0])
-            head_start, head_end = _find_chunk_start_end(f, 0, head_bytes)
+            head_start, head_end = _find_chunk_start_end(f, 0, head_bytes, True)
             f.seek(head_start)
             b = f.read(head_end - head_start)
         mini_df = pd.read_csv(
@@ -706,6 +717,7 @@ def read_csv(
             dtype=dtype,
             names=names,
             header=header,
+            skiprows=skiprows,
         )
         if header == "infer" and names is not None:
             # ignore header as we always specify names
@@ -734,6 +746,7 @@ def read_csv(
         header=header,
         index_col=index_col,
         usecols=usecols,
+        skiprows=skiprows,
         compression=compression,
         gpu=gpu,
         incremental_index=incremental_index,
