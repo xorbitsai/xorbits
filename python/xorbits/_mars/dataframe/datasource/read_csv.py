@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from io import BytesIO
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 from urllib.parse import urlparse
 
 import numpy as np
@@ -51,7 +51,7 @@ from .core import (
 cudf = lazy_import("cudf")
 
 
-def _find_delimiter(f, block_size=2**16):
+def _find_delimiter(f: Any, block_size: int = 2**16):
     delimiter = b"\n"
     if f.tell() == 0:
         return 0
@@ -63,7 +63,7 @@ def _find_delimiter(f, block_size=2**16):
             return f.tell() - len(b) + b.index(delimiter) + 1
 
 
-def _find_hdfs_start_end(f, offset, size):
+def _find_hdfs_start_end(f: Any, offset: int, size: int):
     # As pyarrow doesn't support `readline` operation (https://github.com/apache/arrow/issues/3838),
     # we need to find the start and end of file block manually.
 
@@ -77,7 +77,7 @@ def _find_hdfs_start_end(f, offset, size):
     return start, end
 
 
-def _find_chunk_start_end(f, offset, size, is_first):
+def _find_chunk_start_end(f: Any, offset: int, size: int, is_first: bool):
     if NativeFile is not None and isinstance(f, NativeFile):
         return _find_hdfs_start_end(f, offset, size)
     f.seek(offset)
