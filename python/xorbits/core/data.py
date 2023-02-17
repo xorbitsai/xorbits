@@ -212,6 +212,23 @@ class DataRef(metaclass=DataRefMeta):
 
                 yield from gen()
 
+    def __len__(self):
+        from .._mars.core import HasShapeTileable
+        from .execution import run
+
+        if isinstance(self.data._mars_entity, HasShapeTileable):
+            try:
+                return int(self.data._mars_entity.shape[0])
+            except (IndexError, ValueError):
+                # shape is unknown, execute it
+                run(self)
+                try:
+                    return int(self.data._mars_entity.shape[0])
+                except (IndexError, ValueError):  # happens when dimension is 0
+                    return 0
+        else:
+            raise TypeError(f"object of type '{self.data.data_type}' has no len()")
+
     @safe_repr_str
     def __str__(self):
         from .execution import run

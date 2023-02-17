@@ -118,6 +118,28 @@ def test_manual_execution(setup, dummy_int_series):
     assert not any([need_to_execute(ref) for ref in series_to_execute])
 
 
+def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
+    assert need_to_execute(dummy_df)
+    assert need_to_execute(dummy_int_series)
+    assert need_to_execute(dummy_int_2d_array)
+
+    assert len(dummy_df) == 3
+    assert len(dummy_int_series) == 5
+    assert len(dummy_int_2d_array) == 3
+
+    filtered = dummy_df[dummy_df["foo"] < 2]
+    assert len(filtered) == 2
+    assert not need_to_execute(filtered)
+
+    filtered = dummy_int_series[dummy_int_series < 2]
+    assert len(filtered) == 1
+    assert not need_to_execute(filtered)
+
+    filtered = dummy_int_2d_array[dummy_int_2d_array < 2]
+    assert len(filtered) == 2
+    assert not need_to_execute(filtered)
+
+
 @pytest.fixture()
 def ip():
     from IPython.testing.globalipapp import start_ipython
