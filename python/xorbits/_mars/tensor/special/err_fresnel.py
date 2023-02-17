@@ -224,6 +224,6 @@ def voigt_profile(x, sigma, gamma, **kwargs):
     return op(x, sigma, gamma)
 
 
-if hasattr(spspecial, 'voigt_profile'):
+if hasattr(spspecial, "voigt_profile"):
     func = spspecial.voigt_profile
     voigt_profile = implement_scipy(func)(infer_dtype(func)(voigt_profile))
