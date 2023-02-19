@@ -81,14 +81,26 @@ The performances are shown as below.
 TPC-H SF100: Xorbits vs Dask
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: https://xorbits.io/res/benchmark_dask.png
+.. only:: not zh_cn
+
+    .. image:: https://xorbits.io/res/benchmark_dask.png
+
+.. only:: zh_cn
+
+    .. image:: https://xorbits.cn/assets/images/benchmark_dask.png
 
 Q21 was excluded since Dask ran out of memory. Across all queries, Xorbits was found to be 7.3x faster than Dask.
 
 TPC-H SF100: Xorbits vs Pandas API on Spark
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: https://xorbits.io/res/benchmark_spark.png
+.. only:: not zh_cn
+
+    .. image:: https://xorbits.io/res/benchmark_spark.png
+
+.. only:: zh_cn
+
+    .. image:: https://xorbits.cn/assets/images/benchmark_spark.png
 
 Across all queries, the two systems have roughly similar performance, but Xorbits provided much better API compatibility.
 Pandas API on Spark failed on Q1, Q4, Q7, Q21, and ran out of memory on Q20.
@@ -96,7 +108,13 @@ Pandas API on Spark failed on Q1, Q4, Q7, Q21, and ran out of memory on Q20.
 TPC-H SF100: Xorbits vs Modin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: https://xorbits.io/res/benchmark_modin.png
+.. only:: not zh_cn
+
+    .. image:: https://xorbits.io/res/benchmark_modin.png
+
+.. only:: zh_cn
+
+    .. image:: https://xorbits.cn/assets/images/benchmark_modin.png
 
 Although Modin ran out of memory for most of the queries that involve heavy data shuffles,
 making the performance difference less obvious, Xorbits was still found to be 3.2x faster than Modin.
@@ -104,7 +122,13 @@ making the performance difference less obvious, Xorbits was still found to be 3.
 TPC-H SF1000: Xorbits
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: https://xorbits.io/res/xorbits_1t.png
+.. only:: not zh_cn
+
+    .. image:: https://xorbits.io/res/xorbits_1t.png
+
+.. only:: zh_cn
+
+    .. image:: https://xorbits.cn/assets/images/xorbits_1t.png
 
 Although Xorbits is able to pass all the queries in a row,
 Dask, Pandas API on Spark and Modin failed on most of the queries.
