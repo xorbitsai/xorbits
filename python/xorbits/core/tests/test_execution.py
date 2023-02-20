@@ -15,6 +15,7 @@
 import pytest
 
 from ...pandas import get_dummies
+from ...remote import spawn
 from ..execution import need_to_execute, run
 
 
@@ -138,6 +139,11 @@ def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
     filtered = dummy_int_2d_array[dummy_int_2d_array < 2]
     assert len(filtered) == 2
     assert not need_to_execute(filtered)
+
+    obj = spawn(lambda _: 1)
+    with pytest.raises(TypeError):
+        len(obj)
+    assert need_to_execute(obj)
 
 
 @pytest.fixture()
