@@ -19,8 +19,10 @@ from ..task_info_collector import TaskInfoCollectorActor
 
 class TaskWorkerService(AbstractService):
     async def start(self):
+        profiling_config = self._config.get("profiling", dict())
         await mo.create_actor(
             TaskInfoCollectorActor,
+            profiling_config,
             uid=TaskInfoCollectorActor.default_uid(),
             address=self._address,
         )

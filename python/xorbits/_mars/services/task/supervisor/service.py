@@ -56,8 +56,11 @@ class TaskSupervisorService(AbstractService):
             address=self._address,
             uid=TaskConfigurationActor.default_uid(),
         )
+
+        profiling_config = self._config.get("profiling", dict())
         await mo.create_actor(
             TaskInfoCollectorActor,
+            profiling_config,
             uid=TaskInfoCollectorActor.default_uid(),
             address=self._address,
         )

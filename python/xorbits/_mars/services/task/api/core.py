@@ -151,3 +151,8 @@ class AbstractTaskAPI(ABC):
         """
         Save task information using yaml format.
         """
+
+    async def collect_task_info_enabled(self):
+        """
+        Return if task info collection is enabled.
+        """
