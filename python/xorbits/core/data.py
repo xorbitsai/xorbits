@@ -225,7 +225,9 @@ class DataRef(metaclass=DataRefMeta):
                 try:
                     return int(self.data._mars_entity.shape[0])
                 except (IndexError, ValueError):  # happens when dimension is 0
-                    return 0
+                    raise TypeError(
+                        f"object with shape {self.data._mars_entity.shape} has no len()"
+                    )
         else:
             raise TypeError(f"object of type '{self.data.data_type}' has no len()")
 

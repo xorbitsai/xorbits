@@ -140,6 +140,9 @@ def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
     assert len(filtered) == 2
     assert not need_to_execute(filtered)
 
+    with pytest.raises(TypeError):
+        len(dummy_int_2d_array.sum())
+
     obj = spawn(lambda _: 1)
     with pytest.raises(TypeError):
         len(obj)
