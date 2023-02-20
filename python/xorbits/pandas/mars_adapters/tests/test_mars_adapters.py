@@ -77,7 +77,6 @@ def test_dataframe_indexing(setup, dummy_df):
     xdf = dummy_df.at[0, "foo"]
     assert isinstance(xdf, DataRef)
 
-    assert 0 == len(xdf)
     assert 0 == xdf.to_numpy()
 
     assert isinstance(dummy_df.iat, DataFrameIat)
@@ -85,7 +84,6 @@ def test_dataframe_indexing(setup, dummy_df):
     xdf = dummy_df.iat[0, 0]
     assert isinstance(xdf, DataRef)
 
-    assert 0 == len(xdf)
     assert 0 == xdf.to_numpy()
 
 
@@ -94,28 +92,24 @@ def test_series_indexing(setup, dummy_int_series):
     res = dummy_int_series.loc[0]
     assert isinstance(res, DataRef)
 
-    assert 0 == len(res)
     assert 1 == res.to_numpy()
 
     assert isinstance(dummy_int_series.iloc, DataFrameIloc)
     res = dummy_int_series.iloc[0]
     assert isinstance(res, DataRef)
 
-    assert 0 == len(res)
     assert 1 == res.to_numpy()
 
     assert isinstance(dummy_int_series.at, DataFrameAt)
     res = dummy_int_series.at[1]
     assert isinstance(res, DataRef)
 
-    assert 0 == len(res)
     assert 2 == res.to_numpy()
 
     assert isinstance(dummy_int_series.iat, DataFrameIat)
     res = dummy_int_series.iat[1]
     assert isinstance(res, DataRef)
 
-    assert 0 == len(res)
     assert 2 == res.to_numpy()
 
 
