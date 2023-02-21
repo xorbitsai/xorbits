@@ -24,6 +24,7 @@ from ..._mars.services.cluster.backends import (
     register_cluster_backend,
 )
 from ..._mars.services.cluster.core import NodeRole
+from ._constants import SERVICE_PID_FILE
 from .config import XorbitsReplicationConfig
 
 logger = logging.getLogger(__name__)
@@ -205,7 +206,7 @@ class K8SClusterBackend(AbstractClusterBackend):
 class K8SServiceMixin:
     @staticmethod
     def write_pid_file():
-        with open("/tmp/xorbits-service.pid", "w") as pid_file:
+        with open(SERVICE_PID_FILE, "w") as pid_file:
             pid_file.write(str(os.getpid()))
 
     async def wait_all_supervisors_ready(self):

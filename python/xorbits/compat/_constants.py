@@ -12,22 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..._mars.deploy.oscar.supervisor import SupervisorCommandRunner
-from .core import K8SServiceMixin
+SUPPORTED_PY_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
 
-
-class K8SSupervisorCommandRunner(K8SServiceMixin, SupervisorCommandRunner):
-    async def start_services(self):
-        await super().start_services()
-        await self.start_readiness_server()
-        self.write_pid_file()
-
-    async def stop_services(self):
-        await self.stop_readiness_server()
-        await super().stop_services()
-
-
-main = K8SSupervisorCommandRunner()
-
-if __name__ == "__main__":  # pragma: no branch
-    main()
+# Packages that require the compatible version between local and cluster
+COMPATIBLE_DEPS = ["cloudpickle"]

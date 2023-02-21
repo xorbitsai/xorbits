@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-02 13:00+0800\n"
+"POT-Creation-Date: 2023-02-08 17:45+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,9 +29,7 @@ msgstr "前置条件"
 msgid ""
 "Install Xorbits on the machine where you plan to run the kubernetes "
 "deploy code. Refer to :ref:`installation document <installation>`."
-msgstr ""
-"在 Kubernetes 集群管理机器上安装Xorbits。参考 :ref:`安装教程 <"
-"installation>`。"
+msgstr "在 Kubernetes 集群管理机器上安装Xorbits。参考 :ref:`安装教程 <installation>`。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:13
 msgid "Kubernetes"
@@ -43,16 +41,14 @@ msgid ""
 "enable the `ingress service <https://kubernetes.io/docs/concepts"
 "/services-networking/ingress/>`_."
 msgstr ""
-"确保机器上有一个可用的 Kubernetes 集群，同时开启 `ingress 服务 <https://"
-"kubernetes.io/zh-cn/docs/concepts/services-networking/ingress/>`_。"
+"确保机器上有一个可用的 Kubernetes 集群，同时开启 `ingress 服务 <https://kubernetes.io/zh-"
+"cn/docs/concepts/services-networking/ingress/>`_。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:16
 msgid ""
 "For example, if you use Minikube, start a cluster and enable ingress like"
 " this:"
-msgstr ""
-"例如，如果你的机器上安装的是 Minikube ，运行如下命令以启动集群和开启 "
-"ingress ："
+msgstr "例如，如果你的机器上安装的是 Minikube ，运行如下命令以启动集群和开启 ingress ："
 
 #: ../../source/user_guide/deployment_kubernetes.rst:23
 msgid ""
@@ -61,8 +57,7 @@ msgid ""
 "enabled correctly."
 msgstr ""
 "参考 `Minikube 文档 <https://kubernetes.io/zh-cn/docs/tasks/access-"
-"application-cluster/ingress-minikube/>`_ 以验证 ingress 服务是否正确启动"
-"。"
+"application-cluster/ingress-minikube/>`_ 以验证 ingress 服务是否正确启动。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:25
 msgid ""
@@ -70,10 +65,10 @@ msgid ""
 "<https://github.com/chipmk/docker-mac-net-connect>`_ is needed due to its"
 " `limitation <https://github.com/kubernetes/minikube/issues/7332>`_:"
 msgstr ""
-"对于 macOS 操作系统上基于 docker 后端的 Minikube 集群，由于其网络架构的 `"
-"限制 <https://github.com/kubernetes/minikube/issues/7332>`_，需要安装 `"
-"docker-mac-net-connect <https://github.com/chipmk/docker-mac-net-connect>"
-"`_ 以正确使用 ingress 服务代理出来的地址。参考以下命令："
+"对于 macOS 操作系统上基于 docker 后端的 Minikube 集群，由于其网络架构的 `限制 "
+"<https://github.com/kubernetes/minikube/issues/7332>`_，需要安装 `docker-mac-"
+"net-connect <https://github.com/chipmk/docker-mac-net-connect>`_ 以正确使用 "
+"ingress 服务代理出来的地址。参考以下命令："
 
 #: ../../source/user_guide/deployment_kubernetes.rst:36
 msgid "Then deploy Xorbits cluster, for example:"
@@ -89,17 +84,16 @@ msgid ""
 "http://<ingress_service_ip>:80 is ready!`` soon, and you can access the "
 "web UI of your Xorbits cluster using the endpoint."
 msgstr ""
-"运行上述部署代码后，控制台将出现形如 ``Xorbits endpoint http://<ingress_"
-"service_ip>:80 is ready!`` 的日志。此时意味着部署成功，你可以通过日志中的"
-"地址访问 Xorbits 集群的网页。"
+"运行上述部署代码后，控制台将出现形如 ``Xorbits endpoint http://<ingress_service_ip>:80 is "
+"ready!`` 的日志。此时意味着部署成功，你可以通过日志中的地址访问 Xorbits 集群的网页。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:50
 msgid ""
 "``new_cluster`` api refers to "
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster`."
 msgstr ""
-"部署代码中的 ``new_cluster`` 接口的完整参数和说明请参考 :meth:`xorbits."
-"deploy.kubernetes.client.new_cluster`。"
+"部署代码中的 ``new_cluster`` 接口的完整参数和说明请参考 "
+":meth:`xorbits.deploy.kubernetes.client.new_cluster`。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:52
 msgid "To verify the cluster:"
@@ -117,36 +111,46 @@ msgid ""
 "the kubernetes deployment. Each released version of Xorbits has its "
 "image, distinguished by the ``<xorbits version>``."
 msgstr ""
-"Xorbits 默认使用 ``xprobe/xorbits`` 中的镜像。每个 Xorbits 的发布版本均会"
-"包含带有版本号标签 ``<xorbits version>`` 的镜像，形式为 ``xprobe/xorbits:"
-"<xorbits version>``。"
+"Xorbits 默认使用 ``xprobe/xorbits`` 中的镜像。每个 Xorbits 的发布版本均会包含带有版本号标签 "
+"``<xorbits version>`` 的镜像，形式为 ``xprobe/xorbits:<xorbits version>``。"
 
-#: ../../source/deployment/kubernetes.rst:68
+#: ../../source/user_guide/deployment_kubernetes.rst:68
 msgid ""
-"Since v0.1.2, each release image of xorbits supports python ``3.7``, "
+"Since ``v0.1.2``, each release image of xorbits supports python ``3.7``, "
 "``3.8``, ``3.9`` and ``3.10``, with ``-py<python_version>`` as the suffix"
 " of the image tag."
 msgstr ""
-"自 ``v0.1.2`` 起，每个 Xorbits 的发布版本支持 python ``3.7``、``3.8``、``"
-"3.9`` 和 ``3.10`` 四个版本，镜像标签以 ``-py<python_version>`` 为后缀。"
+"自 ``v0.1.2`` 起，每个 Xorbits 的发布版本支持 python ``3.7``、``3.8``、``3.9`` 和 "
+"``3.10`` 四个版本，镜像标签以 ``-py<python_version>`` 为后缀。"
 
-#: ../../source/deployment/kubernetes.rst:71
+#: ../../source/user_guide/deployment_kubernetes.rst:71
 msgid ""
 "For example, ``xprobe/xorbits:v0.1.2-py3.10`` means the image is built on"
 " python ``3.10``."
 msgstr ""
-"例如，标签为 ``xprobe/xorbits:v0.1.2-py3.10`` 的镜像代表着该镜像中的 "
-"Xorbits 基于 python ``3.10`` 版本构建。"
+"例如，标签为 ``xprobe/xorbits:v0.1.2-py3.10`` 的镜像代表着该镜像中的 Xorbits 基于 python "
+"``3.10`` 版本构建。"
 
-#: ../../source/deployment/kubernetes.rst:73
+#: ../../source/user_guide/deployment_kubernetes.rst:73
 msgid ""
 "By default, the image tagged by ``xprobe/xorbits:<xorbits version>`` "
 "still exists, and it is built on python ``3.9``."
 msgstr ""
-"默认情况下，标签为 ``xprobe/xorbits:<xorbits version>`` 的镜像依然存在，"
-"它基于python ``3.9`` 构建。"
+"默认情况下，标签为 ``xprobe/xorbits:<xorbits version>`` 的镜像依然存在，它基于python ``3.9`` "
+"构建。"
 
-#: ../../source/deployment/kubernetes.rst:76
+#: ../../source/user_guide/deployment_kubernetes.rst:75
+msgid ""
+"Since ``v0.2.0``, Xorbits automatically selects the deployment image "
+"according to your local python version by default. For example, if your "
+"local python version is ``3.9``, Xorbits uses the image tagged by "
+"``xprobe/xorbits:<xorbits version>-py3.9`` during deployment."
+msgstr ""
+"自 ``v0.2.0`` 起, 默认情况下，Xorbits 将根据本地的 Python 版本自动选择 Kubernetes "
+"部署时的镜像。例如，如果你的本地 Python 版本为 ``3.9``，Xorbits 将默认在部署过程中使用标签为 "
+"``xprobe/xorbits:<xorbits version>-py3.9`` 的镜像。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:79
 msgid ""
 "If you need to build an image from source, the related Dockerfiles exists"
 " at `this position <https://github.com/xprobe-"
@@ -155,33 +159,30 @@ msgid ""
 "<https://docs.docker.com/engine/reference/commandline/build/>`_ to build "
 "your own Xorbits image."
 msgstr ""
-"如果你希望从源码制作一个镜像，可以参考我们的 `Dockerfile <https://github."
-"com/xprobe-inc/xorbits/tree/main/python/xorbits/deploy/docker>`_ 和 `"
-"Docker 构建文档 <https://docs.docker.com/engine/reference/commandline/"
-"build/>`_ 进行制作。"
+"如果你希望从源码制作一个镜像，可以参考我们的 `Dockerfile <https://github.com/xprobe-"
+"inc/xorbits/tree/main/python/xorbits/deploy/docker>`_ 和 `Docker 构建文档 "
+"<https://docs.docker.com/engine/reference/commandline/build/>`_ 进行制作。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:79
+#: ../../source/user_guide/deployment_kubernetes.rst:82
 msgid ""
 "After you build your own image, push it to a image repository accessible "
 "by your K8s cluster, e.g. your own DockerHub namespace."
-msgstr ""
-"一旦你的镜像构建完成，需要将其上传至一个你的 Kubernetes 集群能够访问到的"
-"仓库，例如，你自己的 Dockerhub 命名空间。"
+msgstr "一旦你的镜像构建完成，需要将其上传至一个你的 Kubernetes 集群能够访问到的仓库，例如，你自己的 Dockerhub 命名空间。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:81
+#: ../../source/user_guide/deployment_kubernetes.rst:84
 msgid ""
 "Finally, specify your own image during the deployment process through the"
 " ``image`` option of the "
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster` api."
 msgstr ""
-"最后，使用部署接口 :meth:`xorbits.deploy.kubernetes.client.new_cluster` "
-"中的 ``image`` 选项去指定你的镜像即可。"
+"最后，使用部署接口 :meth:`xorbits.deploy.kubernetes.client.new_cluster` 中的 "
+"``image`` 选项去指定你的镜像即可。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:87
+#: ../../source/user_guide/deployment_kubernetes.rst:90
 msgid "Install Python Packages"
 msgstr "安装 Python 包"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:88
+#: ../../source/user_guide/deployment_kubernetes.rst:91
 msgid ""
 "Refer `DockerFile <https://github.com/xprobe-"
 "inc/xorbits/blob/main/python/xorbits/deploy/docker/Dockerfile.base>`_ for"
@@ -190,20 +191,21 @@ msgid ""
 "``pip`` and ``conda`` options of the "
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster` api."
 msgstr ""
-"Xorbits 的发布镜像中已经包含了一些 Python 包，参考 `DockerFile <https://"
-"github.com/xprobe-inc/xorbits/blob/main/python/xorbits/deploy/docker/"
-"Dockerfile.base>`_ 中安装内容。如果你想安装额外的 Python 包或者改变其中"
-"某些包的版本，使用 :meth:`xorbits.deploy.kubernetes.client.new_cluster` "
-"接口中的 ``pip`` 和 ``conda`` 选项即可。"
+"Xorbits 的发布镜像中已经包含了一些 Python 包，参考 `DockerFile <https://github.com/xprobe-"
+"inc/xorbits/blob/main/python/xorbits/deploy/docker/Dockerfile.base>`_ "
+"中安装内容。如果你想安装额外的 Python 包或者改变其中某些包的版本，使用 "
+":meth:`xorbits.deploy.kubernetes.client.new_cluster` 接口中的 ``pip`` 和 "
+"``conda`` 选项即可。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:91
+#: ../../source/user_guide/deployment_kubernetes.rst:94
 msgid ""
 "Please make sure your K8s cluster can access the corresponding `channel "
 "of conda <https://docs.conda.io/projects/conda/en/latest/user-"
 "guide/concepts/channels.html>`_ or `PyPi <https://pypi.org/>`_, when "
 "using ``pip`` and ``conda`` options."
 msgstr ""
-"注意，使用 ``pip`` 和 ``conda`` 选项时，请确保你的 Kubernetes 集群能够"
-"访问 `PyPi <https://pypi.org/>`_ 和 `conda对应的通道 <https://docs.conda."
-"io/projects/conda/en/latest/user-guide/concepts/channels.html>`_。"
+"注意，使用 ``pip`` 和 ``conda`` 选项时，请确保你的 Kubernetes 集群能够访问 `PyPi "
+"<https://pypi.org/>`_ 和 `conda对应的通道 "
+"<https://docs.conda.io/projects/conda/en/latest/user-"
+"guide/concepts/channels.html>`_。"
 

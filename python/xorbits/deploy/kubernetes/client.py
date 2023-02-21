@@ -24,6 +24,8 @@ from ..._mars.lib.aio import new_isolation, stop_isolation
 from ..._mars.services.cluster.api import WebClusterAPI
 from ..._mars.session import new_session
 from ..._mars.utils import calc_size_by_str
+from ...compat._constants import SUPPORTED_PY_VERSIONS
+from ...utils import get_local_py_version
 from .config import (
     IngressConfig,
     NamespaceConfig,
@@ -117,6 +119,14 @@ class KubernetesCluster:
             raise TypeError("`pip` must be str or List[str] type.")
         if conda is not None and not isinstance(conda, (str, list)):  # pragma: no cover
             raise TypeError("`conda` must be str or List[str] type.")
+        local_py_version = get_local_py_version()
+        if (
+            image is None and local_py_version not in SUPPORTED_PY_VERSIONS
+        ):  # pragma: no cover
+            raise RuntimeError(
+                f"Xorbits does not support Kubernetes deployment under your python version {local_py_version}. "
+                f"Please change the python version to one of the following versions: {SUPPORTED_PY_VERSIONS}."
+            )
 
         self._api_client = kube_api_client
         self._core_api = kube_client.CoreV1Api(kube_api_client)

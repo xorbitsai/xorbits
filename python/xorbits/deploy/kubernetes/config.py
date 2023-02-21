@@ -21,13 +21,15 @@ from typing import Any, Dict, List, Optional, Union
 
 from ... import __version__
 from ..._mars.utils import calc_size_by_str, parse_readable_size
+from ...compat._constants import COMPATIBLE_DEPS
+from ...utils import get_local_package_version, get_local_py_version
+from ._constants import SERVICE_PID_FILE
 
 try:
     from kubernetes.client import ApiClient
 except ImportError:  # pragma: no cover
     ApiClient = None
 
-DEFAULT_IMAGE = "xprobe/xorbits:v" + __version__
 DEFAULT_WORKER_CACHE_MEM = "40%"
 
 
@@ -442,6 +444,21 @@ class TcpSocketProbeConfig(ProbeConfig):
         return ret
 
 
+class CommandExecProbeConfig(ProbeConfig):
+    """
+    Configuration builder for command probe
+    """
+
+    def __init__(self, commands: List[str], **kwargs):
+        super().__init__(**kwargs)
+        self._commands = commands
+
+    def build(self):
+        ret = super().build()
+        ret["exec"] = {"command": self._commands}
+        return ret
+
+
 class ReplicationConfig(KubeConfig):
     """
     Base configuration builder for Kubernetes replication controllers
@@ -524,6 +541,15 @@ class ReplicationConfig(KubeConfig):
             content = "\n".join(source)
         return content
 
+    @staticmethod
+    def get_compatible_packages() -> List[str]:
+        deps = []
+        for dep in COMPATIBLE_DEPS:
+            version = get_local_package_version(dep)
+            if version is not None:
+                deps.append(f"{dep}=={version}")
+        return deps
+
     @abc.abstractmethod
     def build_container_command(self) -> List:
         """Output container command"""
@@ -531,6 +557,14 @@ class ReplicationConfig(KubeConfig):
         # All install contents must be wrapped in double quotes to ensure the correctness
         # when passing to the shell script.
         # At the same time, each command is followed by a semicolon to separate the individual commands.
+        deps = self.get_compatible_packages()
+        if deps:
+            # Install for consistent packages must be at the top of all commands.
+            # This does not affect user behavior.
+            cmd += (
+                f'/srv/install.sh pip_compatible "{self.get_install_content(deps)}" ; '
+            )
+
         if self._pip is not None:
             cmd += f'/srv/install.sh pip "{self.get_install_content(self._pip)}" ; '
         if self._conda is not None:
@@ -651,7 +685,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
 
         super().__init__(
             self.rc_name,
-            image or DEFAULT_IMAGE,
+            image or self.get_default_image(),
             replicas,
             resource_request=req_res,
             resource_limit=limit_res if limit_resources else None,
@@ -666,6 +700,12 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             self.add_volume(vol)
 
         self.add_labels({"xorbits/service-type": self.rc_name})
+
+    @staticmethod
+    def get_default_image():
+        image = "xprobe/xorbits:v" + __version__
+        image += f"-py{get_local_py_version()}"
+        return image
 
     def add_default_envs(self):
         self.add_env("MARS_K8S_POD_NAME", field_path="metadata.name")
@@ -698,12 +738,17 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         """
         raise NotImplementedError  # pragma: no cover
 
-    def config_startup_probe(self):
+    @staticmethod
+    def config_startup_probe() -> "ProbeConfig":
         """
         The startup probe is used to check whether the startup is smooth.
         The initial_delay of the startup probe can be sensitive to the system.
         """
-        raise NotImplementedError  # pragma: no cover
+        return CommandExecProbeConfig(
+            ["sh", "-c", f'until [ -f "{SERVICE_PID_FILE}" ]; do sleep 3s; done'],
+            failure_thresh=5,
+            initial_delay=10,
+        )
 
     @staticmethod
     def get_local_app_module(mod_name) -> str:
@@ -737,11 +782,6 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(
             self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
-        )
-
-    def config_startup_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(
-            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
         )
 
     def build_container_command(self):
@@ -815,11 +855,6 @@ class XorbitsWorkersConfig(XorbitsReplicationConfig):
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(
             self._readiness_port, timeout=60, failure_thresh=10, initial_delay=0
-        )
-
-    def config_startup_probe(self) -> "TcpSocketProbeConfig":
-        return TcpSocketProbeConfig(
-            self._readiness_port, timeout=60, failure_thresh=10, initial_delay=20
         )
 
     def config_init_containers(self) -> List[Dict]:
