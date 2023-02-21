@@ -620,6 +620,95 @@ def test_read_csv_execution(setup):
         pd.testing.assert_frame_equal(df, mdf2.sort_index())
 
 
+csv_with_comment = """# comment line
+1 2.2
+2 4.4
+3 6.6
+4 8.8
+5 11.0
+6 13.2
+7 15.4
+8 17.6
+9 19.8
+10 22.0
+"""
+csv_with_comment_and_header = """# comment line
+col1 col2
+1 2.2
+2 4.4
+3 6.6
+4 8.8
+5 11.0
+6 13.2
+7 15.4
+8 17.6
+9 19.8
+10 22.0
+"""
+
+
+def test_read_csv_execution_with_skiprows(setup):
+    # test skiprows(GH-193)
+    with tempfile.TemporaryDirectory() as tempdir:
+        test_file = os.path.join(tempdir, "with_comments.csv")
+        with open(test_file, "w") as f:
+            f.write(csv_with_comment)
+
+        pandas_df = pd.read_csv(
+            test_file,
+            sep=" ",
+            index_col=False,
+            skiprows=1,
+            names=("val1", "val2"),
+            dtype={"val1": "int", "val2": "float"},
+        )
+        mdf = (
+            md.read_csv(
+                test_file,
+                sep=" ",
+                index_col=False,
+                skiprows=1,
+                names=("val1", "val2"),
+                dtype={"val1": "int", "val2": "float"},
+            )
+            .execute()
+            .fetch()
+        )
+        pd.testing.assert_frame_equal(pandas_df, mdf)
+        mdf = (
+            md.read_csv(
+                test_file,
+                sep=" ",
+                index_col=False,
+                skiprows=1,
+                names=("val1", "val2"),
+                dtype={"val1": "int", "val2": "float"},
+                chunk_bytes=20,
+            )
+            .execute()
+            .fetch()
+        )
+        pd.testing.assert_frame_equal(pandas_df, mdf)
+
+        # comment and header
+        test_file = os.path.join(tempdir, "with_comment_and_header.csv")
+        with open(test_file, "w") as f:
+            f.write(csv_with_comment_and_header)
+
+        pandas_df = pd.read_csv(
+            test_file,
+            sep=" ",
+            index_col=False,
+            skiprows=1,
+        )
+        mdf = (
+            md.read_csv(test_file, sep=" ", index_col=False, skiprows=1, chunk_bytes=20)
+            .execute()
+            .fetch()
+        )
+        pd.testing.assert_frame_equal(pandas_df, mdf)
+
+
 @pytest.mark.skipif(pa is None, reason="pyarrow not installed")
 def test_read_csv_use_arrow_dtype(setup):
     rs = np.random.RandomState(0)

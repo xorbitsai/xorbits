@@ -114,7 +114,7 @@ jobs:
       env:
         MODULE: ${{ matrix.module }}
       run: |
-        pip install numpy scipy cython coverage
+        pip install numpy scipy cython coverage flaky
         
         if [[ "$PYTHON" == "3.9" ]]; then
           conda install numba

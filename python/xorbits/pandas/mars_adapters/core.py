@@ -95,6 +95,7 @@ def _collect_dataframe_magic_methods() -> Set[str]:
         "__str__",
         "__setattr__",
         "__getattr__",
+        "__len__",
     }
     all_cls = (
         MARS_DATAFRAME_TYPE
