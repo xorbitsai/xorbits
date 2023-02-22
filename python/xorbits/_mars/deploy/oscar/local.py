@@ -14,11 +14,9 @@
 # limitations under the License.
 
 import asyncio
-import atexit
 import logging
 import os
 import sys
-from concurrent.futures import Future as SyncFuture
 from typing import Dict, List, Union
 
 import numpy as np
@@ -38,11 +36,6 @@ from .service import start_supervisor, start_worker, stop_supervisor, stop_worke
 from .session import AbstractSession, _new_session, ensure_isolation_created
 
 logger = logging.getLogger(__name__)
-
-_is_exiting_future = SyncFuture()
-atexit.register(
-    lambda: _is_exiting_future.set_result(0) if not _is_exiting_future.done() else None
-)
 
 # The default config file.
 DEFAULT_CONFIG_FILE = os.path.join(
@@ -230,7 +223,6 @@ class LocalCluster:
         self._bands_to_resource = execution_config.get_deploy_band_resources()
         self._supervisor_pool = None
         self._worker_pools = []
-        self._exiting_check_task = None
 
         self.supervisor_address = None
         self.web_address = None
@@ -326,12 +318,6 @@ class LocalCluster:
             self.web_address = await web_actor.get_web_address()
             logger.warning("Web service started at %s", self.web_address)
 
-        self._exiting_check_task = asyncio.create_task(self._check_exiting())
-
-    async def _check_exiting(self):
-        await asyncio.wrap_future(_is_exiting_future)
-        await self.stop()
-
     async def _start_supervisor_pool(self):
         supervisor_modules = get_third_party_modules_from_config(
             self._config, NodeRole.SUPERVISOR
@@ -395,7 +381,6 @@ class LocalCluster:
             await worker_pool.stop()
         await self._supervisor_pool.stop()
         AbstractSession.reset_default()
-        self._exiting_check_task.cancel()
         Router.set_instance(None)
 
 
