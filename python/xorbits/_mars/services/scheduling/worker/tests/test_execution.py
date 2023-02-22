@@ -445,10 +445,17 @@ async def test_execute_with_pure_deps(actor_pool):
     chunk_graph.add_edge(dep, remote_result)
 
     subtask = Subtask(
-        f"test_subtask_{uuid.uuid4()}", session_id=session_id, chunk_graph=chunk_graph
+        f"test_subtask_{uuid.uuid4()}",
+        session_id=session_id,
+        task_id="test_task",
+        chunk_graph=chunk_graph,
     )
     # subtask shall run well without data of `dep` available
-    await execution_ref.run_subtask(subtask, "numa-0", pool.external_address)
+    subtask_result = await execution_ref.run_subtask(
+        subtask, "numa-0", pool.external_address
+    )
+    assert subtask_result.status == SubtaskStatus.succeeded
+
     res = await storage_api.get(remote_result.key)
     assert res == session_id
 
@@ -526,7 +533,10 @@ async def test_cancel_without_kill(actor_pool):
     chunk_graph.add_node(remote_result)
 
     subtask = Subtask(
-        f"test_subtask_{uuid.uuid4()}", session_id=session_id, chunk_graph=chunk_graph
+        f"test_subtask_{uuid.uuid4()}",
+        session_id=session_id,
+        task_id=f"test_task_{uuid.uuid4()}",
+        chunk_graph=chunk_graph,
     )
     aiotask = asyncio.create_task(
         execution_ref.run_subtask(subtask, "numa-0", pool.external_address)
@@ -547,11 +557,15 @@ async def test_cancel_without_kill(actor_pool):
     chunk_graph.add_node(remote_result)
 
     subtask = Subtask(
-        f"test_subtask_{uuid.uuid4()}", session_id=session_id, chunk_graph=chunk_graph
+        f"test_subtask_{uuid.uuid4()}",
+        session_id=session_id,
+        task_id=f"test_task_{uuid.uuid4()}",
+        chunk_graph=chunk_graph,
     )
-    await asyncio.wait_for(
+    subtask_result = await asyncio.wait_for(
         execution_ref.run_subtask(subtask, "numa-0", pool.external_address), timeout=30
     )
+    assert subtask_result.status == SubtaskStatus.succeeded
 
     # check if slots not killed (or slot assignment may be cancelled)
     if os.path.exists(executed_file):
