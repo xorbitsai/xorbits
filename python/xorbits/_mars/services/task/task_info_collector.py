@@ -297,7 +297,9 @@ class TaskInfoCollector:
 
 
 class TaskInfoCollectorActor(mo.Actor):
-    def __init__(self, profiling_config: Dict[str, Any]):
+    def __init__(self, profiling_config: Optional[Dict[str, Any]] = None):
+        if profiling_config is None:
+            profiling_config = dict()
         self.profiling_config = profiling_config
         self.experimental_profiling_config = profiling_config.get(
             "experimental", dict()

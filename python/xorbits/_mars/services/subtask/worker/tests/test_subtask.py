@@ -22,6 +22,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from xorbits._mars.services.task.task_info_collector import TaskInfoCollectorActor
+
 from ..... import dataframe as md
 from ..... import oscar as mo
 from ..... import remote as mr
@@ -56,6 +58,11 @@ class FakeTaskManager(TaskManagerActor):
             reducer_indexes=[(0, 0)],
             reducer_bands=[(self.address, "numa-0")],
         )
+
+
+class MockTaskInfoCollectorActor(mo.Actor):
+    def collect_task_info_enabled(self):
+        return False
 
 
 @pytest.fixture
@@ -98,6 +105,11 @@ async def actor_pool():
             FakeTaskManager,
             session_id,
             uid=FakeTaskManager.gen_uid(session_id),
+            address=pool.external_address,
+        )
+        await mo.create_actor(
+            MockTaskInfoCollectorActor,
+            uid=TaskInfoCollectorActor.default_uid(),
             address=pool.external_address,
         )
         manager = await mo.create_actor(
