@@ -121,9 +121,11 @@ class SubtaskProcessor:
         self._meta_api = meta_api
         self._worker_meta_api = worker_meta_api
         collect_task_info = subtask.extra_config and subtask.extra_config.get(
-            "collect_task_info", False
+            "collect_task_info", None
         )
-        self._task_info_collector = TaskInfoCollector(self._band[0], collect_task_info)
+        self._task_info_collector = TaskInfoCollector(
+            subtask.session_id, subtask.task_id, self._band[0], collect_task_info
+        )
 
         # add metrics
         self._subtask_execution_time = Metrics.gauge(
