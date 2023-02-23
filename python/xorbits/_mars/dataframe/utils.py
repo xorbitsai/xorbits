@@ -38,6 +38,7 @@ from ..utils import (
     is_full_slice,
     lazy_import,
     parse_readable_size,
+    parse_version,
     sbytes,
     tokenize,
 )
@@ -49,6 +50,14 @@ except ImportError:  # pragma: no cover
 
 cudf = lazy_import("cudf", rename="cudf")
 vineyard = lazy_import("vineyard")
+try:
+    import ray
+
+    ray_release_version = parse_version(ray.__version__).release
+    ray_deprecate_ml_dataset = ray_release_version[:2] >= (2, 0)
+except ImportError:
+    ray_release_version = None
+    ray_deprecate_ml_dataset = None
 logger = logging.getLogger(__name__)
 
 
