@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import cloudpickle
 import numpy as np
 import pandas as pd
 
@@ -23,7 +24,6 @@ from ...serialization.serializables import (
     AnyField,
     BoolField,
     DictField,
-    FunctionField,
     KeyField,
     StringField,
     TupleField,
@@ -41,9 +41,7 @@ from ..utils import (
     build_empty_df,
     build_empty_series,
     build_series,
-    clean_up_func,
     parse_index,
-    restore_func,
     validate_output_types,
 )
 
@@ -51,98 +49,25 @@ from ..utils import (
 class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = opcodes.MAP_CHUNK
 
-    _input = KeyField("input")
-    _func = FunctionField("func")
-    _args = TupleField("args")
-    _kwargs = DictField("kwargs")
-    _with_chunk_index = BoolField("with_chunk_index")
-    _logic_key = StringField("logic_key")
-    _func_key = AnyField("func_key")
-    _need_clean_up_func = BoolField("need_clean_up_func")
+    input = KeyField("input")
+    func = AnyField("func")
+    args = TupleField("args")
+    kwargs = DictField("kwargs")
+    with_chunk_index = BoolField("with_chunk_index")
+    logic_key = StringField("logic_key")
 
-    def __init__(
-        self,
-        input=None,
-        func=None,
-        args=None,
-        kwargs=None,
-        output_types=None,
-        with_chunk_index=None,
-        logic_key=None,
-        func_key=None,
-        need_clean_up_func=False,
-        **kw,
-    ):
-        super().__init__(
-            _input=input,
-            _func=func,
-            _args=args,
-            _kwargs=kwargs,
-            _output_types=output_types,
-            _with_chunk_index=with_chunk_index,
-            _logic_key=logic_key,
-            _func_key=func_key,
-            _need_clean_up_func=need_clean_up_func,
-            **kw,
-        )
-
-    @property
-    def input(self):
-        return self._input
-
-    @property
-    def func(self):
-        return self._func
-
-    @func.setter
-    def func(self, func):
-        self._func = func
-
-    @property
-    def logic_key(self):
-        return self._logic_key
-
-    @logic_key.setter
-    def logic_key(self, logic_key):
-        self._logic_key = logic_key
-
-    @property
-    def func_key(self):
-        return self._func_key
-
-    @func_key.setter
-    def func_key(self, func_key):
-        self._func_key = func_key
-
-    @property
-    def need_clean_up_func(self):
-        return self._need_clean_up_func
-
-    @need_clean_up_func.setter
-    def need_clean_up_func(self, need_clean_up_func: bool):
-        self._need_clean_up_func = need_clean_up_func
-
-    @property
-    def args(self):
-        return self._args
-
-    @property
-    def kwargs(self):
-        return self._kwargs
-
-    @property
-    def with_chunk_index(self):
-        return self._with_chunk_index
+    def __init__(self, output_types=None, **kw):
+        super().__init__(_output_types=output_types, **kw)
 
     def _set_inputs(self, inputs):
         super()._set_inputs(inputs)
-        old_inputs = find_objects(self._args, ENTITY_TYPE) + find_objects(
-            self._kwargs, ENTITY_TYPE
+        old_inputs = find_objects(self.args, ENTITY_TYPE) + find_objects(
+            self.kwargs, ENTITY_TYPE
         )
-        mapping = {o: n for o, n in zip(old_inputs, self._inputs[1:])}
-        self._args = replace_objects(self._args, mapping)
-        self._kwargs = replace_objects(self._kwargs, mapping)
-        self._input = self._inputs[0]
+        mapping = {o: n for o, n in zip(old_inputs, self.inputs[1:])}
+        self.args = replace_objects(self.args, mapping)
+        self.kwargs = replace_objects(self.kwargs, mapping)
+        self.input = self.inputs[0]
 
     def _infer_attrs_by_call(self, df_or_series):
         test_obj = (
@@ -154,7 +79,7 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
         if self.with_chunk_index:
             kwargs["chunk_index"] = (0,) * df_or_series.ndim
         with np.errstate(all="ignore"), quiet_stdio():
-            obj = self._func(test_obj, *self._args, **kwargs)
+            obj = self.func(test_obj, *self.args, **kwargs)
 
         if obj.ndim == 2:
             output_type = OutputType.dataframe
@@ -172,7 +97,7 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
                 shape = (np.nan,)
 
         index_value = parse_index(
-            obj.index, df_or_series, self._func, self._args, self._kwargs
+            obj.index, df_or_series, self.func, self.args, self.kwargs
         )
         return {
             "output_type": output_type,
@@ -187,14 +112,16 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
             if self.output_types
             else get_output_types(df_or_series)[0]
         )
-        shape = self._kwargs.pop("shape", None)
+        shape = self.kwargs.pop("shape", None)
 
         if output_type == OutputType.df_or_series:
+            # serialize in advance to reduce overhead
+            self.func = cloudpickle.dumps(self.func)
             return self.new_df_or_series([df_or_series])
         elif dtypes is not None:
             index = index if index is not None else pd.RangeIndex(-1)
             index_value = parse_index(
-                index, df_or_series, self._func, self._args, self._kwargs
+                index, df_or_series, self.func, self.args, self.kwargs
             )
             if shape is None:  # pragma: no branch
                 shape = (
@@ -217,7 +144,8 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
                     "for dataframe, `dtypes` is required as well "
                     "if output_type='dataframe'"
                 )
-
+        # serialize in advance to reduce overhead
+        self.func = cloudpickle.dumps(self.func)
         inputs = (
             [df_or_series]
             + find_objects(self.args, ENTITY_TYPE)
@@ -244,7 +172,6 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
 
     @classmethod
     def tile(cls, op: "DataFrameMapChunk"):
-        clean_up_func(op)
         inp = op.input
         out = op.outputs[0]
         out_type = op.output_types[0]
@@ -326,7 +253,7 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
     @redirect_custom_log
     @enter_current_session
     def execute(cls, ctx, op: "DataFrameMapChunk"):
-        restore_func(ctx, op)
+        func = cloudpickle.loads(op.func)
         inp = ctx[op.input.key]
         out = op.outputs[0]
         if len(inp) == 0:
@@ -346,7 +273,7 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
         mapping = {chunk: ctx[chunk.key] for chunk in chunks}
         args = replace_objects(args, mapping)
         kwargs = replace_objects(kwargs, mapping)
-        ctx[out.key] = op.func(inp, *args, **kwargs)
+        ctx[out.key] = func(inp, *args, **kwargs)
 
 
 def map_chunk(df_or_series, func, args=(), kwargs=None, skip_infer=False, **kw):

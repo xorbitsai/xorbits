@@ -14,17 +14,13 @@
 # limitations under the License.
 
 import functools
-import inspect
 import itertools
 import logging
 import operator
-import os
-import sys
 from contextlib import contextmanager
 from numbers import Integral
 from typing import Any, List, Union
 
-import cloudpickle
 import numpy as np
 import pandas as pd
 from pandas.api.extensions import ExtensionDtype
@@ -33,17 +29,15 @@ from pandas.core.dtypes.cast import find_common_type
 
 from ..config import options
 from ..core import Entity, ExecutableTuple
-from ..core.context import Context, get_context
+from ..core.context import Context
 from ..lib.mmh3 import hash as mmh_hash
 from ..tensor.utils import dictify_chunk_size, normalize_chunk_sizes
 from ..typing import ChunkType, TileableType
 from ..utils import (
     ModulePlaceholder,
     is_full_slice,
-    is_on_ray,
     lazy_import,
     parse_readable_size,
-    parse_version,
     sbytes,
     tokenize,
 )
@@ -55,14 +49,6 @@ except ImportError:  # pragma: no cover
 
 cudf = lazy_import("cudf", rename="cudf")
 vineyard = lazy_import("vineyard")
-try:
-    import ray
-
-    ray_release_version = parse_version(ray.__version__).release
-    ray_deprecate_ml_dataset = ray_release_version[:2] >= (2, 0)
-except ImportError:
-    ray_release_version = None
-    ray_deprecate_ml_dataset = None
 logger = logging.getLogger(__name__)
 
 
@@ -1445,128 +1431,6 @@ def auto_merge_chunks(
     else:
         params["nsplits"] = (tuple(n_split), df_or_series.nsplits[1])
     return new_op.new_tileable(df_or_series.op.inputs, kws=[params])
-
-
-# TODO: clean_up_func, is_on_ray and restore_func functions may be
-# removed or refactored in the future to calculate func size
-# with more accuracy as well as address some serialization issues.
-def clean_up_func(op):
-    threshold = int(os.getenv("MARS_CLOSURE_CLEAN_UP_BYTES_THRESHOLD", 10**4))
-    if threshold == -1:  # pragma: no cover
-        return
-    ctx = get_context()
-    if ctx is None:
-        return
-
-    # Note: op.func_key is set only when func was put into storage.
-    # Under ray backend, func will be put into storage.
-    # While under mars backend, since storage service is empty on supervisor,
-    # func won't be put into storage but serialized in advance to reduce upcoming
-    # expenses brought by serializations and deserializations during subtask transmission.
-    if whether_to_clean_up(op, threshold) is True:
-        assert (
-            op.logic_key is not None
-        ), f"Logic key of {op} wasn't calculated before cleaning up func."
-        logger.info("%s is cleaning up func %s.", op, op.func)
-        if is_on_ray(ctx):
-            import ray
-
-            op.func_key = ray.put(op.func)
-            logger.info("%s func %s is replaced by %s.", op, op.func, op.func_key)
-            op.func = None
-        else:
-            op.func = cloudpickle.dumps(op.func)
-
-
-def whether_to_clean_up(op, threshold):
-    func = op.func
-    counted_bytes = 0
-    max_recursion_depth = 2
-
-    from collections import deque
-    from numbers import Number
-
-    BYPASS_CLASSES = (str, bytes, Number, range, bytearray, pd.DataFrame, pd.Series)
-
-    class GetSizeEarlyStopException(Exception):
-        pass
-
-    def check_exceed_threshold():
-        nonlocal threshold, counted_bytes
-        if counted_bytes >= threshold:
-            raise GetSizeEarlyStopException()
-
-    def getsize(obj_outer):
-        _seen_obj_ids = set()
-
-        def inner_count(obj, recursion_depth):
-            obj_id = id(obj)
-            if obj_id in _seen_obj_ids or recursion_depth > max_recursion_depth:
-                return 0
-            _seen_obj_ids.add(obj_id)
-            recursion_depth += 1
-            size = sys.getsizeof(obj)
-            if isinstance(obj, BYPASS_CLASSES):
-                return size
-            elif isinstance(obj, (tuple, list, set, deque)):
-                size += sum(inner_count(i, recursion_depth) for i in obj)
-            elif hasattr(obj, "items"):
-                size += sum(
-                    inner_count(k, recursion_depth) + inner_count(v, recursion_depth)
-                    for k, v in getattr(obj, "items")()
-                )
-            if hasattr(obj, "__dict__"):
-                size += inner_count(vars(obj), recursion_depth)
-            if hasattr(obj, "__slots__"):
-                size += sum(
-                    inner_count(getattr(obj, s), recursion_depth)
-                    for s in obj.__slots__
-                    if hasattr(obj, s)
-                )
-            return size
-
-        return inner_count(obj_outer, 0)
-
-    try:
-        # Note: In most cases, func is just a function with closure, while chances are that
-        # func is a callable that doesn't have __closure__ attribute.
-        if inspect.isclass(func):
-            pass
-        elif hasattr(func, "__closure__") and func.__closure__ is not None:
-            for cell in func.__closure__:
-                counted_bytes += getsize(cell.cell_contents)
-                check_exceed_threshold()
-        elif callable(func):
-            if hasattr(func, "__dict__"):
-                for k, v in func.__dict__.items():
-                    counted_bytes += sum([getsize(k), getsize(v)])
-                    check_exceed_threshold()
-            if hasattr(func, "__slots__"):
-                for slot in func.__slots__:
-                    counted_bytes += (
-                        getsize(getattr(func, slot)) if hasattr(func, slot) else 0
-                    )
-                    check_exceed_threshold()
-    except GetSizeEarlyStopException:
-        logger.debug("Func needs cleanup.")
-        op.need_clean_up_func = True
-    else:
-        assert op.need_clean_up_func is False
-        logger.debug("Func doesn't need cleanup.")
-
-    return op.need_clean_up_func
-
-
-def restore_func(ctx: Context, op):
-    if op.need_clean_up_func and ctx is not None:
-        logger.info("%s is restoring func from %s.", op, op.func_key)
-        if is_on_ray(ctx):
-            import ray
-
-            op.func = ray.get(op.func_key)
-            logger.info("%s func %s is restored.", op, op.func)
-        else:
-            op.func = cloudpickle.loads(op.func)
 
 
 def concat_on_columns(objs: List) -> Any:
