@@ -23,11 +23,10 @@ from typing import Any, Dict, Optional
 
 import yaml
 
-from xorbits._mars.lib.aio import alru_cache
-
 from ... import oscar as mo
 from ...constants import MARS_LOG_PATH_KEY
 from ...core.operand import Fetch, FetchShuffle
+from ...lib.aio import alru_cache
 from ...services.subtask import Subtask, SubtaskGraph
 from ...services.task.core import Task
 from ...typing import ChunkType, TileableType

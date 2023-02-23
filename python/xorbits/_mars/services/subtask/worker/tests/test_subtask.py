@@ -22,8 +22,6 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from xorbits._mars.services.task.task_info_collector import TaskInfoCollectorActor
-
 from ..... import dataframe as md
 from ..... import oscar as mo
 from ..... import remote as mr
@@ -43,6 +41,7 @@ from ....session import MockSessionAPI
 from ....storage import MockStorageAPI
 from ....task import MapReduceInfo, new_task_id
 from ....task.supervisor.manager import TaskConfigurationActor, TaskManagerActor
+from ....task.task_info_collector import TaskInfoCollectorActor
 from ... import Subtask, SubtaskResult, SubtaskStatus
 from ...worker.manager import SubtaskRunnerManagerActor
 from ...worker.runner import SubtaskRunnerActor, SubtaskRunnerRef
