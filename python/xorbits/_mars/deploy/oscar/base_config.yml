@@ -84,3 +84,6 @@ oscar:
       rdmacm: null
       cuda-copy: null
       create-cuda-contex: null
+profiling:
+  experimental:
+    collect_task_info_enabled: no

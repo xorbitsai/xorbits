@@ -71,9 +71,11 @@ class TaskProcessor:
         ):
             self._dump_subtask_graph = True
         self._collect_task_info = task.extra_config and task.extra_config.get(
-            "collect_task_info", False
+            "collect_task_info", None
         )
-        self._task_info_collector = TaskInfoCollector(address, self._collect_task_info)
+        self._task_info_collector = TaskInfoCollector(
+            self._task.session_id, self._task.task_id, address, self._collect_task_info
+        )
 
         self.result = TaskResult(
             task_id=task.task_id,
@@ -230,8 +232,7 @@ class TaskProcessor:
                 op_to_bands=fetch_op_to_bands,
                 shuffle_fetch_type=shuffle_fetch_type,
             )
-            if self._dump_subtask_graph or self._collect_task_info:
-                self._subtask_graphs.append(subtask_graph)
+            self._subtask_graphs.append(subtask_graph)
         stage_profiler.set(f"gen_subtask_graph({len(subtask_graph)})", timer.duration)
         await self._task_info_collector.collect_subtask_operand_structure(
             self._task, subtask_graph, stage_id

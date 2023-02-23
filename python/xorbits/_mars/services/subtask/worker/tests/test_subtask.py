@@ -41,6 +41,7 @@ from ....session import MockSessionAPI
 from ....storage import MockStorageAPI
 from ....task import MapReduceInfo, new_task_id
 from ....task.supervisor.manager import TaskConfigurationActor, TaskManagerActor
+from ....task.task_info_collector import TaskInfoCollectorActor
 from ... import Subtask, SubtaskResult, SubtaskStatus
 from ...worker.manager import SubtaskRunnerManagerActor
 from ...worker.runner import SubtaskRunnerActor, SubtaskRunnerRef
@@ -56,6 +57,11 @@ class FakeTaskManager(TaskManagerActor):
             reducer_indexes=[(0, 0)],
             reducer_bands=[(self.address, "numa-0")],
         )
+
+
+class MockTaskInfoCollectorActor(mo.Actor):
+    def collect_task_info_enabled(self):
+        return False
 
 
 @pytest.fixture
@@ -98,6 +104,11 @@ async def actor_pool():
             FakeTaskManager,
             session_id,
             uid=FakeTaskManager.gen_uid(session_id),
+            address=pool.external_address,
+        )
+        await mo.create_actor(
+            MockTaskInfoCollectorActor,
+            uid=TaskInfoCollectorActor.default_uid(),
             address=pool.external_address,
         )
         manager = await mo.create_actor(

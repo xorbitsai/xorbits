@@ -15,6 +15,7 @@
 
 import asyncio
 import time
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -64,7 +65,11 @@ async def actor_pools():
 
 
 async def _start_services(
-    supervisor_pool, worker_pool, request, task_processor_cls=None
+    supervisor_pool,
+    worker_pool,
+    enable_web: bool,
+    enable_profiling: bool,
+    task_processor_cls: Optional[str] = None,
 ):
     config = {
         "services": [
@@ -85,11 +90,14 @@ async def _start_services(
         "meta": {"store": "dict"},
         "scheduling": {},
         "task": {},
+        "profiling": {},
     }
+    if enable_web:
+        config["services"].append("web")
+    if enable_profiling:
+        config["profiling"]["experimental"] = {"collect_task_info_enabled": True}
     if task_processor_cls:
         config["task"]["task_processor_cls"] = task_processor_cls
-    if request:
-        config["services"].append("web")
     await start_services(
         NodeRole.SUPERVISOR, config, address=supervisor_pool.external_address
     )
@@ -99,7 +107,7 @@ async def _start_services(
     session_api = await SessionAPI.create(supervisor_pool.external_address)
     await session_api.create_session(session_id)
 
-    if not request.param:
+    if not enable_web:
         task_api = await TaskAPI.create(session_id, supervisor_pool.external_address)
     else:
         web_actor = await mo.actor_ref(
@@ -116,21 +124,6 @@ async def _start_services(
     return task_api, storage_api, config
 
 
-@pytest.mark.parametrize(indirect=True)
-@pytest.fixture(params=[False, True])
-async def start_test_service(actor_pools, request):
-    sv_pool, worker_pool = actor_pools
-
-    task_api, storage_api, config = await _start_services(sv_pool, worker_pool, request)
-
-    try:
-        yield sv_pool.external_address, task_api, storage_api
-    finally:
-        await MockStorageAPI.cleanup(worker_pool.external_address)
-        await stop_services(NodeRole.WORKER, config, worker_pool.external_address)
-        await stop_services(NodeRole.SUPERVISOR, config, sv_pool.external_address)
-
-
 class MockTaskProcessor(TaskProcessor):
     @classmethod
     def _get_decref_stage_chunk_keys(cls, stage_processor):
@@ -141,29 +134,42 @@ class MockTaskProcessor(TaskProcessor):
         return super()._get_decref_stage_chunk_keys(stage_processor)
 
 
-@pytest.mark.parametrize(indirect=True)
-@pytest.fixture(params=[True])
-async def start_test_service_with_mock(actor_pools, request):
-    sv_pool, worker_pool = actor_pools
+@pytest.fixture(
+    params=[{"enable_web": True}, {"enable_web": False}],
+    ids=["web_enabled", "web_disabled"],
+)
+async def test_service(actor_pools, request):
+    param = getattr(request, "param", {})
+    enable_web = param.get("enable_web", True)
+    enable_profiling = param.get("enable_profiling", False)
+    task_processor_cls = param.get("task_processor_cls", None)
 
+    sv_pool, worker_pool = actor_pools
     task_api, storage_api, config = await _start_services(
-        sv_pool,
-        worker_pool,
-        request,
-        task_processor_cls="xorbits._mars.services.task.tests.test_service.MockTaskProcessor",
+        sv_pool, worker_pool, enable_web, enable_profiling, task_processor_cls
     )
 
     try:
-        yield sv_pool.external_address, task_api, storage_api
+        yield sv_pool.external_address, worker_pool.external_address, task_api, storage_api, config
     finally:
         await MockStorageAPI.cleanup(worker_pool.external_address)
         await stop_services(NodeRole.WORKER, config, worker_pool.external_address)
         await stop_services(NodeRole.SUPERVISOR, config, sv_pool.external_address)
 
 
+@pytest.mark.parametrize(
+    "test_service",
+    [
+        {
+            "enable_web": True,
+            "task_processor_cls": "xorbits._mars.services.task.tests.test_service.MockTaskProcessor",
+        }
+    ],
+    indirect=True,
+)
 @pytest.mark.asyncio
-async def test_task_timeout_execution(start_test_service_with_mock):
-    _sv_pool_address, task_api, storage_api = start_test_service_with_mock
+async def test_task_timeout_execution(test_service):
+    _, _, task_api, storage_api, _ = test_service
 
     def f1():
         return np.arange(5)
@@ -192,8 +198,8 @@ async def test_task_timeout_execution(start_test_service_with_mock):
 
 
 @pytest.mark.asyncio
-async def test_task_execution(start_test_service):
-    _sv_pool_address, task_api, storage_api = start_test_service
+async def test_task_execution(test_service):
+    _, _, task_api, storage_api, _ = test_service
 
     def f1():
         return np.arange(5)
@@ -229,8 +235,8 @@ async def test_task_execution(start_test_service):
 
 
 @pytest.mark.asyncio
-async def test_task_error(start_test_service):
-    _sv_pool_address, task_api, storage_api = start_test_service
+async def test_task_error(test_service):
+    _, _, task_api, storage_api, _ = test_service
 
     # test job cancel
     def f1():
@@ -249,8 +255,8 @@ async def test_task_error(start_test_service):
 
 
 @pytest.mark.asyncio
-async def test_task_cancel(start_test_service):
-    _sv_pool_address, task_api, storage_api = start_test_service
+async def test_task_cancel(test_service):
+    _, _, task_api, storage_api, _ = test_service
 
     # test job cancel
     def f1():
@@ -289,8 +295,8 @@ class _ProgressController:
 
 
 @pytest.mark.asyncio
-async def test_task_progress(start_test_service):
-    sv_pool_address, task_api, storage_api = start_test_service
+async def test_task_progress(test_service):
+    sv_pool_address, _, task_api, storage_api, _ = test_service
 
     session_api = await SessionAPI.create(address=sv_pool_address)
     ref = await session_api.create_remote_object(
@@ -342,8 +348,8 @@ class _TileProgressOperand(TensorOperand, TensorOperandMixin):
 
 
 @pytest.mark.asyncio
-async def test_task_tile_progress(start_test_service):
-    sv_pool_address, task_api, storage_api = start_test_service
+async def test_task_tile_progress(test_service):
+    sv_pool_address, _, task_api, storage_api, _ = test_service
 
     session_api = await SessionAPI.create(address=sv_pool_address)
     ref = await session_api.create_remote_object(
@@ -370,8 +376,8 @@ async def test_task_tile_progress(start_test_service):
 
 
 @pytest.mark.asyncio
-async def test_get_tileable_graph(start_test_service):
-    _sv_pool_address, task_api, storage_api = start_test_service
+async def test_get_tileable_graph(test_service):
+    _, _, task_api, storage_api, _ = test_service
 
     def f1():
         return np.arange(5)
@@ -432,8 +438,8 @@ async def test_get_tileable_graph(start_test_service):
 
 
 @pytest.mark.asyncio
-async def test_get_tileable_details(start_test_service):
-    sv_pool_address, task_api, storage_api = start_test_service
+async def test_get_tileable_details(test_service):
+    sv_pool_address, _, task_api, storage_api, _ = test_service
 
     session_api = await SessionAPI.create(address=sv_pool_address)
     ref = await session_api.create_remote_object(
@@ -560,8 +566,8 @@ async def test_get_tileable_details(start_test_service):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("with_input_output", [False, True])
-async def test_get_tileable_subtasks(start_test_service, with_input_output):
-    sv_pool_address, task_api, storage_api = start_test_service
+async def test_get_tileable_subtasks(test_service, with_input_output):
+    _, _, task_api, storage_api, _ = test_service
 
     def a():
         return md.DataFrame([[1, 2], [3, 4]])
@@ -632,3 +638,30 @@ async def test_get_tileable_subtasks(start_test_service, with_input_output):
                     )
     finally:
         await task_api.wait_task(task_id, timeout=120)
+
+
+@pytest.mark.parametrize(
+    "test_service",
+    [{"enable_profiling": True}, {"enable_profiling": False}],
+    indirect=True,
+    ids=["profiling_enabled", "profiling_disabled"],
+)
+@pytest.mark.asyncio
+async def test_collect_task_info_enabled(test_service):
+    sv_pool_address, worker_pool_address, _, _, config = test_service
+
+    expected = (
+        config.get("profiling", {})
+        .get("experimental", {})
+        .get("collect_task_info_enabled", False)
+    )
+
+    sv_task_api = await TaskAPI.create(
+        session_id="test_session", local_address=sv_pool_address
+    )
+    assert expected == await sv_task_api.collect_task_info_enabled()
+
+    worker_task_api = await TaskAPI.create(
+        session_id="test_session", local_address=worker_pool_address
+    )
+    assert expected == await worker_task_api.collect_task_info_enabled()
