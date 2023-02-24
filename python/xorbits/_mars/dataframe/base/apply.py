@@ -15,6 +15,7 @@
 
 import inspect
 
+import cloudpickle
 import numpy as np
 import pandas as pd
 
@@ -27,11 +28,10 @@ from ...serialization.serializables import (
     AnyField,
     BoolField,
     DictField,
-    FunctionField,
     StringField,
     TupleField,
 )
-from ...utils import enter_current_session, get_func_token, quiet_stdio, tokenize
+from ...utils import enter_current_session, get_func_token, quiet_stdio
 from ..arrays import ArrowArray
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
@@ -39,11 +39,9 @@ from ..utils import (
     build_empty_df,
     build_empty_series,
     build_series,
-    clean_up_func,
     make_dtype,
     make_dtypes,
     parse_index,
-    restore_func,
     validate_axis,
     validate_output_types,
 )
@@ -51,17 +49,14 @@ from ..utils import (
 
 class ApplyOperandLogicKeyGeneratorMixin(OperatorLogicKeyGeneratorMixin):
     def _get_logic_key_token_values(self):
-        token_values = super()._get_logic_key_token_values() + [
-            self._axis,
-            self._convert_dtype,
-            self._raw,
-            self._result_type,
-            self._elementwise,
+        return super()._get_logic_key_token_values() + [
+            self.axis,
+            self.convert_dtype,
+            self.raw,
+            self.result_type,
+            self.elementwise,
+            self.func_token,
         ]
-        if self.func:
-            return token_values + [get_func_token(self.func)]
-        else:  # pragma: no cover
-            return token_values
 
 
 class ApplyOperand(
@@ -69,123 +64,31 @@ class ApplyOperand(
 ):
     _op_type_ = opcodes.APPLY
 
-    _func = FunctionField("func")
-    _axis = AnyField("axis")
-    _convert_dtype = BoolField("convert_dtype")
-    _raw = BoolField("raw")
-    _result_type = StringField("result_type")
-    _elementwise = BoolField("elementwise")
-    _logic_key = StringField("logic_key")
-    _func_key = AnyField("func_key")
-    _need_clean_up_func = BoolField("need_clean_up_func")
-    _args = TupleField("args")
-    _kwds = DictField("kwds")
+    func = AnyField("func")
+    func_token = StringField("func_token", default=None)
+    axis = AnyField("axis")
+    convert_dtype = BoolField("convert_dtype", default=None)
+    raw = BoolField("raw", default=None)
+    result_type = StringField("result_type", default=None)
+    elementwise = BoolField("elementwise", default=None)
+    logic_key = StringField("logic_key", default=None)
+    args = TupleField("args", default=None)
+    kwds = DictField("kwds", default=None)
 
-    def __init__(
-        self,
-        func=None,
-        axis=None,
-        convert_dtype=None,
-        raw=None,
-        result_type=None,
-        args=None,
-        kwds=None,
-        output_type=None,
-        elementwise=None,
-        logic_key=None,
-        func_key=None,
-        need_clean_up_func=False,
-        **kw,
-    ):
-        if output_type:
-            kw["_output_types"] = [output_type]
-        super().__init__(
-            _func=func,
-            _axis=axis,
-            _convert_dtype=convert_dtype,
-            _raw=raw,
-            _result_type=result_type,
-            _args=args,
-            _kwds=kwds,
-            _elementwise=elementwise,
-            _logic_key=logic_key,
-            _func_key=func_key,
-            _need_clean_up_func=need_clean_up_func,
-            **kw,
-        )
+    def __init__(self, output_types=None, **kw):
+        super().__init__(_output_types=output_types, **kw)
 
-    def _update_key(self):
-        values = [v for v in self._values_ if v is not self.func] + [
-            get_func_token(self.func)
-        ]
-        self._obj_set("_key", tokenize(type(self).__name__, *values))
-        return self
-
-    @property
-    def func(self):
-        return self._func
-
-    @func.setter
-    def func(self, func):
-        self._func = func
-
-    @property
-    def axis(self):
-        return self._axis
-
-    @property
-    def convert_dtype(self):
-        return self._convert_dtype
-
-    @property
-    def raw(self):
-        return self._raw
-
-    @property
-    def result_type(self):
-        return self._result_type
-
-    @property
-    def elementwise(self):
-        return self._elementwise
-
-    @property
-    def logic_key(self):
-        return self._logic_key
-
-    @logic_key.setter
-    def logic_key(self, logic_key):
-        self._logic_key = logic_key
-
-    @property
-    def func_key(self):
-        return self._func_key
-
-    @func_key.setter
-    def func_key(self, func_key):
-        self._func_key = func_key
-
-    @property
-    def need_clean_up_func(self):
-        return self._need_clean_up_func
-
-    @need_clean_up_func.setter
-    def need_clean_up_func(self, need_clean_up_func: bool):
-        self._need_clean_up_func = need_clean_up_func
-
-    @property
-    def args(self):
-        return getattr(self, "_args", None) or ()
-
-    @property
-    def kwds(self):
-        return getattr(self, "_kwds", None) or dict()
+    def _load_func(self):
+        if isinstance(self.func, bytes):
+            return cloudpickle.loads(self.func)
+        else:
+            return self.func
 
     @classmethod
     @redirect_custom_log
     @enter_current_session
     def execute(cls, ctx, op):
-        restore_func(ctx, op)
+        func = op._load_func()
         input_data = ctx[op.inputs[0].key]
         out = op.outputs[0]
         if len(input_data) == 0:
@@ -197,7 +100,7 @@ class ApplyOperand(
 
         if isinstance(input_data, pd.DataFrame):
             result = input_data.apply(
-                op.func,
+                func,
                 axis=op.axis,
                 raw=op.raw,
                 result_type=op.result_type,
@@ -207,7 +110,7 @@ class ApplyOperand(
         else:
             try:
                 result = input_data.apply(
-                    op.func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
+                    func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
                 )
             except TypeError:
                 if isinstance(input_data.values, ArrowArray):
@@ -217,7 +120,7 @@ class ApplyOperand(
                         index=input_data.index,
                     )
                     result = input_data.apply(
-                        op.func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
+                        func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
                     )
                 else:  # pragma: no cover
                     raise
@@ -343,14 +246,14 @@ class ApplyOperand(
 
     @classmethod
     def tile(cls, op):
-        clean_up_func(op)
         if op.inputs[0].ndim == 2:
             return (yield from cls._tile_df(op))
         else:
             return cls._tile_series(op)
 
     def _infer_df_func_returns(self, df, dtypes, dtype=None, name=None, index=None):
-        if isinstance(self._func, np.ufunc):
+        func = self._load_func()
+        if isinstance(func, np.ufunc):
             output_type = OutputType.dataframe
             new_dtypes = None
             index_value = "inherit"
@@ -361,7 +264,7 @@ class ApplyOperand(
             ):
                 ret_dtypes = dtypes if dtypes is not None else (name, dtype)
                 ret_index_value = parse_index(index) if index is not None else None
-                self._elementwise = False
+                self.elementwise = False
                 return ret_dtypes, ret_index_value
 
             output_type = new_dtypes = index_value = None
@@ -371,10 +274,10 @@ class ApplyOperand(
             empty_df = build_df(df, size=2)
             with np.errstate(all="ignore"), quiet_stdio():
                 infer_df = empty_df.apply(
-                    self._func,
-                    axis=self._axis,
-                    raw=self._raw,
-                    result_type=self._result_type,
+                    func,
+                    axis=self.axis,
+                    raw=self.raw,
+                    result_type=self.result_type,
                     args=self.args,
                     **self.kwds,
                 )
@@ -399,12 +302,14 @@ class ApplyOperand(
         )
         dtypes = new_dtypes if dtypes is None else dtypes
         index_value = index_value if index is None else parse_index(index)
-        self._elementwise = (
-            new_elementwise if self._elementwise is None else self._elementwise
+        self.elementwise = (
+            new_elementwise if self.elementwise is None else self.elementwise
         )
         return dtypes, index_value
 
     def _call_df_or_series(self, df):
+        # serialize in advance to reduce overhead
+        self.func = cloudpickle.dumps(self.func)
         return self.new_df_or_series([df])
 
     def _call_dataframe(self, df, dtypes=None, dtype=None, name=None, index=None):
@@ -425,7 +330,7 @@ class ApplyOperand(
         if index_value == "inherit":
             index_value = df.index_value
 
-        if self._elementwise:
+        if self.elementwise:
             shape = df.shape
         elif self.output_types[0] == OutputType.dataframe:
             shape = [np.nan, np.nan]
@@ -434,6 +339,8 @@ class ApplyOperand(
         else:
             shape = (df.shape[1 - self.axis],)
 
+        # serialize in advance to reduce overhead
+        self.func = cloudpickle.dumps(self.func)
         if self.output_types[0] == OutputType.dataframe:
             if self.axis == 0:
                 return self.new_dataframe(
@@ -460,7 +367,7 @@ class ApplyOperand(
     def _call_series(self, series, dtypes=None, dtype=None, name=None, index=None):
         # for backward compatibility
         dtype = dtype if dtype is not None else dtypes
-        if self._convert_dtype:
+        if self.convert_dtype:
             if self.output_types is not None and (
                 dtypes is not None or dtype is not None
             ):
@@ -470,12 +377,12 @@ class ApplyOperand(
                 try:
                     with np.errstate(all="ignore"), quiet_stdio():
                         infer_series = test_series.apply(
-                            self._func, args=self.args, **self.kwds
+                            self.func, args=self.args, **self.kwds
                         )
                 except:  # noqa: E722  # nosec  # pylint: disable=bare-except
                     infer_series = None
 
-            output_type = self._output_types[0]
+            output_type = self.output_types[0]
 
             if index is not None:
                 index_value = parse_index(index)
@@ -487,6 +394,8 @@ class ApplyOperand(
             else:
                 index_value = parse_index(None, series)
 
+            # serialize in advance to reduce overhead
+            self.func = cloudpickle.dumps(self.func)
             if output_type == OutputType.dataframe:
                 if dtypes is None:
                     if infer_series is not None and infer_series.ndim == 2:
@@ -525,6 +434,8 @@ class ApplyOperand(
                 )
         else:
             dtype = dtype if dtype is not None else np.dtype("object")
+            # serialize in advance to reduce overhead
+            self.func = cloudpickle.dumps(self.func)
             return self.new_series(
                 [series],
                 dtype=dtype,
@@ -537,7 +448,8 @@ class ApplyOperand(
         axis = getattr(self, "axis", None) or 0
         dtypes = make_dtypes(dtypes)
         dtype = make_dtype(dtype)
-        self._axis = validate_axis(axis, df_or_series)
+        self.axis = validate_axis(axis, df_or_series)
+        self.func_token = get_func_token(self.func)
 
         if self.output_types and self.output_types[0] == OutputType.df_or_series:
             return self._call_df_or_series(df_or_series)
@@ -747,7 +659,7 @@ def df_apply(
     )
     output_type = output_types[0] if output_types else None
     if skip_infer and output_type is None:
-        output_type = OutputType.df_or_series
+        output_types = [OutputType.df_or_series]
 
     # calling member function
     if isinstance(func, str):
@@ -764,7 +676,7 @@ def df_apply(
         result_type=result_type,
         args=args,
         kwds=kwds,
-        output_type=output_type,
+        output_types=output_types,
         elementwise=elementwise,
     )
     return op(df, dtypes=dtypes, dtype=dtype, name=name, index=index)
@@ -932,12 +844,14 @@ def series_apply(
         output_type=output_type, output_types=output_types, object_type=object_type
     )
     output_type = output_types[0] if output_types else OutputType.series
+    if output_types is None:
+        output_types = [output_type]
 
     op = ApplyOperand(
         func=func,
         convert_dtype=convert_dtype,
         args=args,
         kwds=kwds,
-        output_type=output_type,
+        output_types=output_types,
     )
     return op(series, dtypes=dtypes, dtype=dtype, name=name, index=index)
