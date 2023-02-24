@@ -748,6 +748,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             ["sh", "-c", f'until [ -f "{SERVICE_PID_FILE}" ]; do sleep 3s; done'],
             failure_thresh=5,
             initial_delay=10,
+            timeout=300,
         )
 
     @staticmethod
