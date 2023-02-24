@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import cloudpickle
 import numpy as np
 import pandas as pd
 
@@ -25,32 +26,28 @@ from ...serialization.serializables import (
     AnyField,
     BoolField,
     DictField,
-    FunctionField,
     StringField,
     TupleField,
 )
-from ...utils import enter_current_session, get_func_token, quiet_stdio, tokenize
+from ...utils import enter_current_session, get_func_token, quiet_stdio
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
     auto_merge_chunks,
     build_empty_df,
     build_empty_series,
-    clean_up_func,
     make_dtype,
     make_dtypes,
     parse_index,
-    restore_func,
     validate_output_types,
 )
 
 
 class GroupByApplyLogicKeyGeneratorMixin(OperatorLogicKeyGeneratorMixin):
     def _get_logic_key_token_values(self):
-        token_values = super()._get_logic_key_token_values()
-        if self.func:
-            return token_values + [get_func_token(self.func)]
-        else:  # pragma: no cover
-            return token_values
+        if self.func_token:
+            return super()._get_logic_key_token_values() + [self.func_token]
+        else:
+            return super()._get_logic_key_token_values()
 
 
 class GroupByApply(
@@ -59,29 +56,22 @@ class GroupByApply(
     _op_type_ = opcodes.APPLY
     _op_module_ = "dataframe.groupby"
 
-    func = FunctionField("func")
+    func = AnyField("func")
+    func_token = StringField("func_token")
     args = TupleField("args", default_factory=tuple)
     kwds = DictField("kwds", default_factory=dict)
     maybe_agg = BoolField("maybe_agg", default=None)
     logic_key = StringField("logic_key", default=None)
     func_key = AnyField("func_key", default=None)
-    need_clean_up_func = BoolField("need_clean_up_func", default=False)
 
     def __init__(self, output_types=None, **kw):
         super().__init__(_output_types=output_types, **kw)
-
-    def _update_key(self):
-        values = [v for v in self._values_ if v is not self.func] + [
-            get_func_token(self.func)
-        ]
-        self._obj_set("_key", tokenize(type(self).__name__, *values))
-        return self
 
     @classmethod
     @redirect_custom_log
     @enter_current_session
     def execute(cls, ctx, op):
-        restore_func(ctx, op)
+        func = cloudpickle.loads(op.func)
         in_data = ctx[op.inputs[0].key]
         out = op.outputs[0]
         if not in_data:
@@ -98,7 +88,7 @@ class GroupByApply(
                 )
             return
 
-        applied = in_data.apply(op.func, *op.args, **op.kwds)
+        applied = in_data.apply(func, *op.args, **op.kwds)
 
         if isinstance(applied, pd.DataFrame):
             # when there is only one group, pandas tend to return a DataFrame, while
@@ -121,7 +111,6 @@ class GroupByApply(
 
     @classmethod
     def tile(cls, op):
-        clean_up_func(op)
         in_groupby = op.inputs[0]
         out_df = op.outputs[0]
 
@@ -224,7 +213,10 @@ class GroupByApply(
 
     def __call__(self, groupby, dtypes=None, dtype=None, name=None, index=None):
         in_df = groupby
+        self.func_token = get_func_token(self.func)
         if self.output_types and self.output_types[0] == OutputType.df_or_series:
+            # serialize in advance to reduce overhead
+            self.func = cloudpickle.dumps(self.func)
             return self.new_df_or_series([groupby])
         while in_df.op.output_types[0] not in (OutputType.dataframe, OutputType.series):
             in_df = in_df.inputs[0]
@@ -242,6 +234,8 @@ class GroupByApply(
                     "please specify it as arguments"
                 )
 
+        # serialize in advance to reduce overhead
+        self.func = cloudpickle.dumps(self.func)
         if self.output_types[0] == OutputType.dataframe:
             new_shape = (np.nan, len(dtypes))
             return self.new_dataframe(
