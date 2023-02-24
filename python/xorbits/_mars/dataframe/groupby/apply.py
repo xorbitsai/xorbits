@@ -29,7 +29,7 @@ from ...serialization.serializables import (
     StringField,
     TupleField,
 )
-from ...utils import enter_current_session, get_func_token, quiet_stdio, tokenize
+from ...utils import enter_current_session, get_func_token, quiet_stdio
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
     auto_merge_chunks,
@@ -44,11 +44,10 @@ from ..utils import (
 
 class GroupByApplyLogicKeyGeneratorMixin(OperatorLogicKeyGeneratorMixin):
     def _get_logic_key_token_values(self):
-        token_values = super()._get_logic_key_token_values()
-        if self.func:
-            return token_values + [get_func_token(self.func)]
-        else:  # pragma: no cover
-            return token_values
+        if self.func_token:
+            return super()._get_logic_key_token_values() + [self.func_token]
+        else:
+            return super()._get_logic_key_token_values()
 
 
 class GroupByApply(
@@ -58,6 +57,7 @@ class GroupByApply(
     _op_module_ = "dataframe.groupby"
 
     func = AnyField("func")
+    func_token = StringField("func_token")
     args = TupleField("args", default_factory=tuple)
     kwds = DictField("kwds", default_factory=dict)
     maybe_agg = BoolField("maybe_agg", default=None)
@@ -66,13 +66,6 @@ class GroupByApply(
 
     def __init__(self, output_types=None, **kw):
         super().__init__(_output_types=output_types, **kw)
-
-    def _update_key(self):
-        values = [v for v in self._values_ if v is not self.func] + [
-            get_func_token(self.func)
-        ]
-        self._obj_set("_key", tokenize(type(self).__name__, *values))
-        return self
 
     @classmethod
     @redirect_custom_log
@@ -220,6 +213,7 @@ class GroupByApply(
 
     def __call__(self, groupby, dtypes=None, dtype=None, name=None, index=None):
         in_df = groupby
+        self.func_token = get_func_token(self.func)
         if self.output_types and self.output_types[0] == OutputType.df_or_series:
             # serialize in advance to reduce overhead
             self.func = cloudpickle.dumps(self.func)

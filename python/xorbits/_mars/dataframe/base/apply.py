@@ -31,7 +31,7 @@ from ...serialization.serializables import (
     StringField,
     TupleField,
 )
-from ...utils import enter_current_session, quiet_stdio
+from ...utils import enter_current_session, get_func_token, quiet_stdio
 from ..arrays import ArrowArray
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
@@ -55,7 +55,7 @@ class ApplyOperandLogicKeyGeneratorMixin(OperatorLogicKeyGeneratorMixin):
             self.raw,
             self.result_type,
             self.elementwise,
-            self.func,
+            self.func_token,
         ]
 
 
@@ -65,12 +65,13 @@ class ApplyOperand(
     _op_type_ = opcodes.APPLY
 
     func = AnyField("func")
+    func_token = StringField("func_token", default=None)
     axis = AnyField("axis")
     convert_dtype = BoolField("convert_dtype", default=None)
     raw = BoolField("raw", default=None)
     result_type = StringField("result_type", default=None)
     elementwise = BoolField("elementwise", default=None)
-    logic_key = StringField("logic_key")
+    logic_key = StringField("logic_key", default=None)
     args = TupleField("args", default=None)
     kwds = DictField("kwds", default=None)
 
@@ -448,6 +449,7 @@ class ApplyOperand(
         dtypes = make_dtypes(dtypes)
         dtype = make_dtype(dtype)
         self.axis = validate_axis(axis, df_or_series)
+        self.func_token = get_func_token(self.func)
 
         if self.output_types and self.output_types[0] == OutputType.df_or_series:
             return self._call_df_or_series(df_or_series)
