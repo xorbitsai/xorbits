@@ -87,3 +87,5 @@ oscar:
 profiling:
   experimental:
     collect_task_info_enabled: no
+    task_info_root_path: null
+    task_info_storage_options: null

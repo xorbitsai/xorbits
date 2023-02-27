@@ -36,18 +36,21 @@ def register_filesystem(name: str, fs):
     _filesystems[name] = fs
 
 
-def get_fs(path: path_type, storage_options: Dict = None) -> FileSystem:
-    if storage_options is None:
-        storage_options = dict()
-
-    # detect scheme
+def get_scheme(path: path_type) -> str:
     if os.path.exists(path) or glob_.glob(path):
         scheme = "file"
     else:
         scheme = urlparse(path).scheme
     if scheme == "" or len(scheme) == 1:  # len == 1 for windows
         scheme = "file"
+    return scheme
 
+
+def get_fs(path: path_type, storage_options: Dict = None) -> FileSystem:
+    if storage_options is None:
+        storage_options = dict()
+
+    scheme = get_scheme(path)
     if scheme in _filesystems:
         file_system_type = _filesystems[scheme]
         if scheme == "file" or scheme == "oss":

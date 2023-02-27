@@ -384,7 +384,7 @@ class TaskProcessor:
             async with self._executor:
                 async for stage_args in self._iter_stage_chunk_graph():
                     await self._process_stage_chunk_graph(*stage_args)
-            await self._task_info_collector.collect_last_node_info(
+            await self._task_info_collector.collect_result_nodes(
                 self._task, self._subtask_graphs
             )
             await self._task_info_collector.collect_tileable_structure(

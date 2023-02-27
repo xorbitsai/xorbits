@@ -132,7 +132,7 @@ class TaskAPI(AbstractTaskAPI):
         return await self._task_manager_ref.get_map_reduce_info(task_id, map_reduce_id)
 
     async def save_task_info(self, task_info: Dict, path: str):
-        await self._task_info_collector_ref.save_task_info(task_info, path)
+        await self._task_info_collector_ref.save_task_info.tell(task_info, path)
 
     async def collect_task_info_enabled(self):
         return await self._task_info_collector_ref.collect_task_info_enabled()

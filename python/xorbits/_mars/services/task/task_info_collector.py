@@ -19,14 +19,20 @@ import functools
 import logging
 import os
 import tempfile
+from collections import defaultdict
 from typing import Any, Dict, Optional
 
 import yaml
+from mars.lib.aio import Isolation
+
+from xorbits._mars.lib.aio import AioFileObject
+from xorbits._mars.lib.filesystem import open_file
 
 from ... import oscar as mo
-from ...constants import MARS_LOG_PATH_KEY
+from ...constants import MARS_LOG_PATH_KEY, MARS_TMP_DIR_PREFIX
 from ...core.operand import Fetch, FetchShuffle
 from ...lib.aio import alru_cache
+from ...lib.filesystem import get_fs, get_scheme
 from ...services.subtask import Subtask, SubtaskGraph
 from ...services.task.core import Task
 from ...typing import ChunkType, TileableType
@@ -60,6 +66,7 @@ class TaskInfoCollector:
         self._result_chunk_to_subtask = dict()
         self._save_dir = os.path.join(self._session_id, self._task_id)
         self._collect_task_info = collect_task_info
+        self._subtask_infos = defaultdict(dict)
 
     async def collect_task_info(self):
         if self._collect_task_info is None:
@@ -74,23 +81,31 @@ class TaskInfoCollector:
         task: Task,
         subtask_graph: SubtaskGraph,
         stage_id: str,
-        trunc_key: int = 5,
     ):
+        """
+        This method may be called once for each stage ID.
+        """
         self._validate_task(task)
 
         if self._task_id not in self._result_chunk_to_subtask:
             self._result_chunk_to_subtask[self._task_id] = dict()
 
+        op_info = {}
+        op_save_path = os.path.join(self._save_dir, f"{stage_id}_stage_operand.yaml")
+        subtask_info = {}
+        subtask_save_path = os.path.join(
+            self._save_dir, f"{stage_id}_stage_subtask.yaml"
+        )
         for subtask in subtask_graph.topological_iter():
             chunk_graph = subtask.chunk_graph
             for c in chunk_graph.results:
                 self._result_chunk_to_subtask[self._task_id][c.key] = subtask.subtask_id
 
             visited = set()
-            subtask_dict = dict()
-            subtask_dict["pre_subtasks"] = list()
-            subtask_dict["ops"] = list()
-            subtask_dict["stage_id"] = stage_id
+            subtask_info = dict()
+            subtask_info["pre_subtasks"] = list()
+            subtask_info["ops"] = list()
+            subtask_info["stage_id"] = stage_id
 
             for node in chunk_graph.iter_nodes():
                 op = node.op
@@ -99,28 +114,28 @@ class TaskInfoCollector:
                 if op.key in visited:  # pragma: no cover
                     continue
 
-                subtask_dict["ops"].append(op.key)
-                op_dict = dict()
+                subtask_info["ops"].append(op.key)
+                op_info = dict()
                 op_name = type(op).__name__
-                op_dict["op_name"] = op_name
+                op_info["op_name"] = op_name
                 if op.stage is not None:  # pragma: no cover
-                    op_dict["stage"] = op.stage.name
+                    op_info["stage"] = op.stage.name
                 else:
-                    op_dict["stage"] = None
-                op_dict["subtask_id"] = subtask.subtask_id
-                op_dict["stage_id"] = stage_id
-                op_dict["predecessors"] = list()
-                op_dict["inputs"] = dict()
+                    op_info["stage"] = None
+                op_info["subtask_id"] = subtask.subtask_id
+                op_info["stage_id"] = stage_id
+                op_info["predecessors"] = list()
+                op_info["inputs"] = dict()
 
                 for input_chunk in op.inputs or []:
                     if input_chunk.key not in visited:
-                        op_dict["predecessors"].append(input_chunk.key)
+                        op_info["predecessors"].append(input_chunk.key)
                         if (
                             isinstance(input_chunk.op, (Fetch, FetchShuffle))
                             and input_chunk.key
                             in self._result_chunk_to_subtask[self._task_id]
                         ):  # pragma: no cover
-                            subtask_dict["pre_subtasks"].append(
+                            subtask_info["pre_subtasks"].append(
                                 self._result_chunk_to_subtask[self._task_id][
                                     input_chunk.key
                                 ]
@@ -139,39 +154,38 @@ class TaskInfoCollector:
                         ):
                             chunk_dict["dtype"] = str(input_chunk.dtype)
 
-                        op_dict["inputs"][input_chunk.key] = chunk_dict
+                        op_info["inputs"][input_chunk.key] = chunk_dict
 
-                op_save_path = os.path.join(
-                    self._save_dir, f"{stage_id[:trunc_key]}_operand.yaml"
-                )
-                await self._save_task_info({op.key: op_dict}, op_save_path)
+                op_info[op.key] = op_info
                 visited.add(op.key)
 
-            subtask_save_path = os.path.join(
-                self._save_dir, f"{stage_id[:trunc_key]}_subtask.yaml"
-            )
-            await self._save_task_info(
-                {subtask.subtask_id: subtask_dict}, subtask_save_path
-            )
+            subtask_info[subtask.subtask_id] = subtask_info
+
+        await self._save_task_info(op_info, op_save_path)
+        await self._save_task_info(subtask_info, subtask_save_path)
 
     @collect_on_demand
-    async def collect_last_node_info(
+    async def collect_result_nodes(
         self, task: Task, subtask_graphs: list[SubtaskGraph]
     ):
+        """
+        This method will only be called once for each task.
+        """
+        # TODO: for each stage, would it be better to have an individual file?
         self._validate_task(task)
 
-        last_op_keys = []
-        last_subtask_keys = []
+        result_op_keys = []
+        result_subtask_keys = []
         subtask_graph = subtask_graphs[-1]
         for subtask in subtask_graph.topological_iter():
             if len(subtask_graph._successors[subtask]) == 0:
-                last_subtask_keys.append(subtask.subtask_id)
-                for res in subtask.chunk_graph.results:
-                    last_op_keys.append(res.op.key)
+                result_subtask_keys.append(subtask.subtask_id)
+                for result in subtask.chunk_graph.results:
+                    result_op_keys.append(result.op.key)
 
-        save_path = os.path.join(self._save_dir, "last_nodes.yaml")
+        save_path = os.path.join(self._save_dir, "result_nodes.yaml")
         await self._save_task_info(
-            {"op": last_op_keys, "subtask": last_subtask_keys},
+            {"op": result_op_keys, "subtask": result_subtask_keys},
             save_path,
         )
 
@@ -179,6 +193,9 @@ class TaskInfoCollector:
     async def collect_tileable_structure(
         self, task: Task, tileable_to_subtasks: dict[TileableType, list[Subtask]]
     ):
+        """
+        This method will only be called once for each task.
+        """
         self._validate_task(task)
         tileable_dict = dict()
         for tileable, subtasks in tileable_to_subtasks.items():
@@ -189,11 +206,11 @@ class TaskInfoCollector:
                 x.key for x in tileable.op.inputs
             ]
 
-        save_path = os.path.join(self._save_dir, "tileable.yaml")
+        save_path = os.path.join(self._save_dir, "tileables.yaml")
         await self._save_task_info(tileable_dict, save_path)
 
     @collect_on_demand
-    async def collect_runtime_subtask_info(
+    async def append_runtime_subtask_info(
         self,
         subtask: Subtask,
         band: tuple,
@@ -203,6 +220,9 @@ class TaskInfoCollector:
         memory_sizes: dict[str, int],
         cost_times: dict[str, tuple],
     ):
+        """
+        This method will be called once for each subtask.
+        """
         self._validate_subtask(subtask)
 
         subtask_dict = dict()
@@ -220,11 +240,10 @@ class TaskInfoCollector:
             result_chunks_dict[key] = chunk_dict
         subtask_dict["result_chunks"] = result_chunks_dict
 
-        save_path = os.path.join(self._save_dir, "subtask_runtime.yaml")
-        await self._save_task_info({subtask.subtask_id: subtask_dict}, save_path)
+        self._subtask_infos[subtask.subtask_id].update(subtask_dict)
 
     @collect_on_demand
-    async def collect_runtime_operand_info(
+    async def append_runtime_operand_info(
         self,
         subtask: Subtask,
         start: float,
@@ -232,6 +251,9 @@ class TaskInfoCollector:
         chunk: ChunkType,
         processor_context,
     ):
+        """
+        This method will be called once for each chunk.
+        """
         self._validate_subtask(subtask)
 
         op = chunk.op
@@ -255,22 +277,31 @@ class TaskInfoCollector:
             op_info["memory_use"] = total_size
             op_info["result_count"] = cnt
 
-        save_path = os.path.join(self._save_dir, "operand_runtime.yaml")
-        await self._save_task_info({op_key: op_info}, save_path)
+        if "op_info" not in self._subtask_infos[subtask.subtask_id]:
+            self._subtask_infos[subtask.subtask_id]["op_info"] = dict()
+        self._subtask_infos[subtask.subtask_id]["op_info"][op_key] = op_info
+
+    @collect_on_demand
+    async def flush_subtask_info(self, subtask_id: str):
+        if subtask_id in self._subtask_infos:
+            save_path = os.path.join(self._save_dir, f"{subtask_id}_subtask_info.yaml")
+            await self._save_task_info(self._subtask_infos[subtask_id], save_path)
 
     @collect_on_demand
     async def collect_fetch_time(
         self, subtask: Subtask, fetch_start: float, fetch_end: float
     ):
+        # TODO: merge into subtask info so that the number of files could be reduced greatly.
+        """
+        This method will be called once on worker for each subtask.
+        """
         self._validate_subtask(subtask)
 
-        save_path = os.path.join(self._save_dir, "fetch_time.yaml")
+        save_path = os.path.join(
+            self._save_dir, f"{subtask.subtask_id}_subtask_fetch_time.yaml"
+        )
         await self._save_task_info(
-            {
-                subtask.subtask_id: {
-                    "fetch_time": {"start_time": fetch_start, "end_time": fetch_end}
-                }
-            },
+            {subtask.subtask_id: (fetch_start, fetch_end)},
             save_path,
         )
 
@@ -299,36 +330,52 @@ class TaskInfoCollectorActor(mo.Actor):
     def __init__(self, profiling_config: Optional[Dict[str, Any]] = None):
         if profiling_config is None:
             profiling_config = dict()
-        self.profiling_config = profiling_config
-        self.experimental_profiling_config = profiling_config.get(
-            "experimental", dict()
-        )
-        mars_temp_dir = os.environ.get(MARS_LOG_PATH_KEY)
-        if mars_temp_dir is None:
-            self.yaml_root_dir = os.path.join(tempfile.tempdir, "mars_task_infos")
-        else:
-            self.yaml_root_dir = os.path.abspath(
-                os.path.join(mars_temp_dir, "../..", "mars_task_infos")
-            )
-        logger.info(f"Save task info in {self.yaml_root_dir}")
 
-    async def collect_task_info_enabled(self):
-        return self.experimental_profiling_config.get(
+        experimental_profiling_config = profiling_config.get("experimental", dict())
+        self._collect_task_info_enabled = experimental_profiling_config.get(
             "collect_task_info_enabled", False
         )
+        self._task_info_root_path = experimental_profiling_config.get(
+            "task_info_root_path", None
+        )
+        self._task_info_storage_options = experimental_profiling_config.get(
+            "task_info_storage_options", {}
+        )
+        if self._task_info_root_path is None:
+            log_dir = os.environ.get(MARS_LOG_PATH_KEY)
+            if log_dir is None:
+                log_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
+            self._task_info_root_path = os.path.abspath(
+                os.path.join(log_dir, "mars_task_infos")
+            )
+        logger.info(f"Task info root path: {self._task_info_root_path}")
+        self._scheme = get_scheme(self._task_info_root_path)
+        self._fs = get_fs(self._task_info_root_path, self._task_info_storage_options)
+        self._loop = asyncio.new_event_loop()
+        self._isolation = Isolation(self._loop)
+        self._isolation.start()
 
-    async def save_task_info(self, task_info: dict, path: str):
-        def save_info(task_info_, path_):
-            abs_save_path = os.path.join(self.yaml_root_dir, path_)
-            abs_save_dir, _ = os.path.split(abs_save_path)
-            if not os.path.exists(abs_save_dir):
-                os.makedirs(abs_save_dir)
+    async def __pre_destroy__(self):
+        self._isolation.stop()
 
-            if os.path.isfile(abs_save_path):
-                mode = "a"
-            else:
-                mode = "w"
-            with open(abs_save_path, mode) as f:
-                yaml.dump(task_info_, f)
+    async def collect_task_info_enabled(self):
+        return self._collect_task_info_enabled
 
-        await asyncio.to_thread(save_info, task_info, path)
+    async def save_task_info(self, info: dict, path: str):
+        async def save_info():
+            try:
+                abs_save_path = os.path.join(self._task_info_root_path, path)
+                abs_save_dir, _ = os.path.split(abs_save_path)
+
+                # mkdir when saving to a local file.
+                if self._scheme == "file" and not self._fs.exists(abs_save_dir):
+                    self._fs.mkdir(abs_save_dir, create_parents=True)
+
+                # since append is not available for object storages, create a new file every time.
+                async with AioFileObject(open_file(abs_save_path, "w")) as f:
+                    s = await asyncio.create_task(asyncio.to_thread(yaml.dump, info))
+                    await f.write(s)
+            except:  # noqa: E722   # pragma: no cover
+                logger.error(f"Failed to save task info", exc_info=True)
+
+        asyncio.run_coroutine_threadsafe(save_info(), self._loop)
