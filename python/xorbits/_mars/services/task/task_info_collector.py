@@ -23,16 +23,12 @@ from collections import defaultdict
 from typing import Any, Dict, Optional
 
 import yaml
-from mars.lib.aio import Isolation
-
-from xorbits._mars.lib.aio import AioFileObject
-from xorbits._mars.lib.filesystem import open_file
 
 from ... import oscar as mo
 from ...constants import MARS_LOG_PATH_KEY, MARS_TMP_DIR_PREFIX
 from ...core.operand import Fetch, FetchShuffle
-from ...lib.aio import alru_cache
-from ...lib.filesystem import get_fs, get_scheme
+from ...lib.aio import AioFileObject, Isolation, alru_cache
+from ...lib.filesystem import get_fs, get_scheme, open_file
 from ...services.subtask import Subtask, SubtaskGraph
 from ...services.task.core import Task
 from ...typing import ChunkType, TileableType
