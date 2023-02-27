@@ -1755,9 +1755,6 @@ def is_ray_address(address: str) -> bool:
         return False
 
 
-# TODO: clean_up_func, is_on_ray and restore_func functions may be
-# removed or refactored in the future to calculate func size
-# with more accuracy as well as address some serialization issues.
 def is_on_ray(ctx):
     from .services.task.execution.ray.context import (
         RayExecutionContext,
