@@ -434,6 +434,7 @@ class KubernetesCluster:
             start_time = time.time()
             while True:
                 try:
+                    time.sleep(1)
                     # TODO use Xorbits API instead of mars.
                     cluster_api = WebClusterAPI(self._external_web_endpoint)
                     supervisors = await cluster_api.get_supervisors()
