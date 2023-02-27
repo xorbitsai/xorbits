@@ -11,6 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import inspect
+
+
+METHODS = None
+
+
+def unimplemented_func():
+    """
+    Not implemented yet.
+    """
+    raise NotImplementedError(f"This function is not implemented yet.")
 
 
 def __dir__():
@@ -21,9 +32,22 @@ def __dir__():
 
 def __getattr__(name: str):
     from ..mars_adapters import MARS_TENSOR_RANDOM_CALLABLES
+    from ..numpy_adapters import NUMPY_MODULE_METHODS
 
     if name in MARS_TENSOR_RANDOM_CALLABLES:
         return MARS_TENSOR_RANDOM_CALLABLES[name]
     else:
-        # TODO: fallback to numpy
-        raise AttributeError(name)
+        global METHODS
+        import numpy
+        if METHODS is None: # avoid refetching
+            METHODS = NUMPY_MODULE_METHODS(numpy.random)
+
+        if not hasattr(numpy.random, name):
+            raise AttributeError(name)
+        elif name in METHODS:
+            return METHODS[name]
+        else:  # pragma: no cover
+            if inspect.ismethod(getattr(numpy.random, name)):
+                return unimplemented_func
+            else:
+                raise AttributeError(name)
