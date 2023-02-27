@@ -39,9 +39,9 @@ def _get_output_type(func: Callable) -> MarsOutputType:
             return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
         all_types = [t.strip() for t in return_annotation.split("|")]
 
-        return (
-            MarsOutputType.tensor if "ndarray" in all_types else MarsOutputType.object
-        )
+        if "ndarray" in all_types:
+            return MarsOutputType.tensor
+        return MarsOutputType.object
     except TypeError:  # some np methods return objects and inspect.signature throws a TypeError
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
