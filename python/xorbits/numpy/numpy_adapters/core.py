@@ -28,6 +28,10 @@ from ...core.adapter import (
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
     np.random.default_rng: MarsOutputType.object,
+    np.random.Generator: MarsOutputType.object,
+    np.random.PCG64: MarsOutputType.object,
+    np.random.MT19937: MarsOutputType.object,
+    np.random.Generator: MarsOutputType.object,
 }
 
 
