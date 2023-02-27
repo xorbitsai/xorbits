@@ -39,8 +39,10 @@ def _get_output_type(func: Callable) -> MarsOutputType:
             return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
         all_types = [t.strip() for t in return_annotation.split("|")]
 
-        return MarsOutputType.tensor if 'ndarray' in all_types else MarsOutputType.object
-    except TypeError: # some np methods return objects and inspect.signature throws a TypeError
+        return (
+            MarsOutputType.tensor if "ndarray" in all_types else MarsOutputType.object
+        )
+    except TypeError:  # some np methods return objects and inspect.signature throws a TypeError
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
 
@@ -78,7 +80,9 @@ def wrap_numpy_module_method(np_cls: Type, func_name: str):
                 else:
                     return type(nested)(new_vals)
 
-            return getattr(np_cls, f_name)(*_replace_data(args), **_replace_data(kwargs))
+            return getattr(np_cls, f_name)(
+                *_replace_data(args), **_replace_data(kwargs)
+            )
 
         new_args = (func_name,) + args
         ret = mars_remote.spawn(
