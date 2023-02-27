@@ -16,7 +16,6 @@ import numpy as np
 import pytest
 
 from .... import numpy as xnp
-from ...mars_adapters.core import MARS_TENSOR_CALLABLES
 
 
 @pytest.mark.parametrize(
