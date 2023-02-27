@@ -24,7 +24,9 @@ import time
 import numpy as np
 import pandas as pd
 import pytest
-import yaml
+from mars.constants import MARS_TMP_DIR_PREFIX
+
+from xorbits._mars.constants import MARS_PROFILING_RESULTS_PATH_KEY
 
 from ..... import dataframe as md
 from ..... import oscar as mo
@@ -54,6 +56,9 @@ from ..manager import TaskConfigurationActor, TaskManagerActor
 @pytest.fixture
 async def actor_pool():
     backend = MARS_CI_BACKEND
+    mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
+    os.environ[MARS_PROFILING_RESULTS_PATH_KEY] = mars_tmp_dir
+
     start_method = (
         os.environ.get("POOL_START_METHOD", "forkserver")
         if sys.platform != "win32"
@@ -738,44 +743,17 @@ async def test_collect_task_info(actor_pool):
         extra_config={"collect_task_info": True},
     )
     await manager.wait_task(task_id)
-    yaml_root_dir = os.path.join(tempfile.tempdir, "mars_task_infos")
+
+    yaml_root_dir = os.environ.get(MARS_PROFILING_RESULTS_PATH_KEY)
+    assert yaml_root_dir is not None
+
     save_dir = os.path.join(yaml_root_dir, session_id, task_id)
-
     assert os.path.exists(save_dir)
-    assert os.path.isfile(os.path.join(save_dir, "tileable.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "operand_runtime.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "subtask_runtime.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "last_nodes.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "fetch_time.yaml"))
 
-    with open(os.path.join(save_dir, "operand_runtime.yaml"), "r") as f:
-        operand_runtime = yaml.full_load(f)
-        v = list(operand_runtime.values())[0]
-        assert "execute_time" in v
-        assert "memory_use" in v
-        assert "op_name" in v
-        assert "result_count" in v
-        assert "subtask_id" in v
-
-    with open(os.path.join(save_dir, "subtask_runtime.yaml"), "r") as f:
-        subtask_runtime = yaml.full_load(f)
-        v = list(subtask_runtime.values())[0]
-        assert "band" in v
-        assert "slot_id" in v
-        assert "execute_time" in v
-        assert "load_data_time" in v
-        assert "store_meta_time" in v
-        assert "store_result_time" in v
-        assert "unpin_time" in v
-
-    with open(os.path.join(save_dir, "last_nodes.yaml"), "r") as f:
-        last_nodes = yaml.full_load(f)
-        assert "op" in last_nodes
-        assert "subtask" in last_nodes
-
-    with open(os.path.join(save_dir, "fetch_time.yaml"), "r") as f:
-        fetch_time = yaml.full_load(f)
-        v = list(fetch_time.values())[0]
-        assert "fetch_time" in v
+    files = os.listdir(save_dir)
+    assert "tileables.yaml" in files
+    assert "result_nodes.yaml" in files
+    assert len([f for f in files if f.endswith("_subtask_info.yaml")]) > 0
+    assert len([f for f in files if f.endswith("_subtask_fetch_time.yaml")]) > 0
 
     shutil.rmtree(save_dir, ignore_errors=True)

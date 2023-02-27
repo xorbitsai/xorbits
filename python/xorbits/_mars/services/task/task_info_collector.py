@@ -25,7 +25,7 @@ from typing import Any, Dict, Optional
 import yaml
 
 from ... import oscar as mo
-from ...constants import MARS_LOG_PATH_KEY, MARS_TMP_DIR_PREFIX
+from ...constants import MARS_PROFILING_RESULTS_PATH_KEY, MARS_TMP_DIR_PREFIX
 from ...core.operand import Fetch, FetchShuffle
 from ...lib.aio import AioFileObject, Isolation, alru_cache
 from ...lib.filesystem import get_fs, get_scheme, open_file
@@ -338,12 +338,10 @@ class TaskInfoCollectorActor(mo.Actor):
             "task_info_storage_options", {}
         )
         if self._task_info_root_path is None:
-            log_dir = os.environ.get(MARS_LOG_PATH_KEY)
-            if log_dir is None:
-                log_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
-            self._task_info_root_path = os.path.abspath(
-                os.path.join(log_dir, "mars_task_infos")
-            )
+            profiling_results_dir = os.environ.get(MARS_PROFILING_RESULTS_PATH_KEY)
+            if profiling_results_dir is None:
+                profiling_results_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
+            self._task_info_root_path = profiling_results_dir
         logger.info(f"Task info root path: {self._task_info_root_path}")
         self._scheme = get_scheme(self._task_info_root_path)
         self._fs = get_fs(self._task_info_root_path, self._task_info_storage_options)

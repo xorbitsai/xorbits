@@ -16,5 +16,8 @@
 MARS_LOG_PATH_KEY = "MARS_LOG_PATH"
 # Mars log file name prefix
 MARS_LOG_PREFIX = "mars_"
-# The prefix of the temporary directory where the Mars log is located
-MARS_TMP_DIR_PREFIX = "mars_tmp"
+
+MARS_PROFILING_RESULTS_PATH_KEY = "MARS_PROFILING_RESULTS_PATH"
+
+# The prefix of the temporary directory where the Mars temp files are located
+MARS_TMP_DIR_PREFIX = "mars_tmp_"
