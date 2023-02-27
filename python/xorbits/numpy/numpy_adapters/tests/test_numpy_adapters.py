@@ -21,9 +21,9 @@ from .... import numpy as xnp
 @pytest.mark.parametrize(
     "func",
     [
-       "default_rng",
-       "PCG64",
-       "MT19937",
+        "default_rng",
+        "PCG64",
+        "MT19937",
     ],
 )
 def test_zero_param_funcs(func):
