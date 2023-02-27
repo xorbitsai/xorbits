@@ -19,17 +19,17 @@ from .... import numpy as xnp
 
 
 @pytest.mark.parametrize(
-    "func",
+    "xnp_cls,np_cls,func",
     [
-        "default_rng",
-        "PCG64",
-        "MT19937",
+        (xnp.random, np.random, "default_rng"),
+        (xnp.random, np.random, "PCG64"),
+        (xnp.random, np.random, "MT19937"),
     ],
 )
-def test_zero_param_funcs(func):
+def test_zero_param_funcs(xnp_cls, np_cls, func):
     with pytest.warns(Warning) as w:
-        xnp_func = getattr(xnp.random, func)
-        np_func = getattr(np.random, func)
+        xnp_func = getattr(xnp_cls, func)
+        np_func = getattr(np_cls, func)
 
         res = xnp_func()
         assert f"xorbits.numpy.{func} will fallback to NumPy" == str(w[0].message)
@@ -45,15 +45,15 @@ def test_zero_param_funcs(func):
 
 
 @pytest.mark.parametrize(
-    "func",
+    "xnp_cls,np_cls,func",
     [
-        "Generator",
+        (xnp.random, np.random, "Generator"),
     ],
 )
-def test_one_param_funcs(func):
+def test_one_param_funcs(xnp_cls, np_cls, func):
     with pytest.warns(Warning) as w:
-        xnp_func = getattr(xnp.random, func)
-        np_func = getattr(np.random, func)
+        xnp_func = getattr(xnp_cls, func)
+        np_func = getattr(np_cls, func)
 
         res = xnp_func(np.random.PCG64())
         assert f"xorbits.numpy.{func} will fallback to NumPy" == str(w[0].message)
