@@ -15,16 +15,11 @@
 import functools
 import inspect
 import warnings
-from typing import Any, Dict, Type, Callable
+from typing import Any, Callable, Dict, Type
 
 import numpy as np
 
-from ...core.adapter import (
-    MarsOutputType,
-    mars_remote,
-    wrap_mars_callable,
-)
-
+from ...core.adapter import MarsOutputType, mars_remote, wrap_mars_callable
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
     np.random.default_rng: MarsOutputType.object,
