@@ -281,7 +281,9 @@ class TaskInfoCollector:
     async def flush_subtask_info(self, subtask_id: str):
         if subtask_id in self._subtask_infos:
             save_path = os.path.join(self._save_dir, f"{subtask_id}_subtask_info.yaml")
-            await self._save_task_info(self._subtask_infos[subtask_id], save_path)
+            subtask_info = self._subtask_infos[subtask_id]
+            del self._subtask_infos[subtask_id]
+            await self._save_task_info(subtask_info, save_path)
 
     @collect_on_demand
     async def collect_fetch_time(
