@@ -33,14 +33,14 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
 def _get_output_type(func: Callable) -> MarsOutputType:
     try:
         return_annotation = inspect.signature(func).return_annotation
-        if return_annotation is inspect.Signature.empty:
+        if return_annotation is inspect.Signature.empty:  # pragma: no cover
             # mostly for python3.7 whose return_annotation is always empty
             return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
         all_types = [t.strip() for t in return_annotation.split("|")]
 
-        if "ndarray" in all_types:
-            return MarsOutputType.tensor
-        return MarsOutputType.object
+        return (
+            MarsOutputType.tensor if "ndarray" in all_types else MarsOutputType.object
+        )
     except (
         TypeError
     ):  # some np methods return objects and inspect.signature throws a TypeError
@@ -89,7 +89,7 @@ def wrap_numpy_module_method(np_cls: Type, func_name: str):
         ret = mars_remote.spawn(
             execute_func, args=new_args, kwargs=kwargs, output_types=output_type
         )
-        if output_type == MarsOutputType.tensor:
+        if output_type == MarsOutputType.tensor:  # pragma: no cover
             ret = ret.ensure_data()
         else:
             ret = ret.execute()
