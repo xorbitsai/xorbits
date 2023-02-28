@@ -24,15 +24,13 @@ import time
 import numpy as np
 import pandas as pd
 import pytest
-from mars.constants import MARS_TMP_DIR_PREFIX
-
-from xorbits._mars.constants import MARS_PROFILING_RESULTS_PATH_KEY
 
 from ..... import dataframe as md
 from ..... import oscar as mo
 from ..... import remote as mr
 from ..... import tensor as mt
 from .....conftest import MARS_CI_BACKEND
+from .....constants import MARS_PROFILING_RESULTS_PATH_KEY, MARS_TMP_DIR_PREFIX
 from .....core import Tileable, TileableGraph, TileableGraphBuilder
 from .....core.operand import Fetch
 from .....oscar.backends.allocate_strategy import MainPool
