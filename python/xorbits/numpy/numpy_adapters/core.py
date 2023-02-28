@@ -31,9 +31,9 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
 
 
 def _get_output_type(func: Callable) -> MarsOutputType:
-    try:
+    try:  # pragma: no cover
         return_annotation = inspect.signature(func).return_annotation
-        if return_annotation is inspect.Signature.empty:  # pragma: no cover
+        if return_annotation is inspect.Signature.empty:
             # mostly for python3.7 whose return_annotation is always empty
             return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
         all_types = [t.strip() for t in return_annotation.split("|")]
