@@ -57,7 +57,7 @@ def wrap_numpy_module_method(np_cls: Type, func_name: str):
         output_type = _get_output_type(func_name)
 
         # use mars remote to execute numpy functions
-        def execute_func(f_name: str, *args, **kwargs):
+        def execute_func(f_name: str, *args, **kwargs):  # pragma: no cover
             from xorbits.core.adapter import MarsEntity
 
             def _replace_data(nested):

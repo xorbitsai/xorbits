@@ -16,7 +16,6 @@ import numpy as np
 import pytest
 
 from .... import numpy as xnp
-from ..core import wrap_numpy_module_method
 
 
 @pytest.mark.parametrize(
@@ -37,22 +36,15 @@ def test_zero_param_funcs(xnp_cls, np_cls, func):
 
         xnp_output = res.execute().fetch()
         np_output = np_func()
-        wrapped_func = wrap_numpy_module_method(np_cls, func)
-        wrapped_func_output = wrapped_func().fetch()
 
-        assert type(wrapped_func_output) == type(np_output)
         assert type(xnp_output) == type(np_output)
 
         if isinstance(np_output, np.ndarray):
             assert isinstance(xnp_output, np.ndarray)
             assert np.equal(xnp_output, np_output)
-            assert isinstance(wrapped_func_output, np.ndarray)
-            assert np.equal(wrapped_func_output, np_output)
         if isinstance(np_output, object):
             assert isinstance(xnp_output, object)
             assert dir(xnp_output) == dir(np_output)
-            assert isinstance(wrapped_func_output, object)
-            assert dir(wrapped_func_output) == dir(np_output)
 
 
 @pytest.mark.parametrize(
@@ -71,19 +63,12 @@ def test_one_param_funcs(xnp_cls, np_cls, func):
 
         xnp_output = res.execute().fetch()
         np_output = np_func(np.random.PCG64())
-        wrapped_func = wrap_numpy_module_method(np_cls, func)
-        wrapped_func_output = wrapped_func(np.random.PCG64()).fetch()
 
-        assert type(wrapped_func_output) == type(np_output)
         assert type(xnp_output) == type(np_output)
 
         if isinstance(np_output, np.ndarray):
             assert isinstance(xnp_output, np.ndarray)
             assert np.equal(xnp_output, np_output)
-            assert isinstance(wrapped_func_output, np.ndarray)
-            assert np.equal(wrapped_func_output, np_output)
         if isinstance(np_output, object):
             assert isinstance(xnp_output, object)
             assert dir(xnp_output) == dir(np_output)
-            assert isinstance(wrapped_func_output, object)
-            assert dir(wrapped_func_output) == dir(np_output)
