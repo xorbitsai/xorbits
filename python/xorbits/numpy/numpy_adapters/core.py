@@ -117,6 +117,7 @@ def _collect_numpy_module_members(np_cls: Type) -> Dict[str, Any]:
                     docstring_src=getattr(np_cls, name, None),
                     fallback_warning=True,
                 )
+
     return module_methods
 
 
