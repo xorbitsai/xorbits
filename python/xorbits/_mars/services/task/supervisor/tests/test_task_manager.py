@@ -118,6 +118,7 @@ async def actor_pool():
             await MockStorageAPI.cleanup(pool.external_address)
             await MockClusterAPI.cleanup(pool.external_address)
             await MockMutableAPI.cleanup(session_id, pool.external_address)
+            shutil.rmtree(mars_tmp_dir, ignore_errors=True)
 
 
 async def _merge_data(
@@ -747,11 +748,10 @@ async def test_collect_task_info(actor_pool):
 
     save_dir = os.path.join(yaml_root_dir, session_id, task_id)
     assert os.path.exists(save_dir)
+    time.sleep(1)
 
     files = os.listdir(save_dir)
     assert "tileables.yaml" in files
     assert "result_nodes.yaml" in files
     assert len([f for f in files if f.endswith("_subtask_info.yaml")]) > 0
     assert len([f for f in files if f.endswith("_subtask_fetch_time.yaml")]) > 0
-
-    shutil.rmtree(save_dir, ignore_errors=True)
