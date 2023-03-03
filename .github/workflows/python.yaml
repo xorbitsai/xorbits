@@ -100,6 +100,7 @@ jobs:
 
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
+      if: ${{ matrix.module != 'gpu' }}
       with:
         python-version: ${{ matrix.python-version }}
         activate-environment: ${{ env.CONDA_ENV }}
@@ -114,6 +115,7 @@ jobs:
     - name: Install dependencies
       env:
         MODULE: ${{ matrix.module }}
+      if: ${{ matrix.module != 'gpu' }}
       run: |
         pip install numpy scipy cython coverage flaky
         
@@ -163,6 +165,12 @@ jobs:
         fi
 
         pip install -e ".[dev,extra]"
+      working-directory: ./python
+
+    - name: Install on GPU
+      if: ${{ matrix.module == 'gpu' }}
+      run: |
+        python setup.py build_ext -i
       working-directory: ./python
 
     - name: Test with pytest
