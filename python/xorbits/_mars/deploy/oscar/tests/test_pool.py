@@ -18,8 +18,7 @@ import tempfile
 
 import pytest
 
-from ....constants import MARS_LOG_PATH_KEY, MARS_TMP_DIR_PREFIX
-from ....utils import clean_mars_tmp_dir
+from ....constants import MARS_LOG_DIR_KEY, MARS_TMP_DIR_PREFIX
 from ..pool import (
     _config_logging,
     _get_root_logger_level_and_format,
@@ -44,9 +43,6 @@ def init():
         "handler_file_handler",
     ]
     yield file_logging_config, logger_sections, root_level
-
-    # clean
-    clean_mars_tmp_dir()
 
 
 def test_parse_file_logging_config(init):
@@ -83,16 +79,14 @@ def test_config_logging(init, caplog):
     kwargs = {"logging_conf": {}}
     with caplog.at_level(logging.DEBUG):
         _config_logging(**kwargs)
-    log_path = os.environ.get(MARS_LOG_PATH_KEY)
+    log_path = os.environ.get(MARS_LOG_DIR_KEY)
     assert log_path is not None
     assert os.path.basename(os.path.dirname(log_path)).startswith(MARS_TMP_DIR_PREFIX)
-
-    clean_mars_tmp_dir()
 
     with tempfile.TemporaryDirectory() as folder:
         kwargs = {"logging_conf": {"log_dir": folder, "from_cmd": True}}
         _config_logging(**kwargs)
-        log_path = os.environ.get(MARS_LOG_PATH_KEY)
+        log_path = os.environ.get(MARS_LOG_DIR_KEY)
         assert log_path is not None
         assert os.path.dirname(os.path.dirname(log_path)) == folder
 
@@ -105,11 +99,16 @@ def test_config_logging(init, caplog):
         assert cnt == 1
         assert file_handler is not None
         assert file_handler.level == logging.getLevelName("DEBUG")
-        assert file_handler.baseFilename == os.environ.get(MARS_LOG_PATH_KEY)
+        assert file_handler.baseFilename == os.environ.get(MARS_LOG_DIR_KEY)
 
 
 def test_pool_with_no_web_config(init):
     kwargs = {"web": False}
     _config_logging(**kwargs)
-    log_path = os.environ.get(MARS_LOG_PATH_KEY)
+    log_path = os.environ.get(MARS_LOG_DIR_KEY)
     assert log_path is None
+
+
+# TODO: test non existent logging config file
+# TODO: test non existent log dir
+# TODO: test default log dir

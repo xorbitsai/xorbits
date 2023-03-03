@@ -31,7 +31,7 @@ from ..... import oscar as mo
 from ..... import remote as mr
 from ..... import tensor as mt
 from .....conftest import MARS_CI_BACKEND
-from .....constants import MARS_PROFILING_RESULTS_PATH_KEY, MARS_TMP_DIR_PREFIX
+from .....constants import MARS_PROFILING_RESULTS_DIR_KEY, MARS_TMP_DIR_PREFIX
 from .....core import Tileable, TileableGraph, TileableGraphBuilder
 from .....core.operand import Fetch
 from .....oscar.backends.allocate_strategy import MainPool
@@ -56,7 +56,7 @@ from ..manager import TaskConfigurationActor, TaskManagerActor
 async def actor_pool():
     backend = MARS_CI_BACKEND
     mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
-    os.environ[MARS_PROFILING_RESULTS_PATH_KEY] = mars_tmp_dir
+    os.environ[MARS_PROFILING_RESULTS_DIR_KEY] = mars_tmp_dir
 
     start_method = (
         os.environ.get("POOL_START_METHOD", "forkserver")
@@ -744,7 +744,7 @@ async def test_collect_task_info(actor_pool):
     )
     await manager.wait_task(task_id)
 
-    yaml_root_dir = os.environ.get(MARS_PROFILING_RESULTS_PATH_KEY)
+    yaml_root_dir = os.environ.get(MARS_PROFILING_RESULTS_DIR_KEY)
     assert yaml_root_dir is not None
 
     save_dir = os.path.join(yaml_root_dir, session_id, task_id)

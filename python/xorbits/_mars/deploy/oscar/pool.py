@@ -12,15 +12,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import configparser
 import logging
 import os
 import sys
-import tempfile
-from typing import Dict, List, Optional, Tuple
+import time
+from typing import Any, Dict, List, Optional, Tuple
 
 from ... import oscar as mo
-from ...constants import MARS_LOG_PATH_KEY, MARS_LOG_PREFIX, MARS_TMP_DIR_PREFIX
+from ...constants import (
+    DEFAULT_MARS_LOG_BACKUP_COUNT,
+    DEFAULT_MARS_LOG_DIR,
+    DEFAULT_MARS_LOG_DIR_WIN,
+    DEFAULT_MARS_LOG_FILE_NAME,
+    DEFAULT_MARS_LOG_MAX_BYTES,
+    MARS_LOG_DIR_KEY,
+)
 from ...resource import Resource, cuda_count
 
 logger = logging.getLogger(__name__)
@@ -45,119 +53,144 @@ def _get_root_logger_level_and_format() -> Tuple[str, Optional[str]]:
     return level, fmt
 
 
-def _parse_file_logging_config(
-    file_path: str,
-    log_path: str,
-    level: Optional[str],
-    formatter: Optional[str] = None,
-    from_cmd: bool = False,
-) -> configparser.RawConfigParser:
-    """
-    If env is ipython (from_cmd=False), the log level and format on the web follow our default configuration file,
-    and the level and format on the console use the user's configuration (logging.basicConfig) or keep the default.
-
-    If env is cmd (from_cmd=True, e.g. user invokes `python -m mars.worker`),
-    the log level and format on the web and console follow user's config (--log-level and --log-format)
-    or our default configuration file.
-    """
-    config = configparser.RawConfigParser()
-    config.read(file_path)
-    logger_sections = [
-        "logger_root",
-        "logger_main",
-        "logger_deploy",
-        "logger_oscar",
-        "logger_services",
-        "logger_dataframe",
-        "logger_learn",
-        "logger_tensor",
-        "handler_stream_handler",
-        "handler_file_handler",
-    ]
-    all_sections = config.sections()
-    for section in logger_sections:
-        if level and section in all_sections:
-            config[section]["level"] = level.upper()
-
-    if "handler_file_handler" in config:
-        if sys.platform.startswith("win"):
-            log_path = log_path.replace("\\", "/")
-        config["handler_file_handler"]["args"] = rf"('{log_path}',)"
-    if formatter:
-        format_section = "formatter_formatter"
-        config[format_section]["format"] = formatter
-
-    stream_handler_sec = "handler_stream_handler"
-    file_handler_sec = "handler_file_handler"
-    root_sec = "logger_root"
-    # If not from cmd (like ipython) and user uses its own config file,
-    # need to judge that whether handler_stream_handler section is in the config.
-    if not from_cmd and stream_handler_sec in all_sections:
-        # console and web log keeps the default config as root logger
-        root_level, root_fmt = _get_root_logger_level_and_format()
-        config[file_handler_sec]["level"] = root_level or "WARN"
-        config[stream_handler_sec]["level"] = root_level or "WARN"
-        config[root_sec]["level"] = root_level or "WARN"
-        if root_fmt:
-            config.add_section("formatter_console")
-            config["formatter_console"]["format"] = root_fmt
-            config["formatters"]["keys"] += ",console"
-            config[stream_handler_sec]["formatter"] = "console"
+def _apply_log_level(level: Optional[str], config: configparser.RawConfigParser):
+    if level is not None:
+        loggers = config["loggers"]["keys"].split(",")
+        for lg in loggers:
+            lg = lg.strip()
+            config[f"logger_{lg}"]["level"] = level.upper()
     return config
 
 
+def _apply_log_format(fmt: Optional[str], config: configparser.RawConfigParser):
+    if fmt is not None:
+        formatters = config["formatters"]["keys"].split(",")
+        for formatter in formatters:
+            formatter = formatter.strip()
+            config[f"formatter_{formatter}"]["format"] = fmt
+    return config
+
+
+def _apply_log_dir(
+    log_dir: str,
+    is_default_logging_config: bool,
+    is_default_log_dir: bool,
+    config: configparser.RawConfigParser,
+):
+    if is_default_logging_config:
+        assert "handler_file_handler" in config
+        if sys.platform.startswith("win"):
+            log_dir = log_dir.replace("\\", "/")
+        log_file_path = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
+        config["handler_file_handler"]["args"] = (
+            rf"('{log_file_path}', 'a', "
+            rf"{DEFAULT_MARS_LOG_MAX_BYTES}, "
+            rf"{DEFAULT_MARS_LOG_BACKUP_COUNT})"
+        )
+    elif not is_default_log_dir:
+        # TODO: don't have a perfect way to handle this situation.
+        raise ValueError(
+            "Unable to change the log directory when using a user-defined logging"
+            " configuration file."
+        )
+    return config
+
+
+def _parse_file_logging_config(
+    logging_conf: Dict[str, Any]
+) -> configparser.RawConfigParser:
+    """
+    For interactive environments (from_cmd=False), the log level and format on the web follow our
+    default configuration file, while the level and format on the console follow the user's
+    configuration (logging.basicConfig) or keep the default.
+
+    If env is cmd (from_cmd=True, e.g. user invokes `python -m mars.worker`),
+    the log level and format on the web and console follow user's config.
+    """
+    from_cmd = logging_conf.get("from_cmd", False)
+    log_level = logging_conf.get("level", None)
+    log_fmt = logging_conf.get("format", None)
+    log_dir = _get_log_dir(logging_conf.get("log_dir", None))
+    log_config_path = _get_log_config_path(logging_conf.get("log_config", None))
+    is_default_logging_config = logging_conf.get("log_config", None) is None
+    is_default_log_dir = logging_conf.get("log_dir", None) is None
+
+    # for FileLoggerActor(s).
+    os.environ[MARS_LOG_DIR_KEY] = log_dir
+    logger.info("Logging configuration file %s", log_config_path)
+    logger.info("Logging directory %s", log_dir)
+
+    config = configparser.RawConfigParser()
+    config.read(log_config_path)
+    _apply_log_format(log_fmt, config)
+    _apply_log_level(log_level, config)
+    _apply_log_dir(log_dir, is_default_logging_config, is_default_log_dir, config)
+
+    # optimize logs for local runtimes (like IPython).
+    if not from_cmd and is_default_logging_config:
+        # console and web log keeps the default config as root logger
+        root_level, root_fmt = _get_root_logger_level_and_format()
+
+        assert "handler_file_handler" in config
+        assert "handler_stream_handler" in config
+        config["handler_file_handler"]["level"] = root_level or "WARN"
+        config["handler_stream_handler"]["level"] = root_level or "WARN"
+        config["logger_root"]["level"] = root_level or "WARN"
+        if root_fmt:
+            assert "formatter_console" not in config
+            config.add_section("formatter_console")
+            config["formatter_console"]["format"] = root_fmt
+            config["formatters"]["keys"] += ",console"
+            config["handler_stream_handler"]["formatter"] = "console"
+    return config
+
+
+def _get_or_create_default_log_dir() -> str:
+    if sys.platform.startswith("win"):
+        log_dir = DEFAULT_MARS_LOG_DIR_WIN
+    else:
+        log_dir = DEFAULT_MARS_LOG_DIR
+
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    return log_dir
+
+
+def _get_log_dir(log_dir: Optional[str]) -> str:
+    if log_dir is None:
+        log_dir = _get_or_create_default_log_dir()
+    if not os.path.exists(log_dir):
+        raise RuntimeError(f"Log directory does not exist: {log_dir}")
+
+    log_dir = os.path.join(log_dir, str(time.time_ns()))
+    os.mkdir(log_dir)
+    return log_dir
+
+
+def _get_default_logging_config_path() -> str:
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "file-logging.conf")
+
+
+def _get_log_config_path(log_config: Optional[str]) -> str:
+    if log_config is None:
+        log_config = _get_default_logging_config_path()
+    if not os.path.exists(log_config):
+        raise RuntimeError(f"Logging configuration file does not exist: {log_config}")
+    return log_config
+
+
 def _config_logging(**kwargs) -> Optional[configparser.RawConfigParser]:
-    web: bool = kwargs.get("web", True)
-    # web=False usually means it is a test environment.
-    if not web:
-        return
     if kwargs.get("logging_conf", None) is None:
         return
-    config = kwargs["logging_conf"]
-    from_cmd = config.get("from_cmd", False)
-    log_dir = config.get("log_dir", None)
-    log_conf_file = config.get("file", None)
-    level = config.get("level", None)
-    formatter = config.get("formatter", None)
-    logging_config_path = log_conf_file or os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "file-logging.conf"
+
+    parsed_logging_conf = _parse_file_logging_config(kwargs["logging_conf"])
+
+    logging.config.fileConfig(
+        parsed_logging_conf,
+        disable_existing_loggers=False,
     )
-    # default config, then create a temp file
-    if (os.environ.get(MARS_LOG_PATH_KEY, None)) is None or (
-        not os.path.exists(os.environ[MARS_LOG_PATH_KEY])
-    ):
-        if log_dir is None:
-            mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
-        else:
-            mars_tmp_dir = os.path.join(log_dir, MARS_TMP_DIR_PREFIX)
-            os.makedirs(mars_tmp_dir, exist_ok=True)
-        _, file_path = tempfile.mkstemp(prefix=MARS_LOG_PREFIX, dir=mars_tmp_dir)
-        os.environ[MARS_LOG_PATH_KEY] = file_path
-        logging_conf = _parse_file_logging_config(
-            logging_config_path, file_path, level, formatter, from_cmd
-        )
-        # bind user's level and format when using default log conf
-        logging.config.fileConfig(
-            logging_conf,
-            disable_existing_loggers=False,
-        )
-        logger.debug("Use logging config file at %s", logging_config_path)
-        return logging_conf
-    else:
-        logging_conf = _parse_file_logging_config(
-            logging_config_path,
-            os.environ[MARS_LOG_PATH_KEY],
-            level,
-            formatter,
-            from_cmd,
-        )
-        logging.config.fileConfig(
-            logging_conf,
-            os.environ[MARS_LOG_PATH_KEY],
-            disable_existing_loggers=False,
-        )
-        logger.debug("Use logging config file at %s", logging_config_path)
-        return logging_conf
+
+    return parsed_logging_conf
 
 
 async def create_supervisor_actor_pool(

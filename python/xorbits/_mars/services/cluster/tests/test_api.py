@@ -14,13 +14,18 @@
 # limitations under the License.
 import asyncio
 import os
+import shutil
 import tempfile
 
 import pytest
 
 from .... import oscar as mo
-from ....constants import MARS_LOG_PATH_KEY, MARS_LOG_PREFIX, MARS_TMP_DIR_PREFIX
-from ....utils import clean_mars_tmp_dir, get_next_port
+from ....constants import (
+    DEFAULT_MARS_LOG_FILE_NAME,
+    MARS_LOG_DIR_KEY,
+    MARS_TMP_DIR_PREFIX,
+)
+from ....utils import get_next_port
 from ... import NodeRole
 from ...web.supervisor import WebSupervisorService
 from ..api import ClusterAPI, MockClusterAPI, WebClusterAPI
@@ -32,14 +37,12 @@ from ..core import NodeStatus
 async def actor_pool():
     # prepare
     mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
-    _, file_path = tempfile.mkstemp(prefix=MARS_LOG_PREFIX, dir=mars_tmp_dir)
-    os.environ[MARS_LOG_PATH_KEY] = file_path
+    os.environ[MARS_LOG_DIR_KEY] = mars_tmp_dir
     pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
     async with pool:
         yield pool
 
-    # clean
-    clean_mars_tmp_dir()
+    shutil.rmtree(mars_tmp_dir)
 
 
 class TestActor(mo.Actor):
@@ -165,7 +168,8 @@ async def test_web_api(actor_pool):
     assert type(log_content) is str
     assert len(log_content) == 0
 
-    log_file = os.environ[MARS_LOG_PATH_KEY]
+    log_dir = os.environ[MARS_LOG_DIR_KEY]
+    log_file = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
     with open(log_file, "w") as f:
         f.write("foo bar baz")
     log_content = await web_api.fetch_node_log(size=-1, address=pool_addr)

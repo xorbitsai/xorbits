@@ -25,7 +25,7 @@ from typing import Any, Dict, Optional
 import yaml
 
 from ... import oscar as mo
-from ...constants import MARS_PROFILING_RESULTS_PATH_KEY, MARS_TMP_DIR_PREFIX
+from ...constants import MARS_PROFILING_RESULTS_DIR_WIN, MARS_PROFILING_RESULTS_DIR
 from ...core.operand import Fetch, FetchShuffle
 from ...lib.aio import AioFileObject, Isolation, alru_cache
 from ...lib.filesystem import get_fs, get_scheme, open_file
@@ -332,7 +332,6 @@ class TaskInfoCollectorActor(mo.Actor):
     def __init__(self, profiling_config: Optional[Dict[str, Any]] = None):
         if profiling_config is None:
             profiling_config = dict()
-
         experimental_profiling_config = profiling_config.get("experimental", dict())
         self._collect_task_info_enabled = experimental_profiling_config.get(
             "collect_task_info_enabled", False
@@ -344,16 +343,22 @@ class TaskInfoCollectorActor(mo.Actor):
             "task_info_storage_options", {}
         )
         if self._task_info_root_path is None:
-            profiling_results_dir = os.environ.get(MARS_PROFILING_RESULTS_PATH_KEY)
-            if profiling_results_dir is None:
-                profiling_results_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
-            self._task_info_root_path = profiling_results_dir
+            self._task_info_root_path = self._get_default_profiling_results_dir()
         logger.info(f"Task info root path: {self._task_info_root_path}")
         self._scheme = get_scheme(self._task_info_root_path)
         self._fs = get_fs(self._task_info_root_path, self._task_info_storage_options)
         self._loop = asyncio.new_event_loop()
         self._isolation = Isolation(self._loop)
         self._isolation.start()
+
+    @staticmethod
+    def _get_default_profiling_results_dir():
+        import sys
+
+        if sys.platform.startswith("win"):
+            return MARS_PROFILING_RESULTS_DIR_WIN
+        else:
+            return MARS_PROFILING_RESULTS_DIR
 
     async def __pre_destroy__(self):
         self._isolation.stop()
