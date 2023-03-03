@@ -79,7 +79,7 @@ jobs:
           - { os: macos-latest, python-version: 3.8 }
           - { os: macos-latest, python-version: 3.9}
           - { os: windows-latest, python-version: 3.10}
-          - { os: windows-latest, python-version: 3.11}
+          - { os: windows-latest, python-version: 3.8}
           - { os: windows-latest, python-version: 3.9}
           - { os: windows-latest, module: kubernetes}
           - { os: macos-latest, module: kubernetes}
