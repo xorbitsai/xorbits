@@ -22,15 +22,9 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
+from ..core.utils.fallback import unimplemented_func
 from . import accessors, core, groupby, plotting, window
 from .core import DataFrame, Index, Series
-
-
-def unimplemented_func():
-    """
-    Not implemented yet.
-    """
-    raise NotImplementedError(f"This function is not implemented yet.")
 
 
 def _install():

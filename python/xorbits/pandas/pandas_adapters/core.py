@@ -29,6 +29,7 @@ from ...core.adapter import (
 )
 from ...core.data import DataType
 from ...core.utils.docstring import attach_cls_member_docstring
+from ...core.utils.fallback import wrap_fallback_module_method
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
     pd.read_pickle: MarsOutputType.dataframe,
@@ -248,8 +249,11 @@ def _collect_pandas_module_members() -> Dict[str, Any]:
                 and inspect.isfunction(cls_member)
                 and not name.startswith("_")
             ):
+                warning_str = f"xorbits.pandas.{name} will fallback to Pandas"
+                output_type = _get_output_type(getattr(pd, name))
+
                 module_methods[name] = wrap_mars_callable(
-                    wrap_pandas_module_method(name),
+                    wrap_fallback_module_method(pd, name, output_type, warning_str),
                     attach_docstring=True,
                     is_cls_member=False,
                     docstring_src_module=pd,

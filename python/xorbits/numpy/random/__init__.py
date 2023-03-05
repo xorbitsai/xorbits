@@ -13,14 +13,9 @@
 # limitations under the License.
 import inspect
 
+from ...core.utils.fallback import unimplemented_func
+
 METHODS = None
-
-
-def unimplemented_func():
-    """
-    Not implemented yet.
-    """
-    raise NotImplementedError(f"This function is not implemented yet.")
 
 
 def __dir__():
