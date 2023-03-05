@@ -31,7 +31,7 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
 }
 
 
-def _get_output_type(func) -> MarsOutputType:
+def _get_output_type(func: Callable) -> MarsOutputType:
     try:  # pragma: no cover
         return_annotation = inspect.signature(func).return_annotation
         if return_annotation is inspect.Signature.empty:
@@ -43,8 +43,8 @@ def _get_output_type(func) -> MarsOutputType:
             MarsOutputType.tensor if "ndarray" in all_types else MarsOutputType.object
         )
     except (
-        TypeError
-    ):  # some np methods return objects and inspect.signature throws a TypeError
+        ValueError
+    ):  # some np methods return objects and inspect.signature throws a ValueError
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
 
@@ -60,7 +60,7 @@ def _collect_numpy_module_members(np_cls: Type) -> Dict[str, Any]:
                 and not name.startswith("_")
             ):
                 warning_str = f"xorbits.numpy.{name} will fallback to NumPy"
-                output_type = _get_output_type(name)
+                output_type = _get_output_type(getattr(np_cls, name))
 
                 module_methods[name] = wrap_mars_callable(
                     wrap_fallback_module_method(np_cls, name, output_type, warning_str),
