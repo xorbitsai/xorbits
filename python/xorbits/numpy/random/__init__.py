@@ -34,7 +34,7 @@ def __getattr__(name: str):
         global METHODS
         import numpy
 
-        if METHODS is None:  # avoid refetching
+        if METHODS is None:
             METHODS = NUMPY_MODULE_METHODS(numpy.random)
 
         if not hasattr(numpy.random, name):
