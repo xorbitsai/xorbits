@@ -35,7 +35,7 @@ def wrap_fallback_module_method(
     def _wrapped(*args, **kwargs):
         warnings.warn(warning_str, RuntimeWarning)
 
-        # use mars remote to execute pandas functions
+        # use mars remote to execute functions
         def execute_func(f_name: str, *args, **kwargs):
             from xorbits.core.adapter import MarsEntity
 
