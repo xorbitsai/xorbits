@@ -26,7 +26,7 @@ def __dir__():
 
 def __getattr__(name: str):
     from ..mars_adapters import MARS_TENSOR_RANDOM_CALLABLES
-    from ..numpy_adapters import NUMPY_MODULE_METHODS
+    from ..numpy_adapters import collect_numpy_module_members
 
     if name in MARS_TENSOR_RANDOM_CALLABLES:
         return MARS_TENSOR_RANDOM_CALLABLES[name]
@@ -35,7 +35,7 @@ def __getattr__(name: str):
         import numpy
 
         if METHODS is None:
-            METHODS = NUMPY_MODULE_METHODS(numpy.random)
+            METHODS = collect_numpy_module_members(numpy.random)
 
         if not hasattr(numpy.random, name):
             raise AttributeError(name)

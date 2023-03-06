@@ -48,7 +48,7 @@ def _get_output_type(func: Callable) -> MarsOutputType:
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
 
-def _collect_numpy_module_members(np_cls: Type) -> Dict[str, Any]:
+def collect_numpy_module_members(np_cls: Type) -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_TENSOR_CALLABLES
 
     module_methods: Dict[str, Any] = dict()
@@ -72,6 +72,3 @@ def _collect_numpy_module_members(np_cls: Type) -> Dict[str, Any]:
                 )
 
     return module_methods
-
-
-NUMPY_MODULE_METHODS = _collect_numpy_module_members
