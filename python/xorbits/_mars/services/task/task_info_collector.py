@@ -157,8 +157,8 @@ class TaskInfoCollector:
 
             subtask_info[subtask.subtask_id] = subtask_info
 
-        await self._save_task_info(op_info, op_save_path)
-        await self._save_task_info(subtask_info, subtask_save_path)
+        asyncio.create_task(self._save_task_info(op_info, op_save_path))
+        asyncio.create_task(self._save_task_info(subtask_info, subtask_save_path))
 
     @collect_on_demand
     async def collect_result_nodes(
@@ -180,9 +180,11 @@ class TaskInfoCollector:
                     result_op_keys.append(result.op.key)
 
         save_path = os.path.join(self._save_dir, "result_nodes.yaml")
-        await self._save_task_info(
-            {"op": result_op_keys, "subtask": result_subtask_keys},
-            save_path,
+        asyncio.create_task(
+            self._save_task_info(
+                {"op": result_op_keys, "subtask": result_subtask_keys},
+                save_path,
+            )
         )
 
     @collect_on_demand
@@ -203,7 +205,7 @@ class TaskInfoCollector:
             ]
 
         save_path = os.path.join(self._save_dir, "tileables.yaml")
-        await self._save_task_info(tileable_dict, save_path)
+        asyncio.create_task(self._save_task_info(tileable_dict, save_path))
 
     @collect_on_demand
     async def append_runtime_subtask_info(
@@ -283,7 +285,7 @@ class TaskInfoCollector:
             save_path = os.path.join(self._save_dir, f"{subtask_id}_subtask_info.yaml")
             subtask_info = self._subtask_infos[subtask_id]
             del self._subtask_infos[subtask_id]
-            await self._save_task_info(subtask_info, save_path)
+            asyncio.create_task(self._save_task_info(subtask_info, save_path))
 
     @collect_on_demand
     async def collect_fetch_time(
@@ -298,9 +300,11 @@ class TaskInfoCollector:
         save_path = os.path.join(
             self._save_dir, f"{subtask.subtask_id}_subtask_fetch_time.yaml"
         )
-        await self._save_task_info(
-            {subtask.subtask_id: (fetch_start, fetch_end)},
-            save_path,
+        asyncio.create_task(
+            self._save_task_info(
+                {subtask.subtask_id: (fetch_start, fetch_end)},
+                save_path,
+            )
         )
 
     @alru_cache
