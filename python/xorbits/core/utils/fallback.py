@@ -14,7 +14,7 @@
 
 import functools
 import warnings
-from typing import Type
+from types import ModuleType
 
 from ...core.adapter import MarsOutputType, mars_remote
 
@@ -27,7 +27,7 @@ def unimplemented_func():
 
 
 def wrap_fallback_module_method(
-    cls: Type, func_name: str, output_type: MarsOutputType, warning_str: str
+    cls: ModuleType, func_name: str, output_type: MarsOutputType, warning_str: str
 ):
     # wrap member function
     @functools.wraps(getattr(cls, func_name))
