@@ -63,13 +63,23 @@ os.chdir(repo_root)
 
 
 cythonize_kw = dict(language_level=sys.version_info[0])
-cy_extension_kw = dict()
+define_macros = []
 if os.environ.get("CYTHON_TRACE"):
-    cy_extension_kw["define_macros"] = [
-        ("CYTHON_TRACE_NOGIL", "1"),
-        ("CYTHON_TRACE", "1"),
-    ]
+    define_macros.append(("CYTHON_TRACE_NOGIL", "1"))
+    define_macros.append(("CYTHON_TRACE", "1"))
     cythonize_kw["compiler_directives"] = {"linetrace": True}
+
+# Fixes Python 3.11 compatibility issue
+#
+# see also:
+# - https://github.com/cython/cython/issues/4500
+# - https://github.com/scoder/cython/commit/37f270155dbb5907435a1e83fdc90e403d776af5
+if sys.version_info >= (3, 11):
+    define_macros.append(("CYTHON_FAST_THREAD_STATE", "0"))
+
+cy_extension_kw = {
+    'define_macros': define_macros,
+}
 
 if "MSC" in sys.version:
     extra_compile_args = ["/std:c11", "/Ot", "/I" + os.path.join(repo_root, "misc")]
