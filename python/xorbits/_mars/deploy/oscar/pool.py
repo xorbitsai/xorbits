@@ -20,6 +20,7 @@ import sys
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
+from ....utils import get_default_logging_config_file_absolute
 from ... import oscar as mo
 from ...constants import (
     DEFAULT_MARS_LOG_BACKUP_COUNT,
@@ -168,7 +169,7 @@ def _get_log_dir(log_dir: Optional[str]) -> str:
 
 
 def _get_default_logging_config_path() -> str:
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "file-logging.conf")
+    return str(get_default_logging_config_file_absolute())
 
 
 def _get_log_config_path(log_config: Optional[str]) -> str:

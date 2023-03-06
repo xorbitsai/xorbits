@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import importlib
+import os
 import sys
 import traceback
+from pathlib import Path
 from typing import Callable, Optional
 
 
@@ -52,3 +54,14 @@ def get_local_package_version(package_name: str) -> Optional[str]:
         return importlib.import_module(package_name).__version__
     except ModuleNotFoundError:
         return None
+
+
+def get_xorbits_root_absolute() -> Path:
+    return Path(__file__).parent.absolute()
+
+
+def get_default_logging_config_file_absolute() -> Path:
+    p = os.path.join(
+        get_xorbits_root_absolute(), "deploy", "oscar", "file-logging.conf"
+    )
+    return Path(p)
