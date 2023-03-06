@@ -28,7 +28,7 @@ def test_unimplemented_func():
         unimplemented_func()
 
 
-def test_wrap_fallback_module_method():
+def test_wrap_fallback_module_method(setup):
     np_wrap = wrap_fallback_module_method(
         np.random, "default_rng", MarsOutputType.object, "Test Numpy"
     )

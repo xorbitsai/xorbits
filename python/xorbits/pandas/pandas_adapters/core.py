@@ -152,57 +152,6 @@ def wrap_pandas_cls_method(cls: Type, func_name: str, fallback_warning: bool = F
     return _wrapped
 
 
-def wrap_pandas_module_method(func_name):
-    # wrap pd member function
-    @functools.wraps(getattr(pd, func_name))
-    def _wrapped(*args, **kwargs):
-        warnings.warn(
-            f"xorbits.pandas.{func_name} will fallback to Pandas", RuntimeWarning
-        )
-        output_type = _get_output_type(getattr(pd, func_name))
-
-        # use mars remote to execute pandas functions
-        def execute_func(f_name: str, *args, **kwargs):
-            import pandas as pd
-
-            from xorbits.core.adapter import MarsEntity
-
-            def _replace_data(nested):
-                if isinstance(nested, dict):
-                    vals = list(nested.values())
-                else:
-                    vals = list(nested)
-
-                new_vals = []
-                for val in vals:
-                    if isinstance(val, (dict, list, tuple, set)):
-                        new_val = _replace_data(val)
-                    else:
-                        if isinstance(val, MarsEntity):
-                            new_val = val.fetch()
-                        else:
-                            new_val = val
-                    new_vals.append(new_val)
-                if isinstance(nested, dict):
-                    return type(nested)((k, v) for k, v in zip(nested.keys(), new_vals))
-                else:
-                    return type(nested)(new_vals)
-
-            return getattr(pd, f_name)(*_replace_data(args), **_replace_data(kwargs))
-
-        new_args = (func_name,) + args
-        ret = mars_remote.spawn(
-            execute_func, args=new_args, kwargs=kwargs, output_types=output_type
-        )
-        if output_type == MarsOutputType.df_or_series:
-            ret = ret.ensure_data()
-        else:
-            ret = ret.execute()
-        return ret
-
-    return _wrapped
-
-
 def _collect_pandas_cls_members(pd_cls: Type, data_type: DataType):
     members = get_cls_members(data_type)
     for name, pd_cls_member in inspect.getmembers(pd_cls, inspect.isfunction):
