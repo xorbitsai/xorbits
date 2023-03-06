@@ -27,10 +27,10 @@ def unimplemented_func():
 
 
 def wrap_fallback_module_method(
-    cls: ModuleType, func_name: str, output_type: MarsOutputType, warning_str: str
+    mod: ModuleType, func_name: str, output_type: MarsOutputType, warning_str: str
 ):
     # wrap member function
-    @functools.wraps(getattr(cls, func_name))
+    @functools.wraps(getattr(mod, func_name))
     def _wrapped(*args, **kwargs):
         warnings.warn(warning_str, RuntimeWarning)
 
@@ -59,7 +59,7 @@ def wrap_fallback_module_method(
                 else:
                     return type(nested)(new_vals)
 
-            return getattr(cls, f_name)(*_replace_data(args), **_replace_data(kwargs))
+            return getattr(mod, f_name)(*_replace_data(args), **_replace_data(kwargs))
 
         new_args = (func_name,) + args
         ret = mars_remote.spawn(
