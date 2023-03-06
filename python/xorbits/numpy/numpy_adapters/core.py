@@ -47,26 +47,33 @@ def _get_output_type(func: Callable) -> MarsOutputType:
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
 
-def collect_numpy_module_members(np_cls: Type) -> Dict[str, Any]:
+def collect_numpy_module_members(np_mod: Type) -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_TENSOR_CALLABLES
 
     module_methods: Dict[str, Any] = dict()
     with warnings.catch_warnings():
-        for name, cls_member in inspect.getmembers(np_cls):
+        for name, mod_member in inspect.getmembers(np_mod):
             if (
                 name not in MARS_TENSOR_CALLABLES
-                and callable(cls_member)
+                and callable(mod_member)
                 and not name.startswith("_")
             ):
-                warning_str = f"xorbits.numpy.{name} will fallback to NumPy"
-                output_type = _get_output_type(getattr(np_cls, name))
+                # avoid inconsistency: np.ramdom.__name__ is 'np.random' while np.ndarray.__name__ is 'ndarray'
+                np_mod_str = (
+                    np_mod.__name__
+                    if "numpy." in np_mod.__name__
+                    else "numpy." + np_mod.__name__
+                )
+                warning_str = f"xorbits.{np_mod_str}.{name} will fallback to NumPy"
+
+                output_type = _get_output_type(getattr(np_mod, name))
 
                 module_methods[name] = wrap_mars_callable(
-                    wrap_fallback_module_method(np_cls, name, output_type, warning_str),
+                    wrap_fallback_module_method(np_mod, name, output_type, warning_str),
                     attach_docstring=True,
                     is_cls_member=False,
-                    docstring_src_module=np_cls,
-                    docstring_src=getattr(np_cls, name, None),
+                    docstring_src_module=np_mod,
+                    docstring_src=getattr(np_mod, name, None),
                     fallback_warning=True,
                 )
 
