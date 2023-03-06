@@ -13,6 +13,7 @@
 # limitations under the License.
 import logging
 import os
+from typing import Optional
 
 from ... import oscar as mo
 from ...constants import DEFAULT_MARS_LOG_FILE_NAME, MARS_LOG_DIR_KEY
@@ -28,8 +29,11 @@ class FileLoggerActor(mo.Actor):
 
     def __init__(self):
         log_dir = os.environ.get(MARS_LOG_DIR_KEY)
-        assert log_dir is not None
-        self._log_file_path = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
+        self._log_file_path: Optional[str] = None
+        if log_dir is None:
+            logger.warning("Log directory is not set")
+        else:
+            self._log_file_path = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
 
     def fetch_logs(self, size: int, offset: int) -> str:
         """
@@ -44,7 +48,7 @@ class FileLoggerActor(mo.Actor):
         -------
 
         """
-        if not os.path.exists(self._log_file_path):
+        if self._log_file_path is None or not os.path.exists(self._log_file_path):
             return ""
 
         if size != -1:
