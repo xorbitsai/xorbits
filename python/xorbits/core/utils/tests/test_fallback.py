@@ -64,7 +64,7 @@ def test_wrap_fallback_module_method(setup):
     with pytest.warns(Warning) as w:
         tuple_arg_remote = np_tuple_arg((2, 3, 4))
         np_zeros = np.zeros((2, 3, 4))
-        assert "Test Replace Data" == str(w[0].message)
+        assert "Test Nested Argument" == str(w[0].message)
         assert re.match("RemoteFunction <key=.*>", str(tuple_arg_remote.op))
         assert type(tuple_arg_remote.fetch()) == type(np_zeros)
         assert np.array_equal(tuple_arg_remote.fetch(), np_zeros)
