@@ -14,7 +14,8 @@
 
 import inspect
 import warnings
-from typing import Any, Callable, Dict, Type
+from types import ModuleType
+from typing import Any, Callable, Dict
 
 import numpy as np
 
@@ -47,7 +48,7 @@ def _get_output_type(func: Callable) -> MarsOutputType:
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
 
-def collect_numpy_module_members(np_mod: Type) -> Dict[str, Any]:
+def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_TENSOR_CALLABLES
 
     module_methods: Dict[str, Any] = dict()
