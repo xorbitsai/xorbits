@@ -1,5 +1,4 @@
 # Copyright 2022-2023 XProbe Inc.
-# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -58,7 +57,7 @@ def test_wrap_fallback_module_method(setup):
         assert pd_remote.fetch().equals(pd.read_json(raw.to_json()))
 
     np_tuple_arg = wrap_fallback_module_method(
-        np, "zeros", MarsOutputType.tensor, "Test Replace Data"
+        np, "zeros", MarsOutputType.tensor, "Test Nested Argument"
     )
     assert callable(np_tuple_arg)
 
