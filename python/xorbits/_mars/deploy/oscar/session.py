@@ -843,11 +843,13 @@ class _IsolatedSession(AbstractAsyncSession):
         if init_local:
             from .local import new_cluster_in_isolation
 
-            return (
+            sess = (
                 await new_cluster_in_isolation(
                     address, timeout=timeout, backend=backend, **kwargs
                 )
             ).session
+
+            return sess.session_id, sess
 
         if kwargs:  # pragma: no cover
             unexpected_keys = ", ".join(list(kwargs.keys()))

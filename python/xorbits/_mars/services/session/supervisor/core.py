@@ -56,11 +56,14 @@ class SessionManagerActor(mo.Actor):
         self, session_id: Optional[str], create_services: bool = True
     ):
         ns = await self._get_namespace()
-        if session_id is None and ns is not None:
-            session_id = ns + "-" + random_string_and_digits(8)
+        if session_id is None:
+            if ns is not None:
+                session_id = ns + "-" + random_string_and_digits(8)
+            else:
+                session_id = random_string_and_digits(24)
 
         if session_id in self._session_refs:
-            raise mo.Return(session_id, self._session_refs[session_id])
+            raise mo.Return((session_id, self._session_refs[session_id]))
 
         [address] = await self._cluster_api.get_supervisors_by_keys([session_id])
         try:
@@ -98,7 +101,7 @@ class SessionManagerActor(mo.Actor):
         if create_services:
             yield session_actor_ref.create_services()
 
-        raise mo.Return(session_id, session_actor_ref)
+        raise mo.Return((session_id, session_actor_ref))
 
     def get_sessions(self) -> List[SessionInfo]:
         return [
