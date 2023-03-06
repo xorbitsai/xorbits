@@ -34,6 +34,13 @@ def test_wrap_fallback_module_method(setup):
     )
     assert callable(np_wrap)
 
+    with pytest.warns(Warning) as w:
+        np_remote = np_wrap()
+        assert "Test Numpy" == str(w[0].message)
+        assert re.match("RemoteFunction <key=.*>", str(np_remote.op))
+        assert type(np_remote) in MARS_OBJECT_TYPE
+        assert type(np_remote.fetch()) == type(np.random.default_rng())
+
     raw = pd.DataFrame(
         [["a", "b"], ["c", "d"]], index=["row 1", "row 2"], columns=["col 1", "col 2"]
     )
@@ -43,15 +50,22 @@ def test_wrap_fallback_module_method(setup):
     assert callable(pd_wrap)
 
     with pytest.warns(Warning) as w:
-        np_remote = np_wrap()
-        assert "Test Numpy" == str(w[0].message)
-        assert re.match("RemoteFunction <key=.*>", str(np_remote.op))
-        assert type(np_remote) in MARS_OBJECT_TYPE
-        assert type(np_remote.fetch()) == type(np.random.default_rng())
-
-    with pytest.warns(Warning) as w:
         pd_remote = pd_wrap(raw.to_json())
         assert "Test Pandas" == str(w[0].message)
         assert re.match("RemoteFunction <key=.*>", str(pd_remote.op))
         assert type(pd_remote) in MARS_DATAFRAME_TYPE
         assert type(pd_remote.fetch()) == type(pd.read_json(raw.to_json()))
+        assert pd_remote.fetch().equals(pd.read_json(raw.to_json()))
+
+    np_tuple_arg = wrap_fallback_module_method(
+        np, "zeros", MarsOutputType.tensor, "Test Replace Data"
+    )
+    assert callable(np_tuple_arg)
+
+    with pytest.warns(Warning) as w:
+        tuple_arg_remote = np_tuple_arg((2, 3, 4))
+        np_zeros = np.zeros((2, 3, 4))
+        assert "Test Replace Data" == str(w[0].message)
+        assert re.match("RemoteFunction <key=.*>", str(tuple_arg_remote.op))
+        assert type(tuple_arg_remote.fetch()) == type(np_zeros)
+        assert np.array_equal(tuple_arg_remote.fetch(), np_zeros)
