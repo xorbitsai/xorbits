@@ -59,7 +59,7 @@ def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
                 and callable(mod_member)
                 and not name.startswith("_")
             ):
-                # avoid inconsistency: np.ramdom.__name__ is 'np.random' while np.ndarray.__name__ is 'ndarray'
+                # avoid inconsistency: np.ramdom.__name__ is 'numpy.random' while np.ndarray.__name__ is 'ndarray'
                 np_mod_str = (
                     np_mod.__name__
                     if "numpy." in np_mod.__name__
