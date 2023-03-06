@@ -18,8 +18,6 @@ import concurrent.futures
 import itertools
 import json
 import logging
-import random
-import string
 import threading
 import time
 import warnings
@@ -803,7 +801,7 @@ class _IsolatedSession(AbstractAsyncSession):
         session_api = await SessionAPI.create(address)
         if new:
             # create new session
-            session_address = await session_api.create_session(session_id)
+            session_id, session_address = await session_api.create_session(session_id)
         else:
             session_address = await session_api.get_session_address(session_id)
         lifecycle_api = await LifecycleAPI.create(session_id, session_address)
@@ -815,7 +813,7 @@ class _IsolatedSession(AbstractAsyncSession):
             web_api = await OscarWebAPI.create(session_address)
         except mo.ActorNotExist:
             web_api = None
-        return cls(
+        return session_id, cls(
             address,
             session_id,
             backend,
@@ -839,7 +837,7 @@ class _IsolatedSession(AbstractAsyncSession):
         new: bool = True,
         timeout: float = None,
         **kwargs,
-    ) -> "AbstractAsyncSession":
+    ) -> Tuple[str, "AbstractAsyncSession"]:
         init_local = kwargs.pop("init_local", False)
         request_rewriter = kwargs.pop("request_rewriter", None)
         if init_local:
@@ -1352,14 +1350,14 @@ class _IsolatedWebSession(_IsolatedSession):
         session_api = WebSessionAPI(address, request_rewriter)
         if new:
             # create new session
-            await session_api.create_session(session_id)
+            session_id, _ = await session_api.create_session(session_id)
         lifecycle_api = WebLifecycleAPI(session_id, address, request_rewriter)
         meta_api = WebMetaAPI(session_id, address, request_rewriter)
         task_api = WebTaskAPI(session_id, address, request_rewriter)
         mutable_api = WebMutableAPI(session_id, address, request_rewriter)
         cluster_api = WebClusterAPI(address, request_rewriter)
 
-        return cls(
+        return session_id, cls(
             address,
             session_id,
             backend,
@@ -1444,7 +1442,7 @@ class AsyncSession(AbstractAsyncSession):
         isolation = ensure_isolation_created(kwargs)
         coro = _IsolatedSession.init(address, session_id, backend, new=new, **kwargs)
         fut = asyncio.run_coroutine_threadsafe(coro, isolation.loop)
-        isolated_session = await asyncio.wrap_future(fut)
+        session_id, isolated_session = await asyncio.wrap_future(fut)
         return AsyncSession(address, session_id, isolated_session, isolation)
 
     def as_default(self) -> AbstractSession:
@@ -1619,7 +1617,7 @@ class SyncSession(AbstractSyncSession):
         isolation = ensure_isolation_created(kwargs)
         coro = _IsolatedSession.init(address, session_id, backend, new=new, **kwargs)
         fut = asyncio.run_coroutine_threadsafe(coro, isolation.loop)
-        isolated_session = fut.result()
+        session_id, isolated_session = fut.result()
         return SyncSession(address, session_id, isolated_session, isolation)
 
     def as_default(self) -> AbstractSession:
@@ -1978,12 +1976,6 @@ def ensure_isolation_created(kwargs):
         return new_isolation(loop=loop)
 
 
-def _new_session_id():
-    return "".join(
-        random.choice(string.ascii_letters + string.digits) for _ in range(24)
-    )
-
-
 async def _new_session(
     address: str,
     session_id: str = None,
@@ -1991,9 +1983,6 @@ async def _new_session(
     default: bool = False,
     **kwargs,
 ) -> AbstractSession:
-    if session_id is None:
-        session_id = _new_session_id()
-
     session = await AsyncSession.init(
         address, session_id=session_id, backend=backend, new=True, **kwargs
     )
@@ -2018,9 +2007,6 @@ def new_session(
         address = "127.0.0.1"
         if "init_local" not in kwargs:
             kwargs["init_local"] = True
-
-    if session_id is None:
-        session_id = _new_session_id()
 
     session = SyncSession.init(
         address, session_id=session_id, backend=backend, new=new, **kwargs

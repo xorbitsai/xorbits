@@ -40,7 +40,9 @@ class SessionAPI(AbstractSessionAPI):
         return SessionAPI(address, session_manager)
 
     async def create_session(self, session_id: str) -> str:
-        session_actor_ref = await self._session_manager_ref.create_session(session_id)
+        _, session_actor_ref = await self._session_manager_ref.create_session(
+            session_id
+        )
         return session_actor_ref.address
 
     async def get_sessions(self) -> List[SessionInfo]:

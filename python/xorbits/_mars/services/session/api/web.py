@@ -60,7 +60,7 @@ class SessionWebAPIHandler(SessionWebAPIBaseHandler):
     @web_api("(?P<session_id>[^/]+)", method="put")
     async def create_session(self, session_id: str):
         oscar_api = await self._get_oscar_session_api()
-        addr = await oscar_api.create_session(session_id)
+        _, addr = await oscar_api.create_session(session_id)
         self.write(addr)
 
     @web_api("(?P<session_id>[^/]+)", method="delete")
