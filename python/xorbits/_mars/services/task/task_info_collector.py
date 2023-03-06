@@ -157,8 +157,8 @@ class TaskInfoCollector:
 
             subtask_info[subtask.subtask_id] = subtask_info
 
-        asyncio.create_task(self._save_task_info(op_info, op_save_path))
-        asyncio.create_task(self._save_task_info(subtask_info, subtask_save_path))
+        await self._save_task_info(op_info, op_save_path)
+        await self._save_task_info(subtask_info, subtask_save_path)
 
     @collect_on_demand
     async def collect_result_nodes(
@@ -205,7 +205,7 @@ class TaskInfoCollector:
             ]
 
         save_path = os.path.join(self._save_dir, "tileables.yaml")
-        asyncio.create_task(self._save_task_info(tileable_dict, save_path))
+        await self._save_task_info(tileable_dict, save_path)
 
     @collect_on_demand
     async def append_runtime_subtask_info(
@@ -285,7 +285,7 @@ class TaskInfoCollector:
             save_path = os.path.join(self._save_dir, f"{subtask_id}_subtask_info.yaml")
             subtask_info = self._subtask_infos[subtask_id]
             del self._subtask_infos[subtask_id]
-            asyncio.create_task(self._save_task_info(subtask_info, save_path))
+            await self._save_task_info(subtask_info, save_path)
 
     @collect_on_demand
     async def collect_fetch_time(
@@ -325,7 +325,7 @@ class TaskInfoCollector:
 
     async def _save_task_info(self, task_info: dict, path: str):
         task_api = await self._get_task_api()
-        await task_api.save_task_info(task_info, path)
+        asyncio.create_task(task_api.save_task_info(task_info, path))
 
 
 class TaskInfoCollectorActor(mo.Actor):
