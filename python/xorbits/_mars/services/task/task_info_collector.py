@@ -18,14 +18,13 @@ import asyncio
 import functools
 import logging
 import os
-import tempfile
 from collections import defaultdict
 from typing import Any, Dict, Optional
 
 import yaml
 
 from ... import oscar as mo
-from ...constants import MARS_PROFILING_RESULTS_DIR_WIN, MARS_PROFILING_RESULTS_DIR
+from ...constants import MARS_PROFILING_RESULTS_DIR, MARS_PROFILING_RESULTS_DIR_WIN
 from ...core.operand import Fetch, FetchShuffle
 from ...lib.aio import AioFileObject, Isolation, alru_cache
 from ...lib.filesystem import get_fs, get_scheme, open_file
@@ -332,37 +331,20 @@ class TaskInfoCollectorActor(mo.Actor):
     def __init__(self, profiling_config: Optional[Dict[str, Any]] = None):
         if profiling_config is None:
             profiling_config = dict()
-<<<<<<< HEAD
         experimental_profiling_config = profiling_config.get("experimental", dict())
         self._collect_task_info_enabled = experimental_profiling_config.get(
-=======
-        self.profiling_config = profiling_config
-        self.experimental_profiling_config = profiling_config.get(
-            "experimental", dict()
-        )
-        mars_temp_dir = os.environ.get(MARS_LOG_DIR_KEY)
-        if mars_temp_dir is None:
-            self.yaml_root_dir = os.path.join(tempfile.tempdir, "mars_task_infos")
-        else:
-            self.yaml_root_dir = os.path.abspath(
-                os.path.join(mars_temp_dir, "../..", "mars_task_infos")
-            )
-        logger.info(f"Save task info to {self.yaml_root_dir}")
-
-    async def collect_task_info_enabled(self):
-        return self.experimental_profiling_config.get(
->>>>>>> 3271bfe (Fix log message)
             "collect_task_info_enabled", False
         )
         self._task_info_root_path = experimental_profiling_config.get(
             "task_info_root_path", None
         )
-        self._task_info_storage_options = experimental_profiling_config.get(
-            "task_info_storage_options", {}
-        )
         if self._task_info_root_path is None:
             self._task_info_root_path = self._get_default_profiling_results_dir()
         logger.info(f"Task info root path: {self._task_info_root_path}")
+        self._task_info_storage_options = experimental_profiling_config.get(
+            "task_info_storage_options", {}
+        )
+
         self._scheme = get_scheme(self._task_info_root_path)
         self._fs = get_fs(self._task_info_root_path, self._task_info_storage_options)
         self._loop = asyncio.new_event_loop()
