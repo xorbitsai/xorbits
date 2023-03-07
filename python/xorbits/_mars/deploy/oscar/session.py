@@ -813,7 +813,7 @@ class _IsolatedSession(AbstractAsyncSession):
             web_api = await OscarWebAPI.create(session_address)
         except mo.ActorNotExist:
             web_api = None
-        return session_id, cls(
+        return cls(
             address,
             session_id,
             backend,
@@ -837,19 +837,17 @@ class _IsolatedSession(AbstractAsyncSession):
         new: bool = True,
         timeout: float = None,
         **kwargs,
-    ) -> Tuple[str, "AbstractAsyncSession"]:
+    ) -> "AbstractAsyncSession":
         init_local = kwargs.pop("init_local", False)
         request_rewriter = kwargs.pop("request_rewriter", None)
         if init_local:
             from .local import new_cluster_in_isolation
 
-            sess = (
+            return (
                 await new_cluster_in_isolation(
                     address, timeout=timeout, backend=backend, **kwargs
                 )
             ).session
-
-            return sess.session_id, sess
 
         if kwargs:  # pragma: no cover
             unexpected_keys = ", ".join(list(kwargs.keys()))
@@ -1359,7 +1357,7 @@ class _IsolatedWebSession(_IsolatedSession):
         mutable_api = WebMutableAPI(session_id, address, request_rewriter)
         cluster_api = WebClusterAPI(address, request_rewriter)
 
-        return session_id, cls(
+        return cls(
             address,
             session_id,
             backend,
@@ -1444,8 +1442,10 @@ class AsyncSession(AbstractAsyncSession):
         isolation = ensure_isolation_created(kwargs)
         coro = _IsolatedSession.init(address, session_id, backend, new=new, **kwargs)
         fut = asyncio.run_coroutine_threadsafe(coro, isolation.loop)
-        session_id, isolated_session = await asyncio.wrap_future(fut)
-        return AsyncSession(address, session_id, isolated_session, isolation)
+        isolated_session = await asyncio.wrap_future(fut)
+        return AsyncSession(
+            address, isolated_session.session_id, isolated_session, isolation
+        )
 
     def as_default(self) -> AbstractSession:
         AbstractSession._default = self._isolated_session
@@ -1619,8 +1619,10 @@ class SyncSession(AbstractSyncSession):
         isolation = ensure_isolation_created(kwargs)
         coro = _IsolatedSession.init(address, session_id, backend, new=new, **kwargs)
         fut = asyncio.run_coroutine_threadsafe(coro, isolation.loop)
-        session_id, isolated_session = fut.result()
-        return SyncSession(address, session_id, isolated_session, isolation)
+        isolated_session = fut.result()
+        return SyncSession(
+            address, isolated_session.session_id, isolated_session, isolation
+        )
 
     def as_default(self) -> AbstractSession:
         AbstractSession._default = self._isolated_session
