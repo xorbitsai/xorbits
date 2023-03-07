@@ -31,6 +31,7 @@ from ..... import oscar as mo
 from ..... import remote as mr
 from ..... import tensor as mt
 from .....conftest import MARS_CI_BACKEND
+from .....constants import MARS_PROFILING_RESULTS_PATH_KEY, MARS_TMP_DIR_PREFIX
 from .....core import Tileable, TileableGraph, TileableGraphBuilder
 from .....core.operand import Fetch
 from .....oscar.backends.allocate_strategy import MainPool
@@ -54,6 +55,9 @@ from ..manager import TaskConfigurationActor, TaskManagerActor
 @pytest.fixture
 async def actor_pool():
     backend = MARS_CI_BACKEND
+    mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
+    os.environ[MARS_PROFILING_RESULTS_PATH_KEY] = mars_tmp_dir
+
     start_method = (
         os.environ.get("POOL_START_METHOD", "forkserver")
         if sys.platform != "win32"
@@ -115,6 +119,7 @@ async def actor_pool():
             await MockStorageAPI.cleanup(pool.external_address)
             await MockClusterAPI.cleanup(pool.external_address)
             await MockMutableAPI.cleanup(session_id, pool.external_address)
+            shutil.rmtree(mars_tmp_dir, ignore_errors=True)
 
 
 async def _merge_data(
@@ -738,44 +743,48 @@ async def test_collect_task_info(actor_pool):
         extra_config={"collect_task_info": True},
     )
     await manager.wait_task(task_id)
-    yaml_root_dir = os.path.join(tempfile.tempdir, "mars_task_infos")
+
+    yaml_root_dir = os.environ.get(MARS_PROFILING_RESULTS_PATH_KEY)
+    assert yaml_root_dir is not None
+
     save_dir = os.path.join(yaml_root_dir, session_id, task_id)
-
     assert os.path.exists(save_dir)
-    assert os.path.isfile(os.path.join(save_dir, "tileable.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "operand_runtime.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "subtask_runtime.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "last_nodes.yaml"))
-    assert os.path.isfile(os.path.join(save_dir, "fetch_time.yaml"))
+    # make sure task info has been flushed.
+    time.sleep(1)
 
-    with open(os.path.join(save_dir, "operand_runtime.yaml"), "r") as f:
-        operand_runtime = yaml.full_load(f)
-        v = list(operand_runtime.values())[0]
-        assert "execute_time" in v
-        assert "memory_use" in v
-        assert "op_name" in v
-        assert "result_count" in v
-        assert "subtask_id" in v
+    files = os.listdir(save_dir)
+    assert "tileables.yaml" in files
+    assert "result_nodes.yaml" in files
+    assert len([f for f in files if f.endswith("_subtask_info.yaml")]) > 0
+    assert len([f for f in files if f.endswith("_subtask_fetch_time.yaml")]) > 0
 
-    with open(os.path.join(save_dir, "subtask_runtime.yaml"), "r") as f:
-        subtask_runtime = yaml.full_load(f)
-        v = list(subtask_runtime.values())[0]
-        assert "band" in v
-        assert "slot_id" in v
-        assert "execute_time" in v
-        assert "load_data_time" in v
-        assert "store_meta_time" in v
-        assert "store_result_time" in v
-        assert "unpin_time" in v
+    for f in files:
+        p = os.path.join(save_dir, f)
+        if f.endswith("_subtask_info.yaml"):
+            with open(p) as fd:
+                subtask_info = yaml.full_load(fd)
+                assert "band" in subtask_info
+                assert "slot_id" in subtask_info
+                assert "execute_time" in subtask_info
+                assert "load_data_time" in subtask_info
+                assert "store_meta_time" in subtask_info
+                assert "store_result_time" in subtask_info
+                assert "unpin_time" in subtask_info
+                assert "op_info" in subtask_info
 
-    with open(os.path.join(save_dir, "last_nodes.yaml"), "r") as f:
-        last_nodes = yaml.full_load(f)
-        assert "op" in last_nodes
-        assert "subtask" in last_nodes
-
-    with open(os.path.join(save_dir, "fetch_time.yaml"), "r") as f:
-        fetch_time = yaml.full_load(f)
-        v = list(fetch_time.values())[0]
-        assert "fetch_time" in v
-
-    shutil.rmtree(save_dir, ignore_errors=True)
+                for op_id in subtask_info["op_info"]:
+                    assert "execute_time" in subtask_info["op_info"][op_id]
+                    assert "memory_use" in subtask_info["op_info"][op_id]
+                    assert "op_name" in subtask_info["op_info"][op_id]
+                    assert "result_count" in subtask_info["op_info"][op_id]
+                    assert "subtask_id" in subtask_info["op_info"][op_id]
+        if f.endswith("_subtask_fetch_time.yaml"):
+            with open(p) as fd:
+                fetch_time = yaml.full_load(fd)
+                subtask_id = f[: -len("_subtask_fetch_time.yaml")]
+            assert subtask_id in fetch_time
+        if f == "result_nodes.yaml":
+            with open(p) as fd:
+                result_nodes = yaml.full_load(fd)
+                assert "op" in result_nodes
+                assert "subtask" in result_nodes
