@@ -268,7 +268,7 @@ class SubtaskProcessor:
                         )
                         self.result.status = SubtaskStatus.cancelled
                         raise
-                await self._task_info_collector.collect_runtime_operand_info(
+                await self._task_info_collector.append_runtime_operand_info(
                     self.subtask,
                     timer.start,
                     timer.start + timer.duration,
@@ -614,7 +614,7 @@ class SubtaskProcessor:
                 )
             cost_times["store_meta_time"] = (timer.start, timer.start + timer.duration)
 
-            await self._task_info_collector.collect_runtime_subtask_info(
+            await self._task_info_collector.append_runtime_subtask_info(
                 self.subtask,
                 self._band,
                 self._slot_id,
@@ -642,6 +642,7 @@ class SubtaskProcessor:
         finally:
             if input_keys is not None and not unpinned:
                 await self._unpin_data(input_keys)
+            await self._task_info_collector.flush_subtask_info(self.subtask.subtask_id)
 
         await self.done()
         if self.result.status == SubtaskStatus.succeeded:

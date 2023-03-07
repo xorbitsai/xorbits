@@ -15,7 +15,7 @@
 
 from .azure import AzureBlobFileSystem
 from .base import FileSystem
-from .core import file_size, get_fs, glob, open_file, register_filesystem
+from .core import file_size, get_fs, get_scheme, glob, open_file, register_filesystem
 from .fsmap import FSMap
 
 # noinspection PyUnresolvedReferences
