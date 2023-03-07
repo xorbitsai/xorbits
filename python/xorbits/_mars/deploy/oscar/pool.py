@@ -101,6 +101,8 @@ def _parse_file_logging_config(
     logging_conf: Dict[str, Any]
 ) -> configparser.RawConfigParser:
     """
+    Parse the file logging config and apply logging configurations with higher priority.
+
     For interactive environments (from_cmd=False), the log level and format on the web follow our
     default configuration file, while the level and format on the console follow the user's
     configuration (logging.basicConfig) or keep the default.
@@ -129,14 +131,11 @@ def _parse_file_logging_config(
 
     # optimize logs for local runtimes (like IPython).
     if not from_cmd and is_default_logging_config:
-        # console and web log keeps the default config as root logger
+        # console outputs follows user's configuration.
         root_level, root_fmt = _get_root_logger_level_and_format()
 
-        assert "handler_file_handler" in config
         assert "handler_stream_handler" in config
-        config["handler_file_handler"]["level"] = root_level or "WARN"
-        config["handler_stream_handler"]["level"] = root_level or "WARN"
-        config["logger_root"]["level"] = root_level or "WARN"
+        config["handler_stream_handler"]["level"] = root_level or log_level or "WARN"
         if root_fmt:
             assert "formatter_console" not in config
             config.add_section("formatter_console")
