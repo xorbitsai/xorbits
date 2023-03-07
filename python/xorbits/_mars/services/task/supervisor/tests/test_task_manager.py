@@ -24,6 +24,7 @@ import time
 import numpy as np
 import pandas as pd
 import pytest
+import yaml
 
 from ..... import dataframe as md
 from ..... import oscar as mo
@@ -748,6 +749,7 @@ async def test_collect_task_info(actor_pool):
 
     save_dir = os.path.join(yaml_root_dir, session_id, task_id)
     assert os.path.exists(save_dir)
+    # make sure task info has been flushed.
     time.sleep(1)
 
     files = os.listdir(save_dir)
@@ -755,3 +757,34 @@ async def test_collect_task_info(actor_pool):
     assert "result_nodes.yaml" in files
     assert len([f for f in files if f.endswith("_subtask_info.yaml")]) > 0
     assert len([f for f in files if f.endswith("_subtask_fetch_time.yaml")]) > 0
+
+    for f in files:
+        p = os.path.join(save_dir, f)
+        if f.endswith("_subtask_info.yaml"):
+            with open(p) as fd:
+                subtask_info = yaml.full_load(fd)
+                assert "band" in subtask_info
+                assert "slot_id" in subtask_info
+                assert "execute_time" in subtask_info
+                assert "load_data_time" in subtask_info
+                assert "store_meta_time" in subtask_info
+                assert "store_result_time" in subtask_info
+                assert "unpin_time" in subtask_info
+                assert "op_info" in subtask_info
+
+                for op_id in subtask_info["op_info"]:
+                    assert "execute_time" in subtask_info["op_info"][op_id]
+                    assert "memory_use" in subtask_info["op_info"][op_id]
+                    assert "op_name" in subtask_info["op_info"][op_id]
+                    assert "result_count" in subtask_info["op_info"][op_id]
+                    assert "subtask_id" in subtask_info["op_info"][op_id]
+        if f.endswith("_subtask_fetch_time.yaml"):
+            with open(p) as fd:
+                fetch_time = yaml.full_load(fd)
+                subtask_id = f[: -len("_subtask_fetch_time.yaml")]
+            assert subtask_id in fetch_time
+        if f == "result_nodes.yaml":
+            with open(p) as fd:
+                result_nodes = yaml.full_load(fd)
+                assert "op" in result_nodes
+                assert "subtask" in result_nodes
