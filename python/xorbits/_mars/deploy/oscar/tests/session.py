@@ -82,16 +82,16 @@ async def _new_test_session(
         session_id = str(uuid.uuid4())
 
     async def _get_checked_session(_address):
-        session = AsyncSession.from_isolated_session(
-            await CheckedSession.init(
-                _address,
-                session_id=session_id,
-                backend=backend,
-                new=new,
-                timeout=timeout,
-                **kwargs,
-            )
+        _, sess = await CheckedSession.init(
+            _address,
+            session_id=session_id,
+            backend=backend,
+            new=new,
+            timeout=timeout,
+            **kwargs,
         )
+
+        session = AsyncSession.from_isolated_session(sess)
         if default:
             session.as_default()
         return session
