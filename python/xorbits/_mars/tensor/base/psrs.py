@@ -29,7 +29,7 @@ from ...serialization.serializables import (
     ListField,
     StringField,
 )
-from ...utils import flatten, stack_back
+from ...utils import flatten, is_same_module, stack_back
 from ..array_utils import as_same_device, cp, device
 from ..core import TensorOrder
 from ..operands import (
@@ -423,8 +423,7 @@ def _sort(a, op, xp, axis=None, kind=None, order=None, inplace=False):
         return method(axis=axis, kind=kind, order=order)
     else:  # pragma: no cover
         # cupy does not support structure type
-        assert xp is cp
-        assert order is not None
+        assert is_same_module(xp, cp)
         method = a.sort if inplace else partial(cp.sort, a)
         # cupy does not support kind, thus just ignore it
         return method(axis=axis)
@@ -438,8 +437,7 @@ def _argsort(a, op, xp, axis=None, kind=None, order=None):
         return np.argsort(a, axis=axis, kind=kind, order=order)
     else:  # pragma: no cover
         # cupy does not support structure type
-        assert xp is cp
-        assert order is not None
+        assert is_same_module(xp, cp)
         return cp.argsort(a, axis=axis)
 
 
