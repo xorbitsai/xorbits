@@ -142,7 +142,7 @@ class TensorEinsum(TensorOperand, TensorOperandMixin):
                         ]
                 einsum_op = op.copy().reset_key()
                 in_chunks = [
-                    t.cix[tuple(indices)]
+                    t.cix[tuple([x or 0 for x in indices])]
                     for t, indices in zip(input_tensors, all_indexes)
                 ]
                 chunk = einsum_op.new_chunk(

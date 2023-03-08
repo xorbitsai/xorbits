@@ -84,3 +84,11 @@ def test_einsum_execution(setup):
         "ajk,kl,jl,a->a", data1, data2, data3, data4, optimize="greedy"
     )
     np.testing.assert_almost_equal(res, expected)
+
+    # test nested same dim
+    data_nested = np.arange(25).reshape(5, 5)
+    tensor_nested = tensor(data_nested)
+    nested_t = einsum("ii", tensor_nested)
+    res = nested_t.execute().fetch()
+    expected = np.einsum("ii", data_nested)
+    np.testing.assert_almost_equal(res, expected)
