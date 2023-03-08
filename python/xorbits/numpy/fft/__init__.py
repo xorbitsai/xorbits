@@ -13,6 +13,13 @@
 # limitations under the License.
 
 
+import inspect
+
+from ...core.utils.fallback import unimplemented_func
+
+METHODS = None
+
+
 def __dir__():
     from ..mars_adapters import MARS_TENSOR_FFT_CALLABLES
 
@@ -21,9 +28,23 @@ def __dir__():
 
 def __getattr__(name: str):
     from ..mars_adapters import MARS_TENSOR_FFT_CALLABLES
+    from ..numpy_adapters import collect_numpy_module_members
 
     if name in MARS_TENSOR_FFT_CALLABLES:
         return MARS_TENSOR_FFT_CALLABLES[name]
     else:
-        # TODO: fallback to numpy
-        raise AttributeError(name)
+        global METHODS
+        import numpy
+
+        if METHODS is None:
+            METHODS = collect_numpy_module_members(numpy.fft)
+
+        if not hasattr(numpy.fft, name):
+            raise AttributeError(name)
+        elif name in METHODS:
+            return METHODS[name]
+        else:  # pragma: no cover
+            if inspect.ismethod(getattr(numpy.fft, name)):
+                return unimplemented_func
+            else:
+                raise AttributeError(name)

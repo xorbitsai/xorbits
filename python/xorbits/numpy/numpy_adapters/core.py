@@ -23,6 +23,16 @@ from ...core.adapter import MarsOutputType, wrap_mars_callable
 from ...core.utils.fallback import wrap_fallback_module_method
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
+    np.einsum_path: MarsOutputType.object,
+    np.kron: MarsOutputType.tensor,
+    np.outer: MarsOutputType.tensor,
+    np.trace: MarsOutputType.tensor,
+    np.linalg.eig: MarsOutputType.object,
+    np.linalg.eigh: MarsOutputType.object,
+    np.linalg.eigvals: MarsOutputType.tensor,
+    np.linalg.eigvalsh: MarsOutputType.tensor,
+    np.linalg.multi_dot: MarsOutputType.tensor,
+    np.linalg.matrix_power: MarsOutputType.tensor,
     np.random.default_rng: MarsOutputType.object,
     np.random.Generator: MarsOutputType.object,
     np.random.PCG64: MarsOutputType.object,
@@ -62,7 +72,7 @@ def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
                 # avoid inconsistency: np.ramdom.__name__ is 'numpy.random' while np.ndarray.__name__ is 'ndarray'
                 np_mod_str = (
                     np_mod.__name__
-                    if "numpy." in np_mod.__name__
+                    if "numpy" in np_mod.__name__
                     else "numpy." + np_mod.__name__
                 )
                 warning_str = f"xorbits.{np_mod_str}.{name} will fallback to NumPy"
