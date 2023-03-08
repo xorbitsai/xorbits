@@ -85,7 +85,7 @@ def test_einsum_execution(setup):
     )
     np.testing.assert_almost_equal(res, expected)
 
-    # test nested same dim
+    # test trace
     data_nested = np.arange(25).reshape(5, 5)
     tensor_nested = tensor(data_nested)
     nested_t = einsum("ii", tensor_nested)
