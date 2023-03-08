@@ -92,3 +92,10 @@ def test_einsum_execution(setup):
     res = nested_t.execute().fetch()
     expected = np.einsum("ii", data_nested)
     np.testing.assert_almost_equal(res, expected)
+
+    data_nested = np.arange(8).reshape((1, 2, 1, 2, 2))
+    tensor_nested = tensor(data_nested)
+    nested_t = einsum("ikik...", tensor_nested)
+    res = nested_t.execute().fetch()
+    expected = np.einsum("ikik...", data_nested)
+    np.testing.assert_almost_equal(res, expected)
