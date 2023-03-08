@@ -20,8 +20,10 @@ import tempfile
 import pytest
 
 from ....constants import (
+    DEFAULT_MARS_LOG_BACKUP_COUNT,
     DEFAULT_MARS_LOG_DIR,
     DEFAULT_MARS_LOG_DIR_WIN,
+    DEFAULT_MARS_LOG_MAX_BYTES,
     MARS_LOG_DIR_KEY,
 )
 from ..pool import (
@@ -144,6 +146,9 @@ def test_config_logging(caplog):
         assert isinstance(logger.handlers[1], logging.handlers.RotatingFileHandler)
         assert logger.handlers[1].level == logging.DEBUG
         assert logger.handlers[1].baseFilename.startswith(tempdir)
+        assert logger.handlers[1].mode == "a"
+        assert logger.handlers[1].maxBytes == DEFAULT_MARS_LOG_MAX_BYTES
+        assert logger.handlers[1].backupCount == DEFAULT_MARS_LOG_BACKUP_COUNT
 
         # interactive mode.
         logging_conf = {
@@ -167,6 +172,9 @@ def test_config_logging(caplog):
             # the level of file handler should not be changed.
             assert logger.handlers[1].level == logging.DEBUG
             assert logger.handlers[1].baseFilename.startswith(tempdir)
+            assert logger.handlers[1].mode == "a"
+            assert logger.handlers[1].maxBytes == DEFAULT_MARS_LOG_MAX_BYTES
+            assert logger.handlers[1].backupCount == DEFAULT_MARS_LOG_BACKUP_COUNT
 
 
 def test_non_existent_file_logging_config():

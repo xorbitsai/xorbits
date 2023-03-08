@@ -83,10 +83,12 @@ def _apply_log_dir(
         if sys.platform.startswith("win"):
             log_dir = log_dir.replace("\\", "/")
         log_file_path = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
-        config["handler_file_handler"]["args"] = (
-            rf"('{log_file_path}', 'a', "
-            rf"{DEFAULT_MARS_LOG_MAX_BYTES}, "
-            rf"{DEFAULT_MARS_LOG_BACKUP_COUNT})"
+        config["handler_file_handler"]["args"] = rf"('{log_file_path}',)"
+        config["handler_file_handler"]["kwargs"] = (
+            r"{'mode': 'a', "
+            rf"'maxBytes': {DEFAULT_MARS_LOG_MAX_BYTES}, "
+            rf"'backupCount': {DEFAULT_MARS_LOG_BACKUP_COUNT}"
+            r"}"
         )
     elif not is_default_log_dir:
         # TODO: don't have a perfect way to handle this situation.
