@@ -12,12 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Env key for Mars log absolute path
-MARS_LOG_PATH_KEY = "MARS_LOG_PATH"
-# Mars log file name prefix
-MARS_LOG_PREFIX = "mars_"
-
-MARS_PROFILING_RESULTS_PATH_KEY = "MARS_PROFILING_RESULTS_PATH"
-
-# The prefix of the temporary directory where the Mars temp files are located
-MARS_TMP_DIR_PREFIX = "mars_tmp_"
+from .core import collect_numpy_module_members
