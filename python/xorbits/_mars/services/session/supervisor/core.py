@@ -49,8 +49,8 @@ class SessionManagerActor(mo.Actor):
         envs = await self._cluster_api.get_nodes_info(
             role=NodeRole.SUPERVISOR, env=True
         )
-        for node in envs:
-            env = envs[node].get("env", {})
+        for node_info in envs.values():
+            env = node_info.get("env", {})
             if "k8s_namespace" in env:
                 return env["k8s_namespace"]
 
