@@ -209,7 +209,7 @@ async def create_supervisor_actor_pool(
     oscar_config: dict = None,
     **kwargs,
 ):
-    if "logging_conf" in kwargs:
+    if "logging_conf" in kwargs and kwargs["logging_conf"] is not None:
         kwargs["logging_conf"]["subdir_prefix"] = "supervisor_"
         logging_conf = _config_logging(**kwargs)
         kwargs["logging_conf"] = logging_conf
@@ -247,7 +247,7 @@ async def create_worker_actor_pool(
     oscar_config: dict = None,
     **kwargs,
 ):
-    if "logging_conf" in kwargs:
+    if "logging_conf" in kwargs and kwargs["logging_conf"] is not None:
         kwargs["logging_conf"]["subdir_prefix"] = "worker_"
         logging_conf = _config_logging(**kwargs)
         kwargs["logging_conf"] = logging_conf
