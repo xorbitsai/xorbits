@@ -15,7 +15,7 @@
 # Env key for Mars log absolute path
 MARS_LOG_DIR_KEY = "MARS_LOG_DIR"
 DEFAULT_MARS_LOG_DIR = "/tmp/mars_log"
-DEFAULT_MARS_LOG_DIR_WIN = "C:\\TEMP\\mars_log"
+DEFAULT_MARS_LOG_DIR_WIN = "C:\\Temp\\mars_log"
 DEFAULT_MARS_LOG_FILE_NAME = "mars.log"
 DEFAULT_MARS_LOG_MAX_BYTES = 100 * 1024 * 1024
 DEFAULT_MARS_LOG_BACKUP_COUNT = 30
@@ -24,7 +24,7 @@ DEFAULT_MARS_LOG_BACKUP_COUNT = 30
 MARS_LOG_PREFIX = "mars_"
 
 MARS_PROFILING_RESULTS_DIR = "/tmp/mars_profiling"
-MARS_PROFILING_RESULTS_DIR_WIN = "C:\\TEMP\\mars_profiling"
+MARS_PROFILING_RESULTS_DIR_WIN = "C:\\Temp\\mars_profiling"
 
 # The prefix of the temporary directory where the Mars temp files are located
 MARS_TMP_DIR_PREFIX = "mars_tmp_"
