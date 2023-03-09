@@ -30,7 +30,7 @@ from ..pool import (
     _config_logging,
     _get_default_logging_config_path,
     _get_log_config_path,
-    _get_log_dir,
+    _get_log_subdir,
     _get_or_create_default_log_dir,
     _get_root_logger_level_and_format,
     _parse_file_logging_config,
@@ -184,7 +184,7 @@ def test_non_existent_file_logging_config():
 
 def test_non_existent_log_dir():
     with pytest.raises(RuntimeError, match="Log directory does not exist"):
-        _get_log_dir("/path/to/non_existent/")
+        _get_log_subdir("/path/to/non_existent/", None)
 
 
 def test_default_log_dir():
@@ -194,6 +194,14 @@ def test_default_log_dir():
     else:
         assert default_log_dir == DEFAULT_MARS_LOG_DIR
     assert os.path.exists(default_log_dir) and os.path.isdir(default_log_dir)
+
+
+def test_log_subdir_prefix():
+    with tempfile.TemporaryDirectory(prefix="mars_test_") as tempdir:
+        prefix = "test_"
+        log_subdir = _get_log_subdir(tempdir, prefix)
+        assert log_subdir.startswith(tempdir)
+        assert os.path.split(log_subdir)[1].startswith(prefix)
 
 
 def test_default_file_logging_config():

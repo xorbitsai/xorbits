@@ -72,8 +72,8 @@ def _apply_log_format(fmt: Optional[str], config: configparser.RawConfigParser):
     return config
 
 
-def _apply_log_dir(
-    log_dir: str,
+def _apply_log_file_path(
+    log_subdir: str,
     is_default_logging_config: bool,
     is_default_log_dir: bool,
     config: configparser.RawConfigParser,
@@ -81,8 +81,8 @@ def _apply_log_dir(
     if is_default_logging_config:
         assert "handler_file_handler" in config
         if sys.platform.startswith("win"):
-            log_dir = log_dir.replace("\\", "/")
-        log_file_path = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
+            log_subdir = log_subdir.replace("\\", "/")
+        log_file_path = os.path.join(log_subdir, DEFAULT_MARS_LOG_FILE_NAME)
         config["handler_file_handler"]["args"] = rf"('{log_file_path}',)"
         config["handler_file_handler"]["kwargs"] = (
             r"{'mode': 'a', "
@@ -115,21 +115,25 @@ def _parse_file_logging_config(
     from_cmd = logging_conf.get("from_cmd", False)
     log_level = logging_conf.get("level", None)
     log_fmt = logging_conf.get("format", None)
-    log_dir = _get_log_dir(logging_conf.get("log_dir", None))
+    log_subdir = _get_log_subdir(
+        logging_conf.get("log_dir", None), logging_conf.get("subdir_prefix", None)
+    )
     log_config_path = _get_log_config_path(logging_conf.get("log_config", None))
     is_default_logging_config = logging_conf.get("log_config", None) is None
     is_default_log_dir = logging_conf.get("log_dir", None) is None
 
     # for FileLoggerActor(s).
-    os.environ[MARS_LOG_DIR_KEY] = log_dir
+    os.environ[MARS_LOG_DIR_KEY] = log_subdir
     logger.info("Logging configuration file %s", log_config_path)
-    logger.info("Logging directory %s", log_dir)
+    logger.info("Logging directory %s", log_subdir)
 
     config = configparser.RawConfigParser()
     config.read(log_config_path)
     _apply_log_format(log_fmt, config)
     _apply_log_level(log_level, config)
-    _apply_log_dir(log_dir, is_default_logging_config, is_default_log_dir, config)
+    _apply_log_file_path(
+        log_subdir, is_default_logging_config, is_default_log_dir, config
+    )
 
     # optimize logs for local runtimes (like IPython).
     if not from_cmd and is_default_logging_config:
@@ -157,15 +161,17 @@ def _get_or_create_default_log_dir() -> str:
     return log_dir
 
 
-def _get_log_dir(log_dir: Optional[str]) -> str:
+def _get_log_subdir(log_dir: Optional[str], subdir_prefix: Optional[str]) -> str:
     if log_dir is None:
         log_dir = _get_or_create_default_log_dir()
     if not os.path.exists(log_dir):
         raise RuntimeError(f"Log directory does not exist: {log_dir}")
 
-    log_dir = os.path.join(log_dir, str(time.time_ns()))
-    os.makedirs(log_dir, exist_ok=True)
-    return log_dir
+    subdir_prefix = "" if subdir_prefix is None else subdir_prefix
+    subdir_name = subdir_prefix + str(time.time_ns())
+    log_subdir = os.path.join(log_dir, subdir_name)
+    os.makedirs(log_subdir, exist_ok=True)
+    return log_subdir
 
 
 def _get_default_logging_config_path() -> str:
@@ -182,7 +188,7 @@ def _get_log_config_path(log_config: Optional[str]) -> str:
 
 def _config_logging(**kwargs) -> Optional[configparser.RawConfigParser]:
     if kwargs.get("logging_conf", None) is None:
-        return
+        return None
 
     parsed_logging_conf = _parse_file_logging_config(kwargs["logging_conf"])
 
@@ -203,8 +209,10 @@ async def create_supervisor_actor_pool(
     oscar_config: dict = None,
     **kwargs,
 ):
-    logging_conf = _config_logging(**kwargs)
-    kwargs["logging_conf"] = logging_conf
+    if "logging_conf" in kwargs:
+        kwargs["logging_conf"]["subdir_prefix"] = "supervisor_"
+        logging_conf = _config_logging(**kwargs)
+        kwargs["logging_conf"] = logging_conf
     if oscar_config:
         numa_config = oscar_config.get("numa", dict())
         numa_external_address_scheme = numa_config.get("external_addr_scheme", None)
@@ -239,8 +247,10 @@ async def create_worker_actor_pool(
     oscar_config: dict = None,
     **kwargs,
 ):
-    logging_conf = _config_logging(**kwargs)
-    kwargs["logging_conf"] = logging_conf
+    if "logging_conf" in kwargs:
+        kwargs["logging_conf"]["subdir_prefix"] = "worker_"
+        logging_conf = _config_logging(**kwargs)
+        kwargs["logging_conf"] = logging_conf
     # TODO: support NUMA when ready
     n_process = sum(
         int(resource.num_cpus) or int(resource.num_gpus)
