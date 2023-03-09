@@ -153,8 +153,7 @@ def _get_or_create_default_log_dir() -> str:
     else:
         log_dir = DEFAULT_MARS_LOG_DIR
 
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    os.makedirs(log_dir, exist_ok=True)
     return log_dir
 
 
@@ -165,7 +164,7 @@ def _get_log_dir(log_dir: Optional[str]) -> str:
         raise RuntimeError(f"Log directory does not exist: {log_dir}")
 
     log_dir = os.path.join(log_dir, str(time.time_ns()))
-    os.mkdir(log_dir)
+    os.makedirs(log_dir, exist_ok=True)
     return log_dir
 
 
