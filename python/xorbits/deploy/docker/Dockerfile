@@ -9,7 +9,7 @@ RUN cd /opt/xorbits/python && \
     python setup.py build_ext -i && \
     npm cache clean --force && \
     python setup.py build_web && \
-    rm -rf /opt/xorbits/python/xorbits/ui/node_modules
+    rm -rf /opt/xorbits/python/xorbits/web/ui/node_modules
 
 RUN mkdir -p /srv
 
