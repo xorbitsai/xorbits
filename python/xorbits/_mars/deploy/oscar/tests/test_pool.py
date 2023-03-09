@@ -142,7 +142,7 @@ def test_config_logging(caplog):
         # check if root logger's handlers are as expected.
         assert len(logger.handlers) == 2
         assert isinstance(logger.handlers[0], logging.StreamHandler)
-        assert logger.handlers[0].level == logging.DEBUG
+        assert logger.handlers[0].level == logging.WARN
         assert isinstance(logger.handlers[1], logging.handlers.RotatingFileHandler)
         assert logger.handlers[1].level == logging.DEBUG
         assert logger.handlers[1].baseFilename.startswith(tempdir)
