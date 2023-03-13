@@ -45,10 +45,11 @@ RUN /opt/conda/bin/conda install \
     tiledb-py \
     python-kubernetes \
     uvloop \
-  && pip install \
+  && pip install -U \
     adlfs \
     fsspec>=2022.7.1,!=2022.8.0 \
     s3fs \
+    pyopenssl>=23.0.0 \
   && /opt/conda/bin/conda clean --all -f -y
 
 ENV NVM_DIR /usr/local/nvm
