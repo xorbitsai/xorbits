@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from .... import oscar as mo
 from ....lib.aio import alru_cache
@@ -39,9 +39,11 @@ class SessionAPI(AbstractSessionAPI):
         session_manager = await mo.actor_ref(address, SessionManagerActor.default_uid())
         return SessionAPI(address, session_manager)
 
-    async def create_session(self, session_id: str) -> str:
-        session_actor_ref = await self._session_manager_ref.create_session(session_id)
-        return session_actor_ref.address
+    async def create_session(self, session_id: Optional[str]) -> Tuple[str, str]:
+        session_id, session_actor_ref = await self._session_manager_ref.create_session(
+            session_id
+        )
+        return session_id, session_actor_ref.address
 
     async def get_sessions(self) -> List[SessionInfo]:
         return await self._session_manager_ref.get_sessions()
