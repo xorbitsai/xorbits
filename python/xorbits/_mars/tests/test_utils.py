@@ -668,3 +668,11 @@ def test_calc_data_size_gpu():
     df = pd.DataFrame({"a": ["a", "b", "a"]}, dtype="category")
     df = cudf.from_pandas(df)
     assert utils.calc_data_size(df) > 0
+
+
+def test_random_string_and_digits():
+    res = utils.random_string_and_digits(5)
+    assert len(res) == 5
+
+    res2 = utils.random_string_and_digits(5)
+    assert res != res2

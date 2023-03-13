@@ -30,6 +30,7 @@ import pkgutil
 import random
 import shutil
 import socket
+import string
 import struct
 import sys
 import threading
@@ -1887,3 +1888,9 @@ def clean_mars_tmp_dir():
                 # on windows platform, raise Permission Error
                 _windows: bool = sys.platform.startswith("win")
                 shutil.rmtree(mars_tmp_dir, ignore_errors=_windows)
+
+
+def random_string_and_digits(length: int) -> str:
+    return "".join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(length)
+    )

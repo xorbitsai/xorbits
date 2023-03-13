@@ -69,6 +69,8 @@ def gather_node_env():
 
     if "MARS_K8S_POD_NAME" in os.environ:
         node_info["k8s_pod_name"] = os.environ["MARS_K8S_POD_NAME"]
+    if "MARS_K8S_POD_NAMESPACE" in os.environ:
+        node_info["k8s_namespace"] = os.environ["MARS_K8S_POD_NAMESPACE"]
     if "CONTAINER_ID" in os.environ:
         node_info["yarn_container_id"] = os.environ["CONTAINER_ID"]
 

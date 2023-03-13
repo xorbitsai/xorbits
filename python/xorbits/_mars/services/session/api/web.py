@@ -14,7 +14,7 @@
 # limitations under the License.
 
 import json
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from ....utils import parse_readable_size
 from ...web import MarsServiceWebAPIHandler, MarsWebAPIClientMixin, web_api
@@ -59,9 +59,11 @@ class SessionWebAPIHandler(SessionWebAPIBaseHandler):
 
     @web_api("(?P<session_id>[^/]+)", method="put")
     async def create_session(self, session_id: str):
+        if session_id == "None":
+            session_id = None
         oscar_api = await self._get_oscar_session_api()
-        addr = await oscar_api.create_session(session_id)
-        self.write(addr)
+        sess_id, addr = await oscar_api.create_session(session_id)
+        self.write({"session_id": sess_id, "address": addr})
 
     @web_api("(?P<session_id>[^/]+)", method="delete")
     async def delete_session(self, session_id: str):
@@ -132,10 +134,11 @@ class WebSessionAPI(AbstractSessionAPI, MarsWebAPIClientMixin):
         res_obj = json.loads(res.body.decode())
         return [SessionInfo(**kw) for kw in res_obj["sessions"]]
 
-    async def create_session(self, session_id: str) -> str:
+    async def create_session(self, session_id: Optional[str]) -> Tuple[str, str]:
         addr = f"{self._address}/api/session/{session_id}"
         res = await self._request_url(path=addr, method="PUT", data=b"")
-        return res.body.decode()
+        res_obj = json.loads(res.body.decode())
+        return res_obj["session_id"], res_obj["address"]
 
     async def delete_session(self, session_id: str):
         addr = f"{self._address}/api/session/{session_id}"
