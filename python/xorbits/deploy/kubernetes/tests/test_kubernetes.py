@@ -154,6 +154,7 @@ def _start_kube_cluster(**kwargs):
 
         assert cluster_client.endpoint is not None
         assert cluster_client.session is not None
+        assert cluster_client.session.session_id.startswith(cluster_client.namespace)
 
         pod_items = kube_api.list_namespaced_pod(cluster_client.namespace).to_dict()
 

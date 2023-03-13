@@ -18,8 +18,6 @@ import concurrent.futures
 import itertools
 import json
 import logging
-import random
-import string
 import threading
 import time
 import warnings
@@ -803,7 +801,7 @@ class _IsolatedSession(AbstractAsyncSession):
         session_api = await SessionAPI.create(address)
         if new:
             # create new session
-            session_address = await session_api.create_session(session_id)
+            session_id, session_address = await session_api.create_session(session_id)
         else:
             session_address = await session_api.get_session_address(session_id)
         lifecycle_api = await LifecycleAPI.create(session_id, session_address)
@@ -1352,7 +1350,7 @@ class _IsolatedWebSession(_IsolatedSession):
         session_api = WebSessionAPI(address, request_rewriter)
         if new:
             # create new session
-            await session_api.create_session(session_id)
+            session_id, _ = await session_api.create_session(session_id)
         lifecycle_api = WebLifecycleAPI(session_id, address, request_rewriter)
         meta_api = WebMetaAPI(session_id, address, request_rewriter)
         task_api = WebTaskAPI(session_id, address, request_rewriter)
@@ -1445,7 +1443,9 @@ class AsyncSession(AbstractAsyncSession):
         coro = _IsolatedSession.init(address, session_id, backend, new=new, **kwargs)
         fut = asyncio.run_coroutine_threadsafe(coro, isolation.loop)
         isolated_session = await asyncio.wrap_future(fut)
-        return AsyncSession(address, session_id, isolated_session, isolation)
+        return AsyncSession(
+            address, isolated_session.session_id, isolated_session, isolation
+        )
 
     def as_default(self) -> AbstractSession:
         AbstractSession._default = self._isolated_session
@@ -1620,7 +1620,9 @@ class SyncSession(AbstractSyncSession):
         coro = _IsolatedSession.init(address, session_id, backend, new=new, **kwargs)
         fut = asyncio.run_coroutine_threadsafe(coro, isolation.loop)
         isolated_session = fut.result()
-        return SyncSession(address, session_id, isolated_session, isolation)
+        return SyncSession(
+            address, isolated_session.session_id, isolated_session, isolation
+        )
 
     def as_default(self) -> AbstractSession:
         AbstractSession._default = self._isolated_session
@@ -1978,12 +1980,6 @@ def ensure_isolation_created(kwargs):
         return new_isolation(loop=loop)
 
 
-def _new_session_id():
-    return "".join(
-        random.choice(string.ascii_letters + string.digits) for _ in range(24)
-    )
-
-
 async def _new_session(
     address: str,
     session_id: str = None,
@@ -1991,9 +1987,6 @@ async def _new_session(
     default: bool = False,
     **kwargs,
 ) -> AbstractSession:
-    if session_id is None:
-        session_id = _new_session_id()
-
     session = await AsyncSession.init(
         address, session_id=session_id, backend=backend, new=True, **kwargs
     )
@@ -2018,9 +2011,6 @@ def new_session(
         address = "127.0.0.1"
         if "init_local" not in kwargs:
             kwargs["init_local"] = True
-
-    if session_id is None:
-        session_id = _new_session_id()
 
     session = SyncSession.init(
         address, session_id=session_id, backend=backend, new=new, **kwargs

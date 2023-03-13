@@ -54,7 +54,8 @@ async def test_session_service(test_web):
         else:
             session_api = WebSessionAPI(f'http://127.0.0.1:{config["web"]["port"]}')
         session_id = "test_session"
-        session_address = await session_api.create_session(session_id)
+        sess_id, session_address = await session_api.create_session(session_id)
+        assert sess_id == session_id
         assert session_address == pool.external_address
         assert await session_api.has_session(session_id) is True
         assert (await session_api.get_sessions())[0].session_id == session_id

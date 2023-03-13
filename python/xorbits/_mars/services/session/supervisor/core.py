@@ -21,7 +21,7 @@ import time
 from typing import Dict, List, Optional
 
 from .... import oscar as mo
-from ....utils import to_binary
+from ....utils import random_string_and_digits, to_binary
 from ...cluster import ClusterAPI
 from ...core import NodeRole, create_service_session, destroy_service_session
 from ..core import SessionInfo
@@ -45,9 +45,27 @@ class SessionManagerActor(mo.Actor):
             *[mo.destroy_actor(ref) for ref in self._session_refs.values()]
         )
 
-    async def create_session(self, session_id: str, create_services: bool = True):
+    async def _get_namespace(self) -> Optional[str]:
+        envs = await self._cluster_api.get_nodes_info(
+            role=NodeRole.SUPERVISOR, env=True
+        )
+        for node_info in envs.values():
+            env = node_info.get("env", {})
+            if "k8s_namespace" in env:
+                return env["k8s_namespace"]
+
+    async def create_session(
+        self, session_id: Optional[str], create_services: bool = True
+    ):
+        ns = await self._get_namespace()
+        if session_id is None:
+            if ns is not None:
+                session_id = ns + "-" + random_string_and_digits(8)
+            else:
+                session_id = random_string_and_digits(24)
+
         if session_id in self._session_refs:
-            raise mo.Return(self._session_refs[session_id])
+            raise mo.Return((session_id, self._session_refs[session_id]))
 
         [address] = await self._cluster_api.get_supervisors_by_keys([session_id])
         try:
@@ -85,7 +103,7 @@ class SessionManagerActor(mo.Actor):
         if create_services:
             yield session_actor_ref.create_services()
 
-        raise mo.Return(session_actor_ref)
+        raise mo.Return((session_id, session_actor_ref))
 
     def get_sessions(self) -> List[SessionInfo]:
         return [
