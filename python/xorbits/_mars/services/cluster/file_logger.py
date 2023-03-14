@@ -31,6 +31,9 @@ class FileLoggerActor(mo.Actor):
         log_dir = os.environ.get(MARS_LOG_DIR_KEY)
         self._log_file_path: Optional[str] = None
         if log_dir is None:
+            # normally, this env var is set when a supervisor or worker pool is created, but some
+            # test cases just use an actor pool for convenience, in which case the env var
+            # MARS_LOG_DIR is None.
             logger.warning("Log directory is not set")
         else:
             self._log_file_path = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
