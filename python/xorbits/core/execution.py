@@ -72,12 +72,19 @@ def _collect_user_ns_refs() -> dict[int, DataRef]:
     """
     Collect DataRefs defined in user's interactive namespace.
     """
+
+    def _is_ipython_output_cache(name: str):
+        # _, __, ___ or _<n> where <n> stands for the output line number.
+        return name in ["_", "__", "___"] or name.startswith("_") and name[1:].isdigit()
+
     if not _is_interactive() or not _is_ipython_available():
         return {}
 
     ipython = getattr(builtins, "get_ipython")()
     return dict(
-        (id(v), v) for k, v in ipython.user_ns.items() if isinstance(v, DataRef)
+        (id(v), v)
+        for k, v in ipython.user_ns.items()
+        if isinstance(v, DataRef) and not _is_ipython_output_cache(k)
     )
 
 

@@ -169,3 +169,19 @@ def test_interactive_execution(setup, ip):
     ip.run_cell(raw_cell="xorbits.run(df + 1)")
     r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(df)")
     assert not r.result
+
+
+def test_ignore_ipython_output_cache(setup, ip):
+    ip.run_cell(raw_cell="import xorbits")
+    ip.run_cell(raw_cell="import xorbits.pandas as pd")
+
+    r = ip.run_cell(raw_cell="xorbits.core.execution._is_interactive()")
+    assert r.result
+    r = ip.run_cell(raw_cell="xorbits.core.execution._is_ipython_available()")
+    assert r.result
+
+    ip.run_cell(raw_cell="_ = pd.DataFrame({'foo': [1, 2, 3]})")
+    ip.run_cell(raw_cell="df = pd.DataFrame({'foo': [1, 2, 3]})")
+    ip.run_cell(raw_cell="df + 1")
+    r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(_)")
+    assert r.result
