@@ -423,10 +423,6 @@ def test_quiet_stdio():
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(
-    sys.version_info[:2] < (3, 7),
-    reason="asyncio task timeout detector is not supported on python versions below 3.7",
-)
 async def test_asyncio_task_timeout_detector():
     log_file_name = "test_asyncio_task_timeout_detector.log"
     try:

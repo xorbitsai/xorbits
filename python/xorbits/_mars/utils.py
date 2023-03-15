@@ -1479,25 +1479,20 @@ def register_asyncio_task_timeout_detector(
                 "MARS_DEBUG_ASYNCIO_TASK_EXCLUDE_FILTERS", "mars/oscar"
             )
             task_exclude_filters = task_exclude_filters.split(";")
-        if sys.version_info[:2] < (3, 7):
-            logger.warning(
-                "asyncio tasks timeout detector is not supported under python %s",
-                sys.version,
+
+        loop = asyncio.get_running_loop()
+        logger.info(
+            "Create asyncio tasks timeout detector with check_interval %s task_timeout_seconds %s "
+            "task_exclude_filters %s",
+            check_interval,
+            task_timeout_seconds,
+            task_exclude_filters,
+        )
+        return loop.create_task(
+            asyncio_task_timeout_detector(
+                check_interval, task_timeout_seconds, task_exclude_filters
             )
-        else:
-            loop = asyncio.get_running_loop()
-            logger.info(
-                "Create asyncio tasks timeout detector with check_interval %s task_timeout_seconds %s "
-                "task_exclude_filters %s",
-                check_interval,
-                task_timeout_seconds,
-                task_exclude_filters,
-            )
-            return loop.create_task(
-                asyncio_task_timeout_detector(
-                    check_interval, task_timeout_seconds, task_exclude_filters
-                )
-            )
+        )
     else:
         return None
 

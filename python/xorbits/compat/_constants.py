@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SUPPORTED_PY_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
+SUPPORTED_PY_VERSIONS = ["3.8", "3.9", "3.10", "3.11"]
 
 # Packages that require the compatible version between local and cluster
 COMPATIBLE_DEPS = ["cloudpickle"]
