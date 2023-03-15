@@ -21,11 +21,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         arch: [auto]
-        requires-python: [">=3.7,<3.9", ">=3.9,<3.11"]
+        requires-python: [">=3.8,<3.10", ">=3.10,<3.12"]
         include:
-          - os: ubuntu-latest
-            arch: aarch64
-            requires-python: ">=3.7,<3.8"
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.8,<3.9"
@@ -35,12 +32,15 @@ jobs:
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.10,<3.11"
+          - os: ubuntu-latest
+            arch: aarch64
+            requires-python: ">=3.11,<3.12"
           - os: macos-latest
             arch: universal2
-            requires-python: ">=3.7,<3.9"
+            requires-python: ">=3.8,<3.10"
           - os: macos-latest
             arch: universal2
-            requires-python: ">=3.9,<3.11"
+            requires-python: ">=3.10,<3.12"
 
     steps:
       - uses: actions/checkout@v3
@@ -71,7 +71,6 @@ jobs:
           CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
           CIBW_TEST_REQUIRES: pytest requests
-          CIBW_BEFORE_TEST_WINDOWS: pip install "scipy<=1.9.1" "scikit-learn<=1.1.2" # Fix version on win32
           CIBW_BUILD_VERBOSITY: 1
         with:
           package-dir: ./python/
