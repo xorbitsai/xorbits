@@ -15,7 +15,8 @@ requires = [
     "scipy==1.9.2; python_version>='3.11'",
     "cython==0.29.33",
     "requests>=2.4.0",
-    "cloudpickle>=1.5.0"
+    "cloudpickle==2.2.1; python_version>='3.11'",
+    "cloudpickle==1.5.0; python_version<'3.11'",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -37,6 +38,6 @@ markers = [
 ]
 
 [tool.cibuildwheel]
-build = ["cp37-*", "cp38-*", "cp39-*", "cp310-*"]
-skip = "pp* *musllinux* *i686 cp36* cp310-win32"
+build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+skip = "pp* *musllinux* *i686 cp36* cp310-win32 cp311-win32"
 manylinux-x86_64-image = "manylinux2014"
