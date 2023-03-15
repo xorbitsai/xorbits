@@ -56,12 +56,8 @@ def get_local_package_version(package_name: str) -> Optional[str]:
         return None
 
 
-def get_xorbits_root_absolute() -> Path:
-    return Path(__file__).parent.absolute()
-
-
-def get_default_logging_config_file_absolute() -> Path:
+def get_default_logging_config_file_path() -> Path:
     p = os.path.join(
-        get_xorbits_root_absolute(), "deploy", "oscar", "file-logging.conf"
+        Path(__file__).parent.absolute(), "deploy", "oscar", "file-logging.conf"
     )
     return Path(p)

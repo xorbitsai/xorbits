@@ -19,6 +19,7 @@ import tempfile
 
 import pytest
 
+from .....utils import get_default_logging_config_file_path
 from ....constants import (
     DEFAULT_MARS_LOG_BACKUP_COUNT,
     DEFAULT_MARS_LOG_DIR,
@@ -28,7 +29,6 @@ from ....constants import (
 )
 from ..pool import (
     _config_logging,
-    _get_default_logging_config_path,
     _get_log_config_path,
     _get_log_subdir,
     _get_or_create_default_log_dir,
@@ -205,5 +205,5 @@ def test_log_subdir_prefix():
 
 
 def test_default_file_logging_config():
-    default_logging_config_path = _get_default_logging_config_path()
+    default_logging_config_path = str(get_default_logging_config_file_path())
     assert os.path.exists(default_logging_config_path)

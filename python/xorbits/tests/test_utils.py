@@ -16,10 +16,9 @@ import unittest.mock as mock
 
 from ..core.execution import need_to_execute
 from ..utils import (
-    get_default_logging_config_file_absolute,
+    get_default_logging_config_file_path,
     get_local_package_version,
     get_local_py_version,
-    get_xorbits_root_absolute,
 )
 from .mock_pydevd_xml import var_to_xml
 
@@ -50,14 +49,8 @@ def test_get_local_package_version():
     assert ret is None
 
 
-def test_get_xorbits_root_absolute():
-    root = get_xorbits_root_absolute()
-    assert root.is_absolute()
-    assert root.name == "xorbits"
-
-
 def test_get_default_logging_config_file():
-    default_logging_config_file = get_default_logging_config_file_absolute()
+    default_logging_config_file = get_default_logging_config_file_path()
     assert default_logging_config_file.exists()
     assert default_logging_config_file.is_absolute()
     assert default_logging_config_file.name == "file-logging.conf"

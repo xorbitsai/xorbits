@@ -20,7 +20,7 @@ import sys
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
-from ....utils import get_default_logging_config_file_absolute
+from ....utils import get_default_logging_config_file_path
 from ... import oscar as mo
 from ...constants import (
     DEFAULT_MARS_LOG_BACKUP_COUNT,
@@ -174,13 +174,9 @@ def _get_log_subdir(log_dir: Optional[str], subdir_prefix: Optional[str]) -> str
     return log_subdir
 
 
-def _get_default_logging_config_path() -> str:
-    return str(get_default_logging_config_file_absolute())
-
-
 def _get_log_config_path(log_config: Optional[str]) -> str:
     if log_config is None:
-        log_config = _get_default_logging_config_path()
+        log_config = str(get_default_logging_config_file_path())
     if not os.path.exists(log_config):
         raise RuntimeError(f"Logging configuration file does not exist: {log_config}")
     return log_config
