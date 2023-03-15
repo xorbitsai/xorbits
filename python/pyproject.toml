@@ -15,7 +15,8 @@ requires = [
     "scipy==1.9.2; python_version>='3.11'",
     "cython==0.29.33",
     "requests>=2.4.0",
-    "cloudpickle>=1.5.0"
+    "cloudpickle==2.2.1; python_version>='3.11'",
+    "cloudpickle==1.5.0; python_version<'3.11'",
 ]
 build-backend = "setuptools.build_meta"
 
