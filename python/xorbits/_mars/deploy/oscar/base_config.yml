@@ -12,7 +12,6 @@ cluster:
   backend: fixed
   node_timeout: 120
   node_check_interval: 1
-  log_dir: null
 session:
   custom_log_dir: null
 storage:
