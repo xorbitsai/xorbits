@@ -16,7 +16,6 @@
 import asyncio
 import gc
 import os
-import shutil
 import sys
 import tempfile
 import time
@@ -31,7 +30,6 @@ from ..... import oscar as mo
 from ..... import remote as mr
 from ..... import tensor as mt
 from .....conftest import MARS_CI_BACKEND
-from .....constants import MARS_PROFILING_RESULTS_PATH_KEY, MARS_TMP_DIR_PREFIX
 from .....core import Tileable, TileableGraph, TileableGraphBuilder
 from .....core.operand import Fetch
 from .....oscar.backends.allocate_strategy import MainPool
@@ -52,11 +50,15 @@ from ...task_info_collector import TaskInfoCollectorActor
 from ..manager import TaskConfigurationActor, TaskManagerActor
 
 
+@pytest.fixture(scope="class")
+def task_info_root_path():
+    with tempfile.TemporaryDirectory(prefix="mars_test_") as tempdir:
+        yield tempdir
+
+
 @pytest.fixture
-async def actor_pool():
+async def actor_pool(task_info_root_path):
     backend = MARS_CI_BACKEND
-    mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
-    os.environ[MARS_PROFILING_RESULTS_PATH_KEY] = mars_tmp_dir
 
     start_method = (
         os.environ.get("POOL_START_METHOD", "forkserver")
@@ -109,6 +111,7 @@ async def actor_pool():
         )
         await mo.create_actor(
             TaskInfoCollectorActor,
+            {"experimental": {"task_info_root_path": task_info_root_path}},
             uid=TaskInfoCollectorActor.default_uid(),
             address=pool.external_address,
         )
@@ -119,7 +122,6 @@ async def actor_pool():
             await MockStorageAPI.cleanup(pool.external_address)
             await MockClusterAPI.cleanup(pool.external_address)
             await MockMutableAPI.cleanup(session_id, pool.external_address)
-            shutil.rmtree(mars_tmp_dir, ignore_errors=True)
 
 
 async def _merge_data(
@@ -722,7 +724,7 @@ async def test_dump_subtask_graph(actor_pool):
 
 
 @pytest.mark.asyncio
-async def test_collect_task_info(actor_pool):
+async def test_collect_task_info(actor_pool, task_info_root_path):
     (
         execution_backend,
         pool,
@@ -744,7 +746,7 @@ async def test_collect_task_info(actor_pool):
     )
     await manager.wait_task(task_id)
 
-    yaml_root_dir = os.environ.get(MARS_PROFILING_RESULTS_PATH_KEY)
+    yaml_root_dir = task_info_root_path
     assert yaml_root_dir is not None
 
     save_dir = os.path.join(yaml_root_dir, session_id, task_id)
