@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
+
 from numpy import (
     NAN,
     NINF,
@@ -66,6 +68,10 @@ from numpy import (
 )
 from numpy.lib.index_tricks import ndindex
 
+from ..core.utils.fallback import unimplemented_func
+
+METHODS = None
+
 
 def _install():
     from .mars_adapters import _install as _install_mars_adapters
@@ -100,11 +106,25 @@ def __dir__():
 
 def __getattr__(name: str):
     from .mars_adapters import MARS_TENSOR_CALLABLES, MARS_TENSOR_OBJECTS
+    from .numpy_adapters import collect_numpy_module_members
 
     if name in MARS_TENSOR_CALLABLES:
         return MARS_TENSOR_CALLABLES[name]
     elif name in MARS_TENSOR_OBJECTS:
         return MARS_TENSOR_OBJECTS[name]
     else:
-        # TODO: fallback to numpy
-        raise AttributeError(name)
+        global METHODS
+        import numpy
+
+        if METHODS is None:
+            METHODS = collect_numpy_module_members(numpy)
+
+        if not hasattr(numpy, name):
+            raise AttributeError(name)
+        elif name in METHODS:
+            return METHODS[name]
+        else:  # pragma: no cover
+            if inspect.ismethod(getattr(numpy, name)):
+                return unimplemented_func
+            else:
+                raise AttributeError(name)
