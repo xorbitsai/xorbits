@@ -30,12 +30,8 @@ Backport of the asyncio.runners module from Python 3.7.
 
 import asyncio
 import weakref
+from asyncio import get_running_loop
 from typing import Any, Awaitable, Coroutine, TypeVar, Union
-
-try:
-    from asyncio import get_running_loop  # noqa Python >=3.7
-except ImportError:  # pragma: no cover
-    from asyncio.events import _get_running_loop as get_running_loop  # pragma: no cover
 
 __all__ = ("run", "get_running_loop")
 _T = TypeVar("_T")
