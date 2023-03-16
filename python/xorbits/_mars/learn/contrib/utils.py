@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 
 import numpy as np
 
@@ -66,10 +65,6 @@ def config_mod_getattr(mod_dict, globals_):
             return cls
         else:  # pragma: no cover
             raise AttributeError(name)
-
-    if sys.version_info[:2] < (3, 7):
-        for _mod in mod_dict.keys():
-            __getattr__(_mod)
 
     def __dir__():
         return sorted([n for n in globals_ if not n.startswith("_")] + list(mod_dict))

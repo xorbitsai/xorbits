@@ -14,7 +14,6 @@
 # limitations under the License.
 
 import asyncio
-import sys
 
 import pytest
 
@@ -84,9 +83,6 @@ def test_extensible_bind():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("use_async", [False, True])
-@pytest.mark.skipif(
-    sys.version_info[:2] < (3, 7), reason="only run with Python 3.7 or greater"
-)
 async def test_extensible_no_batch(use_async):
     class TestClass:
         def __init__(self):
@@ -175,9 +171,6 @@ async def test_extensible_batch_only(use_async):
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(
-    sys.version_info[:2] < (3, 7), reason="only run with Python 3.7 or greater"
-)
 @pytest.mark.parametrize("use_async", [False, True])
 async def test_extensible_single_with_batch(use_async):
     class TestClass:
