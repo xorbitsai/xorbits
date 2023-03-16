@@ -45,16 +45,12 @@ def run(obj: DataRef | list[DataRef] | tuple[DataRef], **kwargs) -> None:
     else:
         refs.extend(obj)
 
-    refs_to_execute = _collect_user_ns_refs(refs)
+    refs_to_execute = _collect_executable_user_ns_refs(refs)
     for ref in refs:
-        if id(ref) not in refs_to_execute:
+        if id(ref) not in refs_to_execute and need_to_execute(ref):
             refs_to_execute[id(ref)] = ref
 
-    mars_tileables = [
-        _get_mars_entity(ref)
-        for ref in refs_to_execute.values()
-        if need_to_execute(ref)
-    ]
+    mars_tileables = [_get_mars_entity(ref) for ref in refs_to_execute.values()]
     if mars_tileables:
         mars_execute(mars_tileables, **kwargs)
 
@@ -80,9 +76,9 @@ def _is_in_final_results(ref: DataRef, results: list[DataRef]):
     return False
 
 
-def _collect_user_ns_refs(result_refs: list[DataRef]) -> dict[int, DataRef]:
+def _collect_executable_user_ns_refs(result_refs: list[DataRef]) -> dict[int, DataRef]:
     """
-    Collect DataRefs defined in user's interactive namespace.
+    Collect DataRefs defined in user's interactive namespace that are able to execute.
     """
 
     def _is_ipython_output_cache(name: str):
@@ -98,6 +94,7 @@ def _collect_user_ns_refs(result_refs: list[DataRef]) -> dict[int, DataRef]:
         for k, v in ipython.user_ns.items()
         if isinstance(v, DataRef)
         and not _is_ipython_output_cache(k)
+        and need_to_execute(v)
         and _is_in_final_results(v, result_refs)
     )
 
