@@ -16,7 +16,6 @@
 import numpy as np
 
 import pandas as pd
-from pandas._typing import npt
 from pandas.core.dtypes.common import pandas_dtype
 
 from ..core import ENTITY_TYPE
@@ -124,7 +123,7 @@ class DataFrame(_Frame, metaclass=InitializerMeta):
         super().__init__(df.data)
     
     # Attribute for numpy array conversion, defined in pandas/pandas/core/generic.py
-    def __array__(self, dtype: npt.DTypeLike | None = None) -> np.ndarray:
+    def __array__(self, dtype = None) -> np.ndarray:
         return np.asarray(self.values, dtype=dtype)
 
     @classmethod
