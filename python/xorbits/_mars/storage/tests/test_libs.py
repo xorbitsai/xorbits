@@ -22,10 +22,10 @@ import numpy as np
 import pandas as pd
 import pytest
 import scipy.sparse as sps
+from xoscar.serialization import AioDeserializer, AioSerializer
 
 from ...lib.filesystem import LocalFileSystem
 from ...lib.sparse import SparseMatrix, SparseNDArray
-from ...serialization import AioDeserializer, AioSerializer
 from ...tests.core import require_cudf, require_cupy, require_ray
 from ..base import StorageLevel
 from ..cuda import CudaStorage

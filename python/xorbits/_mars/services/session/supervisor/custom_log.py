@@ -17,7 +17,7 @@ import os.path
 from collections import defaultdict
 from typing import Dict, Tuple
 
-from .... import oscar as mo
+import xoscar as mo
 
 
 class CustomLogMetaActor(mo.Actor):

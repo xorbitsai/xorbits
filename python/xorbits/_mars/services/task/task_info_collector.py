@@ -21,9 +21,9 @@ import os
 from collections import defaultdict
 from typing import Any, Dict, Optional
 
+import xoscar as mo
 import yaml
 
-from ... import oscar as mo
 from ...constants import MARS_PROFILING_RESULTS_DIR, MARS_PROFILING_RESULTS_DIR_WIN
 from ...core.operand import Fetch, FetchShuffle
 from ...lib.aio import AioFileObject, Isolation, alru_cache

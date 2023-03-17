@@ -18,7 +18,7 @@ import os
 
 import pytest
 
-from .... import oscar as mo
+from ....oscar import create_actor_pool
 from ....storage import StorageLevel
 from ... import NodeRole, start_services, stop_services
 from .. import ClusterAPI, DiskInfo, QuotaInfo, StorageInfo, WorkerSlotInfo
@@ -27,7 +27,7 @@ from .. import ClusterAPI, DiskInfo, QuotaInfo, StorageInfo, WorkerSlotInfo
 @pytest.fixture
 async def actor_pools():
     async def start_pool():
-        pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+        pool = await create_actor_pool("127.0.0.1", n_process=0)
         await pool.start()
         return pool
 

@@ -15,7 +15,8 @@
 
 import asyncio
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ...core import AbstractService
 from .autoscale import AutoscalerActor
 from .manager import DEFAULT_SUBTASK_MAX_RESCHEDULES

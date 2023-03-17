@@ -60,17 +60,19 @@ from urllib.parse import urlparse
 import cloudpickle as pickle
 import numpy as np
 import pandas as pd
+from xoscar._utils import (
+    TypeDispatcher,
+    new_random_id,
+    reset_id_random_seed,
+    to_binary,
+    to_str,
+)
 
 from ._utils import (  # noqa: F401 # pylint: disable=unused-import
     NamedType,
     Timer,
-    TypeDispatcher,
     ceildiv,
-    new_random_id,
     register_tokenizer,
-    reset_id_random_seed,
-    to_binary,
-    to_str,
     to_text,
     tokenize,
     tokenize_int,
@@ -422,7 +424,7 @@ class ModulePlaceholder:
 
 
 def serialize_serializable(serializable, compress: bool = False):
-    from .serialization import serialize
+    from xoscar.serialization import serialize
 
     bio = io.BytesIO()
     header, buffers = serialize(serializable)
@@ -441,7 +443,7 @@ def serialize_serializable(serializable, compress: bool = False):
 
 
 def deserialize_serializable(ser_serializable: bytes):
-    from .serialization import deserialize
+    from xoscar.serialization import deserialize
 
     bio = io.BytesIO(ser_serializable)
     s_header_length = struct.unpack("Q", bio.read(8))[0]

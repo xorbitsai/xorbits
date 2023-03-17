@@ -15,7 +15,8 @@
 
 from typing import List, Optional, Tuple, Type, TypeVar, Union
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ...subtask import Subtask
 from ..core import SubtaskScheduleSummary

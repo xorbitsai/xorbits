@@ -20,7 +20,8 @@ import os
 import time
 from typing import Dict, List, Optional
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....utils import random_string_and_digits, to_binary
 from ...cluster import ClusterAPI
 from ...core import NodeRole, create_service_session, destroy_service_session

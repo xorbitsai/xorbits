@@ -20,9 +20,10 @@ import sys
 import numpy as np
 import pandas as pd
 import pytest
+import xoscar as mo
+from xoscar.backends.allocate_strategy import IdleLabel
 
-from .... import oscar as mo
-from ....oscar.backends.allocate_strategy import IdleLabel
+from ....oscar import create_actor_pool
 from ....storage import StorageLevel
 from ..core import DataManagerActor, StorageManagerActor, StorageQuotaActor
 from ..errors import DataNotExist
@@ -41,7 +42,7 @@ async def actor_pools():
             else None
         )
 
-        pool = await mo.create_actor_pool(
+        pool = await create_actor_pool(
             "127.0.0.1",
             n_process=2,
             labels=["main", "numa-0", "io"],

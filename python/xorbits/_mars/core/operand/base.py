@@ -20,7 +20,8 @@ from enum import Enum
 from functools import partial
 from typing import Any, Dict, List, Tuple, Type, Union
 
-from ...serialization.core import Placeholder
+from xoscar.serialization.core import Placeholder
+
 from ...serialization.serializables import (
     BoolField,
     DictField,

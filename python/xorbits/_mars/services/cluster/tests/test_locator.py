@@ -19,8 +19,9 @@ import tempfile
 from typing import List
 
 import pytest
+import xoscar as mo
 
-from .... import oscar as mo
+from ....oscar import create_actor_pool
 from ....tests.core import flaky
 from ....utils import Timer
 from ..core import NodeRole, NodeStatus
@@ -55,7 +56,7 @@ class MockNodeInfoCollectorActor(mo.Actor):
 
 @pytest.fixture
 async def actor_pool():
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
     async with pool:
         await mo.create_actor(
             MockNodeInfoCollectorActor,

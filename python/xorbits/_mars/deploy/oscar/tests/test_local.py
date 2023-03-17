@@ -30,6 +30,7 @@ import numpy as np
 import pandas as pd
 import psutil
 import pytest
+from xoscar.backends.router import Router
 
 try:
     import vineyard
@@ -42,7 +43,6 @@ from .... import tensor as mt
 from ....config import option_context
 from ....core.context import get_context
 from ....lib.aio import new_isolation
-from ....oscar.backends.router import Router
 from ....services.storage import StorageAPI
 from ....services.task.supervisor.task import TaskProcessor
 from ....storage import StorageLevel

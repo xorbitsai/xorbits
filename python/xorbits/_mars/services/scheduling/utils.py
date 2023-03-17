@@ -17,7 +17,8 @@ import asyncio
 import contextlib
 import sys
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...lib.aio import alru_cache
 from ..subtask import SubtaskResult, SubtaskStatus
 from ..task import TaskAPI

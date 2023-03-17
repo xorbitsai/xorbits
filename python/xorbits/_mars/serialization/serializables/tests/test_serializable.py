@@ -21,10 +21,10 @@ from datetime import timezone
 import numpy as np
 import pandas as pd
 import pytest
+from xoscar.serialization import deserialize, serialize
 
 from ....core import EntityData
 from ....utils import no_default
-from ... import deserialize, serialize
 from .. import (
     AnyField,
     BoolField,

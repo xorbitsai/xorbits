@@ -16,9 +16,10 @@
 import inspect
 from typing import Any, Dict, List, Tuple
 
+from xoscar.debug import debug_async_timeout
+from xoscar.metrics import Metrics, Percentile, record_time_cost_percentile
+
 from ..lib import sparse
-from ..metrics import Metrics, Percentile, record_time_cost_percentile
-from ..oscar.debug import debug_async_timeout
 from ..utils import implements, lazy_import, register_ray_serializer
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import BufferWrappedFileObject, StorageFileObject

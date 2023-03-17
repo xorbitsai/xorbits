@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ...core import AbstractService
 from ..task_info_collector import TaskInfoCollectorActor
 from .manager import TaskConfigurationActor, TaskManagerActor

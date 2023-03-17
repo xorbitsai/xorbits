@@ -21,9 +21,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import psutil
 import pyarrow as pa
+from xoscar.serialization import AioDeserializer, AioSerializer
 
 from ..resource import virtual_memory
-from ..serialization import AioDeserializer, AioSerializer
 from ..utils import calc_size_by_str, dataslots, implements, lazy_import
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import BufferWrappedFileObject, StorageFileObject

@@ -18,11 +18,11 @@ import uuid
 from typing import List, Optional, Union
 
 import numpy as np
+from xoscar import ActorNotExist
 
 from ...config import options
 from ...core import recursive_tile
 from ...core.context import Context, get_context
-from ...oscar import ActorNotExist
 from ...serialization.serializables import Int64Field, StringField
 from ...typing import OperandType, TileableType
 from ...utils import parse_readable_size

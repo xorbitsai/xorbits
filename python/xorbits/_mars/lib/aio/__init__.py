@@ -17,10 +17,12 @@ import asyncio
 import contextlib
 import sys
 
-from .file import AioFileObject, AioFilesystem
+from xoscar.aio.file import AioFileObject
+from xoscar.aio.lru import alru_cache
+from xoscar.aio.parallelism import AioEvent
+
+from .file import AioFilesystem
 from .isolation import Isolation, get_isolation, new_isolation, stop_isolation
-from .lru import alru_cache
-from .parallelism import AioEvent
 
 if sys.version_info[:2] < (3, 9):
     from ._threads import to_thread

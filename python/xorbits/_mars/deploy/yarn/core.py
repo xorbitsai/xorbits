@@ -21,7 +21,8 @@ import uuid
 from collections import defaultdict
 from typing import AsyncGenerator, Dict, List, Optional, TypeVar
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...services import NodeRole
 from ...services.cluster.backends import (
     AbstractClusterBackend,

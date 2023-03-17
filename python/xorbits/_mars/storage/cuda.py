@@ -21,8 +21,8 @@ from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
+from xoscar.serialization import deserialize, serialize
 
-from ..serialization import deserialize, serialize
 from ..utils import implements, lazy_import
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import StorageFileObject

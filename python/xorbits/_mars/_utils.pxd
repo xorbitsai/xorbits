@@ -13,22 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-cdef class TypeDispatcher:
-    cdef dict _handlers
-    cdef dict _lazy_handlers
-    cdef dict _inherit_handlers
-    cdef object __weakref__
-
-    cpdef void register(self, object type_, object handler)
-    cpdef void unregister(self, object type_)
-    cdef _reload_lazy_handlers(self)
-    cpdef get_handler(self, object type_)
-
-
-cpdef str to_str(s, encoding=*)
-cpdef bytes to_binary(s, encoding=*)
 cpdef unicode to_text(s, encoding=*)
 cpdef register_tokenizer(cls, handler)
-cpdef void reset_id_random_seed() except *
-cpdef bytes new_random_id(int byte_len)

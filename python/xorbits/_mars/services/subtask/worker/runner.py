@@ -18,7 +18,8 @@ import importlib
 import logging
 from typing import Dict, Optional, Type
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ....typing import BandType
 from ...cluster import ClusterAPI

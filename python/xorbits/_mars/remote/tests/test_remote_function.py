@@ -18,10 +18,10 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 import pytest
+import xoscar as mo
 
 from ... import dataframe as md
 from ... import get_context
-from ... import oscar as mo
 from ... import tensor as mt
 from ...core import tile
 from ...dataframe.core import DATAFRAME_OR_SERIES_TYPE, DATAFRAME_TYPE, SERIES_TYPE

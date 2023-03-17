@@ -15,10 +15,11 @@
 
 import numpy as np
 import pytest
+import xoscar as mo
 
-from ..... import oscar as mo
 from ..... import tensor as mt
 from .....core import tile
+from .....oscar import create_actor_pool
 from ....cluster import MockClusterAPI
 from ....meta import MockMetaAPI
 from ....session import MockSessionAPI
@@ -45,7 +46,7 @@ class FakeTaskManager(TaskManagerActor):
 
 @pytest.mark.asyncio
 async def test_tracker():
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
 
     async with pool:
         addr = pool.external_address

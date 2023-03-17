@@ -15,7 +15,8 @@
 
 from typing import Callable, Dict, List, Optional
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....utils import deserialize_serializable, serialize_serializable
 from ...web import MarsServiceWebAPIHandler, MarsWebAPIClientMixin, web_api
 from .core import AbstractMetaAPI

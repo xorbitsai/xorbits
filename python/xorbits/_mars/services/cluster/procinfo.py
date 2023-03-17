@@ -19,8 +19,8 @@ import threading
 import traceback
 from typing import Dict, List
 
-from ... import oscar as mo
-from ...oscar.backends.allocate_strategy import ProcessIndex
+import xoscar as mo
+from xoscar.backends.allocate_strategy import ProcessIndex
 
 
 class ProcessInfoManagerActor(mo.StatelessActor):

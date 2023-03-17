@@ -15,8 +15,9 @@
 import asyncio
 from typing import Type
 
-from .... import oscar as mo
-from ....oscar.backends.allocate_strategy import IdleLabel
+import xoscar as mo
+from xoscar.backends.allocate_strategy import IdleLabel
+
 from .runner import SubtaskRunnerActor
 
 

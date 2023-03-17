@@ -19,10 +19,10 @@ import sys
 import numpy as np
 import pandas as pd
 import pytest
+from xoscar.serialization import AioDeserializer, AioSerializer
 
-from .... import oscar as mo
+from ....oscar import create_actor_pool
 from ....resource import Resource
-from ....serialization import AioDeserializer, AioSerializer
 from ....storage import StorageLevel
 from ....tests.core import require_cudf, require_cupy
 from ... import NodeRole, start_services, stop_services
@@ -40,7 +40,7 @@ async def actor_pools():
             if sys.platform != "win32"
             else None
         )
-        pool = await mo.create_actor_pool(
+        pool = await create_actor_pool(
             "127.0.0.1",
             n_process=2,
             subprocess_start_method=start_method,
@@ -131,7 +131,7 @@ async def actor_pools_with_gpu():
             if sys.platform != "win32"
             else None
         )
-        pool = await mo.create_actor_pool(
+        pool = await create_actor_pool(
             "127.0.0.1",
             n_process=3,
             subprocess_start_method=start_method,

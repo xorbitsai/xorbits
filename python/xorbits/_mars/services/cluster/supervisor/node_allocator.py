@@ -15,7 +15,8 @@
 
 from typing import Optional
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ...core import NodeRole
 from ..backends import AbstractClusterBackend, get_cluster_backend
 

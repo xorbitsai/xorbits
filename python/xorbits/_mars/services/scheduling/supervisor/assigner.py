@@ -19,8 +19,8 @@ from collections import defaultdict
 from typing import Dict, List, Set
 
 import numpy as np
+import xoscar as mo
 
-from .... import oscar as mo
 from ....core.operand import Fetch, FetchShuffle
 from ....typing import BandType
 from ...core import NodeRole

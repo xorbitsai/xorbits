@@ -41,7 +41,8 @@ except ImportError:  # pragma: no cover
     # allow shared_memory package to be absent
     SharedMemory = SharedMemoryForRead = None
 
-from ..serialization import AioDeserializer, AioSerializer
+from xoscar.serialization import AioDeserializer, AioSerializer
+
 from ..utils import dataslots, implements
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import BufferWrappedFileObject, StorageFileObject

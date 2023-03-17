@@ -17,9 +17,10 @@ import asyncio
 
 import numpy as np
 import pytest
+import xoscar as mo
 
-from ..... import oscar as mo
 from .....core import ChunkGraph
+from .....oscar import create_actor_pool
 from .....tensor.arithmetic import TensorTreeAdd
 from .....tensor.fetch import TensorFetch
 from ....cluster import ClusterAPI
@@ -104,7 +105,7 @@ class FakeClusterAPI(ClusterAPI):
 
 @pytest.fixture
 async def actor_pool(request):
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
     with_gpu = request.param
 
     async with pool:

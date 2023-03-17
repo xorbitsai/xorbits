@@ -18,7 +18,8 @@ import logging
 from collections import defaultdict
 from typing import Dict, List
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...lib.aio import alru_cache
 from ...resource import Resource
 from ...storage import StorageLevel

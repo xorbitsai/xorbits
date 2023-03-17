@@ -19,11 +19,12 @@ import tempfile
 import numpy as np
 import pandas as pd
 import pytest
+import xoscar as mo
+from xoscar.serialization import AioDeserializer, AioSerializer
 
-from .... import oscar as mo
 from .... import tensor as mt
 from ....core import tile
-from ....serialization import AioDeserializer, AioSerializer
+from ....oscar import create_actor_pool
 from ....storage import StorageLevel
 from ....tests.core import require_ray
 from ....utils import get_next_port, lazy_import
@@ -72,7 +73,7 @@ storage_configs.append({"shared_memory": dict()})
 @require_lib
 async def test_storage_mock_api(ray_start_regular, storage_configs):
     start_method = "fork" if sys.platform != "win32" else None
-    pool = await mo.create_actor_pool(
+    pool = await create_actor_pool(
         "127.0.0.1",
         2,
         labels=["main", "numa-0", "io"],
@@ -134,9 +135,7 @@ async def test_web_storage_api():
 
     tempdir = tempfile.mkdtemp()
     start_method = "fork" if sys.platform != "win32" else None
-    pool = await mo.create_actor_pool(
-        "127.0.0.1", 1, subprocess_start_method=start_method
-    )
+    pool = await create_actor_pool("127.0.0.1", 1, subprocess_start_method=start_method)
     async with pool:
         session_id = "mock_session_id"
         await MockClusterAPI.create(address=pool.external_address)

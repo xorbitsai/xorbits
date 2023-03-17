@@ -15,7 +15,8 @@
 
 from typing import Dict, List
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ..supervisor.tracker import LifecycleTrackerActor
 from .core import AbstractLifecycleAPI

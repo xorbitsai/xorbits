@@ -16,7 +16,8 @@
 import logging
 from typing import Dict, List, Union
 
-from ...oscar import ServerClosed
+from xoscar import ServerClosed
+
 from ...resource import Resource
 from ...services import NodeRole, start_services, stop_services
 

@@ -21,7 +21,8 @@ from collections import OrderedDict, namedtuple
 from dataclasses import dataclass
 from typing import Dict, Optional, Tuple, Union
 
-from .... import oscar as mo
+import xoscar as mo
+
 from .... import resource as mars_resource
 from ....typing import BandType
 from ...cluster import QuotaInfo

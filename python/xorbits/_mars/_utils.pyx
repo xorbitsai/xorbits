@@ -30,16 +30,16 @@ from functools import lru_cache, partial
 from random import getrandbits
 from weakref import WeakSet
 
+cimport cython
+
 import cloudpickle
 import numpy as np
 import pandas as pd
 
-cimport cython
 from cpython cimport PyBytes_FromStringAndSize
 from libc.stdint cimport uint8_t, uint32_t, uint_fast64_t
 from libc.stdlib cimport free, malloc
-
-from .lib.cython.libcpp cimport mt19937_64
+from xoscar._utils cimport TypeDispatcher, to_binary, to_str
 
 try:
     from pandas.tseries.offsets import Tick as PDTick
@@ -71,32 +71,6 @@ cdef bytes _get_mars_key(const uint8_t[:] bufferview):
     return PyBytes_FromStringAndSize(<char*>out, 16)
 
 
-cpdef str to_str(s, encoding='utf-8'):
-    if type(s) is str:
-        return <str>s
-    elif isinstance(s, bytes):
-        return (<bytes>s).decode(encoding)
-    elif isinstance(s, str):
-        return str(s)
-    elif s is None:
-        return s
-    else:
-        raise TypeError(f"Could not convert from {s} to str.")
-
-
-cpdef bytes to_binary(s, encoding='utf-8'):
-    if type(s) is bytes:
-        return <bytes>s
-    elif isinstance(s, unicode):
-        return (<unicode>s).encode(encoding)
-    elif isinstance(s, bytes):
-        return bytes(s)
-    elif s is None:
-        return None
-    else:
-        raise TypeError(f"Could not convert from {s} to bytes.")
-
-
 cpdef unicode to_text(s, encoding='utf-8'):
     if type(s) is unicode:
         return <unicode>s
@@ -110,85 +84,7 @@ cpdef unicode to_text(s, encoding='utf-8'):
         raise TypeError(f"Could not convert from {s} to unicode.")
 
 
-_type_dispatchers = WeakSet()
-
-
 NamedType = collections.namedtuple("NamedType", ["name", "type_"])
-
-
-cdef class TypeDispatcher:
-    def __init__(self):
-        self._handlers = dict()
-        self._lazy_handlers = dict()
-        # store inherited handlers to facilitate unregistering
-        self._inherit_handlers = dict()
-
-        _type_dispatchers.add(self)
-
-    cpdef void register(self, object type_, object handler):
-        if isinstance(type_, str):
-            self._lazy_handlers[type_] = handler
-        elif type(type_) is not NamedType and isinstance(type_, tuple):
-            for t in type_:
-                self.register(t, handler)
-        else:
-            self._handlers[type_] = handler
-
-    cpdef void unregister(self, object type_):
-        if type(type_) is not NamedType and isinstance(type_, tuple):
-            for t in type_:
-                self.unregister(t)
-        else:
-            self._lazy_handlers.pop(type_, None)
-            self._handlers.pop(type_, None)
-            self._inherit_handlers.clear()
-
-    cdef _reload_lazy_handlers(self):
-        for k, v in self._lazy_handlers.items():
-            mod_name, obj_name = k.rsplit('.', 1)
-            with warnings.catch_warnings():
-                # the lazy imported cudf will warn no device found,
-                # when we set visible device to -1 for CPU processes,
-                # ignore the warning to not distract users
-                warnings.simplefilter("ignore")
-                mod = importlib.import_module(mod_name, __name__)
-            self.register(getattr(mod, obj_name), v)
-        self._lazy_handlers = dict()
-
-    cpdef get_handler(self, object type_):
-        try:
-            return self._handlers[type_]
-        except KeyError:
-            pass
-
-        try:
-            return self._inherit_handlers[type_]
-        except KeyError:
-            self._reload_lazy_handlers()
-            if type(type_) is NamedType:
-                named_type = partial(NamedType, type_.name)
-                mro = itertools.chain(
-                    *zip(map(named_type, type_.type_.__mro__),
-                         type_.type_.__mro__)
-                )
-            else:
-                mro = type_.__mro__
-            for clz in mro:
-                # only lookup self._handlers for mro clz
-                handler = self._handlers.get(clz)
-                if handler is not None:
-                    self._inherit_handlers[type_] = handler
-                    return handler
-            raise KeyError(f'Cannot dispatch type {type_}')
-
-    def __call__(self, object obj, *args, **kwargs):
-        return self.get_handler(type(obj))(obj, *args, **kwargs)
-
-    @staticmethod
-    def reload_all_lazy_handlers():
-        for dispatcher in _type_dispatchers:
-            (<TypeDispatcher>dispatcher)._reload_lazy_handlers()
-
 
 cdef inline build_canonical_bytes(tuple args, kwargs):
     if kwargs:
@@ -384,13 +280,13 @@ def tokenize_pickled_with_cache(ob):
 
 
 def tokenize_cupy(ob):
-    from .serialization import serialize
+    from xoscar.serialization import serialize
     header, _buffers = serialize(ob)
     return iterative_tokenize([header, ob.data.ptr])
 
 
 def tokenize_cudf(ob):
-    from .serialization import serialize
+    from xoscar.serialization import serialize
     header, buffers = serialize(ob)
     return iterative_tokenize([header] + [(buf.ptr, buf.size) for buf in buffers])
 
@@ -464,46 +360,5 @@ cdef class Timer:
         self.duration = time.time() - self.start
 
 
-cdef mt19937_64 _rnd_gen
-cdef bint _rnd_is_seed_set = False
-
-
-cpdef void reset_id_random_seed() except *:
-    cdef bytes seed_bytes
-    global _rnd_is_seed_set
-
-    seed_bytes = getrandbits(64).to_bytes(8, "little")
-    _rnd_gen.seed((<uint_fast64_t *><char *>seed_bytes)[0])
-    _rnd_is_seed_set = True
-
-
-cpdef bytes new_random_id(int byte_len):
-    cdef uint_fast64_t *res_ptr
-    cdef uint_fast64_t res_data[4]
-    cdef int i, qw_num = byte_len >> 3
-    cdef bytes res
-
-    if not _rnd_is_seed_set:
-        reset_id_random_seed()
-
-    if (qw_num << 3) < byte_len:
-        qw_num += 1
-
-    if qw_num <= 4:
-        # use stack memory to accelerate
-        res_ptr = res_data
-    else:
-        res_ptr = <uint_fast64_t *>malloc(qw_num << 3)
-
-    try:
-        for i in range(qw_num):
-            res_ptr[i] = _rnd_gen()
-        return <bytes>((<char *>&(res_ptr[0]))[:byte_len])
-    finally:
-        # free memory if allocated by malloc
-        if res_ptr != res_data:
-            free(res_ptr)
-
-
-__all__ = ['to_str', 'to_binary', 'to_text', 'TypeDispatcher', 'tokenize', 'tokenize_int',
-           'register_tokenizer', 'ceildiv', 'Timer', 'reset_id_random_seed', 'new_random_id']
+__all__ = ['to_str', 'to_binary', 'to_text', 'tokenize', 'tokenize_int',
+           'register_tokenizer', 'ceildiv', 'Timer', ]
