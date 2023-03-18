@@ -147,7 +147,7 @@ def wrap_magic_method(method_name: str) -> Callable[[Any], Any]:
             not hasattr(mars_entity, method_name)
         ):  # pragma: no cover
             raise AttributeError(
-                f"'{self.data.data_type.name}' object has no attribute '{method_name}'"
+                f"The matching mars object of '{self.data.data_type.name}' object has no attribute '{method_name}'"
             )
         else:
             return wrap_mars_callable(

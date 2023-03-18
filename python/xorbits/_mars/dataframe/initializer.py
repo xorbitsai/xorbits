@@ -121,9 +121,10 @@ class DataFrame(_Frame, metaclass=InitializerMeta):
         if need_repart:
             df = df.rebalance(num_partitions=num_partitions)
         super().__init__(df.data)
-    
+
     # Attribute for numpy array conversion, defined in pandas/pandas/core/generic.py
-    def __array__(self, dtype = None) -> np.ndarray:
+    # Note that pandas function had update regarding copy_on_write, which may cause issues
+    def __array__(self, dtype=None):
         return np.asarray(self.values, dtype=dtype)
 
     @classmethod
