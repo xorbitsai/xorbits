@@ -1,8 +1,6 @@
 import re
 import sys
-from types import CodeType
-from types import FrameType
-from types import TracebackType
+from types import CodeType, FrameType, TracebackType
 
 try:
     from __pypy__ import tproxy

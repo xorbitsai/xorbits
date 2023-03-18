@@ -28,7 +28,6 @@ import weakref
 from collections import OrderedDict
 from functools import _CacheInfo, _make_key, partial, wraps
 
-
 __version__ = "1.0.2"
 
 __all__ = ("alru_cache", "clear_all_alru_caches")
