@@ -36,7 +36,7 @@ from ....services import NodeRole
 from ....services.cluster import ClusterAPI
 from ....session import new_session
 from ....tests import flaky
-from ....utils import clean_mars_tmp_dir, get_next_port
+from ....utils import get_next_port
 from ..cmdline import OscarCommandRunner
 from ..supervisor import SupervisorCommandRunner
 from ..worker import WorkerCommandRunner
@@ -306,54 +306,57 @@ def test_parse_args():
 
 
 @pytest.fixture
-def init_app():
-    parser = argparse.ArgumentParser(description="TestService")
-    app = WorkerCommandRunner()
-    app.config_args(parser)
-    yield app, parser
-
-    # clean
-    clean_mars_tmp_dir()
+def oscar_command_runner():
+    parser = argparse.ArgumentParser()
+    runner = OscarCommandRunner()
+    runner.config_args(parser)
+    yield runner, parser
 
 
-def test_parse_no_log_dir(init_app):
-    app, parser = init_app
-
-    assert not app.config
-    assert len(app.config) == 0
-
-    with pytest.raises(KeyError):
-        try:
-            app._set_log_dir()
-        except ValueError:
-            pytest.fail()
-
-    _ = app.parse_args(parser, ["--supervisors", "127.0.0.1"])
-    assert app.config["cluster"]
-    assert not app.config["cluster"]["log_dir"]
-    app._set_log_dir()
-    assert app.logging_conf["from_cmd"] is True
-    assert not app.logging_conf["log_dir"]
+def test_conf_and_conf_file_at_same_time(oscar_command_runner):
+    runner, parser = oscar_command_runner
+    with pytest.raises(
+        ValueError, match="Cannot specify config and config_file at the same time"
+    ):
+        runner.parse_args(parser, ["--config", "{}", "--config-file", "config.yml"])
 
 
-def test_parse_log_dir(init_app):
-    app, parser = init_app
-    log_dir = tempfile.mkdtemp()
-    _ = app.parse_args(parser, ["--supervisors", "127.0.0.1"])
-    app.config["cluster"]["log_dir"] = log_dir
-    assert os.path.exists(app.config["cluster"]["log_dir"])
-    app._set_log_dir()
-    assert app.logging_conf["log_dir"] == log_dir
+def test_logging_configs(oscar_command_runner):
+    runner, parser = oscar_command_runner
+    level = "debug"
+    format_ = "%(levelname)s:%(message)s"
+
+    with tempfile.TemporaryDirectory() as log_dir, tempfile.NamedTemporaryFile() as log_config:
+        runner.parse_args(
+            parser,
+            [
+                "--log-level",
+                level,
+                "--log-format",
+                format_,
+                "--log-dir",
+                log_dir,
+                "--log-conf",
+                log_config.name,
+            ],
+        )
+
+        assert runner.logging_conf["from_cmd"]
+        assert runner.logging_conf["level"] == level.upper()
+        assert runner.logging_conf["format"] == format_
+        assert runner.logging_conf["log_dir"] == log_dir
+        assert runner.logging_conf["log_config"] == log_config.name
 
 
-def test_config_logging(init_app):
-    app, parser = init_app
-    app.args = app.parse_args(parser, ["--supervisors", "127.0.0.1"])
-    app.config_logging()
-    expected_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "file-logging.conf"
-    )
-    assert app.logging_conf["file"] == expected_path
+def test_logging_config_defaults(oscar_command_runner):
+    runner, parser = oscar_command_runner
+    runner.parse_args(parser, [])
+
+    assert runner.logging_conf["from_cmd"]
+    assert "level" not in runner.logging_conf
+    assert "format" not in runner.logging_conf
+    assert "log_dir" not in runner.logging_conf
+    assert "log_config" not in runner.logging_conf
 
 
 def test_parse_third_party_modules():

@@ -60,10 +60,8 @@ class OscarCommandRunner:
             "--ports",
             help="ports of the service, must equal to num of processes",
         )
-        parser.add_argument("-c", "--config", help="service configuration")
-        parser.add_argument(
-            "-f", "--config-file", help="configuration file of the service"
-        )
+        parser.add_argument("-c", "--config", help="service configuration in json")
+        parser.add_argument("-f", "--config-file", help="service configuration file")
         parser.add_argument(
             "-s",
             "--supervisors",
@@ -73,49 +71,12 @@ class OscarCommandRunner:
         )
         parser.add_argument("--log-level", help="log level")
         parser.add_argument("--log-format", help="log format")
-        parser.add_argument(
-            "--log-conf", help="log config file, logging.conf by default"
-        )
+        parser.add_argument("--log-dir", help="log directory")
+        parser.add_argument("--log-conf", help="logging configuration file path")
         parser.add_argument("--load-modules", nargs="*", help="modules to import")
         parser.add_argument(
             "--use-uvloop", help="use uvloop, 'auto' by default. Use 'no' to disable"
         )
-
-    def _set_log_dir(self):
-        cluster_config: dict = self.config.get("cluster")
-        if cluster_config is None:
-            raise KeyError('"cluster" key is missing!')
-        log_dir = cluster_config.get("log_dir")
-        self.logging_conf["log_dir"] = log_dir
-        self.logging_conf["from_cmd"] = True
-
-    def _get_logging_config_paths(self):
-        log_conf = self.args.log_conf or "logging.conf"
-
-        return [
-            log_conf,
-            os.path.join(os.path.abspath("."), log_conf),
-            os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "file-logging.conf"
-            ),
-        ]
-
-    def config_logging(self):
-        self._set_log_dir()
-
-        # get level and format cmd line config
-        log_level = self.args.log_level
-        level = log_level.upper() if log_level else None
-        self.logging_conf["level"] = level
-        formatter = self.args.log_format
-        if formatter:
-            self.logging_conf["format"] = formatter
-
-        config_paths = self._get_logging_config_paths()
-        for i, conf_path in enumerate(config_paths):
-            if os.path.exists(conf_path):
-                self.logging_conf["file"] = conf_path
-                break
 
     @classmethod
     def _build_endpoint_file_path(cls, pid: int = None, asterisk: bool = False):
@@ -183,12 +144,24 @@ class OscarCommandRunner:
 
         args.use_uvloop = args.use_uvloop or "auto"
 
+        if args.config is not None and args.config_file is not None:
+            raise ValueError("Cannot specify config and config_file at the same time")
         if args.config is not None:
             self.config = json.loads(args.config)
         else:
             if args.config_file is None:
                 args.config_file = self.get_default_config_file()
             self.config = load_service_config_file(args.config_file)
+
+        self.logging_conf["from_cmd"] = True
+        if args.log_level is not None:
+            self.logging_conf["level"] = args.log_level.upper()
+        if args.log_format is not None:
+            self.logging_conf["format"] = args.log_format
+        if args.log_dir is not None:
+            self.logging_conf["log_dir"] = args.log_dir
+        if args.log_conf is not None:
+            self.logging_conf["log_config"] = args.log_conf
 
         load_modules = []
         for mods in list(args.load_modules or ()) + get_third_party_modules_from_config(
@@ -203,8 +176,6 @@ class OscarCommandRunner:
         return args
 
     async def _main(self, argv):
-        self.config_logging()
-
         try:
             pool = self.pool = await self.create_actor_pool()
 
