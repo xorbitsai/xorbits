@@ -32,7 +32,7 @@ def __getattr__(name: str):
 
     if name in MARS_TENSOR_FFT_CALLABLES:
         return MARS_TENSOR_FFT_CALLABLES[name]
-    else:
+    else:  # pragma: no cover
         global METHODS
         import numpy
 
@@ -43,7 +43,7 @@ def __getattr__(name: str):
             raise AttributeError(name)
         elif name in METHODS:
             return METHODS[name]
-        else:  # pragma: no cover
+        else:
             if inspect.ismethod(getattr(numpy.fft, name)):
                 return unimplemented_func
             else:
