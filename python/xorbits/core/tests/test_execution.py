@@ -16,7 +16,7 @@ import pytest
 
 from ...pandas import get_dummies
 from ...remote import spawn
-from ..execution import need_to_execute, run
+from ..execution import _is_in_final_results, need_to_execute, run
 
 
 def test_deferred_execution_repr(setup, dummy_df):
@@ -149,7 +149,25 @@ def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
     assert need_to_execute(obj)
 
 
-@pytest.fixture()
+def test_is_in_final_results(setup, dummy_df, dummy_str_series):
+    assert not _is_in_final_results(dummy_df, [])
+    assert _is_in_final_results(dummy_df, [dummy_df])
+    assert _is_in_final_results(dummy_df, [dummy_df + 1])
+    assert not _is_in_final_results(dummy_df, [dummy_str_series])
+
+    assert _is_in_final_results(dummy_df, [dummy_df.groupby(dummy_str_series).size()])
+    assert _is_in_final_results(
+        dummy_str_series, [dummy_df.groupby(dummy_str_series).size()]
+    )
+    assert not _is_in_final_results(
+        dummy_df + 1, [dummy_df.groupby(dummy_str_series).size()]
+    )
+    assert not _is_in_final_results(
+        dummy_df.groupby(dummy_str_series), [dummy_df.groupby(dummy_str_series).size()]
+    )
+
+
+@pytest.fixture
 def ip():
     from IPython.testing.globalipapp import start_ipython
 
@@ -166,6 +184,18 @@ def test_interactive_execution(setup, ip):
     assert r.result
 
     ip.run_cell(raw_cell="df = pd.DataFrame({'foo': [1, 2, 3]})")
-    ip.run_cell(raw_cell="xorbits.run(df + 1)")
+    ip.run_cell(raw_cell="df + 1")
     r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(df)")
     assert not r.result
+
+    # test if unrelated data refs are skipped.
+    ip.run_cell(raw_cell="df2 = pd.DataFrame({'bar': [1, 2, 3]})")
+    ip.run_cell(raw_cell="df + 2")
+    r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(df2)")
+    assert r.result
+
+    # test if IPython cached variables are skipped.
+    ip.run_cell(raw_cell="_ = pd.DataFrame({'baz': [1, 2, 3]})")
+    ip.run_cell(raw_cell="df + 3")
+    r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(_)")
+    assert r.result

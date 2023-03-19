@@ -28,7 +28,6 @@ import operator
 import os
 import pkgutil
 import random
-import shutil
 import socket
 import string
 import struct
@@ -76,7 +75,6 @@ from ._utils import (  # noqa: F401 # pylint: disable=unused-import
     tokenize,
     tokenize_int,
 )
-from .constants import MARS_LOG_PATH_KEY
 from .lib.version import parse as parse_version
 from .typing import ChunkType, EntityType, OperandType, TileableType
 
@@ -1870,19 +1868,6 @@ def retry_callable(
             raise ex  # pylint: disable-msg=E0702
 
     return retry_call
-
-
-def clean_mars_tmp_dir():
-    # clean Mars log file and Mars tmp dir
-    filename = os.environ.get(MARS_LOG_PATH_KEY)
-    if filename is not None:
-        os.environ.pop(MARS_LOG_PATH_KEY)
-        if os.path.exists(filename):
-            mars_tmp_dir = os.path.dirname(filename)
-            if os.path.exists(mars_tmp_dir):
-                # on windows platform, raise Permission Error
-                _windows: bool = sys.platform.startswith("win")
-                shutil.rmtree(mars_tmp_dir, ignore_errors=_windows)
 
 
 def random_string_and_digits(length: int) -> str:

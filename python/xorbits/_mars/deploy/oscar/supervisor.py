@@ -33,6 +33,7 @@ class SupervisorCommandRunner(OscarCommandRunner):
     def __init__(self):
         super().__init__()
         self._endpoint_file_name = None
+        self.logging_conf["subdir_prefix"] = "supervisor_"
 
     def config_args(self, parser):
         super().config_args(parser)

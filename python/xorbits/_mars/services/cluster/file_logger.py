@@ -13,9 +13,10 @@
 # limitations under the License.
 import logging
 import os
+from typing import Optional
 
 from ... import oscar as mo
-from ...constants import MARS_LOG_PATH_KEY
+from ...constants import DEFAULT_MARS_LOG_FILE_NAME, MARS_LOG_DIR_KEY
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,15 @@ class FileLoggerActor(mo.Actor):
     """
 
     def __init__(self):
-        file_path = os.environ.get(MARS_LOG_PATH_KEY)
-        self._log_filename = file_path
+        log_dir = os.environ.get(MARS_LOG_DIR_KEY)
+        self._log_file_path: Optional[str] = None
+        if log_dir is None:
+            # normally, this env var is set when a supervisor or worker pool is created, but some
+            # test cases just use an actor pool for convenience, in which case the env var
+            # MARS_LOG_DIR is None.
+            logger.warning("Log directory is not set")
+        else:
+            self._log_file_path = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
 
     def fetch_logs(self, size: int, offset: int) -> str:
         """
@@ -43,6 +51,9 @@ class FileLoggerActor(mo.Actor):
         -------
 
         """
+        if self._log_file_path is None or not os.path.exists(self._log_file_path):
+            return ""
+
         if size != -1:
             content = self._get_n_bytes_tail_file(size)
         else:
@@ -61,9 +72,9 @@ class FileLoggerActor(mo.Actor):
         -------
 
         """
-        f_size = os.stat(self._log_filename).st_size
+        f_size = os.stat(self._log_file_path).st_size
         target = f_size - bytes_num if f_size > bytes_num else 0
-        with open(self._log_filename) as f:
+        with open(self._log_file_path) as f:
             f.seek(target)
             if target == 0:
                 res = f.read()
@@ -85,7 +96,7 @@ class FileLoggerActor(mo.Actor):
         -------
 
         """
-        with open(self._log_filename) as f:
+        with open(self._log_file_path) as f:
             f.seek(offset)
             res = f.read(size)
         return res

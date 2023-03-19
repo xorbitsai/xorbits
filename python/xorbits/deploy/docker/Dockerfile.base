@@ -41,6 +41,7 @@ RUN /opt/conda/bin/conda install \
     python-kubernetes \
     uvloop \
   && pip install -U \
+    xoscar \
     cloudpickle \
     adlfs \
     fsspec>=2022.7.1,!=2022.8.0 \

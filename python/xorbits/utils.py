@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import importlib
+import os
 import sys
 import traceback
+from pathlib import Path
 from typing import Callable, Optional
 
 
@@ -52,3 +54,10 @@ def get_local_package_version(package_name: str) -> Optional[str]:
         return importlib.import_module(package_name).__version__
     except ModuleNotFoundError:
         return None
+
+
+def get_default_logging_config_file_path() -> Path:
+    p = os.path.join(
+        Path(__file__).parent.absolute(), "deploy", "oscar", "file-logging.conf"
+    )
+    return Path(p)

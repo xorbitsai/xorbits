@@ -12,13 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import shutil
 import tempfile
 
 import pytest
 
 from .... import oscar as mo
-from ....constants import MARS_LOG_PATH_KEY, MARS_LOG_PREFIX, MARS_TMP_DIR_PREFIX
-from ....utils import clean_mars_tmp_dir
+from ....constants import (
+    DEFAULT_MARS_LOG_FILE_NAME,
+    MARS_LOG_DIR_KEY,
+    MARS_TMP_DIR_PREFIX,
+)
 from ..file_logger import FileLoggerActor
 
 full_content = "qwert\nasdfg\nzxcvb\nyuiop\nhjkl;\nnm,./"
@@ -28,14 +32,12 @@ full_content = "qwert\nasdfg\nzxcvb\nyuiop\nhjkl;\nnm,./"
 async def actor_pool():
     # prepare
     mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
-    _, file_path = tempfile.mkstemp(prefix=MARS_LOG_PREFIX, dir=mars_tmp_dir)
-    os.environ[MARS_LOG_PATH_KEY] = file_path
+    os.environ[MARS_LOG_DIR_KEY] = mars_tmp_dir
     pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
     async with pool:
         yield pool
 
-    # clean
-    clean_mars_tmp_dir()
+    shutil.rmtree(mars_tmp_dir)
 
 
 @pytest.mark.asyncio
@@ -47,8 +49,11 @@ async def test_file_logger(actor_pool):
         address=pool_addr,
     )
 
-    filename = os.environ.get(MARS_LOG_PATH_KEY)
-    with open(filename, "w", newline="\n") as f:
+    log_dir = os.environ.get(MARS_LOG_DIR_KEY)
+    assert log_dir is not None
+
+    log_file = os.path.join(log_dir, DEFAULT_MARS_LOG_FILE_NAME)
+    with open(log_file, "w", newline="\n") as f:
         f.write(full_content)
 
     byte_num = 5

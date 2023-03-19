@@ -14,7 +14,6 @@
 # limitations under the License.
 
 import asyncio
-import atexit
 import concurrent.futures as futures
 import configparser
 import contextlib
@@ -31,17 +30,10 @@ from dataclasses import dataclass
 from types import TracebackType
 from typing import List
 
-from ....utils import (
-    clean_mars_tmp_dir,
-    dataslots,
-    ensure_coverage,
-    reset_id_random_seed,
-)
+from ....utils import dataslots, ensure_coverage, reset_id_random_seed
 from ..config import ActorPoolConfig
 from ..message import CreateActorMessage
 from ..pool import MainActorPoolBase, SubActorPoolBase, _register_message_handler
-
-atexit.register(clean_mars_tmp_dir)
 
 _is_windows: bool = sys.platform.startswith("win")
 
