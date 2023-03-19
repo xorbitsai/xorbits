@@ -14,12 +14,13 @@
 
 import numpy as np
 import pandas as pd
-import pytest
 
-from ... import numpy as xnp
 from ... import pandas as xpd
 
-def test_array_conversion(setup, dummy_dict_num, dummy_dict_str, dummy_dict_bool, dummy_dict_mixed):
+
+def test_array_conversion(
+    setup, dummy_dict_num, dummy_dict_str, dummy_dict_bool, dummy_dict_mixed
+):
     dicts = [dummy_dict_num, dummy_dict_str, dummy_dict_bool, dummy_dict_mixed]
 
     for dict in dicts:
@@ -28,4 +29,3 @@ def test_array_conversion(setup, dummy_dict_num, dummy_dict_str, dummy_dict_bool
 
         assert np.array_equal(df.__array__(), xdf.__array__())
         assert np.array_equal(np.array(df), np.array(xdf))
-
