@@ -6,6 +6,7 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -61,14 +62,7 @@ jobs:
             if [[ -n "$GIT_TAG" ]]; then
               export IMAGE_TAG="$GIT_TAG"
             else
-              echo ""
               git checkout $branch
-              git log --pretty=format:"%h - %an, %cd : %s" --since=25.hours
-              # consider schedule delay of Github Actions, some margin needed.
-              if [[ ! "$(git log --since=25.hours)" ]]; then
-                echo "No recent commits on branch $branch found, will skip building image."
-                continue
-              fi
               export IMAGE_TAG="nightly-$branch"
             fi
             docker build -t "xprobe/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.base . --build-arg PYTHON_VERSION=$PY_VERSION
