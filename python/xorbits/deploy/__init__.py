@@ -122,9 +122,6 @@ def init(
             session.get_default_session().as_default()
         return
     if init_local:
-        logging_file = os.path.join(
-            os.path.join(os.path.dirname(__file__), "oscar"), "file-logging.conf"
-        )
         kw.update(
             dict(
                 n_worker=n_worker,
@@ -132,7 +129,6 @@ def init(
                 mem_bytes=mem_bytes,
                 cuda_devices=cuda_devices,
                 web=web,
-                log_config=dict(file=logging_file),
             )
         )
     kw.update(kwargs)
