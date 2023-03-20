@@ -339,7 +339,9 @@ class TaskInfoCollectorActor(mo.Actor):
             "task_info_root_path", None
         )
         if self._task_info_root_path is None:
-            self._task_info_root_path = self._get_default_profiling_results_dir()
+            self._task_info_root_path = (
+                self._get_or_create_default_profiling_results_dir()
+            )
         logger.info(f"Task info root path: {self._task_info_root_path}")
         self._task_info_storage_options = experimental_profiling_config.get(
             "task_info_storage_options", {}
@@ -352,13 +354,16 @@ class TaskInfoCollectorActor(mo.Actor):
         self._isolation.start()
 
     @staticmethod
-    def _get_default_profiling_results_dir():
+    def _get_or_create_default_profiling_results_dir():
         import sys
 
         if sys.platform.startswith("win"):
-            return MARS_PROFILING_RESULTS_DIR_WIN
+            profiling_results_dir = MARS_PROFILING_RESULTS_DIR_WIN
         else:
-            return MARS_PROFILING_RESULTS_DIR
+            profiling_results_dir = MARS_PROFILING_RESULTS_DIR
+        os.makedirs(profiling_results_dir, exist_ok=True)
+        os.chmod(profiling_results_dir, mode=0o777)
+        return profiling_results_dir
 
     async def __pre_destroy__(self):
         self._isolation.stop()
