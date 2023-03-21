@@ -86,7 +86,6 @@ def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
                     else "numpy." + np_mod.__name__
                 )
                 warning_str = f"xorbits.{np_mod_str}.{name} will fallback to NumPy"
-
                 output_type = _get_output_type(getattr(np_mod, name))
 
                 module_methods[name] = wrap_mars_callable(
