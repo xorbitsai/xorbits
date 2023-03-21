@@ -457,6 +457,48 @@ def test_triu_tril():
     assert isinstance(t.chunks[2].op, TensorTril)
     assert isinstance(t.chunks[3].op, TensorZeros)
 
+    # test broadcast
+    a_data = np.ones(5)
+    a = tensor(a, chunk_size=2)
+
+    t = tril(a)
+
+    assert t.op.gpu is None
+
+    t = tile(t)
+    assert len(t.chunks) == 4
+    assert isinstance(t.chunks[0].op, TensorTril)
+    assert isinstance(t.chunks[1].op, TensorZeros)
+    assert isinstance(t.chunks[2].op, TensorTril)
+    assert isinstance(t.chunks[3].op, TensorTril)
+
+    t = tril(a, k=1)
+
+    t = tile(t)
+    assert len(t.chunks) == 4
+    assert isinstance(t.chunks[0].op, TensorTril)
+    assert isinstance(t.chunks[1].op, TensorTril)
+    assert isinstance(t.chunks[2].op, TensorTril)
+    assert isinstance(t.chunks[3].op, TensorTril)
+
+    t = tril(a, k=-1)
+
+    t = tile(t)
+    assert len(t.chunks) == 4
+    assert isinstance(t.chunks[0].op, TensorTril)
+    assert isinstance(t.chunks[1].op, TensorZeros)
+    assert isinstance(t.chunks[2].op, TensorTril)
+    assert isinstance(t.chunks[3].op, TensorTril)
+
+    t = tril(a, k=-2)
+
+    t = tile(t)
+    assert len(t.chunks) == 4
+    assert isinstance(t.chunks[0].op, TensorZeros)
+    assert isinstance(t.chunks[1].op, TensorZeros)
+    assert isinstance(t.chunks[2].op, TensorTril)
+    assert isinstance(t.chunks[3].op, TensorZeros)
+
 
 def test_set_tensor_inputs():
     t1 = tensor([1, 2], chunk_size=2)
