@@ -17,6 +17,7 @@ requires = [
     "requests>=2.4.0",
     "cloudpickle==2.2.1; python_version>='3.11'",
     "cloudpickle==1.5.0; python_version<'3.11'",
+    "xoscar>=0.0.3",
 ]
 build-backend = "setuptools.build_meta"
 

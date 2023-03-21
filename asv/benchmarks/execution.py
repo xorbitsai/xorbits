@@ -15,6 +15,8 @@
 import dataclasses
 import unittest.mock as mock
 
+from xoscar.serialization import serialize
+
 import xorbits._mars.tensor as mt
 from xorbits._mars import new_session
 from xorbits._mars.core.graph import (
@@ -23,9 +25,7 @@ from xorbits._mars.core.graph import (
     ChunkGraphBuilder,
     ChunkGraph,
 )
-from xorbits._mars.serialization import serialize
 from xorbits._mars.services.task import new_task_id
-from xorbits._mars.services.task.execution.ray import executor as ray_executor
 
 
 def _gen_subtask_chunk_graph(t):
@@ -83,12 +83,3 @@ class NumExprExecutionSuite:
             c = a * b - 4.1 * a > 2.5 * b
             c.execute(show_progress=False)
 
-    def time_numexpr_subtask_execution(self):
-        with mock.patch.object(ray_executor, "ray"):
-            for asv_subtask_info in self.asv_subtasks:
-                ray_executor.execute_subtask(
-                    asv_subtask_info.subtask_id,
-                    asv_subtask_info.serialized_subtask_chunk_graph,
-                    0,
-                    False,
-                )

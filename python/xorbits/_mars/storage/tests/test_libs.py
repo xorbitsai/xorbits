@@ -26,12 +26,11 @@ from xoscar.serialization import AioDeserializer, AioSerializer
 
 from ...lib.filesystem import LocalFileSystem
 from ...lib.sparse import SparseMatrix, SparseNDArray
-from ...tests.core import require_cudf, require_cupy, require_ray
+from ...tests.core import require_cudf, require_cupy
 from ..base import StorageLevel
 from ..cuda import CudaStorage
 from ..filesystem import DiskStorage
 from ..plasma import PlasmaStorage
-from ..ray import RayStorage
 from ..shared_memory import SharedMemoryStorage
 from ..vineyard import VineyardStorage
 
@@ -39,10 +38,6 @@ try:
     import vineyard
 except ImportError:
     vineyard = None
-try:
-    import ray
-except ImportError:
-    ray = None
 
 require_lib = lambda x: x
 params = [
@@ -56,16 +51,10 @@ if (
     params.append("plasma")
 if vineyard is not None:
     params.append("vineyard")
-if ray is not None:
-    params.append("ray")
-    require_lib = require_ray
 
 
-@pytest.mark.parametrize(
-    "ray_start_regular", [{"enable": ray is not None}], indirect=True
-)
 @pytest.fixture(params=params)
-async def storage_context(ray_start_regular, request):
+async def storage_context(request):
     if request.param == "filesystem":
         tempdir = tempfile.mkdtemp()
         params, teardown_params = await DiskStorage.setup(
@@ -114,14 +103,6 @@ async def storage_context(ray_start_regular, request):
 
         teardown_params["object_ids"] = storage._object_ids
         await SharedMemoryStorage.teardown(**teardown_params)
-    elif request.param == "ray":
-        params, teardown_params = await RayStorage.setup()
-        storage = RayStorage(**params)
-        assert storage.level == StorageLevel.MEMORY | StorageLevel.REMOTE
-
-        yield storage
-
-        await RayStorage.teardown(**teardown_params)
 
 
 def test_storage_level():
@@ -137,10 +118,7 @@ def test_storage_level():
 
 @pytest.mark.asyncio
 @require_lib
-@pytest.mark.parametrize(
-    "ray_start_regular", [{"enable": ray is not None}], indirect=True
-)
-async def test_base_operations(ray_start_regular, storage_context):
+async def test_base_operations(storage_context):
     storage = storage_context
 
     data1 = np.random.rand(10, 10)
@@ -168,7 +146,7 @@ async def test_base_operations(ray_start_regular, storage_context):
     assert info2.size == put_info2.size
 
     # FIXME: remove when list functionality is ready for vineyard.
-    if not isinstance(storage, (VineyardStorage, SharedMemoryStorage, RayStorage)):
+    if not isinstance(storage, (VineyardStorage, SharedMemoryStorage)):
         num = len(await storage.list())
         assert num == 2
         await storage.delete(info2.object_id)
@@ -185,10 +163,7 @@ async def test_base_operations(ray_start_regular, storage_context):
 
 @pytest.mark.asyncio
 @require_lib
-@pytest.mark.parametrize(
-    "ray_start_regular", [{"enable": ray is not None}], indirect=True
-)
-async def test_reader_and_writer(ray_start_regular, storage_context):
+async def test_reader_and_writer(storage_context):
     storage = storage_context
 
     if isinstance(storage, VineyardStorage):
@@ -234,10 +209,7 @@ async def test_reader_and_writer(ray_start_regular, storage_context):
 
 @pytest.mark.asyncio
 @require_lib
-@pytest.mark.parametrize(
-    "ray_start_regular", [{"enable": ray is not None}], indirect=True
-)
-async def test_reader_and_writer_vineyard(ray_start_regular, storage_context):
+async def test_reader_and_writer_vineyard(storage_context):
     storage = storage_context
 
     if not isinstance(storage, VineyardStorage):

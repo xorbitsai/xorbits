@@ -23,12 +23,9 @@ import pkgutil
 import time
 import types
 import uuid
-import warnings
 from datetime import date, datetime, timedelta, tzinfo
 from enum import Enum
 from functools import lru_cache, partial
-from random import getrandbits
-from weakref import WeakSet
 
 cimport cython
 
@@ -37,9 +34,9 @@ import numpy as np
 import pandas as pd
 
 from cpython cimport PyBytes_FromStringAndSize
-from libc.stdint cimport uint8_t, uint32_t, uint_fast64_t
-from libc.stdlib cimport free, malloc
+from libc.stdint cimport uint8_t, uint32_t
 from xoscar._utils cimport TypeDispatcher, to_binary, to_str
+from xoscar._utils import NamedType
 
 try:
     from pandas.tseries.offsets import Tick as PDTick
@@ -82,9 +79,6 @@ cpdef unicode to_text(s, encoding='utf-8'):
         return None
     else:
         raise TypeError(f"Could not convert from {s} to unicode.")
-
-
-NamedType = collections.namedtuple("NamedType", ["name", "type_"])
 
 cdef inline build_canonical_bytes(tuple args, kwargs):
     if kwargs:

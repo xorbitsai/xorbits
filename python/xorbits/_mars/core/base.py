@@ -15,6 +15,8 @@
 
 from typing import Dict, Tuple, Type
 
+from xoscar.errors import XoscarError
+
 from ..serialization.serializables import Serializable, StringField
 from ..serialization.serializables.core import SerializableSerializer
 from ..utils import tokenize
@@ -140,7 +142,7 @@ class BaseSerializer(SerializableSerializer):
 BaseSerializer.register(Base)
 
 
-class MarsError(Exception):
+class MarsError(XoscarError):
     pass
 
 

@@ -1743,34 +1743,10 @@ def aiotask_wrapper(_f=None, exit_if_exception=False):
 
 
 def is_ray_address(address: str) -> bool:
-    from .oscar.backends.ray.communication import RayServer
-
-    if urlparse(address).scheme == RayServer.scheme:
+    if urlparse(address).scheme == "ray":
         return True
     else:
         return False
-
-
-def is_on_ray(ctx):
-    from .services.task.execution.ray.context import (
-        RayExecutionContext,
-        RayExecutionWorkerContext,
-    )
-
-    # There are three conditions
-    #   a. mars backend
-    #   b. ray backend(oscar), c. ray backend(dag)
-    # When a. or b. is selected, ctx is an instance of ThreadedServiceContext.
-    #   The main difference between them is whether worker address matches ray scheme.
-    #   To avoid duplicated checks, here we choose the first worker address.
-    # When c. is selected, ctx is an instance of RayExecutionContext or RayExecutionWorkerContext,
-    #   while get_worker_addresses method isn't currently implemented in RayExecutionWorkerContext.
-    try:
-        worker_addresses = ctx.get_worker_addresses()
-    except AttributeError:  # pragma: no cover
-        assert isinstance(ctx, RayExecutionWorkerContext)
-        return True
-    return isinstance(ctx, RayExecutionContext) or is_ray_address(worker_addresses[0])
 
 
 def cache_tileables(*tileables):
