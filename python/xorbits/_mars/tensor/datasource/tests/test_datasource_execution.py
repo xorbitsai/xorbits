@@ -892,6 +892,38 @@ def test_tril_execution(setup):
     assert isinstance(res, SparseNDArray)
     np.testing.assert_equal(res, expected)
 
+    a = np.ones(5)
+
+    t = tril(a)
+
+    res = t.execute().fetch()
+    expected = np.tril(np.ones(5))
+    np.testing.assert_equal(res, expected)
+
+    t = tril(a, k=1)
+
+    res = t.execute().fetch()
+    expected = np.tril(np.ones(5), k=1)
+    np.testing.assert_equal(res, expected)
+
+    t = tril(a, k=2)
+
+    res = t.execute().fetch()
+    expected = np.tril(np.ones(5), k=2)
+    np.testing.assert_equal(res, expected)
+
+    t = tril(a, k=-1)
+
+    res = t.execute().fetch()
+    expected = np.tril(np.ones(5), k=-1)
+    np.testing.assert_equal(res, expected)
+
+    t = tril(a, k=-2)
+
+    res = t.execute().fetch()
+    expected = np.tril(np.ones(5), k=-2)
+    np.testing.assert_equal(res, expected)
+
 
 def test_index_trick_execution(setup):
     mgrid = nd_grid()
