@@ -245,7 +245,7 @@ class MarsServiceConfig(AppServiceConfig):
 
         cmd = self._cmd_tmpl.format(executable=python_executable)
         bash_lines.append(
-            f"{cmd} -m {_get_local_app_module(self.service_name)} {self._extra_args}"
+            f"{cmd} -m {_get_local_app_module(self.service_name)} {self._extra_args} --log-dir logs"
         )
         return "\n".join(bash_lines) + "\n"
 
