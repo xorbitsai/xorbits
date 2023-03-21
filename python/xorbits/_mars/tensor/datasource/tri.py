@@ -45,7 +45,7 @@ class TensorTri(TensorHasInput):
             yield
         tensor = op.outputs[0]
 
-        need_broadcast = False
+        is_1d_tensor = False
         m = op.input
         k = op.k
         is_triu = type(op) == TensorTriu
@@ -55,7 +55,7 @@ class TensorTri(TensorHasInput):
         cum_size = [np.cumsum(s).tolist() for s in nsplits]
 
         if len(cum_size) == 1:  # for 1d shape (x,), broadcast to (x, x)
-            need_broadcast = True
+            is_1d_tensor = True
             cum_size = [cum_size[0], cum_size[0]]
             nsplits = tuple([nsplits[0], nsplits[0]])
 
@@ -87,7 +87,7 @@ class TensorTri(TensorHasInput):
                 lu_pos = ru_pos[0], ld_pos[1]
                 chunk_k = fx(*lu_pos)
 
-                input_chunk = m.cix[out_idx if not need_broadcast else out_idx[0]]
+                input_chunk = m.cix[out_idx if not is_1d_tensor else out_idx[0]]
                 chunk_op = op.to_chunk_op(chunk_k)
                 out_chunk = chunk_op.new_chunk(
                     [input_chunk], shape=chunk_shape, index=out_idx, order=tensor.order
@@ -98,7 +98,7 @@ class TensorTri(TensorHasInput):
         new_op = op.copy()
         params = tensor.params
 
-        if need_broadcast:
+        if is_1d_tensor:
             params["shape"] = tuple([params["shape"][0], params["shape"][0]])
         params["chunks"] = out_chunks
         params["nsplits"] = nsplits
