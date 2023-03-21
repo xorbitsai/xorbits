@@ -227,6 +227,7 @@ class MarsServiceConfig(AppServiceConfig):
         fi
         if [[ -n $MARS_SOURCE_PATH ]]; then export PYTHONPATH=$PYTHONPATH:$MARS_SOURCE_PATH; fi
         if [[ -n $MARS_YARN_PATH ]]; then export PATH=$MARS_YARN_PATH:$PATH; fi
+        mkdir logs
         """
             ).strip()
         ]
