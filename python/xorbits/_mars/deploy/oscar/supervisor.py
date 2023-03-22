@@ -16,7 +16,8 @@
 import logging
 import os
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...services import NodeRole
 from ...utils import get_next_port
 from .cmdline import OscarCommandRunner

@@ -18,7 +18,8 @@ import shutil
 import tempfile
 from typing import Any, Dict, List
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import AioFileObject
 
 

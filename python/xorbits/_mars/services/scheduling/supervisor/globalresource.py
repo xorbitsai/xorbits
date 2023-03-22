@@ -19,7 +19,8 @@ import time
 from collections import defaultdict
 from typing import DefaultDict, Dict, List, Tuple
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....resource import Resource, ZeroResource
 from ....typing import BandType
 

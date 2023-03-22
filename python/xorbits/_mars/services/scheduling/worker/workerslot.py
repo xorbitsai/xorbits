@@ -20,10 +20,10 @@ import time
 from typing import Dict, List, NamedTuple, Set, Tuple
 
 import psutil
+import xoscar as mo
+from xoscar.backends.allocate_strategy import IdleLabel
+from xoscar.errors import NoFreeSlot, SlotStateError
 
-from .... import oscar as mo
-from ....oscar.backends.allocate_strategy import IdleLabel
-from ....oscar.errors import NoFreeSlot, SlotStateError
 from ....resource import Resource
 from ....typing import BandType
 from ...cluster import ClusterAPI, WorkerSlotInfo

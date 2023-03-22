@@ -23,10 +23,11 @@ from collections import defaultdict, deque
 from dataclasses import dataclass
 from typing import Any, Dict, List, Type
 
-from .... import oscar as mo
+import xoscar as mo
+from xoscar.errors import ActorNotExist, ServerClosed
+
 from ....core import TileableGraph, TileableType, TileContext, enter_mode
 from ....core.operand import Fetch
-from ....oscar.errors import ActorNotExist, ServerClosed
 from ....utils import _is_ci, aiotask_wrapper
 from ...subtask import SubtaskGraph, SubtaskResult
 from ..config import task_options

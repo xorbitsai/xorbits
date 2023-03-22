@@ -19,7 +19,8 @@ import logging
 from collections import defaultdict
 from typing import Dict, List, Optional
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ...meta.api import MetaAPI
 from ...storage.api import StorageAPI

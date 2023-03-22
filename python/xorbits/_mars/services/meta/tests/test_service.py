@@ -14,8 +14,9 @@
 # limitations under the License.
 
 import pytest
+import xoscar as mo
 
-from .... import oscar as mo
+from ....oscar import create_actor_pool
 from ... import NodeRole, start_services, stop_services
 from ...session.api import SessionAPI
 from ..api import MetaAPI, WorkerMetaAPI
@@ -24,8 +25,8 @@ from ..supervisor import MetaSupervisorService
 
 @pytest.mark.asyncio
 async def test_meta_service():
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
-    worker_pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
+    worker_pool = await create_actor_pool("127.0.0.1", n_process=0)
 
     async with pool, worker_pool:
         config = {

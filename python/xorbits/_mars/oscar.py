@@ -1,5 +1,4 @@
 # Copyright 2022-2023 XProbe Inc.
-# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,5 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .dataset import get_chunk_refs, to_ray_dataset
-from .mldataset import ChunkRefBatch, to_ray_mldataset
+import xoscar as mo
+
+
+def create_actor_pool(*args, **kwargs):
+    from . import dataframe, learn, remote, tensor
+
+    modules = kwargs.pop("modules", None)
+    modules = list(modules or []) + [
+        tensor.__name__,
+        dataframe.__name__,
+        learn.__name__,
+        remote.__name__,
+    ]
+    kwargs["modules"] = modules
+    return mo.create_actor_pool(*args, **kwargs)

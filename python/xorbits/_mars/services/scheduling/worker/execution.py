@@ -23,14 +23,15 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
-from .... import oscar as mo
+import xoscar as mo
+from xoscar.errors import XoscarError
+from xoscar.metrics import Metrics
+
 from ...._utils import Timer
 from ....core import ExecutionError
 from ....core.graph import DAG
 from ....core.operand import Fetch, FetchShuffle
 from ....lib.aio import alru_cache
-from ....metrics import Metrics
-from ....oscar.errors import MarsError
 from ....storage import StorageLevel
 from ....utils import dataslots, get_chunk_key_to_data_keys, wrap_exception
 from ...cluster import ClusterAPI
@@ -70,7 +71,7 @@ async def _retry_run(
     while True:
         try:
             return await target_async_func(*args)
-        except (OSError, MarsError) as ex:
+        except (OSError, XoscarError) as ex:
             if subtask_info.num_retries < subtask_info.max_retries:
                 logger.error(
                     "Rerun[%s/%s] the %s of subtask %s due to %s.",
@@ -463,7 +464,7 @@ class SubtaskExecutionActor(mo.StatelessActor):
                     raise
                 finally:
                     raise ex
-            except (OSError, MarsError) as ex:
+            except (OSError, XoscarError) as ex:
                 if slot_id is not None:
                     # may encounter subprocess memory error
                     sub_pool_address = await slot_manager_ref.get_slot_address(slot_id)

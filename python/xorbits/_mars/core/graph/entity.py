@@ -16,8 +16,9 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, Iterable, List, Tuple, Union
 
+from xoscar.serialization.core import buffered
+
 from ...core import Chunk, Tileable
-from ...serialization.core import buffered
 from ...serialization.serializables import BoolField, DictField, ListField, Serializable
 from ...serialization.serializables.core import SerializableSerializer
 from ...utils import tokenize

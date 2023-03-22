@@ -20,14 +20,15 @@ import time
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Set, Tuple, Type
 
-from .... import oscar as mo
+import xoscar as mo
+from xoscar.metrics import Metrics
+from xoscar.serialization import AioSerializer
+
 from ....core import ChunkGraph, ExecutionError, OperandType, enter_mode
 from ....core.context import get_context
 from ....core.operand import Fetch, FetchShuffle, execute
 from ....lib.aio import alru_cache
-from ....metrics import Metrics
 from ....optimization.physical import optimize
-from ....serialization import AioSerializer
 from ....typing import BandType, ChunkType
 from ....utils import Timer, calc_data_size, get_chunk_key_to_data_keys
 from ...context import ThreadedServiceContext

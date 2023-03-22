@@ -16,7 +16,8 @@
 
 from typing import Any, Dict, List
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....core import ChunkType
 from ....core.operand import Fuse
 from ....lib.aio import alru_cache

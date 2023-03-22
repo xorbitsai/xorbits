@@ -20,8 +20,9 @@ import tempfile
 
 import numpy as np
 import pytest
+import xoscar as mo
 
-from .... import oscar as mo
+from ....oscar import create_actor_pool
 from ....storage import PlasmaStorage, StorageLevel
 from ....utils import calc_data_size
 from ...cluster import MockClusterAPI
@@ -47,7 +48,7 @@ async def actor_pool():
             else None
         )
 
-        pool = await mo.create_actor_pool(
+        pool = await create_actor_pool(
             "127.0.0.1",
             n_process=2,
             labels=["main", "numa-0", "io"],

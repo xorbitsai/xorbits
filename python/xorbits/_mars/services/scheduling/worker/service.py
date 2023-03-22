@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....utils import calc_size_by_str
 from ...core import AbstractService
 from .execution import DEFAULT_SUBTASK_MAX_RETRIES, SubtaskExecutionActor

@@ -20,10 +20,11 @@ import time
 from collections import defaultdict
 from typing import Dict, List
 
-from ..... import oscar as mo
+import xoscar as mo
+from xoscar.metrics import Metrics
+
 from .....core import Chunk, ChunkGraph
 from .....core.operand import Fetch, Fuse
-from .....metrics import Metrics
 from .....typing import BandType, TileableType
 from .....utils import get_chunk_params
 from ....meta import MetaAPI, WorkerMetaAPI

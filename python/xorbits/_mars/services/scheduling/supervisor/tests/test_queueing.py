@@ -16,8 +16,9 @@
 from typing import List, Tuple
 
 import pytest
+import xoscar as mo
 
-from ..... import oscar as mo
+from .....oscar import create_actor_pool
 from .....resource import Resource
 from ....cluster import MockClusterAPI
 from ....subtask import Subtask
@@ -74,7 +75,7 @@ class MockSubtaskManagerActor(mo.Actor):
 
 @pytest.fixture
 async def actor_pool():
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
 
     async with pool:
         session_id = "test_session"

@@ -15,51 +15,8 @@
 
 import functools
 
-from .base import (
-    AioBase,
-    delegate_to_executor,
-    proxy_method_directly,
-    proxy_property_directly,
-)
-
-
-@delegate_to_executor(
-    "close",
-    "flush",
-    "isatty",
-    "read",
-    "read1",
-    "readinto",
-    "readline",
-    "readlines",
-    "seek",
-    "seekable",
-    "tell",
-    "truncate",
-    "writable",
-    "write",
-    "writelines",
-)
-@proxy_method_directly("fileno", "readable")
-@proxy_property_directly("closed", "name", "mode")
-class AioFileObject(AioBase):
-    def __aiter__(self):
-        return self
-
-    async def __anext__(self):
-        """Simulate normal file iteration."""
-        line = await self.readline()
-        if line:
-            return line
-        else:
-            raise StopAsyncIteration
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close()
-        self._file = None
+from xoscar.aio.base import AioBase, delegate_to_executor, proxy_property_directly
+from xoscar.aio.file import AioFileObject
 
 
 @delegate_to_executor(

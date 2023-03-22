@@ -17,9 +17,9 @@ import importlib
 import logging
 import os
 
+import xoscar as mo
 from tornado import web
 
-from ... import oscar as mo
 from ...utils import get_next_port
 from ..core import AbstractService
 

@@ -18,8 +18,9 @@ import logging
 from collections import defaultdict
 from typing import Any, Dict, List, Union
 
-from ... import oscar as mo
-from ...serialization import AioDeserializer
+import xoscar as mo
+from xoscar.serialization import AioDeserializer
+
 from ...storage import StorageLevel, get_storage_backend
 from ...storage.core import StorageFileObject
 from ...typing import BandType

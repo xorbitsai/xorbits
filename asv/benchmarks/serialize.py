@@ -15,17 +15,16 @@
 import cloudpickle
 import numpy as np
 import pandas as pd
-
-from xorbits._mars.core.operand import MapReduceOperand
-from xorbits._mars.dataframe.operands import DataFrameOperandMixin
-from xorbits._mars.oscar.core import ActorRef
-
-from xorbits._mars.oscar.backends.message import (
+from xoscar.core import ActorRef
+from xoscar.backends.message import (
     SendMessage,
     new_message_id,
     ActorRefMessage,
 )
-from xorbits._mars.serialization import serialize, deserialize
+from xoscar.serialization import serialize, deserialize
+
+from xorbits._mars.core.operand import MapReduceOperand
+from xorbits._mars.dataframe.operands import DataFrameOperandMixin
 from xorbits._mars.serialization.serializables import (
     Serializable,
     Int64Field,

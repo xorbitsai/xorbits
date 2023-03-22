@@ -17,8 +17,8 @@ import weakref
 from typing import Dict, List, Tuple, Type
 
 import cloudpickle
+from xoscar.serialization.core import Placeholder, Serializer, buffered
 
-from ..core import Placeholder, Serializer, buffered
 from .field import Field
 from .field_type import (
     DatetimeType,

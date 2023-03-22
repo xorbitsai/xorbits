@@ -15,7 +15,8 @@
 
 from typing import Dict, List, Union
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....core import Tileable
 from ....lib.aio import alru_cache
 from ...subtask import SubtaskResult

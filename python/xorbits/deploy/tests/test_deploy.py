@@ -17,9 +17,9 @@ import sys
 
 import psutil
 import pytest
+from xoscar.backends.router import Router
 
 from ... import pandas as pd
-from ..._mars.oscar.backends.router import Router
 from .. import init, shutdown
 
 

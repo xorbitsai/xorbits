@@ -19,8 +19,8 @@ from collections import defaultdict
 from typing import List, Union
 
 import numpy as np
+import xoscar as mo
 
-from .... import oscar as mo
 from ....typing import ChunkType
 
 

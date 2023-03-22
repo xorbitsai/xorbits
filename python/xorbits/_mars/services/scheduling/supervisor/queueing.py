@@ -21,9 +21,10 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import DefaultDict, Dict, List, Optional, Set, Tuple, Union
 
-from .... import oscar as mo
+import xoscar as mo
+from xoscar.metrics import Metrics
+
 from ....lib.aio import alru_cache
-from ....metrics import Metrics
 from ....resource import ZeroResource
 from ....utils import dataslots
 from ...subtask import Subtask

@@ -15,9 +15,9 @@
 
 import numpy as np
 import pytest
+from xoscar.serialization import deserialize, serialize
 
 from ....core import tile
-from ....serialization import deserialize, serialize
 from ....serialization.serializables import Serializable
 from ...datasource import tensor as from_ndarray
 from .. import (

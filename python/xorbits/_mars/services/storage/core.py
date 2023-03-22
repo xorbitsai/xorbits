@@ -19,9 +19,10 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from ... import oscar as mo
+import xoscar as mo
+from xoscar.backends.allocate_strategy import IdleLabel, NoIdleSlot
+
 from ...lib.aio import AioFileObject
-from ...oscar.backends.allocate_strategy import IdleLabel, NoIdleSlot
 from ...resource import cuda_card_stats
 from ...storage import StorageLevel, get_storage_backend
 from ...storage.base import ObjectInfo, StorageBackend

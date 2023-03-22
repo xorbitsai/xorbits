@@ -20,12 +20,14 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Union
 
-from .... import oscar as mo
+import xoscar as mo
+from xoscar.backends.context import ProfilingContext
+from xoscar.errors import XoscarError
+from xoscar.metrics import Metrics
+from xoscar.profiling import XOSCAR_ENABLE_PROFILING
+
 from ....lib.aio import alru_cache
-from ....metrics import Metrics
-from ....oscar.backends.context import ProfilingContext
-from ....oscar.errors import MarsError
-from ....oscar.profiling import MARS_ENABLE_PROFILING, ProfilingData
+from ....profiling import ProfilingData
 from ....typing import BandType
 from ....utils import Timer, dataslots
 from ...subtask import Subtask, SubtaskResult, SubtaskStatus
@@ -253,7 +255,7 @@ class SubtaskManagerActor(mo.Actor):
                 subtask_info = self._subtask_infos[subtask_id]
                 execution_ref = await self._get_execution_ref(band)
                 extra_config = subtask_info.subtask.extra_config
-                enable_profiling = MARS_ENABLE_PROFILING or (
+                enable_profiling = XOSCAR_ENABLE_PROFILING or (
                     extra_config and extra_config.get("enable_profiling")
                 )
                 profiling_context = (
@@ -286,7 +288,7 @@ class SubtaskManagerActor(mo.Actor):
                 task_api = await self._get_task_api()
                 logger.debug("Finished subtask %s with result %s.", subtask_id, result)
                 await task_api.set_subtask_result(result)
-            except (OSError, MarsError) as ex:
+            except (OSError, XoscarError) as ex:
                 # TODO: We should handle ServerClosed Error.
                 if (
                     subtask_info.subtask.retryable

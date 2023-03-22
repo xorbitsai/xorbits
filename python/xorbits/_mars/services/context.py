@@ -19,7 +19,8 @@ from collections import defaultdict
 from functools import lru_cache
 from typing import Dict, List
 
-from .. import oscar as mo
+import xoscar as mo
+
 from ..core.context import Context
 from ..lib.aio import new_isolation
 from ..storage.base import StorageLevel
