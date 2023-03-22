@@ -622,22 +622,33 @@ class StorageManagerActor(mo.StatelessActor):
 
         if self._cluster_api is not None:
             while True:
-                upload_tasks = []
-                for band, level_to_quota in self._quotas.items():
-                    for level, quota_ref in level_to_quota.items():
-                        total, used = await quota_ref.get_quota()
-                        used = int(used)
-                        if total is not None:
-                            total = int(total)
-                        storage_info = StorageInfo(
-                            storage_level=level, total_size=total, used_size=used
-                        )
-                        upload_tasks.append(
-                            self._cluster_api.set_band_storage_info.delay(
-                                band, storage_info
+                try:
+                    upload_tasks = []
+                    for band, level_to_quota in self._quotas.items():
+                        for level, quota_ref in level_to_quota.items():
+                            total, used = await quota_ref.get_quota()
+                            used = int(used)
+                            if total is not None:
+                                total = int(total)
+                            storage_info = StorageInfo(
+                                storage_level=level, total_size=total, used_size=used
                             )
-                        )
-                await self._cluster_api.set_band_storage_info.batch(*upload_tasks)
+                            upload_tasks.append(
+                                self._cluster_api.set_band_storage_info.delay(
+                                    band, storage_info
+                                )
+                            )
+                    await self._cluster_api.set_band_storage_info.batch(*upload_tasks)
+                except asyncio.CancelledError:  # pragma: no cover
+                    break
+                except RuntimeError as ex:  # pragma: no cover
+                    if (
+                        "cannot schedule new futures after interpreter shutdown"
+                        not in str(ex)
+                    ):
+                        # when atexit is triggered, the default pool might be shutdown
+                        # and to_thread will fail
+                        break
                 await asyncio.sleep(0.5)
 
     async def upload_disk_info(self):
