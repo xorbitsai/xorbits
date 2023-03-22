@@ -19,7 +19,6 @@ import pytest
 import xoscar as mo
 
 from ....constants import DEFAULT_MARS_LOG_FILE_NAME, MARS_LOG_DIR_KEY
-
 from ....oscar import create_actor_pool
 from ..file_logger import FileLoggerActor
 
