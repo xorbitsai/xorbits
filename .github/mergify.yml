@@ -1,3 +1,5 @@
+permissions: read-all|write-all
+
 pull_request_rules:
   - name: automatic update
     conditions:
