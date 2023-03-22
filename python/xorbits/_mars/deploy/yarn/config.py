@@ -227,6 +227,7 @@ class MarsServiceConfig(AppServiceConfig):
         fi
         if [[ -n $MARS_SOURCE_PATH ]]; then export PYTHONPATH=$PYTHONPATH:$MARS_SOURCE_PATH; fi
         if [[ -n $MARS_YARN_PATH ]]; then export PATH=$MARS_YARN_PATH:$PATH; fi
+        mkdir logs
         """
             ).strip()
         ]
@@ -244,8 +245,9 @@ class MarsServiceConfig(AppServiceConfig):
             python_executable = self._env_path
 
         cmd = self._cmd_tmpl.format(executable=python_executable)
+        # log to local log dir since using default log dir under /tmp results in a permission error.
         bash_lines.append(
-            f"{cmd} -m {_get_local_app_module(self.service_name)} {self._extra_args} > /tmp/{self.service_name}.stdout.log 2> /tmp/{self.service_name}.stderr.log"
+            f"{cmd} -m {_get_local_app_module(self.service_name)} {self._extra_args} --log-dir logs > /tmp/{self.service_name}.stdout.log 2> /tmp/{self.service_name}.stderr.log"
         )
         return "\n".join(bash_lines) + "\n"
 

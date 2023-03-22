@@ -158,6 +158,7 @@ def _get_or_create_default_log_dir() -> str:
         log_dir = DEFAULT_MARS_LOG_DIR
 
     os.makedirs(log_dir, exist_ok=True)
+    os.chmod(log_dir, mode=0o777)
     return log_dir
 
 
@@ -182,11 +183,10 @@ def _get_log_config_path(log_config: Optional[str]) -> str:
     return log_config
 
 
-def _config_logging(**kwargs) -> Optional[configparser.RawConfigParser]:
-    if kwargs.get("logging_conf", None) is None:
-        return None
-
-    parsed_logging_conf = _parse_file_logging_config(kwargs["logging_conf"])
+def _config_logging(
+    logging_conf: Dict[str, Any]
+) -> Optional[configparser.RawConfigParser]:
+    parsed_logging_conf = _parse_file_logging_config(logging_conf)
 
     logging.config.fileConfig(
         parsed_logging_conf,
@@ -205,10 +205,12 @@ async def create_supervisor_actor_pool(
     oscar_config: dict = None,
     **kwargs,
 ):
-    if "logging_conf" in kwargs and kwargs["logging_conf"] is not None:
-        kwargs["logging_conf"]["subdir_prefix"] = "supervisor_"
-        logging_conf = _config_logging(**kwargs)
-        kwargs["logging_conf"] = logging_conf
+    logging_conf = kwargs.get("logging_conf", None)
+    if logging_conf is None:
+        logging_conf = dict()
+    logging_conf["subdir_prefix"] = "supervisor_"
+    logging_conf = _config_logging(logging_conf)
+    kwargs["logging_conf"] = logging_conf
     if oscar_config:
         numa_config = oscar_config.get("numa", dict())
         numa_external_address_scheme = numa_config.get("external_addr_scheme", None)
@@ -243,10 +245,12 @@ async def create_worker_actor_pool(
     oscar_config: dict = None,
     **kwargs,
 ):
-    if "logging_conf" in kwargs and kwargs["logging_conf"] is not None:
-        kwargs["logging_conf"]["subdir_prefix"] = "worker_"
-        logging_conf = _config_logging(**kwargs)
-        kwargs["logging_conf"] = logging_conf
+    logging_conf = kwargs.get("logging_conf", None)
+    if logging_conf is None:
+        logging_conf = dict()
+    logging_conf["subdir_prefix"] = "worker_"
+    logging_conf = _config_logging(logging_conf)
+    kwargs["logging_conf"] = logging_conf
     # TODO: support NUMA when ready
     n_process = sum(
         int(resource.num_cpus) or int(resource.num_gpus)
