@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os.path
 from io import BytesIO
 from typing import Any, Dict, List, Tuple, Union
 from urllib.parse import urlparse
@@ -28,7 +28,7 @@ except ImportError:  # pragma: no cover
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core import OutputType
-from ...lib.filesystem import file_size, get_fs, glob, open_file
+from ...lib.filesystem import LocalFileSystem, file_size, get_fs, glob, open_file
 from ...serialization.serializables import (
     AnyField,
     BoolField,
@@ -686,6 +686,7 @@ def read_csv(
     >>> # read from OSS
     >>> auth_path = build_oss_path(file_path, access_key_id, access_key_secret, end_point)
     >>> md.read_csv(auth_path)
+    s3://buvket/file.txt
     """
     # infer dtypes and columns
     if isinstance(path, (list, tuple)):
@@ -699,7 +700,6 @@ def read_csv(
             file_path = glob(path.rstrip("/") + "/*", storage_options)[0]
     else:
         file_path = glob(path, storage_options)[0]
-
     with open_file(
         file_path, compression=compression, storage_options=storage_options
     ) as f:
@@ -739,8 +739,25 @@ def read_csv(
     columns_value = parse_index(mini_df.columns, store_data=True)
     if index_col and not isinstance(index_col, int):
         index_col = list(mini_df.columns).index(index_col)
+
+    # convert path to abs_path
+    if isinstance(path, (list, tuple)):
+        abs_path = [
+            os.path.abspath(p)
+            if isinstance(get_fs(p, storage_options), LocalFileSystem)
+            else p
+            for p in path
+        ]
+    elif isinstance(get_fs(path, storage_options), LocalFileSystem):
+        abs_path = os.path.abspath(path)
+        # directory
+        if get_fs(abs_path, storage_options).isdir(abs_path):
+            abs_path = glob(abs_path.rstrip("/") + "/*", storage_options)
+    else:
+        abs_path = path
+
     op = DataFrameReadCSV(
-        path=path,
+        path=abs_path,
         names=names,
         sep=sep,
         header=header,
