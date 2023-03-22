@@ -159,9 +159,9 @@ class OscarCommandRunner:
         if args.log_format is not None:
             self.logging_conf["format"] = args.log_format
         if args.log_dir is not None:
-            self.logging_conf["log_dir"] = args.log_dir
+            self.logging_conf["log_dir"] = os.path.abspath(args.log_dir)
         if args.log_conf is not None:
-            self.logging_conf["log_config"] = args.log_conf
+            self.logging_conf["log_config"] = os.path.abspath(args.log_conf)
 
         load_modules = []
         for mods in list(args.load_modules or ()) + get_third_party_modules_from_config(
