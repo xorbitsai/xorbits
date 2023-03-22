@@ -90,6 +90,13 @@ class NodeInfoUploaderActor(mo.Actor):
                     self._uploaded_future.set_result(None)
             except asyncio.CancelledError:  # pragma: no cover
                 break
+            except RuntimeError as ex:  # pragma: no cover
+                if "cannot schedule new futures after interpreter shutdown" not in str(
+                    ex
+                ):
+                    # when atexit is triggered, the default pool might be shutdown
+                    # and to_thread will fail
+                    break
             except (
                 Exception
             ) as ex:  # pragma: no cover  # noqa: E722  # nosec  # pylint: disable=bare-except
@@ -161,11 +168,6 @@ class NodeInfoUploaderActor(mo.Actor):
                     self._env_uploaded = True
                 except ValueError:
                     pass
-        except RuntimeError as ex:  # pragma: no cover
-            if "cannot schedule new futures after interpreter shutdown" not in str(ex):
-                # when atexit is triggered, the default pool might be shutdown
-                # and to_thread will fail
-                raise
         except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
             logger.exception(f"Failed to upload node info")
             raise
