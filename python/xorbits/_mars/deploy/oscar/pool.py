@@ -80,10 +80,8 @@ def _apply_log_file_path(
 ):
     if is_default_logging_config:
         assert "handler_file_handler" in config
-        if sys.platform.startswith("win"):
-            log_subdir = log_subdir.replace("\\", "/")
         log_file_path = os.path.join(log_subdir, DEFAULT_MARS_LOG_FILE_NAME)
-        config["handler_file_handler"]["args"] = rf"('{log_file_path}',)"
+        config["handler_file_handler"]["args"] = rf"(r'{log_file_path}',)"
         config["handler_file_handler"]["kwargs"] = (
             r"{'mode': 'a', "
             rf"'maxBytes': {DEFAULT_MARS_LOG_MAX_BYTES}, "

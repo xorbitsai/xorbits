@@ -28,7 +28,3 @@ DEFAULT_MARS_LOG_BACKUP_COUNT = 30
 # profiling.
 MARS_PROFILING_RESULTS_DIR = os.path.join(MARS_TEMP_DIR, "profiling")
 MARS_PROFILING_RESULTS_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "profiling")
-
-# unix socket.
-MARS_UNIX_SOCKET_DIR = os.path.join(MARS_TEMP_DIR, "socket")
-MARS_UNIX_SOCKET_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "socket")
