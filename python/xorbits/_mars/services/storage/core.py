@@ -641,14 +641,10 @@ class StorageManagerActor(mo.StatelessActor):
                     await self._cluster_api.set_band_storage_info.batch(*upload_tasks)
                 except asyncio.CancelledError:  # pragma: no cover
                     break
-                except RuntimeError as ex:  # pragma: no cover
-                    if (
-                        "cannot schedule new futures after interpreter shutdown"
-                        not in str(ex)
-                    ):
-                        # when atexit is triggered, the default pool might be shutdown
-                        # and to_thread will fail
-                        break
+                except (
+                    Exception
+                ) as ex:  # pragma: no cover  # noqa: E722  # nosec  # pylint: disable=bare-except
+                    logger.error(f"Failed to upload storage info: {ex}")
                 await asyncio.sleep(0.5)
 
     async def upload_disk_info(self):
