@@ -489,7 +489,6 @@ def test_read_csv_directory():
         df1.to_csv(file_path_1)
         df2.to_csv(file_path_2)
         mdf = read_csv(tempdir, index_col=0, chunk_bytes=10)
-        print(mdf)
         assert isinstance(mdf.op, DataFrameReadCSV)
         assert mdf.shape[1] == 3
         pd.testing.assert_index_equal(df1.columns, mdf.columns_value.to_pandas())
