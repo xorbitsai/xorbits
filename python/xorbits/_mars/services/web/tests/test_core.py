@@ -18,9 +18,10 @@ import os
 import sys
 
 import pytest
+import xoscar as mo
 from tornado import httpclient
 
-from .... import oscar as mo
+from ....oscar import create_actor_pool
 from ....utils import get_next_port
 from .. import MarsServiceWebAPIHandler, MarsWebAPIClientMixin, WebActor, web_api
 from ..api.web import MarsApiEntryHandler
@@ -74,7 +75,7 @@ async def actor_pool():
         if sys.platform != "win32"
         else None
     )
-    pool = await mo.create_actor_pool(
+    pool = await create_actor_pool(
         "127.0.0.1", n_process=0, subprocess_start_method=start_method
     )
     async with pool:

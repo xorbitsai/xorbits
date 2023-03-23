@@ -15,7 +15,8 @@
 
 from typing import Any, Dict
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...core import OperandType
 from ...lib.aio import alru_cache
 from ...tests.core import patch_cls

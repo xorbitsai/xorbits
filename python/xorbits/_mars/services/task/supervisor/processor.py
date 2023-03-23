@@ -20,11 +20,13 @@ import tempfile
 import time
 from typing import Dict, Iterator, List, Optional, Set
 
+from xoscar.metrics import Metrics
+from xoscar.profiling import XOSCAR_ENABLE_PROFILING
+
 from ....core import Chunk, ChunkGraph, TileableGraph, TileContext
 from ....core.operand import Fetch
-from ....metrics import Metrics
 from ....optimization.logical import OptimizationRecords
-from ....oscar.profiling import MARS_ENABLE_PROFILING, ProfilingData
+from ....profiling import ProfilingData
 from ....typing import ChunkType, TileableType
 from ....utils import Timer
 from ...subtask import Subtask, SubtaskResult
@@ -59,7 +61,7 @@ class TaskProcessor:
         self._chunk_to_subtasks = dict()
         self._stage_tileables = set()
 
-        if MARS_ENABLE_PROFILING:
+        if XOSCAR_ENABLE_PROFILING:
             ProfilingData.init(task.task_id)
         elif task.extra_config and task.extra_config.get("enable_profiling"):
             ProfilingData.init(task.task_id, task.extra_config["enable_profiling"])
@@ -472,7 +474,7 @@ class TaskProcessor:
         self.done.set()
         if self._dump_subtask_graph:
             self.dump_subtask_graph()
-        if MARS_ENABLE_PROFILING or (
+        if XOSCAR_ENABLE_PROFILING or (
             self._task.extra_config and self._task.extra_config.get("enable_profiling")
         ):
             ProfilingData[self._task.task_id, "general"].set(

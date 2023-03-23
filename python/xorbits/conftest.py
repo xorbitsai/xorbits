@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import pytest
+from xoscar.backends.router import Router
 
 from . import numpy as np
 from . import pandas as pd
 from ._mars.config import option_context
 from ._mars.deploy.oscar.session import clear_default_session
-from ._mars.oscar.backends.router import Router
 from .tests.core import init_test
 
 

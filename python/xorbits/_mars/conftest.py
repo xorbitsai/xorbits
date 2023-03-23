@@ -15,17 +15,15 @@
 
 import concurrent.futures
 import os
-import subprocess
 import time
 
 import psutil
 import pytest
+from xoscar.aio.lru import clear_all_alru_caches
+from xoscar.backends.router import Router
 
 from .config import option_context
 from .core.mode import is_build_mode, is_kernel_mode
-from .lib.aio.lru import clear_all_alru_caches
-from .oscar.backends.ray.communication import RayServer
-from .oscar.backends.router import Router
 from .utils import lazy_import
 
 ray = lazy_import("ray")
@@ -45,130 +43,6 @@ def check_router_cleaned(request):
             assert len(Router.get_instance()._local_mapping) == 0
 
     request.addfinalizer(route_checker)
-
-
-@pytest.fixture(scope="module")
-def ray_start_regular_shared(request):  # pragma: no cover
-    yield from _ray_start_regular(request)
-
-
-@pytest.fixture(scope="module")
-def ray_start_regular_shared2(request):  # pragma: no cover
-    os.environ["RAY_kill_idle_workers_interval_ms"] = "0"
-    param = getattr(request, "param", {})
-    num_cpus = param.get("num_cpus", 64)
-    total_memory_mb = num_cpus * 2 * 1024**2
-    try:
-        try:
-            job_config = ray.job_config.JobConfig(total_memory_mb=total_memory_mb)
-        except TypeError:
-            job_config = None
-        yield ray.init(num_cpus=num_cpus, job_config=job_config)
-    finally:
-        ray.shutdown()
-        Router.set_instance(None)
-        os.environ.pop("RAY_kill_idle_workers_interval_ms", None)
-
-
-@pytest.fixture
-def ray_start_regular(request):  # pragma: no cover
-    yield from _ray_start_regular(request)
-
-
-def _ray_start_regular(request):  # pragma: no cover
-    param = getattr(request, "param", {})
-    if not param.get("enable", True):
-        yield
-    elif ray and ray.is_initialized():
-        yield
-    else:
-        num_cpus = param.get("num_cpus", 64)
-        total_memory_mb = num_cpus * 2 * 1024**2
-        try:
-            try:
-                job_config = ray.job_config.JobConfig(total_memory_mb=total_memory_mb)
-            except TypeError:
-                job_config = None
-            yield ray.init(num_cpus=num_cpus, job_config=job_config)
-        finally:
-            ray.shutdown()
-            Router.set_instance(None)
-            RayServer.clear()
-
-
-@pytest.fixture(scope="module")
-def ray_large_cluster_shared(request):  # pragma: no cover
-    yield from _ray_large_cluster(request)
-
-
-@pytest.fixture
-def ray_large_cluster(request):  # pragma: no cover
-    yield from _ray_large_cluster(request)
-
-
-def _ray_large_cluster(request):  # pragma: no cover
-    param = getattr(request, "param", {})
-    num_nodes = param.get("num_nodes", 3)
-    num_cpus = param.get("num_cpus", 16)
-    from ray.cluster_utils import Cluster
-
-    cluster = Cluster()
-    remote_nodes = []
-    for i in range(num_nodes):
-        remote_nodes.append(
-            cluster.add_node(num_cpus=num_cpus, memory=num_cpus * 2 * 1024**3)
-        )
-        if len(remote_nodes) == 1:
-            try:
-                job_config = ray.job_config.JobConfig(
-                    total_memory_mb=num_nodes * 32 * 1024**3
-                )
-            except TypeError:
-                job_config = None
-            ray.init(address=cluster.address, job_config=job_config)
-    try:
-        yield cluster
-    finally:
-        Router.set_instance(None)
-        RayServer.clear()
-        ray.shutdown()
-        cluster.shutdown()
-        if "COV_CORE_SOURCE" in os.environ:
-            # Remove this when https://github.com/ray-project/ray/issues/16802 got fixed
-            subprocess.check_call(["ray", "stop", "--force"])
-
-
-@pytest.fixture
-def stop_ray(request):  # pragma: no cover
-    yield
-    if ray.is_initialized():
-        ray.shutdown()
-    Router.set_instance(None)
-
-
-@pytest.fixture
-async def ray_create_mars_cluster(request, check_router_cleaned):
-    from .deploy.oscar.ray import _load_config, new_cluster
-
-    ray_config = _load_config()
-    param = getattr(request, "param", {})
-    supervisor_mem = param.get("supervisor_mem", 1 * 1024**3)
-    worker_num = param.get("worker_num", 2)
-    worker_cpu = param.get("worker_cpu", 2)
-    worker_mem = param.get("worker_mem", 256 * 1024**2)
-    ray_config.update(param.get("config", {}))
-    client = await new_cluster(
-        supervisor_mem=supervisor_mem,
-        worker_num=worker_num,
-        worker_cpu=worker_cpu,
-        worker_mem=worker_mem,
-        config=ray_config,
-    )
-    try:
-        async with client:
-            yield client
-    finally:
-        Router.set_instance(None)
 
 
 @pytest.fixture

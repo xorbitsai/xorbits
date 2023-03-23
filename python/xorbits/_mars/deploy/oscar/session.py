@@ -31,8 +31,9 @@ from urllib.parse import urlparse
 from weakref import WeakKeyDictionary, WeakSet, ref
 
 import numpy as np
+import xoscar as mo
+from xoscar.metrics import Metrics
 
-from ... import oscar as mo
 from ...config import options
 from ...core import ChunkType, TileableGraph, TileableType, enter_mode
 from ...core.entrypoints import init_extension_entrypoints
@@ -44,7 +45,6 @@ from ...lib.aio import (
     new_isolation,
     stop_isolation,
 )
-from ...metrics import Metrics
 from ...services.cluster import AbstractClusterAPI, ClusterAPI
 from ...services.lifecycle import AbstractLifecycleAPI, LifecycleAPI
 from ...services.meta import AbstractMetaAPI, MetaAPI

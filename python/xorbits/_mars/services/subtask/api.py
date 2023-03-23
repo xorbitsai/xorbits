@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ... import oscar as mo
+import xoscar as mo
+from xoscar.backends.context import ProfilingContext
+from xoscar.profiling import XOSCAR_ENABLE_PROFILING
+
 from ...lib.aio import alru_cache
-from ...oscar.backends.context import ProfilingContext
-from ...oscar.profiling import MARS_ENABLE_PROFILING
 from .core import Subtask
 
 
@@ -60,7 +61,7 @@ class SubtaskAPI:
         """
         ref = await self._get_runner_ref(band_name, slot_id)
         extra_config = subtask.extra_config
-        enable_profiling = MARS_ENABLE_PROFILING or (
+        enable_profiling = XOSCAR_ENABLE_PROFILING or (
             extra_config and extra_config.get("enable_profiling")
         )
         profiling_context = (

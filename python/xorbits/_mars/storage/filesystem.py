@@ -17,9 +17,10 @@ import os
 import uuid
 from typing import Dict, List, Optional, Tuple
 
+from xoscar.serialization import AioDeserializer, AioSerializer
+
 from ..lib.aio import AioFilesystem
 from ..lib.filesystem import FileSystem, get_fs
-from ..serialization import AioDeserializer, AioSerializer
 from ..utils import implements, mod_hash
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import StorageFileObject

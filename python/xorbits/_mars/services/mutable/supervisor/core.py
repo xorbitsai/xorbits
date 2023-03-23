@@ -17,8 +17,8 @@ import asyncio
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
+import xoscar as mo
 
-from .... import oscar as mo
 from ....core import tile
 from ....utils import build_fetch
 from ...cluster import ClusterAPI

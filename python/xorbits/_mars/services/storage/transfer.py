@@ -18,7 +18,8 @@ import logging
 from dataclasses import dataclass
 from typing import Dict, List
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...lib.aio import alru_cache
 from ...storage import StorageLevel
 from ...utils import dataslots

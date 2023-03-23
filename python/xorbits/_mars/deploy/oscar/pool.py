@@ -21,7 +21,6 @@ import time
 from typing import Any, Dict, List, Optional, Tuple
 
 from ....utils import get_default_logging_config_file_path
-from ... import oscar as mo
 from ...constants import (
     DEFAULT_MARS_LOG_BACKUP_COUNT,
     DEFAULT_MARS_LOG_DIR,
@@ -30,6 +29,7 @@ from ...constants import (
     DEFAULT_MARS_LOG_MAX_BYTES,
     MARS_LOG_DIR_KEY,
 )
+from ...oscar import create_actor_pool
 from ...resource import Resource, cuda_count
 
 logger = logging.getLogger(__name__)
@@ -220,7 +220,7 @@ async def create_supervisor_actor_pool(
         extra_conf = oscar_config["extra_conf"]
     else:
         external_address_schemes = enable_internal_addresses = extra_conf = None
-    return await mo.create_actor_pool(
+    return await create_actor_pool(
         address,
         n_process=n_process,
         ports=ports,
@@ -299,7 +299,7 @@ async def create_worker_actor_pool(
                 [numa_enable_internal_address for _ in range(num_cpus)]
             )
 
-    return await mo.create_actor_pool(
+    return await create_actor_pool(
         address,
         n_process=n_process,
         ports=ports,

@@ -17,13 +17,13 @@ import sys
 from typing import Any, Callable, Dict, List, Tuple, Type, Union
 
 import numpy as np
+from xoscar.metrics import Metrics
 
 try:
     from numpy.core._exceptions import UFuncTypeError
 except ImportError:  # pragma: no cover
     UFuncTypeError = None
 
-from ...metrics import Metrics
 from ...typing import ChunkType, OperandType, TileableType
 from ...utils import calc_data_size
 from ..context import Context

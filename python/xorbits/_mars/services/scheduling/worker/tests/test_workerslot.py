@@ -22,11 +22,12 @@ from typing import Tuple
 import pandas as pd
 import psutil
 import pytest
+import xoscar as mo
+from xoscar import ServerClosed
+from xoscar.backends.allocate_strategy import IdleLabel
+from xoscar.errors import NoFreeSlot, SlotStateError
 
-from ..... import oscar as mo
-from .....oscar import ServerClosed
-from .....oscar.backends.allocate_strategy import IdleLabel
-from .....oscar.errors import NoFreeSlot, SlotStateError
+from .....oscar import create_actor_pool
 from .....resource import Resource
 from .....tests.core import wait_for_condition
 from .....utils import get_next_port
@@ -56,7 +57,7 @@ async def actor_pool(request):
         else None
     )
     n_slots = request.param
-    pool = await mo.create_actor_pool(
+    pool = await create_actor_pool(
         f"127.0.0.1:{get_next_port()}",
         n_process=n_slots,
         labels=[None] + ["numa-0"] * n_slots,

@@ -170,6 +170,7 @@ jobs:
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
+        pip install -U xoscar
         python setup.py build_ext -i
       working-directory: ./python
 

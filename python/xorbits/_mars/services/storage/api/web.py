@@ -16,7 +16,8 @@
 from collections import defaultdict
 from typing import Any, Callable, List
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....storage import StorageLevel
 from ....utils import deserialize_serializable, serialize_serializable
 from ...web import MarsServiceWebAPIHandler, MarsWebAPIClientMixin, web_api

@@ -18,7 +18,8 @@ from collections import defaultdict
 from dataclasses import fields as dataclass_fields
 from typing import Dict, List
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.ordered_set import OrderedSet
 from ....typing import BandType
 from ....utils import implements

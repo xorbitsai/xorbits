@@ -15,7 +15,8 @@
 
 from typing import Dict, List, Optional, Tuple, Union
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ....utils import parse_readable_size
 from ..core import SessionInfo

@@ -15,7 +15,8 @@
 
 from typing import Dict
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ...cluster import ClusterAPI
 from ..store import get_meta_store

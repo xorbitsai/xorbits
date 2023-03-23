@@ -19,7 +19,8 @@ import importlib
 import logging
 from typing import Any, Dict, List, Optional, Set, Type
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....config import Config
 from ....core import TileContext
 from ....core.operand import Fetch

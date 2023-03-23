@@ -21,15 +21,16 @@ import time
 import numpy as np
 import pandas as pd
 import pytest
+import xoscar as mo
 
 from ..... import dataframe as md
-from ..... import oscar as mo
 from ..... import remote as mr
 from ..... import tensor as mt
 from .....core import ChunkGraph, ExecutionError
 from .....core.context import get_context
 from .....core.graph import ChunkGraphBuilder, TileableGraph, TileableGraphBuilder
 from .....core.operand import OperandStage
+from .....oscar import create_actor_pool
 from .....resource import Resource
 from .....utils import Timer
 from ....cluster import MockClusterAPI
@@ -71,7 +72,7 @@ async def actor_pool():
         if sys.platform != "win32"
         else None
     )
-    pool = await mo.create_actor_pool(
+    pool = await create_actor_pool(
         "127.0.0.1",
         n_process=3,
         labels=["main"] + ["numa-0"] * 2 + ["io"],

@@ -16,7 +16,8 @@
 import sys
 from typing import Any, List, Tuple, Type, TypeVar, Union
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ....storage.base import StorageFileObject, StorageLevel
 from ...cluster import StorageInfo

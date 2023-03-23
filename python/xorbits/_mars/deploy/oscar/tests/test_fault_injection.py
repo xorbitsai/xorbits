@@ -19,10 +19,10 @@ import traceback
 import numpy as np
 import pandas as pd
 import pytest
+from xoscar.errors import ServerClosed
 
 from .... import dataframe as md
 from .... import tensor as mt
-from ....oscar.errors import ServerClosed
 from ....remote import spawn
 from ....services.tests.fault_injection_manager import (
     AbstractFaultInjectionManager,

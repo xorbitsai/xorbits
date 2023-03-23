@@ -18,8 +18,9 @@ from collections import defaultdict
 from typing import List, Set, Tuple
 
 import pytest
+import xoscar as mo
 
-from ..... import oscar as mo
+from .....oscar import create_actor_pool
 from .....typing import BandType
 from ....cluster import MockClusterAPI
 from ....subtask import Subtask, SubtaskResult, SubtaskStatus
@@ -101,7 +102,7 @@ class MockSubtaskExecutionActor(mo.StatelessActor):
 
 @pytest.fixture
 async def actor_pool():
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
 
     async with pool:
         session_id = "test_session"
