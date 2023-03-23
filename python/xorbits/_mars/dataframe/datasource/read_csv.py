@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os.path
 from io import BytesIO
 from typing import Any, Dict, List, Tuple, Union
 from urllib.parse import urlparse
@@ -28,7 +27,7 @@ except ImportError:  # pragma: no cover
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core import OutputType
-from ...lib.filesystem import LocalFileSystem, file_size, get_fs, glob, open_file
+from ...lib.filesystem import file_size, get_fs, glob, open_file
 from ...serialization.serializables import (
     AnyField,
     BoolField,
@@ -47,6 +46,7 @@ from .core import (
     IncrementalIndexDataSourceMixin,
     merge_small_files,
 )
+from .utils import convert_to_abspath
 
 cudf = lazy_import("cudf")
 
@@ -741,20 +741,7 @@ def read_csv(
         index_col = list(mini_df.columns).index(index_col)
 
     # convert path to abs_path
-    if isinstance(path, (list, tuple)):
-        abs_path = [
-            os.path.abspath(p)
-            if isinstance(get_fs(p, storage_options), LocalFileSystem)
-            else p
-            for p in path
-        ]
-    elif isinstance(get_fs(path, storage_options), LocalFileSystem):
-        abs_path = os.path.abspath(path)
-        # directory
-        if get_fs(abs_path, storage_options).isdir(abs_path):
-            abs_path = glob(abs_path.rstrip("/") + "/*", storage_options)
-    else:
-        abs_path = path
+    abs_path = convert_to_abspath(path, storage_options)
 
     op = DataFrameReadCSV(
         path=abs_path,

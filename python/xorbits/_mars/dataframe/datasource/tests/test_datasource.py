@@ -504,6 +504,34 @@ def test_read_csv_directory():
         shutil.rmtree(tempdir)
 
 
+def test_read_csv_list():
+    tempdir = tempfile.mkdtemp()
+    file_path_1 = os.path.join(tempdir, "test1.csv")
+    file_path_2 = os.path.join(tempdir, "test2.csv")
+    try:
+        df2 = df1 = pd.DataFrame(
+            np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]),
+            columns=["a", "b", "c"],
+            dtype=np.int64,
+        )
+        df1.to_csv(file_path_1)
+        df2.to_csv(file_path_2)
+        mdf = read_csv([file_path_1, file_path_2], index_col=0, chunk_bytes=10)
+        assert isinstance(mdf.op, DataFrameReadCSV)
+        assert mdf.shape[1] == 3
+        pd.testing.assert_index_equal(df1.columns, mdf.columns_value.to_pandas())
+        mdf = tile(mdf)
+        assert len(mdf.chunks) == 8
+        index_keys = set()
+        for chunk in mdf.chunks:
+            index_keys.add(chunk.index_value.key)
+            pd.testing.assert_index_equal(df1.columns, chunk.columns_value.to_pandas())
+            pd.testing.assert_series_equal(df1.dtypes, chunk.dtypes)
+        assert len(index_keys) > 1
+    finally:
+        shutil.rmtree(tempdir)
+
+
 def test_read_sql():
     test_df = pd.DataFrame(
         {

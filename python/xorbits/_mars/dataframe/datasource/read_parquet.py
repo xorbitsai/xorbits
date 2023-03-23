@@ -53,6 +53,7 @@ from .core import (
     IncrementalIndexDataSourceMixin,
     merge_small_files,
 )
+from .utils import convert_to_abspath
 
 PARQUET_MEMORY_SCALE = 15
 STRING_FIELD_OVERHEAD = 50
@@ -678,8 +679,11 @@ def read_parquet(
 
     index_value = parse_index(pd.RangeIndex(-1))
     columns_value = parse_index(dtypes.index, store_data=True)
+
+    # convert path to abs_path
+    abs_path = convert_to_abspath(path, storage_options)
     op = DataFrameReadParquet(
-        path=path,
+        path=abs_path,
         engine=engine_type,
         columns=columns,
         groups_as_chunks=groups_as_chunks,
