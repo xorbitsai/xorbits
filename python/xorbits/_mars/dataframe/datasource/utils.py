@@ -14,10 +14,10 @@
 
 import os
 
-from ...lib.filesystem import LocalFileSystem, get_fs, glob
+from ...lib.filesystem import LocalFileSystem, get_fs
 
 
-def convert_to_abspath(path, storage_options):
+def convert_to_abspath(path: str, storage_options: dict = None):
     # convert path to abs_path
     if isinstance(path, (list, tuple)):
         abs_path = [
@@ -28,9 +28,6 @@ def convert_to_abspath(path, storage_options):
         ]
     elif isinstance(get_fs(path, storage_options), LocalFileSystem):
         abs_path = os.path.abspath(path)
-        # directory
-        if get_fs(abs_path, storage_options).isdir(abs_path):
-            abs_path = glob(abs_path.rstrip("/") + "/*", storage_options)
     else:
         abs_path = path
     return abs_path

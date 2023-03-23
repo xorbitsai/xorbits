@@ -1136,7 +1136,7 @@ def test_read_parquet_arrow(setup, engine):
     )
 
     with tempfile.TemporaryDirectory() as tempdir:
-        file_path = os.path.join(tempdir, "test.csv")
+        file_path = os.path.join(tempdir, "test.parquet")
         test_df.to_parquet(file_path)
 
         df = md.read_parquet(file_path, engine=engine)
