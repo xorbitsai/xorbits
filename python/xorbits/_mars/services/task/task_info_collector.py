@@ -370,7 +370,8 @@ class TaskInfoCollectorActor(mo.Actor):
         return profiling_results_dir
 
     async def __pre_destroy__(self):
-        self._isolation.stop()
+        if self._collect_task_info_enabled:
+            self._isolation.stop()
 
     async def collect_task_info_enabled(self):
         return self._collect_task_info_enabled
