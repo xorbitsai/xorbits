@@ -193,7 +193,7 @@ def _config_logging(
         parsed_logging_conf,
         disable_existing_loggers=False,
     )
-    logging.info("Logging configurations from %s have been applied", log_config_path)
+    logger.info("Logging configurations from %s have been applied", log_config_path)
     logger.info("Logging directory %s", os.environ[MARS_LOG_DIR_KEY])
 
     return parsed_logging_conf
