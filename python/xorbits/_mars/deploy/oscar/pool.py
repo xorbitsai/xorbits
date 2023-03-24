@@ -116,17 +116,16 @@ def _parse_file_logging_config(
     # there's no need to add a prefix to the log subdir since it is shared by the supervisor and
     # workers in a local cluster.
     subdir_prefix = logging_conf.get("subdir_prefix", None) if from_cmd else None
-    log_subdir = _get_log_subdir(logging_conf.get("log_dir", None), subdir_prefix)
-    log_config_path = _get_log_config_path(logging_conf.get("log_config", None))
-    is_default_logging_config = logging_conf.get("log_config", None) is None
-    is_default_log_dir = logging_conf.get("log_dir", None) is None
-
-    # for FileLoggerActor(s).
     if MARS_LOG_DIR_KEY in os.environ:
         # in a local cluster, this env var may have been configured by another role.
         log_subdir = os.environ[MARS_LOG_DIR_KEY]
     else:
+        log_subdir = _get_log_subdir(logging_conf.get("log_dir", None), subdir_prefix)
+        # for FileLoggerActor(s).
         os.environ[MARS_LOG_DIR_KEY] = log_subdir
+    log_config_path = _get_log_config_path(logging_conf.get("log_config", None))
+    is_default_logging_config = logging_conf.get("log_config", None) is None
+    is_default_log_dir = logging_conf.get("log_dir", None) is None
 
     config = configparser.RawConfigParser()
     config.read(log_config_path)
