@@ -517,6 +517,9 @@ def test_read_csv_list():
         df2.to_csv(file_path_2)
         mdf = read_csv([file_path_1, file_path_2], index_col=0, chunk_bytes=10)
         assert isinstance(mdf.op, DataFrameReadCSV)
+        assert isinstance(mdf.op.path, list)
+        assert mdf.op.path[0] == os.path.abspath(file_path_1)
+        assert mdf.op.path[1] == os.path.abspath(file_path_2)
         assert mdf.shape[1] == 3
         pd.testing.assert_index_equal(df1.columns, mdf.columns_value.to_pandas())
         mdf = tile(mdf)
