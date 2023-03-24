@@ -32,7 +32,7 @@ from ...core.utils.docstring import attach_cls_member_docstring
 from ...core.utils.fallback import wrap_fallback_module_method
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
-    pd.read_pickle: MarsOutputType.object,
+    pd.read_pickle: MarsOutputType.dataframe,
     pd.crosstab: MarsOutputType.dataframe,
     pd.infer_freq: MarsOutputType.object,
     pd.interval_range: MarsOutputType.index,
