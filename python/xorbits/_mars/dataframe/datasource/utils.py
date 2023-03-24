@@ -1,5 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
-
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,12 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import os
+from typing import Optional
 
 from ...lib.filesystem import LocalFileSystem, get_fs
 
 
-def convert_to_abspath(path: str, storage_options: dict = None):
+def convert_to_abspath(
+    path: str | tuple[str] | list[str], storage_options: Optional[dict] = None
+) -> str | list[str]:
     # convert path to abs_path
     if isinstance(path, (list, tuple)):
         abs_path = [
