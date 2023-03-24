@@ -30,6 +30,7 @@ class FileLoggerActor(mo.Actor):
     """
 
     def __init__(self):
+        super().__init__()
         log_dir = os.environ.get(MARS_LOG_DIR_KEY)
         self._log_file_path: Optional[str] = None
         if log_dir is None:
