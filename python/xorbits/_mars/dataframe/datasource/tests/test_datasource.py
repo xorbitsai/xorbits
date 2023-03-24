@@ -458,7 +458,6 @@ def test_read_csv():
         )
         df.to_csv(file_path)
         mdf = read_csv(file_path, index_col=0, chunk_bytes=10)
-        # mdf.op.path
         assert mdf.op.path == os.path.abspath(file_path)
         assert isinstance(mdf.op, DataFrameReadCSV)
         assert mdf.shape[1] == 3
