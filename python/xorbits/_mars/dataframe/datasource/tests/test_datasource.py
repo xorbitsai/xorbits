@@ -489,6 +489,8 @@ def test_read_csv_directory():
         df2.to_csv(file_path_2)
         mdf = read_csv(tempdir, index_col=0, chunk_bytes=10)
         assert isinstance(mdf.op, DataFrameReadCSV)
+        assert isinstance(mdf.op.path, str)
+        assert mdf.op.path == os.path.abspath(tempdir)
         assert mdf.shape[1] == 3
         pd.testing.assert_index_equal(df1.columns, mdf.columns_value.to_pandas())
         mdf = tile(mdf)
