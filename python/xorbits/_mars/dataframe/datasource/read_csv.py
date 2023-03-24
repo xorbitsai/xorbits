@@ -686,7 +686,8 @@ def read_csv(
     >>> # read from OSS
     >>> auth_path = build_oss_path(file_path, access_key_id, access_key_secret, end_point)
     >>> md.read_csv(auth_path)
-    s3://bucket/file.txt
+>>> # read from S3
+>>> md.read_csv('s3://bucket/file.txt')
     """
     # infer dtypes and columns
     if isinstance(path, (list, tuple)):
