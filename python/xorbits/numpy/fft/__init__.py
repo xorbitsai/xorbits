@@ -31,7 +31,7 @@ def __dir__():
     if NUMPY_FFT_METHODS is None:
         NUMPY_FFT_METHODS = collect_numpy_module_members(numpy.fft)
 
-    return list(MARS_TENSOR_FFT_CALLABLES.keys())  # + list(NUMPY_FFT_METHODS.keys())
+    return list(MARS_TENSOR_FFT_CALLABLES.keys()) + list(NUMPY_FFT_METHODS.keys())
 
 
 def __getattr__(name: str):

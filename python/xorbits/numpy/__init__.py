@@ -112,7 +112,7 @@ def __dir__():
     return (
         list(MARS_TENSOR_CALLABLES.keys())
         + list((MARS_TENSOR_OBJECTS.keys()))
-        # + list(NUMPY_MODULE_METHODS.keys())
+        + list(NUMPY_MODULE_METHODS.keys())
     )
 
 
