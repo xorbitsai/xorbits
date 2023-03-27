@@ -193,6 +193,8 @@ class MarsServiceConfig(AppServiceConfig):
 
         self._extra_args = extra_args or ""
 
+        self._redirect = kwargs.pop("redirect", True)
+
         cpu = cpu or 1
         memory = memory or "1 GiB"
         super().__init__(cpu=cpu, memory=memory, **kwargs)
@@ -246,8 +248,19 @@ class MarsServiceConfig(AppServiceConfig):
 
         cmd = self._cmd_tmpl.format(executable=python_executable)
         # log to local log dir since using default log dir under /tmp results in a permission error.
+        if self._redirect:
+            redirect = (
+                f"> /tmp/{self.service_name}.stdout.log "
+                f"2> /tmp/{self.service_name}.stderr.log"
+            )
+        else:
+            redirect = ""
         bash_lines.append(
-            f"{cmd} -m {_get_local_app_module(self.service_name)} {self._extra_args} --log-dir logs > /tmp/{self.service_name}.stdout.log 2> /tmp/{self.service_name}.stderr.log"
+            (
+                f"{cmd} "
+                f"-m {_get_local_app_module(self.service_name)} {self._extra_args}"
+                f" --log-dir logs {redirect}"
+            )
         )
         return "\n".join(bash_lines) + "\n"
 

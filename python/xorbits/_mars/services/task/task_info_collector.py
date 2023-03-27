@@ -329,39 +329,49 @@ class TaskInfoCollector:
 
 class TaskInfoCollectorActor(mo.Actor):
     def __init__(self, profiling_config: Optional[Dict[str, Any]] = None):
+        super().__init__()
         if profiling_config is None:
             profiling_config = dict()
         experimental_profiling_config = profiling_config.get("experimental", dict())
         self._collect_task_info_enabled = experimental_profiling_config.get(
             "collect_task_info_enabled", False
         )
-        self._task_info_root_path = experimental_profiling_config.get(
-            "task_info_root_path", None
-        )
-        if self._task_info_root_path is None:
-            self._task_info_root_path = self._get_default_profiling_results_dir()
-        logger.info(f"Task info root path: {self._task_info_root_path}")
-        self._task_info_storage_options = experimental_profiling_config.get(
-            "task_info_storage_options", {}
-        )
+        if self._collect_task_info_enabled:
+            self._task_info_root_path = experimental_profiling_config.get(
+                "task_info_root_path", None
+            )
+            if self._task_info_root_path is None:
+                self._task_info_root_path = (
+                    self._get_or_create_default_profiling_results_dir()
+                )
+            logger.info(f"Task info root path: {self._task_info_root_path}")
+            self._task_info_storage_options = experimental_profiling_config.get(
+                "task_info_storage_options", {}
+            )
 
-        self._scheme = get_scheme(self._task_info_root_path)
-        self._fs = get_fs(self._task_info_root_path, self._task_info_storage_options)
-        self._loop = asyncio.new_event_loop()
-        self._isolation = Isolation(self._loop)
-        self._isolation.start()
+            self._scheme = get_scheme(self._task_info_root_path)
+            self._fs = get_fs(
+                self._task_info_root_path, self._task_info_storage_options
+            )
+            self._loop = asyncio.new_event_loop()
+            self._isolation = Isolation(self._loop)
+            self._isolation.start()
 
     @staticmethod
-    def _get_default_profiling_results_dir():
+    def _get_or_create_default_profiling_results_dir():
         import sys
 
         if sys.platform.startswith("win"):
-            return MARS_PROFILING_RESULTS_DIR_WIN
+            profiling_results_dir = MARS_PROFILING_RESULTS_DIR_WIN
         else:
-            return MARS_PROFILING_RESULTS_DIR
+            profiling_results_dir = MARS_PROFILING_RESULTS_DIR
+        os.makedirs(profiling_results_dir, exist_ok=True)
+        os.chmod(profiling_results_dir, mode=0o777)
+        return profiling_results_dir
 
     async def __pre_destroy__(self):
-        self._isolation.stop()
+        if self._collect_task_info_enabled:
+            self._isolation.stop()
 
     async def collect_task_info_enabled(self):
         return self._collect_task_info_enabled
