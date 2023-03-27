@@ -80,10 +80,8 @@ def _apply_log_file_path(
 ):
     if is_default_logging_config:
         assert "handler_file_handler" in config
-        if sys.platform.startswith("win"):
-            log_subdir = log_subdir.replace("\\", "/")
         log_file_path = os.path.join(log_subdir, DEFAULT_MARS_LOG_FILE_NAME)
-        config["handler_file_handler"]["args"] = rf"('{log_file_path}',)"
+        config["handler_file_handler"]["args"] = rf"(r'{log_file_path}',)"
         config["handler_file_handler"]["kwargs"] = (
             r"{'mode': 'a', "
             rf"'maxBytes': {DEFAULT_MARS_LOG_MAX_BYTES}, "
@@ -101,7 +99,7 @@ def _apply_log_file_path(
 
 def _parse_file_logging_config(
     logging_conf: Dict[str, Any]
-) -> configparser.RawConfigParser:
+) -> Tuple[configparser.RawConfigParser, str]:
     """
     Parse the file logging config and apply logging configurations with higher priority.
 
@@ -115,17 +113,19 @@ def _parse_file_logging_config(
     from_cmd = logging_conf.get("from_cmd", False)
     log_level = logging_conf.get("level", None)
     log_fmt = logging_conf.get("format", None)
-    log_subdir = _get_log_subdir(
-        logging_conf.get("log_dir", None), logging_conf.get("subdir_prefix", None)
-    )
+    # there's no need to add a prefix to the log subdir since it is shared by the supervisor and
+    # workers in a local cluster.
+    subdir_prefix = logging_conf.get("subdir_prefix", None) if from_cmd else None
+    if MARS_LOG_DIR_KEY in os.environ:
+        # in a local cluster, this env var may have been configured by another role.
+        log_subdir = os.environ[MARS_LOG_DIR_KEY]
+    else:
+        log_subdir = _get_log_subdir(logging_conf.get("log_dir", None), subdir_prefix)
+        # for FileLoggerActor(s).
+        os.environ[MARS_LOG_DIR_KEY] = log_subdir
     log_config_path = _get_log_config_path(logging_conf.get("log_config", None))
     is_default_logging_config = logging_conf.get("log_config", None) is None
     is_default_log_dir = logging_conf.get("log_dir", None) is None
-
-    # for FileLoggerActor(s).
-    os.environ[MARS_LOG_DIR_KEY] = log_subdir
-    logger.info("Logging configuration file %s", log_config_path)
-    logger.info("Logging directory %s", log_subdir)
 
     config = configparser.RawConfigParser()
     config.read(log_config_path)
@@ -148,7 +148,7 @@ def _parse_file_logging_config(
             config["formatter_console"]["format"] = root_fmt
             config["formatters"]["keys"] += ",console"
             config["handler_stream_handler"]["formatter"] = "console"
-    return config
+    return config, log_config_path
 
 
 def _get_or_create_default_log_dir() -> str:
@@ -186,12 +186,14 @@ def _get_log_config_path(log_config: Optional[str]) -> str:
 def _config_logging(
     logging_conf: Dict[str, Any]
 ) -> Optional[configparser.RawConfigParser]:
-    parsed_logging_conf = _parse_file_logging_config(logging_conf)
+    parsed_logging_conf, log_config_path = _parse_file_logging_config(logging_conf)
 
     logging.config.fileConfig(
         parsed_logging_conf,
         disable_existing_loggers=False,
     )
+    logger.info("Logging configurations from %s have been applied", log_config_path)
+    logger.info("Logging directory %s", os.environ[MARS_LOG_DIR_KEY])
 
     return parsed_logging_conf
 

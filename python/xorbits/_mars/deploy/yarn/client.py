@@ -126,6 +126,8 @@ def new_cluster(
     supervisor_log_config = kwargs.pop("supervisor_log_config", log_config)
     worker_log_config = kwargs.pop("worker_log_config", log_config)
 
+    redirect = kwargs.pop("redirect", True)
+
     supervisor_config = MarsSupervisorConfig(
         instances=supervisor_num,
         environment=environment,
@@ -136,6 +138,7 @@ def new_cluster(
         log_config=supervisor_log_config,
         extra_args=supervisor_extra_args,
         cmd_tmpl=cmd_tmpl,
+        redirect=redirect,
     )
     worker_config = MarsWorkerConfig(
         instances=worker_num,
@@ -149,6 +152,7 @@ def new_cluster(
         log_config=worker_log_config,
         extra_args=worker_extra_args,
         cmd_tmpl=cmd_tmpl,
+        redirect=redirect,
     )
     app_config = MarsApplicationConfig(
         app_name,
