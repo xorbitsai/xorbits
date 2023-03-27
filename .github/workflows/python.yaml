@@ -119,7 +119,7 @@ jobs:
       run: |
         pip install numpy scipy cython coverage flaky
         
-        if [[ "$PYTHON" == "3.9" ]]; then
+        if {{ matrix.python-version == '3.9' }}; then
           conda install numba
         fi
         if [[ "$MODULE" == "xorbits" ]]; then
@@ -151,7 +151,7 @@ jobs:
           sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
           rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
         fi
-        if [[ "$PYTHON" == "3.9" ]]; then
+        if {{ matrix.python-version == '3.9' }}; then
           pip install h5py zarr matplotlib fastparquet
           conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
             "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
@@ -202,17 +202,20 @@ jobs:
           export YARN_HOME=$HADOOP_HOME
           export HADOOP_COMMON_LIB_NATIVE_DIR="$HADOOP_HOME/lib/native"
           export PATH="$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin"
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits -m hadoop
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning -m hadoop
         elif [[ "$MODULE" == "vineyard" ]]; then
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits/_mars/storage/tests/test_libs.py
+          mv .coverage build/.coverage.test_lib.file
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml xorbits/_mars/deploy/oscar/tests/test_local.py
+          mv .coverage build/.coverage.test_local.file
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml -k "vineyard" \
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
+          mv .coverage build/.coverage.test_vineyard_op.file
+          coverage combine build/
         elif [[ "$MODULE" == "_mars/learn" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
