@@ -29,7 +29,9 @@ def __dir__():
     if NUMPY_RANDOM_METHODS is None:
         NUMPY_RANDOM_METHODS = collect_numpy_module_members(numpy.random)
 
-    return list(MARS_TENSOR_RANDOM_CALLABLES.keys()) + list(NUMPY_RANDOM_METHODS.keys())
+    return list(
+        MARS_TENSOR_RANDOM_CALLABLES.keys()
+    )  # + list(NUMPY_RANDOM_METHODS.keys())
 
 
 def __getattr__(name: str):

@@ -30,7 +30,9 @@ def __dir__():
     if NUMPY_LINALG_METHODS is None:
         NUMPY_LINALG_METHODS = collect_numpy_module_members(numpy.linalg)
 
-    return list(MARS_TENSOR_LINALG_CALLABLES.keys()) + list(NUMPY_LINALG_METHODS.keys())
+    return list(
+        MARS_TENSOR_LINALG_CALLABLES.keys()
+    )  # + list(NUMPY_LINALG_METHODS.keys())
 
 
 def __getattr__(name: str):
