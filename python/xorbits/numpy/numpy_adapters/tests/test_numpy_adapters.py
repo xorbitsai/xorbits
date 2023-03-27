@@ -142,3 +142,20 @@ def test_tensorinv_fallback(setup):
         )
 
         assert np.equal(xnp_output.all(), np_output.all())
+
+
+def test_docstring():
+    docstring = xnp.trace.__doc__
+    assert docstring is not None and docstring.endswith(
+        "This docstring was copied from numpy."
+    )
+
+    docstring = xnp.linalg.det.__doc__
+    assert docstring is not None and docstring.endswith(
+        "This docstring was copied from numpy.linalg."
+    )
+
+    docstring = xnp.random.default_rng.__doc__
+    assert docstring is not None and docstring.endswith(
+        "This docstring was copied from numpy.random."
+    )

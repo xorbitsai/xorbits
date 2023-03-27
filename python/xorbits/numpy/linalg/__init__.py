@@ -13,16 +13,24 @@
 # limitations under the License.
 
 import inspect
+from typing import Any, Callable, Dict
 
 from ...core.utils.fallback import unimplemented_func
 
-METHODS = None
+NUMPY_LINALG_METHODS: Dict[str, Callable] = {}
 
 
 def __dir__():
     from ..mars_adapters import MARS_TENSOR_LINALG_CALLABLES
+    from ..numpy_adapters import collect_numpy_module_members
 
-    return list(MARS_TENSOR_LINALG_CALLABLES.keys())
+    global NUMPY_LINALG_METHODS
+    import numpy
+
+    if NUMPY_LINALG_METHODS is None:
+        NUMPY_LINALG_METHODS = collect_numpy_module_members(numpy.linalg)
+
+    return list(MARS_TENSOR_LINALG_CALLABLES.keys()) + list(NUMPY_LINALG_METHODS.keys())
 
 
 def __getattr__(name: str):
@@ -32,16 +40,16 @@ def __getattr__(name: str):
     if name in MARS_TENSOR_LINALG_CALLABLES:
         return MARS_TENSOR_LINALG_CALLABLES[name]
     else:
-        global METHODS
+        global NUMPY_LINALG_METHODS
         import numpy
 
-        if METHODS is None:
-            METHODS = collect_numpy_module_members(numpy.linalg)
+        if NUMPY_LINALG_METHODS is None:
+            NUMPY_LINALG_METHODS = collect_numpy_module_members(numpy.linalg)
 
         if not hasattr(numpy.linalg, name):
             raise AttributeError(name)
-        elif name in METHODS:
-            return METHODS[name]
+        elif name in NUMPY_LINALG_METHODS:
+            return NUMPY_LINALG_METHODS[name]
         else:  # pragma: no cover
             if inspect.ismethod(getattr(numpy.linalg, name)):
                 return unimplemented_func

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import inspect
+from typing import Any, Callable, Dict
 
 from numpy import (
     NAN,
@@ -70,7 +71,7 @@ from numpy.lib.index_tricks import ndindex
 
 from ..core.utils.fallback import unimplemented_func
 
-METHODS = None
+NUMPY_MODULE_METHODS: Dict[str, Callable] = {}
 
 
 def _install():
@@ -100,8 +101,19 @@ from .core import ndarray
 
 def __dir__():
     from .mars_adapters import MARS_TENSOR_CALLABLES, MARS_TENSOR_OBJECTS
+    from .numpy_adapters import collect_numpy_module_members
 
-    return list(MARS_TENSOR_CALLABLES.keys()) + list((MARS_TENSOR_OBJECTS.keys()))
+    global NUMPY_MODULE_METHODS
+    import numpy
+
+    if NUMPY_MODULE_METHODS is None:
+        NUMPY_MODULE_METHODS = collect_numpy_module_members(numpy)
+
+    return (
+        list(MARS_TENSOR_CALLABLES.keys())
+        + list((MARS_TENSOR_OBJECTS.keys()))
+        + list(NUMPY_MODULE_METHODS.keys())
+    )
 
 
 def __getattr__(name: str):
@@ -113,16 +125,16 @@ def __getattr__(name: str):
     elif name in MARS_TENSOR_OBJECTS:
         return MARS_TENSOR_OBJECTS[name]
     else:
-        global METHODS
+        global NUMPY_MODULE_METHODS
         import numpy
 
-        if METHODS is None:
-            METHODS = collect_numpy_module_members(numpy)
+        if NUMPY_MODULE_METHODS is None:
+            NUMPY_MODULE_METHODS = collect_numpy_module_members(numpy)
 
         if not hasattr(numpy, name):
             raise AttributeError(name)
-        elif name in METHODS:
-            return METHODS[name]
+        elif name in NUMPY_MODULE_METHODS:
+            return NUMPY_MODULE_METHODS[name]
         else:  # pragma: no cover
             if inspect.ismethod(getattr(numpy, name)):
                 return unimplemented_func
