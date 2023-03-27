@@ -112,7 +112,12 @@ async def actor_pool(task_info_root_path):
         )
         await mo.create_actor(
             TaskInfoCollectorActor,
-            {"experimental": {"task_info_root_path": task_info_root_path}},
+            {
+                "experimental": {
+                    "collect_task_info_enabled": True,
+                    "task_info_root_path": task_info_root_path,
+                }
+            },
             uid=TaskInfoCollectorActor.default_uid(),
             address=pool.external_address,
         )

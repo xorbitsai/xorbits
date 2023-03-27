@@ -38,7 +38,9 @@ from ..pool import (
 
 
 def test_parse_file_logging_config():
-    with tempfile.TemporaryDirectory(prefix="mars_test_") as tempdir:
+    with tempfile.TemporaryDirectory(
+        prefix="mars_test_parse_file_logging_config"
+    ) as tempdir:
         logging_conf = {
             "from_cmd": True,
             "level": "ERROR",
@@ -46,7 +48,7 @@ def test_parse_file_logging_config():
             "log_dir": tempdir,
         }
 
-        parsed_logging_conf = _parse_file_logging_config(logging_conf)
+        parsed_logging_conf, _ = _parse_file_logging_config(logging_conf)
 
         # check if log level has been applied.
         loggers = parsed_logging_conf["loggers"]["keys"].split(",")
@@ -67,9 +69,14 @@ def test_parse_file_logging_config():
         assert "handler_file_handler" in parsed_logging_conf
         assert tempdir in parsed_logging_conf["handler_file_handler"]["args"]
 
+        # clean up.
+        del os.environ[MARS_LOG_DIR_KEY]
+
 
 def test_interactive_env_parse_file_logging_config(caplog):
-    with tempfile.TemporaryDirectory(prefix="mars_test_") as tempdir:
+    with tempfile.TemporaryDirectory(
+        prefix="mars_test_interactive_env_parse_file_logging_config"
+    ) as tempdir:
         # check if config by logging has the highest priority.
         with caplog.at_level(logging.ERROR):
             logging_conf = {
@@ -77,13 +84,18 @@ def test_interactive_env_parse_file_logging_config(caplog):
                 "level": "DEBUG",
                 "log_dir": tempdir,
             }
-            parsed_logging_conf = _parse_file_logging_config(logging_conf)
+            parsed_logging_conf, _ = _parse_file_logging_config(logging_conf)
             assert "handler_stream_handler" in parsed_logging_conf
             assert parsed_logging_conf["handler_stream_handler"]["level"] == "ERROR"
 
+        # clean up.
+        del os.environ[MARS_LOG_DIR_KEY]
+
 
 def test_user_defined_log_dir_and_file_logging_config():
-    with tempfile.TemporaryDirectory(prefix="mars_test_") as tempdir:
+    with tempfile.TemporaryDirectory(
+        prefix="mars_test_user_defined_log_dir_and_file_logging_config"
+    ) as tempdir:
         logging_config_file = os.path.join(tempdir, "test-file-logging.conf")
         with open(logging_config_file, "w") as fd:
             content = """[loggers]
@@ -114,6 +126,9 @@ format=%(asctime)s %(name)-12s %(process)d %(levelname)-8s %(message)s
         with pytest.raises(ValueError, match="Unable to change the log directory"):
             _parse_file_logging_config(logging_conf)
 
+        # clean up.
+        del os.environ[MARS_LOG_DIR_KEY]
+
 
 def test_get_root_logger_level_and_format(caplog):
     with caplog.at_level(logging.DEBUG):
@@ -122,7 +137,7 @@ def test_get_root_logger_level_and_format(caplog):
 
 
 def test_config_logging(caplog):
-    with tempfile.TemporaryDirectory(prefix="mars_test_") as tempdir:
+    with tempfile.TemporaryDirectory(prefix="mars_test_config_logging") as tempdir:
         # non-interactive mode.
         logging_conf = {
             "from_cmd": True,
@@ -176,6 +191,9 @@ def test_config_logging(caplog):
             assert logger.handlers[1].maxBytes == DEFAULT_MARS_LOG_MAX_BYTES
             assert logger.handlers[1].backupCount == DEFAULT_MARS_LOG_BACKUP_COUNT
 
+        # clean up.
+        del os.environ[MARS_LOG_DIR_KEY]
+
 
 def test_non_existent_file_logging_config():
     with pytest.raises(RuntimeError, match="Logging configuration file does not exist"):
@@ -197,7 +215,7 @@ def test_default_log_dir():
 
 
 def test_log_subdir_prefix():
-    with tempfile.TemporaryDirectory(prefix="mars_test_") as tempdir:
+    with tempfile.TemporaryDirectory(prefix="mars_test_log_subdir_prefix") as tempdir:
         prefix = "test_"
         log_subdir = _get_log_subdir(tempdir, prefix)
         assert log_subdir.startswith(tempdir)
