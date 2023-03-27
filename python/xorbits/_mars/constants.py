@@ -12,19 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Env key for Mars log absolute path
+import os
+
+MARS_TEMP_DIR = "/tmp/xorbits"
+MARS_TEMP_DIR_WIN = "C:\\Temp\\xorbits"
+
+# logging.
 MARS_LOG_DIR_KEY = "MARS_LOG_DIR"
-DEFAULT_MARS_LOG_DIR = "/tmp/mars_log"
-DEFAULT_MARS_LOG_DIR_WIN = "C:\\Temp\\mars_log"
-DEFAULT_MARS_LOG_FILE_NAME = "mars.log"
+DEFAULT_MARS_LOG_DIR = os.path.join(MARS_TEMP_DIR, "log")
+DEFAULT_MARS_LOG_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "log")
+DEFAULT_MARS_LOG_FILE_NAME = "xorbits.log"
 DEFAULT_MARS_LOG_MAX_BYTES = 100 * 1024 * 1024
 DEFAULT_MARS_LOG_BACKUP_COUNT = 30
 
-# Mars log file name prefix
-MARS_LOG_PREFIX = "mars_"
-
-MARS_PROFILING_RESULTS_DIR = "/tmp/mars_profiling"
-MARS_PROFILING_RESULTS_DIR_WIN = "C:\\Temp\\mars_profiling"
-
-# The prefix of the temporary directory where the Mars temp files are located
-MARS_TMP_DIR_PREFIX = "mars_tmp_"
+# profiling.
+MARS_PROFILING_RESULTS_DIR = os.path.join(MARS_TEMP_DIR, "profiling")
+MARS_PROFILING_RESULTS_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "profiling")
