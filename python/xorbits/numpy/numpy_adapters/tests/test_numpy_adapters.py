@@ -21,6 +21,7 @@ from .... import numpy as xnp
 @pytest.mark.parametrize(
     "mod_name, func, params",
     [
+        ("", "busday_count", ["2011-01", "2011-02"]),
         ("", "isneginf", [np.NINF]),
         ("", "isposinf", [np.PINF]),
         (
@@ -140,6 +141,38 @@ def test_tensorinv_fallback(setup):
         assert f"xorbits.numpy.linalg.tensorinv will fallback to NumPy" == str(
             w[0].message
         )
+
+        assert np.equal(xnp_output.all(), np_output.all())
+
+
+def test_busday_offset(setup):
+    with pytest.warns(Warning) as w:
+        xnp_output = xnp.busday_offset("2011-10", 0, roll="forward").execute().fetch()
+        np_output = np.busday_offset("2011-10", 0, roll="forward")
+
+        assert f"xorbits.numpy.busday_offset will fallback to NumPy" == str(
+            w[0].message
+        )
+
+        assert np.equal(xnp_output.all(), np_output.all())
+
+
+def test_is_busday(setup):
+    with pytest.warns(Warning) as w:
+        xnp_output = (
+            xnp.is_busday(
+                ["2011-07-01", "2011-07-02", "2011-07-18"],
+                holidays=["2011-07-01", "2011-07-04", "2011-07-17"],
+            )
+            .execute()
+            .fetch()
+        )
+        np_output = np.is_busday(
+            ["2011-07-01", "2011-07-02", "2011-07-18"],
+            holidays=["2011-07-01", "2011-07-04", "2011-07-17"],
+        )
+
+        assert f"xorbits.numpy.is_busday will fallback to NumPy" == str(w[0].message)
 
         assert np.equal(xnp_output.all(), np_output.all())
 

@@ -23,6 +23,9 @@ from ...core.adapter import MarsOutputType, wrap_mars_callable
 from ...core.utils.fallback import wrap_fallback_module_method
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
+    np.busday_count: MarsOutputType.tensor,
+    np.busday_offset: MarsOutputType.object,
+    np.is_busday: MarsOutputType.object,
     np.isneginf: MarsOutputType.object,
     np.isposinf: MarsOutputType.object,
     np.einsum_path: MarsOutputType.object,
