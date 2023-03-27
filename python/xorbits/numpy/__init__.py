@@ -106,7 +106,7 @@ def __dir__():
     global NUMPY_MODULE_METHODS
     import numpy
 
-    if NUMPY_MODULE_METHODS is None:
+    if NUMPY_MODULE_METHODS is None:  # pragma: no cover
         NUMPY_MODULE_METHODS = collect_numpy_module_members(numpy)
 
     return (
