@@ -42,7 +42,7 @@ def __getattr__(name: str):
         global NUMPY_RANDOM_METHODS
         import numpy
 
-        if NUMPY_RANDOM_METHODS is None:
+        if NUMPY_RANDOM_METHODS is None:  # pragma: no cover
             NUMPY_RANDOM_METHODS = collect_numpy_module_members(numpy.random)
 
         if not hasattr(numpy.random, name):

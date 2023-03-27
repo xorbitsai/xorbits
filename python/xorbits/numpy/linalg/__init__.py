@@ -43,7 +43,7 @@ def __getattr__(name: str):
         global NUMPY_LINALG_METHODS
         import numpy
 
-        if NUMPY_LINALG_METHODS is None:
+        if NUMPY_LINALG_METHODS is None:  # pragma: no cover
             NUMPY_LINALG_METHODS = collect_numpy_module_members(numpy.linalg)
 
         if not hasattr(numpy.linalg, name):
