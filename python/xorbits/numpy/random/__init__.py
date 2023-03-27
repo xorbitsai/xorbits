@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import inspect
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 
 from ...core.utils.fallback import unimplemented_func
 
-NUMPY_RANDOM_METHODS: Dict[str, Callable] = {}
+NUMPY_RANDOM_METHODS: Optional[Dict[str, Callable]] = None
 
 
 def __dir__():

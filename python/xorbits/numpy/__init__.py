@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import inspect
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 
 from numpy import (
     NAN,
@@ -71,7 +71,7 @@ from numpy.lib.index_tricks import ndindex
 
 from ..core.utils.fallback import unimplemented_func
 
-NUMPY_MODULE_METHODS: Dict[str, Callable] = {}
+NUMPY_MODULE_METHODS: Optional[Dict[str, Callable]] = None
 
 
 def _install():
