@@ -205,13 +205,13 @@ jobs:
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning -m hadoop
         elif [[ "$MODULE" == "vineyard" ]]; then
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml xorbits/_mars/storage/tests/test_libs.py
+            --cov-config=setup.cfg --cov-report= --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
           mv .coverage build/.coverage.test_lib.file
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml xorbits/_mars/deploy/oscar/tests/test_local.py
+            --cov-config=setup.cfg --cov-report= --cov=xorbits xorbits/_mars/deploy/oscar/tests/test_local.py
           mv .coverage build/.coverage.test_local.file
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml -k "vineyard" \
+            --cov-config=setup.cfg --cov-report= --cov=xorbits -k "vineyard" \
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
           mv .coverage build/.coverage.test_vineyard_op.file
