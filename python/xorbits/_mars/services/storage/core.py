@@ -641,6 +641,7 @@ class StorageManagerActor(mo.StatelessActor):
                             )
                     await self._cluster_api.set_band_storage_info.batch(*upload_tasks)
                     failure_num = 0
+                    await asyncio.sleep(1)
                 except asyncio.CancelledError:  # pragma: no cover
                     break
                 except (
@@ -651,7 +652,6 @@ class StorageManagerActor(mo.StatelessActor):
                     if failure_num >= 3:
                         # Exit the loop after three consecutive failures.
                         break
-                await asyncio.sleep(1)
 
     async def upload_disk_info(self):
         from ..cluster import DiskInfo
