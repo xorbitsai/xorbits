@@ -105,6 +105,7 @@ def _run_yarn_test_with_env(env_path, timeout):
             extra_args=f"--config-file {MARS_ROOT}/xorbits/_mars/deploy/yarn/tests/test_yarn_config.yml",
             log_when_fail=True,
             cmd_tmpl=cmd_tmpl,
+            redirect=False,
         )
         assert cluster.endpoint is not None
 
