@@ -26,10 +26,7 @@ import pytest
 from .... import tensor as mt
 from ....config import option_context
 from ....core import tile
-from ....tests.core import require_ray
-from ....utils import lazy_import
 from ...core import DatetimeIndex, Float64Index, IndexValue, Int64Index
-from ...utils import ray_deprecate_ml_dataset
 from ..core import merge_small_files
 from ..dataframe import from_pandas as from_pandas_df
 from ..date_range import date_range
@@ -42,16 +39,8 @@ from ..from_tensor import (
 from ..index import from_pandas as from_pandas_index
 from ..index import from_tileable
 from ..read_csv import DataFrameReadCSV, read_csv
-from ..read_raydataset import (
-    DataFrameReadMLDataset,
-    DataFrameReadRayDataset,
-    read_ray_dataset,
-    read_ray_mldataset,
-)
 from ..read_sql import DataFrameReadSQL, read_sql_query, read_sql_table
 from ..series import from_pandas as from_pandas_series
-
-ray = lazy_import("ray")
 
 
 def test_from_pandas_dataframe():
@@ -519,34 +508,6 @@ def test_read_sql():
             read_sql_query("select * from " + table_name, uri, partition_col="b")
 
 
-@require_ray
-def test_read_ray_dataset(ray_start_regular):
-    test_df1 = pd.DataFrame(
-        {
-            "a": np.arange(10).astype(np.int64, copy=False),
-            "b": [f"s{i}" for i in range(10)],
-        }
-    )
-    test_df2 = pd.DataFrame(
-        {
-            "a": np.arange(10).astype(np.int64, copy=False),
-            "b": [f"s{i}" for i in range(10)],
-        }
-    )
-    df = pd.concat([test_df1, test_df2])
-    ds = ray.data.from_pandas_refs([ray.put(test_df1), ray.put(test_df2)])
-    mdf = read_ray_dataset(ds)
-
-    assert mdf.shape[1] == 2
-    pd.testing.assert_index_equal(df.columns, mdf.columns_value.to_pandas())
-    pd.testing.assert_series_equal(df.dtypes, mdf.dtypes)
-
-    mdf = tile(mdf)
-    assert len(mdf.chunks) == 2
-    for chunk in mdf.chunks:
-        assert isinstance(chunk.op, DataFrameReadRayDataset)
-
-
 def test_date_range():
     with pytest.raises(TypeError):
         _ = date_range("2020-1-1", periods="2")
@@ -586,43 +547,6 @@ def test_date_range():
         assert c.index_value.is_unique == ec.is_unique
         assert c.index_value.is_monotonic_increasing == ec.is_monotonic_increasing
         assert c.name == ec.name
-
-
-@require_ray
-@pytest.mark.skipif(
-    ray_deprecate_ml_dataset in (True, None),
-    reason="Ray (>=2.0) has deprecated MLDataset.",
-)
-def test_read_ray_mldataset(ray_start_regular):
-    test_df1 = pd.DataFrame(
-        {
-            "a": np.arange(10).astype(np.int64, copy=False),
-            "b": [f"s{i}" for i in range(10)],
-        }
-    )
-    test_df2 = pd.DataFrame(
-        {
-            "a": np.arange(10).astype(np.int64, copy=False),
-            "b": [f"s{i}" for i in range(10)],
-        }
-    )
-    df = pd.concat([test_df1, test_df2])
-    import ray.util.iter
-    from ray.util.data import from_parallel_iter
-
-    ml_dataset = from_parallel_iter(
-        ray.util.iter.from_items([test_df1, test_df2], num_shards=2), need_convert=False
-    )
-    mdf = read_ray_mldataset(ml_dataset)
-
-    assert mdf.shape[1] == 2
-    pd.testing.assert_index_equal(df.columns, mdf.columns_value.to_pandas())
-    pd.testing.assert_series_equal(df.dtypes, mdf.dtypes)
-
-    mdf = tile(mdf)
-    assert len(mdf.chunks) == 2
-    for chunk in mdf.chunks:
-        assert isinstance(chunk.op, DataFrameReadMLDataset)
 
 
 def test_merge_small_files():
