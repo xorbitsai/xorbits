@@ -36,7 +36,6 @@ from xoscar.metrics import Metrics
 
 from ...config import options
 from ...core import ChunkType, TileableGraph, TileableType, enter_mode
-from ...core.entrypoints import init_extension_entrypoints
 from ...core.operand import Fetch
 from ...lib.aio import (
     Isolation,
@@ -2003,8 +2002,6 @@ def new_session(
     new: bool = True,
     **kwargs,
 ) -> AbstractSession:
-    # load third party extensions.
-    init_extension_entrypoints()
     ensure_isolation_created(kwargs)
 
     if address is None:
