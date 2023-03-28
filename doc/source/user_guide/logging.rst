@@ -9,7 +9,7 @@ as well as files.
 
 Log to stderr
 -------------
-The default log level for stderr is set to ``WARNING`` to to limit the amount of log output.
+The default log level for stderr is set to ``WARNING`` to limit the amount of log output.
 
 In a :ref:`local deployment <deployment_local>`, you can modify the log level and format before
 initializing Xorbits as follows:
