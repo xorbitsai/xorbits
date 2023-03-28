@@ -115,11 +115,12 @@ jobs:
     - name: Install dependencies
       env:
         MODULE: ${{ matrix.module }}
+        PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
         pip install numpy scipy cython coverage flaky
         
-        if {{ matrix.python-version == '3.9' }}; then
+        if {{ "$PYTHON" == '3.9' }}; then
           conda install numba
         fi
         if [[ "$MODULE" == "xorbits" ]]; then
@@ -151,7 +152,7 @@ jobs:
           sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
           rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
         fi
-        if {{ matrix.python-version == '3.9' }}; then
+        if {{ "$PYTHON" == '3.9' }}; then
           pip install h5py zarr matplotlib fastparquet
           conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
             "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
