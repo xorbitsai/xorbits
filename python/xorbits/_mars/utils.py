@@ -452,31 +452,6 @@ def deserialize_serializable(ser_serializable: bytes):
     return deserialize(header2, buffers2)
 
 
-def register_ray_serializer(obj_type, serializer=None, deserializer=None):
-    try:
-        import ray
-
-        try:
-            ray.register_custom_serializer(
-                obj_type, serializer=serializer, deserializer=deserializer
-            )
-        except AttributeError:  # ray >= 1.0
-            try:
-                from ray.worker import global_worker
-
-                global_worker.check_connected()
-                context = global_worker.get_serialization_context()
-                context.register_custom_serializer(
-                    obj_type, serializer=serializer, deserializer=deserializer
-                )
-            except AttributeError:  # ray >= 1.2.0
-                ray.util.register_serializer(
-                    obj_type, serializer=serializer, deserializer=deserializer
-                )
-    except ImportError:
-        pass
-
-
 cudf = lazy_import("cudf")
 
 
