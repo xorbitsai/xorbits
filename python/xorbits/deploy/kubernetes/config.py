@@ -784,7 +784,7 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         super().__init__(*args, **kwargs)
         if self._web_port:
             self.add_port(self._web_port)
-            self.add_env("MARS_K8S_SUPERVISOR_WEB_PORT", self._web_port)
+        self.add_env("MARS_K8S_SUPERVISOR_WEB_PORT", self._web_port)
 
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(

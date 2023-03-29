@@ -90,6 +90,8 @@ async def test_api(actor_pool):
     with pytest.raises(NotImplementedError):
         await api.request_workers(worker_num=4, timeout=1)
     with pytest.raises(NotImplementedError):
+        await api.request_workers(worker_num=4, timeout=1)
+    with pytest.raises(NotImplementedError):
         await api.release_worker("127.0.0.1:1234")
 
     await api.set_node_status(pool_addr, NodeRole.WORKER, NodeStatus.STOPPING)
