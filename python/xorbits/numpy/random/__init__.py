@@ -26,7 +26,7 @@ def __dir__():
     global NUMPY_RANDOM_METHODS
     import numpy
 
-    if NUMPY_RANDOM_METHODS is None:
+    if NUMPY_RANDOM_METHODS is None:  # pragma: no cover
         NUMPY_RANDOM_METHODS = collect_numpy_module_members(numpy.random)
 
     return list(MARS_TENSOR_RANDOM_CALLABLES.keys()) + list(NUMPY_RANDOM_METHODS.keys())
