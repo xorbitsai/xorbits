@@ -28,7 +28,7 @@ def __dir__():
     global NUMPY_FFT_METHODS
     import numpy
 
-    if NUMPY_FFT_METHODS is None:
+    if NUMPY_FFT_METHODS is None:  # pragma: no cover
         NUMPY_FFT_METHODS = collect_numpy_module_members(numpy.fft)
 
     return list(MARS_TENSOR_FFT_CALLABLES.keys()) + list(NUMPY_FFT_METHODS.keys())
