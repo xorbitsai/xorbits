@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import glob
 import logging
 import os
@@ -26,6 +25,7 @@ import numpy as np
 import pytest
 
 from .... import numpy as xnp
+from ...._mars.services.cluster.api.web import WebClusterAPI
 from ...._mars.utils import lazy_import
 from ....utils import get_local_py_version
 from .. import new_cluster
@@ -173,7 +173,7 @@ def _start_kube_cluster(**kwargs):
                 )
             )
 
-        yield
+        yield cluster_client
 
         [p.terminate() for p in log_processes]
     finally:
@@ -221,3 +221,40 @@ def test_run_in_kubernetes():
 
         res = xr.spawn(gen_data).to_object()
         print(res)
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.asyncio
+async def test_request_workers():
+    with _start_kube_cluster(
+        supervisor_cpu=0.5,
+        supervisor_mem="1G",
+        worker_cpu=0.5,
+        worker_mem="1G",
+        worker_cache_mem="64m",
+        use_local_image=True,
+        pip=["Faker"],
+    ) as cluster_client:
+        cluster_api = WebClusterAPI(address=cluster_client.endpoint)
+        # with pytest.raises(TimeoutError) as exc0:
+        #     await cluster_api.request_workers(worker_num=1, timeout=0)
+        # assert exc0.type == TimeoutError
+        # assert "Request worker timeout" in str(exc0.value)
+        # with pytest.raises(ValueError) as exc:
+        #     await cluster_api.request_workers(worker_num=1, timeout=-10)
+        # assert exc.type == ValueError
+        # assert "Please specify a `timeout` that is greater than zero" in str(exc.value)
+        # with pytest.raises(ValueError) as exc1:
+        #     await cluster_api.request_workers(worker_num=-10, timeout=1)
+        # assert exc1.type == ValueError
+        # assert "Please specify a `worker_num` that is greater than zero" in str(
+        #     exc1.value
+        # )
+        # with pytest.raises(ValueError) as exc2:
+        #     await cluster_api.request_workers(worker_num=-10, timeout=1)
+        # assert exc1.type == ValueError
+        # assert "Please specify a `worker_num` that is greater than zero" in str(
+        #     exc2.value
+        # )
+        new_workers = await cluster_api.request_workers(worker_num=1, timeout=30)
+        assert len(new_workers) == 2

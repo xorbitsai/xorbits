@@ -110,7 +110,8 @@ jobs:
       if: ${{ matrix.module == 'kubernetes' }}
       with:
         driver: none
-        kubernetes-version: v1.23.12
+        kubernetes-version: v1.25.3
+        minikube-version: 1.28.0
 
     - name: Install dependencies
       env:

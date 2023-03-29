@@ -88,7 +88,7 @@ async def test_api(actor_pool):
             timeout=0.1,
         )
     with pytest.raises(NotImplementedError):
-        await api.request_worker(timeout=1)
+        await api.request_workers(worker_num=4, timeout=1)
     with pytest.raises(NotImplementedError):
         await api.release_worker("127.0.0.1:1234")
 

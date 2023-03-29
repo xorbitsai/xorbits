@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import asyncio
+import json
 import logging
 import os
+import time
 from typing import Any, AsyncGenerator, Dict, List, Optional, TypeVar
 
 from ..._mars.deploy.utils import next_in_thread, wait_all_supervisors_ready
@@ -60,6 +62,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         self._service_name = os.environ.get("MARS_K8S_SERVICE_NAME")
         self._full_label_selector = None
         self._client = client.CoreV1Api(client.ApiClient(self._k8s_config))
+        self._client2 = client.AppsV1Api(client.ApiClient(self._k8s_config))
 
     @classmethod
     async def create(
@@ -195,6 +198,41 @@ class K8SClusterBackend(AbstractClusterBackend):
         timeout: Optional[int] = None,
     ) -> str:
         raise NotImplementedError
+
+    async def request_workers(
+        self, worker_num: int, timeout: Optional[int] = None
+    ) -> List[str]:
+        if worker_num <= 0:
+            raise ValueError("Please specify a `worker_num` that is greater than zero")
+        start_time = time.time()
+        deployment = self._client2.read_namespaced_deployment(
+            name="xorbitsworker", namespace=self._k8s_namespace, _preload_content=False
+        )
+        deployment_data = json.loads(deployment.data)
+        old_replica = deployment_data["status"]["replicas"]
+        new_replica = old_replica + worker_num
+        body = {"spec": {"replicas": new_replica}}
+        self._client2.patch_namespaced_deployment_scale(
+            name="xorbitsworker", namespace=self._k8s_namespace, body=body
+        )
+        while True:
+            if timeout is not None and (timeout + start_time) < time.time():
+                raise TimeoutError("Request worker timeout")
+            new_workers = []
+            pods = self._client.list_namespaced_pod(
+                namespace=self._k8s_namespace, _preload_content=False
+            )
+            pods_list = json.loads(pods.data)["items"]
+            for p in pods_list:
+                if "xorbitsworker" in p["metadata"]["name"] and "podIP" in p["status"]:
+                    new_workers.append(
+                        p["status"]["podIP"]
+                        + ":"
+                        + str(p["spec"]["containers"][0]["ports"][0]["containerPort"])
+                    )
+            if len(new_workers) == new_replica:
+                return new_workers
+            time.sleep(1)
 
     async def release_worker(self, address: str):
         raise NotImplementedError

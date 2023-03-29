@@ -79,6 +79,11 @@ class AbstractClusterBackend(ABC):
         Address of the new created worker
         """
 
+    async def request_workers(
+        self, worker_num: int, timeout: Optional[int] = None
+    ) -> List[str]:
+        raise NotImplementedError
+
     @abstractmethod
     async def release_worker(self, address: str):
         """
