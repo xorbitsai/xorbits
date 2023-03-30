@@ -82,7 +82,7 @@ def _setup_test_session():
         try:
             yield sess
         finally:
-            sess.stop_server(isolation=False)
+            sess.stop_server()
             Router.set_instance(None)
 
 
@@ -99,7 +99,7 @@ def _setup_with_web():
     try:
         yield sess
     finally:
-        sess.stop_server(isolation=False)
+        sess.stop_server()
         Router.set_instance(None)
 
 
