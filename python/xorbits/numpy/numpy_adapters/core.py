@@ -23,6 +23,29 @@ from ...core.adapter import MarsOutputType, wrap_mars_callable
 from ...core.utils.fallback import wrap_fallback_module_method
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
+    np.busday_count: MarsOutputType.tensor,
+    np.busday_offset: MarsOutputType.object,
+    np.is_busday: MarsOutputType.object,
+    np.isneginf: MarsOutputType.object,
+    np.isposinf: MarsOutputType.object,
+    np.einsum_path: MarsOutputType.object,
+    np.kron: MarsOutputType.tensor,
+    np.outer: MarsOutputType.tensor,
+    np.trace: MarsOutputType.tensor,
+    np.linalg.cond: MarsOutputType.tensor,
+    np.linalg.det: MarsOutputType.tensor,
+    np.linalg.eig: MarsOutputType.object,
+    np.linalg.eigh: MarsOutputType.object,
+    np.linalg.eigvals: MarsOutputType.tensor,
+    np.linalg.eigvalsh: MarsOutputType.tensor,
+    np.linalg.tensorsolve: MarsOutputType.tensor,
+    np.linalg.multi_dot: MarsOutputType.tensor,
+    np.linalg.matrix_power: MarsOutputType.tensor,
+    np.linalg.matrix_rank: MarsOutputType.tensor,
+    np.linalg.lstsq: MarsOutputType.object,
+    np.linalg.slogdet: MarsOutputType.object,
+    np.linalg.pinv: MarsOutputType.tensor,
+    np.linalg.tensorinv: MarsOutputType.tensor,
     np.random.default_rng: MarsOutputType.object,
     np.random.Generator: MarsOutputType.object,
     np.random.PCG64: MarsOutputType.object,
@@ -62,11 +85,10 @@ def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
                 # avoid inconsistency: np.ramdom.__name__ is 'numpy.random' while np.ndarray.__name__ is 'ndarray'
                 np_mod_str = (
                     np_mod.__name__
-                    if "numpy." in np_mod.__name__
+                    if "numpy" in np_mod.__name__
                     else "numpy." + np_mod.__name__
                 )
                 warning_str = f"xorbits.{np_mod_str}.{name} will fallback to NumPy"
-
                 output_type = _get_output_type(getattr(np_mod, name))
 
                 module_methods[name] = wrap_mars_callable(
