@@ -81,14 +81,7 @@ class SerializableMeta(type):
                 properties_without_fields[k] = v
                 continue
 
-            field = all_fields.get(k)
-            if field is None:
-                properties_field_slot_names.append(k)
-            else:
-                v.name = field.name
-                v.get = field.get
-                v.set = field.set
-                v.__delete__ = field.__delete__
+            properties_field_slot_names.append(k)
             all_fields[k] = v
 
         # Make field order deterministic to serialize it as list instead of dict.
