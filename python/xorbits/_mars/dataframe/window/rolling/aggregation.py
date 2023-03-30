@@ -243,7 +243,8 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
 
         # find prev chunks
         i = cur_chunk_index[axis]
-        rest = window if not center else window // 2
+        # handle all the possibilities of op.closed.
+        rest = window if not center else window // 2 + 1
         prev_chunks = []
         while i > 0 and rest > 0:
             prev_chunk_index = list(cur_chunk_index)
@@ -272,7 +273,8 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
 
         # find succ chunks
         j = cur_chunk_index[axis]
-        rest = 0 if not center else window - window // 2 - 1
+        # handle all the possibilities of op.closed.
+        rest = 0 if not center else window - window // 2
         chunk_size = inp.chunk_shape[axis]
         succ_chunks = []
         while j < chunk_size - 1 and rest > 0:
@@ -341,7 +343,7 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         return prev_chunks, []
 
     @classmethod
-    def tile(cls, op):
+    def tile(cls, op: "DataFrameRollingAgg"):
         inp = op.input
         out = op.outputs[0]
         is_window_int = op.win_type != "freq"
@@ -402,12 +404,18 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
                     chunk_params["index_value"] = inp_chunk.index_value
                     chunk_params["columns_value"] = out.columns_value
                 else:
-                    if axis == 0:
+                    if op.func == "corr" and op.func_kwargs.get("pairwise", True):
+                        # the calculation of corr is axis irrelevant.
                         out_shape = list(out.shape)
-                        out_shape[axis] = inp_chunk.shape[axis]
+                        out_shape[0] = inp_chunk.shape[0] * out_shape[1]
                         chunk_params["shape"] = tuple(out_shape)
                     else:
-                        chunk_params["shape"] = inp_chunk.shape
+                        if axis == 0:
+                            out_shape = list(out.shape)
+                            out_shape[axis] = inp_chunk.shape[axis]
+                            chunk_params["shape"] = tuple(out_shape)
+                        else:
+                            chunk_params["shape"] = inp_chunk.shape
                     chunk_params["index_value"] = (
                         inp_chunk.index_value if axis == 0 else out.index_value
                     )
@@ -432,13 +440,19 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         if out.ndim == 1:
             params["shape"] = (inp.shape[0],)
         else:
-            params["shape"] = (inp.shape[0], params["shape"][1])
+            if op.func == "corr" and op.func_kwargs.get("pairwise", True):
+                params["shape"] = (
+                    inp.shape[0] * params["shape"][1],
+                    params["shape"][1],
+                )
+            else:
+                params["shape"] = (inp.shape[0], params["shape"][1])
         params["nsplits"] = calc_nsplits({c.index: c.shape for c in out_chunks})
         new_op = op.copy()
         return new_op.new_tileables([inp], kws=[params])
 
     @classmethod
-    def execute(cls, ctx, op):
+    def execute(cls, ctx, op: "DataFrameRollingAgg"):
         inp = ctx[op.input.key]
         axis = op.axis
         win_type = op.win_type
@@ -483,7 +497,13 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
 
         if pred_size > 0 or succ_size > 0:
             slc = [slice(None)] * result.ndim
-            slc[axis] = slice(pred_size, result.shape[axis] - succ_size)
+            if op.func == "corr" and op.func_kwargs.get("pairwise", True):
+                slc[axis] = slice(
+                    pred_size * len(inp.dtypes),
+                    result.shape[axis] - succ_size * len(inp.dtypes),
+                )
+            else:
+                slc[axis] = slice(pred_size, result.shape[axis] - succ_size)
             result = result.iloc[tuple(slc)]
 
         ctx[op.outputs[0].key] = result

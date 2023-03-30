@@ -12,9 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
+import tempfile
+from itertools import product
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from ..... import dataframe as md
 
@@ -144,3 +148,70 @@ def test_rolling_agg_execution(setup):
         result = r.execute().fetch()
         expected = getattr(raw.rolling(4), func)(ddof=0)
         pd.testing.assert_frame_equal(result, expected)
+
+
+@pytest.mark.parametrize(
+    "window,min_periods,center,on,axis,closed,pairwise,",
+    list(
+        product(
+            [3, "3D"],
+            [1, 3],
+            [False, True],
+            [None, "foo"],
+            [0, 1],
+            ["right", "left", "both", "neither"],
+            [True, False],
+        )
+    ),
+)
+def test_str_indexed_df_rolling_corr_execution(
+    window, min_periods, center, on, axis, closed, pairwise, setup
+):
+    # skipped for now due to https://github.com/pandas-dev/pandas/issues/52299
+    if on is not None:
+        return
+
+    # skip invalid combinations.
+    if (
+        on is not None
+        and isinstance(window, str)
+        or center
+        and isinstance(window, str)
+        or axis == 1
+        and isinstance(window, str)
+    ):
+        return
+
+    with tempfile.TemporaryDirectory("mars_test_df_rolling_corr_execution") as tempdir:
+        path = os.path.join(tempdir, "test.csv")
+        index = pd.date_range(start="2023-01-01", end="2023-01-05", freq="D")
+        pd.DataFrame(
+            {
+                "foo": list(range(0, 5)),
+                "bar": list(range(1, 6)),
+                "baz": list(range(2, 7)),
+            },
+            index=index,
+        ).to_csv(path)
+
+        mdf = md.read_csv(path, index_col=0, parse_dates=True, chunk_bytes=50)
+        mr = mdf.rolling(
+            window=window,
+            min_periods=min_periods,
+            center=center,
+            on=on,
+            axis=axis,
+            closed=closed,
+        ).corr(pairwise=pairwise)
+        mr.execute()
+
+        pdf = pd.read_csv(path, index_col=0, parse_dates=True)
+        pr = pdf.rolling(
+            window=window,
+            min_periods=min_periods,
+            center=center,
+            on=on,
+            axis=axis,
+            closed=closed,
+        ).corr(pairwise=pairwise)
+        pd.testing.assert_frame_equal(pr, mr.fetch())
