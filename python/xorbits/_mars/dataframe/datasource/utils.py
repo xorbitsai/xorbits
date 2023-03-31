@@ -21,7 +21,7 @@ from ...lib.filesystem import LocalFileSystem, get_fs
 
 
 def convert_to_abspath(
-    path: str | tuple[str] | list[str], storage_options: Optional[dict] = None
+    path: str | tuple[str] | list[str], storage_options: dict | None = None
 ) -> str | list[str]:
     # convert path to abs_path
     if isinstance(path, (list, tuple)):
