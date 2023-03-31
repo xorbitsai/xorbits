@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
 
 from ...lib.filesystem import LocalFileSystem, get_fs
 
