@@ -184,6 +184,11 @@ class Rolling(Window):
     def kurt(self, **kwargs):
         return self.aggregate("kurt", **kwargs)
 
+    def corr(self, **kwargs):
+        # for convenience, since the calculation of corr is axis irrelevant.
+        self._axis = 0
+        return self.aggregate("corr", **kwargs)
+
 
 def rolling(
     obj,
