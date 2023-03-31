@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-08 17:45+0800\n"
+"POT-Creation-Date: 2023-03-31 12:53+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -150,7 +150,15 @@ msgstr ""
 "部署时的镜像。例如，如果你的本地 Python 版本为 ``3.9``，Xorbits 将默认在部署过程中使用标签为 "
 "``xprobe/xorbits:<xorbits version>-py3.9`` 的镜像。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:79
+#: ../../source/user_guide/deployment_kubernetes.rst:78
+msgid ""
+"Since ``v0.2.1``, Xorbits image has removed support for python ``3.7`` "
+"and introduced support for python ``3.11``. The image tagged by "
+"``xprobe/xorbits:<xorbits version>`` is built on python ``3.10``."
+msgstr "自 ``v0.2.1`` 起，Xorbits 镜像不再支持 Python ``3.7``，同时新增对 Python ``3.11`` 的支持。"
+"标签为 ``xprobe/xorbits:<xorbits version>`` 的镜像基于 Python ``3.10`` 构建。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:82
 msgid ""
 "If you need to build an image from source, the related Dockerfiles exists"
 " at `this position <https://github.com/xprobe-"
@@ -163,13 +171,13 @@ msgstr ""
 "inc/xorbits/tree/main/python/xorbits/deploy/docker>`_ 和 `Docker 构建文档 "
 "<https://docs.docker.com/engine/reference/commandline/build/>`_ 进行制作。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:82
+#: ../../source/user_guide/deployment_kubernetes.rst:85
 msgid ""
 "After you build your own image, push it to a image repository accessible "
 "by your K8s cluster, e.g. your own DockerHub namespace."
 msgstr "一旦你的镜像构建完成，需要将其上传至一个你的 Kubernetes 集群能够访问到的仓库，例如，你自己的 Dockerhub 命名空间。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:84
+#: ../../source/user_guide/deployment_kubernetes.rst:87
 msgid ""
 "Finally, specify your own image during the deployment process through the"
 " ``image`` option of the "
@@ -178,11 +186,11 @@ msgstr ""
 "最后，使用部署接口 :meth:`xorbits.deploy.kubernetes.client.new_cluster` 中的 "
 "``image`` 选项去指定你的镜像即可。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:90
+#: ../../source/user_guide/deployment_kubernetes.rst:93
 msgid "Install Python Packages"
 msgstr "安装 Python 包"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:91
+#: ../../source/user_guide/deployment_kubernetes.rst:94
 msgid ""
 "Refer `DockerFile <https://github.com/xprobe-"
 "inc/xorbits/blob/main/python/xorbits/deploy/docker/Dockerfile.base>`_ for"
@@ -197,7 +205,7 @@ msgstr ""
 ":meth:`xorbits.deploy.kubernetes.client.new_cluster` 接口中的 ``pip`` 和 "
 "``conda`` 选项即可。"
 
-#: ../../source/user_guide/deployment_kubernetes.rst:94
+#: ../../source/user_guide/deployment_kubernetes.rst:97
 msgid ""
 "Please make sure your K8s cluster can access the corresponding `channel "
 "of conda <https://docs.conda.io/projects/conda/en/latest/user-"
