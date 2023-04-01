@@ -30,7 +30,7 @@ msgid ""
 "are similar. You are recommended to read the :ref:`cluster deployment "
 "<deployment_cluster>` first to know some basic knowledge of a Xorbits "
 "cluster."
-msgstr "如果你有一个 SLURM 集群，你可以使用本教程去提交一个 Xorbits 作业。其他HPC作业调度器（例如Torque或者LSF等）与之类似。你需要先阅读 :ref:`集群部署 <deployment_cluster> 以了解一些 Xorbits 集群的基础知识。"
+msgstr "如果你有一个 SLURM 集群，你可以使用本教程去提交一个 Xorbits 作业。其他HPC作业调度器（例如Torque或者LSF等）与之类似。你需要先阅读 :ref:`集群部署 <deployment_cluster>` 以了解一些 Xorbits 集群的基础知识。"
 
 #: ../../source/user_guide/deployment_slurm.rst:11
 msgid "Installation"
@@ -42,7 +42,7 @@ msgid ""
 "``module``, ``conda`` or ``mamba`` to create a Python environment and use"
 " ``pip`` to install Xorbits on the shared storage, see :ref:`installation"
 " document <installation>` for reference."
-msgstr "HPC集群有一个多计算节点共享的存储。你可以用``module``，``conda`` 或 ``mamba``创建一个Python环境，然后用``pip``安装Xorbits，Xorbits会被安装到共享的存储上。查看 :ref:`安装文档"
+msgstr "HPC集群有一个多计算节点共享的存储。你可以用 ``module``，``conda`` 或 ``mamba`` 创建一个Python环境，然后用 ``pip`` 安装 Xorbits，Xorbits 会被安装到共享的存储上。安装问题请查看 :ref:`安装文档"
 " <installation>`。"
 
 #: ../../source/user_guide/deployment_slurm.rst:16
@@ -54,7 +54,7 @@ msgid ""
 "On a SLURM cluster, you are required to interact with the compute "
 "resources via ``sbatch`` command and a SLURM script file declaring "
 "specific compute resources."
-msgstr "在一个SLURM集群，获取和使用计算资源需要使用``sbatch``命令并编写一个 SLURM 脚本文件，SLURM 脚本文件中声明所需计算资源。"
+msgstr "在一个SLURM集群，获取和使用计算资源需要使用 ``sbatch`` 命令并编写一个 SLURM 脚本文件，SLURM 脚本文件中声明所需计算资源。"
 
 #: ../../source/user_guide/deployment_slurm.rst:20
 msgid ""
@@ -62,7 +62,7 @@ msgid ""
 "multiple ``srun`` commands (tasks), and then execute your python script "
 "that connects with the Xorbits cluster. You need to first start a "
 "supervisor and then start the workers."
-msgstr "在这个SLURM脚本文件中，你需要启动一个 Xorbits 集群，启动集群需要使用``srun``命令；然后执行 Python 程序，Python 程序连接到刚刚启动的 Xorbits 集群。你需要先启动一个 supervisor，然后启动一系列 worker。"
+msgstr "在这个SLURM脚本文件中，你需要启动一个 Xorbits 集群，启动集群需要使用 ``srun`` 命令；然后执行 Python 程序，Python 程序连接到刚刚启动的 Xorbits 集群。你需要先启动一个 supervisor，然后启动一系列 worker。"
 
 #: ../../source/user_guide/deployment_slurm.rst:22
 msgid "The below walkthrough will do the following:"
@@ -111,8 +111,8 @@ msgid ""
 "in your site. You can also add other optional flags to your ``sbatch`` "
 "directives."
 msgstr "在这个 SLURM 脚本文件中，你需要告诉 SLURM 分配计算节点给 Xorbits 作业。在本例中，我们申请了4个计算节点，每个计算节点上设置 ``--cpus-per-task=24`` 和 ``--ntasks-per-node=1``，意味着每个计算节点使用24个CPU核。"
-"根据你的工作负载来修改这些设置。类似地，你也可以通过``--gpus=1``参数来修改所申请的GPU的数量。"
-"你需要将``--partition``改为你的站点所设置的分区。你也可以添加其他SLURM参数。"
+"根据你的工作负载来修改这些设置。类似地，你也可以通过 ``--gpus=1`` 参数来修改所申请的GPU的数量。"
+"你需要将 ``--partition`` 改为你的站点所设置的分区。你也可以添加其他SLURM参数。"
 
 #: ../../source/user_guide/deployment_slurm.rst:56
 msgid "Loading your environment"
