@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2022-2023, Xprobe Inc.
+# This file is distributed under the same license as the Xorbits package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Xorbits \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-01 22:37+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: ../../source/user_guide/deployment_slurm.rst:5
+msgid "SLURM deployment"
+msgstr "SLURM 部署"
+
+#: ../../source/user_guide/deployment_slurm.rst:7
+msgid ""
+"If you have access to a SLURM cluster, you can refer to the following "
+"guide to run a Xorbits job. Other HPC job schedulers like Torque or LSF "
+"are similar. You are recommended to read the :ref:`cluster deployment "
+"<deployment_cluster>` first to know some basic knowledge of a Xorbits "
+"cluster."
+msgstr "如果你有一个 SLURM 集群，你可以使用本教程去提交一个 Xorbits 作业。其他HPC作业调度器（例如Torque或者LSF等）与之类似。你需要先阅读 :ref:`集群部署 <deployment_cluster> 以了解一些 Xorbits 集群的基础知识。"
+
+#: ../../source/user_guide/deployment_slurm.rst:11
+msgid "Installation"
+msgstr "安装"
+
+#: ../../source/user_guide/deployment_slurm.rst:13
+msgid ""
+"HPC clusters have shared storage among all compute nodes. You can use "
+"``module``, ``conda`` or ``mamba`` to create a Python environment and use"
+" ``pip`` to install Xorbits on the shared storage, see :ref:`installation"
+" document <installation>` for reference."
+msgstr "HPC集群有一个多计算节点共享的存储。你可以用``module``，``conda`` 或 ``mamba``创建一个Python环境，然后用``pip``安装Xorbits，Xorbits会被安装到共享的存储上。查看 :ref:`安装文档"
+" <installation>`。"
+
+#: ../../source/user_guide/deployment_slurm.rst:16
+msgid "Walkthrough using Xorbits with SLURM"
+msgstr "SLURM Xorbits 流程"
+
+#: ../../source/user_guide/deployment_slurm.rst:18
+msgid ""
+"On a SLURM cluster, you are required to interact with the compute "
+"resources via ``sbatch`` command and a SLURM script file declaring "
+"specific compute resources."
+msgstr "在一个SLURM集群，获取和使用计算资源需要使用``sbatch``命令并编写一个 SLURM 脚本文件，SLURM 脚本文件中声明所需计算资源。"
+
+#: ../../source/user_guide/deployment_slurm.rst:20
+msgid ""
+"In the SLURM script file, you will want to start a Xorbits cluster with "
+"multiple ``srun`` commands (tasks), and then execute your python script "
+"that connects with the Xorbits cluster. You need to first start a "
+"supervisor and then start the workers."
+msgstr "在这个SLURM脚本文件中，你需要启动一个 Xorbits 集群，启动集群需要使用``srun``命令；然后执行 Python 程序，Python 程序连接到刚刚启动的 Xorbits 集群。你需要先启动一个 supervisor，然后启动一系列 worker。"
+
+#: ../../source/user_guide/deployment_slurm.rst:22
+msgid "The below walkthrough will do the following:"
+msgstr "整个流程如下："
+
+#: ../../source/user_guide/deployment_slurm.rst:24
+msgid "Set the proper headers where you ask for resources from the SLURM cluster."
+msgstr "向SLURM集群申请所需要的计算资源。"
+
+#: ../../source/user_guide/deployment_slurm.rst:26
+msgid "Load the proper environment/modules."
+msgstr "加载环境。"
+
+#: ../../source/user_guide/deployment_slurm.rst:28
+msgid "Fetch a list of available computing nodes and their IP addresses."
+msgstr "获取计算节点和他们的 IP 地址。"
+
+#: ../../source/user_guide/deployment_slurm.rst:30
+msgid "Launch a supervisor process in one of the nodes (called the head node)."
+msgstr "在其中一个节点（头结点）启动 supervisor。"
+
+#: ../../source/user_guide/deployment_slurm.rst:32
+msgid ""
+"Launch worker processes in other worker nodes and connects them to the "
+"head node by providing the head node address."
+msgstr "在其他节点启动 worker，保证 worker 与头结点连接。"
+
+#: ../../source/user_guide/deployment_slurm.rst:34
+msgid ""
+"After the underlying Xorbits cluster is ready, submit the user-specified "
+"task."
+msgstr "向该 Xorbits 集群提交用户作业。"
+
+#: ../../source/user_guide/deployment_slurm.rst:37
+msgid "SLURM script file"
+msgstr "SLURM 脚本文件"
+
+#: ../../source/user_guide/deployment_slurm.rst:39
+msgid ""
+"In the SLURM script, you'll need to tell SLURM to allocate nodes for your"
+" Xorbits job. In this example, we ask for 4 nodes, and on each node, "
+"we've set ``--cpus-per-task=24`` and ``--ntasks-per-node=1`` which means "
+"we need 24 CPUs per node. Modify this setting according to your workload."
+" Similarly, you can also specify the number of GPUs per node via "
+"``--gpus=1``. You need to change ``--partition`` to select the partition "
+"in your site. You can also add other optional flags to your ``sbatch`` "
+"directives."
+msgstr "在这个 SLURM 脚本文件中，你需要告诉 SLURM 分配计算节点给 Xorbits 作业。在本例中，我们申请了4个计算节点，每个计算节点上设置 ``--cpus-per-task=24`` 和 ``--ntasks-per-node=1``，意味着每个计算节点使用24个CPU核。"
+"根据你的工作负载来修改这些设置。类似地，你也可以通过``--gpus=1``参数来修改所申请的GPU的数量。"
+"你需要将``--partition``改为你的站点所设置的分区。你也可以添加其他SLURM参数。"
+
+#: ../../source/user_guide/deployment_slurm.rst:56
+msgid "Loading your environment"
+msgstr "加载环境"
+
+#: ../../source/user_guide/deployment_slurm.rst:58
+msgid ""
+"You'll need to install Xorbits into a specific environment using "
+"``conda`` or ``module``. In the SLURM script, you should load modules or "
+"your own conda environment. And on the compute nodes allocated, the "
+"environment will be switched to the one with Xorbits installed. In this "
+"case, we install Xorbits in a conda environment called ``df``."
+msgstr "你需要使用 ``conda`` 或 ``module`` 将 Xorbits 安装到特定环境。计算节点被分配后，环境会被切换到你安装 Xorbits 的环境。"
+"本例中，我们将 Xorbits 安装到了一个名为 ``df`` 的 conda 环境。"
+
+#: ../../source/user_guide/deployment_slurm.rst:72
+msgid "Obtain the nodes"
+msgstr "获取节点"
+
+#: ../../source/user_guide/deployment_slurm.rst:74
+msgid "Next, we'll want to obtain the head node and the IP address."
+msgstr "接下来，你需要获取头结点和其 IP 地址。"
+
+#: ../../source/user_guide/deployment_slurm.rst:82
+msgid ""
+"Now the ``nodes_array`` is the list of all the nodes allocated for this "
+"job."
+msgstr "现在， ``nodes_array`` 是一个数组，它存储着分配给这个作业的节点。"
+
+#: ../../source/user_guide/deployment_slurm.rst:84
+msgid ""
+"Choose the first node of the ``nodes_array`` as the head node. The "
+"``hostname --ip-address`` command will return the IP address of the "
+"specific node. Get the IP address of the head node:"
+msgstr "选择 ``nodes_array`` 中的第一个节点作为头结点。``hostname --ip-address`` 可以返回该节点的 IP 地址。 使用下面的命令获取头结点的 IP 地址："
+
+#: ../../source/user_guide/deployment_slurm.rst:106
+msgid "Starting the supervisor"
+msgstr "启动 Supervisor"
+
+#: ../../source/user_guide/deployment_slurm.rst:108
+msgid ""
+"After detecting the head node hostname and IP address, we'll want to run "
+"the supervisor on the head node. We'll do this by using ``srun`` to start"
+" the supervisor on the head node. ``xorbits-supervisor`` is the command "
+"line tool to start the supervisor. You should specify the IP, port, the "
+"web port. Note that you should sleep a few seconds as the supervisor need"
+" some time to start. Otherwise, other worker nodes may not able to connect "
+"to the supervisor."
+msgstr "获取到头结点的主机名和 IP 地址后，我们将在头结点上运行 supervisor。我们将使用 ``srun`` 来启动 supervisor。"
+"``xorbits-supervisor`` 是启动 supervisor 的命令。你必须配置 IP，端口和 web 端口。注意，你需要让程序休眠几秒，因为 supervisor 需要一些时间来启动。"
+"否则，其他 worker 节点可能无法连接上 supervisor。"
+
+#: ../../source/user_guide/deployment_slurm.rst:125
+msgid "Starting Workers"
+msgstr "启动 Worker"
+
+#: ../../source/user_guide/deployment_slurm.rst:126
+msgid "The rest of the machines can be started as workers via command:"
+msgstr "其他的机器被用来作为 worker："
+
+#: ../../source/user_guide/deployment_slurm.rst:144
+msgid "Connecting to Created Cluster"
+msgstr "连接到创建的集群"
+
+#: ../../source/user_guide/deployment_slurm.rst:146
+msgid ""
+"Now, the Xorbits cluster is created, and ``address`` is the endpoint to "
+"connect. You can connect to the supervisor and submit your Xorbits job."
+msgstr "至此，Xorbits 集群已创建。``address`` 是访问这个集群的地址，你通过这个地址可以连接到 supervisor，然后提交你的 Xorbits 作业。"
+
+#: ../../source/user_guide/deployment_slurm.rst:155
+msgid "The ``test.py`` is like the following:"
+msgstr "``test.py`` 像这样："
+
+#: ../../source/user_guide/deployment_slurm.rst:178
+msgid "Name this SLURM script file as ``xorbits_slurm.sh``. Submit the job via:"
+msgstr "将 SLURM 脚本文件命名为 ``xorbits_slurm.sh``。提交这个作业："
+
+#: ../../source/user_guide/deployment_slurm.rst:186
+msgid "Put all together"
+msgstr "整合汇总"
+
+#: ../../source/user_guide/deployment_slurm.rst:188
+msgid "The SLURM script looks like this:"
+msgstr "将以上汇总， SLURM 脚本文件像这样："
+
