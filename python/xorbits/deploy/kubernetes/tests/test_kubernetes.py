@@ -42,9 +42,9 @@ TEST_ROOT = os.path.dirname(os.path.abspath(__file__))
 DOCKER_ROOT = os.path.join((os.path.dirname(os.path.dirname(TEST_ROOT))), "docker")
 
 kube_available = (
-        find_executable("kubectl") is not None
-        and find_executable("docker") is not None
-        and k8s is not None
+    find_executable("kubectl") is not None
+    and find_executable("docker") is not None
+    and k8s is not None
 )
 
 
