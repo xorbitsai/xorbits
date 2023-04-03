@@ -29,6 +29,7 @@ _scheme_to_dependencies = {
     "az": ["fsspec", "adlfs"],
     "abfs": ["fsspec", "adlfs"],
     "s3": ["fsspec", "s3fs"],
+    "memory": [],
 }
 
 
