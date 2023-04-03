@@ -204,7 +204,7 @@ class K8SClusterBackend(AbstractClusterBackend):
     ) -> List[str]:
         if worker_num <= 0:
             raise ValueError("Please specify a `worker_num` that is greater than zero")
-        if timeout < 0:
+        if timeout and timeout < 0:
             raise ValueError("Please specify a `timeout` that is greater than zero")
         start_time = time.time()
         deployment = self._client_for_apps.read_namespaced_deployment(
