@@ -318,10 +318,10 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
         )
 
     async def get_all_bands(
-            self,
-            role: NodeRole = None,
-            statuses: Set[NodeStatus] = None,
-            exclude_statuses: Set[NodeStatus] = None,
+        self,
+        role: NodeRole = None,
+        statuses: Set[NodeStatus] = None,
+        exclude_statuses: Set[NodeStatus] = None,
     ) -> Dict[BandType, Resource]:
         statuses = self._calc_statuses(statuses, exclude_statuses)
         statuses_str = (
