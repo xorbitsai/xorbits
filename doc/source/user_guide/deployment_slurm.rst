@@ -4,7 +4,7 @@
 SLURM deployment
 ==================
 
-If you have access to a SLURM cluster, you can refer to the following guide to run a Xorbits job. Other HPC job schedulers like Torque or LSF are similar.
+If you have access to a SLURM cluster, you can refer to the following guide to run an Xorbits job. Other HPC job schedulers like Torque or LSF are similar.
 You are recommended to read the :ref:`cluster deployment <deployment_cluster>` first to know some basic knowledge of a Xorbits cluster.
 
 Installation
@@ -17,7 +17,7 @@ Walkthrough using Xorbits with SLURM
 
 On a SLURM cluster, you are required to interact with the compute resources via ``sbatch`` command and a SLURM script file declaring specific compute resources.
 
-In the SLURM script file, you will want to start a Xorbits cluster with multiple ``srun`` commands (tasks), and then execute your python script that connects with the Xorbits cluster. You need to first start a supervisor and then start the workers.
+In the SLURM script file, you will want to start a Xorbits cluster with multiple ``srun`` commands (tasks), and then execute your python script that connects to the Xorbits cluster. You need to first start a supervisor and then start the workers.
 
 The below walkthrough will do the following:
 
@@ -25,11 +25,11 @@ The below walkthrough will do the following:
 
 2. Load the proper environment/modules.
 
-3. Fetch a list of available computing nodes and their IP addresses.
+3. Fetch a list of available compute nodes and their IP addresses.
 
-4. Launch a supervisor process in one of the nodes (called the head node).
+4. Launch a supervisor process on one of the nodes (called the head node).
 
-5. Launch worker processes in other worker nodes and connects them to the head node by providing the head node address.
+5. Launch worker processes on other worker nodes with the head node's address.
 
 6. After the underlying Xorbits cluster is ready, submit the user-specified task.
 
@@ -57,7 +57,7 @@ Loading your environment
 
 You'll need to install Xorbits into a specific environment using ``conda`` or ``module``. 
 In the SLURM script, you should load modules or your own conda environment. 
-And on the compute nodes allocated, the environment will be switched to the one with Xorbits installed.
+And on the compute nodes allocated, the environment will be switched to the one where Xorbits is installed.
 In this case, we install Xorbits in a conda environment called ``df``.
 
 .. code-block:: bash
@@ -102,7 +102,7 @@ Get the IP address of the head node:
         echo "IPV6 address detected. We split the IPV4 address as $head_node_ip"
     fi
 
-Starting the supervisor
+Start the supervisor
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 After detecting the head node hostname and IP address, we'll want to run the supervisor on the head node. 
@@ -140,8 +140,8 @@ The rest of the machines can be started as workers via command:
     done
     sleep 5
 
-Connecting to Created Cluster
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Connect to The Cluster
+~~~~~~~~~~~~~~~~~~~~~~
 
 Now, the Xorbits cluster is created, and ``address`` is the endpoint to connect.
 You can connect to the supervisor and submit your Xorbits job.
