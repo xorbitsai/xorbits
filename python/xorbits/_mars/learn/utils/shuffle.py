@@ -34,7 +34,7 @@ from ...tensor.utils import (
     gen_random_seeds,
     validate_axis,
 )
-from ...utils import has_unknown_shape, lazy_import, tokenize
+from ...utils import has_unknown_shape, is_same_module, lazy_import, tokenize
 from ..operands import LearnOperandMixin, LearnShuffleProxy, OutputType
 from ..utils import convert_to_tensor_or_dataframe
 
@@ -348,7 +348,7 @@ class LearnShuffle(MapReduceOperand, LearnOperandMixin):
         conv = lambda x: x
         if op.output_types[0] == OutputType.tensor:
             xp = get_array_module(x)
-            if xp is sparse:
+            if is_same_module(xp, sparse):
                 conv = lambda x: x
             else:
                 conv = (

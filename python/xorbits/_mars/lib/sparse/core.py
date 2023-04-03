@@ -22,7 +22,7 @@ except ImportError:  # pragma: no cover
     sps = None
     splinalg = None
 
-from ...utils import lazy_import
+from ...utils import is_same_module, lazy_import
 
 splinalg = splinalg
 cp = lazy_import("cupy", rename="cp")
@@ -80,7 +80,7 @@ def get_sparse_module(x):
 
 
 def is_cupy(x):
-    return get_array_module(x) is cp
+    return is_same_module(get_array_module(x), cp)
 
 
 def naked(x):

@@ -21,6 +21,7 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...serialization.serializables import AnyField, StringField
+from ...utils import is_same_module
 from ..arithmetic.utils import chunk_tree_add
 from ..array_utils import as_same_device, device
 from ..core import TensorOrder
@@ -175,7 +176,7 @@ class TensorEinsum(TensorOperand, TensorOperandMixin):
         )
 
         with device(device_id):
-            if xp is np:
+            if is_same_module(xp, np):
                 ctx[op.outputs[0].key] = xp.einsum(
                     op.subscripts,
                     *inputs,

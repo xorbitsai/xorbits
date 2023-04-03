@@ -20,7 +20,7 @@ import numpy as np
 
 from ..lib import sparse
 from ..lib.sparse.core import get_dense_module, issparse
-from ..utils import lazy_import
+from ..utils import is_same_module, lazy_import
 
 cp = lazy_import("cupy", rename="cp")
 
@@ -165,7 +165,7 @@ def as_np_array(x):
 
 
 def is_sparse_module(xp):
-    return xp is sparse
+    return is_same_module(xp, sparse)
 
 
 @contextmanager

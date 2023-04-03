@@ -418,7 +418,7 @@ def _sort(a, op, xp, axis=None, kind=None, order=None, inplace=False):
     axis = axis if axis is not None else op.axis
     kind = kind if kind is not None else op.kind
     order = order if order is not None else op.order
-    if xp is np:
+    if is_same_module(xp, np):
         method = a.sort if inplace else partial(np.sort, a)
         return method(axis=axis, kind=kind, order=order)
     else:  # pragma: no cover
@@ -433,7 +433,7 @@ def _argsort(a, op, xp, axis=None, kind=None, order=None):
     axis = axis if axis is not None else op.axis
     kind = kind if kind is not None else op.kind
     order = order if order is not None else op.order
-    if xp is np:
+    if is_same_module(xp, np):
         return np.argsort(a, axis=axis, kind=kind, order=order)
     else:  # pragma: no cover
         # cupy does not support structure type
