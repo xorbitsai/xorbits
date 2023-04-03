@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from io import BytesIO
 from typing import Any, Dict, List, Tuple, Union
 from urllib.parse import urlparse
@@ -47,6 +46,7 @@ from .core import (
     IncrementalIndexDataSourceMixin,
     merge_small_files,
 )
+from .utils import convert_to_abspath
 
 cudf = lazy_import("cudf")
 
@@ -686,6 +686,8 @@ def read_csv(
     >>> # read from OSS
     >>> auth_path = build_oss_path(file_path, access_key_id, access_key_secret, end_point)
     >>> md.read_csv(auth_path)
+    >>> # read from S3
+    >>> md.read_csv('s3://bucket/file.txt')
     """
     # infer dtypes and columns
     if isinstance(path, (list, tuple)):
@@ -699,7 +701,6 @@ def read_csv(
             file_path = glob(path.rstrip("/") + "/*", storage_options)[0]
     else:
         file_path = glob(path, storage_options)[0]
-
     with open_file(
         file_path, compression=compression, storage_options=storage_options
     ) as f:
@@ -739,8 +740,12 @@ def read_csv(
     columns_value = parse_index(mini_df.columns, store_data=True)
     if index_col and not isinstance(index_col, int):
         index_col = list(mini_df.columns).index(index_col)
+
+    # convert path to abs_path
+    abs_path = convert_to_abspath(path, storage_options)
+
     op = DataFrameReadCSV(
-        path=path,
+        path=abs_path,
         names=names,
         sep=sep,
         header=header,
