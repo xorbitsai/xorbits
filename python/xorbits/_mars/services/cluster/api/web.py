@@ -387,7 +387,7 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
             return str(json.loads(res.body)["content"])
 
     async def request_workers(
-            self, worker_num: int, timeout: Optional[int] = None
+        self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
         path = f"{self._address}/api/cluster/workers?worker_num={worker_num}"
         if timeout is not None:

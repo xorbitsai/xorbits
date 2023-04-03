@@ -41,7 +41,7 @@ class NodeAllocatorActor(mo.StatelessActor):
         )
 
     async def request_workers(
-            self, worker_num: int, timeout: Optional[int] = None
+        self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
         return await self._backend.request_workers(worker_num, timeout)
 

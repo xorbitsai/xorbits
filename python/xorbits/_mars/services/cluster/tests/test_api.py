@@ -62,8 +62,8 @@ async def test_api(actor_pool):
 
     await mo.create_actor(TestActor, uid=TestActor.default_uid(), address=pool_addr)
     assert (await api.get_supervisor_refs([TestActor.default_uid()]))[
-       0
-   ].address == pool_addr
+        0
+    ].address == pool_addr
 
     bands = await api.get_all_bands()
     assert (pool_addr, "numa-0") in bands

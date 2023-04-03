@@ -80,7 +80,7 @@ class AbstractClusterBackend(ABC):
         """
 
     async def request_workers(
-            self, worker_num: int, timeout: Optional[int] = None
+        self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
         raise NotImplementedError
 
