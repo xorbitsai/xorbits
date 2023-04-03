@@ -433,8 +433,12 @@ class ModulePlaceholder:
 
 
 def is_same_module(
-    mod1: Union[ModuleType, LazyModule], mod2: Union[ModuleType, LazyModule]
+    mod1: Optional[Union[ModuleType, LazyModule]],
+    mod2: Optional[Union[ModuleType, LazyModule]],
 ) -> bool:
+    if mod1 is None or mod2 is None:
+        return False
+
     name1 = mod1.name if isinstance(mod1, LazyModule) else mod1.__name__
     name2 = mod2.name if isinstance(mod2, LazyModule) else mod2.__name__
     return name1 == name2
