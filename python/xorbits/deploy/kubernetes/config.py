@@ -93,10 +93,16 @@ class RoleConfig(KubeConfig):
             "metadata": {"name": self._name, "namespace": self._namespace},
             "rules": [
                 {
-                    "apiGroups": self._api_groups,
-                    "resources": self._resources,
-                    "verbs": self._verbs,
-                }
+                    "apiGroups": ["", "apps"],
+                    "resources": [
+                        "pods",
+                        "endpoints",
+                        "services",
+                        "deployments",
+                        "deployments/scale",
+                    ],
+                    "verbs": ["get", "watch", "list", "patch"],
+                },
             ],
         }
 
@@ -779,6 +785,7 @@ class XorbitsSupervisorsConfig(XorbitsReplicationConfig):
         super().__init__(*args, **kwargs)
         if self._web_port:
             self.add_port(self._web_port)
+            self.add_env("MARS_K8S_SUPERVISOR_WEB_PORT", self._web_port)
 
     def config_liveness_probe(self) -> "TcpSocketProbeConfig":
         return TcpSocketProbeConfig(

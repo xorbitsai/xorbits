@@ -26,6 +26,7 @@ import numpy as np
 import pytest
 
 from .... import numpy as xnp
+from ...._mars.services.cluster.api.web import WebClusterAPI
 from ...._mars.utils import lazy_import
 from ....utils import get_local_py_version
 from .. import new_cluster
@@ -41,9 +42,9 @@ TEST_ROOT = os.path.dirname(os.path.abspath(__file__))
 DOCKER_ROOT = os.path.join((os.path.dirname(os.path.dirname(TEST_ROOT))), "docker")
 
 kube_available = (
-    find_executable("kubectl") is not None
-    and find_executable("docker") is not None
-    and k8s is not None
+        find_executable("kubectl") is not None
+        and find_executable("docker") is not None
+        and k8s is not None
 )
 
 
@@ -80,7 +81,7 @@ def _collect_coverage():
 def _build_docker_images(py_version: str):
     image_name = "xorbits-test-image:" + uuid.uuid1().hex
     xorbits_root = XORBITS_ROOT + "/"
-    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile")[len(xorbits_root) :]
+    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile")[len(xorbits_root):]
     try:
         build_proc = subprocess.Popen(
             [
@@ -122,7 +123,7 @@ def _load_docker_env():
         export_pos = line.find("export")
         if export_pos < 0:
             continue
-        line = line[export_pos + 6 :].strip()
+        line = line[export_pos + 6:].strip()
         var, value = line.split("=", 1)
         os.environ[var] = value.strip('"')
 
@@ -173,7 +174,7 @@ def _start_kube_cluster(**kwargs):
                 )
             )
 
-        yield
+        yield cluster_client
 
         [p.terminate() for p in log_processes]
     finally:
@@ -185,18 +186,19 @@ def _start_kube_cluster(**kwargs):
                 pass
         _collect_coverage()
         _remove_docker_image(image_name, False)
+        kube_api.delete_namespace(name=cluster_client.namespace)
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_run_in_kubernetes():
     with _start_kube_cluster(
-        supervisor_cpu=0.5,
-        supervisor_mem="1G",
-        worker_cpu=0.5,
-        worker_mem="1G",
-        worker_cache_mem="64m",
-        use_local_image=True,
-        pip=["Faker"],
+            supervisor_cpu=0.5,
+            supervisor_mem="1G",
+            worker_cpu=0.5,
+            worker_mem="1G",
+            worker_cache_mem="64m",
+            use_local_image=True,
+            pip=["Faker"],
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
@@ -221,3 +223,40 @@ def test_run_in_kubernetes():
 
         res = xr.spawn(gen_data).to_object()
         print(res)
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.asyncio
+async def test_request_workers():
+    with _start_kube_cluster(
+            supervisor_cpu=0.2,
+            supervisor_mem="1G",
+            worker_cpu=0.2,
+            worker_mem="1G",
+            worker_cache_mem="64m",
+            use_local_image=True,
+            pip=["Faker"],
+    ) as cluster_client:
+        cluster_api = WebClusterAPI(address=cluster_client.endpoint)
+        with pytest.raises(ValueError) as exc:
+            await cluster_api.request_workers(worker_num=1, timeout=-10)
+        assert exc.type == ValueError
+        assert "Please specify a `timeout` that is greater than zero" in str(exc.value)
+        with pytest.raises(ValueError) as exc1:
+            await cluster_api.request_workers(worker_num=-10, timeout=1)
+        assert exc1.type == ValueError
+        assert "Please specify a `worker_num` that is greater than zero" in str(
+            exc1.value
+        )
+        with pytest.raises(ValueError) as exc2:
+            await cluster_api.request_workers(worker_num=0, timeout=1)
+        assert exc2.type == ValueError
+        assert "Please specify a `worker_num` that is greater than zero" in str(
+            exc2.value
+        )
+        new_workers = await cluster_api.request_workers(worker_num=1, timeout=300)
+        assert len(new_workers) == 2
+        with pytest.raises(TimeoutError) as exc3:
+            await cluster_api.request_workers(worker_num=1, timeout=0)
+        assert exc3.type == TimeoutError
+        assert "Request worker timeout" in str(exc3.value)
