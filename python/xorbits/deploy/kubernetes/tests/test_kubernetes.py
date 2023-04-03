@@ -81,7 +81,7 @@ def _collect_coverage():
 def _build_docker_images(py_version: str):
     image_name = "xorbits-test-image:" + uuid.uuid1().hex
     xorbits_root = XORBITS_ROOT + "/"
-    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile")[len(xorbits_root):]
+    docker_file_path = os.path.join(DOCKER_ROOT, "Dockerfile")[len(xorbits_root) :]
     try:
         build_proc = subprocess.Popen(
             [
@@ -229,13 +229,13 @@ def test_run_in_kubernetes():
 @pytest.mark.asyncio
 async def test_request_workers():
     with _start_kube_cluster(
-            supervisor_cpu=0.2,
-            supervisor_mem="1G",
-            worker_cpu=0.2,
-            worker_mem="1G",
-            worker_cache_mem="64m",
-            use_local_image=True,
-            pip=["Faker"],
+        supervisor_cpu=0.2,
+        supervisor_mem="1G",
+        worker_cpu=0.2,
+        worker_mem="1G",
+        worker_cache_mem="64m",
+        use_local_image=True,
+        pip=["Faker"],
     ) as cluster_client:
         cluster_api = WebClusterAPI(address=cluster_client.endpoint)
         with pytest.raises(ValueError) as exc:

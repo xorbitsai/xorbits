@@ -200,7 +200,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         raise NotImplementedError
 
     async def request_workers(
-            self, worker_num: int, timeout: Optional[int] = None
+        self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
         if worker_num <= 0:
             raise ValueError("Please specify a `worker_num` that is greater than zero")

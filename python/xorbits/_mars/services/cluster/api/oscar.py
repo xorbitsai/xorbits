@@ -272,11 +272,11 @@ class ClusterAPI(AbstractClusterAPI):
         return address
 
     async def request_workers(
-            self, worker_num: int, timeout: Optional[int] = None
+        self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
         node_allocator_ref = await self._get_node_allocator_ref()
         addresses = await node_allocator_ref.request_workers(worker_num, timeout)
-        return addresses    # pragma: no cover
+        return addresses  # pragma: no cover
 
     async def release_worker(self, address: str):
         node_allocator_ref = await self._get_node_allocator_ref()
