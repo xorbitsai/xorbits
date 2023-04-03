@@ -91,12 +91,6 @@ async def test_api(actor_pool):
         await api.request_worker(timeout=1)
     with pytest.raises(NotImplementedError):
         await api.request_workers(worker_num=1, timeout=1)
-    # with pytest.raises(ValueError) as exc:
-    #     await api.request_workers(worker_num=1, timeout=-1)
-    # assert exc.type == ValueError
-    # assert "Please specify a `timeout` that is greater than zero" in str(
-    #     exc.value
-    # )
     with pytest.raises(NotImplementedError):
         await api.release_worker("127.0.0.1:1234")
 
