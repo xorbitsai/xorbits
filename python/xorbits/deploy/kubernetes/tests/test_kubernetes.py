@@ -123,7 +123,7 @@ def _load_docker_env():
         export_pos = line.find("export")
         if export_pos < 0:
             continue
-        line = line[export_pos + 6:].strip()
+        line = line[export_pos + 6 :].strip()
         var, value = line.split("=", 1)
         os.environ[var] = value.strip('"')
 
@@ -192,13 +192,13 @@ def _start_kube_cluster(**kwargs):
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_run_in_kubernetes():
     with _start_kube_cluster(
-            supervisor_cpu=0.5,
-            supervisor_mem="1G",
-            worker_cpu=0.5,
-            worker_mem="1G",
-            worker_cache_mem="64m",
-            use_local_image=True,
-            pip=["Faker"],
+        supervisor_cpu=0.5,
+        supervisor_mem="1G",
+        worker_cpu=0.5,
+        worker_mem="1G",
+        worker_cache_mem="64m",
+        use_local_image=True,
+        pip=["Faker"],
     ):
         a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
         b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
