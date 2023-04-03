@@ -62,8 +62,8 @@ async def test_api(actor_pool):
 
     await mo.create_actor(TestActor, uid=TestActor.default_uid(), address=pool_addr)
     assert (await api.get_supervisor_refs([TestActor.default_uid()]))[
-        0
-    ].address == pool_addr
+               0
+           ].address == pool_addr
 
     bands = await api.get_all_bands()
     assert (pool_addr, "numa-0") in bands
@@ -89,6 +89,14 @@ async def test_api(actor_pool):
         )
     with pytest.raises(NotImplementedError):
         await api.request_worker(timeout=1)
+    with pytest.raises(NotImplementedError):
+        await api.request_workers(worker_num=1, timeout=1)
+    # with pytest.raises(ValueError) as exc:
+    #     await api.request_workers(worker_num=1, timeout=-1)
+    # assert exc.type == ValueError
+    # assert "Please specify a `timeout` that is greater than zero" in str(
+    #     exc.value
+    # )
     with pytest.raises(NotImplementedError):
         await api.release_worker("127.0.0.1:1234")
 
@@ -173,6 +181,8 @@ async def test_web_api(actor_pool):
     assert len(log_content) == 11
 
     await MockClusterAPI.cleanup(pool_addr)
+    with pytest.raises(NotImplementedError):
+        await web_api.request_workers(worker_num=1, timeout=1)
 
 
 @pytest.mark.asyncio

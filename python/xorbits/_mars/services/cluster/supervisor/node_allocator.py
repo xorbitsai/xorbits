@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+from typing import List, Optional
 
 import xoscar as mo
 
@@ -39,6 +39,11 @@ class NodeAllocatorActor(mo.StatelessActor):
         return await self._backend.request_worker(
             worker_cpu, worker_mem, timeout=timeout
         )
+
+    async def request_workers(
+            self, worker_num: int, timeout: Optional[int] = None
+    ) -> List[str]:
+        return await self._backend.request_workers(worker_num, timeout)
 
     async def release_worker(self, address: str):
         await self._backend.release_worker(address)

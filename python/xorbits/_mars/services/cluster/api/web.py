@@ -83,12 +83,12 @@ class ClusterWebAPIHandler(MarsServiceWebAPIHandler):
                 version = int(version)
 
             async for version, node_infos in cluster_api.watch_nodes(
-                role,
-                env=env,
-                resource=resource,
-                detail=detail,
-                statuses=statuses,
-                version=version,
+                    role,
+                    env=env,
+                    resource=resource,
+                    detail=detail,
+                    statuses=statuses,
+                    version=version,
             ):
                 result["version"] = version
                 result["nodes"] = self._convert_node_dict(node_infos)
@@ -125,7 +125,7 @@ class ClusterWebAPIHandler(MarsServiceWebAPIHandler):
                 version = int(version)
 
             async for version, bands in cluster_api.watch_all_bands(
-                role, statuses=statuses, version=version
+                    role, statuses=statuses, version=version
             ):
                 self.write(serialize_serializable((version, bands)))
                 break
@@ -193,6 +193,14 @@ class ClusterWebAPIHandler(MarsServiceWebAPIHandler):
                     size, address=address, offset=offset
                 )
 
+    @web_api("workers", method=["post"], cache_blocking=True)
+    async def request_workers(self):
+        worker_num = int(self.get_argument(name="worker_num", default="0"))
+        timeout = int(self.get_argument(name="timeout", default="30"))
+        cluster_api = await self._get_cluster_api()
+        addresses = await cluster_api.request_workers(worker_num, timeout=timeout)
+        self.write(json.dumps({"workers": addresses}))  # pragma: no cover
+
 
 web_handlers = {ClusterWebAPIHandler.get_root_pattern(): ClusterWebAPIHandler}
 
@@ -212,15 +220,15 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
         return res
 
     async def _get_nodes_info(
-        self,
-        nodes: List[str] = None,
-        role: NodeRole = None,
-        env: bool = False,
-        resource: bool = False,
-        detail: bool = False,
-        watch: bool = False,
-        statuses: Set[NodeStatus] = None,
-        version: Optional[int] = None,
+            self,
+            nodes: List[str] = None,
+            role: NodeRole = None,
+            env: bool = False,
+            resource: bool = False,
+            detail: bool = False,
+            watch: bool = False,
+            statuses: Set[NodeStatus] = None,
+            version: Optional[int] = None,
     ):
         statuses_str = (
             ",".join(str(status.value) for status in statuses) if statuses else ""
@@ -267,14 +275,14 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
         return version, list(res.keys())
 
     async def get_nodes_info(
-        self,
-        nodes: List[str] = None,
-        role: NodeRole = None,
-        env: bool = False,
-        resource: bool = False,
-        detail: bool = False,
-        statuses: Set[NodeStatus] = None,
-        exclude_statuses: Set[NodeStatus] = None,
+            self,
+            nodes: List[str] = None,
+            role: NodeRole = None,
+            env: bool = False,
+            resource: bool = False,
+            detail: bool = False,
+            statuses: Set[NodeStatus] = None,
+            exclude_statuses: Set[NodeStatus] = None,
     ):
         statuses = self._calc_statuses(statuses, exclude_statuses)
         return await self._get_nodes_info(
@@ -289,14 +297,14 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
 
     @watch_method
     async def watch_nodes(
-        self,
-        role: NodeRole,
-        env: bool = False,
-        resource: bool = False,
-        detail: bool = False,
-        statuses: Set[NodeStatus] = None,
-        exclude_statuses: Set[NodeStatus] = None,
-        version: Optional[int] = None,
+            self,
+            role: NodeRole,
+            env: bool = False,
+            resource: bool = False,
+            detail: bool = False,
+            statuses: Set[NodeStatus] = None,
+            exclude_statuses: Set[NodeStatus] = None,
+            version: Optional[int] = None,
     ) -> List[Dict[str, Dict]]:
         statuses = self._calc_statuses(statuses, exclude_statuses)
         return await self._get_nodes_info(
@@ -310,10 +318,10 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
         )
 
     async def get_all_bands(
-        self,
-        role: NodeRole = None,
-        statuses: Set[NodeStatus] = None,
-        exclude_statuses: Set[NodeStatus] = None,
+            self,
+            role: NodeRole = None,
+            statuses: Set[NodeStatus] = None,
+            exclude_statuses: Set[NodeStatus] = None,
     ) -> Dict[BandType, Resource]:
         statuses = self._calc_statuses(statuses, exclude_statuses)
         statuses_str = (
@@ -331,11 +339,11 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
 
     @watch_method
     async def watch_all_bands(
-        self,
-        role: NodeRole = None,
-        statuses: List[NodeStatus] = None,
-        exclude_statuses: Set[NodeStatus] = None,
-        version: Optional[int] = None,
+            self,
+            role: NodeRole = None,
+            statuses: List[NodeStatus] = None,
+            exclude_statuses: Set[NodeStatus] = None,
+            version: Optional[int] = None,
     ):
         statuses = self._calc_statuses(statuses, exclude_statuses)
         statuses_str = (
@@ -367,7 +375,7 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
         return list(json.loads(res.body)["stacks"])
 
     async def fetch_node_log(
-        self, size: int = None, address: str = None, offset: int = 0
+            self, size: int = None, address: str = None, offset: int = 0
     ) -> str:
         path = f"{self._address}/api/cluster/logs?address={address}"
         if size is not None:
@@ -377,3 +385,12 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
             return res.body.decode(encoding="utf8")
         else:
             return str(json.loads(res.body)["content"])
+
+    async def request_workers(
+            self, worker_num: int, timeout: Optional[int] = None
+    ) -> List[str]:
+        path = f"{self._address}/api/cluster/workers?worker_num={worker_num}"
+        if timeout is not None:
+            path += f"&&timeout={timeout}"
+        res = await self._request_url(path=path, method="POST", data=b"0")
+        return json.loads(res.body)["workers"]
