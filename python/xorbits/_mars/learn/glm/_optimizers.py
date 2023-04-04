@@ -22,11 +22,6 @@ from ... import tensor as mt
 from ...tensor.datasource import tensor as astensor
 
 
-def batch_generator(idx, X, y):
-    for i in idx:
-        yield X[i], y[i]
-
-
 def single_softmax_grad(W, X, y, reg):
     X = X.reshape((1, X.shape[0]))
     K = W.shape[1]
@@ -88,9 +83,9 @@ def gradient_descent(
                 ]
             )
             grad_tensors = funcs.execute().fetch()
-            grad_sum = np.sum(grad_tensors, axis=0) / len(idx)
+            grad = np.sum(grad_tensors, axis=0) / len(idx)
 
             # update parameters
-            W = W - learning_rate * grad_sum
+            W = W - learning_rate * grad
 
     return W
