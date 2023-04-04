@@ -43,6 +43,7 @@ from .... import tensor as mt
 from ....config import option_context
 from ....core.context import get_context
 from ....lib.aio import new_isolation
+from ....resource import cuda_count
 from ....services.storage import StorageAPI
 from ....services.task.supervisor.task import TaskProcessor
 from ....storage import StorageLevel
@@ -1220,7 +1221,7 @@ def test_oscar_configs(scheme, enable_inaddr, manner):
 @require_cupy
 @pytest.mark.parametrize("scheme", schemes)
 @pytest.mark.parametrize("enable_inaddr", [False, True])
-@pytest.mark.parametrize("manner", ["gpu", "all"])
+@pytest.mark.parametrize("manner", ["gpu", "multi-gpu", "all"])
 def test_gpu_oscar_configs(scheme, enable_inaddr, manner):
     def test(sess):
         def verify():
@@ -1262,6 +1263,17 @@ def test_gpu_oscar_configs(scheme, enable_inaddr, manner):
             oscar_extra_conf={"ucx": {"create-cuda-contex": True}},
         )
         test(session)
+    elif manner == "multi-gpu":
+        if cuda_count() > 1:
+            session = new_session(
+                n_cpu=2,
+                web=False,
+                cuda_devices=[1],
+                gpu_external_addr_scheme=scheme,
+                gpu_enable_internal_addr=enable_inaddr,
+                oscar_extra_conf={"ucx": {"create-cuda-contex": True}},
+            )
+            test(session)
     else:
         session = new_session(
             n_cpu=2,

@@ -336,13 +336,16 @@ class LocalCluster:
         worker_modules = get_third_party_modules_from_config(
             self._config, NodeRole.WORKER
         )
-        for band_to_resource in self._bands_to_resource:
+        for band_to_resource, worker_devices in zip(
+            self._bands_to_resource, self._cuda_devices
+        ):
             worker_pool = await create_worker_actor_pool(
                 self._address,
                 band_to_resource,
                 modules=worker_modules,
                 subprocess_start_method=self._subprocess_start_method,
                 metrics=self._config.get("metrics", {}),
+                cuda_devices=worker_devices,
                 web=self._web,
                 # passing logging conf to config logging when create pools
                 logging_conf=self._log_config,
