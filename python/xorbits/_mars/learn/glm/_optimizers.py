@@ -29,7 +29,7 @@ def instance_softmax_sgd(W, X, y, reg):
     y_obs = np.zeros(shape=(N, K))
     y_obs[0] = np.eye(K)[y]
 
-    loss = -1 / N * np.sum(
+    loss = -1 * np.sum(
         y_obs * np.log(np.exp(X @ W) / np.sum(np.exp(X @ W), axis=1).reshape(-1, 1))
     ) + 0.5 * reg * np.sum(np.square(W))
 
