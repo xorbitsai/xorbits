@@ -45,6 +45,10 @@ By default, Xorbits’ logs are saved in the directory ``/tmp/xorbits/logs`` for
 and ``C:\Temp\xorbits\logs`` for Windows. The default log level for files is set to ``DEBUG`` for
 troubleshooting purposes.
 
+.. note::
+    Since ``v0.3.0``, Xorbits’ logs are saved in the directory ``/tmp/${USER}/xorbits/logs`` for Linux and Mac OS,
+    and ``C:\Temp\${USERNAME}\xorbits\logs`` for Windows by default.
+
 Local deployment
 ~~~~~~~~~~~~~~~~
 In a :ref:`local deployment <deployment_local>`, Xorbits creates a subdirectory under the log
@@ -56,6 +60,14 @@ file. An example of the log directory structure is shown below::
     └── logs
         └── 1679904140623326000
             └── xorbits.log
+
+.. note::
+    Since ``v0.3.0``, an example of the log directory structure for user ``test`` is shown below::
+
+        /tmp/test/xorbits
+        └── logs
+            └── 1679904140623326000
+                └── xorbits.log
 
 If you wish to change the log directory, level, or format, specify them when calling
 ``xorbits.init()``:
@@ -84,6 +96,16 @@ structure is shown below::
         │   └── xorbits.log
         └── worker_1679923657597859000
             └── xorbits.log
+
+.. note::
+    Since ``v0.3.0``, an example of the log directory structure for user ``test`` is shown below::
+
+        /tmp/test/xorbits
+        └── logs
+            ├── supervisor_1679923647642312000
+            │   └── xorbits.log
+            └── worker_1679923657597859000
+                └── xorbits.log
 
 You can easily modify the log level, format, or directory with command line arguments. For
 instance::

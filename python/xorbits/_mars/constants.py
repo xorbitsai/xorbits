@@ -14,7 +14,7 @@
 
 import os
 
-from .utils import get_current_user
+from xoscar.utils import get_current_user
 
 MARS_TEMP_DIR = f"/tmp/{get_current_user()}/xorbits"
 MARS_TEMP_DIR_WIN = f"C:\\Temp\\{get_current_user()}\\xorbits"
