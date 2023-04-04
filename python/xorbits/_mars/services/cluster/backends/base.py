@@ -82,6 +82,13 @@ class AbstractClusterBackend(ABC):
     async def request_workers(
         self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
+        """
+        Create new workers
+
+        Returns
+        -------
+        Addresses of the new created workers
+        """
         raise NotImplementedError
 
     @abstractmethod

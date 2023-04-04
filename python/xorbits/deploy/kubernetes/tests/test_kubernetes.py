@@ -26,7 +26,7 @@ import numpy as np
 import pytest
 
 from .... import numpy as xnp
-from ...._mars.services.cluster.api.web import WebClusterAPI
+from ...._mars.services.cluster import WebClusterAPI
 from ...._mars.utils import lazy_import
 from ....utils import get_local_py_version
 from .. import new_cluster
@@ -178,15 +178,25 @@ def _start_kube_cluster(**kwargs):
 
         [p.terminate() for p in log_processes]
     finally:
-        shutil.rmtree(temp_spill_dir)
-        if cluster_client:
-            try:
-                cluster_client.stop(wait=True, timeout=20)
-            except TimeoutError:
-                pass
-        _collect_coverage()
-        _remove_docker_image(image_name, False)
-        kube_api.delete_namespace(name=cluster_client.namespace)
+        # shutil.rmtree(temp_spill_dir)
+        # if cluster_client:
+        #     try:
+        #         cluster_client.stop(wait=True, timeout=20)
+        #     except TimeoutError:
+        #         pass
+        # _collect_coverage()
+        # _remove_docker_image(image_name, False)
+        print("HI")
+
+
+def simple_job():
+    a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
+    b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
+    c = (a * b * 2 + 1).sum()
+    print(c)
+
+    expected = (np.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
+    np.testing.assert_array_equal(c.to_numpy(), expected.sum())
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
@@ -200,14 +210,7 @@ def test_run_in_kubernetes():
         use_local_image=True,
         pip=["Faker"],
     ):
-        a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
-        b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
-        c = (a * b * 2 + 1).sum()
-        print(c)
-
-        expected = (np.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
-        np.testing.assert_array_equal(c.to_numpy(), expected.sum())
-
+        simple_job()
         import pandas as pd
 
         def gen_data(n=100):
@@ -235,28 +238,47 @@ async def test_request_workers():
         worker_mem="1G",
         worker_cache_mem="64m",
         use_local_image=True,
-        pip=["Faker"],
     ) as cluster_client:
         cluster_api = WebClusterAPI(address=cluster_client.endpoint)
         with pytest.raises(ValueError) as exc:
             await cluster_api.request_workers(worker_num=1, timeout=-10)
         assert exc.type == ValueError
         assert "Please specify a `timeout` that is greater than zero" in str(exc.value)
-        with pytest.raises(ValueError) as exc1:
+        with pytest.raises(ValueError) as exc:
             await cluster_api.request_workers(worker_num=-10, timeout=1)
-        assert exc1.type == ValueError
+        assert exc.type == ValueError
         assert "Please specify a `worker_num` that is greater than zero" in str(
-            exc1.value
+            exc.value
         )
-        with pytest.raises(ValueError) as exc2:
+        with pytest.raises(ValueError) as exc:
             await cluster_api.request_workers(worker_num=0, timeout=1)
-        assert exc2.type == ValueError
+        assert exc.type == ValueError
         assert "Please specify a `worker_num` that is greater than zero" in str(
-            exc2.value
+            exc.value
         )
         new_workers = await cluster_api.request_workers(worker_num=1, timeout=300)
-        assert len(new_workers) == 2
-        with pytest.raises(TimeoutError) as exc3:
+        assert len(new_workers) == 1
+        with pytest.raises(TimeoutError) as exc:
             await cluster_api.request_workers(worker_num=1, timeout=0)
-        assert exc3.type == TimeoutError
-        assert "Request worker timeout" in str(exc3.value)
+        assert exc.type == TimeoutError
+        assert "Request worker timeout" in str(exc.value)
+        simple_job()
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.asyncio
+async def test_request_workers_insufficient():
+    with _start_kube_cluster(
+        supervisor_cpu=0.5,
+        supervisor_mem="1G",
+        worker_cpu=0.5,
+        worker_mem="1G",
+        worker_cache_mem="64m",
+        use_local_image=True,
+    ) as cluster_client:
+        cluster_api = WebClusterAPI(address=cluster_client.endpoint)
+        with pytest.raises(MemoryError) as exc:
+            await cluster_api.request_workers(worker_num=1, timeout=30)
+        assert exc.type == MemoryError
+        assert "Insufficient cpu" in str(exc.value)
+        simple_job()
