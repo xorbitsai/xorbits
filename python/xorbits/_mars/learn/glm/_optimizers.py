@@ -22,7 +22,7 @@ from ... import tensor as mt
 from ...tensor.datasource import tensor as astensor
 
 
-def single_softmax_grad(W, X, y, reg):
+def instance_softmax_sgd(W, X, y, reg):
     X = X.reshape((1, X.shape[0]))
     K = W.shape[1]
     y_obs = np.eye(K)[y]
@@ -76,7 +76,7 @@ def gradient_descent(
             funcs = mr.ExecutableTuple(
                 [
                     mr.spawn(
-                        single_softmax_grad,
+                        instance_softmax_sgd,
                         args=(W, X[i], y[i], reg),
                     )
                     for i in idx
