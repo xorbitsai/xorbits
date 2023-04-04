@@ -167,7 +167,7 @@ jobs:
           pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
         fi
 
-        pip install -e .[dev,extra,aws]
+        pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
     - name: Install on GPU

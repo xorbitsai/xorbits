@@ -458,6 +458,7 @@ def test_read_csv():
         )
         df.to_csv(file_path)
         rel_path = os.path.relpath(file_path, start=os.curdir)
+        # test rel path read_csv
         mdf = read_csv(rel_path, index_col=0, chunk_bytes=10)
         assert mdf.op.path == os.path.abspath(file_path)
         assert isinstance(mdf.op, DataFrameReadCSV)
@@ -468,6 +469,21 @@ def test_read_csv():
         assert len(mdf.chunks) == 4
         index_keys = set()
         for chunk in mdf.chunks:
+            index_keys.add(chunk.index_value.key)
+            pd.testing.assert_index_equal(df.columns, chunk.columns_value.to_pandas())
+            pd.testing.assert_series_equal(df.dtypes, chunk.dtypes)
+        assert len(index_keys) > 1
+        # test abs path read_csv
+        abs_mdf = read_csv(file_path, index_col=0, chunk_bytes=10)
+        assert abs_mdf.op.path == os.path.abspath(file_path)
+        assert isinstance(abs_mdf.op, DataFrameReadCSV)
+        assert abs_mdf.shape[1] == 3
+        pd.testing.assert_index_equal(df.columns, abs_mdf.columns_value.to_pandas())
+
+        abs_mdf = tile(abs_mdf)
+        assert len(abs_mdf.chunks) == 4
+        index_keys = set()
+        for chunk in abs_mdf.chunks:
             index_keys.add(chunk.index_value.key)
             pd.testing.assert_index_equal(df.columns, chunk.columns_value.to_pandas())
             pd.testing.assert_series_equal(df.dtypes, chunk.dtypes)
