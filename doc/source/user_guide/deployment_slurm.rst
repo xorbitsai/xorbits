@@ -109,7 +109,7 @@ After detecting the head node hostname and IP address, we'll want to run the sup
 We'll do this by using ``srun`` to start the supervisor on the head node. 
 ``xorbits-supervisor`` is the command line tool to start the supervisor.
 You should specify the IP, port, the web port.
-Note that you should sleep a few seconds as the supervisor need some time to start. Otherwise, other worker nodes may not able to connect to the supervisor.
+Note that you should sleep a few seconds as the supervisor need some time to start. Otherwise, worker nodes may not be able to connect to the supervisor.
 
 .. code-block:: bash
 
