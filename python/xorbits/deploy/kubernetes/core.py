@@ -207,7 +207,7 @@ class K8SClusterBackend(AbstractClusterBackend):
             pods = self._client.list_namespaced_pod(
                 namespace=self._k8s_namespace,
                 _preload_content=False,
-                label_selector="xorbits/service-type=xorbitsworker",
+                label_selector="xorbits/service-type="+XorbitsWorkersConfig.rc_name,
             )
             pods_list = json.loads(pods.data)["items"]
             port = os.environ["MARS_K8S_SERVICE_PORT"]
