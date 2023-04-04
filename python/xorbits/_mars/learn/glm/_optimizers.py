@@ -18,8 +18,31 @@ import math
 import numpy as np
 
 from ... import execute
+from ... import remote as mr
 from ... import tensor as mt
 from ...tensor.datasource import tensor as astensor
+
+
+def batch_generator(idx, X, y):
+    for i in idx:
+        yield X[i], y[i]
+
+
+def single_softmax_grad(W, X, y, reg):
+    K = W.shape[1]
+    y_obs = mt.eye(K)[y]
+
+    dW = mt.zeros(shape=(X.shape[1], K))
+
+    # Matrix approach
+    dW = (
+        -1
+        * X.T
+        @ (y_obs - (mt.exp(X @ W) / mt.sum(mt.exp(X @ W), axis=1).reshape(-1, 1)))
+        + reg * W
+    )
+
+    return dW.to_numpy()
 
 
 def softmax_loss_and_grad(W, X, y, reg):
@@ -78,15 +101,24 @@ def gradient_descent(
         # perform mini-batch SGD update
         perm_idx = np.random.permutation(num_train)
         for it in range(num_iters_per_epoch):
-            # print(it, num_iters_per_epoch)
             idx = perm_idx[it * batch_size : (it + 1) * batch_size]
-            batch_x = X[idx]
-            batch_y = y[idx]
+            # batch_x = X[idx]
+            # batch_y = y[idx]
 
             # evaluate loss and gradient
-            _, grad = softmax_loss_and_grad(W, batch_x, batch_y, reg)
+            # _, grad_sum = softmax_loss_and_grad(W, batch_x, batch_y, reg)
+
+            # grad_sum = [single_softmax_grad(W, cur_X, cur_y, reg) for cur_X, cur_y in batch_generator(idx, X, y)] / len(idx)
+            funcs = [
+                mr.spawn(
+                    single_softmax_grad,
+                    args=(W, X[i].reshape((1, X[i].shape[0])), y[i], reg),
+                )
+                for i in idx
+            ]
+            grad_sum = mr.ExecutableTuple(funcs).execute().fetch() / len(idx)
 
             # update parameters
-            W = W - learning_rate * grad
+            W = W - learning_rate * grad_sum
 
     return W
