@@ -22,7 +22,7 @@ from ... import tensor as mt
 from ...tensor.datasource import tensor as astensor
 
 
-def instance_softmax_sgd(W, X, y, reg):
+def instance_softmax_loss_and_sgd(W, X, y, reg):
     N, D = X.shape
     K = W.shape[1]
 
@@ -82,7 +82,7 @@ def gradient_descent(
             funcs = mr.ExecutableTuple(
                 [
                     mr.spawn(
-                        instance_softmax_sgd,
+                        instance_softmax_loss_and_sgd,
                         args=(W, X[i].reshape((1, X[i].shape[0])), y[i], reg),
                     )
                     for i in idx
