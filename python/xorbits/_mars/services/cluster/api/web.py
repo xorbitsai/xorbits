@@ -395,4 +395,4 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
         if timeout is not None:
             path += f"&&timeout={timeout}"
         res = await self._request_url("PATCH", path, data=b"")
-        return json.loads(res.body)["workers"]
+        return json.loads(res.body)["workers"]  # pragma: no cover

@@ -178,15 +178,14 @@ def _start_kube_cluster(**kwargs):
 
         [p.terminate() for p in log_processes]
     finally:
-        # shutil.rmtree(temp_spill_dir)
-        # if cluster_client:
-        #     try:
-        #         cluster_client.stop(wait=True, timeout=20)
-        #     except TimeoutError:
-        #         pass
-        # _collect_coverage()
-        # _remove_docker_image(image_name, False)
-        print("HI")
+        shutil.rmtree(temp_spill_dir)
+        if cluster_client:
+            try:
+                cluster_client.stop(wait=True, timeout=20)
+            except TimeoutError:
+                pass
+        _collect_coverage()
+        _remove_docker_image(image_name, False)
 
 
 def simple_job():
