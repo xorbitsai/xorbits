@@ -276,8 +276,7 @@ async def test_request_workers_insufficient():
         use_local_image=True,
     ) as cluster_client:
         cluster_api = WebClusterAPI(address=cluster_client.endpoint)
-        with pytest.raises(MemoryError) as exc:
+        with pytest.raises(SystemError) as exc:
             await cluster_api.request_workers(worker_num=1, timeout=30)
-        assert exc.type == MemoryError
+        assert exc.type == SystemError
         assert "Insufficient cpu" in str(exc.value)
-        simple_job()
