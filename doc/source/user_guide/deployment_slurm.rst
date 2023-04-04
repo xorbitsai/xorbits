@@ -52,7 +52,7 @@ You need to change ``--partition`` to select the partition in your site. You can
     #SBATCH --time=00:30:00
 
 
-Loading your environment
+Load your environment
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 You'll need to install Xorbits into a specific environment using ``conda`` or ``module``. 
@@ -121,7 +121,7 @@ Note that you should sleep a few seconds as the supervisor need some time to sta
         xorbits-supervisor -H "$head_node_ip" -p "$port" -w "$web_port" &
     sleep 10
 
-Starting Workers
+Start Workers
 ~~~~~~~~~~~~~~~~
 The rest of the machines can be started as workers via command:
 
