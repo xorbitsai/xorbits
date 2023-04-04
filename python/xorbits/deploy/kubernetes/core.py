@@ -199,29 +199,29 @@ class K8SClusterBackend(AbstractClusterBackend):
     ) -> str:
         raise NotImplementedError
 
+    def list_workers(self):
+        workers = []
+        pods = self._client.list_namespaced_pod(
+            namespace=self._k8s_namespace,
+            _preload_content=False,
+            label_selector="xorbits/service-type=" + XorbitsWorkersConfig.rc_name,
+        )
+        pods_list = json.loads(pods.data)["items"]
+        port = os.environ["MARS_K8S_SERVICE_PORT"]
+        for p in pods_list:
+            if "podIP" in p["status"]:
+                workers.append(p["status"]["podIP"] + ":" + port)
+            elif (
+                "conditions" in p["status"]
+                and "reason" in p["status"]["conditions"][0]
+                and p["status"]["conditions"][0]["reason"] == "Unschedulable"
+            ):
+                raise SystemError(p["status"]["conditions"][0]["message"])
+        return workers
+
     async def request_workers(
         self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
-        def list_workers():
-            workers = []
-            pods = self._client.list_namespaced_pod(
-                namespace=self._k8s_namespace,
-                _preload_content=False,
-                label_selector="xorbits/service-type=" + XorbitsWorkersConfig.rc_name,
-            )
-            pods_list = json.loads(pods.data)["items"]
-            port = os.environ["MARS_K8S_SERVICE_PORT"]
-            for p in pods_list:
-                if "podIP" in p["status"]:
-                    workers.append(p["status"]["podIP"] + ":" + port)
-                elif (
-                    "conditions" in p["status"]
-                    and "reason" in p["status"]["conditions"][0]
-                    and p["status"]["conditions"][0]["reason"] == "Unschedulable"
-                ):
-                    raise MemoryError(p["status"]["conditions"][0]["message"])
-            return workers
-
         if worker_num <= 0:
             raise ValueError("Please specify a `worker_num` that is greater than zero")
         if timeout and timeout < 0:
@@ -234,7 +234,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         )
         deployment_data = json.loads(deployment.data)
         old_replica = deployment_data["status"]["replicas"]
-        old_workers = list_workers()
+        old_workers = self.list_workers()
         new_replica = old_replica + worker_num
         body = {"spec": {"replicas": new_replica}}
         self._apps_client.patch_namespaced_deployment_scale(
@@ -243,7 +243,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         while True:
             if timeout is not None and (timeout + start_time) < time.time():
                 raise TimeoutError("Request worker timeout")
-            new_workers = list_workers()
+            new_workers = self.list_workers()
             if len(new_workers) == new_replica:
                 return list(set(new_workers) - set(old_workers))
             await asyncio.sleep(1)
