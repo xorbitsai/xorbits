@@ -193,10 +193,12 @@ class ClusterWebAPIHandler(MarsServiceWebAPIHandler):
                     size, address=address, offset=offset
                 )
 
-    @web_api("workers", method=["post"], cache_blocking=True)
+    @web_api("workers/scale", method=["patch"], cache_blocking=True)
     async def request_workers(self):
-        worker_num = int(self.get_argument(name="worker_num", default="0"))
-        timeout = int(self.get_argument(name="timeout", default="30"))
+        worker_num = int(self.get_argument(name="worker_num"))
+        timeout = self.get_argument(name="timeout", default=None)
+        if timeout is not None:
+            timeout = int(timeout)
         cluster_api = await self._get_cluster_api()
         addresses = await cluster_api.request_workers(worker_num, timeout=timeout)
         self.write(json.dumps({"workers": addresses}))  # pragma: no cover
@@ -389,8 +391,8 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
     async def request_workers(
         self, worker_num: int, timeout: Optional[int] = None
     ) -> List[str]:
-        path = f"{self._address}/api/cluster/workers?worker_num={worker_num}"
+        path = f"{self._address}/api/cluster/workers/scale?worker_num={worker_num}"
         if timeout is not None:
             path += f"&&timeout={timeout}"
-        res = await self._request_url(path=path, method="POST", data=b"0")
+        res = await self._request_url("PATCH", path, data=b"")
         return json.loads(res.body)["workers"]
