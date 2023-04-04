@@ -23,11 +23,13 @@ from ...tensor.datasource import tensor as astensor
 
 
 def instance_softmax_sgd(W, X, y, reg):
-    X = X.reshape((1, X.shape[0]))
+    N, D = X.shape
     K = W.shape[1]
-    y_obs = np.eye(K)[y]
 
-    dW = np.zeros(shape=(X.shape[1], K))
+    y_obs = np.zeros(shape=(N, K))
+    y_obs[0] = np.eye(K)[y]
+
+    dW = np.zeros(shape=(D, K))
 
     # Matrix approach
     dW = (
@@ -77,7 +79,7 @@ def gradient_descent(
                 [
                     mr.spawn(
                         instance_softmax_sgd,
-                        args=(W, X[i], y[i], reg),
+                        args=(W, X[i].reshape((1, X[i].shape[0])), y[i], reg),
                     )
                     for i in idx
                 ]
