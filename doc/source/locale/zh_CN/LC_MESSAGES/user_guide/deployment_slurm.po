@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-03 19:48+0800\n"
+"POT-Creation-Date: 2023-04-04 12:02+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_CN\n"
@@ -129,7 +129,7 @@ msgstr ""
 "添加其他SLURM参数。"
 
 #: ../../source/user_guide/deployment_slurm.rst:56
-msgid "Loading your environment"
+msgid "Load your environment"
 msgstr "加载环境"
 
 #: ../../source/user_guide/deployment_slurm.rst:58
@@ -188,7 +188,7 @@ msgstr ""
 "supervisor。"
 
 #: ../../source/user_guide/deployment_slurm.rst:125
-msgid "Starting Workers"
+msgid "Start Workers"
 msgstr "启动 Worker"
 
 #: ../../source/user_guide/deployment_slurm.rst:126
