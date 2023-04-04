@@ -29,6 +29,10 @@ def instance_softmax_sgd(W, X, y, reg):
     y_obs = np.zeros(shape=(N, K))
     y_obs[0] = np.eye(K)[y]
 
+    loss = -1 / N * np.sum(
+        y_obs * np.log(np.exp(X @ W) / np.sum(np.exp(X @ W), axis=1).reshape(-1, 1))
+    ) + 0.5 * reg * np.sum(np.square(W))
+
     dW = np.zeros(shape=(D, K))
 
     # Matrix approach
@@ -39,7 +43,7 @@ def instance_softmax_sgd(W, X, y, reg):
         + reg * W
     )
 
-    return dW
+    return loss, dW
 
 
 def gradient_descent(
@@ -84,7 +88,7 @@ def gradient_descent(
                     for i in idx
                 ]
             )
-            grad_tensors = funcs.execute().fetch()
+            grad_tensors = [out[1] for out in funcs.execute().fetch()]
             grad = np.sum(grad_tensors, axis=0) / len(idx)
 
             # update parameters
