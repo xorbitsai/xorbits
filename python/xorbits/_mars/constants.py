@@ -14,8 +14,10 @@
 
 import os
 
-MARS_TEMP_DIR = "/tmp/xorbits"
-MARS_TEMP_DIR_WIN = "C:\\Temp\\xorbits"
+from .utils import get_current_user
+
+MARS_TEMP_DIR = f"/tmp/{get_current_user()}/xorbits"
+MARS_TEMP_DIR_WIN = f"C:\\Temp\\{get_current_user()}\\xorbits"
 
 # logging.
 MARS_LOG_DIR_KEY = "MARS_LOG_DIR"

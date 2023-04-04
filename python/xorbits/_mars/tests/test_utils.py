@@ -541,3 +541,11 @@ def test_random_string_and_digits():
 
     res2 = utils.random_string_and_digits(5)
     assert res != res2
+
+
+def test_get_current_user():
+    user = utils.get_current_user()
+    # WINDOWS env USERNAME
+    # UNIX env USER
+    actual_user = os.environ.get("USER", os.environ.get("USERNAME"))
+    assert user == actual_user

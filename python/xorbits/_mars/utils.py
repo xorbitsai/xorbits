@@ -18,6 +18,7 @@ import dataclasses
 import datetime
 import enum
 import functools
+import getpass
 import importlib
 import inspect
 import io
@@ -1827,3 +1828,11 @@ def random_string_and_digits(length: int) -> str:
     return "".join(
         random.choice(string.ascii_letters + string.digits) for _ in range(length)
     )
+
+
+def get_current_user() -> str:
+    """
+    Get current login user.
+    Compatible for unix and windows.
+    """
+    return getpass.getuser()

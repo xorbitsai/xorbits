@@ -158,7 +158,6 @@ def _get_or_create_default_log_dir() -> str:
         log_dir = DEFAULT_MARS_LOG_DIR
 
     os.makedirs(log_dir, exist_ok=True)
-    os.chmod(log_dir, mode=0o777)
     return log_dir
 
 
