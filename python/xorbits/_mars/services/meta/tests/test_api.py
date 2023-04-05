@@ -18,10 +18,10 @@ import sys
 import pytest
 
 from .... import dataframe as md
-from .... import oscar as mo
 from .... import remote as mr
 from .... import tensor as mt
 from ....core import tile
+from ....oscar import create_actor_pool
 from ....utils import get_next_port
 from ... import NodeRole, start_services, stop_services
 from ...cluster import MockClusterAPI
@@ -42,9 +42,7 @@ test_objects = [t, df, series, index, obj]
 @pytest.mark.parametrize("obj", test_objects)
 async def test_meta_mock_api(obj):
     start_method = "fork" if sys.platform != "win32" else None
-    pool = await mo.create_actor_pool(
-        "127.0.0.1", 2, subprocess_start_method=start_method
-    )
+    pool = await create_actor_pool("127.0.0.1", 2, subprocess_start_method=start_method)
     async with pool:
         session_id = "mock_session_id"
 
@@ -90,8 +88,8 @@ async def test_meta_mock_api(obj):
 
 @pytest.mark.asyncio
 async def test_worker_meta_api():
-    supervisor_pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
-    worker_pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    supervisor_pool = await create_actor_pool("127.0.0.1", n_process=0)
+    worker_pool = await create_actor_pool("127.0.0.1", n_process=0)
 
     async with supervisor_pool, worker_pool:
         config = {
@@ -133,7 +131,7 @@ async def test_worker_meta_api():
 
 @pytest.mark.asyncio
 async def test_meta_web_api():
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
     web_port = get_next_port()
 
     async with pool:

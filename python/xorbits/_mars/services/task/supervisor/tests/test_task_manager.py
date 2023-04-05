@@ -23,16 +23,17 @@ import time
 import numpy as np
 import pandas as pd
 import pytest
+import xoscar as mo
 import yaml
+from xoscar.backends.allocate_strategy import MainPool
 
 from ..... import dataframe as md
-from ..... import oscar as mo
 from ..... import remote as mr
 from ..... import tensor as mt
 from .....conftest import MARS_CI_BACKEND
 from .....core import Tileable, TileableGraph, TileableGraphBuilder
 from .....core.operand import Fetch
-from .....oscar.backends.allocate_strategy import MainPool
+from .....oscar import create_actor_pool
 from .....resource import Resource
 from .....storage import StorageLevel
 from .....utils import Timer, merge_chunks
@@ -65,7 +66,7 @@ async def actor_pool(task_info_root_path):
         if sys.platform != "win32"
         else None
     )
-    pool = await mo.create_actor_pool(
+    pool = await create_actor_pool(
         "127.0.0.1",
         n_process=3,
         labels=["main"] + ["numa-0"] * 2 + ["io"],
@@ -111,7 +112,12 @@ async def actor_pool(task_info_root_path):
         )
         await mo.create_actor(
             TaskInfoCollectorActor,
-            {"experimental": {"task_info_root_path": task_info_root_path}},
+            {
+                "experimental": {
+                    "collect_task_info_enabled": True,
+                    "task_info_root_path": task_info_root_path,
+                }
+            },
             uid=TaskInfoCollectorActor.default_uid(),
             address=pool.external_address,
         )

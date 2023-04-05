@@ -14,14 +14,15 @@
 # limitations under the License.
 
 import pytest
+import xoscar as mo
 
-from .... import oscar as mo
+from ....oscar import create_actor_pool
 from ..procinfo import ProcessInfoManagerActor
 
 
 @pytest.fixture
 async def actor_pool():
-    pool = await mo.create_actor_pool(
+    pool = await create_actor_pool(
         "127.0.0.1", n_process=2, labels=["main", "numa-0", "gpu-0"]
     )
     async with pool:

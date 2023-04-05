@@ -19,11 +19,12 @@ import sys
 from collections import defaultdict
 from typing import Dict, List, Optional, Set
 
-from ..... import oscar as mo
+import xoscar as mo
+
 from .....core import ChunkGraph, TileContext
 from .....core.operand import Fetch, MapReduceOperand, OperandStage, ShuffleProxy
 from .....lib.aio import alru_cache
-from .....oscar.profiling import ProfilingData
+from .....profiling import ProfilingData
 from .....resource import Resource
 from .....typing import BandType, TileableType
 from .....utils import Timer

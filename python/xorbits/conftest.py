@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import pytest
+from xoscar.backends.router import Router
 
 from . import numpy as np
 from . import pandas as pd
 from ._mars.config import option_context
 from ._mars.deploy.oscar.session import clear_default_session
-from ._mars.oscar.backends.router import Router
 from .tests.core import init_test
 
 
@@ -30,26 +30,6 @@ def doctest_namespace():
 @pytest.fixture
 def dummy_df():
     return pd.DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
-
-
-@pytest.fixture
-def dummy_dict_num():
-    return {"foo": (0, 1, 2), "bar": (3, 4, 5)}
-
-
-@pytest.fixture
-def dummy_dict_str():
-    return {"foo": ("a", "b", "c"), "bar": ("d", "e", "f")}
-
-
-@pytest.fixture
-def dummy_dict_bool():
-    return {"foo": (True, False, True), "bar": (False, True, False)}
-
-
-@pytest.fixture
-def dummy_dict_mixed():
-    return {"foo": (False, 1, "a"), "bar": (5, "f", True)}
 
 
 @pytest.fixture

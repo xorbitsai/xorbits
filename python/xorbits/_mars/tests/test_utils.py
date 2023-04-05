@@ -18,11 +18,7 @@ import copy
 import logging
 import multiprocessing
 import os
-import shutil
 import sys
-import tempfile
-import textwrap
-import time
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from functools import partial
@@ -41,39 +37,15 @@ from .core import require_cudf, require_ray
 
 def test_string_conversion():
     s = None
-    assert utils.to_binary(s) is None
-    assert utils.to_str(s) is None
     assert utils.to_text(s) is None
 
     s = "abcdefg"
-    assert isinstance(utils.to_binary(s), bytes)
-    assert utils.to_binary(s) == b"abcdefg"
-    assert isinstance(utils.to_str(s), str)
-    assert utils.to_str(s) == "abcdefg"
-    assert isinstance(utils.to_text(s), str)
     assert utils.to_text(s) == "abcdefg"
-
-    ustr = type("ustr", (str,), {})
-    assert isinstance(utils.to_str(ustr(s)), str)
-    assert utils.to_str(ustr(s)) == "abcdefg"
 
     s = b"abcdefg"
-    assert isinstance(utils.to_binary(s), bytes)
-    assert utils.to_binary(s) == b"abcdefg"
-    assert isinstance(utils.to_str(s), str)
-    assert utils.to_str(s) == "abcdefg"
-    assert isinstance(utils.to_text(s), str)
     assert utils.to_text(s) == "abcdefg"
 
-    ubytes = type("ubytes", (bytes,), {})
-    assert isinstance(utils.to_binary(ubytes(s)), bytes)
-    assert utils.to_binary(ubytes(s)) == b"abcdefg"
-
     s = "abcdefg"
-    assert isinstance(utils.to_binary(s), bytes)
-    assert utils.to_binary(s) == b"abcdefg"
-    assert isinstance(utils.to_str(s), str)
-    assert utils.to_str(s) == "abcdefg"
     assert isinstance(utils.to_text(s), str)
     assert utils.to_text(s) == "abcdefg"
 
@@ -81,10 +53,6 @@ def test_string_conversion():
     assert isinstance(utils.to_text(uunicode(s)), str)
     assert utils.to_text(uunicode(s)) == "abcdefg"
 
-    with pytest.raises(TypeError):
-        utils.to_binary(utils)
-    with pytest.raises(TypeError):
-        utils.to_str(utils)
     with pytest.raises(TypeError):
         utils.to_text(utils)
 
@@ -179,64 +147,6 @@ def test_tokenize():
     assert utils.tokenize(partial_f) != utils.tokenize(partial_f2)
 
 
-def test_lazy_import():
-    old_sys_path = sys.path
-    mock_mod = textwrap.dedent(
-        """
-        __version__ = '0.1.0b1'
-        """.strip()
-    )
-    mock_mod2 = textwrap.dedent(
-        """
-        from xorbits._mars.utils import lazy_import
-        mock_mod = lazy_import("mock_mod")
-
-        def get_version():
-            return mock_mod.__version__
-        """
-    )
-
-    temp_dir = tempfile.mkdtemp(prefix="mars-utils-test-")
-    sys.path += [temp_dir]
-    try:
-        with open(os.path.join(temp_dir, "mock_mod.py"), "w") as outf:
-            outf.write(mock_mod)
-        with open(os.path.join(temp_dir, "mock_mod2.py"), "w") as outf:
-            outf.write(mock_mod2)
-
-        non_exist_mod = utils.lazy_import("non_exist_mod", locals=locals())
-        assert non_exist_mod is None
-
-        non_exist_mod1 = utils.lazy_import("non_exist_mod1", placeholder=True)
-        with pytest.raises(AttributeError) as ex_data:
-            non_exist_mod1.meth()
-        assert "required" in str(ex_data.value)
-
-        mod = utils.lazy_import(
-            "mock_mod", globals=globals(), locals=locals(), rename="mod"
-        )
-        assert mod is not None
-        assert mod.__version__ == "0.1.0b1"
-
-        glob = globals().copy()
-        mod = utils.lazy_import("mock_mod", globals=glob, locals=locals(), rename="mod")
-        glob["mod"] = mod
-        assert mod is not None
-        assert mod.__version__ == "0.1.0b1"
-        assert type(glob["mod"]).__name__ == "module"
-
-        import mock_mod2 as mod2
-
-        assert type(mod2.mock_mod).__name__ != "module"
-        assert mod2.get_version() == "0.1.0b1"
-        assert type(mod2.mock_mod).__name__ == "module"
-    finally:
-        shutil.rmtree(temp_dir)
-        sys.path = old_sys_path
-        sys.modules.pop("mock_mod", None)
-        sys.modules.pop("mock_mod2", None)
-
-
 def test_chunks_indexer():
     a = mt.ones((3, 4, 5), chunk_size=2)
     a = tile(a)
@@ -319,40 +229,6 @@ def test_require_not_none():
     assert should_not_exist_np is None
 
 
-def test_type_dispatcher():
-    dispatcher = utils.TypeDispatcher()
-
-    type1 = type("Type1", (), {})
-    type2 = type("Type2", (type1,), {})
-    type3 = type("Type3", (), {})
-    type4 = type("Type4", (type2,), {})
-    type5 = type("Type5", (type4,), {})
-
-    dispatcher.register(object, lambda x: "Object")
-    dispatcher.register(type1, lambda x: "Type1")
-    dispatcher.register(type4, lambda x: "Type4")
-    dispatcher.register("pandas.DataFrame", lambda x: "DataFrame")
-    dispatcher.register(utils.NamedType("ray", type1), lambda x: "RayType1")
-
-    assert "Type1" == dispatcher(type2())
-    assert "DataFrame" == dispatcher(pd.DataFrame())
-    assert "Object" == dispatcher(type3())
-
-    tp = utils.NamedType("ray", type1)
-    assert dispatcher.get_handler(tp)(tp) == "RayType1"
-    tp = utils.NamedType("ray", type2)
-    assert dispatcher.get_handler(tp)(tp) == "RayType1"
-    tp = utils.NamedType("xxx", type2)
-    assert dispatcher.get_handler(tp)(tp) == "Type1"
-    assert "Type1" == dispatcher(type2())
-    tp = utils.NamedType("ray", type5)
-    assert dispatcher.get_handler(tp)(tp) == "Type4"
-
-    dispatcher.unregister(object)
-    with pytest.raises(KeyError):
-        dispatcher(type3())
-
-
 def test_fixed_size_file_object():
     arr = [str(i).encode() * 20 for i in range(10)]
     bts = os.linesep.encode().join(arr)
@@ -370,13 +246,6 @@ def test_fixed_size_file_object():
     assert ref_bio.read(5) == fix_bio.read(5)
     assert ref_bio.readlines(25) == fix_bio.readlines(25)
     assert list(ref_bio) == list(fix_bio)
-
-
-def test_timer():
-    with utils.Timer() as timer:
-        time.sleep(0.1)
-
-    assert timer.duration >= 0.1
 
 
 def test_quiet_stdio():

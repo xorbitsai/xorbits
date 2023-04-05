@@ -18,13 +18,10 @@ import shutil
 import tempfile
 
 import pytest
+import xoscar as mo
 
-from .... import oscar as mo
-from ....constants import (
-    DEFAULT_MARS_LOG_FILE_NAME,
-    MARS_LOG_DIR_KEY,
-    MARS_TMP_DIR_PREFIX,
-)
+from ....constants import DEFAULT_MARS_LOG_FILE_NAME, MARS_LOG_DIR_KEY
+from ....oscar import create_actor_pool
 from ....utils import get_next_port
 from ... import NodeRole
 from ...web.supervisor import WebSupervisorService
@@ -36,9 +33,9 @@ from ..core import NodeStatus
 @pytest.fixture
 async def actor_pool():
     # prepare
-    mars_tmp_dir = tempfile.mkdtemp(prefix=MARS_TMP_DIR_PREFIX)
+    mars_tmp_dir = tempfile.mkdtemp(prefix="mars_tmp_")
     os.environ[MARS_LOG_DIR_KEY] = mars_tmp_dir
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
     async with pool:
         yield pool
 

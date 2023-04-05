@@ -15,13 +15,10 @@
 
 from typing import Any, Dict, List
 
-try:
-    import scipy.sparse as sps
-except ImportError:  # pragma: no cover
-    sps = None
+import scipy.sparse as sps
+from xoscar.serialization.core import Serializer, buffered, deserialize, serialize
 
 from ..lib.sparse import SparseNDArray
-from .core import Serializer, buffered, deserialize, serialize
 
 
 class SparseNDArraySerializer(Serializer):

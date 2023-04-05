@@ -17,7 +17,8 @@ import time
 from collections import defaultdict
 from typing import Dict, List, Optional, Set
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....resource import Resource
 from ....typing import BandType
 from ...core import NodeRole

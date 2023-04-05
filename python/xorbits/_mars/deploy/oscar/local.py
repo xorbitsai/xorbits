@@ -20,12 +20,11 @@ import sys
 from typing import Dict, List, Union
 
 import numpy as np
+import xoscar as mo
+from xoscar.backends.router import Router
+from xoscar.metrics import init_metrics
 
-from ... import oscar as mo
-from ...core.entrypoints import init_extension_entrypoints
 from ...lib.aio import get_isolation
-from ...metrics import init_metrics
-from ...oscar.backends.router import Router
 from ...resource import cpu_count, cuda_count, mem_total
 from ...services import NodeRole
 from ...services.task.execution.api import ExecutionConfig
@@ -173,8 +172,6 @@ class LocalCluster:
         oscar_extra_conf: dict = None,
         log_config: dict = None,
     ):
-        # load third party extensions.
-        init_extension_entrypoints()
         # auto choose the subprocess_start_method.
         if subprocess_start_method is None:
             subprocess_start_method = (

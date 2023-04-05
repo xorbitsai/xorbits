@@ -17,7 +17,8 @@ import asyncio
 import logging
 from typing import List, Optional, Set
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...lib.uhashring import HashRing
 from .backends import AbstractClusterBackend, get_cluster_backend
 from .core import NodeRole, WatchNotifier

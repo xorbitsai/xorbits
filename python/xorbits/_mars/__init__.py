@@ -16,7 +16,11 @@
 from . import _version
 from .config import options
 from .core.context import get_context
-from .deploy.oscar import new_cluster_in_ray, new_ray_session
+from .core.entrypoints import init_extension_entrypoints
 from .session import execute, fetch, fetch_log, new_session, stop_server
+
+# load third party extensions.
+init_extension_entrypoints()
+del init_extension_entrypoints
 
 __version__ = _version.get_versions()["version"]

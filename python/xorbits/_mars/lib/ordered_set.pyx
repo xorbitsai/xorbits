@@ -6,8 +6,8 @@
 import sys
 
 if sys.version_info[0] == 2:
-    from collections import Iterable, MutableSet, Set
     from itertools import izip
+    from collections import Set, MutableSet, Iterable
 else:
     izip = zip
     from collections.abc import Set, MutableSet, Iterable

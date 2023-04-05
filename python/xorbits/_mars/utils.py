@@ -60,17 +60,19 @@ from urllib.parse import urlparse
 import cloudpickle as pickle
 import numpy as np
 import pandas as pd
+from xoscar._utils import (
+    TypeDispatcher,
+    new_random_id,
+    reset_id_random_seed,
+    to_binary,
+    to_str,
+)
 
 from ._utils import (  # noqa: F401 # pylint: disable=unused-import
     NamedType,
     Timer,
-    TypeDispatcher,
     ceildiv,
-    new_random_id,
     register_tokenizer,
-    reset_id_random_seed,
-    to_binary,
-    to_str,
     to_text,
     tokenize,
     tokenize_int,
@@ -422,7 +424,7 @@ class ModulePlaceholder:
 
 
 def serialize_serializable(serializable, compress: bool = False):
-    from .serialization import serialize
+    from xoscar.serialization import serialize
 
     bio = io.BytesIO()
     header, buffers = serialize(serializable)
@@ -441,38 +443,13 @@ def serialize_serializable(serializable, compress: bool = False):
 
 
 def deserialize_serializable(ser_serializable: bytes):
-    from .serialization import deserialize
+    from xoscar.serialization import deserialize
 
     bio = io.BytesIO(ser_serializable)
     s_header_length = struct.unpack("Q", bio.read(8))[0]
     header2 = pickle.loads(bio.read(s_header_length))
     buffers2 = [bio.read(s) for s in header2[0]["buf_sizes"]]
     return deserialize(header2, buffers2)
-
-
-def register_ray_serializer(obj_type, serializer=None, deserializer=None):
-    try:
-        import ray
-
-        try:
-            ray.register_custom_serializer(
-                obj_type, serializer=serializer, deserializer=deserializer
-            )
-        except AttributeError:  # ray >= 1.0
-            try:
-                from ray.worker import global_worker
-
-                global_worker.check_connected()
-                context = global_worker.get_serialization_context()
-                context.register_custom_serializer(
-                    obj_type, serializer=serializer, deserializer=deserializer
-                )
-            except AttributeError:  # ray >= 1.2.0
-                ray.util.register_serializer(
-                    obj_type, serializer=serializer, deserializer=deserializer
-                )
-    except ImportError:
-        pass
 
 
 cudf = lazy_import("cudf")
@@ -1741,34 +1718,10 @@ def aiotask_wrapper(_f=None, exit_if_exception=False):
 
 
 def is_ray_address(address: str) -> bool:
-    from .oscar.backends.ray.communication import RayServer
-
-    if urlparse(address).scheme == RayServer.scheme:
+    if urlparse(address).scheme == "ray":
         return True
     else:
         return False
-
-
-def is_on_ray(ctx):
-    from .services.task.execution.ray.context import (
-        RayExecutionContext,
-        RayExecutionWorkerContext,
-    )
-
-    # There are three conditions
-    #   a. mars backend
-    #   b. ray backend(oscar), c. ray backend(dag)
-    # When a. or b. is selected, ctx is an instance of ThreadedServiceContext.
-    #   The main difference between them is whether worker address matches ray scheme.
-    #   To avoid duplicated checks, here we choose the first worker address.
-    # When c. is selected, ctx is an instance of RayExecutionContext or RayExecutionWorkerContext,
-    #   while get_worker_addresses method isn't currently implemented in RayExecutionWorkerContext.
-    try:
-        worker_addresses = ctx.get_worker_addresses()
-    except AttributeError:  # pragma: no cover
-        assert isinstance(ctx, RayExecutionWorkerContext)
-        return True
-    return isinstance(ctx, RayExecutionContext) or is_ray_address(worker_addresses[0])
 
 
 def cache_tileables(*tileables):

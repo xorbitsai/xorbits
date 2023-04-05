@@ -19,11 +19,12 @@ from collections import defaultdict
 
 import numpy as np
 import pytest
+import xoscar as mo
 
-from .... import oscar as mo
 from .... import remote as mr
 from .... import tensor as mt
 from ....core.graph import ChunkGraphBuilder, TileableGraph, TileableGraphBuilder
+from ....oscar import create_actor_pool
 from ....resource import Resource
 from ... import NodeRole, start_services, stop_services
 from ...session import SessionAPI
@@ -101,7 +102,7 @@ async def actor_pools():
             )
         else:
             kw = dict(n_process=0, subprocess_start_method="spawn")
-        pool = await mo.create_actor_pool("127.0.0.1", **kw)
+        pool = await create_actor_pool("127.0.0.1", **kw)
         await pool.start()
         return pool
 

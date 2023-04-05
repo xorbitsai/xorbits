@@ -39,8 +39,9 @@ class DecrefRunner:
         self._decref_thread.start()
 
     def _thread_body(self):
+        from xoscar.errors import ActorNotExist
+
         from ...deploy.oscar.session import SyncSession
-        from ...oscar.errors import ActorNotExist
 
         while True:
             key, session_ref, fut = self._queue.get()

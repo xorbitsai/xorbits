@@ -16,7 +16,8 @@
 import logging
 from typing import List, Set
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ..core import NodeRole, NodeStatus
 from ..locator import SupervisorLocatorActor
 

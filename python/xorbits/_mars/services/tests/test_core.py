@@ -14,9 +14,10 @@
 # limitations under the License.
 
 import pytest
+import xoscar as mo
 from tornado import httpclient
 
-from ... import oscar as mo
+from ...oscar import create_actor_pool
 from ...utils import get_next_port
 from .. import (
     NodeRole,
@@ -29,7 +30,7 @@ from .. import (
 
 @pytest.fixture
 async def actor_pool_context():
-    pool = await mo.create_actor_pool(f"127.0.0.1:{get_next_port()}", n_process=0)
+    pool = await create_actor_pool(f"127.0.0.1:{get_next_port()}", n_process=0)
     await pool.start()
     try:
         yield pool

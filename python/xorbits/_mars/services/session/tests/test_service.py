@@ -19,9 +19,9 @@ import time
 import numpy as np
 import pytest
 
-from .... import oscar as mo
 from .... import remote as mr
 from ....core import TileableGraph, TileableGraphBuilder
+from ....oscar import create_actor_pool
 from ....resource import Resource
 from ....utils import get_next_port
 from ... import NodeRole, start_services, stop_services
@@ -32,7 +32,7 @@ from .. import SessionAPI, WebSessionAPI
 @pytest.mark.parametrize("test_web", [False, True])
 @pytest.mark.asyncio
 async def test_session_service(test_web):
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
 
     async with pool:
         config = {
@@ -72,8 +72,8 @@ async def test_session_service(test_web):
 
 @pytest.mark.asyncio
 async def test_get_last_idle_time():
-    sv_pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
-    worker_pool = await mo.create_actor_pool(
+    sv_pool = await create_actor_pool("127.0.0.1", n_process=0)
+    worker_pool = await create_actor_pool(
         "127.0.0.1",
         n_process=2,
         labels=["main"] + ["numa-0"] * 2,
@@ -169,7 +169,7 @@ async def test_get_last_idle_time():
 
 @pytest.mark.asyncio
 async def test_dmap():
-    pool = await mo.create_actor_pool("127.0.0.1", n_process=0)
+    pool = await create_actor_pool("127.0.0.1", n_process=0)
 
     async with pool:
         config = {

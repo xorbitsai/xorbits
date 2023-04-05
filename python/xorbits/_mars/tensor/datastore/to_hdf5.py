@@ -18,11 +18,11 @@ import time
 from typing import List
 
 import numpy as np
+from xoscar import ActorNotExist
 
 from ... import opcodes as OperandDef
 from ...core.context import get_context
 from ...lib.filesystem import open_file
-from ...oscar import ActorNotExist
 from ...serialization.serializables import (
     DictField,
     FieldTypes,

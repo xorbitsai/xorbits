@@ -16,7 +16,8 @@
 import asyncio
 from typing import Dict
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ...session import SessionAPI
 from ..store import get_meta_store
 

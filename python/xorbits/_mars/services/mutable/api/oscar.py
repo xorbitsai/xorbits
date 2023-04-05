@@ -16,8 +16,8 @@
 from typing import Tuple, Type, TypeVar, Union
 
 import numpy as np
+import xoscar as mo
 
-from .... import oscar as mo
 from ....lib.aio import alru_cache
 from ..core import MutableTensorInfo
 from ..supervisor import MutableObjectManagerActor, MutableTensorActor

@@ -22,7 +22,8 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Set
 
-from .... import oscar as mo
+import xoscar as mo
+
 from ....lib.aio import alru_cache
 from ....typing import BandType
 from ...cluster.api import ClusterAPI

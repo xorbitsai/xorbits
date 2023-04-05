@@ -19,8 +19,9 @@ import sys
 import time
 
 import pytest
+import xoscar as mo
 
-from ..... import oscar as mo
+from .....oscar import create_actor_pool
 from .....tests.core import mock
 from .....utils import get_next_port
 from ...worker import BandSlotManagerActor, MemQuotaActor, QuotaActor
@@ -39,7 +40,7 @@ async def actor_pool():
     start_method = (
         os.environ.get("POOL_START_METHOD", "fork") if sys.platform != "win32" else None
     )
-    pool = await mo.create_actor_pool(
+    pool = await create_actor_pool(
         f"127.0.0.1:{get_next_port()}",
         n_process=0,
         subprocess_start_method=start_method,

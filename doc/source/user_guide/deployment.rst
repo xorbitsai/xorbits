@@ -14,3 +14,4 @@ or deploy via Kubernetes and clouds.
    deployment_cluster
    deployment_kubernetes
    deployment_cloud
+   deployment_slurm

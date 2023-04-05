@@ -20,13 +20,14 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 import pytest
+import xoscar as mo
 
 from .... import dataframe as md
-from .... import oscar as mo
 from .... import remote as mr
 from .... import tensor as mt
 from ....core import TileableGraph, TileableGraphBuilder, TileStatus, recursive_tile
 from ....core.context import get_context
+from ....oscar import create_actor_pool
 from ....resource import Resource
 from ....tensor.core import TensorOrder
 from ....tensor.operands import TensorOperand, TensorOperandMixin
@@ -53,7 +54,7 @@ async def actor_pools():
             )
         else:
             kw = dict(n_process=1, subprocess_start_method="spawn")
-        pool = await mo.create_actor_pool("127.0.0.1", **kw)
+        pool = await create_actor_pool("127.0.0.1", **kw)
         await pool.start()
         return pool
 

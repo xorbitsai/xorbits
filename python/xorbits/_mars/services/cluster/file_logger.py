@@ -11,11 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import logging
 import os
 from typing import Optional
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...constants import DEFAULT_MARS_LOG_FILE_NAME, MARS_LOG_DIR_KEY
 
 logger = logging.getLogger(__name__)
@@ -28,6 +30,7 @@ class FileLoggerActor(mo.Actor):
     """
 
     def __init__(self):
+        super().__init__()
         log_dir = os.environ.get(MARS_LOG_DIR_KEY)
         self._log_file_path: Optional[str] = None
         if log_dir is None:

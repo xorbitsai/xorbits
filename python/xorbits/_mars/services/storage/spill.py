@@ -19,7 +19,8 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import List, Tuple
 
-from ... import oscar as mo
+import xoscar as mo
+
 from ...storage import StorageLevel
 from .core import DataManagerActor
 from .errors import NoDataToSpill

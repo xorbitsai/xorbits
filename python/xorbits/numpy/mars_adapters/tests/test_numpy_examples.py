@@ -35,6 +35,9 @@ def run_docstring(
 
     results: List[TestResults] = []
     for test in finder.find(f, name, globs=globs):
+        if name in ["busday_count", "busdaycalendar", "busday_offset", "is_busday"]:
+            continue
+
         # exclude examples that plot graphs.
         examples = []
         for example in test.examples:

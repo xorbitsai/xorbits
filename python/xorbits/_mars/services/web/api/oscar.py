@@ -15,8 +15,8 @@
 
 from typing import Type
 
-from .... import oscar as mo
-from ....lib.aio import alru_cache
+import xoscar as mo
+from xoscar.aio import alru_cache
 
 
 class OscarWebAPI:
