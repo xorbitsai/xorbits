@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-07 11:34+0800\n"
+"POT-Creation-Date: 2023-04-06 14:18+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,5 +60,13 @@ msgstr ":ref:`云 <deployment_cloud>`"
 
 #: ../../source/getting_started/deployment.rst:12
 msgid "Deploy Xorbits to various cloud platforms via python code"
-msgstr "通过 Python 代码把 Xoribts 部署到云平台"
+msgstr "通过 Python 代码把 Xorbits 部署到云平台"
+
+#: ../../source/getting_started/deployment.rst:13
+msgid ":ref:`SLURM <deployment_slurm>`"
+msgstr ":ref:`SLURM <deployment_slurm>`"
+
+#: ../../source/getting_started/deployment.rst:13
+msgid "Deploy Xorbits to SLURM"
+msgstr "把 Xorbits 部署到 SLURM"
 
