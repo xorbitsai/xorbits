@@ -234,7 +234,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         )
         deployment_data = json.loads(deployment.data)
         old_replica = deployment_data["status"]["replicas"]
-        old_workers = self.list_workers()
+        old_workers = self._list_workers()
         new_replica = old_replica + worker_num
         body = {"spec": {"replicas": new_replica}}
         self._apps_client.patch_namespaced_deployment_scale(
