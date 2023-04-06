@@ -255,15 +255,27 @@ class DataRef(metaclass=DataRefMeta):
 
     def __int__(self):
         from .execution import run
-        if self.data.data_type == DataType.tensor and self.data._mars_entity.shape == () and self.data._mars_entity.dtype == "int":
+
+        if (
+            self.data.data_type == DataType.tensor
+            and self.data._mars_entity.shape == ()
+            and self.data._mars_entity.dtype == "int"
+        ):
             run(self)
             return self.to_numpy()
         elif self.data.data_type == DataType.object_ and self.to_object().isnumeric():
             run(self)
             return int(self.to_object())
         else:
+            data = (
+                self.__str__()
+                if self.data.data_type != DataType.object_
+                else self.to_object().__str__()
+            )
             raise TypeError(
-                "int() argument must be a string, a bytes-like object or a real number, not " + self.__str__())
+                "int() argument must be a string, a bytes-like object or a real number, not "
+                + data
+            )
 
     def __index__(self):
         return self.__int__()

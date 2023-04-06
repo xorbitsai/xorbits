@@ -120,13 +120,18 @@ def test_manual_execution(setup, dummy_int_series):
 
 
 def test_conversion(setup, dummy_int_2d_array, dummy_str_series):
-    with pytest.raises(TypeError):
-        for i in range(dummy_str_series[0]): print(i)
-    data = dummy_int_2d_array[0][2]
     test = 0
-    for i in range(data):
+    for i in range(dummy_int_2d_array[0][2]):
         test += 1
     assert test == 2
+    import xorbits.remote as xr
+
+    for i in range(xr.spawn(lambda: "2")):
+        test += 1
+    assert test == 4
+    with pytest.raises(TypeError):
+        for i in range(dummy_str_series[0]):
+            pass
 
 
 def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
