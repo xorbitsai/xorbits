@@ -279,7 +279,7 @@ class LocalCluster:
 
         else:
             if not cuda_devices:
-                return []
+                return [[]] * n_worker
             elif isinstance(cuda_devices[0], int):
                 assert n_worker == 1
                 return [cuda_devices]
