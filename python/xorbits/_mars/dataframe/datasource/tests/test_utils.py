@@ -20,22 +20,20 @@ def test_convert_to_abspath():
     s3_path = "s3://"
     local_path = "./test.csv"
     local_path_2 = "./test_2.csv"
-    try:
-        # test non-local path convert
-        s3_abspath = convert_to_abspath(s3_path)
-        assert s3_abspath == s3_path
-        # test local path convert
-        local_relpath = convert_to_abspath(local_path)
-        assert local_relpath == os.path.abspath(local_path)
-        # test local path list convert
-        local_relpath_lst = [local_path, local_path_2]
-        local_abspath_lst = convert_to_abspath(local_relpath_lst)
-        assert local_abspath_lst[0] == os.path.abspath(local_relpath_lst[0])
-        assert local_abspath_lst[1] == os.path.abspath(local_relpath_lst[1])
-        # test non-local/local path list convert
-        mix_relpath_lst = [s3_path, local_path]
-        mix_abspath_lst = convert_to_abspath(mix_relpath_lst)
-        assert mix_abspath_lst[0] == mix_relpath_lst[0]
-        assert mix_abspath_lst[1] == os.path.abspath(mix_relpath_lst[1])
-    finally:
-        pass
+
+    # test non-local path convert
+    s3_abspath = convert_to_abspath(s3_path)
+    assert s3_abspath == s3_path
+    # test local path convert
+    local_relpath = convert_to_abspath(local_path)
+    assert local_relpath == os.path.abspath(local_path)
+    # test local path list convert
+    local_relpath_lst = [local_path, local_path_2]
+    local_abspath_lst = convert_to_abspath(local_relpath_lst)
+    assert local_abspath_lst[0] == os.path.abspath(local_relpath_lst[0])
+    assert local_abspath_lst[1] == os.path.abspath(local_relpath_lst[1])
+    # test non-local/local path list convert
+    mix_relpath_lst = [s3_path, local_path]
+    mix_abspath_lst = convert_to_abspath(mix_relpath_lst)
+    assert mix_abspath_lst[0] == mix_relpath_lst[0]
+    assert mix_abspath_lst[1] == os.path.abspath(mix_relpath_lst[1])
