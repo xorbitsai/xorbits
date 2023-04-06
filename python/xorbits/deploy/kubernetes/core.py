@@ -244,7 +244,7 @@ class K8SClusterBackend(AbstractClusterBackend):
             if timeout is not None and (timeout + start_time) < time.time():
                 raise TimeoutError("Request worker timeout")
             new_workers = self.list_workers()
-            if len(new_workers) == new_replica:
+            if new_replica == len(new_workers):
                 return list(set(new_workers) - set(old_workers))
             await asyncio.sleep(1)
 
