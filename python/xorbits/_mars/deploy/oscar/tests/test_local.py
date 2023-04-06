@@ -43,7 +43,6 @@ from .... import tensor as mt
 from ....config import option_context
 from ....core.context import get_context
 from ....lib.aio import new_isolation
-from ....resource import cuda_count
 from ....services.storage import StorageAPI
 from ....services.task.supervisor.task import TaskProcessor
 from ....storage import StorageLevel
@@ -1264,6 +1263,8 @@ def test_gpu_oscar_configs(scheme, enable_inaddr, manner):
         )
         test(session)
     elif manner == "multi-gpu":
+        from ....resource import cuda_count
+
         if cuda_count() > 1:
             session = new_session(
                 n_cpu=2,
