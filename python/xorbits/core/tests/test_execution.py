@@ -119,6 +119,16 @@ def test_manual_execution(setup, dummy_int_series):
     assert not any([need_to_execute(ref) for ref in series_to_execute])
 
 
+def test_conversion(setup, dummy_int_2d_array, dummy_str_series):
+    with pytest.raises(TypeError):
+        for i in range(dummy_str_series[0]): print(i)
+    data = dummy_int_2d_array[0][2]
+    test = 0
+    for i in range(data):
+        test += 1
+    assert test == 2
+
+
 def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
     assert need_to_execute(dummy_df)
     assert need_to_execute(dummy_int_series)
