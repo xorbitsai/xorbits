@@ -199,7 +199,7 @@ class K8SClusterBackend(AbstractClusterBackend):
     ) -> str:
         raise NotImplementedError
 
-    def list_workers(self):
+    def _list_workers(self):
         workers = []
         pods = self._client.list_namespaced_pod(
             namespace=self._k8s_namespace,
@@ -243,7 +243,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         while True:
             if timeout is not None and (timeout + start_time) < time.time():
                 raise TimeoutError("Request worker timeout")
-            new_workers = self.list_workers()
+            new_workers = self._list_workers()
             if len(new_workers) == new_replica:
                 return list(set(new_workers) - set(old_workers))
             await asyncio.sleep(1)

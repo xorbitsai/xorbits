@@ -173,10 +173,9 @@ async def test_web_api(actor_pool):
         f.write("foo bar baz")
     log_content = await web_api.fetch_node_log(size=-1, address=pool_addr)
     assert len(log_content) == 11
-
-    await MockClusterAPI.cleanup(pool_addr)
     with pytest.raises(NotImplementedError):
         await web_api.request_workers(worker_num=1, timeout=1)
+    await MockClusterAPI.cleanup(pool_addr)
 
 
 @pytest.mark.asyncio
