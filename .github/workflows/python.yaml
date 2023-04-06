@@ -165,7 +165,7 @@ jobs:
         fi
         if [[ "$MODULE" == "pandas-1.0" ]]; then
           # test if compatible with pandas 1.0
-          pip install pandas==1.5.3
+          pip install pandas==1.5.3 sqlalchemy\<2
         fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
