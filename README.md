@@ -106,6 +106,7 @@ or deploy via Kubernetes and clouds.
 | [Cluster](https://doc.xorbits.io/en/latest/user_guide/deployment_cluster.html)       | Deploy Xorbits to existing cluster via command lines      |
 | [Kubernetes](https://doc.xorbits.io/en/latest/user_guide/deployment_kubernetes.html) | Deploy Xorbits to existing k8s cluster via python code    |
 | [Cloud](https://doc.xorbits.io/en/latest/user_guide/deployment_cloud.html)           | Deploy Xorbits to various cloud platforms via python code |
+| [SLURM](https://doc.xorbits.io/en/latest/user_guide/deployment_slurm.html)           | Deploy Xorbits to SLURM                                   |
 
 
 ## License
