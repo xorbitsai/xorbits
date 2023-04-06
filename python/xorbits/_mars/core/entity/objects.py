@@ -72,6 +72,17 @@ class ObjectData(TileableData, _ToObjectMixin):
     def __repr__(self):
         return f"Object <op={type(self.op).__name__}, key={self.key}>"
 
+    def __int__(self):
+        try:
+            return int(self.to_object())
+        except ValueError:
+            raise ValueError(
+                "Invalid literal for int() with base 10: " + self.to_object()
+            )
+
+    def __index__(self):
+        return self.__int__()
+
     @property
     def params(self):
         # params return the properties which useful to rebuild a new tileable object

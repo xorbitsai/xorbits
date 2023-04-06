@@ -381,6 +381,17 @@ class Tensor(HasShapeTileable):
     def __len__(self):
         return len(self._data)
 
+    def __int__(self):
+        if len(self.shape) == 0:
+            return self.to_numpy()
+        else:
+            raise TypeError(
+                "Tensors with nonzero shapes cannot be converted to integer"
+            )
+
+    def __index__(self):
+        return self.__int__()
+
     @property
     def shape(self):
         return self._data.shape
