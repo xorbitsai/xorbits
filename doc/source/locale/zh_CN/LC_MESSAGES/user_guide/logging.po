@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the Xorbits package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-29 10:47+0800\n"
+"POT-Creation-Date: 2023-04-04 18:20+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +32,7 @@ msgstr "输出日志到 stderr"
 
 #: ../../source/user_guide/logging.rst:12
 msgid ""
-"The default log level for stderr is set to ``WARNING`` to to limit the "
+"The default log level for stderr is set to ``WARNING`` to limit the "
 "amount of log output."
 msgstr "默认情况下，stderr 的日志级别被设置为 ``WARNING`` 以限制日志输出量。"
 
@@ -69,10 +68,19 @@ msgid ""
 msgstr "默认情况下，Xorbits 的日志保存在 Linux 和 Mac OS 的 ``/tmp/xorbits/logs`` 目录下，Windows 下则为 ``C:\Temp\xorbits\logs`` 目录。文件的默认日志级别为 ``DEBUG`` 以方便错误定位。"
 
 #: ../../source/user_guide/logging.rst:49
+msgid ""
+"Since ``v0.3.0``, Xorbits’ logs are saved in the directory "
+"``/tmp/${USER}/xorbits/logs`` for Linux and Mac OS, and "
+"``C:\\Temp\\${USERNAME}\\xorbits\\logs`` for Windows by default."
+msgstr ""
+"自 ``v0.3.0`` 起，默认情况下，Xorbits 的日志保存在 Linux 和 Mac OS 的 ``/tmp/${USER}/xorbits/logs`` 目录下，Windows "
+"下则为 ``C:\\Temp\\${USERNAME}\\xorbits\\logs`` 目录。"
+
+#: ../../source/user_guide/logging.rst:53
 msgid "Local deployment"
 msgstr "本地部署"
 
-#: ../../source/user_guide/logging.rst:50
+#: ../../source/user_guide/logging.rst:54
 msgid ""
 "In a :ref:`local deployment <deployment_local>`, Xorbits creates a "
 "subdirectory under the log directory. The name of the subdirectory "
@@ -82,17 +90,25 @@ msgid ""
 " shown below::"
 msgstr "在 :ref:`本地部署 <deployment_local>` 下，Xorbits 会在日志目录下创建一个子目录。子目录的名称对应于进程启动时间（以纳秒为单位）。在本地部署下，Xorbits supervisor 和 worker 的日志会被合并为单个文件。下面是日志目录结构示例::"
 
-#: ../../source/user_guide/logging.rst:60
+#: ../../source/user_guide/logging.rst:65
+#: ../../source/user_guide/logging.rst:101
+msgid ""
+"Since ``v0.3.0``, an example of the log directory structure for user "
+"``test`` is shown below::"
+msgstr ""
+"自 ``v0.3.0`` 起，对于用户 ``test`` ，日志目录结构如下所示："
+
+#: ../../source/user_guide/logging.rst:72
 msgid ""
 "If you wish to change the log directory, level, or format, specify them "
 "when calling ``xorbits.init()``:"
 msgstr "如果您想更改日志目录、级别或格式，请在调用 xorbits.init() 时指定它们:"
 
-#: ../../source/user_guide/logging.rst:75
+#: ../../source/user_guide/logging.rst:87
 msgid "Cluster deployment"
 msgstr "集群部署"
 
-#: ../../source/user_guide/logging.rst:76
+#: ../../source/user_guide/logging.rst:88
 msgid ""
 "In a :ref:`cluster deployment <deployment_cluster>`, Xorbits supervisor "
 "and Xorbits workers each create their own subdirectory under the log "
@@ -101,28 +117,28 @@ msgid ""
 "log directory structure is shown below::"
 msgstr "在 :ref:`集群部署 <deployment_cluster>` 下，Xorbits supervisor 和 worker 会各自在日志目录下创建自己的子目录。子目录的名称以角色名称开头，后跟进程启动时间（以纳秒为单位）。下面是日志目录结构示例::"
 
-#: ../../source/user_guide/logging.rst:88
+#: ../../source/user_guide/logging.rst:110
 msgid ""
 "You can easily modify the log level, format, or directory with command "
 "line arguments. For instance::"
 msgstr "您可以使用命令行参数轻松修改日志级别、格式或目录。例如::"
 
-#: ../../source/user_guide/logging.rst:100
+#: ../../source/user_guide/logging.rst:122
 msgid "Log rotation"
 msgstr "日志滚动"
 
-#: ../../source/user_guide/logging.rst:101
+#: ../../source/user_guide/logging.rst:123
 msgid ""
 "Xorbits supports log rotation of log files. By default, logs rotate when "
 "they reach 100MB (maxBytes), and up to 30 backup files (backupCount) are "
 "kept."
 msgstr "Xorbits 支持日志文件的日志滚动。默认情况下，当日志文件大小达到 100MB（maxBytes）时，日志会进行滚动，并且会保留多达 30 个备份文件（backupCount）。"
 
-#: ../../source/user_guide/logging.rst:107
+#: ../../source/user_guide/logging.rst:129
 msgid "Log configuration template"
 msgstr "日志配置文件模版"
 
-#: ../../source/user_guide/logging.rst:108
+#: ../../source/user_guide/logging.rst:130
 msgid "Here's a log configuration template::"
 msgstr "下面是一个日志配置文件模版，供您参考::"
 
