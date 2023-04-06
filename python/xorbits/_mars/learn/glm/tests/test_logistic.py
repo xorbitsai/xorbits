@@ -15,13 +15,47 @@
 
 import re
 
+import numpy as np
 import pytest
 from sklearn.datasets import load_iris
 
+from .... import execute
+from .... import remote as mr
+from .... import tensor as mt
 from .._logistic import LogisticRegression, _check_multi_class, _check_solver
+from .._optimizers import instance_softmax_loss_and_sgd
 
 # general data load
 X, y = load_iris(return_X_y=True)
+
+
+# unparalled gradient calculation
+def batched_softmax_loss_and_grad(W, X, y, reg):
+    N, D = X.shape
+    K = W.shape[1]
+
+    y_obs = mt.zeros(shape=(N, K))
+    for i in range(N):
+        y_obs[i] = mt.eye(K)[y[i]]
+
+    loss = -1 / N * mt.sum(
+        y_obs * mt.log(mt.exp(X @ W) / mt.sum(mt.exp(X @ W), axis=1).reshape(-1, 1))
+    ) + 0.5 * reg * mt.sum(mt.square(W))
+
+    dW = mt.zeros(shape=(D, K))
+
+    # Matrix approach
+    dW = (
+        -1
+        / N
+        * X.T
+        @ (y_obs - (mt.exp(X @ W) / mt.sum(mt.exp(X @ W), axis=1).reshape(-1, 1)))
+        + reg * W
+    )
+
+    execute(loss, dW)
+
+    return loss, dW
 
 
 def test_check_solver(setup):
@@ -112,3 +146,28 @@ def test_logistic_regression_no_converge(setup, fit_intercept):
     model.coef_ = model.coef_[:, :-1]
     with pytest.raises(ValueError, match=error_msg):
         model.predict(X)
+
+
+def test_parallel_gradient_calculation(setup):
+    X = np.random.random((15, 4))
+    W = np.zeros((4, 3))
+    y = np.random.choice([0, 1, 2], size=15, p=[0.3, 0.4, 0.3])
+    reg = 1e-5
+
+    # paralleld result
+    funcs = mr.ExecutableTuple(
+        [
+            mr.spawn(
+                instance_softmax_loss_and_sgd,
+                args=(W, X[i].reshape((1, X[i].shape[0])), y[i], reg),
+            )
+            for i in range(15)
+        ]
+    )
+    grad_tensors = [out[1] for out in funcs.execute().fetch()]
+    parallel_grad = np.sum(grad_tensors, axis=0) / 15
+
+    # batched result
+    _, batch_grad = batched_softmax_loss_and_grad(W, mt.tensor(X), mt.tensor(y), reg)
+
+    assert np.equal(parallel_grad.all(), batch_grad.execute().fetch().all())
