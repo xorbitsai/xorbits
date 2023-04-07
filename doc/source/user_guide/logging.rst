@@ -46,8 +46,15 @@ and ``C:\Temp\xorbits\logs`` for Windows. The default log level for files is set
 troubleshooting purposes.
 
 .. note::
-    Since ``v0.3.0``, Xorbits’ logs are saved in the directory ``/tmp/${USER}/xorbits/logs`` for Linux and Mac OS,
-    and ``C:\Temp\${USERNAME}\xorbits\logs`` for Windows by default.
+    Since ``v0.3.0``, Xorbits’ logs are saved in the directory ``~/.xorbits/logs``
+    for Linux, Mac OS and Windows by default.
+    You can check your current home directory on your system using the following code:
+
+    .. code-block:: python
+
+        from pathlib import Path
+        print(Path.home())
+
 
 Local deployment
 ~~~~~~~~~~~~~~~~
@@ -64,7 +71,7 @@ file. An example of the log directory structure is shown below::
 .. note::
     Since ``v0.3.0``, an example of the log directory structure for user ``test`` is shown below::
 
-        /tmp/test/xorbits
+        /home/test/.xorbits
         └── logs
             └── 1679904140623326000
                 └── xorbits.log
@@ -100,7 +107,7 @@ structure is shown below::
 .. note::
     Since ``v0.3.0``, an example of the log directory structure for user ``test`` is shown below::
 
-        /tmp/test/xorbits
+        /home/test/.xorbits
         └── logs
             ├── supervisor_1679923647642312000
             │   └── xorbits.log

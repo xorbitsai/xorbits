@@ -15,7 +15,7 @@
 import os
 from pathlib import Path
 
-MARS_TEMP_DIR = f"{str(Path.home())}/xorbits"
+MARS_TEMP_DIR = f"{str(Path.home())}/.xorbits"
 
 # logging.
 MARS_LOG_DIR_KEY = "MARS_LOG_DIR"
