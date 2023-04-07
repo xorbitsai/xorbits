@@ -393,3 +393,22 @@ def test_series_median(setup):
     r = series.median(skipna=False)
     result = r.execute().fetch()
     assert np.isnan(raw.median(skipna=False)) and np.isnan(result)
+
+
+def test_to_arr_and_array():
+    raw = pd.DataFrame(np.random.rand(4, 3), columns=list("ABC"))
+    df = DataFrame(raw)
+
+    # Test _to_arr with representation=True
+    representation = df._to_arr(representation=True)
+    assert isinstance(representation, str)
+    assert "DataFrame" in representation
+
+    # Test _to_arr with representation=False
+    arr = df._to_arr(representation=False)
+    expected = raw.to_numpy()
+    np.testing.assert_array_equal(arr, expected)
+
+    # Test __array__ method
+    arr_from_array_method = np.array(df)
+    np.testing.assert_array_equal(arr_from_array_method, expected)

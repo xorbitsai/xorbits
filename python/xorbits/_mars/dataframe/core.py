@@ -2179,9 +2179,21 @@ class DataFrameData(_BatchedFetcher, BaseDataFrameData):
     def __str__(self):
         return self._to_str(representation=False)
 
+    def _to_arr(self, representation=False):
+        if is_build_mode() or len(self._executed_sessions) == 0:
+            # in build mode, or not executed, just return representation
+            if representation:
+                return (
+                    f"{self.type_name} <op={type(self._op).__name__}, key={self.key}>"
+                )
+            else:
+                return f"{self.type_name}(op={type(self._op).__name__})"
+        else:
+            data = self.fetch(session=self._executed_sessions[-1])
+            return np.asarray(data)
+
     def __array__(self):
-        data = self.fetch(session=self._executed_sessions[-1])
-        return np.asarray(data)
+        return self._to_arr(representation=False)
 
     def __repr__(self):
         return self._to_str(representation=True)
