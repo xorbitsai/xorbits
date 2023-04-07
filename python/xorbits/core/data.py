@@ -255,44 +255,39 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def _is_convertible_tensor(self):
-        if len(self.shape) == 0 and is_integer_dtype(self.dtype):
-            return True
-        return False
-
-    def __int__(self):
+    def _to_int(self, cast=False):
         from .execution import run
 
         data_type = self.data.data_type
-        if data_type == DataType.tensor and self._is_convertible_tensor():
+        if (
+            data_type == DataType.tensor
+            and len(self.shape) == 0
+            and is_integer_dtype(self.dtype)
+        ):
             run(self)
             return self.to_numpy()
         elif data_type == DataType.object_:
             run(self)
             data_object = self.to_object()
-            return int(data_object)
-        else:
-            raise TypeError(
-                f"int() argument must be a string, a bytes-like object or a real number, not {self.data.data_type}."
-            )
-
-    def __index__(self):
-        from .execution import run
-
-        data_type = self.data.data_type
-        if data_type == DataType.tensor and self._is_convertible_tensor():
-            run(self)
-            return self.to_numpy()
-        elif data_type == DataType.object_:
-            run(self)
-            data_object = self.to_object()
-            if isinstance(data_object, int):
+            if cast or isinstance(data_object, int):
                 return int(data_object)
             else:
                 raise TypeError(
                     f"{self.data.data_type} object cannot be interpreted as an integer."
                 )
         else:
+            raise TypeError(
+                f"{self.data.data_type} object cannot be interpreted as an integer."
+            )
+
+    def __int__(self):
+        return self._to_int(cast=True)
+
+    def __index__(self):
+        try:
+            val = self._to_int(cast=False)
+            return val
+        except TypeError:
             raise TypeError(
                 f"{self.data.data_type} object cannot be interpreted as an integer."
             )
