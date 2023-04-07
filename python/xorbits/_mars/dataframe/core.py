@@ -1487,7 +1487,7 @@ class Series(HasShapeTileable, _ToPandasMixin):
 
     @index.setter
     def index(self, new_index):
-        self.set_axis(new_index, axis=0, inplace=True)
+        self.set_axis(new_index, axis=0, copy=False)
 
     @property
     def name(self):
@@ -2301,7 +2301,7 @@ class DataFrame(HasShapeTileable, _ToPandasMixin):
 
     @index.setter
     def index(self, new_index):
-        self.set_axis(new_index, axis=0, inplace=True)
+        self.set_axis(new_index, axis=0, copy=False)
 
     @property
     def columns(self):
@@ -2311,7 +2311,7 @@ class DataFrame(HasShapeTileable, _ToPandasMixin):
 
     @columns.setter
     def columns(self, new_columns):
-        self.set_axis(new_columns, axis=1, inplace=True)
+        self.set_axis(new_columns, axis=1, copy=False)
 
     def keys(self):
         """
