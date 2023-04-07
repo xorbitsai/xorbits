@@ -33,6 +33,31 @@ def dummy_df():
 
 
 @pytest.fixture
+def dummy_dict_int():
+    return {"foo": (0, 1, 2), "bar": (3, 4, 5)}
+
+
+@pytest.fixture
+def dummy_dict_float():
+    return {"foo": (0.0, 0.1, 0.2), "bar": (0.3, 0.4, 0.5)}
+
+
+@pytest.fixture
+def dummy_dict_str():
+    return {"foo": ("a", "b", "c"), "bar": ("d", "e", "f")}
+
+
+@pytest.fixture
+def dummy_dict_bool():
+    return {"foo": (True, False, True), "bar": (False, True, False)}
+
+
+@pytest.fixture
+def dummy_dict_mixed():
+    return {"foo": (False, 1, "a"), "bar": (5.3, "f", True)}
+
+
+@pytest.fixture
 def dummy_int_series():
     return pd.Series([1, 2, 3, 4, 5])
 
