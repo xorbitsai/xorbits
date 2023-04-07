@@ -2179,6 +2179,10 @@ class DataFrameData(_BatchedFetcher, BaseDataFrameData):
     def __str__(self):
         return self._to_str(representation=False)
 
+    def __array__(self):
+        data = self.fetch(session=self._executed_sessions[-1])
+        return np.asarray(data)
+
     def __repr__(self):
         return self._to_str(representation=True)
 
