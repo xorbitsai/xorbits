@@ -259,7 +259,7 @@ class DataRef(metaclass=DataRefMeta):
         from .execution import run
 
         if (
-            hasattr(self, "shape")
+            self.data.data_type == DataType.tensor
             and len(self.shape) == 0
             and is_integer_dtype(self.dtype)
         ):
