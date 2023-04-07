@@ -17,7 +17,7 @@ from enum import Enum
 from itertools import count
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
-from pandas.api.types import is_signed_integer_dtype
+from pandas.api.types import is_integer_dtype
 
 from ..utils import safe_repr_str
 
@@ -261,7 +261,7 @@ class DataRef(metaclass=DataRefMeta):
         if (
             hasattr(self, "shape")
             and len(self.shape) == 0
-            and is_signed_integer_dtype(self)
+            and is_integer_dtype(self.dtype)
         ):
             run(self)
             return self.to_numpy()
