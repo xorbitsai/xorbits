@@ -255,26 +255,47 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
+    def _is_convertible_tensor(self):
+        if len(self.shape) == 0 and is_integer_dtype(self.dtype):
+            return True
+        return False
+
     def __int__(self):
         from .execution import run
 
-        if (
-            self.data.data_type == DataType.tensor
-            and len(self.shape) == 0
-            and is_integer_dtype(self.dtype)
-        ):
+        data_type = self.data.data_type
+        if data_type == DataType.tensor and self._is_convertible_tensor():
             run(self)
             return self.to_numpy()
-        elif self.data.data_type == DataType.object_:
+        elif data_type == DataType.object_:
             run(self)
-            return int(self.to_object())
+            data_object = self.to_object()
+            return int(data_object)
         else:
             raise TypeError(
                 f"int() argument must be a string, a bytes-like object or a real number, not {self.data.data_type}."
             )
 
     def __index__(self):
-        return self.__int__()
+        from .execution import run
+
+        data_type = self.data.data_type
+        if data_type == DataType.tensor and self._is_convertible_tensor():
+            run(self)
+            return self.to_numpy()
+        elif data_type == DataType.object_:
+            run(self)
+            data_object = self.to_object()
+            if isinstance(data_object, int):
+                return int(data_object)
+            else:
+                raise TypeError(
+                    f"{self.data.data_type} object cannot be interpreted as an integer."
+                )
+        else:
+            raise TypeError(
+                f"{self.data.data_type} object cannot be interpreted as an integer."
+            )
 
 
 SUB_CLASS_TO_DATA_TYPE: Dict[Type[DataRef], DataType] = dict()
