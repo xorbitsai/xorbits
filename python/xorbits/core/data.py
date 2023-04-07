@@ -263,22 +263,13 @@ class DataRef(metaclass=DataRefMeta):
         ):
             run(self)
             return self.to_numpy()
-        elif self.data.data_type == DataType.object_ and self.to_object().isnumeric():
+        elif self.data.data_type == DataType.object_:
             run(self)
             return int(self.to_object())
         else:
-            data = (
-                self.__str__()
-                if self.data.data_type != DataType.object_
-                else self.to_object().__str__()
-            )
             raise TypeError(
-                "int() argument must be a string, a bytes-like object or a real number, not "
-                + data
+                f"int() argument must be a string, a bytes-like object or a real number, not {self.data.data_type}."
             )
-
-    def __index__(self):
-        return self.__int__()
 
 
 SUB_CLASS_TO_DATA_TYPE: Dict[Type[DataRef], DataType] = dict()

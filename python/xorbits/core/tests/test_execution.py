@@ -132,6 +132,9 @@ def test_conversion(setup, dummy_int_2d_array, dummy_str_series):
     with pytest.raises(TypeError):
         for i in range(dummy_str_series[0]):
             pass
+    with pytest.raises(ValueError):
+        for i in range(xr.spawn(lambda: "foo")):
+            pass
 
 
 def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
