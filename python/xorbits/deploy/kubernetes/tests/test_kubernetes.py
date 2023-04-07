@@ -239,28 +239,22 @@ async def test_request_workers():
         use_local_image=True,
     ) as cluster_client:
         cluster_api = WebClusterAPI(address=cluster_client.endpoint)
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(
+            ValueError, match="Please specify a `timeout` that is greater than zero"
+        ):
             await cluster_api.request_workers(worker_num=1, timeout=-10)
-        assert exc.type == ValueError
-        assert "Please specify a `timeout` that is greater than zero" in str(exc.value)
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(
+            ValueError, match="Please specify a `worker_num` that is greater than zero"
+        ):
             await cluster_api.request_workers(worker_num=-10, timeout=1)
-        assert exc.type == ValueError
-        assert "Please specify a `worker_num` that is greater than zero" in str(
-            exc.value
-        )
-        with pytest.raises(ValueError) as exc:
+        with pytest.raises(
+            ValueError, match="Please specify a `worker_num` that is greater than zero"
+        ):
             await cluster_api.request_workers(worker_num=0, timeout=1)
-        assert exc.type == ValueError
-        assert "Please specify a `worker_num` that is greater than zero" in str(
-            exc.value
-        )
         new_workers = await cluster_api.request_workers(worker_num=1, timeout=300)
         assert len(new_workers) == 1
-        with pytest.raises(TimeoutError) as exc:
+        with pytest.raises(TimeoutError, match="Request worker timeout"):
             await cluster_api.request_workers(worker_num=1, timeout=0)
-        assert exc.type == TimeoutError
-        assert "Request worker timeout" in str(exc.value)
         simple_job()
 
 
