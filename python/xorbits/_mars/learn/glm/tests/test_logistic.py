@@ -152,22 +152,31 @@ def test_parallel_gradient_calculation(setup):
     X = np.random.random((15, 4))
     W = np.zeros((4, 3))
     y = np.random.choice([0, 1, 2], size=15, p=[0.3, 0.4, 0.3])
+
+    X = mt.tensor(X).execute()
+    W = mt.tensor(W).execute()
+    y = mt.tensor(y).execute()
+
     reg = 1e-5
+    loss_reg_W = (0.5 * reg * mt.sum(mt.square(W))).execute()
+    dW_reg_W = (reg * W).execute()
 
     # paralleld result
     funcs = mr.ExecutableTuple(
         [
             mr.spawn(
                 instance_softmax_loss_and_sgd,
-                args=(W, X[i].reshape((1, X[i].shape[0])), y[i], reg),
+                args=(W, X, y, loss_reg_W, i),
             )
             for i in range(15)
         ]
     )
     grad_tensors = [out[1] for out in funcs.execute().fetch()]
-    parallel_grad = np.sum(grad_tensors, axis=0) / 15
+    parallel_grad = (mt.sum(grad_tensors, axis=0) / 15) + dW_reg_W
 
     # batched result
-    _, batch_grad = batched_softmax_loss_and_grad(W, mt.tensor(X), mt.tensor(y), reg)
+    _, batch_grad = batched_softmax_loss_and_grad(W, X, y, reg)
 
-    assert np.equal(parallel_grad.all(), batch_grad.execute().fetch().all())
+    assert np.equal(
+        parallel_grad.execute().fetch().all(), batch_grad.execute().fetch().all()
+    )

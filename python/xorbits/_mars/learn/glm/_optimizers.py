@@ -99,8 +99,7 @@ def gradient_descent(
             # update parameters
             W = (
                 cur_W
-                - learning_rate * mt.sum(grad_tensors, axis=0) / len(idx)
-                + dW_reg_W
+                - learning_rate * (mt.sum(grad_tensors, axis=0) / len(idx) + dW_reg_W)
             ).execute()
 
     return W
