@@ -17,6 +17,8 @@ from enum import Enum
 from itertools import count
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
+from pandas.api.types import is_integer_dtype
+
 from ..utils import safe_repr_str
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -252,6 +254,43 @@ class DataRef(metaclass=DataRefMeta):
         else:
             run(self)
             return self.data.__repr__()
+
+    def _to_int(self, cast=False):
+        from .execution import run
+
+        data_type = self.data.data_type
+        if (
+            data_type == DataType.tensor
+            and len(self.shape) == 0
+            and is_integer_dtype(self.dtype)
+        ):
+            run(self)
+            return self.to_numpy()
+        elif data_type == DataType.object_:
+            run(self)
+            data_object = self.to_object()
+            if cast or isinstance(data_object, int):
+                return int(data_object)
+            else:
+                raise TypeError(
+                    f"{self.data.data_type} object cannot be interpreted as an integer."
+                )
+        else:
+            raise TypeError(
+                f"{self.data.data_type} object cannot be interpreted as an integer."
+            )
+
+    def __int__(self):
+        return self._to_int(cast=True)
+
+    def __index__(self):
+        try:
+            val = self._to_int(cast=False)
+            return val
+        except TypeError:
+            raise TypeError(
+                f"{self.data.data_type} object cannot be interpreted as an integer."
+            )
 
 
 SUB_CLASS_TO_DATA_TYPE: Dict[Type[DataRef], DataType] = dict()
