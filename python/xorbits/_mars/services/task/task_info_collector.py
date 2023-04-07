@@ -24,7 +24,7 @@ from typing import Any, Dict, Optional
 import xoscar as mo
 import yaml
 
-from ...constants import MARS_PROFILING_RESULTS_DIR, MARS_PROFILING_RESULTS_DIR_WIN
+from ...constants import MARS_PROFILING_RESULTS_DIR
 from ...core.operand import Fetch, FetchShuffle
 from ...lib.aio import AioFileObject, Isolation, alru_cache
 from ...lib.filesystem import get_fs, get_scheme, open_file
@@ -359,15 +359,8 @@ class TaskInfoCollectorActor(mo.Actor):
 
     @staticmethod
     def _get_or_create_default_profiling_results_dir():
-        import sys
-
-        if sys.platform.startswith("win"):
-            profiling_results_dir = MARS_PROFILING_RESULTS_DIR_WIN
-        else:
-            profiling_results_dir = MARS_PROFILING_RESULTS_DIR
-        os.makedirs(profiling_results_dir, exist_ok=True)
-        os.chmod(profiling_results_dir, mode=0o777)
-        return profiling_results_dir
+        os.makedirs(MARS_PROFILING_RESULTS_DIR, exist_ok=True)
+        return MARS_PROFILING_RESULTS_DIR
 
     async def __pre_destroy__(self):
         if self._collect_task_info_enabled:

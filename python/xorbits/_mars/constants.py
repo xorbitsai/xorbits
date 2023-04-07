@@ -13,20 +13,16 @@
 # limitations under the License.
 
 import os
+from pathlib import Path
 
-from xoscar.utils import get_current_user
-
-MARS_TEMP_DIR = f"/tmp/{get_current_user()}/xorbits"
-MARS_TEMP_DIR_WIN = f"C:\\Temp\\{get_current_user()}\\xorbits"
+MARS_TEMP_DIR = f"{str(Path.home())}/xorbits"
 
 # logging.
 MARS_LOG_DIR_KEY = "MARS_LOG_DIR"
 DEFAULT_MARS_LOG_DIR = os.path.join(MARS_TEMP_DIR, "logs")
-DEFAULT_MARS_LOG_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "logs")
 DEFAULT_MARS_LOG_FILE_NAME = "xorbits.log"
 DEFAULT_MARS_LOG_MAX_BYTES = 100 * 1024 * 1024
 DEFAULT_MARS_LOG_BACKUP_COUNT = 30
 
 # profiling.
 MARS_PROFILING_RESULTS_DIR = os.path.join(MARS_TEMP_DIR, "profiling")
-MARS_PROFILING_RESULTS_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "profiling")
