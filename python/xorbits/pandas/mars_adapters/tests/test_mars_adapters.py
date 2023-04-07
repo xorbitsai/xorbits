@@ -118,7 +118,7 @@ def test_string_accessor(setup, dummy_str_series):
     s = dummy_str_series.str.fullmatch("foo")
 
     assert isinstance(s, DataRef)
-    for i, val in s.iteritems():
+    for i, val in s.items():
         assert val == (str(dummy_str_series[i]) == "foo")
 
 
@@ -127,7 +127,7 @@ def test_datetime_accessor(setup, dummy_dt_series):
     s = dummy_dt_series.dt.second
 
     assert isinstance(s, DataRef)
-    for i, val in s.iteritems():
+    for i, val in s.items():
         assert val == i
 
 
@@ -136,7 +136,7 @@ def test_dataframe_getitem(setup, dummy_df):
     assert isinstance(foo, DataRef)
 
     idx = 0
-    for i, val in foo.iteritems():
+    for i, val in foo.items():
         assert idx == i
         assert idx == val
         idx += 1
@@ -148,7 +148,7 @@ def test_dataframe_setitem(setup, dummy_df):
     assert isinstance(baz, DataRef)
 
     idx = 0
-    for i, val in baz.iteritems():
+    for i, val in baz.items():
         assert idx == i
         assert val == float(idx)
         idx += 1
@@ -159,7 +159,7 @@ def test_dataframe_getattr(setup, dummy_df):
     assert isinstance(foo, DataRef)
 
     idx = 0
-    for i, val in foo.iteritems():
+    for i, val in foo.items():
         assert idx == i
         assert idx == val
         idx += 1

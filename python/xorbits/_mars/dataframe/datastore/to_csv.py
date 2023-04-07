@@ -55,7 +55,7 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
     _compression = AnyField("compression")
     _quoting = Int32Field("quoting")
     _quotechar = StringField("quotechar")
-    _line_terminator = StringField("line_terminator")
+    _lineterminator = StringField("lineterminator")
     _chunksize = Int64Field("chunksize")
     _date_format = StringField("date_format")
     _doublequote = BoolField("doublequote")
@@ -80,7 +80,7 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
         compression=None,
         quoting=None,
         quotechar=None,
-        line_terminator=None,
+        lineterminator=None,
         chunksize=None,
         date_format=None,
         doublequote=None,
@@ -105,7 +105,7 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
             _compression=compression,
             _quoting=quoting,
             _quotechar=quotechar,
-            _line_terminator=line_terminator,
+            _lineterminator=lineterminator,
             _chunksize=chunksize,
             _date_format=date_format,
             _doublequote=doublequote,
@@ -174,8 +174,8 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
         return self._quotechar
 
     @property
-    def line_terminator(self):
-        return self._line_terminator
+    def lineterminator(self):
+        return self._lineterminator
 
     @property
     def chunksize(self):
@@ -233,12 +233,11 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
         for chunk in in_df.chunks:
             chunk_op = op.copy().reset_key()
             if not one_file:
-                index_value = parse_index(chunk.index_value.to_pandas()[:0], chunk)
                 if chunk.ndim == 2:
                     out_chunk = chunk_op.new_chunk(
                         [chunk],
                         shape=(0, 0),
-                        index_value=index_value,
+                        index_value=out_df.index_value,
                         columns_value=out_df.columns_value,
                         dtypes=out_df.dtypes,
                         index=chunk.index,
@@ -247,7 +246,7 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
                     out_chunk = chunk_op.new_chunk(
                         [chunk],
                         shape=(0,),
-                        index_value=index_value,
+                        index_value=out_df.index_value,
                         dtype=out_df.dtype,
                         index=chunk.index,
                     )
@@ -330,15 +329,13 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
         return new_op.new_tileables([in_df], **params)
 
     def __call__(self, df):
-        index_value = parse_index(df.index_value.to_pandas()[:0], df)
+        index_value = parse_index(pd.RangeIndex(0), df)
         if df.ndim == 2:
-            columns_value = parse_index(
-                df.columns_value.to_pandas()[:0], store_data=True
-            )
+            columns_value = parse_index(pd.RangeIndex(0))
             return self.new_dataframe(
                 [df],
                 shape=(0, 0),
-                dtypes=df.dtypes[:0],
+                dtypes=pd.Series(),
                 index_value=index_value,
                 columns_value=columns_value,
             )
@@ -351,8 +348,7 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
     def _to_csv(cls, op, df, path, header=None):
         if header is None:
             header = op.header
-        df.to_csv(
-            path,
+        kwargs = dict(
             sep=op.sep,
             na_rep=op.na_rep,
             float_format=op.float_format,
@@ -365,13 +361,19 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
             compression=op.compression,
             quoting=op.quoting,
             quotechar=op.quotechar,
-            line_terminator=op.line_terminator,
+            lineterminator=op.lineterminator,
             chunksize=op.chunksize,
             date_format=op.date_format,
             doublequote=op.doublequote,
             escapechar=op.escapechar,
             decimal=op.decimal,
         )
+        if pd.__version__ < "2.0.0":
+            kwargs["line_terminator"] = op.lineterminator
+        else:
+            kwargs["lineterminator"] = op.lineterminator
+
+        df.to_csv(path, **kwargs)
 
     @classmethod
     def _execute_map(cls, ctx, op):
@@ -481,7 +483,7 @@ def to_csv(
     compression="infer",
     quoting=None,
     quotechar='"',
-    line_terminator=None,
+    lineterminator=None,
     chunksize=None,
     date_format=None,
     doublequote=True,
@@ -540,7 +542,7 @@ def to_csv(
         will treat them as non-numeric.
     quotechar : str, default '\"'
         String of length 1. Character used to quote fields.
-    line_terminator : str, optional
+    lineterminator : str, optional
         The newline character or character sequence to use in the output
         file. Defaults to `os.linesep`, which depends on the OS in which
         this method is called ('\n' for linux, '\r\n' for Windows, i.e.).
@@ -591,7 +593,7 @@ def to_csv(
         compression=compression,
         quoting=quoting,
         quotechar=quotechar,
-        line_terminator=line_terminator,
+        lineterminator=lineterminator,
         chunksize=chunksize,
         date_format=date_format,
         doublequote=doublequote,

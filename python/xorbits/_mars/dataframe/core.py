@@ -1425,11 +1425,9 @@ class SeriesData(_BatchedFetcher, BaseSeriesData):
         dtype = dtype if dtype is not None else tensor.dtype
         return tensor.astype(dtype=dtype, order=order, copy=False)
 
-    def iteritems(self, batch_size=10000, session=None):
+    def items(self, batch_size=10000, session=None):
         for batch_data in self.iterbatch(batch_size=batch_size, session=session):
-            yield from getattr(batch_data, "iteritems")()
-
-    items = iteritems
+            yield from getattr(batch_data, "items")()
 
     def to_dict(self, into=dict, batch_size=10000, session=None):
         fetch_kwargs = dict(batch_size=batch_size)
@@ -1561,7 +1559,7 @@ class Series(HasShapeTileable, _ToPandasMixin):
     def values(self):
         return self.to_tensor()
 
-    def iteritems(self, batch_size=10000, session=None):
+    def items(self, batch_size=10000, session=None):
         """
         Lazily iterate over (index, value) tuples.
 
@@ -1589,9 +1587,7 @@ class Series(HasShapeTileable, _ToPandasMixin):
         Index : 1, Value : B
         Index : 2, Value : C
         """
-        return self._data.iteritems(batch_size=batch_size, session=session)
-
-    items = iteritems
+        return self._data.items(batch_size=batch_size, session=session)
 
     def to_dict(self, into=dict, batch_size=10000, session=None):
         """
