@@ -17,6 +17,7 @@ from enum import Enum
 from itertools import count
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
+
 from ..utils import safe_repr_str
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -255,11 +256,12 @@ class DataRef(metaclass=DataRefMeta):
 
     def __int__(self):
         from .execution import run
+        from pandas.api.types import is_signed_integer_dtype
 
         if (
-            self.data.data_type == DataType.tensor
-            and self.data._mars_entity.shape == ()
-            and self.data._mars_entity.dtype == "int"
+            hasattr(self, "shape")
+            and len(self.shape) == 0
+            and is_signed_integer_dtype(self)
         ):
             run(self)
             return self.to_numpy()
@@ -270,6 +272,9 @@ class DataRef(metaclass=DataRefMeta):
             raise TypeError(
                 f"int() argument must be a string, a bytes-like object or a real number, not {self.data.data_type}."
             )
+
+    def __index__(self):
+        return self.__int__()
 
 
 SUB_CLASS_TO_DATA_TYPE: Dict[Type[DataRef], DataType] = dict()
