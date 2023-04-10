@@ -52,6 +52,7 @@ from ..serialization.serializables import (
     OneOfField,
     ReferenceField,
     Serializable,
+    SerializableMeta,
     SeriesField,
     SliceField,
     StringField,
@@ -77,7 +78,29 @@ class IndexValue(Serializable):
 
     __slots__ = ()
 
-    class IndexBase(Serializable):
+    class IndexMeta(SerializableMeta):
+        classmethod
+
+        def __instancecheck__(cls, instance):
+            if pd.__version__ < "2.0.0":
+                return cls in instance.__class__.__mro__
+            else:
+                if cls is IndexValue.Int64Index:
+                    return type(
+                        instance
+                    ) == IndexValue.Index and instance._dtype == np.dtype("int64")
+                elif cls is IndexValue.Float64Index:
+                    return type(
+                        instance
+                    ) == IndexValue.Index and instance._dtype == np.dtype("float64")
+                elif cls is IndexValue.UInt64Index:
+                    return type(
+                        instance
+                    ) == IndexValue.Index and instance._dtype == np.dtype("uinit64")
+                else:
+                    return cls in instance.__class__.__mro__
+
+    class IndexBase(Serializable, metaclass=IndexMeta):
         _key = StringField("key")  # to identify if the index is the same
         _is_monotonic_increasing = BoolField("is_monotonic_increasing")
         _is_monotonic_decreasing = BoolField("is_monotonic_decreasing")

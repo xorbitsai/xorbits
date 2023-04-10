@@ -26,13 +26,13 @@ def test_expanding():
     df2 = md.DataFrame(df)
 
     with pytest.raises(NotImplementedError):
-        _ = df2.expanding(3, center=True)
+        _ = df2.expanding(3)
 
     with pytest.raises(NotImplementedError):
         _ = df2.expanding(3, axis=1)
 
-    r = df2.expanding(3, center=False)
-    expected = df.expanding(3, center=False)
+    r = df2.expanding(3)
+    expected = df.expanding(3)
     assert repr(r) == repr(expected)
 
     assert "b" in dir(r)

@@ -200,7 +200,7 @@ class DataFrameToParquet(DataFrameOperand, DataFrameOperandMixin):
         return self.new_dataframe(
             [df],
             shape=(0, 0),
-            dtypes=pd.Series(),
+            dtypes=pd.Series(dtype="object"),
             index_value=index_value,
             columns_value=columns_value,
         )
