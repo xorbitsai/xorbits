@@ -401,13 +401,25 @@ def test_mars_tensor_magic(setup):
     actual = Series(expected).__mars_tensor__().execute()
     np.testing.assert_array_equal(expected, actual)
 
+    a = np.random.rand(10)
+    expected = a.astype(dtype="float64")
+    actual = Series(expected).__mars_tensor__(dtype="float64").execute()
+    np.testing.assert_array_equal(expected, actual)
+
     a = np.array(["foo", "bar", "baz"])
     expected = a
     actual = Series(expected).__mars_tensor__().execute()
     np.testing.assert_array_equal(expected, actual)
+    with pytest.raises(ValueError, match="could not convert string to float"):
+        Series(expected).__mars_tensor__(dtype="float64").execute()
 
     a = np.random.rand(10)
     expected = pd.DataFrame(a).values
+    actual = DataFrame(expected).__mars_tensor__().execute()
+    np.testing.assert_array_equal(pd.DataFrame(expected), actual)
+
+    a = np.random.rand(10)
+    expected = pd.DataFrame(a).values.astype(dtype="float64")
     actual = DataFrame(expected).__mars_tensor__().execute()
     np.testing.assert_array_equal(pd.DataFrame(expected), actual)
 
@@ -415,3 +427,5 @@ def test_mars_tensor_magic(setup):
     expected = pd.DataFrame(a).values
     actual = DataFrame(expected).__mars_tensor__().execute()
     np.testing.assert_array_equal(expected, actual)
+    with pytest.raises(ValueError, match="could not convert string to float"):
+        DataFrame(expected).__mars_tensor__(dtype="float64").execute()
