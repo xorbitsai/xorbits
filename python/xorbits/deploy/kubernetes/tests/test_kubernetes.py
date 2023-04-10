@@ -26,6 +26,7 @@ import numpy as np
 import pytest
 
 from .... import numpy as xnp
+from ...._mars.services.cluster import WebClusterAPI
 from ...._mars.utils import lazy_import
 from ....utils import get_local_py_version
 from .. import new_cluster
@@ -173,7 +174,7 @@ def _start_kube_cluster(**kwargs):
                 )
             )
 
-        yield
+        yield cluster_client
 
         [p.terminate() for p in log_processes]
     finally:
@@ -187,6 +188,16 @@ def _start_kube_cluster(**kwargs):
         _remove_docker_image(image_name, False)
 
 
+def simple_job():
+    a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
+    b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
+    c = (a * b * 2 + 1).sum()
+    print(c)
+
+    expected = (np.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
+    np.testing.assert_array_equal(c.to_numpy(), expected.sum())
+
+
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
 def test_run_in_kubernetes():
     with _start_kube_cluster(
@@ -198,14 +209,7 @@ def test_run_in_kubernetes():
         use_local_image=True,
         pip=["Faker"],
     ):
-        a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
-        b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
-        c = (a * b * 2 + 1).sum()
-        print(c)
-
-        expected = (np.ones(a.shape) * 2 * 1 + 1) ** 2 * 2 + 1
-        np.testing.assert_array_equal(c.to_numpy(), expected.sum())
-
+        simple_job()
         import pandas as pd
 
         def gen_data(n=100):
@@ -221,3 +225,50 @@ def test_run_in_kubernetes():
 
         res = xr.spawn(gen_data).to_object()
         print(res)
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.asyncio
+async def test_request_workers():
+    with _start_kube_cluster(
+        supervisor_cpu=0.2,
+        supervisor_mem="1G",
+        worker_cpu=0.2,
+        worker_mem="1G",
+        worker_cache_mem="64m",
+        use_local_image=True,
+    ) as cluster_client:
+        cluster_api = WebClusterAPI(address=cluster_client.endpoint)
+        with pytest.raises(
+            ValueError, match="Please specify a `timeout` that is greater than zero"
+        ):
+            await cluster_api.request_workers(worker_num=1, timeout=-10)
+        with pytest.raises(
+            ValueError, match="Please specify a `worker_num` that is greater than zero"
+        ):
+            await cluster_api.request_workers(worker_num=-10, timeout=1)
+        with pytest.raises(
+            ValueError, match="Please specify a `worker_num` that is greater than zero"
+        ):
+            await cluster_api.request_workers(worker_num=0, timeout=1)
+        new_workers = await cluster_api.request_workers(worker_num=1, timeout=300)
+        assert len(new_workers) == 1
+        with pytest.raises(TimeoutError, match="Request worker timeout"):
+            await cluster_api.request_workers(worker_num=1, timeout=0)
+        simple_job()
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.asyncio
+async def test_request_workers_insufficient():
+    with _start_kube_cluster(
+        supervisor_cpu=0.5,
+        supervisor_mem="1G",
+        worker_cpu=0.5,
+        worker_mem="1G",
+        worker_cache_mem="64m",
+        use_local_image=True,
+    ) as cluster_client:
+        cluster_api = WebClusterAPI(address=cluster_client.endpoint)
+        with pytest.raises(SystemError, match=r".*Insufficient cpu.*"):
+            await cluster_api.request_workers(worker_num=1, timeout=30)

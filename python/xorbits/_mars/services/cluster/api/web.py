@@ -193,6 +193,16 @@ class ClusterWebAPIHandler(MarsServiceWebAPIHandler):
                     size, address=address, offset=offset
                 )
 
+    @web_api("workers/scale", method=["patch"], cache_blocking=True)
+    async def request_workers(self):
+        worker_num = int(self.get_argument(name="worker_num"))
+        timeout = self.get_argument(name="timeout", default=None)
+        if timeout is not None:
+            timeout = int(timeout)
+        cluster_api = await self._get_cluster_api()
+        addresses = await cluster_api.request_workers(worker_num, timeout=timeout)
+        self.write(json.dumps({"workers": addresses}))  # pragma: no cover
+
 
 web_handlers = {ClusterWebAPIHandler.get_root_pattern(): ClusterWebAPIHandler}
 
@@ -377,3 +387,12 @@ class WebClusterAPI(AbstractClusterAPI, MarsWebAPIClientMixin):
             return res.body.decode(encoding="utf8")
         else:
             return str(json.loads(res.body)["content"])
+
+    async def request_workers(
+        self, worker_num: int, timeout: Optional[int] = None
+    ) -> List[str]:
+        path = f"{self._address}/api/cluster/workers/scale?worker_num={worker_num}"
+        if timeout is not None:
+            path += f"&&timeout={timeout}"
+        res = await self._request_url("PATCH", path, data=b"")
+        return json.loads(res.body)["workers"]  # pragma: no cover
