@@ -145,6 +145,40 @@ def tests_index_conversion(setup, dummy_int_2d_array, dummy_str_series):
         range(xr.spawn(lambda: "foo"))
 
 
+def test_bool_conversion(setup, dummy_df, dummy_int_2d_array, dummy_str_series):
+    test = 0
+    if dummy_int_2d_array[0][0]:
+        test += 1
+    assert test == 0
+    if dummy_int_2d_array[0][1]:
+        test += 1
+    assert test == 1
+    if dummy_str_series[0]:
+        test += 1
+    assert test == 2
+    import xorbits.remote as xr
+
+    if xr.spawn(lambda: ""):
+        test += 1
+    assert test == 2
+    import xorbits.numpy as np
+
+    if np.zeros(0):
+        test += 1
+    assert test == 2
+    import xorbits.pandas as pd
+
+    with pytest.raises(ValueError):
+        if np.zeros(2):
+            pass
+    with pytest.raises(ValueError):
+        if pd.DataFrame({}):
+            pass
+    with pytest.raises(ValueError):
+        if dummy_df.groupby(["foo"]):
+            pass
+
+
 def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
     assert need_to_execute(dummy_df)
     assert need_to_execute(dummy_int_series)

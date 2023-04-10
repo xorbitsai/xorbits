@@ -214,6 +214,36 @@ class DataRef(metaclass=DataRefMeta):
 
                 yield from gen()
 
+    def __bool__(self):
+        data_type = self.data.data_type
+        from .execution import run
+
+        if data_type == DataType.tensor:
+            if len(self.shape) == 0:
+                run(self)
+                return bool(self.to_numpy())
+            else:
+                if self.__len__() <= 1:
+                    run(self)
+                    return bool(self.to_numpy())
+                else:
+                    raise ValueError(
+                        f"ValueError: The truth value of a {data_type} with more than one element is ambiguous. Use a.any() or a.all()"
+                    )
+        elif data_type == DataType.object_:
+            run(self)
+            return bool(self.to_object())
+        elif (
+            data_type == DataType.dataframe
+            or data_type == DataType.series
+            or data_type == DataType.index
+        ):
+            raise ValueError(
+                f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
+            )
+        else:
+            raise ValueError(f"{data_type} cannot be converted to boolean values.")
+
     def __len__(self):
         from .._mars.core import HasShapeTileable
         from .execution import run
