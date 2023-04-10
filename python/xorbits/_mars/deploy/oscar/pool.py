@@ -16,7 +16,6 @@
 import configparser
 import logging
 import os
-import sys
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -24,7 +23,6 @@ from ....utils import get_default_logging_config_file_path
 from ...constants import (
     DEFAULT_MARS_LOG_BACKUP_COUNT,
     DEFAULT_MARS_LOG_DIR,
-    DEFAULT_MARS_LOG_DIR_WIN,
     DEFAULT_MARS_LOG_FILE_NAME,
     DEFAULT_MARS_LOG_MAX_BYTES,
     MARS_LOG_DIR_KEY,
@@ -152,14 +150,8 @@ def _parse_file_logging_config(
 
 
 def _get_or_create_default_log_dir() -> str:
-    if sys.platform.startswith("win"):
-        log_dir = DEFAULT_MARS_LOG_DIR_WIN
-    else:
-        log_dir = DEFAULT_MARS_LOG_DIR
-
-    os.makedirs(log_dir, exist_ok=True)
-    os.chmod(log_dir, mode=0o777)
-    return log_dir
+    os.makedirs(DEFAULT_MARS_LOG_DIR, exist_ok=True)
+    return DEFAULT_MARS_LOG_DIR
 
 
 def _get_log_subdir(log_dir: Optional[str], subdir_prefix: Optional[str]) -> str:
