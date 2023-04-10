@@ -96,7 +96,12 @@ class RoleConfig(KubeConfig):
                     "apiGroups": self._api_groups,
                     "resources": self._resources,
                     "verbs": self._verbs,
-                }
+                },
+                {
+                    "apiGroups": ["apps"],
+                    "resources": ["deployments", "deployments/scale"],
+                    "verbs": ["get", "watch", "list", "patch"],
+                },
             ],
         }
 
