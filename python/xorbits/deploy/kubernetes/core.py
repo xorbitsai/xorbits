@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import asyncio
+import json
 import logging
 import os
+import time
 from typing import Any, AsyncGenerator, Dict, List, Optional, TypeVar
 
 from ..._mars.deploy.utils import next_in_thread, wait_all_supervisors_ready
@@ -25,7 +27,7 @@ from ..._mars.services.cluster.backends import (
 )
 from ..._mars.services.cluster.core import NodeRole
 from ._constants import SERVICE_PID_FILE
-from .config import XorbitsReplicationConfig
+from .config import XorbitsReplicationConfig, XorbitsWorkersConfig
 
 logger = logging.getLogger(__name__)
 RetType = TypeVar("RetType")
@@ -60,6 +62,7 @@ class K8SClusterBackend(AbstractClusterBackend):
         self._service_name = os.environ.get("MARS_K8S_SERVICE_NAME")
         self._full_label_selector = None
         self._client = client.CoreV1Api(client.ApiClient(self._k8s_config))
+        self._apps_client = client.AppsV1Api(client.ApiClient(self._k8s_config))
 
     @classmethod
     async def create(
@@ -195,6 +198,55 @@ class K8SClusterBackend(AbstractClusterBackend):
         timeout: Optional[int] = None,
     ) -> str:
         raise NotImplementedError
+
+    def _list_workers(self):
+        workers = []
+        pods = self._client.list_namespaced_pod(
+            namespace=self._k8s_namespace,
+            _preload_content=False,
+            label_selector="xorbits/service-type=" + XorbitsWorkersConfig.rc_name,
+        )
+        pods_list = json.loads(pods.data)["items"]
+        port = os.environ["MARS_K8S_SERVICE_PORT"]
+        for p in pods_list:
+            if "podIP" in p["status"]:
+                workers.append(p["status"]["podIP"] + ":" + port)
+            elif (
+                "conditions" in p["status"]
+                and "reason" in p["status"]["conditions"][0]
+                and p["status"]["conditions"][0]["reason"] == "Unschedulable"
+            ):
+                raise SystemError(p["status"]["conditions"][0]["message"])
+        return workers
+
+    async def request_workers(
+        self, worker_num: int, timeout: Optional[int] = None
+    ) -> List[str]:
+        if worker_num <= 0:
+            raise ValueError("Please specify a `worker_num` that is greater than zero")
+        if timeout and timeout < 0:
+            raise ValueError("Please specify a `timeout` that is greater than zero")
+        start_time = time.time()
+        deployment = self._apps_client.read_namespaced_deployment(
+            name=XorbitsWorkersConfig.rc_name,
+            namespace=self._k8s_namespace,
+            _preload_content=False,
+        )
+        deployment_data = json.loads(deployment.data)
+        old_replica = deployment_data["status"]["replicas"]
+        old_workers = self._list_workers()
+        new_replica = old_replica + worker_num
+        body = {"spec": {"replicas": new_replica}}
+        self._apps_client.patch_namespaced_deployment_scale(
+            name=XorbitsWorkersConfig.rc_name, namespace=self._k8s_namespace, body=body
+        )
+        while True:
+            if timeout is not None and (timeout + start_time) < time.time():
+                raise TimeoutError("Request worker timeout")
+            new_workers = self._list_workers()
+            if len(new_workers) == new_replica:
+                return list(set(new_workers) - set(old_workers))
+            await asyncio.sleep(1)
 
     async def release_worker(self, address: str):
         raise NotImplementedError
