@@ -27,6 +27,7 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 import pytest
+from pandas._libs.missing import NAType
 
 try:
     from flaky import flaky as _raw_flaky
@@ -313,7 +314,7 @@ class ObjectCheckMixin:
     def assert_tensor_consistent(self, expected, real):
         from ..lib.sparse import SparseNDArray
 
-        np_types = (np.generic, np.ndarray, pd.Timestamp, SparseNDArray)
+        np_types = (np.generic, np.ndarray, pd.Timestamp, SparseNDArray, NAType)
         if cupy is not None:
             np_types += (cupy.ndarray,)
 
@@ -326,7 +327,7 @@ class ObjectCheckMixin:
             raise AssertionError(
                 f"Type of real value ({type(real)}) not one of {np_types!r}"
             )
-        if not hasattr(expected, "dtype"):
+        if not hasattr(expected, "dtype") or isinstance(real, NAType):
             return
         if self._check_options["check_dtypes"]:
             try:

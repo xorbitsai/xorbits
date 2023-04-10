@@ -45,6 +45,7 @@ from ..utils import (
     build_empty_df,
     build_empty_series,
     build_series,
+    is_cudf,
     parse_index,
     validate_axis,
 )
@@ -301,6 +302,7 @@ class DataFrameReductionMixin(DataFrameOperandMixin):
                 _output_type=output_type,
                 _dtypes=dtypes,
                 _index=index,
+                _func_name=getattr(op, "_func_name"),
             )
         )
         return [out_df]
@@ -332,7 +334,11 @@ class DataFrameReductionMixin(DataFrameOperandMixin):
         elif func_name == "custom_reduction":
             empty_df = build_df(df, ensure_string=True)
             reduced = getattr(self, "custom_reduction").__call_agg__(empty_df)
-            reduced_cols = list(reduced.index)
+            reduced_cols = (
+                list(reduced.index.to_pandas())
+                if is_cudf(reduced)
+                else list(reduced.index)
+            )
             reduced_dtype = reduced.dtype
         else:
             reduced_cols, dtypes = [], []

@@ -1061,3 +1061,185 @@ def test_custom_series_aggregate(setup, check_ref_counts):
 
     result = s.agg(MockReduction2())
     assert pytest.approx(result.execute().fetch()) == data.agg(MockReduction2())
+
+
+@require_cudf
+@require_cupy
+@pytest.mark.parametrize(
+    "method",
+    [
+        "all",
+        "any",
+        "count",
+        "cummax",
+        "cummin",
+        "cumprod",
+        "cumsum",
+        "kurtosis",
+        "max",
+        "min",
+        "nunique",
+        "prod",
+        "size",
+        "sem",
+        "skew",
+        "std",
+        "sum",
+        "unique",
+        "var",
+    ],
+)
+def test_gpu_series_agg(method, setup_gpu):
+    series = pd.Series([1, 2, 3])
+    expected = series.agg(method)
+
+    mars_series = to_gpu(md.Series([1, 2, 3]))
+
+    if method in (
+        "unique",
+        "cummax",
+        "cummin",
+        "cumprod",
+        "cumsum",
+    ):  # _infer_df_func_returns error
+        with pytest.raises(TypeError):
+            mars_series.agg(method)
+    elif method == "sem":  # cudf not impl
+        with pytest.raises(AttributeError):
+            mars_series.agg(method).execute()
+    elif method == "size":  # error in cudf
+        with pytest.raises(TypeError):
+            mars_series.agg(method).execute()
+    elif method == "kurtosis":
+        res = mars_series.agg(method).execute().fetch()
+        assert pd.isna(res)
+    else:
+        res = mars_series.agg(method).execute().fetch()
+        try:
+            pd.testing.assert_series_equal(res.to_pandas(), expected)
+        except:
+            assert res == expected
+
+    expected, actual = None, None
+    if method in ("unique", "sem"):
+        with pytest.raises(AttributeError):  # cudf not impl
+            getattr(mars_series, method)().execute()
+    elif method == "nunique":
+        with pytest.raises(AttributeError):  # nunique reduction impl error
+            getattr(mars_series, method)().execute()
+    elif method == "size":
+        expected = getattr(series, method)
+        actual = getattr(mars_series.execute().fetch().to_pandas(), method)
+    elif method == "kurtosis":
+        actual = getattr(mars_series, method)().execute().fetch()
+        assert pd.isna(actual)
+        assert pd.isna(expected)
+    else:
+        expected = getattr(series, method)()
+        actual = getattr(mars_series, method)().execute().fetch()
+
+    if actual is not None and expected is not None:
+        try:
+            pd.testing.assert_series_equal(actual.to_pandas(), expected)
+        except:
+            assert actual == expected
+
+
+@require_cudf
+@require_cupy
+@pytest.mark.parametrize(
+    "method",
+    [
+        "all",
+        "any",
+        "count",
+        "cummax",
+        "cummin",
+        "cumprod",
+        "cumsum",
+        "kurtosis",
+        "max",
+        "min",
+        "nunique",
+        "prod",
+        "size",
+        "sem",
+        "skew",
+        "std",
+        "sum",
+        "unique",
+        "var",
+    ],
+)
+def test_gpu_dataframe_agg(method, setup_gpu):
+    df = pd.DataFrame({"a": [1, 2, 3]})
+    expected = df.agg(method)
+
+    s = to_gpu(md.DataFrame({"a": [1, 2, 3]}))
+
+    if method == "unique":  # _infer_df_func_returns error
+        with pytest.raises(AttributeError):
+            s.agg(method)
+    else:
+        res = s.agg(method)
+        if method in (
+            "cummax",
+            "cummin",
+            "cumprod",
+            "cumsum",
+        ):  # impl error, trigger transform
+            with pytest.raises(KeyError) as e:
+                res.execute()
+            assert "NotImplementedError" in str(e)
+        elif method == "size":  # error in cudf
+            with pytest.raises(TypeError):
+                res.execute()
+        elif method == "sem":  # not impl in cudf
+            with pytest.raises(AttributeError):
+                res.execute()
+        elif method == "unique":  # _infer_df_func_returns error
+            with pytest.raises(AttributeError):
+                res.execute()
+        else:
+            res_pandas = res.execute().fetch().to_pandas()
+            pd.testing.assert_series_equal(expected, res_pandas)
+
+    expected, actual = None, None
+    if method == "unique":
+        with pytest.raises(AttributeError):  # no df.unique in pandas
+            getattr(df, method)()
+    elif method == "size":
+        expected_size = getattr(df, method)
+        actual_size = getattr(s.execute().fetch().to_pandas(), method)
+        assert expected_size == actual_size
+    elif method == "sem":  # cudf not impl
+        with pytest.raises(AttributeError):
+            getattr(s, method)().execute()
+    else:
+        expected = getattr(df, method)()
+        actual = getattr(s, method)().execute().fetch().to_pandas()
+
+    if expected is not None and actual is not None:
+        try:
+            pd.testing.assert_series_equal(expected, actual)
+        except:
+            pd.testing.assert_frame_equal(expected, actual)
+
+
+@require_cudf
+@require_cupy
+def test_multi_agg_methods(setup_gpu):
+    df = pd.DataFrame({"a": [1, 2, 3]})
+    expected = df.agg(["max", "min"])
+
+    mdf = to_gpu(md.DataFrame({"a": [1, 2, 3]}))
+    res = mdf.agg(["max", "min"]).execute().fetch()
+
+    pd.testing.assert_frame_equal(expected, res.to_pandas())
+
+    series = pd.Series([1, 2, 3])
+    expected = series.agg(["max", "min"])
+    mars_series = to_gpu(md.Series([1, 2, 3]))
+    res = mars_series.agg(["max", "min"]).execute().fetch()
+
+    pd.testing.assert_series_equal(expected, res.to_pandas())

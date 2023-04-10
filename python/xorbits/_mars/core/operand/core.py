@@ -499,7 +499,7 @@ def execute(results: Dict[str, Any], op: OperandType):
                 return result
             except UFuncTypeError as e:  # pragma: no cover
                 raise TypeError(str(e)).with_traceback(sys.exc_info()[2]) from None
-    except NotImplementedError:
+    except NotImplementedError as e:
         for op_cls in type(op).__mro__:
             if op_cls in _op_type_to_executor:
                 executor = _op_type_to_executor[op_cls]
@@ -507,7 +507,9 @@ def execute(results: Dict[str, Any], op: OperandType):
                 result = executor(results, op)
                 succeeded = True
                 return result
-        raise KeyError(f"No handler found for op: {op}")
+        raise KeyError(
+            f"No handler found for op: {op}, due to NotImplementedError: {str(e)}"
+        )
     finally:
         if succeeded:
             op.post_execute(results, op)

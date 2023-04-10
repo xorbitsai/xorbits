@@ -40,7 +40,16 @@ from ...utils import ceildiv, enter_current_session, lazy_import, pd_release_ver
 from ..core import INDEX_CHUNK_TYPE
 from ..merge import DataFrameConcat
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_df, build_empty_df, build_series, parse_index, validate_axis
+from ..utils import (
+    build_df,
+    build_empty_df,
+    build_series,
+    is_cudf,
+    is_dataframe,
+    is_series,
+    parse_index,
+    validate_axis,
+)
 from .core import CustomReduction, ReductionAggStep, ReductionCompiler, ReductionSteps
 
 cp = lazy_import("cupy", rename="cp")
@@ -862,6 +871,32 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
         ctx[op.outputs[0].key] = concat_df
 
     @classmethod
+    def _cudf_agg(cls, op: "DataFrameAggregate", in_data):
+        data = in_data
+        if is_series(in_data):
+            data = in_data.to_frame()
+            # cudf to_frame doc: https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.series.to_frame
+            # The `name` option is None by default, but the actual behaviour sets the name to `0`
+            # So define the columns manually
+            data.columns = [None]
+
+        func_name = (
+            op.func_rename[0] or op.func[0] if len(op.func) == 1 else op.func_rename
+        )
+        # cudf do not support that axis is not None
+        # when axis is 0, make it None
+        # when axis is not None, just raise Error
+        # ref: https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.dataframe.agg
+        axis = op.axis if op.axis else None
+        result = data.agg(func_name, axis=axis)
+
+        if is_series(result) and op.output_types[0] == OutputType.scalar:
+            result = result[0]
+        elif is_dataframe(result) and op.output_types[0] == OutputType.series:
+            result = result.iloc[:, 0]
+        return result
+
+    @classmethod
     @redirect_custom_log
     @enter_current_session
     def execute(cls, ctx, op: "DataFrameAggregate"):
@@ -892,7 +927,10 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
                 ):
                     result = op.func[0](in_data)
                 else:
-                    result = in_data.agg(op.raw_func, axis=op.axis)
+                    if is_cudf(in_data):
+                        result = cls._cudf_agg(op, in_data)
+                    else:
+                        result = in_data.agg(op.raw_func, axis=op.axis)
                     if op.outputs[0].ndim == 1:
                         result = result.astype(op.outputs[0].dtype, copy=False)
 
@@ -1021,6 +1059,7 @@ def aggregate(df, func=None, axis=0, **kw):
     output_type = kw.pop("_output_type", None)
     dtypes = kw.pop("_dtypes", None)
     index = kw.pop("_index", None)
+    raw_func_name = kw.pop("_func_name", None)
 
     if not is_funcs_aggregate(func, func_kw=kw, ndim=df.ndim):
         return df.transform(func, axis=axis, _call_agg=True)
@@ -1028,6 +1067,9 @@ def aggregate(df, func=None, axis=0, **kw):
     op = DataFrameAggregate(
         raw_func=copy.deepcopy(func),
         raw_func_kw=copy.deepcopy(kw),
+        func_rename=[raw_func_name]
+        if raw_func_name
+        else (func if isinstance(func, list) else [func]),
         axis=axis,
         combine_size=combine_size,
         numeric_only=numeric_only,
