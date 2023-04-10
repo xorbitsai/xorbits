@@ -90,6 +90,8 @@ async def test_api(actor_pool):
     with pytest.raises(NotImplementedError):
         await api.request_worker(timeout=1)
     with pytest.raises(NotImplementedError):
+        await api.request_workers(worker_num=1, timeout=1)
+    with pytest.raises(NotImplementedError):
         await api.release_worker("127.0.0.1:1234")
 
     await api.set_node_status(pool_addr, NodeRole.WORKER, NodeStatus.STOPPING)
@@ -171,7 +173,8 @@ async def test_web_api(actor_pool):
         f.write("foo bar baz")
     log_content = await web_api.fetch_node_log(size=-1, address=pool_addr)
     assert len(log_content) == 11
-
+    with pytest.raises(NotImplementedError):
+        await web_api.request_workers(worker_num=1, timeout=1)
     await MockClusterAPI.cleanup(pool_addr)
 
 
