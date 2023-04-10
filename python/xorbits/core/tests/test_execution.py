@@ -129,6 +129,16 @@ def tests_int_conversion(setup, dummy_int_2d_array):
         int(np.atleast_2d(3.0))
 
 
+def tests_float_conversion(setup, dummy_int_2d_array):
+    import xorbits.numpy as np
+    import xorbits.remote as xr
+
+    assert float(dummy_int_2d_array[0][2]) == 2.0
+    assert float(xr.spawn(lambda: "1.2")) == 1.2
+    with pytest.raises(TypeError):
+        float(np.atleast_2d(3.0))
+
+
 def tests_index_conversion(setup, dummy_int_2d_array, dummy_str_series):
     test = 0
     for i in range(dummy_int_2d_array[0][2]):

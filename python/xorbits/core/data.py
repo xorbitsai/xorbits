@@ -15,9 +15,10 @@
 from collections import defaultdict
 from enum import Enum
 from itertools import count
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Type
 
 from pandas.api.types import is_integer_dtype
+from pandas.core.dtypes.common import is_float_dtype
 
 from ..utils import safe_repr_str
 
@@ -38,6 +39,11 @@ class DataType(Enum):
 
 
 DATA_MEMBERS: Dict[DataType, Dict[str, Any]] = defaultdict(dict)
+
+
+class ConversionType(Enum):
+    int_conversion = 1
+    float_conversion = 2
 
 
 class Data:
@@ -285,22 +291,30 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def _to_int(self, cast=False):
+    def _to_int_or_float(self, conversion: Optional[ConversionType] = None, cast=False):
         from .execution import run
 
         data_type = self.data.data_type
         if (
             data_type == DataType.tensor
             and len(self.shape) == 0
-            and is_integer_dtype(self.dtype)
+            and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
         ):
             run(self)
-            return self.to_numpy()
+            return (
+                self.to_numpy()
+                if conversion == ConversionType.int_conversion
+                else float(self.to_numpy())
+            )
         elif data_type == DataType.object_:
             run(self)
             data_object = self.to_object()
-            if cast or isinstance(data_object, int):
-                return int(data_object)
+            if cast or isinstance(data_object, int) or isinstance(data_object, float):
+                return (
+                    int(data_object)
+                    if conversion == ConversionType.int_conversion
+                    else float(data_object)
+                )
             else:
                 raise TypeError(
                     f"{self.data.data_type} object cannot be interpreted as an integer."
@@ -311,15 +325,18 @@ class DataRef(metaclass=DataRefMeta):
             )
 
     def __int__(self):
-        return self._to_int(cast=True)
+        return self._to_int_or_float(ConversionType.int_conversion, cast=True)
+
+    def __float__(self):
+        return self._to_int_or_float(ConversionType.float_conversion, cast=True)
 
     def __index__(self):
         try:
-            val = self._to_int(cast=False)
+            val = self._to_int_or_float(ConversionType.int_conversion, cast=False)
             return val
         except TypeError:
             raise TypeError(
-                f"{self.data.data_type} object cannot be interpreted as an integer."
+                f"{self.data.data_type} object cannot be interpreted as an integer or a float."
             )
 
 
