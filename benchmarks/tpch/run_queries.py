@@ -25,11 +25,11 @@ import xorbits.pandas as xd
 
 @functools.lru_cache
 def load_lineitem(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/lineitem"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     df["L_SHIPDATE"] = xd.to_datetime(df.L_SHIPDATE, format="%Y-%m-%d")
     df["L_RECEIPTDATE"] = xd.to_datetime(df.L_RECEIPTDATE, format="%Y-%m-%d")
@@ -39,22 +39,22 @@ def load_lineitem(
 
 @functools.lru_cache
 def load_part(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/part"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     return df
 
 
 @functools.lru_cache
 def load_orders(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/orders"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     df["O_ORDERDATE"] = xd.to_datetime(df.O_ORDERDATE, format="%Y-%m-%d")
     return df
@@ -62,55 +62,55 @@ def load_orders(
 
 @functools.lru_cache
 def load_customer(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/customer"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     return df
 
 
 @functools.lru_cache
 def load_nation(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/nation"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     return df
 
 
 @functools.lru_cache
 def load_region(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/region"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     return df
 
 
 @functools.lru_cache
 def load_supplier(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/supplier"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     return df
 
 
 @functools.lru_cache
 def load_partsupp(
-    data_folder: str, use_arrow_dtype: bool = None, **storage_options
+    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/partsupp"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options
+        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
     )
     return df
 
@@ -1035,6 +1035,7 @@ def run_queries(
     root: str,
     storage_options: Dict[str, str],
     queries: List[int],
+    gpu: bool,
     use_arrow_dtype: bool = None,
 ):
     total_start = time.time()
@@ -1045,7 +1046,7 @@ def run_queries(
         args = []
         for dataset in _query_to_datasets[query]:
             args.append(
-                globals()[f"load_{dataset}"](root, use_arrow_dtype, **storage_options)
+                globals()[f"load_{dataset}"](root, use_arrow_dtype, gpu, **storage_options)
             )
             datasets_to_load.update(args)
         queries_to_args[query] = args
@@ -1086,6 +1087,19 @@ def main():
         help="Use arrow dtype.",
     )
     parser.add_argument(
+        "--gpu",
+        default=False,
+        action="store_true",
+        help="Use GPUs.",
+    )
+    parser.add_argument(
+        "--cuda_devices",
+        type=int,
+        nargs="+",
+        required=False,
+        help="Comma separated cuda devices to use.",
+    )
+    parser.add_argument(
         "--endpoint",
         type=str,
         required=False,
@@ -1094,6 +1108,7 @@ def main():
 
     args = parser.parse_args()
     data_set = args.data_set
+    gpu = args.gpu
     use_arrow_dtype = args.use_arrow_dtype
 
     # credentials to access the datasource.
@@ -1108,12 +1123,13 @@ def main():
         queries = args.queries
     print(f"Queries to run: {queries}")
 
-    xorbits.init(address=args.endpoint)
+    xorbits.init(address=args.endpoint, cuda_devices=args.cuda_devices)
     try:
         run_queries(
             data_set,
             storage_options=storage_options,
             queries=queries,
+            gpu=gpu,
             use_arrow_dtype=use_arrow_dtype,
         )
     finally:
