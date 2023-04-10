@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-19 21:31+0800\n"
+"POT-Creation-Date: 2023-04-06 14:18+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,9 +31,11 @@ msgid ""
 "test, **Xorbits is the fastest framework among the most popular "
 "distributed data science frameworks**."
 msgstr ""
-"Xorbits 是一个 Python 数据处理和 AI 的加速框架，它能加速许多知名 Python 库，包括 numpy、pandas"
-"、scikit-learn 等。Xorbits 利用多核和 GPU 来加速计算，支持单机加速，也可以轻松扩展到成千台机器，以支持处理 TB "
-"级数据。根据我们的性能测试结果，**Xorbits 跟其他知名分布式框架相比，是性能最好的。**"
+"Xorbits 是一个 Python 数据处理和 AI 的加速框架，它能加速许多知名 Python "
+"库，包括 numpy、pandas、scikit-learn 等。Xorbits 利用多核和 GPU 来加速"
+"计算，支持单机加速，也可以轻松扩展到成千台机器，以支持处理 TB 级数据。"
+"根据我们的性能测试结果，**Xorbits 跟其他知名分布式框架相比，是性能最好的"
+"。**"
 
 #: ../../source/index.rst:19
 msgid ""
@@ -41,8 +43,9 @@ msgid ""
 " ``X-or-bits`` or ``X-orbits`` or ``xor-bits``, just have fun to "
 "comprehend it in your own way."
 msgstr ""
-"``Xorbits`` 名字本身有许多含义，你可以理解成 ``X-or-bits（未来或比特）``，也可以理解成 "
-"``X-orbits（未来的轨道）``，或者 ``xor-bits（异或比特）`` 等等，随意按你的想法来理解。"
+"``Xorbits`` 名字本身有许多含义，你可以理解成 ``X-or-bits（未来或比特）``"
+"，也可以理解成 ``X-orbits（未来的轨道）``，或者 ``xor-bits（异或比特）`` "
+"等等，随意按你的想法来理解。"
 
 #: ../../source/index.rst:23
 msgid "At a glance"
@@ -54,8 +57,8 @@ msgid ""
 "pandas`` with ``import xorbits.pandas`` will just work, so does numpy and"
 " so forth."
 msgstr ""
-"代码除了 import 几乎相同，只要把 ``import pandas`` 改成 ``import xorbits.pandas`` "
-"就大功告成，numpy 和其他库也是如此。"
+"代码除了 import 几乎相同，只要把 ``import pandas`` 改成 ``import xorbits."
+"pandas`` 就大功告成，numpy 和其他库也是如此。"
 
 #: ../../source/index.rst:32
 msgid "Where to get it?"
@@ -84,8 +87,8 @@ msgid ""
 "Binary installers for the latest released version are available at the "
 "`Python Package Index (PyPI) <https://pypi.org/project/xorbits>`_"
 msgstr ""
-"最新版本二进制包可以在 `Python Package Index (PyPI) "
-"<https://pypi.org/project/xorbits>`_ 找到。"
+"最新版本二进制包可以在 `Python Package Index (PyPI) <https://pypi.org/"
+"project/xorbits>`_ 找到。"
 
 #: ../../source/index.rst:54
 msgid "API compatibility"
@@ -169,7 +172,9 @@ msgstr "根据我们的性能测试，Xorbits 相比于其他流行的框架是�
 msgid ""
 "We did benchmarks for TPC-H at scale factor 100 (~100 GB datasets) and "
 "1000 (~1 TB datasets). The performances are shown as below."
-msgstr "我们测试了 TPC-H 在 scale factor 100（大约100G数据集）和 1000（大约1T数据集）。性能结果如下。"
+msgstr ""
+"我们测试了 TPC-H 在 scale factor 100（大约100G数据集）和 1000（大约1T数据"
+"集）。性能结果如下。"
 
 #: ../../source/index.rst:82
 msgid "TPC-H SF100: Xorbits vs Dask"
@@ -179,7 +184,9 @@ msgstr "TPC-H SF100：Xorbits 对比 Dask"
 msgid ""
 "Q21 was excluded since Dask ran out of memory. Across all queries, "
 "Xorbits was found to be 7.3x faster than Dask."
-msgstr "Dask 在 Q21 跑的时候内存溢出，因此 Q21 被排除。综合所有查询，Xorbits 比 Dask 快7.3倍。"
+msgstr ""
+"Dask 在 Q21 跑的时候内存溢出，因此 Q21 被排除。综合所有查询，Xorbits 比 "
+"Dask 快7.3倍。"
 
 #: ../../source/index.rst:95
 msgid "TPC-H SF100: Xorbits vs Pandas API on Spark"
@@ -191,8 +198,9 @@ msgid ""
 " Xorbits provided much better API compatibility. Pandas API on Spark "
 "failed on Q1, Q4, Q7, Q21, and ran out of memory on Q20."
 msgstr ""
-"Pandas API on Spark 跑 Q1、Q4、Q7 和 Q21 查询时失败，跑 Q20 "
-"查询时内存溢出。除此之外，对于所有查询，Xorbits 和它有着相似的性能，但是 Xorbits 提供更优秀的 API 兼容性。"
+"Pandas API on Spark 跑 Q1、Q4、Q7 和 Q21 查询时失败，跑 Q20 查询时内存"
+"溢出。除此之外，对于所有查询，Xorbits 和它有着相似的性能，但是 Xorbits "
+"提供更优秀的 API 兼容性。"
 
 #: ../../source/index.rst:109
 msgid "TPC-H SF100: Xorbits vs Modin"
@@ -203,7 +211,9 @@ msgid ""
 "Although Modin ran out of memory for most of the queries that involve "
 "heavy data shuffles, making the performance difference less obvious, "
 "Xorbits was still found to be 3.2x faster than Modin."
-msgstr "尽管 Modin 在大多数涉及数据重排的查询中内存溢出，显得性能差别没那么明显，Xorbits 依然比 Modin 快了3.2倍。"
+msgstr ""
+"尽管 Modin 在大多数涉及数据重排的查询中内存溢出，显得性能差别没那么明显，"
+"Xorbits 依然比 Modin 快了3.2倍。"
 
 #: ../../source/index.rst:123
 msgid "TPC-H SF1000: Xorbits"
@@ -216,8 +226,9 @@ msgid ""
 "able to compare the performance difference now, and we plan to try again "
 "later."
 msgstr ""
-"Xorbits 能够跑通全部的测试，Dask、Pandas API on Spark 以及 Modin "
-"大部分的测试都跑失败了。因此，我们无法对比性能的差别，我们计划未来在合适的时间继续对比。"
+"Xorbits 能够跑通全部的测试，Dask、Pandas API on Spark 以及 Modin 大部分的"
+"测试都跑失败了。因此，我们无法对比性能的差别，我们计划未来在合适的时间"
+"继续对比。"
 
 #: ../../source/index.rst:137
 msgid ""
@@ -233,7 +244,9 @@ msgstr "部署"
 msgid ""
 "Xorbits can be deployed on your local machine, largely deployed to a "
 "cluster via command lines, or deploy via Kubernetes and clouds."
-msgstr "Xorbits 能够部署到单机、通过命令行大规模部署到集群，或者部署到 Kubernetes 以及云上。"
+msgstr ""
+"Xorbits 能够部署到单机、通过命令行大规模部署到集群，或者部署到 Kubernetes"
+" 以及云上。"
 
 #: ../../source/index.rst:146
 msgid "Description"
@@ -269,70 +282,80 @@ msgstr ":ref:`云 <deployment_cloud>`"
 
 #: ../../source/index.rst:151
 msgid "Deploy Xorbits to various cloud platforms via python code"
-msgstr "通过 Python 代码把 Xoribts 部署到云平台"
+msgstr "通过 Python 代码把 Xorbits 部署到云平台"
 
-#: ../../source/index.rst:155
+#: ../../source/index.rst:152
+msgid ":ref:`SLURM <deployment_slurm>`"
+msgstr ":ref:`SLURM <deployment_slurm>`"
+
+#: ../../source/index.rst:152
+msgid "Deploy Xorbits to SLURM"
+msgstr "把 Xorbits 部署到 SLURM"
+
+#: ../../source/index.rst:156
 msgid "Getting involved"
 msgstr "参与项目"
 
-#: ../../source/index.rst:160 ../../source/index.rst:176
+#: ../../source/index.rst:161 ../../source/index.rst:177
 msgid "**Platform**"
 msgstr "**平台**"
 
-#: ../../source/index.rst:160 ../../source/index.rst:176
+#: ../../source/index.rst:161 ../../source/index.rst:177
 msgid "**Purpose**"
 msgstr "**目的**"
 
-#: ../../source/index.rst:162
+#: ../../source/index.rst:163
 msgid "`Discourse Forum <https://discuss.xorbits.io/>`_"
 msgstr "`Discourse 论坛 <https://discuss.xorbits.io/>`_"
 
-#: ../../source/index.rst:162
+#: ../../source/index.rst:163
 msgid "Asking usage questions and discussing development."
 msgstr "询问使用的问题，参与开发的讨论"
 
-#: ../../source/index.rst:164 ../../source/index.rst:178
+#: ../../source/index.rst:165 ../../source/index.rst:179
 msgid "`Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_"
 msgstr ""
 
-#: ../../source/index.rst:164 ../../source/index.rst:178
-#: ../../source/index.rst:180
+#: ../../source/index.rst:165 ../../source/index.rst:179
+#: ../../source/index.rst:181
 msgid "Reporting bugs and filing feature requests."
 msgstr "报告 bug 或者发起新特性请求"
 
-#: ../../source/index.rst:166
+#: ../../source/index.rst:167
 msgid ""
 "`Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-"
 "RbfhbPVpx7prOVdM1CAuxg>`_"
 msgstr ""
 
-#: ../../source/index.rst:166
+#: ../../source/index.rst:167
 msgid "Collaborating with other Xorbits users."
 msgstr "与其他 Xorbits 用户一起讨论"
 
-#: ../../source/index.rst:168
+#: ../../source/index.rst:169
 msgid "`StackOverflow <https://stackoverflow.com/questions/tagged/xorbits>`_"
 msgstr ""
 
-#: ../../source/index.rst:168
+#: ../../source/index.rst:169
 msgid "Asking questions about how to use Xorbits."
 msgstr "询问 Xorbits 使用问题"
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:171
 msgid "`Twitter <https://twitter.com/xorbitsio>`_"
 msgstr ""
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:171
 msgid "Staying up-to-date on new features."
 msgstr "获取最新特性的更新"
 
-#: ../../source/index.rst:180
+#: ../../source/index.rst:181
 msgid "`Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_"
 msgstr ""
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:184
 msgid ""
 "Visit `Xorbits community <https://xorbits.cn/community>`_ to join us on "
 "Wechat, Zhihu and so on."
-msgstr "访问 `Xorbits 社区 <https://xorbits.cn/community>`_ 获取微信公众号、知乎等联系方式。"
+msgstr ""
+"访问 `Xorbits 社区 <https://xorbits.cn/community>`_ 获取微信公众号、知乎"
+"等联系方式。"
 
