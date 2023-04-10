@@ -380,11 +380,6 @@ class LazyModule:
         self._on_loads = []
         return ret
 
-    def __eq__(self, other: "LazyModule"):
-        if not isinstance(other, LazyModule):
-            return False
-        return self.name == other.name
-
     def add_load_handler(self, func: Callable):
         self._on_loads.append(func)
         return func
