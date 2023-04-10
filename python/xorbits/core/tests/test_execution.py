@@ -119,6 +119,32 @@ def test_manual_execution(setup, dummy_int_series):
     assert not any([need_to_execute(ref) for ref in series_to_execute])
 
 
+def tests_int_conversion(setup, dummy_int_2d_array):
+    import xorbits.numpy as np
+    import xorbits.remote as xr
+
+    assert int(dummy_int_2d_array[0][2]) == 2
+    assert int(xr.spawn(lambda: "2")) == 2
+    with pytest.raises(TypeError):
+        int(np.atleast_2d(3.0))
+
+
+def tests_index_conversion(setup, dummy_int_2d_array, dummy_str_series):
+    test = 0
+    for i in range(dummy_int_2d_array[0][2]):
+        test += 1
+    assert test == 2
+    import xorbits.remote as xr
+
+    for i in range(xr.spawn(lambda: 2)):
+        test += 1
+    assert test == 4
+    with pytest.raises(TypeError):
+        range(dummy_str_series[0])
+    with pytest.raises(TypeError):
+        range(xr.spawn(lambda: "foo"))
+
+
 def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
     assert need_to_execute(dummy_df)
     assert need_to_execute(dummy_int_series)
