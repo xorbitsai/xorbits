@@ -31,10 +31,7 @@ class Rolling(MarsGetAttrProxy):
 
 
 install_members(
-    Rolling,
-    MarsRolling,
-    pandas,
-    pandas.core.window.rolling.Rolling,
+    Rolling, MarsRolling, pandas, pandas.core.window.rolling.Rolling,
 )
 attach_module_callable_docstring(Rolling, pandas, pandas.core.window.rolling.Rolling)
 
@@ -45,10 +42,7 @@ class Expanding(MarsGetAttrProxy):
 
 
 install_members(
-    Expanding,
-    MarsExpanding,
-    pandas,
-    pandas.core.window.expanding.Expanding,
+    Expanding, MarsExpanding, pandas, pandas.core.window.expanding.Expanding,
 )
 attach_module_callable_docstring(
     Expanding, pandas, pandas.core.window.expanding.Expanding

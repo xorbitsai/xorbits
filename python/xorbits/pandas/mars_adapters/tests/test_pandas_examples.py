@@ -23,12 +23,7 @@ from .... import pandas as xpd
 
 
 def run_docstring(
-    f,
-    globs,
-    verbose=False,
-    name="NoName",
-    compileflags=None,
-    optionflags=0,
+    f, globs, verbose=False, name="NoName", compileflags=None, optionflags=0,
 ) -> List[TestResults]:
     finder = DocTestFinder(verbose=verbose, recurse=False)
     runner = DocTestRunner(verbose=verbose, optionflags=optionflags)

@@ -35,10 +35,7 @@ class PlotAccessor(MarsGetAttrProxy):
 
 
 install_members(
-    PlotAccessor,
-    MarsPlotAccessor,
-    pandas,
-    pandas.plotting._core.PlotAccessor,
+    PlotAccessor, MarsPlotAccessor, pandas, pandas.plotting._core.PlotAccessor,
 )
 attach_module_callable_docstring(
     PlotAccessor, pandas, pandas.plotting._core.PlotAccessor
