@@ -257,6 +257,4 @@ def tri(N, M=None, k=0, dtype=float, chunk_size=None, gpu=None):
     if M is None:
         M = N
     m = asones((N, M), dtype=dtype, chunk_size=chunk_size, gpu=gpu)
-    gpu = m.op.gpu if gpu is None else gpu
-    op = TensorTril(k, dtype=m.dtype, sparse=m.issparse(), gpu=gpu)
-    return op(m)
+    return tril(m, k=k)
