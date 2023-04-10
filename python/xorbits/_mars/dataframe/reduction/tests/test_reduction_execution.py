@@ -31,6 +31,7 @@ from ....tests.core import require_cudf, require_cupy
 from ....utils import lazy_import, pd_release_version
 from ... import CustomReduction, NamedAgg
 from ...base import to_gpu
+from ...utils import is_pandas_2
 
 pytestmark = pytest.mark.pd_compat
 
@@ -120,6 +121,7 @@ def test_series_reduction(
     np.testing.assert_equal(r.execute().fetch(), compute(data))
 
 
+@pytest.mark.skipif(is_pandas_2(), reason="Pandas 2.0 has removed `level` argument.")
 @pytest.mark.parametrize("func_name,func_opts", reduction_functions)
 def test_series_level_reduction(setup, func_name, func_opts: FunctionOptions):
     def compute(data, **kwargs):
@@ -171,7 +173,7 @@ def test_dataframe_reduction(
         return getattr(data, func_name)(**kwargs)
 
     rs = np.random.RandomState(0)
-    data = pd.DataFrame(rs.rand(20, 10))
+    data = pd.DataFrame(rs.rand(20, 10), columns=[f"col{i}" for i in range(10)])
     r = compute(md.DataFrame(data))
     pd.testing.assert_series_equal(compute(data), r.execute().fetch())
 
@@ -189,7 +191,7 @@ def test_dataframe_reduction(
     # test null
     np_data = rs.rand(20, 10)
     np_data[np_data > 0.6] = np.nan
-    data = pd.DataFrame(np_data)
+    data = pd.DataFrame(np_data, columns=[f"col{i}" for i in range(10)])
 
     r = compute(md.DataFrame(data, chunk_size=3))
     pd.testing.assert_series_equal(compute(data), r.execute().fetch())
@@ -256,6 +258,7 @@ def test_dataframe_reduction(
     )
 
 
+@pytest.mark.skipif(is_pandas_2(), reason="Pandas 2.0 has removed `level` argument.")
 @pytest.mark.parametrize("func_name,func_opts", reduction_functions)
 def test_dataframe_level_reduction(
     setup, check_ref_counts, func_name, func_opts: FunctionOptions

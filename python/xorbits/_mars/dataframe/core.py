@@ -68,7 +68,13 @@ from ..utils import (
     on_serialize_shape,
     tokenize,
 )
-from .utils import ReprSeries, fetch_corner_data, merge_index_value, parse_index
+from .utils import (
+    ReprSeries,
+    fetch_corner_data,
+    is_pandas_2,
+    merge_index_value,
+    parse_index,
+)
 
 
 class IndexValue(Serializable):
@@ -82,7 +88,7 @@ class IndexValue(Serializable):
         classmethod
 
         def __instancecheck__(cls, instance):
-            if pd.__version__ < "2.0.0":
+            if not is_pandas_2():
                 return cls in instance.__class__.__mro__
             else:
                 if cls is IndexValue.Int64Index:

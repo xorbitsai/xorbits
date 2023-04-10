@@ -35,7 +35,7 @@ from ...serialization.serializables import (
 from ...tensor.core import TensorOrder
 from ...tensor.operands import TensorOperand, TensorOperandMixin
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index
+from ..utils import is_pandas_2, parse_index
 
 
 class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
@@ -368,10 +368,10 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
             escapechar=op.escapechar,
             decimal=op.decimal,
         )
-        if pd.__version__ < "2.0.0":
-            kwargs["line_terminator"] = op.lineterminator
-        else:
+        if is_pandas_2():
             kwargs["lineterminator"] = op.lineterminator
+        else:
+            kwargs["line_terminator"] = op.lineterminator
 
         df.to_csv(path, **kwargs)
 

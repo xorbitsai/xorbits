@@ -296,7 +296,7 @@ def parse_index(index_value, *args, store_data=False, key=None):
 
     def _serialize_index(index):
         extra_properties = dict(_name=index.name)
-        if pd.__version__ < "2.0.0":
+        if not is_pandas_2():
             tp = getattr(IndexValue, type(index).__name__)
         else:
             # pandas 2.0 does not have `Int64Index`, `Float64Index`, etc.
@@ -1450,3 +1450,7 @@ def concat_on_columns(objs: List) -> Any:
     if xdf is cudf:
         result.index = objs[0].index
     return result
+
+
+def is_pandas_2():
+    return pd.__version__ >= "2.0.0"
