@@ -14,7 +14,6 @@
 
 import logging
 import os
-import sys
 import tempfile
 
 import pytest
@@ -23,7 +22,6 @@ from .....utils import get_default_logging_config_file_path
 from ....constants import (
     DEFAULT_MARS_LOG_BACKUP_COUNT,
     DEFAULT_MARS_LOG_DIR,
-    DEFAULT_MARS_LOG_DIR_WIN,
     DEFAULT_MARS_LOG_MAX_BYTES,
     MARS_LOG_DIR_KEY,
 )
@@ -207,10 +205,7 @@ def test_non_existent_log_dir():
 
 def test_default_log_dir():
     default_log_dir = _get_or_create_default_log_dir()
-    if sys.platform.startswith("win"):
-        assert default_log_dir == DEFAULT_MARS_LOG_DIR_WIN
-    else:
-        assert default_log_dir == DEFAULT_MARS_LOG_DIR
+    assert default_log_dir == DEFAULT_MARS_LOG_DIR
     assert os.path.exists(default_log_dir) and os.path.isdir(default_log_dir)
 
 
