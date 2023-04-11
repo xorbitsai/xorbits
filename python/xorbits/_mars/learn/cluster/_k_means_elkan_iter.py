@@ -21,7 +21,7 @@ from ...core.operand import OperandStage
 from ...serialization.serializables import BoolField, Int32Field, KeyField
 from ...tensor.array_utils import as_same_device, cp, device, sparse
 from ...tensor.core import TensorOrder
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..operands import LearnOperand, LearnOperandMixin
 from ._k_means_common import _execute_merge_update, _relocate_empty_clusters
 from ._k_means_elkan import (
@@ -193,7 +193,7 @@ class KMeansElkanInitBounds(LearnOperand, LearnOperandMixin):
         )
 
         with device(device_id):
-            if xp is cp:  # pragma: no cover
+            if is_same_module(xp, cp):  # pragma: no cover
                 raise NotImplementedError("cannot support init_bounds for kmeans elkan")
 
             n_samples = x.shape[0]
@@ -203,10 +203,10 @@ class KMeansElkanInitBounds(LearnOperand, LearnOperandMixin):
             upper_bounds = np.zeros(n_samples, dtype=x.dtype)
             lower_bounds = np.zeros((n_samples, n_clusters), dtype=x.dtype)
 
-            if xp is np:
+            if is_same_module(xp, np):
                 init_bounds = init_bounds_dense
             else:
-                assert xp is sparse
+                assert is_same_module(xp, sparse)
                 init_bounds = init_bounds_sparse
 
             init_bounds(
@@ -529,9 +529,9 @@ class KMeansElkanUpdate(LearnOperand, LearnOperandMixin):
                     centers_new = np.zeros_like(centers_old)
                 weight_in_clusters = np.zeros(op.n_clusters, dtype=x.dtype)
 
-                if xp is np:
+                if is_same_module(xp, np):
                     method = update_chunk_dense
-                elif xp is sparse:
+                elif is_same_module(xp, sparse):
                     method = update_chunk_sparse
                 else:  # pragma: no cover
                     raise NotImplementedError("Does not support run on GPU")

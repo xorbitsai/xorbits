@@ -24,7 +24,7 @@ from ...serialization.serializables import (
     NDArrayField,
     TupleField,
 )
-from ...utils import on_deserialize_shape, on_serialize_shape
+from ...utils import is_same_module, on_deserialize_shape, on_serialize_shape
 from ..array_utils import array_module, is_array, is_cupy
 from ..core import TENSOR_TYPE, Tensor, TensorData, TensorOrder
 from ..utils import get_chunk_slices
@@ -125,9 +125,9 @@ class CSRMatrixDataSource(TensorNoInput):
 def _from_spmatrix(spmatrix, dtype=None, chunk_size=None, gpu=None):
     if gpu is None:
         m = get_array_module(spmatrix)
-        if cp is not None and m is cp:
+        if cp is not None and is_same_module(m, cp):
             gpu = True
-        elif cp is np:
+        elif is_same_module(cp, np):
             gpu = False
     if dtype and spmatrix.dtype != dtype:
         spmatrix = spmatrix.astype(dtype)
@@ -177,7 +177,7 @@ def tensor(
                 return arr.astype(arr.dtype, order=order, copy=False)
             raise
         if gpu is None:
-            if cp is not None and m is cp:
+            if cp is not None and is_same_module(m, cp):
                 gpu = True
 
     if is_array(data):

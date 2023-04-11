@@ -15,6 +15,8 @@
 
 import numpy as np
 
+from ....utils import is_same_module
+
 try:
     from sklearn.neighbors import DistanceMetric as SklearnDistanceMetric
 except ImportError:  # pragma: no cover
@@ -95,7 +97,11 @@ class HaversineDistances(PairwiseDistances):
         )
 
         with device(device_id):
-            if xp is np and op.use_sklearn and SklearnDistanceMetric is not None:
+            if (
+                is_same_module(xp, np)
+                and op.use_sklearn
+                and SklearnDistanceMetric is not None
+            ):
                 # CPU and sklearn installed, delegate computation to sklearn
                 d = SklearnDistanceMetric.get_metric("haversine").pairwise(x, y)
             else:

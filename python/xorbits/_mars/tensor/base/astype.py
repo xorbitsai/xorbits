@@ -17,7 +17,7 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...serialization.serializables import KeyField, StringField
-from ...utils import get_dtype
+from ...utils import get_dtype, is_same_module
 from ..array_utils import as_same_device, device
 from ..operands import TensorHasInput, TensorOperandMixin
 from ..utils import get_order
@@ -82,7 +82,7 @@ class TensorAstype(TensorHasInput, TensorOperandMixin):
             if op.sparse:
                 ctx[chunk.key] = x.astype(op.dtype)
             else:
-                if xp is np:
+                if is_same_module(xp, np):
                     ctx[chunk.key] = x.astype(
                         op.dtype, order=op.order, casting=op.casting
                     )
