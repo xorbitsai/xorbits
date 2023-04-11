@@ -63,6 +63,7 @@ from .. import (
     meshgrid,
     ones_like,
     tensor,
+    tri,
     tril,
     triu,
     zeros,
@@ -820,6 +821,43 @@ def test_triu_execution(setup):
     np.testing.assert_array_equal(res, expected)
     assert res.flags["C_CONTIGUOUS"] == expected.flags["C_CONTIGUOUS"]
     assert res.flags["F_CONTIGUOUS"] == expected.flags["F_CONTIGUOUS"]
+
+
+def test_tri_execution(setup):
+    # test only one para (N)
+    t = tri(3)
+    res = t.execute().fetch()
+    expected = np.tri(3)
+    np.testing.assert_equal(res, expected)
+
+    # test two para (N, M)
+    t = tri(3, 4)
+    res = t.execute().fetch()
+    expected = np.tri(3, 4)
+    np.testing.assert_equal(res, expected)
+
+    # test three para (N, M, k)
+    t = tri(3, 4, k=-1)
+    res = t.execute().fetch()
+    expected = np.tri(3, 4, k=-1)
+    np.testing.assert_equal(res, expected)
+
+    t = tri(3, 4, k=1)
+    res = t.execute().fetch()
+    expected = np.tri(3, 4, k=1)
+    np.testing.assert_equal(res, expected)
+
+    # test four para (N, M, k, dtype)
+    t = tri(3, 4, k=-1, dtype=int)
+    res = t.execute().fetch()
+    expected = np.tri(3, 4, k=-1, dtype=int)
+    np.testing.assert_equal(res, expected)
+
+    # test four para (N, M, k, dtype, chunk_size)
+    t = tri(3, 4, k=-1, dtype=int, chunk_size=2)
+    res = t.execute().fetch()
+    expected = np.tri(3, 4, k=-1, dtype=int)
+    np.testing.assert_equal(res, expected)
 
 
 def test_tril_execution(setup):
