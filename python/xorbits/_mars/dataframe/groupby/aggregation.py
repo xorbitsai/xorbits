@@ -1008,6 +1008,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
     @staticmethod
     def _do_predefined_agg(input_obj, agg_func, single_func=False, **kwds):
         ndim = getattr(input_obj, "ndim", None) or input_obj.obj.ndim
+        gpu = kwds.pop("gpu", False)
         if agg_func == "str_concat":
             agg_func = lambda x: x.str.cat(**kwds)
         elif isinstance(agg_func, str) and not kwds.get("skipna", True):
@@ -1017,12 +1018,22 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
 
         if ndim == 2:
             if single_func:
-                result = input_obj.agg(agg_func)
+                # DataFrameGroupby.agg('size') returns empty df in cudf, which is not correct
+                # The index order of DataFrameGroupby.size() is wrong in cudf
+                result = (
+                    input_obj.size().sort_index()
+                    if gpu and agg_func == "size"
+                    else input_obj.agg(agg_func)
+                )
                 if result.ndim == 1:
                     # when agg_func == size, agg only returns one single series.
                     result = result.to_frame(agg_func)
             else:
-                result = input_obj.agg([agg_func])
+                result = (
+                    input_obj.agg([agg_func]).sort_index()
+                    if gpu
+                    else input_obj.agg([agg_func])
+                )
                 result.columns = result.columns.droplevel(-1)
             return result
         else:
@@ -1108,6 +1119,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 agg_dfs.append(cls._do_custom_agg(raw_func_name, op, in_data))
             else:
                 single_func = map_func_name == op.raw_func
+                kwds["gpu"] = op.gpu
                 agg_dfs.append(
                     cls._do_predefined_agg(
                         input_obj, map_func_name, single_func, **kwds
