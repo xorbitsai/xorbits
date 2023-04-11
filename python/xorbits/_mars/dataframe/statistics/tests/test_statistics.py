@@ -51,8 +51,8 @@ def test_dataframe_quantile():
     s = df_from_pandas(raw, chunk_size=7)
 
     # q = 0.3, axis = 0
-    r = s.quantile(0.3)
-    e = raw.quantile(0.3)
+    r = s.quantile(0.3, numeric_only=True)
+    e = raw.quantile(0.3, numeric_only=True)
     assert isinstance(r, Series)
     assert r.shape == (2,)
     assert r.dtype == e.dtype
@@ -61,8 +61,8 @@ def test_dataframe_quantile():
     tile(r)
 
     # q = 0.3, axis = 1
-    r = s.quantile(0.3, axis=1)
-    e = raw.quantile(0.3, axis=1)
+    r = s.quantile(0.3, axis=1, numeric_only=True)
+    e = raw.quantile(0.3, axis=1, numeric_only=True)
     assert isinstance(r, Series)
     assert r.shape == e.shape
     assert r.dtype == e.dtype
@@ -71,8 +71,8 @@ def test_dataframe_quantile():
     tile(r)
 
     # q = [0.3, 0.7], axis = 0
-    r = s.quantile([0.3, 0.7])
-    e = raw.quantile([0.3, 0.7])
+    r = s.quantile([0.3, 0.7], numeric_only=True)
+    e = raw.quantile([0.3, 0.7], numeric_only=True)
     assert isinstance(r, DataFrame)
     assert r.shape == e.shape
     pd.testing.assert_series_equal(r.dtypes, e.dtypes)
@@ -82,8 +82,8 @@ def test_dataframe_quantile():
     tile(r)
 
     # q = [0.3, 0.7], axis = 1
-    r = s.quantile([0.3, 0.7], axis=1)
-    e = raw.quantile([0.3, 0.7], axis=1)
+    r = s.quantile([0.3, 0.7], axis=1, numeric_only=True)
+    e = raw.quantile([0.3, 0.7], axis=1, numeric_only=True)
     assert isinstance(r, DataFrame)
     assert r.shape == e.shape
     pd.testing.assert_series_equal(r.dtypes, e.dtypes)

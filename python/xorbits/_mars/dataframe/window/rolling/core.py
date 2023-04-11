@@ -24,7 +24,7 @@ from ....serialization.serializables import (
 )
 from ....utils import pd_release_version
 from ...core import DATAFRAME_TYPE
-from ...utils import build_empty_df, build_empty_series, validate_axis
+from ...utils import build_empty_df, build_empty_series, is_pandas_2, validate_axis
 from ..core import Window
 
 _window_has_method = pd_release_version >= (1, 3, 0)
@@ -142,6 +142,8 @@ class Rolling(Window):
         for k in self.params:
             # update value according to pandas rolling
             setattr(self, "_" + k, getattr(pd_rolling, k))
+        if is_pandas_2() and pd_rolling._win_freq_i8 is not None:
+            setattr(self, "_win_type", "freq")
 
     def aggregate(self, func, *args, **kwargs):
         from .aggregation import DataFrameRollingAgg

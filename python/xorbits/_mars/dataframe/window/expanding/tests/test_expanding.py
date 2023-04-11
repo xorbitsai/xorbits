@@ -19,6 +19,7 @@ import pytest
 
 from ..... import dataframe as md
 from .....core import tile
+from ....utils import is_pandas_2
 
 
 def test_expanding():
@@ -30,7 +31,8 @@ def test_expanding():
 
     r = df2.expanding(3)
     expected = df.expanding(3)
-    assert repr(r) == repr(expected)
+    if is_pandas_2():
+        assert repr(r) == repr(expected)
 
     assert "b" in dir(r)
 

@@ -21,6 +21,7 @@ import pandas as pd
 
 from .... import opcodes
 from ....serialization.serializables import BoolField
+from ...utils import is_pandas_2
 from ..aggregation import BaseDataFrameExpandingAgg
 
 _stage_info = namedtuple(
@@ -150,9 +151,12 @@ class DataFrameExpandingAgg(BaseDataFrameExpandingAgg):
     def _execute_map_function(cls, op: "DataFrameExpandingAgg", func, in_data):
         min_periods = 1 if op.min_periods > 0 else 0
 
-        expanding = in_data.expanding(
-            min_periods=min_periods, center=op.center, axis=op.axis
-        )
+        if is_pandas_2():
+            expanding = in_data.expanding(min_periods=min_periods, axis=op.axis)
+        else:
+            expanding = in_data.expanding(
+                min_periods=min_periods, center=op.center, axis=op.axis
+            )
         if func == "var":
             result = expanding.var(ddof=0)
         else:
@@ -172,7 +176,10 @@ class DataFrameExpandingAgg(BaseDataFrameExpandingAgg):
 
     @classmethod
     def _execute_raw_function(cls, op: "DataFrameExpandingAgg", in_data):
-        expanding = in_data.expanding(
-            min_periods=op.min_periods, center=op.center, axis=op.axis
-        )
+        if is_pandas_2():
+            expanding = in_data.expanding(min_periods=op.min_periods, axis=op.axis)
+        else:
+            expanding = in_data.expanding(
+                min_periods=op.min_periods, center=op.center, axis=op.axis
+            )
         return expanding.agg(op.func)
