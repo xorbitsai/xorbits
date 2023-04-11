@@ -66,7 +66,7 @@ def test_series_map(setup):
 
 def test_dataframe_transform(setup):
     cols = [chr(ord("A") + i) for i in range(10)]
-    df = pd.DataFrame(dict((c, [i ** 2 for i in range(20)]) for c in cols))
+    df = pd.DataFrame(dict((c, [i**2 for i in range(20)]) for c in cols))
     xdf = xpd.DataFrame(df, chunk_size=2)
 
     def f(s):
@@ -167,5 +167,6 @@ def test_groupby_transform(setup):
     assert isinstance(res, DataRef)
     assert isinstance(res, DataFrame)
     pd.testing.assert_frame_equal(
-        res.to_pandas().sort_index(), df.groupby("c").transform(f).sort_index(),
+        res.to_pandas().sort_index(),
+        df.groupby("c").transform(f).sort_index(),
     )
