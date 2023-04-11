@@ -129,6 +129,18 @@ def tests_int_conversion(setup, dummy_int_2d_array):
         int(np.atleast_2d(3.0))
 
 
+def tests_float_conversion(setup, dummy_int_2d_array, dummy_df):
+    import xorbits.numpy as np
+    import xorbits.remote as xr
+
+    assert float(dummy_int_2d_array[0][2]) == 2.0
+    assert float(xr.spawn(lambda: "1.2")) == 1.2
+    with pytest.raises(TypeError):
+        float(np.atleast_2d(3.0))
+    with pytest.raises(TypeError):
+        float(dummy_df["foo"])
+
+
 def tests_index_conversion(setup, dummy_int_2d_array, dummy_str_series):
     test = 0
     for i in range(dummy_int_2d_array[0][2]):
@@ -143,6 +155,40 @@ def tests_index_conversion(setup, dummy_int_2d_array, dummy_str_series):
         range(dummy_str_series[0])
     with pytest.raises(TypeError):
         range(xr.spawn(lambda: "foo"))
+
+
+def test_bool_conversion(setup, dummy_df, dummy_int_2d_array, dummy_str_series):
+    test = 0
+    if dummy_int_2d_array[0][0]:
+        test += 1
+    assert test == 0
+    if dummy_int_2d_array[0][1]:
+        test += 1
+    assert test == 1
+    if dummy_str_series[0]:
+        test += 1
+    assert test == 2
+    import xorbits.remote as xr
+
+    if xr.spawn(lambda: ""):
+        test += 1
+    assert test == 2
+    import xorbits.numpy as np
+
+    if np.zeros(0):
+        test += 1
+    assert test == 2
+    import xorbits.pandas as pd
+
+    with pytest.raises(ValueError):
+        if np.zeros(2):
+            pass
+    with pytest.raises(ValueError):
+        if pd.DataFrame({}):
+            pass
+    with pytest.raises(ValueError):
+        if dummy_df.groupby(["foo"]):
+            pass
 
 
 def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
