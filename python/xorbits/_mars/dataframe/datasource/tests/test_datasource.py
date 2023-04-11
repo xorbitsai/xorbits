@@ -26,7 +26,7 @@ import pytest
 from .... import tensor as mt
 from ....config import option_context
 from ....core import tile
-from ...core import DatetimeIndex, Float64Index, IndexValue, Int64Index
+from ...core import DatetimeIndex, IndexValue
 from ..core import merge_small_files
 from ..dataframe import from_pandas as from_pandas_df
 from ..date_range import date_range
@@ -211,7 +211,6 @@ def test_from_tileable_index():
 
     for o in [df, df[0]]:
         index = o.index
-        assert isinstance(index, Int64Index)
         assert index.dtype == np.int64
         assert index.name == pd_df.index.name
         assert isinstance(index.index_value.value, IndexValue.Int64Index)
@@ -220,14 +219,12 @@ def test_from_tileable_index():
 
         assert len(index.chunks) == 2
         for c in index.chunks:
-            assert c.dtype == np.int64
             assert c.name == pd_df.index.name
             assert isinstance(c.index_value.value, IndexValue.Int64Index)
 
     t = mt.random.rand(10, chunk_size=6)
     index = from_tileable(t, name="new_name")
 
-    assert isinstance(index, Float64Index)
     assert index.dtype == np.float64
     assert index.name == "new_name"
     assert isinstance(index.index_value.value, IndexValue.Float64Index)

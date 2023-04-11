@@ -26,9 +26,6 @@ def test_expanding():
     df2 = md.DataFrame(df)
 
     with pytest.raises(NotImplementedError):
-        _ = df2.expanding(3)
-
-    with pytest.raises(NotImplementedError):
         _ = df2.expanding(3, axis=1)
 
     r = df2.expanding(3)

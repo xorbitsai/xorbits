@@ -498,7 +498,7 @@ class DataFrameReadSQL(
                 for i in range(len(dtypes)):
                     dtype = dtypes.iloc[i]
                     if isinstance(dtype, ArrowStringDtype):
-                        df.iloc[:, i] = df.iloc[:, i].astype(dtype)
+                        df.isetitem(i, df.iloc[:, i].astype(dtype))
 
             if out.ndim == 2:
                 ctx[out.key] = df

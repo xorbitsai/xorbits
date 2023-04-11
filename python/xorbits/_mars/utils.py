@@ -1183,7 +1183,7 @@ def arrow_array_to_objects(
                         obj.iloc[:, i].to_numpy(), index=obj.index
                     )
                 else:
-                    result.iloc[:, i] = obj.iloc[:, i]
+                    result.isetitem(i, obj.iloc[:, i])
             obj = result
     elif isinstance(obj, pd.Series):
         if isinstance(obj.dtype, ArrowDtype):
