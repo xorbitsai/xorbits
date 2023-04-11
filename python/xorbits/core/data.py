@@ -46,6 +46,14 @@ class ConversionType(Enum):
     float_conversion = 2
     bool_conversion = 3
 
+    def convert(self, val):
+        if self.value == 1:
+            return int(val)
+        elif self.value == 2:
+            return float(val)
+        else:
+            return bool(val)
+
 
 class Data:
     data_type: DataType
@@ -262,7 +270,7 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def _magic_methods(self, conversion, cast=False):
+    def _convert_to(self, conversion, cast=False):
         from .execution import run
 
         data_type = self.data.data_type
@@ -270,12 +278,7 @@ class DataRef(metaclass=DataRefMeta):
             if len(self.shape) == 0:
                 run(self)
                 if is_integer_dtype(self.dtype) or is_float_dtype(self.dtype):
-                    if conversion == ConversionType.int_conversion:
-                        return self.to_numpy()
-                    elif conversion == ConversionType.float_conversion:
-                        return float(self.to_numpy())
-                    else:
-                        return bool(self.to_numpy())
+                    return conversion.convert(self.to_numpy())
                 else:
                     if conversion == ConversionType.bool_conversion:
                         return bool(self.to_numpy())
@@ -332,17 +335,17 @@ class DataRef(metaclass=DataRefMeta):
                 )
 
     def __bool__(self):
-        return self._magic_methods(ConversionType.bool_conversion, cast=True)
+        return self._convert_to(ConversionType.bool_conversion, cast=True)
 
     def __int__(self):
-        return self._magic_methods(ConversionType.int_conversion, cast=True)
+        return self._convert_to(ConversionType.int_conversion, cast=True)
 
     def __float__(self):
-        return self._magic_methods(ConversionType.float_conversion, cast=True)
+        return self._convert_to(ConversionType.float_conversion, cast=True)
 
     def __index__(self):
         try:
-            val = self._magic_methods(ConversionType.int_conversion, cast=False)
+            val = self._convert_to(ConversionType.int_conversion, cast=False)
             return val
         except TypeError:
             raise TypeError(
