@@ -270,7 +270,7 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def _convert_to(self, conversion, cast=False):
+    def _convert_to(self, conversion: ConversionType, cast: bool = False):
         from .execution import run
 
         data_type = self.data.data_type
