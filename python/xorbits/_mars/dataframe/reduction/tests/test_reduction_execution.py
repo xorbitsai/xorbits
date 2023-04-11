@@ -407,6 +407,7 @@ def test_series_bool_reduction(setup, check_ref_counts, func_name):
     assert r.execute().fetch() is True
 
 
+@pytest.mark.skipif(is_pandas_2(), reason="Pandas 2.0 has removed `level` argument.")
 @pytest.mark.parametrize("func_name", bool_reduction_functions)
 def test_series_bool_level_reduction(setup, check_ref_counts, func_name):
     def compute(data, **kwargs):
@@ -514,6 +515,7 @@ def test_dataframe_bool_reduction(setup, check_ref_counts, func_name):
     )
 
 
+@pytest.mark.skipif(is_pandas_2(), reason="Pandas 2.0 has removed `level` argument.")
 @pytest.mark.parametrize("func_name", bool_reduction_functions)
 def test_dataframe_bool_level_reduction(setup, check_ref_counts, func_name):
     def compute(data, **kwargs):
