@@ -18,6 +18,7 @@ import operator
 from collections.abc import Iterable
 from functools import partial, reduce
 
+from ...utils import is_same_module
 from .array import SparseNDArray, call_sparse
 from .core import get_sparse_module, issparse
 from .matrix import SparseMatrix
@@ -120,7 +121,7 @@ def _call_bin(method, a, b, **kwargs):
         try:
             res = getattr(xp, method)(a, b, **kwargs)
         except TypeError:
-            if xp is cp and issparse(b):
+            if is_same_module(xp, cp) and issparse(b):
                 res = getattr(xp, method)(a, b.toarray(), **kwargs)
             else:
                 raise

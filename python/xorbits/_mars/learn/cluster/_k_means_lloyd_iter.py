@@ -22,7 +22,7 @@ from ...core.operand import OperandStage
 from ...serialization.serializables import BoolField, Int32Field, KeyField
 from ...tensor.array_utils import as_same_device, device, sparse
 from ...tensor.core import TensorOrder
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..operands import LearnOperand, LearnOperandMixin
 from ._k_means_common import _execute_merge_update, _relocate_empty_clusters
 from ._k_means_fast import update_center
@@ -245,9 +245,9 @@ class KMeansLloydUpdate(LearnOperand, LearnOperandMixin):
                 weight_in_clusters = np.zeros(op.n_clusters, dtype=x.dtype)
                 centers_squared_norms = sklearn_row_norms(centers_old, squared=True)
 
-                if xp is np:
+                if is_same_module(xp, np):
                     method = update_chunk_dense
-                elif xp is sparse:
+                elif is_same_module(xp, sparse):
                     method = update_chunk_sparse
                 else:  # pragma: no cover
                     raise NotImplementedError("Does not support run on GPU")

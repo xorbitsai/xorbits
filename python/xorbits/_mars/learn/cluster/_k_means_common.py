@@ -21,7 +21,7 @@ from ...core import OutputType, recursive_tile
 from ...serialization.serializables import KeyField
 from ...tensor.array_utils import as_same_device, device, sparse
 from ...tensor.core import TensorOrder
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..operands import LearnOperand, LearnOperandMixin
 from ._k_means_fast import _inertia_dense, _inertia_sparse, merge_update_chunks
 
@@ -132,9 +132,9 @@ class KMeansInertia(LearnOperand, LearnOperandMixin):
         )
 
         with device(device_id):
-            if xp is np:
+            if is_same_module(xp, np):
                 method = _inertia_dense
-            elif xp is sparse:
+            elif is_same_module(xp, sparse):
                 method = _inertia_sparse
             else:  # pragma: no cover
                 raise NotImplementedError("Cannot run inertial on GPU")
