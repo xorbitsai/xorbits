@@ -336,7 +336,7 @@ class DataRef(metaclass=DataRefMeta):
             return val
         except TypeError:
             raise TypeError(
-                f"{self.data.data_type} object cannot be interpreted as an integer or a float."
+                f"{self.data.data_type} object cannot be interpreted as an integer."
             )
 
 
