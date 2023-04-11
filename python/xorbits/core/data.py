@@ -15,7 +15,7 @@
 from collections import defaultdict
 from enum import Enum
 from itertools import count
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Type
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
 from pandas.api.types import is_integer_dtype
 from pandas.core.dtypes.common import is_float_dtype
@@ -262,7 +262,7 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def _magic_methods(self, conversion: Optional[ConversionType] = None, cast=False):
+    def _magic_methods(self, conversion, cast=False):
         from .execution import run
 
         data_type = self.data.data_type
