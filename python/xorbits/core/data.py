@@ -46,7 +46,7 @@ class AutoConversionType(Enum):
     float_conversion = 2
 
     def convert(self, val):
-        if self.value == 1:
+        if self == AutoConversionType.int_conversion:
             return int(val)
         else:
             return float(val)
