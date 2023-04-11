@@ -44,6 +44,7 @@ DATA_MEMBERS: Dict[DataType, Dict[str, Any]] = defaultdict(dict)
 class ConversionType(Enum):
     int_conversion = 1
     float_conversion = 2
+    bool_conversion = 3
 
 
 class Data:
@@ -220,36 +221,6 @@ class DataRef(metaclass=DataRefMeta):
 
                 yield from gen()
 
-    def __bool__(self):
-        data_type = self.data.data_type
-        from .execution import run
-
-        if data_type == DataType.tensor:
-            if len(self.shape) == 0:
-                run(self)
-                return bool(self.to_numpy())
-            else:
-                if self.__len__() <= 1:
-                    run(self)
-                    return bool(self.to_numpy())
-                else:
-                    raise ValueError(
-                        f"ValueError: The truth value of a {data_type} with more than one element is ambiguous. Use a.any() or a.all()"
-                    )
-        elif data_type == DataType.object_:
-            run(self)
-            return bool(self.to_object())
-        elif (
-            data_type == DataType.dataframe
-            or data_type == DataType.series
-            or data_type == DataType.index
-        ):
-            raise ValueError(
-                f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
-            )
-        else:
-            raise ValueError(f"{data_type} cannot be converted to boolean values.")
-
     def __len__(self):
         from .._mars.core import HasShapeTileable
         from .execution import run
@@ -291,48 +262,87 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def _to_int_or_float(self, conversion: Optional[ConversionType] = None, cast=False):
+    def _magic_methods(self, conversion: Optional[ConversionType] = None, cast=False):
         from .execution import run
 
         data_type = self.data.data_type
-        if (
-            data_type == DataType.tensor
-            and len(self.shape) == 0
-            and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
-        ):
-            run(self)
-            return (
-                self.to_numpy()
-                if conversion == ConversionType.int_conversion
-                else float(self.to_numpy())
-            )
+        if data_type == DataType.tensor:
+            if len(self.shape) == 0:
+                run(self)
+                if is_integer_dtype(self.dtype) or is_float_dtype(self.dtype):
+                    if conversion == ConversionType.int_conversion:
+                        return self.to_numpy()
+                    elif conversion == ConversionType.float_conversion:
+                        return float(self.to_numpy())
+                    else:
+                        return bool(self.to_numpy())
+                else:
+                    if conversion == ConversionType.bool_conversion:
+                        return bool(self.to_numpy())
+                    else:
+                        raise TypeError(
+                            f"{self.data.data_type} object cannot be interpreted as an integer or a float."
+                        )
+            else:
+                if conversion == ConversionType.bool_conversion:
+                    if self.__len__() <= 1:
+                        run(self)
+                        return bool(self.to_numpy())
+                    else:
+                        raise ValueError(
+                            f"ValueError: The truth value of a {data_type} with more than one element is ambiguous. Use a.any() or a.all()"
+                        )
+                else:
+                    raise TypeError(
+                        f"{self.data.data_type} object cannot be interpreted as an integer or a float."
+                    )
         elif data_type == DataType.object_:
             run(self)
             data_object = self.to_object()
             if cast or isinstance(data_object, int) or isinstance(data_object, float):
-                return (
-                    int(data_object)
-                    if conversion == ConversionType.int_conversion
-                    else float(data_object)
-                )
+                if conversion == ConversionType.bool_conversion:
+                    return bool(self.to_object())
+                else:
+                    return (
+                        int(data_object)
+                        if conversion == ConversionType.int_conversion
+                        else float(data_object)
+                    )
             else:
                 raise TypeError(
-                    f"{self.data.data_type} object cannot be interpreted as an integer."
+                    f"{self.data.data_type} object cannot be interpreted as an integer or a float."
                 )
         else:
-            raise TypeError(
-                f"{self.data.data_type} object cannot be interpreted as an integer."
-            )
+            if conversion == ConversionType.bool_conversion:
+                if (
+                    data_type == DataType.dataframe
+                    or data_type == DataType.series
+                    or data_type == DataType.index
+                ):
+                    raise ValueError(
+                        f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
+                    )
+                else:
+                    raise ValueError(
+                        f"{data_type} cannot be converted to boolean values."
+                    )
+            else:
+                raise TypeError(
+                    f"{self.data.data_type} object cannot be interpreted as an integer or a float."
+                )
+
+    def __bool__(self):
+        return self._magic_methods(ConversionType.bool_conversion, cast=True)
 
     def __int__(self):
-        return self._to_int_or_float(ConversionType.int_conversion, cast=True)
+        return self._magic_methods(ConversionType.int_conversion, cast=True)
 
     def __float__(self):
-        return self._to_int_or_float(ConversionType.float_conversion, cast=True)
+        return self._magic_methods(ConversionType.float_conversion, cast=True)
 
     def __index__(self):
         try:
-            val = self._to_int_or_float(ConversionType.int_conversion, cast=False)
+            val = self._magic_methods(ConversionType.int_conversion, cast=False)
             return val
         except TypeError:
             raise TypeError(
