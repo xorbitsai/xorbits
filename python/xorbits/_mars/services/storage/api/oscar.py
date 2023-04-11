@@ -14,7 +14,7 @@
 # limitations under the License.
 
 import sys
-from typing import Any, List, Tuple, Type, TypeVar, Union
+from typing import Any, List, Optional, Tuple, Type, TypeVar, Union
 
 import xoscar as mo
 
@@ -93,10 +93,14 @@ class StorageAPI(AbstractStorageAPI):
 
     @mo.extensible
     async def get(
-        self, data_key: str, conditions: List = None, error: str = "raise"
+        self,
+        data_key: str,
+        conditions: List = None,
+        cpu: Optional[bool] = None,
+        error: str = "raise",
     ) -> Any:
         return await self._storage_handler_ref.get(
-            self._session_id, data_key, conditions, error
+            self._session_id, data_key, conditions, cpu, error
         )
 
     @get.batch

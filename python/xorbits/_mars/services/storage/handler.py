@@ -16,7 +16,7 @@
 import asyncio
 import logging
 from collections import defaultdict
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import xoscar as mo
 from xoscar.serialization import AioDeserializer
@@ -124,6 +124,7 @@ class StorageHandlerActor(mo.Actor):
         session_id: str,
         data_key: str,
         conditions: List = None,
+        cpu: Optional[bool] = None,
         error: str = "raise",
     ):
         try:
@@ -131,6 +132,10 @@ class StorageHandlerActor(mo.Actor):
                 session_id, data_key, self._band_name
             )
             data = yield self._get_data(data_info, conditions)
+            from xorbits._mars.dataframe.utils import is_cudf
+
+            if is_cudf(data) and cpu:
+                data = data.to_pandas()
             raise mo.Return(data)
         except DataNotExist:
             if error == "raise":
