@@ -25,6 +25,7 @@ from ..array_utils import create_array
 from ..core import TensorOrder
 from .array import tensor as astensor
 from .core import TensorHasInput
+from .ones import ones as asones
 from .zeros import TensorZeros
 
 
@@ -212,3 +213,48 @@ def tril(m, k=0, gpu=None):
     gpu = m.op.gpu if gpu is None else gpu
     op = TensorTril(k, dtype=m.dtype, sparse=m.issparse(), gpu=gpu)
     return op(m)
+
+
+def tri(N, M=None, k=0, dtype=float, chunk_size=None, gpu=None):
+    """
+    An array with ones at and below the given diagonal and zeros elsewhere.
+
+    Parameters
+    ----------
+    N : int
+        Number of rows in the array.
+    M : int, optional
+        Number of columns in the array.
+        By default, `M` is taken equal to `N`.
+    k : int, optional
+        The sub-diagonal at and below which the array is filled.
+        `k` = 0 is the main diagonal, while `k` < 0 is below it,
+        and `k` > 0 is above.  The default is 0.
+    dtype : dtype, optional
+        Data type of the returned array.  The default is float.
+    ${ARRAY_FUNCTION_LIKE}
+
+        .. versionadded:: 1.20.0
+
+    Returns
+    -------
+    tri : ndarray of shape (N, M)
+        Array with its lower triangle filled with ones and zero elsewhere;
+        in other words ``T[i,j] == 1`` for ``j <= i + k``, 0 otherwise.
+
+    Examples
+    --------
+    >>> np.tri(3, 5, 2, dtype=int)
+    array([[1, 1, 1, 0, 0],
+           [1, 1, 1, 1, 0],
+           [1, 1, 1, 1, 1]])
+
+    >>> np.tri(3, 5, -1)
+    array([[0.,  0.,  0.,  0.,  0.],
+           [1.,  0.,  0.,  0.,  0.],
+           [1.,  1.,  0.,  0.,  0.]])
+    """
+    if M is None:
+        M = N
+    m = asones((N, M), dtype=dtype, chunk_size=chunk_size, gpu=gpu)
+    return tril(m, k=k)
