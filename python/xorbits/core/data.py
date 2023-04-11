@@ -41,18 +41,21 @@ class DataType(Enum):
 DATA_MEMBERS: Dict[DataType, Dict[str, Any]] = defaultdict(dict)
 
 
-class ConversionType(Enum):
+class AutoConversionType(Enum):
     int_conversion = 1
     float_conversion = 2
-    bool_conversion = 3
 
     def convert(self, val):
         if self.value == 1:
             return int(val)
-        elif self.value == 2:
-            return float(val)
         else:
-            return bool(val)
+            return float(val)
+
+    def generate_error_msg(self, val):
+        if self.value == 1:
+            return f"{val} object cannot be interpreted as an integer."
+        else:
+            return f"{val} object cannot be interpreted as a float."
 
 
 class Data:
@@ -270,82 +273,66 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def _convert_to(self, conversion: ConversionType, cast: bool = False):
+    def _to_int_or_float(self, conversion: AutoConversionType, cast: bool = False):
         from .execution import run
 
         data_type = self.data.data_type
-        if data_type == DataType.tensor:
-            if len(self.shape) == 0:
-                run(self)
-                if is_integer_dtype(self.dtype) or is_float_dtype(self.dtype):
-                    return conversion.convert(self.to_numpy())
-                else:
-                    if conversion == ConversionType.bool_conversion:
-                        return bool(self.to_numpy())
-                    else:
-                        raise TypeError(
-                            f"{self.data.data_type} object cannot be interpreted as an integer or a float."
-                        )
-            else:
-                if conversion == ConversionType.bool_conversion:
-                    if self.__len__() <= 1:
-                        run(self)
-                        return bool(self.to_numpy())
-                    else:
-                        raise ValueError(
-                            f"ValueError: The truth value of a {data_type} with more than one element is ambiguous. Use a.any() or a.all()"
-                        )
-                else:
-                    raise TypeError(
-                        f"{self.data.data_type} object cannot be interpreted as an integer or a float."
-                    )
+        if (
+            data_type == DataType.tensor
+            and len(self.shape) == 0
+            and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
+        ):
+            run(self)
+            return conversion.convert(self.to_numpy())
         elif data_type == DataType.object_:
             run(self)
             data_object = self.to_object()
             if cast or isinstance(data_object, int) or isinstance(data_object, float):
-                if conversion == ConversionType.bool_conversion:
-                    return bool(self.to_object())
-                else:
-                    return (
-                        int(data_object)
-                        if conversion == ConversionType.int_conversion
-                        else float(data_object)
-                    )
+                return conversion.convert(self.to_object())
             else:
-                raise TypeError(
-                    f"{self.data.data_type} object cannot be interpreted as an integer or a float."
-                )
+                raise TypeError(conversion.generate_error_msg(self.data.data_type))
         else:
-            if conversion == ConversionType.bool_conversion:
-                if (
-                    data_type == DataType.dataframe
-                    or data_type == DataType.series
-                    or data_type == DataType.index
-                ):
-                    raise ValueError(
-                        f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
-                    )
-                else:
-                    raise ValueError(
-                        f"{data_type} cannot be converted to boolean values."
-                    )
-            else:
-                raise TypeError(
-                    f"{self.data.data_type} object cannot be interpreted as an integer or a float."
-                )
+            raise TypeError(conversion.generate_error_msg(self.data.data_type))
 
     def __bool__(self):
-        return self._convert_to(ConversionType.bool_conversion, cast=True)
+        data_type = self.data.data_type
+        from .execution import run
+
+        if data_type == DataType.tensor:
+            if len(self.shape) == 0:
+                run(self)
+                return bool(self.to_numpy())
+            else:
+                if self.__len__() <= 1:
+                    run(self)
+                    return bool(self.to_numpy())
+                else:
+                    raise ValueError(
+                        f"ValueError: The truth value of a {data_type} with more than one element is ambiguous. Use a.any() or a.all()"
+                    )
+        elif data_type == DataType.object_:
+            run(self)
+            return bool(self.to_object())
+        elif (
+            data_type == DataType.dataframe
+            or data_type == DataType.series
+            or data_type == DataType.index
+        ):
+            raise ValueError(
+                f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
+            )
+        else:
+            raise ValueError(f"{data_type} cannot be converted to boolean values.")
 
     def __int__(self):
-        return self._convert_to(ConversionType.int_conversion, cast=True)
+        return self._to_int_or_float(AutoConversionType.int_conversion, cast=True)
 
     def __float__(self):
-        return self._convert_to(ConversionType.float_conversion, cast=True)
+        return self._to_int_or_float(AutoConversionType.float_conversion, cast=True)
 
     def __index__(self):
         try:
-            val = self._convert_to(ConversionType.int_conversion, cast=False)
+            val = self._to_int_or_float(AutoConversionType.int_conversion, cast=False)
             return val
         except TypeError:
             raise TypeError(
