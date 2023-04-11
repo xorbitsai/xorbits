@@ -22,7 +22,7 @@ from ....config import options
 from ....core import recursive_tile
 from ....core.operand import OperandStage
 from ....serialization.serializables import BoolField, FieldTypes, KeyField, TupleField
-from ....utils import has_unknown_shape, require_module
+from ....utils import has_unknown_shape, is_same_module, require_module
 from ...arithmetic import equal
 from ...array_utils import as_same_device, cp, device
 from ...core import TensorOrder
@@ -344,7 +344,7 @@ class TensorSquareform(TensorMapReduceOperand, TensorOperandMixin):
             # check fail
             raise ValueError("Distance matrix X must be symmetric.")
 
-        if xp is cp:  # pragma: no cover
+        if is_same_module(xp, cp):  # pragma: no cover
             raise NotImplementedError(
                 "`squareform` does not support running on GPU yet"
             )
@@ -388,7 +388,7 @@ class TensorSquareform(TensorMapReduceOperand, TensorOperandMixin):
                 [ctx[inp.key] for inp in op.inputs], device=op.device, ret_extra=True
             )
 
-            if xp is cp:  # pragma: no cover
+            if is_same_module(xp, cp):  # pragma: no cover
                 raise NotImplementedError(
                     "`squareform` does not support running on GPU yet"
                 )

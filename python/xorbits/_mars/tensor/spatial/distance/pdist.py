@@ -29,7 +29,7 @@ from ....serialization.serializables import (
     KeyField,
     TupleField,
 )
-from ....utils import ensure_own_data, has_unknown_shape, require_module
+from ....utils import ensure_own_data, has_unknown_shape, is_same_module, require_module
 from ...array_utils import as_same_device, cp, device
 from ...core import TensorOrder
 from ...datasource.array import tensor as astensor
@@ -311,7 +311,7 @@ class TensorPdist(TensorMapReduceOperand, TensorOperandMixin):
             [ctx[inp.key] for inp in op.inputs], device=op.device, ret_extra=True
         )
 
-        if xp is cp:  # pragma: no cover
+        if is_same_module(xp, cp):  # pragma: no cover
             raise NotImplementedError("`pdist` does not support running on GPU yet")
 
         with device(device_id):
@@ -380,7 +380,7 @@ class TensorPdist(TensorMapReduceOperand, TensorOperandMixin):
             [ctx[inp.key] for inp in op.inputs], device=op.device, ret_extra=True
         )
 
-        if xp is cp:  # pragma: no cover
+        if is_same_module(xp, cp):  # pragma: no cover
             raise NotImplementedError("`pdist` does not support running on GPU yet")
 
         with device(device_id):

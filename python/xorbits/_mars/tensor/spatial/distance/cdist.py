@@ -21,7 +21,7 @@ import numpy as np
 from .... import opcodes as OperandDef
 from ....core import recursive_tile
 from ....serialization.serializables import AnyField, Float16Field, KeyField
-from ....utils import ensure_own_data, has_unknown_shape, require_module
+from ....utils import ensure_own_data, has_unknown_shape, is_same_module, require_module
 from ...array_utils import as_same_device, cp, device
 from ...core import TensorOrder
 from ...datasource import tensor as astensor
@@ -186,7 +186,7 @@ class TensorCdist(TensorOperand, TensorOperandMixin):
             [ctx[inp.key] for inp in op.inputs], device=op.device, ret_extra=True
         )
 
-        if xp is cp:  # pragma: no cover
+        if is_same_module(xp, cp):  # pragma: no cover
             raise NotImplementedError("`cdist` does not support running on GPU yet")
 
         with device(device_id):
