@@ -878,7 +878,7 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
             # cudf to_frame doc: https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.series.to_frame
             # The `name` option is None by default, but the actual behaviour sets the name to `0`
             # So define the columns manually
-            data.columns = [None]
+            data.columns = [in_data.name]
 
         func_name = (
             op.func_rename[0] or op.func[0] if len(op.func) == 1 else op.func_rename
@@ -1064,12 +1064,20 @@ def aggregate(df, func=None, axis=0, **kw):
     if not is_funcs_aggregate(func, func_kw=kw, ndim=df.ndim):
         return df.transform(func, axis=axis, _call_agg=True)
 
+    func_rename = (
+        (
+            [raw_func_name]
+            if raw_func_name
+            else (func if isinstance(func, list) else [func])
+        )
+        if df.op.gpu
+        else None
+    )
+
     op = DataFrameAggregate(
         raw_func=copy.deepcopy(func),
         raw_func_kw=copy.deepcopy(kw),
-        func_rename=[raw_func_name]
-        if raw_func_name
-        else (func if isinstance(func, list) else [func]),
+        func_rename=func_rename,
         axis=axis,
         combine_size=combine_size,
         numeric_only=numeric_only,
