@@ -19,7 +19,7 @@ from numpy.linalg import LinAlgError
 from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...serialization.serializables import BoolField, KeyField
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..array_utils import as_same_device, device
 from ..core import TensorOrder
 from ..datasource import tensor as astensor
@@ -188,7 +188,7 @@ class TensorCholesky(TensorHasInput, TensorOperandMixin):
         )
 
         with device(device_id):
-            if xp is np:
+            if is_same_module(xp, np):
                 import scipy.linalg
 
                 ctx[chunk.key] = scipy.linalg.cholesky(a, lower=op.lower)

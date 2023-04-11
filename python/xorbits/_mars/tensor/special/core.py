@@ -17,6 +17,7 @@ import scipy.special as spspecial
 
 from ... import opcodes
 from ...core import ExecutableTuple
+from ...utils import is_same_module
 from ..arithmetic.core import TensorBinOp, TensorMultiOp, TensorUnaryOp
 from ..array_utils import (
     as_same_device,
@@ -49,16 +50,16 @@ class TensorSpecialOperandMixin:
 
     @classmethod
     def _get_func(cls, xp):
-        if xp is np:
+        if is_same_module(xp, np):
             from scipy import special
 
             return getattr(special, cls._func_name)
-        elif cp is not None and xp is cp:
+        elif cp is not None and is_same_module(xp, cp):
             from cupyx.scipy import special
 
             return getattr(special, cls._func_name)
         else:
-            assert xp is sparse
+            assert is_same_module(xp, sparse)
             return getattr(sparse, cls._func_name)
 
 

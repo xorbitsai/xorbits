@@ -15,7 +15,7 @@
 
 from functools import partialmethod
 
-from ...utils import ceildiv
+from ...utils import ceildiv, is_same_module
 from .core import (
     cp,
     cps,
@@ -81,7 +81,7 @@ def call_sparse(method, *args, **kwargs):
     try:
         new_data = getattr(xp, method)(*new_args, **kwargs)
     except AttributeError:
-        if xp is np:
+        if is_same_module(xp, np):
             from scipy import special
         else:
             from cupyx.scipy import special
@@ -116,7 +116,7 @@ class SparseArray(SparseNDArray):
         return self.toarray()
 
     def ascupy(self):
-        is_cp = get_array_module(self.spmatrix) is cp
+        is_cp = is_same_module(get_array_module(self.spmatrix), cp)
         if is_cp:
             return self
         mat_tuple = (
@@ -129,7 +129,7 @@ class SparseArray(SparseNDArray):
         )
 
     def asscipy(self):
-        is_cp = get_array_module(self.spmatrix) is cp
+        is_cp = is_same_module(get_array_module(self.spmatrix), cp)
         if not is_cp:
             return self
         return SparseNDArray(self.spmatrix.get(), shape=self.shape)
@@ -220,7 +220,7 @@ class SparseArray(SparseNDArray):
         self.spmatrix = xps.csr_matrix(x)
 
     def __getattr__(self, attr):
-        is_cp = get_array_module(self.spmatrix) is cp
+        is_cp = is_same_module(get_array_module(self.spmatrix), cp)
         if attr == "device" and is_cp:
             try:
                 return self.spmatrix.device
@@ -680,7 +680,7 @@ class SparseArray(SparseNDArray):
     def _scipy_unary(self, func_name):
         spmatrix = self.spmatrix
         xp = get_array_module(spmatrix)
-        if xp is np:
+        if is_same_module(xp, np):
             from scipy import special
         else:
             from cupyx.scipy import special
@@ -699,7 +699,7 @@ class SparseArray(SparseNDArray):
 
         xp = get_array_module(self.spmatrix)
 
-        if xp is np:
+        if is_same_module(xp, np):
             from scipy import special
         else:  # pragma: no cover
             from cupyx.scipy import special
