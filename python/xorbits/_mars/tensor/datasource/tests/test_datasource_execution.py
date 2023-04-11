@@ -853,6 +853,12 @@ def test_tri_execution(setup):
     expected = np.tri(3, 4, k=-1, dtype=int)
     np.testing.assert_equal(res, expected)
 
+    # test four para (N, M, k, dtype, chunk_size)
+    t = tri(3, 4, k=-1, dtype=int, chunk_size=2)
+    res = t.execute().fetch()
+    expected = np.tri(3, 4, k=-1, dtype=int)
+    np.testing.assert_equal(res, expected)
+
 
 def test_tril_execution(setup):
     a = arange(24, chunk_size=2).reshape(2, 3, 4)
