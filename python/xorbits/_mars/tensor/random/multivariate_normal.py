@@ -20,6 +20,7 @@ import numpy as np
 from ... import opcodes as OperandDef
 from ...config import options
 from ...serialization.serializables import Float64Field, NDArrayField, StringField
+from ...utils import is_same_module
 from ..array_utils import array_module, device
 from ..utils import decide_chunk_sizes, gen_random_seeds
 from .core import TENSOR_CHUNK_TYPE, TensorDistribution, TensorRandomOperandMixin
@@ -80,7 +81,7 @@ class TensorMultivariateNormal(TensorDistribution, TensorRandomOperandMixin):
     @classmethod
     def execute(cls, ctx, op):
         xp = array_module(op.gpu)
-        if xp is np:
+        if is_same_module(xp, np):
             device_id = -1
         else:
             device_id = op.device or 0

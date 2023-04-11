@@ -19,7 +19,7 @@ from numpy.linalg import LinAlgError
 from ... import opcodes as OperandDef
 from ...core import recursive_tile
 from ...serialization.serializables import BoolField, KeyField
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..array_utils import as_same_device, cp, device
 from ..core import TensorOrder
 from ..datasource import tensor as astensor
@@ -154,7 +154,7 @@ class TensorSolveTriangular(TensorOperand, TensorOperandMixin):
 
         chunk = op.outputs[0]
         with device(device_id):
-            if xp is np:
+            if is_same_module(xp, np):
                 import scipy.linalg
 
                 try:
@@ -163,7 +163,7 @@ class TensorSolveTriangular(TensorOperand, TensorOperandMixin):
                     if op.strict is not False:
                         raise
                     ctx[chunk.key] = np.linalg.lstsq(a, b, rcond=-1)[0]
-            elif xp is cp:
+            elif is_same_module(xp, cp):
                 import cupyx
 
                 ctx[chunk.key] = cupyx.scipy.linalg.solve_triangular(

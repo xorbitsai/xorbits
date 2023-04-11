@@ -41,7 +41,7 @@ import weakref
 import zlib
 from abc import ABC
 from contextlib import contextmanager
-from types import TracebackType
+from types import ModuleType, TracebackType
 from typing import (
     Any,
     Callable,
@@ -356,44 +356,48 @@ class classproperty:
         return self.f(owner)
 
 
+class LazyModule:
+    def __init__(self, name, rename, globals_, locals_):
+        self.name = name
+        self._on_loads = []
+        self._rename = rename
+        self._globals = globals_
+        self._locals = locals_
+
+    def __getattr__(self, item):
+        if item.startswith("_pytest") or item in ("__bases__", "__test__"):
+            raise AttributeError(item)
+
+        real_mod = importlib.import_module(self.name)
+        if self._rename in self._globals:
+            self._globals[self._rename] = real_mod
+        elif self._locals is not None:
+            self._locals[self._rename] = real_mod
+        ret = getattr(real_mod, item)
+        for on_load_func in self._on_loads:
+            on_load_func()
+        # make sure on_load hooks only executed once
+        self._on_loads = []
+        return ret
+
+    def add_load_handler(self, func: Callable):
+        self._on_loads.append(func)
+        return func
+
+
 def lazy_import(
     name: str,
-    package: str = None,
-    globals: Dict = None,  # pylint: disable=redefined-builtin
-    locals: Dict = None,  # pylint: disable=redefined-builtin
+    globals_: Dict = None,  # pylint: disable=redefined-builtin
+    locals_: Dict = None,  # pylint: disable=redefined-builtin
     rename: str = None,
     placeholder: bool = False,
 ):
     rename = rename or name
     prefix_name = name.split(".", 1)[0]
-    globals = globals or inspect.currentframe().f_back.f_globals
-
-    class LazyModule:
-        def __init__(self):
-            self._on_loads = []
-
-        def __getattr__(self, item):
-            if item.startswith("_pytest") or item in ("__bases__", "__test__"):
-                raise AttributeError(item)
-
-            real_mod = importlib.import_module(name, package=package)
-            if rename in globals:
-                globals[rename] = real_mod
-            elif locals is not None:
-                locals[rename] = real_mod
-            ret = getattr(real_mod, item)
-            for on_load_func in self._on_loads:
-                on_load_func()
-            # make sure on_load hooks only executed once
-            self._on_loads = []
-            return ret
-
-        def add_load_handler(self, func: Callable):
-            self._on_loads.append(func)
-            return func
+    globals_ = globals_ or inspect.currentframe().f_back.f_globals
 
     if pkgutil.find_loader(prefix_name) is not None:
-        return LazyModule()
+        return LazyModule(name, rename, globals_, locals_)
     elif placeholder:
         return ModulePlaceholder(prefix_name)
     else:
@@ -421,6 +425,18 @@ class ModulePlaceholder:
 
     def __call__(self, *_args, **_kwargs):
         self._raises()
+
+
+def is_same_module(
+    mod1: Optional[Union[ModuleType, LazyModule]],
+    mod2: Optional[Union[ModuleType, LazyModule]],
+) -> bool:
+    if mod1 is None or mod2 is None:
+        return False
+
+    name1 = mod1.name if isinstance(mod1, LazyModule) else mod1.__name__
+    name2 = mod2.name if isinstance(mod2, LazyModule) else mod2.__name__
+    return name1 == name2
 
 
 def serialize_serializable(serializable, compress: bool = False):

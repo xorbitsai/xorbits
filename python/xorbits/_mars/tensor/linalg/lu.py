@@ -19,7 +19,7 @@ from numpy.linalg import LinAlgError
 from ... import opcodes as OperandDef
 from ...core import ExecutableTuple, recursive_tile
 from ...serialization.serializables import KeyField
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..array_utils import as_same_device, device, is_sparse_module
 from ..datasource import tensor as astensor
 from ..operands import TensorHasInput, TensorOperandMixin
@@ -445,7 +445,7 @@ class TensorLU(TensorHasInput, TensorOperandMixin):
         )
 
         with device(device_id):
-            if xp is np:
+            if is_same_module(xp, np):
                 import scipy.linalg
 
                 p, l, u = scipy.linalg.lu(a)

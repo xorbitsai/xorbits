@@ -23,6 +23,7 @@ import numpy as np
 from ...config import options
 from ...core import recursive_tile
 from ...serialization.serializables import FieldTypes, Int32Field, TupleField
+from ...utils import is_same_module
 from ..array_utils import array_module, device
 from ..base import broadcast_to
 from ..core import TENSOR_CHUNK_TYPE, TENSOR_TYPE
@@ -164,7 +165,7 @@ class TensorRandomOperandMixin(TensorOperandMixin):
     @classmethod
     def execute(cls, ctx, op):
         xp = array_module(op.gpu)
-        if xp is np:
+        if is_same_module(xp, np):
             device_id = -1
         else:
             device_id = op.device or 0
@@ -375,7 +376,7 @@ class TensorDistribution(TensorRandomOperand):
     @classmethod
     def execute(cls, ctx, op):
         xp = array_module(op.gpu)
-        if xp is np:
+        if is_same_module(xp, np):
             device_id = -1
         else:
             device_id = op.device or 0

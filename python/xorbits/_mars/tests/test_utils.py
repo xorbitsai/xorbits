@@ -541,3 +541,16 @@ def test_random_string_and_digits():
 
     res2 = utils.random_string_and_digits(5)
     assert res != res2
+
+
+@pytest.mark.parametrize(
+    "mod1,mod2,expected",
+    [
+        (pd, utils.lazy_import("pandas"), True),
+        (pd, pd, True),
+        (utils.lazy_import("pandas"), pd, True),
+        (utils.lazy_import("pandas"), utils.lazy_import("pandas"), True),
+    ],
+)
+def test_is_same_module(mod1, mod2, expected):
+    assert utils.is_same_module(mod1, mod2) == expected
