@@ -17,8 +17,7 @@ from enum import Enum
 from itertools import count
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Type
 
-from pandas.api.types import is_integer_dtype
-from pandas.core.dtypes.common import is_float_dtype
+from pandas.api.types import is_float_dtype, is_integer_dtype
 
 from ..utils import safe_repr_str
 
@@ -52,7 +51,7 @@ class AutoConversionType(Enum):
             return float(val)
 
     def generate_error_msg(self, val):
-        if self.value == 1:
+        if self == AutoConversionType.int_conversion:
             return f"{val} object cannot be interpreted as an integer."
         else:
             return f"{val} object cannot be interpreted as a float."
@@ -308,7 +307,8 @@ class DataRef(metaclass=DataRefMeta):
                     return bool(self.to_numpy())
                 else:
                     raise ValueError(
-                        f"ValueError: The truth value of a {data_type} with more than one element is ambiguous. Use a.any() or a.all()"
+                        f"ValueError: The truth value of a {data_type} with more than one element is ambiguous. "
+                        f"Use a.any() or a.all()"
                     )
         elif data_type == DataType.object_:
             run(self)
