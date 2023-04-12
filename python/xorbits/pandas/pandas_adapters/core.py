@@ -173,7 +173,7 @@ def _collect_pandas_index_members():
     _collect_pandas_cls_members(pd.Index, DataType.index)
 
 
-def _collect_pandas_module_members() -> Dict[str, Any]:
+def collect_pandas_module_members() -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_DATAFRAME_CALLABLES
 
     module_methods: Dict[str, Any] = dict()
@@ -210,6 +210,3 @@ def _collect_pandas_module_members() -> Dict[str, Any]:
                     fallback_warning=True,
                 )
     return module_methods
-
-
-PANDAS_MODULE_METHODS = _collect_pandas_module_members()
