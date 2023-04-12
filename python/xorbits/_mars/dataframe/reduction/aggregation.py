@@ -883,9 +883,8 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
         func_name = (
             op.func_rename[0] or op.func[0] if len(op.func) == 1 else op.func_rename
         )
-        # cudf do not support that axis is not None
-        # when axis is 0, make it None
-        # when axis is not None, just raise Error
+        # cudf doesn't support the parameter axis
+        # when axis is not None, cudf raises Error
         # ref: https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.dataframe.agg
         axis = op.axis if op.axis == 1 else None
         result = data.agg(func_name, axis=axis)

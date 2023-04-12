@@ -1228,7 +1228,40 @@ def test_gpu_dataframe_agg(method, setup_gpu):
 
 @require_cudf
 @require_cupy
-def test_multi_agg_methods(setup_gpu):
+@pytest.mark.parametrize(
+    "method",
+    [
+        # "all",
+        # "any",
+        # "count",
+        # "kurtosis",
+        # "max",
+        # "min",
+        "nunique",
+        # "prod",
+        # "skew",
+        # "std",
+        # "sum",
+        # "var",
+    ],
+)
+def test_gpu_agg_with_multi_chunks(method, setup_gpu):
+    data = [i + 1 for i in range(50)]
+    df = pd.DataFrame({"a": data})
+    expected = df.agg(method)
+
+    mdf = md.DataFrame({"a": data}, chunk_size=3).to_gpu()
+    res = mdf.agg(method).execute()
+
+    if isinstance(expected, pd.DataFrame):
+        pd.testing.assert_frame_equal(expected, res.fetch().to_pandas())
+    else:
+        pd.testing.assert_series_equal(expected, res.fetch().to_pandas())
+
+
+@require_cudf
+@require_cupy
+def test_gpu_multi_agg_methods(setup_gpu):
     df = pd.DataFrame({"a": [1, 2, 3]})
     expected = df.agg(["max", "min"])
 
@@ -1242,4 +1275,19 @@ def test_multi_agg_methods(setup_gpu):
     mars_series = to_gpu(md.Series([1, 2, 3]))
     res = mars_series.agg(["max", "min"]).execute().fetch()
 
+    pd.testing.assert_series_equal(expected, res.to_pandas())
+
+    data = [i + 1 for i in range(50)]
+    df = pd.DataFrame({"a": data})
+    expected = df.agg(["sum", "max"])
+    mdf = md.DataFrame({"a": data}, chunk_size=3).to_gpu()
+    res = mdf.agg(["sum", "max"]).execute().fetch()
+
+    pd.testing.assert_frame_equal(expected, res.to_pandas())
+
+    series = pd.Series(data)
+    expected = series.agg(["sum", "prod"])
+    mars_series = md.Series(data, chunk_size=3).to_gpu()
+
+    res = mars_series.agg(["sum", "prod"]).execute().fetch()
     pd.testing.assert_series_equal(expected, res.to_pandas())
