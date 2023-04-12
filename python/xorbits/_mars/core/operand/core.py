@@ -509,7 +509,7 @@ def execute(results: Dict[str, Any], op: OperandType):
                 return result
         raise KeyError(
             f"No handler found for op: {op}, due to NotImplementedError: {str(e)}"
-        )
+        ) from e
     finally:
         if succeeded:
             op.post_execute(results, op)

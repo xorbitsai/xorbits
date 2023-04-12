@@ -887,7 +887,7 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
         # when axis is 0, make it None
         # when axis is not None, just raise Error
         # ref: https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.dataframe.agg
-        axis = op.axis if op.axis else None
+        axis = op.axis if op.axis == 1 else None
         result = data.agg(func_name, axis=axis)
 
         if is_series(result) and op.output_types[0] == OutputType.scalar:
