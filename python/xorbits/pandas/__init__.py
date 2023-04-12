@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import inspect
+from typing import Callable, Dict, Optional
 
 # noinspection PyUnresolvedReferences
 from pandas import Timedelta  # noqa: F401
@@ -26,6 +27,8 @@ from ..core.utils.fallback import unimplemented_func
 from . import accessors, core, groupby, plotting, window
 from .core import DataFrame, Index, Series
 
+PANDAS_MODULE_METHODS: Optional[Dict[str, Callable]] = None
+
 
 def _install():
     from .mars_adapters import _install as _install_mars_methods
@@ -37,18 +40,29 @@ def _install():
 
 def __dir__():
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
+    from .pandas_adapters import collect_pandas_module_members
 
-    return list(MARS_DATAFRAME_CALLABLES.keys())
+    global PANDAS_MODULE_METHODS
+    import pandas
+
+    if PANDAS_MODULE_METHODS is None:  # pragma: no cover
+        PANDAS_MODULE_METHODS = collect_pandas_module_members(pandas)
+
+    return list(MARS_DATAFRAME_CALLABLES.keys()) + list(PANDAS_MODULE_METHODS.keys())
 
 
 def __getattr__(name: str):
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
-    from .pandas_adapters import PANDAS_MODULE_METHODS
+    from .pandas_adapters import collect_pandas_module_members
 
     if name in MARS_DATAFRAME_CALLABLES:
         return MARS_DATAFRAME_CALLABLES[name]
     else:
+        global PANDAS_MODULE_METHODS
         import pandas
+
+        if PANDAS_MODULE_METHODS is None:  # pragma: no cover
+            PANDAS_MODULE_METHODS = collect_pandas_module_members()
 
         if not hasattr(pandas, name):
             raise AttributeError(name)
