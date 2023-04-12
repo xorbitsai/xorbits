@@ -188,12 +188,11 @@ async def test_storage_service_with_cuda(actor_pools_with_gpu):
     )
     data1_np = np.random.rand(10, 10)
     data1 = cupy.asarray(data1_np)
-    await storage_api.put("mock_cupy_key", data1, level=StorageLevel.GPU)
-    get_data1 = await storage_api.get("mock_cupy_key")
+    await storage_api.put("mock_cupy_key1", data1, level=StorageLevel.GPU)
+    get_data1 = await storage_api.get("mock_cupy_key1")
     assert isinstance(get_data1, cupy.ndarray)
     cupy.testing.assert_array_equal(data1, get_data1)
-    get_data1_np = await storage_api.get("mock_cupy_key", cpu=True)
-    print(type(get_data1_np))
+    get_data1_np = await storage_api.get("mock_cupy_key1", cpu=True)
     assert isinstance(get_data1_np, np.ndarray)
     np.testing.assert_array_equal(data1_np, get_data1_np)
 
@@ -205,14 +204,33 @@ async def test_storage_service_with_cuda(actor_pools_with_gpu):
         },
     )
     data2 = cudf.DataFrame(data2_pd)
-    await storage_api.put("mock_cudf_key", data2, level=StorageLevel.GPU)
-    get_data2 = await storage_api.get("mock_cudf_key")
+    await storage_api.put("mock_cudf_key2", data2, level=StorageLevel.GPU)
+    get_data2 = await storage_api.get("mock_cudf_key2")
     assert isinstance(get_data2, cudf.DataFrame)
     cudf.testing.assert_frame_equal(data2, get_data2)
-    get_data2_pd = await storage_api.get("mock_cudf_key", cpu=True)
-    print(type(get_data2_pd))
+    get_data2_pd = await storage_api.get("mock_cudf_key2", cpu=True)
     assert isinstance(get_data2_pd, pd.DataFrame)
     pd.testing.assert_frame_equal(data2_pd, get_data2_pd)
+
+    gets = []
+    gets.append(storage_api.get.delay("mock_cudf_key1"))
+    gets.append(storage_api.get.delay("mock_cudf_key2"))
+    results = await storage_api.get.batch(*gets)
+    assert len(results) == 2
+    assert isinstance(results[0], cupy.ndarray)
+    cupy.testing.assert_array_equal(data1, results[0])
+    assert isinstance(results[1], cudf.DataFrame)
+    cudf.testing.assert_frame_equal(data2, results[1])
+
+    gets = []
+    gets.append(storage_api.get.delay("mock_cudf_key1", cpu=True))
+    gets.append(storage_api.get.delay("mock_cudf_key2", cpu=True))
+    results = await storage_api.get.batch(*gets)
+    assert len(results) == 2
+    assert isinstance(results[0], np.ndarray)
+    np.testing.assert_array_equal(data1_np, results[0])
+    assert isinstance(results[1], pd.DataFrame)
+    pd.testing.assert_frame_equal(data2_pd, results[1])
 
     await MockClusterAPI.cleanup(worker_pool.external_address)
     await stop_services(NodeRole.WORKER, config, address=worker_pool.external_address)
