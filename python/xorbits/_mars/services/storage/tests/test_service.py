@@ -198,15 +198,13 @@ async def test_storage_service_with_cuda(actor_pools_with_gpu):
     np.testing.assert_array_equal(data1_np, get_data1_np)
 
     data2_pd = pd.DataFrame(
-            {
-                "col1": np.arange(10),
-                "col2": [f"str{i}" for i in range(10)],
-                "col3": np.random.rand(10),
-            },
-        )
-    data2 = cudf.DataFrame(
-        data2_pd
+        {
+            "col1": np.arange(10),
+            "col2": [f"str{i}" for i in range(10)],
+            "col3": np.random.rand(10),
+        },
     )
+    data2 = cudf.DataFrame(data2_pd)
     await storage_api.put("mock_cudf_key", data2, level=StorageLevel.GPU)
     get_data2 = await storage_api.get("mock_cudf_key")
     assert isinstance(get_data2, cudf.DataFrame)
