@@ -328,7 +328,9 @@ class ObjectCheckMixin:
                 f"Type of real value ({type(real)}) not one of {np_types!r}"
             )
         # If real is NAN, the shape of expected is empty tuple
-        if not hasattr(expected, "dtype") or (expected.shape == () and pd.isna(real)):
+        if not hasattr(expected, "dtype") or (
+            expected.shape == () and isinstance(real, NAType)
+        ):
             return
         if self._check_options["check_dtypes"]:
             try:
