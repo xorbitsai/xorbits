@@ -146,21 +146,24 @@ class StorageHandlerActor(mo.Actor):
         session_id: str,
         data_key: str,
         conditions: List = None,
+        cpu: Optional[bool] = None,
         error: str = "raise",
     ):
         info = self._data_manager_ref.get_data_info.delay(
             session_id, data_key, self._band_name, error
         )
-        return info, conditions
+        return info, conditions, cpu
 
     @get.batch
     async def batch_get(self, args_list, kwargs_list):
         infos = []
         conditions_list = []
+        cpus = []
         for args, kwargs in zip(args_list, kwargs_list):
-            info, conditions = self._get_data_info(*args, **kwargs)
+            info, conditions, cpu = self._get_data_info(*args, **kwargs)
             infos.append(info)
             conditions_list.append(conditions)
+            cpus.append(cpu)
         data_infos = await self._data_manager_ref.get_data_info.batch(*infos)
         results = []
         writer_args = [
@@ -173,17 +176,20 @@ class StorageHandlerActor(mo.Actor):
             object_id_to_reader[object_id] = await self._clients[level].open_reader(
                 object_id
             )
-        for data_info, conditions in zip(data_infos, conditions_list):
+        for data_info, conditions, cpu in zip(data_infos, conditions_list, cpus):
             if data_info is None:
-                results.append(None)
+                result = None
             elif data_info.offset is not None:
                 reader = object_id_to_reader[data_info.object_id]
                 await reader.seek(data_info.offset)
                 result = await AioDeserializer(reader).run()
-                results.append(result)
             else:
                 result = yield self._get_data(data_info, conditions)
-                results.append(result)
+            from xorbits._mars.dataframe.utils import is_cudf
+
+            if is_cudf(result) and cpu:
+                result = result.to_pandas()
+            results.append(result)
         raise mo.Return(results)
 
     def _get_default_level(self, obj):
