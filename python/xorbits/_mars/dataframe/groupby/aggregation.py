@@ -1019,9 +1019,10 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
         if ndim == 2:
             if single_func:
                 # DataFrameGroupby.agg('size') returns empty df in cudf, which is not correct
-                # The index order of DataFrameGroupby.size() is wrong in cudf
+                # The index order of .size() is wrong in cudf,
+                # however, for performance considerations, sort_index() will not be called here
                 result = (
-                    input_obj.size().sort_index()
+                    input_obj.size()
                     if gpu and agg_func == "size"
                     else input_obj.agg(agg_func)
                 )
@@ -1029,11 +1030,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                     # when agg_func == size, agg only returns one single series.
                     result = result.to_frame(agg_func)
             else:
-                result = (
-                    input_obj.agg([agg_func]).sort_index()
-                    if gpu
-                    else input_obj.agg([agg_func])
-                )
+                result = input_obj.agg([agg_func])
                 result.columns = result.columns.droplevel(-1)
             return result
         else:

@@ -1514,35 +1514,32 @@ def test_groupby_nunique(setup):
         )
 
 
+def _generate_params_for_gpu():
+    for chunked in (False, True):
+        for as_index in (False, True):
+            for sort in (False, True):
+                yield chunked, as_index, sort
+
+
 @require_cudf
 @pytest.mark.parametrize(
-    "as_index,sort",
-    [(True, True), (True, False), (False, True), (False, False)],
+    "chunked,as_index,sort",
+    _generate_params_for_gpu(),
 )
-def test_gpu_groupby_size(as_index, sort, setup_gpu):
-    data = {"a": [1, 2, 2, 3, 4], "b": [6, 7, 8, 9, 9]}
+def test_gpu_groupby_size(chunked, as_index, sort, setup_gpu):
+    data = {"a": [i + 1 for i in range(20)], "b": [i * 2 + 1 for i in range(20)]}
     df = pd.DataFrame(data)
 
     expected = df.groupby(["a"], as_index=as_index, sort=sort).size()
 
-    mdf = md.DataFrame(data).to_gpu()
+    chunk_size = 3 if chunked else None
+    mdf = md.DataFrame(data, chunk_size=chunk_size).to_gpu()
     res = mdf.groupby(["a"], as_index=as_index, sort=sort).size()
     actual = res.execute().fetch().to_pandas()
 
     if isinstance(expected, pd.DataFrame):
         assert not as_index
-        pd.testing.assert_frame_equal(expected, actual)
-    else:
-        assert as_index
-        pd.testing.assert_series_equal(expected, actual)
-
-    mdf = md.DataFrame(data, chunk_size=3).to_gpu()
-    res = mdf.groupby(["a"], as_index=as_index, sort=sort).size()
-    actual = res.execute().fetch().to_pandas()
-
-    if isinstance(expected, pd.DataFrame):
-        assert not as_index
-        # chunk_size means the order cannot be ensured
+        # cudf groupby size not ensure order
         actual = actual.sort_values(by="a").reset_index(drop=True)
         pd.testing.assert_frame_equal(expected, actual)
     else:
