@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import PANDAS_MODULE_METHODS
+from .core import collect_pandas_module_members
 
 
 def _install():
