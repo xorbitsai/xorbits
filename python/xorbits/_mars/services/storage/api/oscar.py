@@ -96,11 +96,11 @@ class StorageAPI(AbstractStorageAPI):
         self,
         data_key: str,
         conditions: List = None,
-        cpu: Optional[bool] = None,
+        to_cpu: Optional[bool] = None,
         error: str = "raise",
     ) -> Any:
         return await self._storage_handler_ref.get(
-            self._session_id, data_key, conditions, cpu, error
+            self._session_id, data_key, conditions, to_cpu, error
         )
 
     @get.batch

@@ -59,7 +59,7 @@ class StorageWebAPIHandler(MarsServiceWebAPIHandler):
             storage_api_to_idx[oscar_api].append(i)
             storage_api_to_gets[oscar_api].append(
                 oscar_api.get.delay(
-                    data_key, conditions=conditions, cpu=True, error=error
+                    data_key, conditions=conditions, to_cpu=True, error=error
                 )
             )
         for api, fetches in storage_api_to_gets.items():
@@ -77,7 +77,7 @@ class StorageWebAPIHandler(MarsServiceWebAPIHandler):
         conditions = body_args.get("conditions")
 
         oscar_api = await self._get_storage_api_by_object_id(session_id, data_key)
-        result = await oscar_api.get(data_key, conditions, cpu=True)
+        result = await oscar_api.get(data_key, conditions, to_cpu=True)
         self.write(serialize_serializable(result))
 
     @web_api("(?P<data_key>[^/]+)", method="put")
