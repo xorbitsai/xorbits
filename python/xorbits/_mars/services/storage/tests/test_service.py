@@ -218,4 +218,3 @@ async def test_storage_service_with_cuda(actor_pools_with_gpu):
 
     await MockClusterAPI.cleanup(worker_pool.external_address)
     await stop_services(NodeRole.WORKER, config, address=worker_pool.external_address)
-
