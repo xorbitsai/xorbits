@@ -16,7 +16,7 @@
 import asyncio
 import logging
 from collections import defaultdict
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import xoscar as mo
 from xoscar.serialization import AioDeserializer
@@ -124,6 +124,7 @@ class StorageHandlerActor(mo.Actor):
         session_id: str,
         data_key: str,
         conditions: List = None,
+        to_cpu: Optional[bool] = None,
         error: str = "raise",
     ):
         try:
@@ -131,6 +132,12 @@ class StorageHandlerActor(mo.Actor):
                 session_id, data_key, self._band_name
             )
             data = yield self._get_data(data_info, conditions)
+
+            from ...dataframe.utils import is_cudf
+            from ...tensor.array_utils import is_cupy
+
+            if (is_cudf(data) or is_cupy(data)) and to_cpu is True:
+                data = data.to_pandas() if is_cudf(data) else data.get()
             raise mo.Return(data)
         except DataNotExist:
             if error == "raise":
@@ -141,21 +148,24 @@ class StorageHandlerActor(mo.Actor):
         session_id: str,
         data_key: str,
         conditions: List = None,
+        to_cpu: Optional[bool] = None,
         error: str = "raise",
     ):
         info = self._data_manager_ref.get_data_info.delay(
             session_id, data_key, self._band_name, error
         )
-        return info, conditions
+        return info, conditions, to_cpu
 
     @get.batch
     async def batch_get(self, args_list, kwargs_list):
         infos = []
         conditions_list = []
+        to_cpus = []
         for args, kwargs in zip(args_list, kwargs_list):
-            info, conditions = self._get_data_info(*args, **kwargs)
+            info, conditions, to_cpu = self._get_data_info(*args, **kwargs)
             infos.append(info)
             conditions_list.append(conditions)
+            to_cpus.append(to_cpu)
         data_infos = await self._data_manager_ref.get_data_info.batch(*infos)
         results = []
         writer_args = [
@@ -168,17 +178,22 @@ class StorageHandlerActor(mo.Actor):
             object_id_to_reader[object_id] = await self._clients[level].open_reader(
                 object_id
             )
-        for data_info, conditions in zip(data_infos, conditions_list):
-            if data_info is None:
-                results.append(None)
+        for data_info, conditions, to_cpu in zip(data_infos, conditions_list, to_cpus):
+            if data_info is None:  # pragma: no cover
+                result = None
             elif data_info.offset is not None:
                 reader = object_id_to_reader[data_info.object_id]
                 await reader.seek(data_info.offset)
                 result = await AioDeserializer(reader).run()
-                results.append(result)
             else:
                 result = yield self._get_data(data_info, conditions)
-                results.append(result)
+
+            from ...dataframe.utils import is_cudf
+            from ...tensor.array_utils import is_cupy
+
+            if (is_cudf(result) or is_cupy(result)) and to_cpu is True:
+                result = result.to_pandas() if is_cudf(result) else result.get()
+            results.append(result)
         raise mo.Return(results)
 
     def _get_default_level(self, obj):
