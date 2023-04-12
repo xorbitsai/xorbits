@@ -132,10 +132,12 @@ class StorageHandlerActor(mo.Actor):
                 session_id, data_key, self._band_name
             )
             data = yield self._get_data(data_info, conditions)
-            from xorbits._mars.dataframe.utils import is_cudf
 
-            if is_cudf(data) and cpu:
-                data = data.to_pandas()
+            from ...dataframe.utils import is_cudf
+            from ...tensor.array_utils import is_cupy
+
+            if (is_cudf(data) or is_cupy(data)) and cpu is True:
+                data = data.to_pandas() if is_cudf(data) else data.get()
             raise mo.Return(data)
         except DataNotExist:
             if error == "raise":
@@ -177,7 +179,7 @@ class StorageHandlerActor(mo.Actor):
                 object_id
             )
         for data_info, conditions, cpu in zip(data_infos, conditions_list, cpus):
-            if data_info is None:
+            if data_info is None:  # pragma: no cover
                 result = None
             elif data_info.offset is not None:
                 reader = object_id_to_reader[data_info.object_id]
@@ -185,10 +187,12 @@ class StorageHandlerActor(mo.Actor):
                 result = await AioDeserializer(reader).run()
             else:
                 result = yield self._get_data(data_info, conditions)
-            from xorbits._mars.dataframe.utils import is_cudf
 
-            if is_cudf(result) and cpu:
-                result = result.to_pandas()
+            from ...dataframe.utils import is_cudf
+            from ...tensor.array_utils import is_cupy
+
+            if (is_cudf(result) or is_cupy(result)) and cpu is True:
+                result = result.to_pandas() if is_cudf(result) else result.get()
             results.append(result)
         raise mo.Return(results)
 
