@@ -32,6 +32,7 @@ from ..utils import (
     build_empty_df,
     build_empty_series,
     create_sa_connection,
+    is_pandas_2,
     parse_index,
 )
 
@@ -96,12 +97,14 @@ class DataFrameToSQLTable(
                 dtype=self.dtype,
             )
 
-            index_value = parse_index(
-                df_or_series.index_value.to_pandas()[:0], df_or_series.key, "index"
-            )
             if isinstance(df_or_series, DATAFRAME_TYPE):
+                if is_pandas_2():
+                    dtypes = pd.Series([], index=pd.RangeIndex(0), dtype="object")
+                else:
+                    dtypes = df_or_series.dtypes[:0]
+                index_value = parse_index(dtypes.index, df_or_series.key, "index")
                 columns_value = parse_index(
-                    df_or_series.columns_value.to_pandas()[:0],
+                    dtypes.index,
                     df_or_series.key,
                     "columns",
                     store_data=True,
@@ -109,11 +112,21 @@ class DataFrameToSQLTable(
                 return self.new_dataframe(
                     [df_or_series],
                     shape=(0, 0),
-                    dtypes=df_or_series.dtypes[:0],
+                    dtypes=dtypes,
                     index_value=index_value,
                     columns_value=columns_value,
                 )
             else:
+                if is_pandas_2():
+                    index_value = parse_index(
+                        pd.RangeIndex(0), df_or_series.key, "index"
+                    )
+                else:
+                    index_value = parse_index(
+                        df_or_series.index_value.to_pandas()[:0],
+                        df_or_series.key,
+                        "index",
+                    )
                 return self.new_series(
                     [df_or_series],
                     shape=(0,),
@@ -133,11 +146,9 @@ class DataFrameToSQLTable(
             new_op = op.copy().reset_key()
             new_op.if_exists = "append"
 
-            index_value = parse_index(c.index_value.to_pandas()[:0], c)
+            index_value = out.index_value
             if c.ndim == 2:
-                columns_value = parse_index(
-                    c.columns_value.to_pandas()[:0], store_data=True
-                )
+                columns_value = out.columns_value
                 chunks.append(
                     new_op.new_chunk(
                         [c],

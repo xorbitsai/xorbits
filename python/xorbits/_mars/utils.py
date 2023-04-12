@@ -755,7 +755,6 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
             group_keys=v.group_keys,
             squeeze=v.squeeze,
             observed=v.observed,
-            mutated=v.mutated,
         )
         return grouped.groupby_obj
     elif isinstance(v, (str, bytes, memoryview, BaseEstimator)):
