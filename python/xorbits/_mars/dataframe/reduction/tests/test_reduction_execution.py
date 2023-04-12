@@ -1063,200 +1063,67 @@ def test_custom_series_aggregate(setup, check_ref_counts):
     assert pytest.approx(result.execute().fetch()) == data.agg(MockReduction2())
 
 
-@require_cudf
-@require_cupy
-@pytest.mark.parametrize(
-    "method",
-    [
-        "all",
-        "any",
-        "count",
-        "cummax",
-        "cummin",
-        "cumprod",
-        "cumsum",
-        "kurtosis",
-        "max",
-        "min",
-        "nunique",
-        "prod",
-        "size",
-        "sem",
-        "skew",
-        "std",
-        "sum",
-        "unique",
-        "var",
-    ],
-)
-def test_gpu_series_agg(method, setup_gpu):
-    series = pd.Series([1, 2, 3])
-    expected = series.agg(method)
-
-    mars_series = to_gpu(md.Series([1, 2, 3]))
-
-    if method in (
-        "unique",
-        "cummax",
-        "cummin",
-        "cumprod",
-        "cumsum",
-    ):  # _infer_df_func_returns error
-        with pytest.raises(TypeError):
-            mars_series.agg(method)
-    elif method == "sem":  # cudf not impl
-        with pytest.raises(AttributeError):
-            mars_series.agg(method).execute()
-    elif method == "size":  # error in cudf
-        with pytest.raises(TypeError):
-            mars_series.agg(method).execute()
-    elif method == "kurtosis":
-        res = mars_series.agg(method).execute().fetch()
-        assert pd.isna(res)
-    else:
-        res = mars_series.agg(method).execute().fetch()
-        try:
-            pd.testing.assert_series_equal(res.to_pandas(), expected)
-        except:
-            assert res == expected
-
-    expected, actual = None, None
-    if method in ("unique", "sem"):
-        with pytest.raises(AttributeError):  # cudf not impl
-            getattr(mars_series, method)().execute()
-    elif method == "nunique":
-        with pytest.raises(AttributeError):  # nunique reduction impl error
-            getattr(mars_series, method)().execute()
-    elif method == "size":
-        expected = getattr(series, method)
-        actual = getattr(mars_series.execute().fetch().to_pandas(), method)
-    elif method == "kurtosis":
-        actual = getattr(mars_series, method)().execute().fetch()
-        assert pd.isna(actual)
-        assert pd.isna(expected)
-    else:
-        expected = getattr(series, method)()
-        actual = getattr(mars_series, method)().execute().fetch()
-
-    if actual is not None and expected is not None:
-        try:
-            pd.testing.assert_series_equal(actual.to_pandas(), expected)
-        except:
-            assert actual == expected
+def _generate_parameters_for_gpu_agg(methods):
+    for data_type in ("series", "df"):
+        for agg_way in ("str", "func"):
+            for chunked in (False, True):
+                for method in methods:
+                    yield data_type, agg_way, chunked, method
 
 
 @require_cudf
 @require_cupy
 @pytest.mark.parametrize(
-    "method",
-    [
-        "all",
-        "any",
-        "count",
-        "cummax",
-        "cummin",
-        "cumprod",
-        "cumsum",
-        "kurtosis",
-        "max",
-        "min",
-        "nunique",
-        "prod",
-        "size",
-        "sem",
-        "skew",
-        "std",
-        "sum",
-        "unique",
-        "var",
-    ],
+    "data_type,agg_way,chunked,method",
+    _generate_parameters_for_gpu_agg(
+        [
+            "all",
+            "any",
+            "count",
+            "kurtosis",
+            "max",
+            "min",
+            "prod",
+            "skew",
+            "std",
+            "sum",
+            "var",
+        ]
+    ),
 )
-def test_gpu_dataframe_agg(method, setup_gpu):
-    df = pd.DataFrame({"a": [1, 2, 3]})
-    expected = df.agg(method)
-
-    s = to_gpu(md.DataFrame({"a": [1, 2, 3]}))
-
-    if method == "unique":  # _infer_df_func_returns error
-        with pytest.raises(AttributeError):
-            s.agg(method)
-    else:
-        res = s.agg(method)
-        if method in (
-            "cummax",
-            "cummin",
-            "cumprod",
-            "cumsum",
-        ):  # impl error, trigger transform
-            with pytest.raises(KeyError) as e:
-                res.execute()
-            assert "NotImplementedError" in str(e)
-        elif method == "size":  # error in cudf
-            with pytest.raises(TypeError):
-                res.execute()
-        elif method == "sem":  # not impl in cudf
-            with pytest.raises(AttributeError):
-                res.execute()
-        elif method == "unique":  # _infer_df_func_returns error
-            with pytest.raises(AttributeError):
-                res.execute()
-        else:
-            res_pandas = res.execute().fetch().to_pandas()
-            pd.testing.assert_series_equal(expected, res_pandas)
-
-    expected, actual = None, None
-    if method == "unique":
-        with pytest.raises(AttributeError):  # no df.unique in pandas
-            getattr(df, method)()
-    elif method == "size":
-        expected_size = getattr(df, method)
-        actual_size = getattr(s.execute().fetch().to_pandas(), method)
-        assert expected_size == actual_size
-    elif method == "sem":  # cudf not impl
-        with pytest.raises(AttributeError):
-            getattr(s, method)().execute()
-    else:
-        expected = getattr(df, method)()
-        actual = getattr(s, method)().execute().fetch().to_pandas()
-
-    if expected is not None and actual is not None:
-        try:
-            pd.testing.assert_series_equal(expected, actual)
-        except:
-            pd.testing.assert_frame_equal(expected, actual)
-
-
-@require_cudf
-@require_cupy
-@pytest.mark.parametrize(
-    "method",
-    [
-        # "all",
-        # "any",
-        # "count",
-        # "kurtosis",
-        # "max",
-        # "min",
-        "nunique",
-        # "prod",
-        # "skew",
-        # "std",
-        # "sum",
-        # "var",
-    ],
-)
-def test_gpu_agg_with_multi_chunks(method, setup_gpu):
+def test_gpu_agg_ok(data_type, agg_way, chunked, method, setup_gpu):
     data = [i + 1 for i in range(50)]
-    df = pd.DataFrame({"a": data})
-    expected = df.agg(method)
 
-    mdf = md.DataFrame({"a": data}, chunk_size=3).to_gpu()
-    res = mdf.agg(method).execute()
+    if data_type == "df":
+        pd_data = pd.DataFrame({"a": data})
+    else:
+        pd_data = pd.Series(data)
+
+    if agg_way == "str":
+        expected = pd_data.agg(method)
+    else:
+        expected = getattr(pd_data, method)()
+
+    chunk_size = 3 if chunked else None
+    if data_type == "df":
+        mdf = md.DataFrame({"a": data}, chunk_size=chunk_size).to_gpu()
+    else:
+        mdf = md.Series(data, chunk_size=chunk_size).to_gpu()
+
+    if agg_way == "str":
+        res = mdf.agg(method).execute()
+    else:
+        res = getattr(mdf, method)().execute()
 
     if isinstance(expected, pd.DataFrame):
         pd.testing.assert_frame_equal(expected, res.fetch().to_pandas())
-    else:
+    elif isinstance(expected, pd.Series):
         pd.testing.assert_series_equal(expected, res.fetch().to_pandas())
+    else:
+        if method == "kurtosis":
+            assert pytest.approx(expected, 1e-5) == res.fetch()
+        else:
+            assert expected == res.fetch()
 
 
 @require_cudf
