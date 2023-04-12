@@ -17,35 +17,28 @@ import math
 
 import numpy as np
 
-from ... import execute
+from ... import remote as mr
 from ... import tensor as mt
 from ...tensor.datasource import tensor as astensor
 
 
-def softmax_loss_and_grad(W, X, y, reg):
+def instance_softmax_loss_and_sgd(W, X, y, loss_reg_W, i):
+    X = X[i].reshape((1, X[i].shape[0]))
+    y = y[i]
+
     N, D = X.shape
     K = W.shape[1]
 
-    y_obs = mt.zeros(shape=(N, K))
-    for i in range(N):
-        y_obs[i] = mt.eye(K)[y[i]]
+    y_obs = mt.eye(K)[y]
 
-    loss = -1 / N * mt.sum(
-        y_obs * mt.log(mt.exp(X @ W) / mt.sum(mt.exp(X @ W), axis=1).reshape(-1, 1))
-    ) + 0.5 * reg * mt.sum(mt.square(W))
+    exp_X_W_over_sum = mt.exp(X @ W) / mt.sum(mt.exp(X @ W), axis=1).reshape(-1, 1)
+
+    loss = -1 * mt.sum(y_obs * mt.log(exp_X_W_over_sum)) + loss_reg_W
 
     dW = mt.zeros(shape=(D, K))
 
     # Matrix approach
-    dW = (
-        -1
-        / N
-        * X.T
-        @ (y_obs - (mt.exp(X @ W) / mt.sum(mt.exp(X @ W), axis=1).reshape(-1, 1)))
-        + reg * W
-    )
-
-    execute(loss, dW)
+    dW = -1 * X.T @ (y_obs - (exp_X_W_over_sum))
 
     return loss, dW
 
@@ -74,19 +67,39 @@ def gradient_descent(
         X = astensor(X)
         W = 0.001 * mt.random.randn(dim, num_classes).execute()
 
+    X = X.execute()
+    y = y.execute()
+
     for _ in range(max_epochs):
         # perform mini-batch SGD update
         perm_idx = np.random.permutation(num_train)
         for it in range(num_iters_per_epoch):
-            # print(it, num_iters_per_epoch)
             idx = perm_idx[it * batch_size : (it + 1) * batch_size]
-            batch_x = X[idx]
-            batch_y = y[idx]
+            cur_W = W.execute()
+            loss_reg_W = (0.5 * reg * mt.sum(mt.square(W))).execute()
+            dW_reg_W = (reg * cur_W).execute()
 
-            # evaluate loss and gradient
-            _, grad = softmax_loss_and_grad(W, batch_x, batch_y, reg)
+            funcs = [
+                mr.spawn(
+                    instance_softmax_loss_and_sgd,
+                    args=(
+                        cur_W,
+                        X,
+                        y,
+                        loss_reg_W,
+                        i,
+                    ),
+                )
+                for i in idx
+            ]
+
+            outs = mr.ExecutableTuple(funcs).execute().fetch()
+            grad_tensors = [out[1] for out in outs]
 
             # update parameters
-            W = W - learning_rate * grad
+            W = (
+                cur_W
+                - learning_rate * (mt.sum(grad_tensors, axis=0) / len(idx) + dW_reg_W)
+            ).execute()
 
     return W
