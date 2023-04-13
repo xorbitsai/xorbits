@@ -29,6 +29,7 @@ from ....core.operand import OperandStage
 from ....tests.core import assert_groupby_equal, require_cudf
 from ....utils import arrow_array_to_objects, pd_release_version
 from ...core import DATAFRAME_OR_SERIES_TYPE
+from ...utils import is_pandas_2
 from ..aggregation import DataFrameGroupByAgg
 
 pytestmark = pytest.mark.pd_compat
@@ -1086,24 +1087,33 @@ def test_groupby_transform(setup):
     )
 
     if pd.__version__ != "1.1.0":
-        r = mdf.groupby("b").transform(["cummax", "cumsum"], _call_agg=True)
+        df3 = pd.DataFrame(
+            {
+                "a": [3, 4, 5, 3, 5, 4, 1, 2, 3],
+                "b": [1, 3, 4, 5, 6, 5, 4, 4, 4],
+                "c": [1, 3, 4, 5, 6, 5, 4, 4, 4],
+            }
+        )
+        mdf3 = md.DataFrame(df3, chunk_size=3)
+
+        r = mdf3.groupby("b").transform(["cummax", "cumsum"], _call_agg=True)
         pd.testing.assert_frame_equal(
             r.execute().fetch().sort_index(),
-            df1.groupby("b").agg(["cummax", "cumsum"]).sort_index(),
+            df3.groupby("b").agg(["cummax", "cumsum"]).sort_index(),
         )
 
         agg_list = ["cummax", "cumsum"]
-        r = mdf.groupby("b").transform(agg_list, _call_agg=True)
+        r = mdf3.groupby("b").transform(agg_list, _call_agg=True)
         pd.testing.assert_frame_equal(
             r.execute().fetch().sort_index(),
-            df1.groupby("b").agg(agg_list).sort_index(),
+            df3.groupby("b").agg(agg_list).sort_index(),
         )
 
-        agg_dict = OrderedDict([("d", "cummax"), ("b", "cumsum")])
-        r = mdf.groupby("b").transform(agg_dict, _call_agg=True)
+        agg_dict = OrderedDict([("a", "cummax"), ("c", "cumsum")])
+        r = mdf3.groupby("b").transform(agg_dict, _call_agg=True)
         pd.testing.assert_frame_equal(
             r.execute().fetch().sort_index(),
-            df1.groupby("b").agg(agg_dict).sort_index(),
+            df3.groupby("b").agg(agg_dict).sort_index(),
         )
 
     agg_list = ["sum", lambda s: s.sum()]
@@ -1207,11 +1217,12 @@ def test_groupby_fill(setup):
         getattr(df1.groupby("one"), "fillna")(5).sort_index(),
     )
 
-    r4 = getattr(mdf.groupby("two"), "backfill")()
-    pd.testing.assert_frame_equal(
-        r4.execute().fetch().sort_index(),
-        getattr(df1.groupby("two"), "backfill")().sort_index(),
-    )
+    if not is_pandas_2():
+        r4 = getattr(mdf.groupby("two"), "backfill")()
+        pd.testing.assert_frame_equal(
+            r4.execute().fetch().sort_index(),
+            getattr(df1.groupby("two"), "backfill")().sort_index(),
+        )
 
     s1 = pd.Series([4, 3, 9, np.nan, np.nan, 7, 10, 8, 1, 6])
     ms1 = md.Series(s1, chunk_size=3)
@@ -1228,11 +1239,12 @@ def test_groupby_fill(setup):
         getattr(s1.groupby(lambda x: x % 2), "bfill")().sort_index(),
     )
 
-    r4 = getattr(ms1.groupby(lambda x: x % 2), "backfill")()
-    pd.testing.assert_series_equal(
-        r4.execute().fetch().sort_index(),
-        getattr(s1.groupby(lambda x: x % 2), "backfill")().sort_index(),
-    )
+    if not is_pandas_2():
+        r4 = getattr(ms1.groupby(lambda x: x % 2), "backfill")()
+        pd.testing.assert_series_equal(
+            r4.execute().fetch().sort_index(),
+            getattr(s1.groupby(lambda x: x % 2), "backfill")().sort_index(),
+        )
 
 
 def test_groupby_head(setup):
@@ -1255,9 +1267,9 @@ def test_groupby_head(setup):
     pd.testing.assert_frame_equal(
         r.execute().fetch().sort_index(), df1.groupby("b").head(-1)
     )
-    r = mdf.groupby("b")["a", "c"].head(1)
+    r = mdf.groupby("b")[["a", "c"]].head(1)
     pd.testing.assert_frame_equal(
-        r.execute().fetch().sort_index(), df1.groupby("b")["a", "c"].head(1)
+        r.execute().fetch().sort_index(), df1.groupby("b")[["a", "c"]].head(1)
     )
 
     # test multiple chunks
@@ -1274,13 +1286,13 @@ def test_groupby_head(setup):
     )
 
     # test head with selection
-    r = mdf.groupby("b")["a", "d"].head(1)
+    r = mdf.groupby("b")[["a", "d"]].head(1)
     pd.testing.assert_frame_equal(
-        r.execute().fetch().sort_index(), df1.groupby("b")["a", "d"].head(1)
+        r.execute().fetch().sort_index(), df1.groupby("b")[["a", "d"]].head(1)
     )
-    r = mdf.groupby("b")["c", "a", "d"].head(1)
+    r = mdf.groupby("b")[["c", "a", "d"]].head(1)
     pd.testing.assert_frame_equal(
-        r.execute().fetch().sort_index(), df1.groupby("b")["c", "a", "d"].head(1)
+        r.execute().fetch().sort_index(), df1.groupby("b")[["c", "a", "d"]].head(1)
     )
     r = mdf.groupby("b")["c"].head(1)
     pd.testing.assert_series_equal(
@@ -1481,9 +1493,10 @@ def test_groupby_apply_with_arrow_dtype(setup):
 
     applied = mseries.groupby(mseries).apply(lambda s: s)
     result = applied.execute().fetch()
-    result.index = result.index.astype(np.int64)
     expected = series1.groupby(series1).apply(lambda s: s)
-    pd.testing.assert_series_equal(arrow_array_to_objects(result), expected)
+    pd.testing.assert_series_equal(
+        arrow_array_to_objects(result), expected, check_index_type=False
+    )
 
 
 def test_groupby_nunique(setup):
