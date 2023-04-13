@@ -735,6 +735,8 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         df = pd.concat([r[1].obj for r in chunk_results], axis=0)
         if not isinstance(v.keys, list):
             keys = v.keys
+            if isinstance(v.keys, pd.Series):
+                keys = pd.concat([r[1].keys for r in chunk_results])
         else:
             keys = []
             for idx, k in enumerate(v.keys):

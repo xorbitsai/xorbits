@@ -52,24 +52,24 @@ def test_groupby(setup):
 
     # test groupby with DataFrames and RangeIndex
     df1 = pd.DataFrame(data_dict)
-    mdf = md.DataFrame(df1, chunk_size=13)
-    grouped = mdf.groupby("b")
+    mdf1 = md.DataFrame(df1, chunk_size=13)
+    grouped = mdf1.groupby("b")
     assert_groupby_equal(grouped.execute().fetch(), df1.groupby("b"))
 
     # test groupby with string index with duplications
     df2 = pd.DataFrame(data_dict, index=["i" + str(i % 3) for i in range(data_size)])
-    mdf = md.DataFrame(df2, chunk_size=13)
-    grouped = mdf.groupby("b")
+    mdf2 = md.DataFrame(df2, chunk_size=13)
+    grouped = mdf2.groupby("b")
     assert_groupby_equal(grouped.execute().fetch(), df2.groupby("b"))
 
     # test groupby with DataFrames by series
-    grouped = mdf.groupby(mdf["b"])
-    assert_groupby_equal(grouped.execute().fetch(), df2.groupby(df2["b"]))
+    grouped = mdf1.groupby(mdf1["b"])
+    assert_groupby_equal(grouped.execute().fetch(), df1.groupby(df1["b"]))
 
     # test groupby with DataFrames by multiple series
-    grouped = mdf.groupby(by=[mdf["b"], mdf["c"]])
+    grouped = mdf1.groupby(by=[mdf1["b"], mdf1["c"]])
     assert_groupby_equal(
-        grouped.execute().fetch(), df2.groupby(by=[df2["b"], df2["c"]])
+        grouped.execute().fetch(), df1.groupby(by=[df1["b"], df1["c"]])
     )
 
     # test groupby with DataFrames with MultiIndex
@@ -172,6 +172,7 @@ def test_groupby_getitem(setup):
     pd.testing.assert_frame_equal(
         r.execute().fetch().sort_index(),
         raw.groupby("b")[["a", "b"]].apply(lambda x: x + 1).sort_index(),
+        check_names=False,
     )
 
     r = mdf.groupby("b")[["a", "b"]].transform(lambda x: x + 1)
@@ -203,7 +204,10 @@ def test_groupby_getitem(setup):
 
         r = mdf.groupby("b", as_index=False).a.sum(method=method)
         pd.testing.assert_frame_equal(
-            r.execute().fetch().sort_values("b", ignore_index=True),
+            r.execute()
+            .fetch()
+            .sort_values("b", ignore_index=True)
+            .reset_index(drop=True),
             raw.groupby("b", as_index=False)
             .a.sum()
             .sort_values("b", ignore_index=True),
@@ -224,7 +228,12 @@ def test_groupby_getitem(setup):
         pd.testing.assert_frame_equal(result, expected)
 
         r = mdf.groupby("b", as_index=False).b.agg({"cnt": "count"}, method=method)
-        result = r.execute().fetch().sort_values("b", ignore_index=True)
+        result = (
+            r.execute()
+            .fetch()
+            .sort_values("b", ignore_index=True)
+            .reset_index(drop=True)
+        )
         try:
             expected = (
                 raw.groupby("b", as_index=False)
@@ -241,6 +250,7 @@ def test_groupby_getitem(setup):
     pd.testing.assert_series_equal(
         r.execute().fetch().sort_index(),
         raw.groupby("b").a.apply(lambda x: x + 1).sort_index(),
+        check_names=False,
     )
 
     r = mdf.groupby("b").a.transform(lambda x: x + 1)
@@ -392,10 +402,10 @@ def test_dataframe_groupby_agg(setup):
             )
 
             # test groupby series
-            r = mdf.groupby(mdf["c2"], sort=sort).sum(method=method)
+            r = mdf.groupby(mdf["c2"], sort=sort).sum(method=method, numeric_only=True)
             pd.testing.assert_frame_equal(
                 r.execute().fetch().sort_index(),
-                raw.groupby(raw["c2"]).sum().sort_index(),
+                raw.groupby(raw["c2"]).sum(numeric_only=True).sort_index(),
             )
 
     r = mdf.groupby("c2").size(method="tree")
@@ -440,10 +450,14 @@ def test_dataframe_groupby_agg(setup):
 
         r = mdf.groupby(["c1", "c2"], as_index=False).agg("mean", method=method)
         pd.testing.assert_frame_equal(
-            r.execute().fetch().sort_values(["c1", "c2"], ignore_index=True),
+            r.execute()
+            .fetch()
+            .sort_values(["c1", "c2"], ignore_index=True)
+            .reset_index(drop=True),
             raw.groupby(["c1", "c2"], as_index=False)
             .agg("mean")
-            .sort_values(["c1", "c2"], ignore_index=True),
+            .sort_values(["c1", "c2"], ignore_index=True)
+            .reset_index(drop=True),
         )
         assert r.op.groupby_params["as_index"] is False
 
@@ -545,8 +559,10 @@ def test_dataframe_groupby_agg_sort(setup):
         )
 
         # test groupby series
-        r = mdf.groupby(mdf["c2"]).sum(method=method)
-        pd.testing.assert_frame_equal(r.execute().fetch(), raw.groupby(raw["c2"]).sum())
+        r = mdf.groupby(mdf["c2"]).sum(method=method, numeric_only=True)
+        pd.testing.assert_frame_equal(
+            r.execute().fetch(), raw.groupby(raw["c2"]).sum(numeric_only=True)
+        )
 
     r = mdf.groupby("c2").size(method="tree")
     pd.testing.assert_series_equal(r.execute().fetch(), raw.groupby("c2").size())

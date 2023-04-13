@@ -290,10 +290,10 @@ def test_groupby_transform():
         {
             "a": [3, 4, 5, 3, 5, 4, 1, 2, 3],
             "b": [1, 3, 4, 5, 6, 5, 4, 4, 4],
-            "c": list("aabaaddce"),
+            "c": [1, 3, 4, 5, 6, 5, 4, 4, 4],
             "d": [3, 4, 5, 3, 5, 4, 1, 2, 3],
             "e": [1, 3, 4, 5, 6, 5, 4, 4, 4],
-            "f": list("aabaaddce"),
+            "f": [1, 3, 4, 5, 6, 5, 4, 4, 4],
         }
     )
 
@@ -333,11 +333,11 @@ def test_groupby_transform():
     assert r.chunks[0].dtypes.index.tolist() == list("acdef")
 
     r = tile(mdf.groupby("b").transform(["cummax", "cumcount"], _call_agg=True))
-    assert r.shape == (np.nan, 6)
+    assert r.shape == (np.nan, 10)
     assert r.op._op_type_ == opcodes.TRANSFORM
     assert r.op.output_types[0] == OutputType.dataframe
     assert len(r.chunks) == 3
-    assert r.chunks[0].shape == (np.nan, 6)
+    assert r.chunks[0].shape == (np.nan, 10)
 
     agg_dict = OrderedDict([("d", "cummax"), ("b", "cumsum")])
     r = tile(mdf.groupby("b").transform(agg_dict, _call_agg=True))
