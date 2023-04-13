@@ -1006,9 +1006,8 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             return custom_agg_functions[func_name].execute_agg(op, in_data)
 
     @staticmethod
-    def _do_predefined_agg(input_obj, agg_func, single_func=False, **kwds):
+    def _do_predefined_agg(input_obj, agg_func, single_func=False, gpu=False, **kwds):
         ndim = getattr(input_obj, "ndim", None) or input_obj.obj.ndim
-        gpu = kwds.pop("gpu", False)
         if agg_func == "str_concat":
             agg_func = lambda x: x.str.cat(**kwds)
         elif isinstance(agg_func, str) and not kwds.get("skipna", True):
@@ -1116,10 +1115,9 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 agg_dfs.append(cls._do_custom_agg(raw_func_name, op, in_data))
             else:
                 single_func = map_func_name == op.raw_func
-                kwds["gpu"] = op.gpu
                 agg_dfs.append(
                     cls._do_predefined_agg(
-                        input_obj, map_func_name, single_func, **kwds
+                        input_obj, map_func_name, single_func, op.gpu, **kwds
                     )
                 )
 
@@ -1165,7 +1163,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 combines.append(cls._do_custom_agg(raw_func_name, op, raw_input))
             else:
                 combines.append(
-                    cls._do_predefined_agg(input_obj, agg_func_name, **kwds)
+                    cls._do_predefined_agg(input_obj, agg_func_name, gpu=op.gpu, **kwds)
                 )
         ctx[op.outputs[0].key] = tuple(combines)
 
@@ -1208,7 +1206,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             else:
                 input_obj = cls._get_grouped(op, in_data_dict[output_key], ctx)
                 in_data_dict[output_key] = cls._do_predefined_agg(
-                    input_obj, agg_func_name, **kwds
+                    input_obj, agg_func_name, gpu=op.gpu, **kwds
                 )
 
         aggs = []
