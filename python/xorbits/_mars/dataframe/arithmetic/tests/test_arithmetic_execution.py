@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import datetime
 import operator
 from dataclasses import dataclass
 from functools import partial
@@ -22,8 +22,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from .... import dataframe as md
 from .... import tensor as mt
 from ....tensor.datasource import array as from_array
+from ....tests.core import require_cudf
 from ....utils import dataslots
 from ... import to_datetime
 from ...datasource.dataframe import from_pandas
@@ -902,6 +904,56 @@ def test_date_time_bin(setup):
         df_raw["c"] < pd.to_datetime("2021-01-01")
     )
     pd.testing.assert_series_equal(result, expected)
+
+
+def _generate_params_for_gpu():
+    for data_type in ("series", "df"):
+        for chunked in (False, True):
+            for bin_op in ("and", "or", "not", "xor"):
+                yield data_type, chunked, bin_op
+
+
+@require_cudf
+@pytest.mark.parametrize(
+    "data_type,chunked,bin_op",
+    _generate_params_for_gpu(),
+)
+def test_date_time_bin_gpu(data_type, chunked, bin_op, setup_gpu):
+    date1 = pd.Timestamp("1996-01-01")
+    date2 = pd.Timestamp("2020-01-01")
+
+    data1 = [datetime.datetime(1989, 1, 1), datetime.datetime(2001, 1, 1)]
+    data2 = [datetime.datetime(1990, 1, 1), datetime.datetime(2021, 1, 1)]
+
+    chunk_size = 3 if chunked else None
+    if data_type == "df":
+        pandas_data = pd.DataFrame({"date1": data1, "date2": data2})
+        mars_data = md.DataFrame(
+            {"date1": data1, "date2": data2}, chunk_size=chunk_size
+        ).to_gpu()
+    else:
+        pandas_data = pd.Series(data1 + data2, name="date")
+        mars_data = md.Series(
+            data1 + data2, name="date", chunk_size=chunk_size
+        ).to_gpu()
+
+    if bin_op == "and":
+        actual = (mars_data >= date1) & (mars_data < date2)
+        expected = (pandas_data >= date1) & (pandas_data < date2)
+    elif bin_op == "or":
+        actual = (mars_data >= date1) | (mars_data < date2)
+        expected = (pandas_data >= date1) | (pandas_data < date2)
+    elif bin_op == "not":
+        actual = ~(mars_data >= date1)
+        expected = ~(pandas_data >= date1)
+    else:
+        actual = (mars_data >= date1) ^ (mars_data < date2)
+        expected = (pandas_data >= date1) ^ (pandas_data < date2)
+
+    if isinstance(expected, pd.DataFrame):
+        pd.testing.assert_frame_equal(expected, actual.execute().fetch().to_pandas())
+    else:
+        pd.testing.assert_series_equal(expected, actual.execute().fetch().to_pandas())
 
 
 def test_series_and_tensor(setup):

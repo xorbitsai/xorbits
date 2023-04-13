@@ -231,7 +231,7 @@ class DataFrameBinOpMixin(DataFrameOperandMixin):
                         [chunk],
                         shape=chunk.shape,
                         index=chunk.index,
-                        dtypes=chunk.dtypes,
+                        dtypes=df.dtypes,
                         index_value=chunk.index_value,
                         columns_value=getattr(chunk, "columns_value"),
                     )
@@ -241,7 +241,7 @@ class DataFrameBinOpMixin(DataFrameOperandMixin):
                         [chunk],
                         shape=chunk.shape,
                         index=chunk.index,
-                        dtype=chunk.dtype,
+                        dtype=df.dtype,
                         name=getattr(chunk, "name"),
                     )
                     out_chunk._set_tileable_meta(
@@ -254,7 +254,7 @@ class DataFrameBinOpMixin(DataFrameOperandMixin):
                         [chunk],
                         shape=chunk.shape,
                         index=chunk.index,
-                        dtype=chunk.dtype,
+                        dtype=df.dtype,
                         index_value=chunk.index_value,
                         name=getattr(chunk, "name"),
                     )
