@@ -40,7 +40,8 @@ class MarsFetcher(Fetcher):
                 band = bands[0]
         storage_api = await self._get_storage_api(band)
         get = _GetWithIndex(
-            storage_api.get.delay(chunk_key, conditions=conditions), self._counter
+            storage_api.get.delay(chunk_key, conditions=conditions, to_cpu=True),
+            self._counter,
         )
         self._storage_api_to_gets[storage_api].append(get)
         self._counter += 1
