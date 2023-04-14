@@ -20,7 +20,7 @@ import pytest
 from ....core.graph.builder.utils import build_graph
 from ...datasource.dataframe import from_pandas
 from ...datasource.series import from_pandas as series_from_pandas
-from ...utils import sort_dataframe_inplace
+from ...utils import is_pandas_2, sort_dataframe_inplace
 from .. import DataFrameConcat, DataFrameMergeAlign, concat
 
 
@@ -664,6 +664,7 @@ def test_merge_on_duplicate_columns(setup, auto_merge):
     pd.testing.assert_frame_equal(expected, result)
 
 
+@pytest.mark.skipif(not is_pandas_2(), "Pandas 2.0 hasn't support append")
 def test_append_execution(setup):
     df1 = pd.DataFrame(np.random.rand(10, 4), columns=list("ABCD"))
     df2 = pd.DataFrame(np.random.rand(10, 4), columns=list("ABCD"))

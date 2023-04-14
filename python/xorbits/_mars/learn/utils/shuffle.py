@@ -436,7 +436,7 @@ class LearnShuffle(MapReduceOperand, LearnOperandMixin):
     def _concat_series_grid(cls, grid, axes):
         assert axes == (0,) and grid.ndim == 1
 
-        return reduce(lambda a, b: a.append(b), grid)
+        return reduce(lambda a, b: pd.concat([a, b]), grid)
 
     @classmethod
     def _concat_tensor_grid(cls, grid, axes):
