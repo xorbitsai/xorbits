@@ -335,30 +335,30 @@ def test_gpu_execution(setup_gpu, check_ref_counts):
     df = to_gpu(md.DataFrame(df_raw, chunk_size=6))
 
     r = df.sum()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(res.to_pandas(), df_raw.sum())
 
     r = df.kurt()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(res.to_pandas(), df_raw.kurt())
 
     r = df.agg(["sum", "var"])
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_frame_equal(res.to_pandas(), df_raw.agg(["sum", "var"]))
 
     s_raw = pd.Series(np.random.rand(30))
     s = to_gpu(md.Series(s_raw, chunk_size=6))
 
     r = s.sum()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     assert pytest.approx(res) == s_raw.sum()
 
     r = s.kurt()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     assert pytest.approx(res) == s_raw.kurt()
 
     r = s.agg(["sum", "var"])
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(res.to_pandas(), s_raw.agg(["sum", "var"]))
 
     s_raw = pd.Series(
@@ -367,7 +367,7 @@ def test_gpu_execution(setup_gpu, check_ref_counts):
     s = to_gpu(md.Series(s_raw, chunk_size=6))
 
     r = s.unique()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     np.testing.assert_array_equal(cp.asnumpy(res).sort(), s_raw.unique().sort())
 
 

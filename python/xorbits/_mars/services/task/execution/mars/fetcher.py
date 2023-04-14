@@ -31,6 +31,11 @@ class MarsFetcher(Fetcher):
         self._get_storage_api = get_storage_api
         self._storage_api_to_gets = defaultdict(list)
         self._counter = 0
+        self._to_cpu = kwargs.pop("to_cpu", True)
+
+        if kwargs:  # pragma: no cover
+            unexpected_keys = ", ".join(list(kwargs.keys()))
+            raise TypeError(f"unexpected arguments: {unexpected_keys}")
 
     async def append(self, chunk_key: str, chunk_meta: Dict, conditions: List = None):
         band = None
@@ -40,7 +45,9 @@ class MarsFetcher(Fetcher):
                 band = bands[0]
         storage_api = await self._get_storage_api(band)
         get = _GetWithIndex(
-            storage_api.get.delay(chunk_key, conditions=conditions, to_cpu=True),
+            storage_api.get.delay(
+                chunk_key, conditions=conditions, to_cpu=self._to_cpu
+            ),
             self._counter,
         )
         self._storage_api_to_gets[storage_api].append(get)

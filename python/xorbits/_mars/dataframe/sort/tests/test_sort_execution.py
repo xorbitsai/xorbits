@@ -392,7 +392,7 @@ def test_gpu_execution(setup_gpu):
         raw = pd.DataFrame(rs.rand(100, 10), columns=["a" + str(i) for i in range(10)])
         mdf = DataFrame(raw, chunk_size=30).to_gpu()
 
-        result = mdf.sort_values(by="a0").execute().fetch()
+        result = mdf.sort_values(by="a0").execute().fetch(to_cpu=False)
         expected = raw.sort_values(by="a0")
         pd.testing.assert_frame_equal(result.to_pandas(), expected)
 
@@ -400,7 +400,7 @@ def test_gpu_execution(setup_gpu):
         raw = pd.Series(rs.rand(10))
         series = Series(raw).to_gpu()
 
-        result = series.sort_values().execute().fetch()
+        result = series.sort_values().execute().fetch(to_cpu=False)
         expected = raw.sort_values()
         pd.testing.assert_series_equal(result.to_pandas(), expected)
 
@@ -408,7 +408,7 @@ def test_gpu_execution(setup_gpu):
     raw = pd.DataFrame(np.random.rand(10, 10), columns=np.random.rand(10))
     mdf = DataFrame(raw).to_gpu()
 
-    result = mdf.sort_index().execute().fetch()
+    result = mdf.sort_index().execute().fetch(to_cpu=False)
     expected = raw.sort_index()
     pd.testing.assert_frame_equal(result.to_pandas(), expected)
 
@@ -419,6 +419,6 @@ def test_gpu_execution(setup_gpu):
     )
     series = Series(raw).to_gpu()
 
-    result = series.sort_index().execute().fetch()
+    result = series.sort_index().execute().fetch(to_cpu=False)
     expected = raw.sort_index()
     pd.testing.assert_series_equal(result.to_pandas(), expected)

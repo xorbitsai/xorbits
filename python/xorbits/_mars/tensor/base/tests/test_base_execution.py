@@ -1132,7 +1132,7 @@ def test_to_gpu_execution(setup_gpu):
 
     gx = to_gpu(x)
 
-    res = gx.execute().fetch()
+    res = gx.execute().fetch(to_cpu=False)
     np.testing.assert_array_equal(res.get(), raw)
 
 

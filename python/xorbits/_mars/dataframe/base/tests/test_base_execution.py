@@ -59,7 +59,7 @@ def test_to_gpu_execution(setup_gpu):
     df = from_pandas_df(pdf, chunk_size=(13, 21))
     cdf = to_gpu(df)
 
-    res = cdf.execute().fetch()
+    res = cdf.execute().fetch(to_cpu=False)
     assert isinstance(res, cudf.DataFrame)
     pd.testing.assert_frame_equal(res.to_pandas(), pdf)
 
@@ -67,7 +67,7 @@ def test_to_gpu_execution(setup_gpu):
     series = from_pandas_series(pseries)
     cseries = series.to_gpu()
 
-    res = cseries.execute().fetch()
+    res = cseries.execute().fetch(to_cpu=False)
     assert isinstance(res, cudf.Series)
     pd.testing.assert_series_equal(res.to_pandas(), pseries)
 

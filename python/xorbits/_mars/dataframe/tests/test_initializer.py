@@ -98,12 +98,12 @@ def test_dataframe_gpu_initializer(setup_gpu):
     # from raw cudf initializer
     raw = cudf.DataFrame(cupy.random.rand(100, 10), columns=list("ABCDEFGHIJ"))
     r = md.DataFrame(raw, chunk_size=13)
-    result = r.execute().fetch()
+    result = r.execute().fetch(to_cpu=False)
     pd.testing.assert_frame_equal(result.to_pandas(), raw.to_pandas())
 
     raw = cupy.random.rand(100, 10)
     r = md.DataFrame(raw, columns=list("ABCDEFGHIJ"), chunk_size=13)
-    result = r.execute().fetch()
+    result = r.execute().fetch(to_cpu=False)
     expected = cudf.DataFrame(raw, columns=list("ABCDEFGHIJ"))
     pd.testing.assert_frame_equal(result.to_pandas(), expected.to_pandas())
 
@@ -153,12 +153,12 @@ def test_series_gpu_initializer(setup_gpu):
     # from raw cudf initializer
     raw = cudf.Series(cupy.random.rand(100), name="a")
     r = md.Series(raw, chunk_size=13)
-    result = r.execute().fetch()
+    result = r.execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(result.to_pandas(), raw.to_pandas())
 
     raw = cupy.random.rand(100)
     r = md.Series(raw, name="a", chunk_size=13)
-    result = r.execute().fetch()
+    result = r.execute().fetch(to_cpu=False)
     expected = cudf.Series(raw, name="a")
     pd.testing.assert_series_equal(result.to_pandas(), expected.to_pandas())
 
@@ -200,11 +200,11 @@ def test_index_gpu_initializer(setup_gpu):
     # from raw cudf initializer
     raw = cudf.Index(cupy.random.rand(100), name="a")
     r = md.Index(raw, chunk_size=13)
-    result = r.execute().fetch()
+    result = r.execute().fetch(to_cpu=False)
     pd.testing.assert_index_equal(result.to_pandas(), raw.to_pandas())
 
     raw = cupy.random.rand(100)
     r = md.Index(raw, name="a", chunk_size=13)
-    result = r.execute().fetch()
+    result = r.execute().fetch(to_cpu=False)
     expected = cudf.Index(raw, name="a")
     pd.testing.assert_index_equal(result.to_pandas(), expected.to_pandas())
