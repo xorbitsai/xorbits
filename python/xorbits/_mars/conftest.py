@@ -30,6 +30,17 @@ ray = lazy_import("ray")
 MARS_CI_BACKEND = os.environ.get("MARS_CI_BACKEND", "mars")
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--gpu", action="store_true", default=False, help="run test cases on GPU."
+    )
+
+
+@pytest.fixture
+def gpu(request):
+    return request.config.option.gpu
+
+
 @pytest.fixture(autouse=True)
 def auto_cleanup(request):
     request.addfinalizer(clear_all_alru_caches)

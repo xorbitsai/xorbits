@@ -19,9 +19,9 @@ import pandas as pd
 from ... import opcodes
 from ...core import ENTITY_TYPE, get_output_types, recursive_tile
 from ...serialization.serializables import AnyField, Int8Field, KeyField
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index, validate_axis
+from ..utils import get_xdf, parse_index, validate_axis
 
 
 class DataFrameSetAxis(DataFrameOperand, DataFrameOperandMixin):
@@ -171,7 +171,18 @@ class DataFrameSetAxis(DataFrameOperand, DataFrameOperandMixin):
         value = op.value
         if isinstance(value, ENTITY_TYPE):
             value = ctx[value.key]
-        ctx[op.outputs[0].key] = in_data.set_axis(value, axis=op.axis)
+
+        xdf = get_xdf(in_data)
+        if is_same_module(xdf, pd):
+            ctx[op.outputs[0].key] = in_data.set_axis(value, axis=op.axis)
+        else:
+            ctx[op.outputs[0].key] = in_data.set_axis(value, axis=op.axis)
+            # cudf does not support set_axis.
+            # if op.axis == 0:
+            #                 ctx[op.outputs[0].key] = in_data.set_index(value, axis=op.axis)
+            #             else:
+            #                 in_data.columns = value
+            #                 ctx[op.outputs[0].key] = in_data
 
 
 def _set_axis(df_or_axis, labels, axis=0, copy=False):

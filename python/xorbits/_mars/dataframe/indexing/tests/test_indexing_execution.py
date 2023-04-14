@@ -20,6 +20,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from ....tests.core import support_cuda
+
 try:
     import pyarrow as pa
 except ImportError:  # pragma: no cover
@@ -1481,14 +1483,15 @@ def test_where_execution(setup):
     pd.testing.assert_frame_equal(new_df.execute().fetch(), raw_df.mask(raw_df < 0))
 
 
-def test_set_axis_execution(setup):
+@support_cuda
+def test_set_axis_execution(setup_gpu, gpu):
     raw_df = pd.DataFrame(np.random.rand(10, 5), columns=["c1", "c2", "c3", "c4", "c5"])
-    df = md.DataFrame(raw_df, chunk_size=3)
+    df = md.DataFrame(raw_df, chunk_size=3, gpu=gpu)
 
     # test axis=0
     idx_data = np.arange(0, 10)
     np.random.shuffle(idx_data)
-    new_idx = md.Index(idx_data, chunk_size=4)
+    new_idx = md.Index(idx_data, chunk_size=4, gpu=gpu)
 
     r = df.set_axis(new_idx)
     pd.testing.assert_frame_equal(r.execute().fetch(), raw_df.set_axis(idx_data))
@@ -1501,7 +1504,7 @@ def test_set_axis_execution(setup):
     df1.index = pd.Index(range(9, -1, -1))
     pd.testing.assert_frame_equal(df1.execute().fetch(), raw_df.set_axis(new_idx))
 
-    ser = md.Series(idx_data)
+    ser = md.Series(idx_data, gpu=gpu)
     with pytest.raises(ValueError):
         df.set_axis(ser[ser > 5]).execute()
 
@@ -1512,7 +1515,7 @@ def test_set_axis_execution(setup):
         r.execute().fetch(), raw_df.set_axis(new_axis, axis=1)
     )
 
-    r = df.set_axis(md.Index(new_axis, store_data=True), axis=1)
+    r = df.set_axis(md.Index(new_axis, store_data=True, gpu=gpu), axis=1)
     pd.testing.assert_frame_equal(
         r.execute().fetch(), raw_df.set_axis(new_axis, axis=1)
     )
@@ -1528,11 +1531,11 @@ def test_set_axis_execution(setup):
 
     # test series
     raw_series = pd.Series(np.random.rand(10))
-    s = md.Series(raw_series, chunk_size=3)
+    s = md.Series(raw_series, chunk_size=3, gpu=gpu)
 
     idx_data = np.arange(0, 10)
     np.random.shuffle(idx_data)
-    new_idx = md.Index(idx_data, chunk_size=4)
+    new_idx = md.Index(idx_data, chunk_size=4, gpu=gpu)
 
     r = s.set_axis(new_idx)
     pd.testing.assert_series_equal(r.execute().fetch(), raw_series.set_axis(idx_data))
