@@ -1515,34 +1515,50 @@ def test_groupby_nunique(setup):
 
 
 def _generate_params_for_gpu():
-    for chunked in (False, True):
-        for as_index in (False, True):
-            for sort in (False, True):
-                yield chunked, as_index, sort
+    for data_type in ("df", "series"):
+        for chunked in (False, True):
+            for as_index in (False, True):
+                for sort in (False, True):
+                    yield data_type, chunked, as_index, sort
 
 
 @require_cudf
 @pytest.mark.parametrize(
-    "chunked,as_index,sort",
+    "data_type,chunked,as_index,sort",
     _generate_params_for_gpu(),
 )
-def test_gpu_groupby_size(chunked, as_index, sort, setup_gpu):
-    data = {"a": [i + 1 for i in range(20)], "b": [i * 2 + 1 for i in range(20)]}
-    df = pd.DataFrame(data)
+def test_gpu_groupby_size(data_type, chunked, as_index, sort, setup_gpu):
+    data1 = [i + 1 for i in range(20)]
+    data2 = [i * 2 + 1 for i in range(20)]
+    data = {"a": data1, "b": data2}
 
-    expected = df.groupby(["a"], as_index=as_index, sort=sort).size()
+    if data_type == "df":
+        df = pd.DataFrame(data)
+        expected = df.groupby(["a"], as_index=as_index, sort=sort).size()
+    else:
+        series = pd.Series(data1 + data2)
+        if not as_index and data_type == "series":
+            with pytest.raises(Exception):
+                series.groupby(level=0, as_index=as_index, sort=sort).size()
+            pytest.skip(
+                "Skip this since pandas series groupby not support as_index=False"
+            )
+        expected = series.groupby(level=0, as_index=as_index, sort=sort).size()
 
     chunk_size = 3 if chunked else None
-    mdf = md.DataFrame(data, chunk_size=chunk_size).to_gpu()
-    res = mdf.groupby(["a"], as_index=as_index, sort=sort).size()
+
+    if data_type == "df":
+        mdf = md.DataFrame(data, chunk_size=chunk_size).to_gpu()
+        res = mdf.groupby(["a"], as_index=as_index, sort=sort).size()
+    else:
+        series = md.Series(data1 + data2, chunk_size=chunk_size).to_gpu()
+        res = series.groupby(level=0, as_index=as_index, sort=sort).size()
     actual = res.execute().fetch().to_pandas()
 
     if isinstance(expected, pd.DataFrame):
-        assert not as_index
         # cudf groupby size not ensure order
         actual = actual.sort_values(by="a").reset_index(drop=True)
         pd.testing.assert_frame_equal(expected, actual)
     else:
-        assert as_index
         actual = actual.sort_index()
         pd.testing.assert_series_equal(expected, actual)

@@ -1006,7 +1006,9 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             return custom_agg_functions[func_name].execute_agg(op, in_data)
 
     @staticmethod
-    def _do_predefined_agg(input_obj, agg_func, single_func=False, gpu=False, **kwds):
+    def _do_predefined_agg(
+        input_obj, agg_func, single_func: bool = False, gpu: bool = False, **kwds
+    ):
         ndim = getattr(input_obj, "ndim", None) or input_obj.obj.ndim
         if agg_func == "str_concat":
             agg_func = lambda x: x.str.cat(**kwds)
