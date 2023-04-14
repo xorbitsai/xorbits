@@ -903,7 +903,7 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
         # when axis is not None, cudf raises Error
         # ref: https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.dataframe.agg
         axis = op.axis if op.axis == 1 else None
-        global result
+        result = None
         try:
             result = data.agg(func_name, axis=axis)
         except Exception as error:
