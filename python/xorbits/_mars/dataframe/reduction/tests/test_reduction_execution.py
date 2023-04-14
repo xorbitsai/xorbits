@@ -1088,6 +1088,7 @@ def _generate_parameters_for_gpu_agg(methods):
             "std",
             "sum",
             "var",
+            "mean",
         ]
     ),
 )
@@ -1124,6 +1125,34 @@ def test_gpu_agg_ok(data_type, agg_way, chunked, method, setup_gpu):
             assert pytest.approx(expected, 1e-5) == res.fetch()
         else:
             assert expected == res.fetch()
+
+
+def _generate_parameters_for_gpu_agg_with_error(methods):
+    for data_type in ("df", "series"):
+        for method in methods:
+            yield data_type, method
+
+
+@require_cudf
+@require_cupy
+@pytest.mark.parametrize(
+    "data_type,method",
+    _generate_parameters_for_gpu_agg_with_error(
+        ("sem", max, ["sum", "size"], ["mean", sum])
+    ),
+)
+def test_gpu_agg_with_error(data_type, method, setup_gpu):
+    data = [i + 1 for i in range(50)]
+    if data_type == "df":
+        mdf = md.DataFrame({"a": data}).to_gpu()
+    else:
+        mdf = md.Series(data).to_gpu()
+    with pytest.raises(Exception, match=r"Cudf"):
+        mdf.agg(method).execute()
+
+    if isinstance(method, str):
+        with pytest.raises(Exception, match=r"Cudf"):
+            getattr(mdf, method)().execute()
 
 
 @require_cudf

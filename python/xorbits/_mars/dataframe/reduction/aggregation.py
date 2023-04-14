@@ -18,7 +18,7 @@ import functools
 import itertools
 from collections import OrderedDict
 from collections.abc import Iterable
-from typing import Dict, List
+from typing import Callable, Dict, List, Union
 
 import numpy as np
 import pandas as pd
@@ -871,6 +871,22 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
         ctx[op.outputs[0].key] = concat_df
 
     @classmethod
+    def _handle_cudf_agg_error(
+        cls,
+        func_name: Union[str, List[str], Callable, List[Callable]],
+        exception: Exception,
+    ):
+        if callable(func_name) or (
+            isinstance(func_name, list) and any([callable(f) for f in func_name])
+        ):
+            raise NotImplementedError(
+                "Cudf does not support callable type aggregation functions for now. "
+                "Please try to replace them with string type ones."
+            ) from exception
+        else:
+            raise RuntimeError(f"Cudf error: {str(exception)}") from exception
+
+    @classmethod
     def _cudf_agg(cls, op: "DataFrameAggregate", in_data):
         data = in_data
         if is_series(in_data):
@@ -883,11 +899,21 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
         func_name = (
             op.func_rename[0] or op.func[0] if len(op.func) == 1 else op.func_rename
         )
-        # cudf doesn't support the parameter axis
+        # df.agg doesn't support the parameter axis in cudf
         # when axis is not None, cudf raises Error
         # ref: https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.dataframe.agg
         axis = op.axis if op.axis == 1 else None
-        result = data.agg(func_name, axis=axis)
+        global result
+        try:
+            result = data.agg(func_name, axis=axis)
+        except Exception as error:
+            if isinstance(func_name, str):
+                try:
+                    result = getattr(data, func_name)(axis=axis)
+                except Exception as e:
+                    cls._handle_cudf_agg_error(func_name, e)
+            else:
+                cls._handle_cudf_agg_error(func_name, error)
 
         if is_series(result) and op.output_types[0] == OutputType.scalar:
             result = result[0]
