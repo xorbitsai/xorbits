@@ -30,7 +30,6 @@ def test_rolling_agg_execution(setup):
             "a": rs.randint(100, size=(10,)),
             "b": rs.rand(10),
             "c": rs.randint(100, size=(10,)),
-            "d": ["c" * i for i in rs.randint(4, size=10)],
         }
     )
     raw.iloc[1, ::4] = np.nan

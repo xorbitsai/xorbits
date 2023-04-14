@@ -221,24 +221,14 @@ class DataFrameWhere(DataFrameOperand, DataFrameOperandMixin):
         if isinstance(other, ENTITY_TYPE):
             other = ctx[other.key]
 
+        params = dict(axis=op.axis, level=op.level)
+        if not is_pandas_2():
+            params["errors"] = op.errors
+            params["try_cast"] = op.try_cast
         if op.replace_true:
-            ctx[out_obj.key] = input_data.mask(
-                cond,
-                other,
-                axis=op.axis,
-                level=op.level,
-                errors=op.errors,
-                try_cast=op.try_cast,
-            )
+            ctx[out_obj.key] = input_data.mask(cond, other, **params)
         else:
-            ctx[out_obj.key] = input_data.where(
-                cond,
-                other,
-                axis=op.axis,
-                level=op.level,
-                errors=op.errors,
-                try_cast=op.try_cast,
-            )
+            ctx[out_obj.key] = input_data.where(cond, other, **params)
 
 
 _doc_template = """
