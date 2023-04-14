@@ -176,13 +176,12 @@ class DataFrameSetAxis(DataFrameOperand, DataFrameOperandMixin):
         if is_same_module(xdf, pd):
             ctx[op.outputs[0].key] = in_data.set_axis(value, axis=op.axis)
         else:
-            ctx[op.outputs[0].key] = in_data.set_axis(value, axis=op.axis)
             # cudf does not support set_axis.
-            # if op.axis == 0:
-            #                 ctx[op.outputs[0].key] = in_data.set_index(value, axis=op.axis)
-            #             else:
-            #                 in_data.columns = value
-            #                 ctx[op.outputs[0].key] = in_data
+            if op.axis == 0:
+                ctx[op.outputs[0].key] = in_data.set_index(value, axis=op.axis)
+            else:
+                in_data.columns = value
+                ctx[op.outputs[0].key] = in_data
 
 
 def _set_axis(df_or_axis, labels, axis=0, copy=False):
