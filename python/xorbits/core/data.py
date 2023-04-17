@@ -104,8 +104,14 @@ class Data:
     def __repr__(self):
         if self._mars_entity is not None:
             return self._mars_entity.__repr__()
-        else:
+        else:  # pragma: no cover
             return super().__repr__()
+
+    def __array__(self):
+        if self._mars_entity is not None:
+            return self._mars_entity.__array__()
+        else:  # pragma: no cover
+            raise AttributeError("__array__")
 
 
 class DataRefMeta(type):
@@ -254,6 +260,15 @@ class DataRef(metaclass=DataRefMeta):
         else:
             run(self)
             return self.data.__repr__()
+
+    def __array__(self):
+        from .execution import run
+
+        if self._own_data():
+            return self.data._mars_entity.op.data.__array__()
+        else:
+            run(self)
+            return self.data.__array__()
 
     def _to_int(self, cast=False):
         from .execution import run

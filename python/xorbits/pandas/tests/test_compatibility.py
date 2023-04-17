@@ -40,5 +40,9 @@ def test_array_conversion(test_dict, request):
     df = pd.DataFrame(test_dict)
     xdf = xpd.DataFrame(test_dict)
 
-    assert np.array_equal(df.__array__(), xdf.__array__())
-    assert np.array_equal(np.array(df), np.array(xdf))
+    expected = df.__array__()
+    test_array = xdf.__array__()
+    test_numpy = np.array(xdf)
+
+    np.testing.assert_array_equal(test_array, expected)
+    np.testing.assert_array_equal(test_numpy, expected)

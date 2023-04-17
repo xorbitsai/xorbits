@@ -2181,11 +2181,10 @@ class DataFrameData(_BatchedFetcher, BaseDataFrameData):
 
     def _to_arr(self):
         if len(self._executed_sessions) == 0:
-            data = np.asarray(self.__mars_tensor__().data)
-            return np.asarray(data)
-        else:
-            data = self.fetch(session=self._executed_sessions[-1])
-            return np.asarray(data)
+            raise NotImplementedError
+
+        data = self.fetch(session=self._executed_sessions[-1])
+        return np.asarray(data)
 
     def __array__(self):
         return self._to_arr()
