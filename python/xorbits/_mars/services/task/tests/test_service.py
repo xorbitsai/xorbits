@@ -81,7 +81,6 @@ async def _start_services(
             "scheduling",
             "subtask",
             "task",
-            "mutable",
         ],
         "cluster": {
             "backend": "fixed",
