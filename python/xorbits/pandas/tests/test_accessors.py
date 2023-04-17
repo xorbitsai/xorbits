@@ -140,3 +140,6 @@ def test_obj_docstring(setup, dummy_str_series, dummy_dt_series, dummy_df):
     assert dummy_df.iat.__doc__ is not None and dummy_df.iat.__doc__.endswith(
         "This docstring was copied from pandas."
     )
+
+def test_dir(setup):
+    assert pd.__dir__().sort() == xpd.__dir__().sort()
