@@ -43,7 +43,6 @@ def __dir__():
     from .pandas_adapters import collect_pandas_module_members
 
     global PANDAS_MODULE_METHODS
-    import pandas
 
     if PANDAS_MODULE_METHODS is None:  # pragma: no cover
         PANDAS_MODULE_METHODS = collect_pandas_module_members()
