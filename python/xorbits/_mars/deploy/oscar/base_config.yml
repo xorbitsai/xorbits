@@ -7,7 +7,6 @@ services:
   - scheduling
   - subtask
   - task
-  - mutable
 cluster:
   backend: fixed
   node_timeout: 120
