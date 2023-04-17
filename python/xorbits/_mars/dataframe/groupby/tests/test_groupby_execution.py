@@ -790,17 +790,18 @@ def test_gpu_groupby_agg(setup_gpu):
 
     r = mdf.groupby("a").sum()
     pd.testing.assert_frame_equal(
-        r.execute().fetch().to_pandas(), df1.groupby("a").sum()
+        r.execute().fetch(to_cpu=False).to_pandas(), df1.groupby("a").sum()
     )
 
     r = mdf.groupby("a").kurt()
     pd.testing.assert_frame_equal(
-        r.execute().fetch().to_pandas(), df1.groupby("a").kurt()
+        r.execute().fetch(to_cpu=False).to_pandas(), df1.groupby("a").kurt()
     )
 
     r = mdf.groupby("a").agg(["sum", "var"])
     pd.testing.assert_frame_equal(
-        r.execute().fetch().to_pandas(), df1.groupby("a").agg(["sum", "var"])
+        r.execute().fetch(to_cpu=False).to_pandas(),
+        df1.groupby("a").agg(["sum", "var"]),
     )
 
     rs = np.random.RandomState(0)
@@ -810,17 +811,18 @@ def test_gpu_groupby_agg(setup_gpu):
 
     r = ms.groupby(level=0).sum()
     pd.testing.assert_series_equal(
-        r.execute().fetch().to_pandas(), series1.groupby(level=0).sum()
+        r.execute().fetch(to_cpu=False).to_pandas(), series1.groupby(level=0).sum()
     )
 
     r = ms.groupby(level=0).kurt()
     pd.testing.assert_series_equal(
-        r.execute().fetch().to_pandas(), series1.groupby(level=0).kurt()
+        r.execute().fetch(to_cpu=False).to_pandas(), series1.groupby(level=0).kurt()
     )
 
     r = ms.groupby(level=0).agg(["sum", "var"])
     pd.testing.assert_frame_equal(
-        r.execute().fetch().to_pandas(), series1.groupby(level=0).agg(["sum", "var"])
+        r.execute().fetch(to_cpu=False).to_pandas(),
+        series1.groupby(level=0).agg(["sum", "var"]),
     )
 
 
