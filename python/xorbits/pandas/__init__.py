@@ -27,6 +27,7 @@ from ..core.utils.fallback import unimplemented_func
 from . import accessors, core, groupby, plotting, window
 from .core import DataFrame, Index, Series
 
+
 def _install():
     from .mars_adapters import _install as _install_mars_methods
     from .pandas_adapters import _install as _install_pandas_methods
@@ -39,7 +40,9 @@ def __dir__():
     from .mars_adapters import MARS_DATAFRAME_CALLABLES
     from .pandas_adapters import collect_pandas_module_members
 
-    return list(MARS_DATAFRAME_CALLABLES.keys()) + list(collect_pandas_module_members().keys())
+    return list(MARS_DATAFRAME_CALLABLES.keys()) + list(
+        collect_pandas_module_members().keys()
+    )
 
 
 def __getattr__(name: str):
