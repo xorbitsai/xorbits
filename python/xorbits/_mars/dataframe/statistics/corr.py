@@ -346,7 +346,7 @@ def df_corrwith(df, other, axis=0, drop=False, method="pearson", numeric_only=Fa
     return op(df)
 
 
-def series_corr(series, other, method="pearson", min_periods=None, numeric_only=False):
+def series_corr(series, other, method="pearson", min_periods=None):
     """
     Compute correlation with `other` Series, excluding missing values.
 
@@ -367,8 +367,6 @@ def series_corr(series, other, method="pearson", min_periods=None, numeric_only=
 
     min_periods : int, optional
         Minimum number of observations needed to have a valid result.
-    numeric_only : bool, default False
-        Include only float, int or boolean data.
 
     Returns
     -------
@@ -389,9 +387,7 @@ def series_corr(series, other, method="pearson", min_periods=None, numeric_only=
     >>> s1.corr(s2, method='pearson').execute()
     -0.8510644963469898
     """
-    op = DataFrameCorr(
-        other=other, method=method, min_periods=min_periods, numeric_only=numeric_only
-    )
+    op = DataFrameCorr(other=other, method=method, min_periods=min_periods)
     return op(series)
 
 

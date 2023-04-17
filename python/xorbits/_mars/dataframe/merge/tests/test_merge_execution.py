@@ -664,7 +664,7 @@ def test_merge_on_duplicate_columns(setup, auto_merge):
     pd.testing.assert_frame_equal(expected, result)
 
 
-@pytest.mark.skipif(is_pandas_2(), reason="Pandas 2.0 hasn't support append")
+@pytest.mark.skipif(is_pandas_2(), reason="Pandas 2.0 hasn't supported append")
 def test_append_execution(setup):
     df1 = pd.DataFrame(np.random.rand(10, 4), columns=list("ABCD"))
     df2 = pd.DataFrame(np.random.rand(10, 4), columns=list("ABCD"))
