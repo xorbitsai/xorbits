@@ -951,9 +951,13 @@ def test_date_time_bin_gpu(data_type, chunked, bin_op, setup_gpu):
         expected = (pandas_data >= date1) ^ (pandas_data < date2)
 
     if isinstance(expected, pd.DataFrame):
-        pd.testing.assert_frame_equal(expected, actual.execute().fetch().to_pandas())
+        pd.testing.assert_frame_equal(
+            expected, actual.execute().fetch(to_cpu=False).to_pandas()
+        )
     else:
-        pd.testing.assert_series_equal(expected, actual.execute().fetch().to_pandas())
+        pd.testing.assert_series_equal(
+            expected, actual.execute().fetch(to_cpu=False).to_pandas()
+        )
 
 
 def test_series_and_tensor(setup):
