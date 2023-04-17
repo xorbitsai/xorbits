@@ -335,30 +335,30 @@ def test_gpu_execution(setup_gpu, check_ref_counts):
     df = to_gpu(md.DataFrame(df_raw, chunk_size=6))
 
     r = df.sum()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(res.to_pandas(), df_raw.sum())
 
     r = df.kurt()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(res.to_pandas(), df_raw.kurt())
 
     r = df.agg(["sum", "var"])
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_frame_equal(res.to_pandas(), df_raw.agg(["sum", "var"]))
 
     s_raw = pd.Series(np.random.rand(30))
     s = to_gpu(md.Series(s_raw, chunk_size=6))
 
     r = s.sum()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     assert pytest.approx(res) == s_raw.sum()
 
     r = s.kurt()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     assert pytest.approx(res) == s_raw.kurt()
 
     r = s.agg(["sum", "var"])
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(res.to_pandas(), s_raw.agg(["sum", "var"]))
 
     s_raw = pd.Series(
@@ -367,7 +367,7 @@ def test_gpu_execution(setup_gpu, check_ref_counts):
     s = to_gpu(md.Series(s_raw, chunk_size=6))
 
     r = s.unique()
-    res = r.execute().fetch()
+    res = r.execute().fetch(to_cpu=False)
     np.testing.assert_array_equal(cp.asnumpy(res).sort(), s_raw.unique().sort())
 
 
@@ -1061,3 +1061,129 @@ def test_custom_series_aggregate(setup, check_ref_counts):
 
     result = s.agg(MockReduction2())
     assert pytest.approx(result.execute().fetch()) == data.agg(MockReduction2())
+
+
+def _generate_parameters_for_gpu_agg(methods):
+    for data_type in ("series", "df"):
+        for agg_way in ("str", "func"):
+            for chunked in (False, True):
+                for method in methods:
+                    yield data_type, agg_way, chunked, method
+
+
+@require_cudf
+@require_cupy
+@pytest.mark.parametrize(
+    "data_type,agg_way,chunked,method",
+    _generate_parameters_for_gpu_agg(
+        [
+            "all",
+            "any",
+            "count",
+            "kurtosis",
+            "max",
+            "min",
+            "prod",
+            "skew",
+            "std",
+            "sum",
+            "var",
+            "mean",
+        ]
+    ),
+)
+def test_gpu_agg_ok(data_type, agg_way, chunked, method, setup_gpu):
+    data = [i + 1 for i in range(50)]
+
+    if data_type == "df":
+        pd_data = pd.DataFrame({"a": data})
+    else:
+        pd_data = pd.Series(data)
+
+    if agg_way == "str":
+        expected = pd_data.agg(method)
+    else:
+        expected = getattr(pd_data, method)()
+
+    chunk_size = 3 if chunked else None
+    if data_type == "df":
+        mdf = md.DataFrame({"a": data}, chunk_size=chunk_size).to_gpu()
+    else:
+        mdf = md.Series(data, chunk_size=chunk_size).to_gpu()
+
+    if agg_way == "str":
+        res = mdf.agg(method).execute()
+    else:
+        res = getattr(mdf, method)().execute()
+
+    if isinstance(expected, pd.DataFrame):
+        pd.testing.assert_frame_equal(expected, res.fetch().to_pandas())
+    elif isinstance(expected, pd.Series):
+        pd.testing.assert_series_equal(expected, res.fetch().to_pandas())
+    else:
+        if method == "kurtosis":
+            assert pytest.approx(expected, 1e-5) == res.fetch()
+        else:
+            assert expected == res.fetch()
+
+
+def _generate_parameters_for_gpu_agg_with_error(methods):
+    for data_type in ("df", "series"):
+        for method in methods:
+            yield data_type, method
+
+
+@require_cudf
+@require_cupy
+@pytest.mark.parametrize(
+    "data_type,method",
+    _generate_parameters_for_gpu_agg_with_error(
+        ("sem", max, ["sum", "size"], ["mean", sum])
+    ),
+)
+def test_gpu_agg_with_error(data_type, method, setup_gpu):
+    data = [i + 1 for i in range(50)]
+    if data_type == "df":
+        mdf = md.DataFrame({"a": data}).to_gpu()
+    else:
+        mdf = md.Series(data).to_gpu()
+    with pytest.raises(Exception, match=r"Cudf"):
+        mdf.agg(method).execute()
+
+    if isinstance(method, str):
+        with pytest.raises(Exception, match=r"Cudf"):
+            getattr(mdf, method)().execute()
+
+
+@require_cudf
+@require_cupy
+def test_gpu_multi_agg_methods(setup_gpu):
+    df = pd.DataFrame({"a": [1, 2, 3]})
+    expected = df.agg(["max", "min"])
+
+    mdf = to_gpu(md.DataFrame({"a": [1, 2, 3]}))
+    res = mdf.agg(["max", "min"]).execute().fetch()
+
+    pd.testing.assert_frame_equal(expected, res.to_pandas())
+
+    series = pd.Series([1, 2, 3])
+    expected = series.agg(["max", "min"])
+    mars_series = to_gpu(md.Series([1, 2, 3]))
+    res = mars_series.agg(["max", "min"]).execute().fetch()
+
+    pd.testing.assert_series_equal(expected, res.to_pandas())
+
+    data = [i + 1 for i in range(50)]
+    df = pd.DataFrame({"a": data})
+    expected = df.agg(["sum", "max"])
+    mdf = md.DataFrame({"a": data}, chunk_size=3).to_gpu()
+    res = mdf.agg(["sum", "max"]).execute().fetch()
+
+    pd.testing.assert_frame_equal(expected, res.to_pandas())
+
+    series = pd.Series(data)
+    expected = series.agg(["sum", "prod"])
+    mars_series = md.Series(data, chunk_size=3).to_gpu()
+
+    res = mars_series.agg(["sum", "prod"]).execute().fetch()
+    pd.testing.assert_series_equal(expected, res.to_pandas())
