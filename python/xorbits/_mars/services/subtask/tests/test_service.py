@@ -85,7 +85,6 @@ async def test_subtask_service(actor_pools):
             "scheduling",
             "subtask",
             "task",
-            "mutable",
         ],
         "cluster": {
             "backend": "fixed",
