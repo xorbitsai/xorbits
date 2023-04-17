@@ -36,7 +36,6 @@ from .....utils import Timer
 from ....cluster import MockClusterAPI
 from ....lifecycle import MockLifecycleAPI
 from ....meta import MockMetaAPI, MockWorkerMetaAPI
-from ....mutable import MockMutableAPI
 from ....scheduling import MockSchedulingAPI
 from ....session import MockSessionAPI
 from ....storage import MockStorageAPI
@@ -91,7 +90,6 @@ async def actor_pool():
         await MockLifecycleAPI.create(session_id, pool.external_address)
         storage_api = await MockStorageAPI.create(session_id, pool.external_address)
         await MockSchedulingAPI.create(session_id, pool.external_address)
-        await MockMutableAPI.create(session_id, pool.external_address)
 
         # create configuration
         await mo.create_actor(
@@ -124,7 +122,6 @@ async def actor_pool():
         finally:
             await MockStorageAPI.cleanup(pool.external_address)
             await MockClusterAPI.cleanup(pool.external_address)
-            await MockMutableAPI.cleanup(session_id, pool.external_address)
 
 
 def _gen_subtask(t, session_id):

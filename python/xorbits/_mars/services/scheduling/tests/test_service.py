@@ -117,7 +117,6 @@ async def actor_pools():
             "scheduling",
             "subtask",
             "task",
-            "mutable",
             "web",
         ],
         "cluster": {
