@@ -1092,7 +1092,7 @@ def _generate_parameters_for_gpu_agg(methods):
         ]
     ),
 )
-def test_gpu_agg_ok(data_type, agg_way, chunked, method, setup_gpu):
+def test_gpu_agg_positive(data_type, agg_way, chunked, method, setup_gpu):
     data = [i + 1 for i in range(50)]
 
     if data_type == "df":
@@ -1117,14 +1117,14 @@ def test_gpu_agg_ok(data_type, agg_way, chunked, method, setup_gpu):
         res = getattr(mdf, method)().execute()
 
     if isinstance(expected, pd.DataFrame):
-        pd.testing.assert_frame_equal(expected, res.fetch().to_pandas())
+        pd.testing.assert_frame_equal(expected, res.fetch(to_cpu=False).to_pandas())
     elif isinstance(expected, pd.Series):
-        pd.testing.assert_series_equal(expected, res.fetch().to_pandas())
+        pd.testing.assert_series_equal(expected, res.fetch(to_cpu=False).to_pandas())
     else:
         if method == "kurtosis":
-            assert pytest.approx(expected, 1e-5) == res.fetch()
+            assert pytest.approx(expected, 1e-5) == res.fetch(to_cpu=False)
         else:
-            assert expected == res.fetch()
+            assert expected == res.fetch(to_cpu=False)
 
 
 def _generate_parameters_for_gpu_agg_with_error(methods):
@@ -1141,7 +1141,7 @@ def _generate_parameters_for_gpu_agg_with_error(methods):
         ("sem", max, ["sum", "size"], ["mean", sum])
     ),
 )
-def test_gpu_agg_with_error(data_type, method, setup_gpu):
+def test_gpu_agg_negative(data_type, method, setup_gpu):
     data = [i + 1 for i in range(50)]
     if data_type == "df":
         mdf = md.DataFrame({"a": data}).to_gpu()
@@ -1162,14 +1162,14 @@ def test_gpu_multi_agg_methods(setup_gpu):
     expected = df.agg(["max", "min"])
 
     mdf = to_gpu(md.DataFrame({"a": [1, 2, 3]}))
-    res = mdf.agg(["max", "min"]).execute().fetch()
+    res = mdf.agg(["max", "min"]).execute().fetch(to_cpu=False)
 
     pd.testing.assert_frame_equal(expected, res.to_pandas())
 
     series = pd.Series([1, 2, 3])
     expected = series.agg(["max", "min"])
     mars_series = to_gpu(md.Series([1, 2, 3]))
-    res = mars_series.agg(["max", "min"]).execute().fetch()
+    res = mars_series.agg(["max", "min"]).execute().fetch(to_cpu=False)
 
     pd.testing.assert_series_equal(expected, res.to_pandas())
 
@@ -1177,7 +1177,7 @@ def test_gpu_multi_agg_methods(setup_gpu):
     df = pd.DataFrame({"a": data})
     expected = df.agg(["sum", "max"])
     mdf = md.DataFrame({"a": data}, chunk_size=3).to_gpu()
-    res = mdf.agg(["sum", "max"]).execute().fetch()
+    res = mdf.agg(["sum", "max"]).execute().fetch(to_cpu=False)
 
     pd.testing.assert_frame_equal(expected, res.to_pandas())
 
@@ -1185,5 +1185,5 @@ def test_gpu_multi_agg_methods(setup_gpu):
     expected = series.agg(["sum", "prod"])
     mars_series = md.Series(data, chunk_size=3).to_gpu()
 
-    res = mars_series.agg(["sum", "prod"]).execute().fetch()
+    res = mars_series.agg(["sum", "prod"]).execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(expected, res.to_pandas())
