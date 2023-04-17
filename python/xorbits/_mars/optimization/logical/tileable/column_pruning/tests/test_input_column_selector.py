@@ -86,7 +86,7 @@ def test_df_groupby_agg():
     assert df.data in input_columns
     assert input_columns[df.data] == {"foo", "baz"}
 
-    s = df.groupby(by="foo")["bar", "baz"].agg(["sum", "max"])
+    s = df.groupby(by="foo")[["bar", "baz"]].agg(["sum", "max"])
     input_columns = InputColumnSelector.select(s.data, {"baz"})
     assert len(input_columns) == 1
     assert df.data in input_columns

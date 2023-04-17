@@ -891,7 +891,7 @@ def test_read_sql_execution(setup):
         r = md.read_sql_query(
             "select * from test where b > 's5'",
             uri,
-            parse_dates={"d": "%Y-%m-%d %H:%M:%S"},
+            parse_dates={"d": "%Y-%m-%d %H:%M:%S.%f"},
             partition_col="d",
             num_partitions=3,
         )

@@ -295,9 +295,17 @@ def parse_index(index_value, *args, store_data=False, key=None):
             return None
 
     def _serialize_index(index):
-        tp = getattr(IndexValue, type(index).__name__)
+        extra_properties = dict(_name=index.name)
+        if not is_pandas_2():
+            tp = getattr(IndexValue, type(index).__name__)
+        else:
+            # pandas 2.0 does not have `Int64Index`, `Float64Index`, etc.
+            name = type(index).__name__
+            if name == "Index":
+                extra_properties["_dtype"] = index.dtype
+            tp = getattr(IndexValue, type(index).__name__)
         properties = _extract_property(index, tp, store_data)
-        properties["_name"] = index.name
+        properties.update(extra_properties)
         return tp(**properties)
 
     def _serialize_range_index(index):
@@ -1442,3 +1450,7 @@ def concat_on_columns(objs: List) -> Any:
     if xdf is cudf:
         result.index = objs[0].index
     return result
+
+
+def is_pandas_2():
+    return pd.__version__ >= "2.0.0"

@@ -231,7 +231,7 @@ class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
             [left, right],
             shape=(np.nan, merged.shape[1]),
             dtypes=merged.dtypes,
-            index_value=parse_index(merged.index, *index_tokenize_objects),
+            index_value=parse_index(merged.index[:0], *index_tokenize_objects),
             columns_value=parse_index(merged.columns, store_data=True),
         )
 

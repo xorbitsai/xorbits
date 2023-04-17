@@ -30,7 +30,7 @@ from ..align import (
 )
 from ..core import DATAFRAME_TYPE, SERIES_TYPE
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import validate_axis
+from ..utils import is_pandas_2, validate_axis
 
 
 class FillNA(DataFrameOperand, DataFrameOperandMixin):
@@ -164,9 +164,18 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
         else:
             concat_df = pd.concat([valid_summary, input_data], axis=axis)
 
-        concat_df.fillna(
-            method=method, axis=axis, inplace=True, limit=limit, downcast=op.downcast
-        )
+        if is_pandas_2():
+            concat_df = concat_df.fillna(
+                method=method, axis=axis, limit=limit, downcast=op.downcast
+            )
+        else:
+            concat_df.fillna(
+                method=method,
+                axis=axis,
+                inplace=True,
+                limit=limit,
+                downcast=op.downcast,
+            )
         ctx[op.outputs[0].key] = cls._get_first_slice(op, concat_df, -1)
 
     @classmethod

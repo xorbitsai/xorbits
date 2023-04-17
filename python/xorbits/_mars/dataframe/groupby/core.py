@@ -48,6 +48,7 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
     _op_type_ = OperandDef.GROUPBY
 
     _by = AnyField("by", on_serialize=lambda x: x.data if isinstance(x, Entity) else x)
+    _is_list_by = BoolField("is_list_by")
     _level = AnyField("level")
     _as_index = BoolField("as_index")
     _sort = BoolField("sort")
@@ -62,6 +63,7 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
         as_index=None,
         sort=None,
         group_keys=None,
+        is_list_by=None,
         shuffle_size=None,
         output_types=None,
         **kw
@@ -72,6 +74,7 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
             _as_index=as_index,
             _sort=sort,
             _group_keys=group_keys,
+            _is_list_by=is_list_by,
             _shuffle_size=shuffle_size,
             _output_types=output_types,
             **kw
@@ -114,6 +117,10 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
     @property
     def group_keys(self):
         return self._group_keys
+
+    @property
+    def is_list_by(self):
+        return self._is_list_by
 
     @property
     def shuffle_size(self):
@@ -498,6 +505,8 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
             else:
                 df = inp
                 by = op.by
+            if not op.is_list_by and isinstance(by, list):
+                by = by[0]
             ctx[op.outputs[0].key] = wrapped_groupby(
                 df,
                 by=by,
@@ -517,6 +526,7 @@ def groupby(
     output_types = (
         [OutputType.dataframe_groupby] if df.ndim == 2 else [OutputType.series_groupby]
     )
+    is_list_by = isinstance(by, (list, tuple))
     if isinstance(by, (SERIES_TYPE, pd.Series)):
         if isinstance(by, pd.Series):
             by = asseries(by)
@@ -529,6 +539,7 @@ def groupby(
         as_index=as_index,
         sort=sort,
         group_keys=group_keys if group_keys is not no_default else None,
+        is_list_by=is_list_by,
         output_types=output_types,
     )
     return op(df)

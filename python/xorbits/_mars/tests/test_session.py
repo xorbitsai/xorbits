@@ -329,9 +329,7 @@ def test_iter(setup):
         pd.testing.assert_series_equal(batch, raw_data.iloc[i * 15 : (i + 1) * 15])
 
     i = 0
-    for result_item, expect_item in zip(
-        s.iteritems(batch_size=15), raw_data.iteritems()
-    ):
+    for result_item, expect_item in zip(s.items(batch_size=15), raw_data.items()):
         assert result_item[0] == expect_item[0]
         assert result_item[1] == expect_item[1]
         i += 1

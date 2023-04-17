@@ -62,9 +62,6 @@ def test_dataframe_quantile_execution(setup):
             "a": np.random.rand(10),
             "b": np.random.randint(1000, size=10),
             "c": np.random.rand(10),
-            "d": [np.random.bytes(10) for _ in range(10)],
-            "e": [pd.Timestamp(f"201{i}") for i in range(10)],
-            "f": [pd.Timedelta(f"{i} days") for i in range(10)],
         },
         index=pd.RangeIndex(1, 11),
     )
@@ -147,22 +144,26 @@ def test_dataframe_corr(setup):
 
     df = DataFrame(raw)
 
-    result = df.corr()
-    pd.testing.assert_frame_equal(result.execute().fetch(), raw.corr())
+    result = df.corr(numeric_only=True)
+    pd.testing.assert_frame_equal(result.execute().fetch(), raw.corr(numeric_only=True))
 
-    result = df.corr(method="kendall")
-    pd.testing.assert_frame_equal(result.execute().fetch(), raw.corr(method="kendall"))
+    result = df.corr(method="kendall", numeric_only=True)
+    pd.testing.assert_frame_equal(
+        result.execute().fetch(), raw.corr(method="kendall", numeric_only=True)
+    )
 
     df = DataFrame(raw, chunk_size=6)
 
     with pytest.raises(Exception):
         df.corr(method="kendall").execute()
 
-    result = df.corr()
-    pd.testing.assert_frame_equal(result.execute().fetch(), raw.corr())
+    result = df.corr(numeric_only=True)
+    pd.testing.assert_frame_equal(result.execute().fetch(), raw.corr(numeric_only=True))
 
-    result = df.corr(min_periods=7)
-    pd.testing.assert_frame_equal(result.execute().fetch(), raw.corr(min_periods=7))
+    result = df.corr(min_periods=7, numeric_only=True)
+    pd.testing.assert_frame_equal(
+        result.execute().fetch(), raw.corr(min_periods=7, numeric_only=True)
+    )
 
 
 @pytest.mark.skip_ray_dag  # https://github.com/mars-project/mars/issues/3247

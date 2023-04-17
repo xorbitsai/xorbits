@@ -198,7 +198,12 @@ def require_hadoop(func):
 
 
 def assert_groupby_equal(
-    left, right, sort_keys=False, sort_index=True, with_selection=False
+    left,
+    right,
+    sort_keys=False,
+    sort_index=True,
+    sort_value=False,
+    with_selection=False,
 ):
     if hasattr(left, "groupby_obj"):
         left = left.groupby_obj
@@ -240,8 +245,14 @@ def assert_groupby_equal(
                 right_frame = right_frame[right_selection]
 
         if isinstance(left_frame, pd.DataFrame):
+            if sort_value:
+                left_frame = left_frame.sort_values(by=list(left_frame.columns))
+                right_frame = right_frame.sort_values(by=list(right_frame.columns))
             pd.testing.assert_frame_equal(left_frame, right_frame)
         else:
+            if sort_value:
+                left_frame = left_frame.sort_values()
+                right_frame = right_frame.sort_values()
             pd.testing.assert_series_equal(left_frame, right_frame)
 
 

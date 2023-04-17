@@ -195,12 +195,12 @@ class DataFrameToParquet(DataFrameOperand, DataFrameOperandMixin):
         ctx[out.key] = pd.DataFrame()
 
     def __call__(self, df):
-        index_value = parse_index(df.index_value.to_pandas()[:0], df)
-        columns_value = parse_index(df.columns_value.to_pandas()[:0], store_data=True)
+        index_value = parse_index(pd.RangeIndex(0), df)
+        columns_value = parse_index(pd.RangeIndex(0))
         return self.new_dataframe(
             [df],
             shape=(0, 0),
-            dtypes=df.dtypes[:0],
+            dtypes=pd.Series(dtype="object"),
             index_value=index_value,
             columns_value=columns_value,
         )

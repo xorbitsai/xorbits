@@ -23,7 +23,7 @@ from ...serialization.serializables import BoolField, Int64Field, KeyField, Stri
 from ...utils import has_unknown_shape, pd_release_version
 from ..core import Series
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_series, parse_index
+from ..utils import build_series, is_pandas_2, parse_index
 
 _keep_original_order = pd_release_version >= (1, 3, 0)
 
@@ -51,6 +51,13 @@ class DataFrameValueCounts(DataFrameOperand, DataFrameOperandMixin):
 
     def __call__(self, inp):
         test_series = build_series(inp).value_counts(normalize=self.normalize)
+        if is_pandas_2():
+            if self.normalize:
+                name = "proportion"
+            else:
+                name = "count"
+        else:
+            name = inp.name
         if self.bins is not None:
             from .cut import cut
 
@@ -66,7 +73,7 @@ class DataFrameValueCounts(DataFrameOperand, DataFrameOperandMixin):
                 [inp],
                 shape=(np.nan,),
                 index_value=parse_index(pd.CategoricalIndex([]), inp, store_data=False),
-                name=inp.name,
+                name=name,
                 dtype=test_series.dtype,
             )
         else:
@@ -74,7 +81,7 @@ class DataFrameValueCounts(DataFrameOperand, DataFrameOperandMixin):
                 [inp],
                 shape=(np.nan,),
                 index_value=parse_index(test_series.index, store_data=False),
-                name=inp.name,
+                name=name,
                 dtype=test_series.dtype,
             )
 
@@ -131,6 +138,7 @@ class DataFrameValueCounts(DataFrameOperand, DataFrameOperandMixin):
                 stage=OperandStage.map,
             )
             chunk_params = c.params
+            chunk_params["name"] = out.name
             if op.convert_index_to_interval:
                 # convert index to IntervalDtype
                 chunk_params["index_value"] = parse_index(
@@ -179,13 +187,15 @@ class DataFrameValueCounts(DataFrameOperand, DataFrameOperandMixin):
         else:
             result = ctx[op.input.key]
             # set index name to None to keep consistency with pandas
-            result.index.name = None
+            if not is_pandas_2():
+                result.index.name = None
         if op.convert_index_to_interval:
             # convert CategoricalDtype which generated in `cut`
             # to IntervalDtype
             result.index = result.index.astype("interval")
         if op.nrows:
             result = result.head(op.nrows)
+        result.name = op.outputs[0].name
         ctx[op.outputs[0].key] = result
 
 

@@ -24,10 +24,12 @@ try:
 except ImportError:
     tsfresh = None
 
+from .....dataframe.utils import is_pandas_2
 from .....deploy.oscar.session import get_default_session, new_session
 from .. import MarsDistributor
 
 
+@pytest.mark.skipif(is_pandas_2(), reason="tsfresh is not compatible with Pandas 2.0")
 @pytest.mark.skipif(tsfresh is None, reason="tsfresh not installed")
 def test_distributed_ts_fresh(setup):
     robot_execution_failures.download_robot_execution_failures()

@@ -125,7 +125,10 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
             store_index_value = False
         else:
             q_val = np.asanyarray(self._q)
-            pd_index = pd.Index(q_val)
+            if np.isscalar(self._q):
+                pd_index = pd.Index([self._q])
+            else:
+                pd_index = pd.Index(q_val)
             name = self._q if q_val.size == 1 else None
             store_index_value = True
         tokenize_objects = (a, q_val, self._interpolation, type(self).__name__)
@@ -208,7 +211,10 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
             store_index_value = False
         else:
             q_val = np.asanyarray(self._q)
-            index_val = pd.Index(q_val)
+            if np.isscalar(self._q):
+                index_val = pd.Index([self._q])
+            else:
+                index_val = pd.Index(q_val)
             store_index_value = True
 
         # get dtype by tensor
@@ -401,7 +407,7 @@ def quantile_series(series, q=0.5, interpolation="linear"):
     return op(series, q_input=q_input)
 
 
-def quantile_dataframe(df, q=0.5, axis=0, numeric_only=True, interpolation="linear"):
+def quantile_dataframe(df, q=0.5, axis=0, numeric_only=False, interpolation="linear"):
     """
     Return values at the given quantile over requested axis.
 
@@ -411,7 +417,7 @@ def quantile_dataframe(df, q=0.5, axis=0, numeric_only=True, interpolation="line
         Value between 0 <= q <= 1, the quantile(s) to compute.
     axis : {0, 1, 'index', 'columns'} (default 0)
         Equals 0 or 'index' for row-wise, 1 or 'columns' for column-wise.
-    numeric_only : bool, default True
+    numeric_only : bool, default False
         If False, the quantile of datetime and timedelta data will be
         computed as well.
     interpolation : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}

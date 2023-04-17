@@ -49,7 +49,7 @@ X_sparse = mt.tensor(x_sparse, chunk_size=chunk_size).tosparse(missing=np.nan)[f
 
 @pytest.mark.skipif(lightgbm is None, reason="LightGBM not installed")
 def test_local_classifier(setup):
-    y_data = (y * 10).astype(mt.int32)
+    y_data = (y * 10).astype(mt.int64)
     classifier = LGBMClassifier(n_estimators=2)
     classifier.fit(X, y_data, eval_set=[(X, y_data)], verbose=True)
     prediction = classifier.predict(X)
@@ -110,7 +110,7 @@ def test_local_classifier(setup):
         )
 
     # test binary classifier
-    new_y = (y_data > 0.5).astype(mt.int32)
+    new_y = (y_data > 0.5).astype(mt.int64)
     classifier = LGBMClassifier(n_estimators=2)
     classifier.fit(X, new_y, verbose=True)
 

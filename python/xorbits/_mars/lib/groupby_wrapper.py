@@ -46,7 +46,6 @@ class GroupByWrapper:
         squeeze=False,
         observed=False,
         dropna=True,
-        mutated=False,
         grouper_cache=None,
     ):
         def fill_value(v, key):
@@ -65,7 +64,6 @@ class GroupByWrapper:
         self.group_keys = fill_value(group_keys, "group_keys")
         self.squeeze = fill_value(squeeze, "squeeze")
         self.observed = fill_value(observed, "observed")
-        self.mutated = fill_value(mutated, "mutated")
         self.dropna = fill_value(dropna, "dropna")
 
         if groupby_obj is None:
@@ -79,7 +77,6 @@ class GroupByWrapper:
                 group_keys=group_keys,
                 squeeze=squeeze,
                 observed=observed,
-                mutated=mutated,
                 dropna=dropna,
             )
             if not _HAS_SQUEEZE:  # pragma: no branch
@@ -116,7 +113,6 @@ class GroupByWrapper:
             squeeze=self.squeeze,
             observed=self.observed,
             dropna=self.dropna,
-            mutated=self.mutated,
         )
 
     def __getattr__(self, item):
@@ -204,7 +200,6 @@ class GroupByWrapper:
             self.squeeze,
             self.observed,
             self.dropna,
-            self.mutated,
             getattr(self.groupby_obj.grouper, "_cache", dict()),
         )
 
@@ -223,7 +218,6 @@ class GroupByWrapper:
             squeeze,
             observed,
             dropna,
-            mutated,
             grouper_cache,
         ) = tp
 
@@ -243,7 +237,6 @@ class GroupByWrapper:
             squeeze=squeeze,
             observed=observed,
             dropna=dropna,
-            mutated=mutated,
             grouper_cache=grouper_cache,
         )
 

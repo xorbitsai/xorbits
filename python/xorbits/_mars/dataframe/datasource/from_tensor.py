@@ -30,7 +30,7 @@ from ...typing import EntityType, TileableType
 from ...utils import has_unknown_shape
 from ..core import INDEX_TYPE, SERIES_TYPE
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index
+from ..utils import is_pandas_2, parse_index
 
 
 class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
@@ -251,7 +251,7 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
             columns_value = parse_index(columns, store_data=True)
             shape.append(columns.shape[0])
         else:
-            columns_value = parse_index(pd.Index([], dtype=object), store_data=True)
+            columns_value = parse_index(pd.RangeIndex(0), store_data=True)
             shape.append(0)
 
         return self.new_dataframe(
@@ -502,7 +502,10 @@ def dataframe_from_tensor(
         if columns is not None:
             dtypes = pd.Series([], index=columns)
         else:
-            dtypes = pd.Series([], index=pd.Index([], dtype=object))
+            if is_pandas_2():
+                dtypes = pd.Series([], index=pd.RangeIndex(0))
+            else:
+                dtypes = pd.Series([], index=pd.Index([], dtype=object))
     if index is not None and not isinstance(index, ENTITY_TYPE):
         index = pd.Index(index)
     op = DataFrameFromTensor(

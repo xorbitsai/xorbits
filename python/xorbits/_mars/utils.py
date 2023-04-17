@@ -735,6 +735,8 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         df = pd.concat([r[1].obj for r in chunk_results], axis=0)
         if not isinstance(v.keys, list):
             keys = v.keys
+            if isinstance(v.keys, pd.Series):
+                keys = pd.concat([r[1].keys for r in chunk_results])
         else:
             keys = []
             for idx, k in enumerate(v.keys):
@@ -755,7 +757,6 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
             group_keys=v.group_keys,
             squeeze=v.squeeze,
             observed=v.observed,
-            mutated=v.mutated,
         )
         return grouped.groupby_obj
     elif isinstance(v, (str, bytes, memoryview, BaseEstimator)):
@@ -1183,7 +1184,7 @@ def arrow_array_to_objects(
                         obj.iloc[:, i].to_numpy(), index=obj.index
                     )
                 else:
-                    result.iloc[:, i] = obj.iloc[:, i]
+                    result.isetitem(i, obj.iloc[:, i])
             obj = result
     elif isinstance(obj, pd.Series):
         if isinstance(obj.dtype, ArrowDtype):

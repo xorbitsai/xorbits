@@ -37,6 +37,7 @@ from ..utils import (
     filter_index_value,
     infer_dtypes,
     infer_index_value,
+    is_pandas_2,
     make_dtypes,
     merge_index_value,
     parse_index,
@@ -470,9 +471,16 @@ def test_infer_index_value():
 
 
 def test_index_inferred_type():
-    assert Index(pd.Index([1, 2, 3, 4])).inferred_type == "integer"
-    assert Index(pd.Index([1, 2, 3, 4]).astype("uint32")).inferred_type == "integer"
-    assert Index(pd.Index([1.2, 2.3, 4.5])).inferred_type == "floating"
+    if is_pandas_2():
+        assert Index(pd.Index([1, 2, 3, 4]))._dtype == np.dtype("int64")
+        assert Index(pd.Index([1, 2, 3, 4]).astype("uint32"))._dtype == np.dtype(
+            "uint32"
+        )
+        assert Index(pd.Index([1.2, 2.3, 4.5]))._dtype == np.dtype("float")
+    else:
+        assert Index(pd.Index([1, 2, 3, 4])).inferred_type == "integer"
+        assert Index(pd.Index([1, 2, 3, 4]).astype("uint32")).inferred_type == "integer"
+        assert Index(pd.Index([1.2, 2.3, 4.5])).inferred_type == "floating"
     assert (
         Index(pd.IntervalIndex.from_tuples([(0, 1), (2, 3), (4, 5)])).inferred_type
         == "interval"
