@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from collections import defaultdict
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Optional
 
 import xoscar as mo
 
@@ -54,12 +54,12 @@ class StorageWebAPIHandler(MarsServiceWebAPIHandler):
         storage_api_to_gets = defaultdict(list)
         storage_api_to_idx = defaultdict(list)
         results = [None] * len(body_args)
-        for i, (data_key, conditions, error) in enumerate(body_args):
+        for i, (data_key, conditions, to_cpu, error) in enumerate(body_args):
             oscar_api = await self._get_storage_api_by_object_id(session_id, data_key)
             storage_api_to_idx[oscar_api].append(i)
             storage_api_to_gets[oscar_api].append(
                 oscar_api.get.delay(
-                    data_key, conditions=conditions, to_cpu=True, error=error
+                    data_key, conditions=conditions, to_cpu=to_cpu, error=error
                 )
             )
         for api, fetches in storage_api_to_gets.items():
@@ -75,9 +75,10 @@ class StorageWebAPIHandler(MarsServiceWebAPIHandler):
             deserialize_serializable(self.request.body) if self.request.body else None
         )
         conditions = body_args.get("conditions")
+        to_cpu = body_args.get("to_cpu")
 
         oscar_api = await self._get_storage_api_by_object_id(session_id, data_key)
-        result = await oscar_api.get(data_key, conditions, to_cpu=True)
+        result = await oscar_api.get(data_key, conditions, to_cpu=to_cpu)
         self.write(serialize_serializable(result))
 
     @web_api("(?P<data_key>[^/]+)", method="put")
@@ -116,12 +117,17 @@ class WebStorageAPI(AbstractStorageAPI, MarsWebAPIClientMixin):
 
     @mo.extensible
     async def get(
-        self, data_key: str, conditions: List = None, error: str = "raise"
+        self,
+        data_key: str,
+        conditions: List = None,
+        to_cpu: Optional[bool] = None,
+        error: str = "raise",
     ) -> Any:
         path = f"{self._address}/api/session/{self._session_id}/storage/{data_key}"
         params = dict(error=error)
         if conditions is not None:
             params["conditions"] = conditions
+            params["to_cpu"] = to_cpu
         body = serialize_serializable(params)
         res = await self._request_url(
             path=path,
@@ -135,8 +141,8 @@ class WebStorageAPI(AbstractStorageAPI, MarsWebAPIClientMixin):
     async def get_batch(self, args_list, kwargs_list):
         get_chunks = []
         for args, kwargs in zip(args_list, kwargs_list):
-            data_key, conditions, error = self.get.bind(*args, **kwargs)
-            get_chunks.append([data_key, conditions, error])
+            data_key, conditions, to_cpu, error = self.get.bind(*args, **kwargs)
+            get_chunks.append([data_key, conditions, to_cpu, error])
 
         path = f"{self._address}/api/session/{self._session_id}/storage/batch/get"
         res = await self._request_url(

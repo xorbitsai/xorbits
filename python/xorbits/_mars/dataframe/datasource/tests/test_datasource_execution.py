@@ -768,12 +768,16 @@ def test_read_csv_gpu_execution(setup_gpu):
         df.to_csv(file_path, index=False)
 
         pdf = pd.read_csv(file_path)
-        mdf = md.read_csv(file_path, gpu=True).execute().fetch()
+        mdf = md.read_csv(file_path, gpu=True).execute().fetch(to_cpu=False)
         pd.testing.assert_frame_equal(
             pdf.reset_index(drop=True), mdf.to_pandas().reset_index(drop=True)
         )
 
-        mdf2 = md.read_csv(file_path, gpu=True, chunk_bytes=200).execute().fetch()
+        mdf2 = (
+            md.read_csv(file_path, gpu=True, chunk_bytes=200)
+            .execute()
+            .fetch(to_cpu=False)
+        )
         pd.testing.assert_frame_equal(
             pdf.reset_index(drop=True), mdf2.to_pandas().reset_index(drop=True)
         )
@@ -1279,17 +1283,19 @@ def test_read_parquet_gpu_execution(setup_gpu):
         df.to_parquet(file_path, index=False)
 
         pdf = pd.read_parquet(file_path)
-        mdf = md.read_parquet(file_path, gpu=True).execute().fetch()
+        mdf = md.read_parquet(file_path, gpu=True).execute().fetch(to_cpu=False)
         pd.testing.assert_frame_equal(
             pdf.reset_index(drop=True), mdf.to_pandas().reset_index(drop=True)
         )
 
-        mdf2 = md.read_parquet(file_path, gpu=True).execute().fetch()
+        mdf2 = md.read_parquet(file_path, gpu=True).execute().fetch(to_cpu=False)
         pd.testing.assert_frame_equal(
             pdf.reset_index(drop=True), mdf2.to_pandas().reset_index(drop=True)
         )
 
-        mdf3 = md.read_parquet(file_path, gpu=True).head(3).execute().fetch()
+        mdf3 = (
+            md.read_parquet(file_path, gpu=True).head(3).execute().fetch(to_cpu=False)
+        )
         pd.testing.assert_frame_equal(
             pdf.reset_index(drop=True).head(3), mdf3.to_pandas().reset_index(drop=True)
         )
@@ -1308,7 +1314,7 @@ def test_read_parquet_gpu_execution(setup_gpu):
         df = md.read_parquet(
             file_path, groups_as_chunks=True, columns=["a", "b"], gpu=True
         )
-        result = df.execute().fetch().to_pandas()
+        result = df.execute().fetch(to_cpu=False).to_pandas()
         pd.testing.assert_frame_equal(
             result.reset_index(drop=True), test_df[["a", "b"]]
         )
@@ -1324,7 +1330,7 @@ def test_read_parquet_gpu_execution(setup_gpu):
         )
         df.to_parquet(tempdir, partition_cols=["c"])
         mdf = md.read_parquet(tempdir, gpu=True)
-        r = mdf.execute().fetch().to_pandas().astype(df.dtypes)
+        r = mdf.execute().fetch(to_cpu=False).to_pandas().astype(df.dtypes)
         pd.testing.assert_frame_equal(
             df.sort_values("a").reset_index(drop=True),
             r.sort_values("a").reset_index(drop=True),

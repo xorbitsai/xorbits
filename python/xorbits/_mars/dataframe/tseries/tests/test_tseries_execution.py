@@ -91,7 +91,7 @@ def test_to_datetime_execution(setup):
 def test_to_datetime_gpu_execution(setup_gpu):
     s = md.Series(["3/11/2000", "3/12/2000", "3/13/2000"]).to_gpu()
     r = to_datetime(s, format="%m/%d/%Y")
-    result = r.execute().fetch().to_pandas()
+    result = r.execute().fetch(to_cpu=False).to_pandas()
     expected = pd.to_datetime(
         pd.Series(["3/11/2000", "3/12/2000", "3/13/2000"]), format="%m/%d/%Y"
     )

@@ -1083,11 +1083,9 @@ class _IsolatedSession(AbstractAsyncSession):
         return storage_api
 
     async def fetch(self, *tileables, **kwargs) -> list:
-        if kwargs:  # pragma: no cover
-            unexpected_keys = ", ".join(list(kwargs.keys()))
-            raise TypeError(f"`fetch` got unexpected arguments: {unexpected_keys}")
-
-        fetcher = Fetcher.create(self._backend, get_storage_api=self._get_storage_api)
+        fetcher = Fetcher.create(
+            self._backend, get_storage_api=self._get_storage_api, **kwargs
+        )
 
         with enter_mode(build=True):
             chunks = []
