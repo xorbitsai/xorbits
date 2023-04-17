@@ -15,8 +15,8 @@
 import functools
 import inspect
 import warnings
-from typing import Any, Callable, Dict, Type
 from functools import lru_cache
+from typing import Any, Callable, Dict, Type
 
 import pandas as pd
 
@@ -173,7 +173,8 @@ def _collect_pandas_series_members():
 def _collect_pandas_index_members():
     _collect_pandas_cls_members(pd.Index, DataType.index)
 
-@lru_cache
+
+@lru_cache(maxsize=1)
 def collect_pandas_module_members() -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_DATAFRAME_CALLABLES
 
