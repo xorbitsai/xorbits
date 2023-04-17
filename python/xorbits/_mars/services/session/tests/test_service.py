@@ -89,7 +89,6 @@ async def test_get_last_idle_time():
                 "scheduling",
                 "subtask",
                 "task",
-                "mutable",
             ],
             "cluster": {
                 "backend": "fixed",
@@ -181,7 +180,6 @@ async def test_dmap():
                 "scheduling",
                 "subtask",
                 "task",
-                "mutable",
             ],
             "cluster": {
                 "backend": "fixed",
