@@ -1555,7 +1555,7 @@ def test_gpu_groupby_size(data_type, chunked, as_index, sort, setup_gpu):
     else:
         series = md.Series(data1 + data2, chunk_size=chunk_size).to_gpu()
         res = series.groupby(level=0, as_index=as_index, sort=sort).size()
-    actual = res.execute().fetch().to_pandas()
+    actual = res.execute().fetch(to_cpu=False).to_pandas()
 
     if isinstance(expected, pd.DataFrame):
         # cudf groupby size not ensure order
