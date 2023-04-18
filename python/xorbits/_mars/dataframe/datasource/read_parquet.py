@@ -14,7 +14,7 @@
 # limitations under the License.
 
 import os
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
 import numpy as np
@@ -166,7 +166,7 @@ def _parse_prefix(path):
     return path_prefix
 
 
-def _arrow_dtype_mapper(tp: Union[np.dtype, pa.DataType]):
+def _arrow_dtype_mapper(tp: Union[np.dtype, pa.DataType]) -> Optional[Union[ArrowListDtype, ArrowStringDtype]]:
     if tp == pa.string():
         return ArrowStringDtype()
     elif isinstance(tp, pa.ListType):
