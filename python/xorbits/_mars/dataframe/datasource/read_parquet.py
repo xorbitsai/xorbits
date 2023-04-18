@@ -670,9 +670,7 @@ def read_parquet(
             f"`engine` should be pyarrow instead of {engine_type}"
             f" when use arrow dtype as extension dtype"
         )
-    types_mapper = (
-        _arrow_dtype_mapper if (use_arrow_dtype and engine_type == "pyarrow") else None
-    )
+    types_mapper = _arrow_dtype_mapper if use_arrow_dtype else None
 
     if fs.isdir(single_path):
         paths = fs.ls(path)
