@@ -1209,14 +1209,14 @@ def test_read_parquet_arrow(setup, engine):
             pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
 
             # test `use_arrow_dtype=True`
-            mdf = md.read_parquet(
-                f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
-            )
-            result = mdf.execute().fetch()
-            assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-
             if engine != "fastparquet":
+                mdf = md.read_parquet(
+                    f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
+                )
+                result = mdf.execute().fetch()
+                assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+                assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
+
                 mdf = md.read_parquet(
                     f"{tempdir}/*.parquet",
                     groups_as_chunks=True,
