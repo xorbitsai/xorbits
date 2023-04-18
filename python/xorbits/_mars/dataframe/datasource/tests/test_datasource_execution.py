@@ -1227,6 +1227,11 @@ def test_read_parquet_arrow(setup, engine):
                 pd.testing.assert_frame_equal(
                     df, r.sort_values("a").reset_index(drop=True)
                 )
+            else:
+                with pytest.raises(ValueError):
+                    mdf = md.read_parquet(
+                        f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
+                    )
 
     # test partitioned
     with tempfile.TemporaryDirectory() as tempdir:

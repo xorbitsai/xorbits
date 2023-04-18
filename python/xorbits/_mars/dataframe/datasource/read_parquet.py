@@ -14,7 +14,7 @@
 # limitations under the License.
 
 import os
-from typing import Dict
+from typing import Dict, Union
 from urllib.parse import urlparse
 
 import numpy as np
@@ -166,7 +166,7 @@ def _parse_prefix(path):
     return path_prefix
 
 
-def _arrow_dtype_mapper(tp):
+def _arrow_dtype_mapper(tp: Union[np.dtype, pa.DataType]):
     if tp == pa.string():
         return ArrowStringDtype()
     elif isinstance(tp, pa.ListType):
@@ -665,6 +665,11 @@ def read_parquet(
     is_partitioned = False
     if use_arrow_dtype is None:
         use_arrow_dtype = options.dataframe.use_arrow_dtype
+    if use_arrow_dtype and engine_type != "pyarrow":
+        raise ValueError(
+            f"`engine` should be pyarrow instead of {engine_type}"
+            f" when use arrow dtype as extension dtype"
+        )
     types_mapper = (
         _arrow_dtype_mapper if (use_arrow_dtype and engine_type == "pyarrow") else None
     )
