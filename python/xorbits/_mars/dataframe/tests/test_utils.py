@@ -24,6 +24,7 @@ import pytest
 
 from ...config import option_context
 from ...core import tile
+from ...tests.core import require_cudf
 from ...utils import Timer
 from ..core import IndexValue
 from ..initializer import DataFrame, Index, Series
@@ -547,6 +548,27 @@ def test_fetch_dataframe_corner_data(setup):
         assert corner.to_string(
             max_rows=corner_max_rows, min_rows=min_rows
         ) == pdf.to_string(max_rows=max_rows, min_rows=min_rows)
+
+
+@require_cudf
+def test_fetch_dataframe_corner_data_gpu(setup_gpu):
+    """
+    TODO: this test should be merged with test_fetch_dataframe_corner_data later.
+    """
+    max_rows = pd.get_option("display.max_rows")
+    try:
+        min_rows = pd.get_option("display.min_rows")
+    except KeyError:  # pragma: no cover
+        min_rows = max_rows
+
+    pdf = pd.DataFrame(range(2000))
+    mdf = DataFrame(pdf, chunk_size=1000).to_gpu()
+    mdf.execute()
+    corner = fetch_corner_data(mdf)
+    assert isinstance(corner, pd.DataFrame)
+    assert corner.to_string(
+        max_rows=(corner.shape[0] - 1), min_rows=min_rows
+    ) == pdf.to_string(max_rows=max_rows, min_rows=min_rows)
 
 
 def test_make_dtypes():
