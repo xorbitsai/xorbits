@@ -21,9 +21,12 @@ from collections import OrderedDict
 from datetime import datetime
 from string import printable
 
+import cudf.testing
 import numpy as np
 import pandas as pd
 import pytest
+
+from ....tensor.core import TENSOR_TYPE
 
 try:
     import pyarrow as pa
@@ -42,7 +45,7 @@ except ImportError:  # pragma: no cover
 from .... import dataframe as md
 from .... import tensor as mt
 from ....config import option_context
-from ....tests.core import require_cudf
+from ....tests.core import require_cudf, require_cupy
 from ....utils import arrow_array_to_objects, pd_release_version
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records
@@ -196,6 +199,36 @@ def test_initializer_execution(setup):
     index = md.Index(md.Index(pi))
     result = index.execute().fetch()
     pd.testing.assert_index_equal(pi, result)
+
+
+@require_cupy
+@require_cudf
+@pytest.mark.parametrize(
+    "data",
+    [
+        mt.arange(1000),
+        mt.arange(1000, gpu=True),
+        {"foo": mt.arange(1000), "bar": mt.arange(1000)},
+        {"foo": mt.arange(1000, gpu=True), "bar": mt.arange(1000, gpu=True)},
+        list(range(1000)),
+        {"foo": list(range(1000)), "bar": list(range(1000))},
+    ],
+)
+def test_dataframe_initializer_gpu(setup_gpu, data):
+    def to_object(data_):
+        if isinstance(data_, TENSOR_TYPE):
+            return data_.execute().fetch(to_cpu=False)
+        if isinstance(data_, dict):
+            return dict((k, to_object(v)) for k, v in data_.items())
+        else:
+            return data_
+
+    df = md.DataFrame(data, gpu=True, chunk_size=500)
+    df.execute()
+    assert isinstance(df.fetch(to_cpu=False), cudf.DataFrame)
+    actual = df.fetch(to_cpu=False)
+    expected = cudf.DataFrame(to_object(data))
+    cudf.testing.assert_frame_equal(expected, actual)
 
 
 def test_index_only(setup):
@@ -976,6 +1009,7 @@ def test_read_sql_execution(setup):
             engine.dispose()
 
 
+@pytest.mark.skipif(sqlalchemy is None, reason="sqlalchemy not installed")
 @pytest.mark.skipif(pa is None, reason="pyarrow not installed")
 def test_read_sql_use_arrow_dtype(setup):
     rs = np.random.RandomState(0)
