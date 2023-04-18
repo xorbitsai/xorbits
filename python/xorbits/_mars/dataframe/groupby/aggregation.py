@@ -17,7 +17,7 @@ import functools
 import itertools
 import logging
 import uuid
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -1007,7 +1007,11 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
 
     @staticmethod
     def _do_predefined_agg(
-        input_obj, agg_func, single_func: bool = False, gpu: bool = False, **kwds
+        input_obj,
+        agg_func,
+        single_func: bool = False,
+        gpu: Optional[bool] = False,
+        **kwds,
     ):
         ndim = getattr(input_obj, "ndim", None) or input_obj.obj.ndim
         if agg_func == "str_concat":
