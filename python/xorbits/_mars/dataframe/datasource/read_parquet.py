@@ -166,7 +166,9 @@ def _parse_prefix(path):
     return path_prefix
 
 
-def _arrow_dtype_mapper(tp: Union[np.dtype, pa.DataType]) -> Optional[Union[ArrowListDtype, ArrowStringDtype]]:
+def _arrow_dtype_mapper(
+    tp: Union[np.dtype, pa.DataType]
+) -> Optional[Union[ArrowListDtype, ArrowStringDtype]]:
     if tp == pa.string():
         return ArrowStringDtype()
     elif isinstance(tp, pa.ListType):
