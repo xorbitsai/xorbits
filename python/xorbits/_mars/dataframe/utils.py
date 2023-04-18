@@ -1275,7 +1275,7 @@ def contain_arrow_dtype(dtypes):
     return any(isinstance(dtype, ArrowStringDtype) for dtype in dtypes)
 
 
-def to_arrow_dtypes(dtypes, test_df=None, type_mapper=None):
+def to_arrow_dtypes(dtypes, test_df=None):
     from .arrays import ArrowStringDtype
 
     new_dtypes = dtypes.copy()
