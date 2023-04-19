@@ -38,6 +38,7 @@ from .datasource import (
     linspace,
     meshgrid,
     indices,
+    tri,
     tril,
     triu,
     fromtiledb,

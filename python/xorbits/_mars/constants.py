@@ -13,18 +13,16 @@
 # limitations under the License.
 
 import os
+from pathlib import Path
 
-MARS_TEMP_DIR = "/tmp/xorbits"
-MARS_TEMP_DIR_WIN = "C:\\Temp\\xorbits"
+MARS_TEMP_DIR = str(Path.home() / ".xorbits")
 
 # logging.
 MARS_LOG_DIR_KEY = "MARS_LOG_DIR"
 DEFAULT_MARS_LOG_DIR = os.path.join(MARS_TEMP_DIR, "logs")
-DEFAULT_MARS_LOG_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "logs")
 DEFAULT_MARS_LOG_FILE_NAME = "xorbits.log"
 DEFAULT_MARS_LOG_MAX_BYTES = 100 * 1024 * 1024
 DEFAULT_MARS_LOG_BACKUP_COUNT = 30
 
 # profiling.
 MARS_PROFILING_RESULTS_DIR = os.path.join(MARS_TEMP_DIR, "profiling")
-MARS_PROFILING_RESULTS_DIR_WIN = os.path.join(MARS_TEMP_DIR_WIN, "profiling")

@@ -789,8 +789,8 @@ def test_cupy_execution(setup_gpu):
 
     a = tensor(a_data, gpu=True, chunk_size=3)
     b = tensor(b_data, gpu=True, chunk_size=3)
-    res_binary = (a + b).execute().fetch()
+    res_binary = (a + b).execute().fetch(to_cpu=False)
     np.testing.assert_array_equal(res_binary.get(), (a_data + b_data))
 
-    res_unary = cos(a).execute().fetch()
+    res_unary = cos(a).execute().fetch(to_cpu=False)
     np.testing.assert_array_almost_equal(res_unary.get(), np.cos(a_data))

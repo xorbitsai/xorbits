@@ -42,5 +42,5 @@ from .linspace import TensorLinspace, linspace
 from .meshgrid import meshgrid
 from .ones import TensorOnes, TensorOnesLike, ones, ones_like
 from .scalar import Scalar, scalar
-from .tri import TensorTril, TensorTriu, tril, triu
+from .tri import TensorTril, TensorTriu, tri, tril, triu
 from .zeros import TensorZeros, TensorZerosLike, zeros, zeros_like

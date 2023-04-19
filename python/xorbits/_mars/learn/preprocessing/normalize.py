@@ -15,6 +15,8 @@
 
 import numpy as np
 
+from ...utils import is_same_module
+
 try:
     from sklearn.preprocessing import normalize as sklearn_normalize
 except ImportError:  # pragma: no cover
@@ -252,7 +254,7 @@ class TensorNormalize(TensorOperand, TensorOperandMixin):
             if device_id < 0 and op.use_sklearn and sklearn_normalize is not None:
                 # no GPU
                 try:
-                    if xp is sparse:
+                    if is_same_module(xp, sparse):
                         if axis == 0:
                             xm = x.raw.tocsc()
                         else:

@@ -30,7 +30,7 @@ from ....serialization.serializables import (
 from ....tensor.array_utils import as_same_device, device, get_array_module
 from ....tensor.core import TensorOrder
 from ....tensor.merge import TensorConcatenate
-from ....utils import ensure_own_data, has_unknown_shape
+from ....utils import ensure_own_data, has_unknown_shape, is_same_module
 from ...utils import gen_batches, get_chunk_n_rows
 from ...utils.validation import _num_samples
 from .core import PairwiseDistances
@@ -78,7 +78,7 @@ def _check_chunk_size(reduced, chunk_size):  # pragma: no cover
 def _pariwise_distance_chunked(
     X, Y, reduce_func=None, metric="euclidean", working_memory=None, xp=None, **kwds
 ):
-    if xp is np:
+    if is_same_module(xp, np):
         from sklearn.metrics import pairwise_distances
     else:  # pragma: no cover
         from cuml.metrics import pairwise_distances

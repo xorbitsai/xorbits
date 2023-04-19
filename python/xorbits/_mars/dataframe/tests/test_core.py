@@ -405,3 +405,39 @@ def test_to_arr_and_array():
 
     arr_from_array_method = np.array(df)
     np.testing.assert_array_equal(arr_from_array_method, expected)
+
+
+def test_mars_tensor_magic(setup):
+    a = np.random.rand(10)
+    expected = a
+    actual = Series(expected).__mars_tensor__().execute()
+    np.testing.assert_array_equal(expected, actual)
+
+    a = np.random.rand(10)
+    expected = a.astype(dtype="float64")
+    actual = Series(expected).__mars_tensor__(dtype="float64").execute()
+    np.testing.assert_array_equal(expected, actual)
+
+    a = np.array(["foo", "bar", "baz"])
+    expected = a
+    actual = Series(expected).__mars_tensor__().execute()
+    np.testing.assert_array_equal(expected, actual)
+    with pytest.raises(ValueError, match="could not convert string to float"):
+        Series(expected).__mars_tensor__(dtype="float64").execute()
+
+    a = np.random.rand(10)
+    expected = pd.DataFrame(a).values
+    actual = DataFrame(expected).__mars_tensor__().execute()
+    np.testing.assert_array_equal(pd.DataFrame(expected), actual)
+
+    a = np.random.rand(10)
+    expected = pd.DataFrame(a).values.astype(dtype="float64")
+    actual = DataFrame(expected).__mars_tensor__().execute()
+    np.testing.assert_array_equal(pd.DataFrame(expected), actual)
+
+    a = np.array(["foo", "bar", "baz"])
+    expected = pd.DataFrame(a).values
+    actual = DataFrame(expected).__mars_tensor__().execute()
+    np.testing.assert_array_equal(expected, actual)
+    with pytest.raises(ValueError, match="could not convert string to float"):
+        DataFrame(expected).__mars_tensor__(dtype="float64").execute()

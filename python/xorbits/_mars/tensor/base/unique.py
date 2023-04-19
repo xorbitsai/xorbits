@@ -24,7 +24,7 @@ from ...core.operand import OperandStage
 from ...lib import sparse
 from ...lib.sparse.core import get_array_module as get_sparse_array_module
 from ...serialization.serializables import BoolField, Int32Field, Int64Field
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, is_same_module
 from ..array_utils import as_same_device, device
 from ..core import TensorOrder
 from ..operands import TensorMapReduceOperand, TensorOperandMixin, TensorShuffleProxy
@@ -322,7 +322,7 @@ class TensorUnique(TensorMapReduceOperand, TensorOperandMixin):
             inverse_ar = next(results_iter) if op.return_inverse else None
             counts_ar = next(results_iter) if op.return_counts else None
 
-            if xp is sparse:
+            if is_same_module(xp, sparse):
                 dense_xp = get_sparse_array_module(unique_ar)
             else:
                 dense_xp = xp
