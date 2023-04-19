@@ -23,8 +23,11 @@ import pandas as pd
 try:
     import pyarrow as pa
     import pyarrow.parquet as pq
+
+    arrow_dtype = pa.DataType
 except ImportError:
     pa = None
+    arrow_dtype = None
 
 try:
     import fastparquet
@@ -167,7 +170,7 @@ def _parse_prefix(path):
 
 
 def _arrow_dtype_mapper(
-    tp: Union[np.dtype, pa.DataType]
+    tp: Union[np.dtype, arrow_dtype]
 ) -> Optional[Union[ArrowListDtype, ArrowStringDtype]]:
     if tp == pa.string():
         return ArrowStringDtype()
