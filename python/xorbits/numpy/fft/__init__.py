@@ -18,8 +18,6 @@ from typing import Any, Callable, Dict, Optional
 
 from ...core.utils.fallback import unimplemented_func
 
-NUMPY_FFT_METHODS: Optional[Dict[str, Callable]] = None
-
 
 def __dir__():
     from ..mars_adapters import MARS_TENSOR_FFT_CALLABLES
@@ -28,10 +26,9 @@ def __dir__():
     global NUMPY_FFT_METHODS
     import numpy
 
-    if NUMPY_FFT_METHODS is None:  # pragma: no cover
-        NUMPY_FFT_METHODS = collect_numpy_module_members(numpy.fft)
-
-    return list(MARS_TENSOR_FFT_CALLABLES.keys()) + list(NUMPY_FFT_METHODS.keys())
+    return list(MARS_TENSOR_FFT_CALLABLES.keys()) + list(
+        collect_numpy_module_members(numpy.fft).keys()
+    )
 
 
 def __getattr__(name: str):
@@ -41,16 +38,12 @@ def __getattr__(name: str):
     if name in MARS_TENSOR_FFT_CALLABLES:
         return MARS_TENSOR_FFT_CALLABLES[name]
     else:  # pragma: no cover
-        global NUMPY_FFT_METHODS
         import numpy
-
-        if NUMPY_FFT_METHODS is None:
-            NUMPY_FFT_METHODS = collect_numpy_module_members(numpy.fft)
 
         if not hasattr(numpy.fft, name):
             raise AttributeError(name)
-        elif name in NUMPY_FFT_METHODS:
-            return NUMPY_FFT_METHODS[name]
+        elif name in collect_numpy_module_members(numpy.fft):
+            return collect_numpy_module_members(numpy.fft)[name]
         else:
             if inspect.ismethod(getattr(numpy.fft, name)):
                 return unimplemented_func

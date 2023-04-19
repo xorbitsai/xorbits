@@ -16,8 +16,6 @@ from typing import Any, Callable, Dict, Optional
 
 from ...core.utils.fallback import unimplemented_func
 
-NUMPY_RANDOM_METHODS: Optional[Dict[str, Callable]] = None
-
 
 def __dir__():
     from ..mars_adapters import MARS_TENSOR_RANDOM_CALLABLES
@@ -26,10 +24,9 @@ def __dir__():
     global NUMPY_RANDOM_METHODS
     import numpy
 
-    if NUMPY_RANDOM_METHODS is None:  # pragma: no cover
-        NUMPY_RANDOM_METHODS = collect_numpy_module_members(numpy.random)
-
-    return list(MARS_TENSOR_RANDOM_CALLABLES.keys()) + list(NUMPY_RANDOM_METHODS.keys())
+    return list(MARS_TENSOR_RANDOM_CALLABLES.keys()) + list(
+        collect_numpy_module_members(numpy.random).keys()
+    )
 
 
 def __getattr__(name: str):
@@ -39,16 +36,12 @@ def __getattr__(name: str):
     if name in MARS_TENSOR_RANDOM_CALLABLES:
         return MARS_TENSOR_RANDOM_CALLABLES[name]
     else:
-        global NUMPY_RANDOM_METHODS
         import numpy
-
-        if NUMPY_RANDOM_METHODS is None:  # pragma: no cover
-            NUMPY_RANDOM_METHODS = collect_numpy_module_members(numpy.random)
 
         if not hasattr(numpy.random, name):
             raise AttributeError(name)
-        elif name in NUMPY_RANDOM_METHODS:
-            return NUMPY_RANDOM_METHODS[name]
+        elif name in collect_numpy_module_members(numpy.random):
+            return collect_numpy_module_members(numpy.random)[name]
         else:  # pragma: no cover
             if inspect.ismethod(getattr(numpy.random, name)):
                 return unimplemented_func
