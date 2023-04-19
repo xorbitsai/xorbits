@@ -252,6 +252,9 @@ class CudaStorage(StorageBackend):
 
     @implements(StorageBackend.get)
     async def get(self, object_id: str, **kwargs) -> object:
+        if kwargs:
+            raise NotImplementedError(f'Got unsupported args: {",".join(kwargs)}')
+
         from cudf.core.buffer import Buffer as CPBuffer
         from rmm import DeviceBuffer
 

@@ -265,6 +265,9 @@ async def test_cuda_backend():
     get_data1 = await storage.get(put_info1.object_id)
     cupy.testing.assert_array_equal(data1, get_data1)
 
+    with pytest.raises(NotImplementedError):
+        await storage.get(put_info1.object_id, conditions=[])
+
     info1 = await storage.object_info(put_info1.object_id)
     assert info1.size == put_info1.size
 
@@ -280,6 +283,9 @@ async def test_cuda_backend():
     put_info2 = await storage.put(data2)
     get_data2 = await storage.get(put_info2.object_id)
     cudf.testing.assert_frame_equal(data2, get_data2)
+
+    with pytest.raises(NotImplementedError):
+        await storage.get(put_info2.object_id, conditions=[])
 
     info2 = await storage.object_info(put_info2.object_id)
     assert info2.size == put_info2.size
