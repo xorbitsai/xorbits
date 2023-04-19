@@ -21,7 +21,6 @@ from collections import OrderedDict
 from datetime import datetime
 from string import printable
 
-import cudf.testing
 import numpy as np
 import pandas as pd
 import pytest
@@ -215,6 +214,9 @@ def test_initializer_execution(setup):
     ],
 )
 def test_dataframe_initializer_gpu(setup_gpu, data):
+    import cudf
+    import cudf.testing
+
     def to_object(data_):
         if isinstance(data_, TENSOR_TYPE):
             return data_.execute().fetch(to_cpu=False)
