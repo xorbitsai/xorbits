@@ -25,7 +25,7 @@ import pytest
 from .... import dataframe as md
 from .... import tensor as mt
 from ....tensor.datasource import array as from_array
-from ....tests.core import require_cudf
+from ....tests.core import support_cuda
 from ....utils import dataslots
 from ... import to_datetime
 from ...datasource.dataframe import from_pandas
@@ -886,7 +886,9 @@ def test_ufunc(setup):
                 pd.testing.assert_series_equal(result, expected)
 
 
-def test_date_time_bin(setup):
+@support_cuda
+def test_to_datetime_bin(setup_gpu, gpu):
+    gpu = True
     rs = np.random.RandomState(0)
     df_raw = pd.DataFrame(
         {
@@ -896,10 +898,22 @@ def test_date_time_bin(setup):
         },
         index=pd.RangeIndex(9, -1, -1),
     )
-    df = from_pandas(df_raw, chunk_size=5)
+    df = md.DataFrame(
+        {
+            "a": rs.randint(1000, size=10),
+            "b": rs.rand(10),
+            "c": [pd.Timestamp(rs.randint(1604000000, 1604481373)) for _ in range(10)],
+        },
+        index=pd.RangeIndex(9, -1, -1),
+    )
+    if gpu:
+        df = df.to_gpu()
     r = (df["c"] > to_datetime("2000-01-01")) & (df["c"] < to_datetime("2021-01-01"))
 
-    result = r.execute().fetch()
+    print(r.execute())
+    result = r.execute().fetch(to_cpu=False)
+    if gpu:
+        result = result.to_pandas()
     expected = (df_raw["c"] > pd.to_datetime("2000-01-01")) & (
         df_raw["c"] < pd.to_datetime("2021-01-01")
     )
@@ -914,12 +928,12 @@ def _generate_params_for_gpu():
                     yield data_type, compare_target_type, chunked, bin_op
 
 
-@require_cudf
+@support_cuda
 @pytest.mark.parametrize(
     "data_type,compare_target_type,chunked,bin_op",
     _generate_params_for_gpu(),
 )
-def test_date_time_bin_gpu(data_type, compare_target_type, chunked, bin_op, setup_gpu):
+def test_datetime_bin(data_type, compare_target_type, chunked, bin_op, setup_gpu, gpu):
     if compare_target_type != "scalar" and data_type != compare_target_type:
         pytest.skip(f"Cannot compare incompatible types.")
 
@@ -936,26 +950,30 @@ def test_date_time_bin_gpu(data_type, compare_target_type, chunked, bin_op, setu
         pandas_data = pd.DataFrame({"date1": data1, "date2": data2})
         mars_data = md.DataFrame(
             {"date1": data1, "date2": data2}, chunk_size=chunk_size
-        ).to_gpu()
+        )
         if compare_target_type != "scalar":
             df_data1 = {"date1": data2, "date2": data1}
-            date1 = md.DataFrame(df_data1, chunk_size=chunk_size).to_gpu()
+            date1 = md.DataFrame(df_data1, chunk_size=chunk_size)
             date3 = pd.DataFrame(df_data1)
             df_data2 = {"date1": data3, "date2": data4}
-            date2 = md.DataFrame(df_data2, chunk_size=chunk_size).to_gpu()
+            date2 = md.DataFrame(df_data2, chunk_size=chunk_size)
             date4 = pd.DataFrame(df_data2)
     else:
         pandas_data = pd.Series(data1 + data2, name="date")
-        mars_data = md.Series(
-            data1 + data2, name="date", chunk_size=chunk_size
-        ).to_gpu()
+        mars_data = md.Series(data1 + data2, name="date", chunk_size=chunk_size)
         if compare_target_type != "scalar":
             s_data1 = data2 + data1
             s_data2 = data3 + data4
-            date1 = md.Series(s_data1, chunk_size=chunk_size).to_gpu()
+            date1 = md.Series(s_data1, chunk_size=chunk_size)
             date3 = pd.Series(s_data1)
-            date2 = md.Series(s_data2, chunk_size=chunk_size).to_gpu()
+            date2 = md.Series(s_data2, chunk_size=chunk_size)
             date4 = pd.Series(s_data2)
+
+    if gpu:
+        mars_data = mars_data.to_gpu()
+        if compare_target_type != "scalar":
+            date1 = date1.to_gpu()
+            date2 = date2.to_gpu()
 
     if bin_op == "and":
         actual = (mars_data >= date1) & (mars_data < date2)
@@ -970,14 +988,11 @@ def test_date_time_bin_gpu(data_type, compare_target_type, chunked, bin_op, setu
         actual = (mars_data >= date1) ^ (mars_data < date2)
         expected = (pandas_data >= date3) ^ (pandas_data < date4)
 
+    actual = actual.execute().fetch(to_cpu=False)
     if isinstance(expected, pd.DataFrame):
-        pd.testing.assert_frame_equal(
-            expected, actual.execute().fetch(to_cpu=False).to_pandas()
-        )
+        pd.testing.assert_frame_equal(expected, actual.to_pandas() if gpu else actual)
     else:
-        pd.testing.assert_series_equal(
-            expected, actual.execute().fetch(to_cpu=False).to_pandas()
-        )
+        pd.testing.assert_series_equal(expected, actual.to_pandas() if gpu else actual)
 
 
 def test_series_and_tensor(setup):
