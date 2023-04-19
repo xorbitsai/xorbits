@@ -1168,8 +1168,7 @@ def fetch_corner_data(df_or_series, session=None) -> pd.DataFrame:
         head = iloc(df_or_series)[:index_size]
         tail = iloc(df_or_series)[-index_size:]
         head_data, tail_data = ExecutableTuple([head, tail]).fetch(session=session)
-        xdf = cudf if head.op.is_gpu() else pd
-        return xdf.concat([head_data, tail_data], axis="index")
+        return pd.concat([head_data, tail_data], axis="index")
 
 
 class ReprSeries(pd.Series):
