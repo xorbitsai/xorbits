@@ -22,6 +22,18 @@ from ._mars.deploy.oscar.session import clear_default_session
 from .tests.core import init_test
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--gpu", action="store_true", default=False, help="run test cases on GPU."
+    )
+
+
+@pytest.fixture
+def gpu(request):
+    print(f"GPU: {request.config.option.gpu}")
+    return request.config.option.gpu
+
+
 @pytest.fixture
 def doctest_namespace():
     return {"pd": pd, "np": np}

@@ -174,6 +174,12 @@ def require_cudf(func):
     return func
 
 
+def support_cuda(func):
+    if pytest:
+        func = pytest.mark.cuda(func)
+    return func
+
+
 def require_ray(func):
     if pytest:
         func = pytest.mark.ray(func)
