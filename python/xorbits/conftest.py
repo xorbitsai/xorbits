@@ -30,7 +30,6 @@ def pytest_addoption(parser):
 
 @pytest.fixture
 def gpu(request):
-    print(f"GPU: {request.config.option.gpu}")
     return request.config.option.gpu
 
 
