@@ -256,7 +256,7 @@ jobs:
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         elif [ "$MODULE" == "gpu" ]; then
-          pytest -m cuda --cov-config=setup.cfg --cov-report=xml --cov=xorbits        
+          pytest -m cuda --gpu --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits  
         elif [ "$MODULE" == "pandas-1.0" ]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
