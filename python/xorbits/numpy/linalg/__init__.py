@@ -17,20 +17,16 @@ from typing import Any, Callable, Dict, Optional
 
 from ...core.utils.fallback import unimplemented_func
 
-NUMPY_LINALG_METHODS: Optional[Dict[str, Callable]] = None
-
 
 def __dir__():
+    import numpy
+
     from ..mars_adapters import MARS_TENSOR_LINALG_CALLABLES
     from ..numpy_adapters import collect_numpy_module_members
 
-    global NUMPY_LINALG_METHODS
-    import numpy
-
-    if NUMPY_LINALG_METHODS is None:  # pragma: no cover
-        NUMPY_LINALG_METHODS = collect_numpy_module_members(numpy.linalg)
-
-    return list(MARS_TENSOR_LINALG_CALLABLES.keys()) + list(NUMPY_LINALG_METHODS.keys())
+    return list(MARS_TENSOR_LINALG_CALLABLES.keys()) + list(
+        collect_numpy_module_members(numpy.linalg).keys()
+    )
 
 
 def __getattr__(name: str):
@@ -40,16 +36,12 @@ def __getattr__(name: str):
     if name in MARS_TENSOR_LINALG_CALLABLES:
         return MARS_TENSOR_LINALG_CALLABLES[name]
     else:
-        global NUMPY_LINALG_METHODS
         import numpy
-
-        if NUMPY_LINALG_METHODS is None:  # pragma: no cover
-            NUMPY_LINALG_METHODS = collect_numpy_module_members(numpy.linalg)
 
         if not hasattr(numpy.linalg, name):
             raise AttributeError(name)
-        elif name in NUMPY_LINALG_METHODS:
-            return NUMPY_LINALG_METHODS[name]
+        elif name in collect_numpy_module_members(numpy.linalg):
+            return collect_numpy_module_members(numpy.linalg)[name]
         else:  # pragma: no cover
             if inspect.ismethod(getattr(numpy.linalg, name)):
                 return unimplemented_func
