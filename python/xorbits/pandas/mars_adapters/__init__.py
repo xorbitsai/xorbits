@@ -38,8 +38,7 @@ def _install():
     )
 
     for method in MARS_DATAFRAME_MAGIC_METHODS:
-        if not hasattr(DataRef, method):
-            setattr(DataRef, method, wrap_magic_method(method))
+        setattr(DataRef, method, wrap_magic_method(method))
 
     _register_to_mars_execution_conditions()
     _register_from_mars_execution_conditions()

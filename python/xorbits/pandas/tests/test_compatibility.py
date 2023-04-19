@@ -18,13 +18,6 @@ import pytest
 from ... import pandas as xpd
 
 
-@pytest.mark.usefixtures(
-    "dummy_dict_int",
-    "dummy_dict_float",
-    "dummy_dict_str",
-    "dummy_dict_bool",
-    "dummy_dict_mixed",
-)
 @pytest.mark.parametrize(
     "test_dict",
     [
@@ -41,8 +34,5 @@ def test_array_conversion(test_dict, request):
     xdf = xpd.DataFrame(test_dict)
 
     expected = df.__array__()
-    test_array = xdf.__array__()
-    test_numpy = np.array(xdf)
-
-    np.testing.assert_array_equal(test_array, expected)
-    np.testing.assert_array_equal(test_numpy, expected)
+    np.testing.assert_array_equal(xdf.__array__(), expected)
+    np.testing.assert_array_equal(np.array(xdf), expected)

@@ -34,8 +34,7 @@ def _install():
     from ...core.data import DataRef, DataType
 
     for method in MARS_TENSOR_MAGIC_METHODS:
-        if not hasattr(DataRef, method):
-            setattr(DataRef, method, wrap_magic_method(method))
+        setattr(DataRef, method, wrap_magic_method(method))
 
     for cls in MARS_TENSOR_TYPE:
         register_data_members(
