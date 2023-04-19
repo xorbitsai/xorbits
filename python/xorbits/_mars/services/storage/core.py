@@ -645,6 +645,7 @@ class StorageManagerActor(mo.StatelessActor):
                     Exception
                 ) as ex:  # pragma: no cover  # noqa: E722  # nosec  # pylint: disable=bare-except
                     logger.error(f"Failed to upload storage info: {ex}")
+                    break
                 await asyncio.sleep(0.5)
 
     async def upload_disk_info(self):
