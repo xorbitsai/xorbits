@@ -1309,11 +1309,11 @@ def test_shift_execution(setup):
     # test tshift
     r = df2.tshift(periods=1)
     result = r.execute().fetch()
-    expected = raw2.tshift(periods=1)
+    expected = raw2.shift(periods=1, freq="infer")
     pd.testing.assert_frame_equal(result, expected)
 
     with pytest.raises(ValueError):
-        _ = df.tshift(periods=1)
+        _ = df.shift(periods=1, freq="infer")
 
     # test series
     s = raw.iloc[:, 0]

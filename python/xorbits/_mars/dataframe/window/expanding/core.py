@@ -15,12 +15,7 @@
 
 from collections import OrderedDict
 
-from ....serialization.serializables import (
-    BoolField,
-    Int32Field,
-    Int64Field,
-    StringField,
-)
+from ....serialization.serializables import Int32Field, Int64Field, StringField
 from ....utils import pd_release_version
 from ...utils import validate_axis
 from ..core import Window
@@ -31,13 +26,10 @@ _window_has_method = pd_release_version >= (1, 3, 0)
 class Expanding(Window):
     _min_periods = Int64Field("min_periods")
     _axis = Int32Field("axis")
-    _center = BoolField("center")
     _method = StringField("method")
 
-    def __init__(self, min_periods=None, axis=None, center=None, method=None, **kw):
-        super().__init__(
-            _min_periods=min_periods, _axis=axis, _center=center, _method=method, **kw
-        )
+    def __init__(self, min_periods=None, axis=None, method=None, **kw):
+        super().__init__(_min_periods=min_periods, _axis=axis, _method=method, **kw)
 
     @property
     def min_periods(self):
@@ -63,9 +55,9 @@ class Expanding(Window):
         p = OrderedDict()
 
         if not _window_has_method:  # pragma: no cover
-            args = ["min_periods", "center", "axis"]
+            args = ["min_periods", "axis"]
         else:
-            args = ["min_periods", "center", "axis", "method"]
+            args = ["min_periods", "axis", "method"]
 
         for k in args:
             p[k] = getattr(self, k)
@@ -105,7 +97,7 @@ class Expanding(Window):
         return self.aggregate("std")
 
 
-def expanding(obj, min_periods=1, center=False, axis=0):
+def expanding(obj, min_periods=1, axis=0):
     """
     Provide expanding transformations.
 
@@ -114,7 +106,6 @@ def expanding(obj, min_periods=1, center=False, axis=0):
     min_periods : int, default 1
     Minimum number of observations in window required to have a value
     (otherwise result is NA).
-    center : bool, default False
     Set the labels at the center of the window.
     axis : int or str, default 0
 
@@ -154,9 +145,7 @@ def expanding(obj, min_periods=1, center=False, axis=0):
     """
     axis = validate_axis(axis, obj)
 
-    if center:
-        raise NotImplementedError("center == True is not supported")
     if axis == 1:
         raise NotImplementedError("axis other than 0 is not supported")
 
-    return Expanding(input=obj, min_periods=min_periods, center=center, axis=axis)
+    return Expanding(input=obj, min_periods=min_periods, axis=axis)

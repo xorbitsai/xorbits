@@ -469,9 +469,9 @@ def test_to_pandas():
     assert df2.memory_usage(deep=True).sum() < df.memory_usage(deep=True).sum()
 
     # test df method
-    df4 = df2.groupby("b").sum()
+    df4 = df2.groupby("b").sum(numeric_only=True)
     df4.index = df4.index.astype(object)
-    expected = df.groupby("b").sum()
+    expected = df.groupby("b").sum(numeric_only=True)
     pd.testing.assert_frame_equal(df4, expected)
 
     s = ("s" + df2["b"]).astype("string")

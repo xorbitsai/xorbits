@@ -43,7 +43,6 @@ from .....utils import Timer
 from ....cluster import MockClusterAPI
 from ....lifecycle import MockLifecycleAPI
 from ....meta import MockMetaAPI, MockWorkerMetaAPI
-from ....mutable import MockMutableAPI
 from ....session import MockSessionAPI
 from ....storage import MockStorageAPI
 from ....storage.handler import StorageHandlerActor
@@ -173,7 +172,6 @@ async def actor_pool(request):
         )
         await MockLifecycleAPI.create(session_id, pool.external_address)
         await MockSubtaskAPI.create(pool.external_address)
-        await MockMutableAPI.create(session_id, pool.external_address)
         storage_api = await MockStorageAPI.create(
             session_id,
             pool.external_address,
@@ -237,7 +235,6 @@ async def actor_pool(request):
             await MockStorageAPI.cleanup(pool.external_address)
             await MockSubtaskAPI.cleanup(pool.external_address)
             await MockClusterAPI.cleanup(pool.external_address)
-            await MockMutableAPI.cleanup(session_id, pool.external_address)
 
 
 @pytest.mark.asyncio

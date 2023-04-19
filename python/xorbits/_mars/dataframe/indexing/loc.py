@@ -289,9 +289,7 @@ class DataFrameLocGetItem(DataFrameOperand, DataFrameOperandMixin):
             if axis == 1:
                 param["dtypes"] = inp.dtypes
         elif input_index_value.has_value():
-            start, end = pd_index.slice_locs(
-                index.start, index.stop, index.step, kind="loc"
-            )
+            start, end = pd_index.slice_locs(index.start, index.stop, index.step)
             slc = slice(start, end, index.step)
             size = calc_sliced_size(inp.shape[axis], slc)
             param["shape"] = size

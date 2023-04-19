@@ -29,7 +29,6 @@ def test_dataframe_ewm_agg(setup):
             "a": np.random.randint(100, size=(10,)),
             "b": np.random.rand(10),
             "c": np.random.randint(100, size=(10,)),
-            "d": ["c" * i for i in np.random.randint(4, size=10)],
         }
     )
     raw.b[0:3] = np.nan

@@ -32,6 +32,7 @@ class DataFrameCorr(DataFrameOperand, DataFrameOperandMixin):
     other = KeyField("other", default=None)
     method = AnyField("method", default=None)
     min_periods = Int32Field("min_periods", default=None)
+    numeric_only = BoolField("numeric_only", default=None)
     axis = Int32Field("axis", default=None)
     drop = BoolField("drop", default=None)
 
@@ -217,16 +218,21 @@ class DataFrameCorr(DataFrameOperand, DataFrameOperandMixin):
         out = op.outputs[0]
         inp_data = ctx[inp.key]
 
+        kws = dict(method=op.method)
         if inp.ndim == 1:
-            ctx[out.key] = inp_data.corr(
-                ctx[op.other.key], method=op.method, min_periods=op.min_periods
-            )
+            kws["min_periods"] = op.min_periods
+            ctx[out.key] = inp_data.corr(ctx[op.other.key], **kws)
         elif op.axis is None:
-            ctx[out.key] = inp_data.corr(method=op.method, min_periods=op.min_periods)
+            kws["min_periods"] = op.min_periods
+            if pd.__version__ >= "1.5.0":
+                kws["numeric_only"] = op.numeric_only
+            ctx[out.key] = inp_data.corr(**kws)
         else:
-            ctx[out.key] = inp_data.corrwith(
-                ctx[op.other.key], method=op.method, axis=op.axis, drop=op.drop
-            )
+            kws["drop"] = op.drop
+            kws["axis"] = op.axis
+            if pd.__version__ >= "1.5.0":
+                kws["numeric_only"] = op.numeric_only
+            ctx[out.key] = inp_data.corrwith(ctx[op.other.key], **kws)
 
 
 def _check_supported_methods(method):
@@ -234,7 +240,7 @@ def _check_supported_methods(method):
         raise NotImplementedError(f"Correlation method {method!r} not supported")
 
 
-def df_corr(df, method="pearson", min_periods=1):
+def df_corr(df, method="pearson", min_periods=1, numeric_only=False):
     """
     Compute pairwise correlation of columns, excluding NA/null values.
 
@@ -259,6 +265,9 @@ def df_corr(df, method="pearson", min_periods=1):
         to have a valid result. Currently only available for Pearson
         and Spearman correlation.
 
+    numeric_only : bool, default False
+        Include only float, int or boolean data.
+
     Returns
     -------
     DataFrame
@@ -280,11 +289,13 @@ def df_corr(df, method="pearson", min_periods=1):
     dogs  1.000000 -0.851064
     cats -0.851064  1.000000
     """
-    op = DataFrameCorr(method=method, min_periods=min_periods)
+    op = DataFrameCorr(
+        method=method, min_periods=min_periods, numeric_only=numeric_only
+    )
     return op(df)
 
 
-def df_corrwith(df, other, axis=0, drop=False, method="pearson"):
+def df_corrwith(df, other, axis=0, drop=False, method="pearson", numeric_only=False):
     """
     Compute pairwise correlation.
 
@@ -313,6 +324,8 @@ def df_corrwith(df, other, axis=0, drop=False, method="pearson"):
 
         .. note::
             kendall, spearman and callables not supported on multiple chunks yet.
+    numeric_only : bool, default False
+        Include only float, int or boolean data.
 
     Returns
     -------
@@ -327,7 +340,9 @@ def df_corrwith(df, other, axis=0, drop=False, method="pearson"):
     if drop:
         # TODO implement with df.align(method='inner')
         raise NotImplementedError("drop=True not implemented")
-    op = DataFrameCorr(other=other, method=method, axis=axis, drop=drop)
+    op = DataFrameCorr(
+        other=other, method=method, axis=axis, drop=drop, numeric_only=numeric_only
+    )
     return op(df)
 
 

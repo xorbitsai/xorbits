@@ -24,6 +24,7 @@ import pytest
 
 from ...config import option_context
 from ...core import tile
+from ...tests.core import require_cudf
 from ...utils import Timer
 from ..core import IndexValue
 from ..initializer import DataFrame, Index, Series
@@ -37,6 +38,7 @@ from ..utils import (
     filter_index_value,
     infer_dtypes,
     infer_index_value,
+    is_pandas_2,
     make_dtypes,
     merge_index_value,
     parse_index,
@@ -470,9 +472,16 @@ def test_infer_index_value():
 
 
 def test_index_inferred_type():
-    assert Index(pd.Index([1, 2, 3, 4])).inferred_type == "integer"
-    assert Index(pd.Index([1, 2, 3, 4]).astype("uint32")).inferred_type == "integer"
-    assert Index(pd.Index([1.2, 2.3, 4.5])).inferred_type == "floating"
+    if is_pandas_2():
+        assert Index(pd.Index([1, 2, 3, 4]))._dtype == np.dtype("int64")
+        assert Index(pd.Index([1, 2, 3, 4]).astype("uint32"))._dtype == np.dtype(
+            "uint32"
+        )
+        assert Index(pd.Index([1.2, 2.3, 4.5]))._dtype == np.dtype("float")
+    else:
+        assert Index(pd.Index([1, 2, 3, 4])).inferred_type == "integer"
+        assert Index(pd.Index([1, 2, 3, 4]).astype("uint32")).inferred_type == "integer"
+        assert Index(pd.Index([1.2, 2.3, 4.5])).inferred_type == "floating"
     assert (
         Index(pd.IntervalIndex.from_tuples([(0, 1), (2, 3), (4, 5)])).inferred_type
         == "interval"
@@ -539,6 +548,27 @@ def test_fetch_dataframe_corner_data(setup):
         assert corner.to_string(
             max_rows=corner_max_rows, min_rows=min_rows
         ) == pdf.to_string(max_rows=max_rows, min_rows=min_rows)
+
+
+@require_cudf
+def test_fetch_dataframe_corner_data_gpu(setup_gpu):
+    """
+    TODO: this test should be merged with test_fetch_dataframe_corner_data later.
+    """
+    max_rows = pd.get_option("display.max_rows")
+    try:
+        min_rows = pd.get_option("display.min_rows")
+    except KeyError:  # pragma: no cover
+        min_rows = max_rows
+
+    pdf = pd.DataFrame(range(2000))
+    mdf = DataFrame(pdf, chunk_size=1000).to_gpu()
+    mdf.execute()
+    corner = fetch_corner_data(mdf)
+    assert isinstance(corner, pd.DataFrame)
+    assert corner.to_string(
+        max_rows=(corner.shape[0] - 1), min_rows=min_rows
+    ) == pdf.to_string(max_rows=max_rows, min_rows=min_rows)
 
 
 def test_make_dtypes():

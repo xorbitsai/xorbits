@@ -22,7 +22,7 @@ from ...serialization.serializables import AnyField, BoolField, Int32Field, Stri
 from ...tensor.utils import filter_inputs
 from ..core import DATAFRAME_TYPE, SERIES_TYPE
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_df, build_series, validate_axis
+from ..utils import build_df, build_series, is_pandas_2, validate_axis
 
 
 class DataFrameWhere(DataFrameOperand, DataFrameOperandMixin):
@@ -122,14 +122,22 @@ class DataFrameWhere(DataFrameOperand, DataFrameOperandMixin):
         else:
             mock_other = self.other
 
-        result_df = mock_obj.where(
-            np.zeros(mock_obj.shape).astype(bool),
-            other=mock_other,
-            axis=self.axis,
-            level=self.level,
-            errors=self.errors,
-            try_cast=self.try_cast,
-        )
+        if is_pandas_2():
+            result_df = mock_obj.where(
+                np.zeros(mock_obj.shape).astype(bool),
+                other=mock_other,
+                axis=self.axis,
+                level=self.level,
+            )
+        else:
+            result_df = mock_obj.where(
+                np.zeros(mock_obj.shape).astype(bool),
+                other=mock_other,
+                axis=self.axis,
+                level=self.level,
+                errors=self.errors,
+                try_cast=self.try_cast,
+            )
 
         inputs = filter_inputs([df_or_series, self.cond, self.other])
         if isinstance(df_or_series, DATAFRAME_TYPE):
@@ -213,24 +221,14 @@ class DataFrameWhere(DataFrameOperand, DataFrameOperandMixin):
         if isinstance(other, ENTITY_TYPE):
             other = ctx[other.key]
 
+        params = dict(axis=op.axis, level=op.level)
+        if not is_pandas_2():
+            params["errors"] = op.errors
+            params["try_cast"] = op.try_cast
         if op.replace_true:
-            ctx[out_obj.key] = input_data.mask(
-                cond,
-                other,
-                axis=op.axis,
-                level=op.level,
-                errors=op.errors,
-                try_cast=op.try_cast,
-            )
+            ctx[out_obj.key] = input_data.mask(cond, other, **params)
         else:
-            ctx[out_obj.key] = input_data.where(
-                cond,
-                other,
-                axis=op.axis,
-                level=op.level,
-                errors=op.errors,
-                try_cast=op.try_cast,
-            )
+            ctx[out_obj.key] = input_data.where(cond, other, **params)
 
 
 _doc_template = """

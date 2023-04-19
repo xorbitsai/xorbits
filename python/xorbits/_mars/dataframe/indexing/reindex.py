@@ -332,7 +332,7 @@ class DataFrameReindex(DataFrameOperand, DataFrameOperandMixin):
         inp = cls._convert_to_writable(ctx[op.input.key])
         index = cls._get_value(ctx, op.index)
         if op.index_freq is not None:
-            index = pd.Index(index, freq=op.index_freq)
+            index = type(pd.Index(index))(index, freq=op.index_freq)
         columns = cls._get_value(ctx, op.columns)
         kw = {"level": op.level}
         if index is not None and not isinstance(index, slice):
