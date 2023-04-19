@@ -211,12 +211,11 @@ def test_initializer_execution(setup):
         {"foo": mt.arange(1000, gpu=True), "bar": mt.arange(1000, gpu=True)},
         list(range(1000)),
         {"foo": list(range(1000)), "bar": list(range(1000))},
+        np.arange(1000),
+        {"foo": np.arange(1000), "bar": np.arange(1000)},
     ],
 )
 def test_dataframe_initializer_gpu(setup_gpu, data):
-    import cudf
-    import cudf.testing
-
     def to_object(data_):
         if isinstance(data_, TENSOR_TYPE):
             return data_.execute().fetch(to_cpu=False)
@@ -224,6 +223,9 @@ def test_dataframe_initializer_gpu(setup_gpu, data):
             return dict((k, to_object(v)) for k, v in data_.items())
         else:
             return data_
+
+    import cudf
+    import cudf.testing
 
     df = md.DataFrame(data, gpu=True, chunk_size=500)
     df.execute()
