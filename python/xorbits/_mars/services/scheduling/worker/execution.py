@@ -21,7 +21,7 @@ import pprint
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import xoscar as mo
 from xoscar.errors import XoscarError
@@ -185,9 +185,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         return await mo.actor_ref(QuotaActor.gen_uid(band), address=self.address)
 
     async def _prepare_input_data(self, subtask: Subtask, band_name: str):
-        band_to_queries = defaultdict(list)
-        band_to_shuffle_queries = defaultdict(list)
-        band_to_storage_api = {}
+        band_to_queries: Dict[str, List] = defaultdict(list)
+        band_to_shuffle_queries: Dict[str, List] = defaultdict(list)
+        band_to_storage_api: Dict[str, StorageAPI] = {}
         chunk_key_to_data_keys = get_chunk_key_to_data_keys(subtask.chunk_graph)
         for chunk in subtask.chunk_graph:
             if chunk.key in subtask.pure_depend_keys:
@@ -215,18 +215,10 @@ class SubtaskExecutionActor(mo.StatelessActor):
                             key, band_name=to_fetch_band, error="ignore"
                         )
                     )
-        # if queries:
-        #     await storage_api.fetch.batch(*queries)
 
         for band, queries in band_to_queries.items():
             storage_api = band_to_storage_api[band]
             await storage_api.fetch.batch(*queries)
-
-        # if shuffle_queries:
-        #     # TODO(hks): The batch method doesn't accept different error arguments,
-        #     #  combine them when it can.
-        #
-        #     await storage_api.fetch.batch(*shuffle_queries)
 
         # TODO(hks): The batch method doesn't accept different error arguments,
         #  combine them when it can.
