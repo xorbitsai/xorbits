@@ -160,6 +160,14 @@ class AlluxioStorage(FileSystemStorage):
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
+        logger.error("cur_dir %s", os.getcwd())
+        proc = await asyncio.create_subprocess_shell(
+            """${ALLUXIO_HOME}/bin/alluxio format
+            ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
+            """
+        )
+        await proc.wait()
+        logger.error("ALLUXIOHOME, %s", os.system("echo $ALLUXIO_HOME"))
         proc = await asyncio.create_subprocess_shell(
             """${ALLUXIO_HOME}/bin/alluxio format
             ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
