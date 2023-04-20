@@ -158,11 +158,9 @@ class AlluxioStorage(FileSystemStorage):
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
         proc = await asyncio.create_subprocess_shell(
-            "${ALLUXIO_HOME}/bin/alluxio format"
-        )
-        await proc.wait()
-        proc = await asyncio.create_subprocess_shell(
-            "${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount"
+            """${ALLUXIO_HOME}/bin/alluxio format
+            ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
+            """
         )
         await proc.wait()
         proc = await asyncio.create_subprocess_shell(
@@ -171,13 +169,11 @@ class AlluxioStorage(FileSystemStorage):
         await proc.wait()
         if proc.returncode != 0:
             raise SystemError("Cannot setup Alluxio. Please check the environment.")
-        proc = await asyncio.create_subprocess_shell(
-            "${ALLUXIO_HOME}/bin/alluxio fs mkdir /alluxio-storage"
-        )
-        await proc.wait()
         root_dir = kwargs.get("root_dirs")[0]
         proc = await asyncio.create_subprocess_shell(
-            f"$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage"
+            f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
+            $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage
+            """
         )
         await proc.wait()
         return await super().setup(**kwargs)
@@ -187,16 +183,9 @@ class AlluxioStorage(FileSystemStorage):
     async def teardown(**kwargs):
         root_dir = kwargs.get("root_dirs")[0]
         proc = await asyncio.create_subprocess_shell(
-            f"$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage"
-        )
-        await proc.wait()
-        fs = kwargs.get("fs")
-        fs.delete(root_dir, recursive=True)
-        proc = await asyncio.create_subprocess_shell(
-            "${ALLUXIO_HOME}/bin/alluxio fs rm -R /alluxio-storage"
-        )
-        await proc.wait()
-        proc = await asyncio.create_subprocess_shell(
-            "${ALLUXIO_HOME}/bin/alluxio-stop.sh local"
+            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage
+            $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage
+            $ALLUXIO_HOME/bin/alluxio-stop.sh local
+            """
         )
         await proc.wait()

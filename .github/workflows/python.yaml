@@ -230,6 +230,9 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits -k "vineyard" \
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
+        elif [[ "$MODULE" == "external-storage" ]]; then
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
         elif [[ "$MODULE" == "_mars/learn" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \

@@ -192,6 +192,7 @@ async def test_reader_and_writer(storage_context):
 
     async with await storage.open_reader(writer.object_id) as reader:
         r = await AioDeserializer(reader).run()
+
     np.testing.assert_array_equal(t, r)
 
     # test writer and reader with seek offset
