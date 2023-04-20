@@ -205,6 +205,8 @@ async def create_supervisor_actor_pool(
     logging_conf["subdir_prefix"] = "supervisor_"
     logging_conf = _config_logging(logging_conf)
     kwargs["logging_conf"] = logging_conf
+    # Disable cuda device on supervisor
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
     if oscar_config:
         numa_config = oscar_config.get("numa", dict())
         numa_external_address_scheme = numa_config.get("external_addr_scheme", None)
@@ -262,6 +264,12 @@ async def create_worker_actor_pool(
     gpu_enable_internal_address = gpu_config.get("enable_internal_addr")
     extra_conf = oscar_config.get("extra_conf", dict())
 
+    # Worker main process should remain CUDA_VISIBLE_DEVICES env for now.
+    # The scheduling decides the band based on cluster information,
+    # however, when collecting cluster information,
+    # nvutils determines whether to use the GPU based on the env CUDA_VISIBLE_DEVICES.
+    # See detail in ``nvutils.get_device_count``
+    os.environ.pop("CUDA_VISIBLE_DEVICES", None)
     if cuda_devices is None:  # pragma: no cover
         env_devices = os.environ.get("CUDA_VISIBLE_DEVICES")
         if not env_devices:
