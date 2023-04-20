@@ -141,6 +141,10 @@ def shutdown(**kw) -> None:
     """
     sess = session.get_default_session()
     if sess:  # pragma: no branch
+        # When connecting to an existing cluster by xorbits.init,
+        # stop_server will not do anything,
+        # so we need to delete the session first to release resources
+        sess.destroy()
         sess.stop_server(**kw)
 
 
