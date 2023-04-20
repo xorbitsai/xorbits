@@ -168,6 +168,11 @@ class AlluxioStorage(FileSystemStorage):
         )
         await proc.wait()
         logger.error("ALLUXIOHOME, %s", os.system("echo $ALLUXIO_HOME"))
+        os.system("echo $ALLUXIO_HOME >> tmp.txt")
+        f = open("tmp.txt", "r")
+        d = f.read()
+        f.close()
+        logger.error("ALLUXIO_HOME %s", d)
         proc = await asyncio.create_subprocess_shell(
             """${ALLUXIO_HOME}/bin/alluxio format
             ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
