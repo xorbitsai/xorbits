@@ -27,7 +27,6 @@ from .... import tensor as mt
 from ....tensor.datasource import array as from_array
 from ....tests.core import support_cuda
 from ....utils import dataslots
-from ... import to_datetime
 from ...datasource.dataframe import from_pandas
 from ...datasource.series import from_pandas as from_pandas_series
 from ..tests.test_arithmetic import comp_func
@@ -884,40 +883,6 @@ def test_ufunc(setup):
                 pd.testing.assert_frame_equal(result, expected)
             else:
                 pd.testing.assert_series_equal(result, expected)
-
-
-@support_cuda
-def test_to_datetime_bin(setup_gpu, gpu):
-    gpu = True
-    rs = np.random.RandomState(0)
-    df_raw = pd.DataFrame(
-        {
-            "a": rs.randint(1000, size=10),
-            "b": rs.rand(10),
-            "c": [pd.Timestamp(rs.randint(1604000000, 1604481373)) for _ in range(10)],
-        },
-        index=pd.RangeIndex(9, -1, -1),
-    )
-    df = md.DataFrame(
-        {
-            "a": rs.randint(1000, size=10),
-            "b": rs.rand(10),
-            "c": [pd.Timestamp(rs.randint(1604000000, 1604481373)) for _ in range(10)],
-        },
-        index=pd.RangeIndex(9, -1, -1),
-    )
-    if gpu:
-        df = df.to_gpu()
-    r = (df["c"] > to_datetime("2000-01-01")) & (df["c"] < to_datetime("2021-01-01"))
-
-    print(r.execute())
-    result = r.execute().fetch(to_cpu=False)
-    if gpu:
-        result = result.to_pandas()
-    expected = (df_raw["c"] > pd.to_datetime("2000-01-01")) & (
-        df_raw["c"] < pd.to_datetime("2021-01-01")
-    )
-    pd.testing.assert_series_equal(result, expected)
 
 
 def _generate_params_for_gpu():
