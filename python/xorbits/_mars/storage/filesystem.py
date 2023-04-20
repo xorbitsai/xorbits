@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import asyncio
+import logging
 import os
 import uuid
 from typing import Dict, List, Optional, Tuple
@@ -24,6 +25,8 @@ from ..lib.filesystem import FileSystem, get_fs
 from ..utils import implements, mod_hash
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import StorageFileObject
+
+logger = logging.getLogger(__name__)
 
 
 @register_storage_backend
@@ -163,10 +166,12 @@ class AlluxioStorage(FileSystemStorage):
             """
         )
         await proc.wait()
+        logger.error("starting /bin/alluxio-start.sh")
         proc = await asyncio.create_subprocess_shell(
             "${ALLUXIO_HOME}/bin/alluxio runTests"
         )
         await proc.wait()
+        logger.error("%s", str(proc))
         if proc.returncode != 0:
             raise SystemError("Cannot setup Alluxio. Please check the environment.")
         root_dir = kwargs.get("root_dirs")[0]
