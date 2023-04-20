@@ -1209,14 +1209,14 @@ def test_read_parquet_arrow(setup, engine):
             pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
 
             # test `use_arrow_dtype=True`
-            mdf = md.read_parquet(
-                f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
-            )
-            result = mdf.execute().fetch()
-            assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-
             if engine != "fastparquet":
+                mdf = md.read_parquet(
+                    f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
+                )
+                result = mdf.execute().fetch()
+                assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+                assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
+
                 mdf = md.read_parquet(
                     f"{tempdir}/*.parquet",
                     groups_as_chunks=True,
@@ -1227,6 +1227,11 @@ def test_read_parquet_arrow(setup, engine):
                 pd.testing.assert_frame_equal(
                     df, r.sort_values("a").reset_index(drop=True)
                 )
+            else:
+                with pytest.raises(ValueError):
+                    mdf = md.read_parquet(
+                        f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
+                    )
 
     # test partitioned
     with tempfile.TemporaryDirectory() as tempdir:
@@ -1244,6 +1249,27 @@ def test_read_parquet_arrow(setup, engine):
             df.sort_values("a").reset_index(drop=True),
             r.sort_values("a").reset_index(drop=True),
         )
+
+
+def test_read_parquet_arrow_dtype(setup):
+    test_df = pd.DataFrame(
+        {
+            "a": np.arange(10).astype(np.int64, copy=False),
+            "b": [f"s{i}" for i in range(10)],
+            "c": np.random.rand(10),
+            "d": np.random.rand(10, 4).tolist(),
+        }
+    )
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        file_path = os.path.join(tempdir, "test.parquet")
+        test_df.to_parquet(file_path)
+
+        df = md.read_parquet(file_path, use_arrow_dtype=True)
+        result = df.execute().fetch()
+        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
+        assert isinstance(result.dtypes.iloc[3], md.ArrowListDtype)
+        pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
 
 
 @pytest.mark.skipif(fastparquet is None, reason="fastparquet not installed")
