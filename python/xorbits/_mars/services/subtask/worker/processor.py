@@ -359,7 +359,7 @@ class SubtaskProcessor:
                         self.subtask.subtask_id,
                         storage_level,
                     )
-                except asyncio.CancelledError:
+                except asyncio.CancelledError:  # pragma: no cover
                     logger.debug(
                         f"Cancelling put {data_info_fmt}",
                         stored_keys,
