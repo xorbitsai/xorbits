@@ -88,6 +88,7 @@ jobs:
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
+          - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
           - { os: ubuntu-latest, module: pandas-1.0, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
     steps:
@@ -150,6 +151,20 @@ jobs:
           sudo mv /tmp/etcd-download-test/etcd /usr/local/bin/
           sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
           rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
+        fi
+        if [[ "$MODULE" == "external-storage" ]]; then
+          mkdir -p /tmp/alluxio-download-test
+          cd /tmp/alluxio-download-test
+          wget https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
+          tar -xzf alluxio-2.9.3-bin.tar.gz
+          cd alluxio-2.9.3
+          cp conf/alluxio-env.sh.template conf/alluxio-env.sh
+          echo "JAVA_HOME=/path/to/java/home" >> conf/alluxio-env.sh
+          cp conf/alluxio-site.properties.template conf/alluxio-site.properties
+          echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
+          sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
+          rm -fr alluxio-2.9.3-bin.tar.gz /tmp/alluxio-download-test
+          export ALLUXIO_HOME="/usr/local/bin/"
         fi
         if [[ "$PYTHON" == '3.9' ]]; then
           pip install h5py zarr matplotlib fastparquet

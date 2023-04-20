@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import os
 import pkgutil
 import sys
@@ -29,7 +28,7 @@ from ...lib.sparse import SparseMatrix, SparseNDArray
 from ...tests.core import require_cudf, require_cupy
 from ..base import StorageLevel
 from ..cuda import CudaStorage
-from ..filesystem import DiskStorage
+from ..filesystem import AlluxioStorage, DiskStorage
 from ..plasma import PlasmaStorage
 from ..shared_memory import SharedMemoryStorage
 from ..vineyard import VineyardStorage
@@ -42,6 +41,7 @@ except ImportError:
 require_lib = lambda x: x
 params = [
     "filesystem",
+    "external_storage",
     "shared_memory",
 ]
 if (
@@ -65,6 +65,17 @@ async def storage_context(request):
 
         yield storage
 
+        await storage.teardown(**teardown_params)
+    elif request.param == "external_storage":
+        tempdir = tempfile.mkdtemp()
+        params, teardown_params = await AlluxioStorage.setup(
+            fs=LocalFileSystem(),
+            root_dirs=[tempdir],
+        )
+        storage = AlluxioStorage(**params)
+        assert storage.level == StorageLevel.MEMORY
+
+        yield storage
         await storage.teardown(**teardown_params)
     elif request.param == "plasma":
         plasma_storage_size = 10 * 1024 * 1024
@@ -181,7 +192,6 @@ async def test_reader_and_writer(storage_context):
 
     async with await storage.open_reader(writer.object_id) as reader:
         r = await AioDeserializer(reader).run()
-
     np.testing.assert_array_equal(t, r)
 
     # test writer and reader with seek offset
