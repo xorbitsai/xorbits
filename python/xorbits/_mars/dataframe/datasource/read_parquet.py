@@ -672,8 +672,7 @@ def read_parquet(
         use_arrow_dtype = options.dataframe.use_arrow_dtype
     if use_arrow_dtype and engine_type != "pyarrow":
         raise ValueError(
-            f"`engine` should be pyarrow instead of {engine_type}"
-            f" when use arrow dtype as extension dtype"
+            f"The 'use_arrow_dtype' argument is not supported for the {engine_type} engine"
         )
     types_mapper = _arrow_dtype_mapper if use_arrow_dtype else None
 
