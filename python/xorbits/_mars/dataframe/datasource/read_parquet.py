@@ -14,7 +14,7 @@
 # limitations under the License.
 
 import os
-from typing import Dict
+from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
 import numpy as np
@@ -23,8 +23,11 @@ import pandas as pd
 try:
     import pyarrow as pa
     import pyarrow.parquet as pq
+
+    arrow_dtype = pa.DataType
 except ImportError:
     pa = None
+    arrow_dtype = None
 
 try:
     import fastparquet
@@ -44,7 +47,7 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...utils import is_object_dtype, lazy_import
-from ..arrays import ArrowStringDtype
+from ..arrays import ArrowListDtype, ArrowStringDtype
 from ..operands import OutputType
 from ..utils import contain_arrow_dtype, parse_index, to_arrow_dtypes
 from .core import (
@@ -166,21 +169,35 @@ def _parse_prefix(path):
     return path_prefix
 
 
+def _arrow_dtype_mapper(
+    tp: Union[np.dtype, arrow_dtype]
+) -> Optional[Union[ArrowListDtype, ArrowStringDtype]]:
+    if tp == pa.string():
+        return ArrowStringDtype()
+    elif isinstance(tp, pa.ListType):
+        return ArrowListDtype(tp.value_type)
+    else:
+        return
+
+
 class ArrowEngine(ParquetEngine):
     def get_row_num(self, f):
         file = pq.ParquetFile(f)
         return file.metadata.num_rows
 
     def read_dtypes(self, f, **kwargs):
+        types_mapper = kwargs.pop("types_mapper", None)
         file = pq.ParquetFile(f)
-        return file.schema_arrow.empty_table().to_pandas().dtypes
+        return (
+            file.schema_arrow.empty_table().to_pandas(types_mapper=types_mapper).dtypes
+        )
 
     @classmethod
     def _table_to_pandas(cls, t, nrows=None, use_arrow_dtype=None):
         if nrows is not None:
             t = t.slice(0, nrows)
         if use_arrow_dtype:
-            df = t.to_pandas(types_mapper={pa.string(): ArrowStringDtype()}.get)
+            df = t.to_pandas(types_mapper=_arrow_dtype_mapper)
         else:
             df = t.to_pandas()
         return df
@@ -651,6 +668,14 @@ def read_parquet(
     single_path = path[0] if isinstance(path, list) else path
     fs = get_fs(single_path, storage_options)
     is_partitioned = False
+    if use_arrow_dtype is None:
+        use_arrow_dtype = options.dataframe.use_arrow_dtype
+    if use_arrow_dtype and engine_type != "pyarrow":
+        raise ValueError(
+            f"The 'use_arrow_dtype' argument is not supported for the {engine_type} engine"
+        )
+    types_mapper = _arrow_dtype_mapper if use_arrow_dtype else None
+
     if fs.isdir(single_path):
         paths = fs.ls(path)
         if all(fs.isdir(p) for p in paths):
@@ -659,7 +684,7 @@ def read_parquet(
             is_partitioned = True
         else:
             with fs.open(paths[0], mode="rb") as f:
-                dtypes = engine.read_dtypes(f)
+                dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
     else:
         if not isinstance(path, list):
             file_path = glob(path, storage_options=storage_options)[0]
@@ -667,15 +692,10 @@ def read_parquet(
             file_path = path[0]
 
         with open_file(file_path, storage_options=storage_options) as f:
-            dtypes = engine.read_dtypes(f)
+            dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
 
     if columns:
         dtypes = dtypes[columns]
-
-    if use_arrow_dtype is None:
-        use_arrow_dtype = options.dataframe.use_arrow_dtype
-    if use_arrow_dtype:
-        dtypes = to_arrow_dtypes(dtypes)
 
     index_value = parse_index(pd.RangeIndex(-1))
     columns_value = parse_index(dtypes.index, store_data=True)
