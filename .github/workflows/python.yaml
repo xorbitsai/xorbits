@@ -156,7 +156,7 @@ jobs:
           export CUR_DIR=$(pwd)
           mkdir -p /tmp/alluxio-download-test
           cd /tmp/alluxio-download-test
-          wget https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
+          wget -q https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
           tar -xzf alluxio-2.9.3-bin.tar.gz
           cd alluxio-2.9.3
           cp conf/alluxio-env.sh.template conf/alluxio-env.sh
@@ -164,9 +164,10 @@ jobs:
           cp conf/alluxio-site.properties.template conf/alluxio-site.properties
           echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
           cd $CUR_DIR
-          sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 $CUR_DIR
+          sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
           rm -R /tmp/alluxio-download-test
-          export ALLUXIO_HOME=$CUR_DIR
+          export ALLUXIO_HOME="/usr/local/bin"
+          echo $CUR_DIR
           unset CUR_DIR
         fi
         if [[ "$PYTHON" == '3.9' ]]; then
@@ -234,6 +235,7 @@ jobs:
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
         elif [[ "$MODULE" == "external-storage" ]]; then
+          export ALLUXIO_HOME="/usr/local/bin"
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
         elif [[ "$MODULE" == "_mars/learn" ]]; then
