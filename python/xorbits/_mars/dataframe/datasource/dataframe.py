@@ -22,9 +22,11 @@ from ...config import options
 from ...core import OutputType
 from ...serialization.serializables import DataFrameField, SeriesField
 from ...tensor.utils import get_chunk_slices
-from ...utils import estimate_pandas_size
+from ...utils import estimate_pandas_size, lazy_import
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import decide_dataframe_chunk_sizes, is_cudf, parse_index
+
+cudf = lazy_import("cudf")
 
 
 class DataFrameDataSource(DataFrameOperand, DataFrameOperandMixin):
@@ -121,8 +123,8 @@ class DataFrameDataSource(DataFrameOperand, DataFrameOperandMixin):
         )
 
     @classmethod
-    def execute(cls, ctx, op):
-        ctx[op.outputs[0].key] = op.data
+    def execute(cls, ctx, op: "DataFrameDataSource"):
+        ctx[op.outputs[0].key] = cudf.DataFrame(op.data) if op.is_gpu() else op.data
 
 
 def from_pandas(data, chunk_size=None, gpu=None, sparse=False):
