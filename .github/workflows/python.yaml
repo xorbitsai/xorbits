@@ -166,6 +166,7 @@ jobs:
           sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
           rm -R /tmp/alluxio-download-test
           unset CUR_DIR
+          export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
           ${ALLUXIO_HOME}/bin/alluxio format
           ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
         fi

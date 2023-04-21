@@ -177,7 +177,6 @@ class AlluxioStorage(FileSystemStorage):
         proc = await asyncio.create_subprocess_shell(
             f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage
             $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage
-            $ALLUXIO_HOME/bin/alluxio-stop.sh local
             """
         )
         await proc.wait()
