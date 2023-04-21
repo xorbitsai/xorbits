@@ -58,7 +58,8 @@ from .core import (
 )
 from .utils import convert_to_abspath
 
-PARQUET_MEMORY_SCALE = 15
+PARQUET_MEMORY_SCALE = 10
+PARQUET_MEMORY_SCALE_WITH_ARROW_DTYPE = 3
 STRING_FIELD_OVERHEAD = 50
 cudf = lazy_import("cudf")
 
@@ -585,10 +586,22 @@ class DataFrameReadParquet(
             .astype(np.int64)
             .item()
         )
-        phy_size = raw_bytes * (op.memory_scale or PARQUET_MEMORY_SCALE)
-        n_strings = len([dt for dt in op.outputs[0].dtypes if is_object_dtype(dt)])
+        all_columns = list(op.outputs[0].dtypes.index)
+        columns = op.columns if op.columns else all_columns
+        if op.use_arrow_dtype:
+            scale = op.memory_scale or PARQUET_MEMORY_SCALE_WITH_ARROW_DTYPE
+        else:
+            scale = op.memory_scale or PARQUET_MEMORY_SCALE
+        phy_size = raw_bytes * scale * len(columns) / len(all_columns)
+        n_strings = len(
+            [
+                dt
+                for col, dt in op.outputs[0].dtypes.items()
+                if col in columns and is_object_dtype(dt)
+            ]
+        )
         pd_size = phy_size + n_strings * estimated_row_num * STRING_FIELD_OVERHEAD
-        ctx[op.outputs[0].key] = (pd_size, pd_size + phy_size)
+        ctx[op.outputs[0].key] = (pd_size, pd_size)
 
     def __call__(self, index_value=None, columns_value=None, dtypes=None):
         self._output_types = [OutputType.dataframe]
