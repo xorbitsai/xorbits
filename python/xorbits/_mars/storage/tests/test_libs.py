@@ -51,7 +51,7 @@ if (
 ):
     params.append("plasma")
 alluxio = sp.getoutput("echo $ALLUXIO_HOME")
-if not alluxio.isspace() and not vineyard:
+if "alluxio" in alluxio:
     params.append("alluxio")
 if vineyard is not None:
     params.append("vineyard")

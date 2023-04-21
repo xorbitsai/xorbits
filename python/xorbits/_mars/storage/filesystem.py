@@ -165,7 +165,9 @@ class AlluxioStorage(FileSystemStorage):
         )
         await proc.wait()
         if proc.returncode != 0:
-            raise SystemError("Cannot setup Alluxio. Please check the environment.")
+            raise SystemError(
+                "Cannot setup Alluxio. Please check the environment."
+            )  # pragma: no cover
         root_dir = kwargs.get("root_dirs")[0]
         proc = await asyncio.create_subprocess_shell(
             f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
