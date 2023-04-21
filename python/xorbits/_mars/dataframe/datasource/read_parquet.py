@@ -600,7 +600,10 @@ class DataFrameReadParquet(
                 if col in columns and is_object_dtype(dt)
             ]
         )
-        pd_size = phy_size + n_strings * estimated_row_num * STRING_FIELD_OVERHEAD
+        if op.use_arrow_dtype:
+            pd_size = phy_size
+        else:
+            pd_size = phy_size + n_strings * estimated_row_num * STRING_FIELD_OVERHEAD
         ctx[op.outputs[0].key] = (pd_size, pd_size)
 
     def __call__(self, index_value=None, columns_value=None, dtypes=None):
