@@ -174,12 +174,6 @@ class AlluxioStorage(FileSystemStorage):
         f.close()
         logger.error("type ALLUXIO_HOME %s", type(d))
         logger.error("ALLUXIO_HOME %s", d)
-        proc = await asyncio.create_subprocess_shell(
-            """${ALLUXIO_HOME}/bin/alluxio format
-            ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
-            """
-        )
-        await proc.wait()
         logger.error("starting /bin/alluxio-start.sh")
         proc = await asyncio.create_subprocess_shell(
             "${ALLUXIO_HOME}/bin/alluxio runTests"
