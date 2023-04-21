@@ -153,6 +153,8 @@ class DiskStorage(FileSystemStorage):
 
 @register_storage_backend
 class AlluxioStorage(FileSystemStorage):
+    name = "alluxio"
+
     @classmethod
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
