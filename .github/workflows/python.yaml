@@ -163,10 +163,11 @@ jobs:
           echo "JAVA_HOME=/path/to/java/home" >> conf/alluxio-env.sh
           cp conf/alluxio-site.properties.template conf/alluxio-site.properties
           echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
-          sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
-          rm -fr alluxio-2.9.3-bin.tar.gz /tmp/alluxio-download-test
-          export ALLUXIO_HOME="/usr/local/bin/"
           cd $CUR_DIR
+          mkdir /alluxiofolder
+          sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /alluxiofolder
+          rm -R /tmp/alluxio-download-test
+          export ALLUXIO_HOME="/alluxiofolder"
           unset CUR_DIR
         fi
         if [[ "$PYTHON" == '3.9' ]]; then
