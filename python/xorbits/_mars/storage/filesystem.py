@@ -159,24 +159,15 @@ class AlluxioStorage(FileSystemStorage):
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
-        proc = await asyncio.create_subprocess_shell(
-            """${ALLUXIO_HOME}/bin/alluxio format
-            ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
-            ${ALLUXIO_HOME}/bin/alluxio runTests
-            """
-        )
-        await proc.wait()
-        if proc.returncode != 0:
-            raise SystemError(
-                "Cannot setup Alluxio. Please check the environment."
-            )  # pragma: no cover
         root_dir = kwargs.get("root_dirs")[0]
-        proc = await asyncio.create_subprocess_shell(
-            f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
-            $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage
-            """
-        )
-        await proc.wait()
+        local_environ = kwargs.get("local_environ")
+        if local_environ:
+            proc = await asyncio.create_subprocess_shell(
+                f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
+                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage
+                """
+            )
+            await proc.wait()
         return await super().setup(**kwargs)
 
     @staticmethod
