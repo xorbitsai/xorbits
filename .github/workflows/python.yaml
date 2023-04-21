@@ -166,7 +166,6 @@ jobs:
           cd $CUR_DIR
           sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
           rm -R /tmp/alluxio-download-test
-          export ALLUXIO_HOME="/usr/local/bin"
           echo $CUR_DIR
           unset CUR_DIR
         fi
@@ -235,7 +234,7 @@ jobs:
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
         elif [[ "$MODULE" == "external-storage" ]]; then
-          export ALLUXIO_HOME="/usr/local/bin"
+          export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
         elif [[ "$MODULE" == "_mars/learn" ]]; then
