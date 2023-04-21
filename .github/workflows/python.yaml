@@ -88,7 +88,7 @@ jobs:
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
-          - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
+          - { os: ubuntu-latest, module: alluxio, python-version: 3.9 }
           - { os: ubuntu-latest, module: pandas-1.0, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
     steps:
@@ -152,7 +152,7 @@ jobs:
           sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
           rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
         fi
-        if [[ "$MODULE" == "external-storage" ]]; then
+        if [[ "$MODULE" == "alluxio" ]]; then
           export CUR_DIR=$(pwd)
           mkdir -p /tmp/alluxio-download-test
           cd /tmp/alluxio-download-test
@@ -166,7 +166,6 @@ jobs:
           cd $CUR_DIR
           sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
           rm -R /tmp/alluxio-download-test
-          echo $CUR_DIR
           unset CUR_DIR
         fi
         if [[ "$PYTHON" == '3.9' ]]; then
@@ -233,7 +232,7 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits -k "vineyard" \
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
-        elif [[ "$MODULE" == "external-storage" ]]; then
+        elif [[ "$MODULE" == "alluxio" ]]; then
           export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py

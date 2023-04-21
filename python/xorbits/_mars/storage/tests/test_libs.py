@@ -15,6 +15,7 @@
 
 import os
 import pkgutil
+import subprocess as sp
 import sys
 import tempfile
 
@@ -42,7 +43,6 @@ except ImportError:
 require_lib = lambda x: x
 params = [
     "filesystem",
-    "external_storage",
     "shared_memory",
 ]
 if (
@@ -52,6 +52,9 @@ if (
     params.append("plasma")
 if vineyard is not None:
     params.append("vineyard")
+alluxio = sp.getoutput("echo $ALLUXIO_HOME")
+if not alluxio.isspace():
+    params.append("alluxio")
 
 
 @pytest.fixture(params=params)
@@ -67,7 +70,7 @@ async def storage_context(request):
         yield storage
 
         await storage.teardown(**teardown_params)
-    elif request.param == "external_storage":
+    elif request.param == "alluxio":
         tempdir = tempfile.mkdtemp()
         params, teardown_params = await AlluxioStorage.setup(
             fs=LocalFileSystem(),
