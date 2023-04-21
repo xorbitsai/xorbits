@@ -21,7 +21,7 @@ import pprint
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import xoscar as mo
 from xoscar.errors import XoscarError
@@ -185,11 +185,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         return await mo.actor_ref(QuotaActor.gen_uid(band), address=self.address)
 
     async def _prepare_input_data(self, subtask: Subtask, band_name: str):
-        queries = []
-        shuffle_queries = []
-        storage_api = await StorageAPI.create(
-            subtask.session_id, address=self.address, band_name=band_name
-        )
+        band_to_queries: Dict[str, List] = defaultdict(list)
+        band_to_shuffle_queries: Dict[str, List] = defaultdict(list)
+        band_to_storage_api: Dict[str, StorageAPI] = {}
         chunk_key_to_data_keys = get_chunk_key_to_data_keys(subtask.chunk_graph)
         for chunk in subtask.chunk_graph:
             if chunk.key in subtask.pure_depend_keys:
@@ -198,23 +196,34 @@ class SubtaskExecutionActor(mo.StatelessActor):
                 to_fetch_band = band_name
             else:
                 to_fetch_band = "numa-0"
+
+            if not band_to_storage_api.get(to_fetch_band, None):
+                band_to_storage_api[to_fetch_band] = await StorageAPI.create(
+                    subtask.session_id, address=self.address, band_name=to_fetch_band
+                )
+
             if isinstance(chunk.op, Fetch):
-                queries.append(
-                    storage_api.fetch.delay(chunk.key, band_name=to_fetch_band)
+                band_to_queries[to_fetch_band].append(
+                    band_to_storage_api[to_fetch_band].fetch.delay(
+                        chunk.key, band_name=to_fetch_band
+                    )
                 )
             elif isinstance(chunk.op, FetchShuffle):
                 for key in chunk_key_to_data_keys[chunk.key]:
-                    shuffle_queries.append(
-                        storage_api.fetch.delay(
+                    band_to_shuffle_queries[to_fetch_band].append(
+                        band_to_storage_api[to_fetch_band].fetch.delay(
                             key, band_name=to_fetch_band, error="ignore"
                         )
                     )
-        if queries:
-            await storage_api.fetch.batch(*queries)
-        if shuffle_queries:
-            # TODO(hks): The batch method doesn't accept different error arguments,
-            #  combine them when it can.
 
+        for band, queries in band_to_queries.items():
+            storage_api = band_to_storage_api[band]
+            await storage_api.fetch.batch(*queries)
+
+        # TODO(hks): The batch method doesn't accept different error arguments,
+        #  combine them when it can.
+        for band, shuffle_queries in band_to_shuffle_queries.items():
+            storage_api = band_to_storage_api[band]
             await storage_api.fetch.batch(*shuffle_queries)
 
     async def _collect_input_sizes(
