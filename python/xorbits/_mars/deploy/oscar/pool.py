@@ -303,7 +303,7 @@ async def create_worker_actor_pool(
     # sub-pools for IO(transfer and spill)
     for _ in range(n_io_process):
         if envs:  # pragma: no cover
-            envs.append(dict())
+            envs.append({"CUDA_VISIBLE_DEVICES": "-1"})
         labels.append("io")
         if external_address_schemes:
             # just use main process' scheme for IO process
