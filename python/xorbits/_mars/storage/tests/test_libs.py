@@ -50,11 +50,11 @@ if (
     and pkgutil.find_loader("pyarrow.plasma") is not None
 ):
     params.append("plasma")
+alluxio = sp.getoutput("echo $ALLUXIO_HOME")
+if not alluxio.isspace() and not vineyard:
+    params.append("alluxio")
 if vineyard is not None:
     params.append("vineyard")
-alluxio = sp.getoutput("echo $ALLUXIO_HOME")
-if not alluxio.isspace():
-    params.append("alluxio")
 
 
 @pytest.fixture(params=params)
