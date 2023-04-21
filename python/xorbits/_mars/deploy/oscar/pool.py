@@ -295,11 +295,6 @@ async def create_worker_actor_pool(
 
     # handle n_io_process
     n_process += n_io_process
-
-    labels = kwargs["labels"]
-    envs = kwargs["envs"]
-    external_address_schemes = kwargs["external_address_schemes"]
-    enable_internal_addresses = kwargs["enable_internal_addresses"]
     # sub-pools for IO(transfer and spill)
     for _ in range(n_io_process):
         if envs:  # pragma: no cover
