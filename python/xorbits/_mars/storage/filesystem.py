@@ -156,7 +156,11 @@ class AlluxioStorage(FileSystemStorage):
     name = "alluxio"
 
     def __init__(
-        self, root_dirs: List[str], level: StorageLevel, size: int, local_environ: bool
+        self,
+        root_dirs: List[str],
+        local_environ: bool,
+        level: StorageLevel = None,
+        size: int = None,
     ):
         super().__init__(LocalFileSystem(), root_dirs, level, size)
         self._local_environ = local_environ
@@ -174,7 +178,13 @@ class AlluxioStorage(FileSystemStorage):
                 """
             )
             await proc.wait()
-        params = dict(root_dirs=[root_dir], local_environ=local_environ)
+        params = dict(
+            fs=LocalFileSystem(),
+            root_dirs=[root_dir],
+            level=StorageLevel.MEMORY,
+            size=None,
+            local_environ=local_environ,
+        )
         return params, params
 
     @staticmethod
