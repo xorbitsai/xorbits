@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Tuple
 from xoscar.serialization import AioDeserializer, AioSerializer
 
 from ..lib.aio import AioFilesystem
-from ..lib.filesystem import FileSystem, get_fs
+from ..lib.filesystem import FileSystem, LocalFileSystem, get_fs
 from ..utils import implements, mod_hash
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import StorageFileObject
@@ -157,13 +157,12 @@ class AlluxioStorage(FileSystemStorage):
 
     def __init__(
         self,
-        fs: FileSystem,
         root_dirs: List[str],
         level: StorageLevel,
         size: int,
         local_environ: bool,
     ):
-        super().__init__(fs, root_dirs, level, size)
+        super().__init__(LocalFileSystem(), root_dirs, level, size)
         self._local_environ = local_environ
 
     @classmethod
@@ -174,20 +173,21 @@ class AlluxioStorage(FileSystemStorage):
         local_environ = kwargs.get("local_environ")
         if local_environ:
             proc = await asyncio.create_subprocess_shell(
-                f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
-                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage
+                f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage-test
+                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage-test
                 """
             )
             await proc.wait()
-        return await super().setup(**kwargs)
+        params = dict(root_dirs=[root_dir], local_environ=local_environ)
+        return params, params
 
     @staticmethod
     @implements(StorageBackend.teardown)
     async def teardown(**kwargs):
         root_dir = kwargs.get("root_dirs")[0]
         proc = await asyncio.create_subprocess_shell(
-            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage
-            $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage
+            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage-test
+            $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage-test
             """
         )
         await proc.wait()
