@@ -156,11 +156,9 @@ class AlluxioStorage(FileSystemStorage):
     name = "alluxio"
 
     def __init__(
-        self,
-        root_dirs: List[str],
-        local_environ: bool,
+        self, root_dirs: List[str], level: StorageLevel, size: int, local_environ: bool
     ):
-        super().__init__(LocalFileSystem(), root_dirs)
+        super().__init__(LocalFileSystem(), root_dirs, level, size)
         self._local_environ = local_environ
 
     @classmethod
