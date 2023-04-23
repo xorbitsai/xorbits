@@ -174,8 +174,8 @@ class AlluxioStorage(FileSystemStorage):
         local_environ = kwargs.get("local_environ")
         if local_environ:
             proc = await asyncio.create_subprocess_shell(
-                f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage-test
-                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage-test
+                f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
+                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage
                 """
             )
             await proc.wait()
@@ -193,8 +193,8 @@ class AlluxioStorage(FileSystemStorage):
     async def teardown(**kwargs):
         root_dir = kwargs.get("root_dirs")[0]
         proc = await asyncio.create_subprocess_shell(
-            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage-test
-            $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage-test
+            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage
+            $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage
             """
         )
         await proc.wait()
