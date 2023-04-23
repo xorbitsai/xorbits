@@ -155,6 +155,17 @@ class DiskStorage(FileSystemStorage):
 class AlluxioStorage(FileSystemStorage):
     name = "alluxio"
 
+    def __init__(
+        self,
+        fs: FileSystem,
+        root_dirs: List[str],
+        level: StorageLevel,
+        size: int,
+        local_environ: bool,
+    ):
+        super().__init__(fs, root_dirs, level, size)
+        self._local_environ = local_environ
+
     @classmethod
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
