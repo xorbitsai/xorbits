@@ -159,10 +159,11 @@ class AlluxioStorage(FileSystemStorage):
         self,
         root_dirs: List[str],
         local_environ: bool,
+        fs: FileSystem = LocalFileSystem(),
         level: StorageLevel = None,
         size: int = None,
     ):
-        super().__init__(LocalFileSystem(), root_dirs, level, size)
+        super().__init__(fs, root_dirs, level, size)
         self._local_environ = local_environ
 
     @classmethod
