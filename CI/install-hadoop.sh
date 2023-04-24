@@ -117,6 +117,10 @@ sudo chown root /etc/profile.d/hadoop.sh
 sudo addgroup hadoop
 sudo adduser --disabled-password --gecos "" --ingroup hadoop hduser
 
+# for xoscar
+sudo mkdir /home/.xoscar
+sudo chmod -R 1777 /home/.xoscar
+
 sudo mkdir -p /var/lib/hadoop/tmp
 sudo chmod 750 /var/lib/hadoop/tmp
 
