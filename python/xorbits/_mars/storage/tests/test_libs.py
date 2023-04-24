@@ -72,6 +72,11 @@ async def storage_context(request):
         await storage.teardown(**teardown_params)
     elif request.param == "alluxio":
         tempdir = tempfile.mkdtemp()
+        with pytest.raises(
+            ValueError,
+            match="Please specify only one root directory for alluxio storage.",
+        ):
+            await AlluxioStorage.setup(root_dirs=[tempdir, tempdir], local_environ=True)
         params, teardown_params = await AlluxioStorage.setup(
             root_dirs=[tempdir], local_environ=True
         )

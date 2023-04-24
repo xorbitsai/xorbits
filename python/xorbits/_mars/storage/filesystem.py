@@ -159,10 +159,12 @@ class AlluxioStorage(FileSystemStorage):
         self,
         root_dirs: List[str],
         local_environ: bool,
-        fs: FileSystem = LocalFileSystem(),
+        fs: FileSystem = None,
         level: StorageLevel = None,
         size: int = None,
     ):
+        if fs is None:
+            fs = LocalFileSystem()
         super().__init__(fs, root_dirs, level, size)
         self._local_environ = local_environ
 
@@ -170,7 +172,12 @@ class AlluxioStorage(FileSystemStorage):
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
-        root_dir = kwargs.get("root_dirs")[0]
+        root_dirs = kwargs.get("root_dirs")
+        if len(root_dirs) > 1:
+            raise ValueError(
+                "Please specify only one root directory for alluxio storage."
+            )
+        root_dir = root_dirs[0]
         local_environ = kwargs.get("local_environ")
         if local_environ:
             proc = await asyncio.create_subprocess_shell(
