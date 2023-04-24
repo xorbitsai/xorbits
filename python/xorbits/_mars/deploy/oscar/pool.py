@@ -293,11 +293,24 @@ async def create_worker_actor_pool(
                 [numa_enable_internal_address for _ in range(num_cpus)]
             )
 
+    # handle n_io_process
+    n_process += n_io_process
+    # sub-pools for IO(transfer and spill)
+    for _ in range(n_io_process):
+        if envs:  # pragma: no cover
+            envs.append({"CUDA_VISIBLE_DEVICES": "-1"})
+        labels.append("io")
+        if external_address_schemes:
+            # just use main process' scheme for IO process
+            external_address_schemes.append(external_address_schemes[0])
+        if enable_internal_addresses:
+            # just use main process' setting for IO process
+            enable_internal_addresses.append(enable_internal_addresses[0])
+
     return await create_actor_pool(
         address,
         n_process=n_process,
         ports=ports,
-        n_io_process=n_io_process,
         labels=labels,
         envs=envs,
         modules=modules,
