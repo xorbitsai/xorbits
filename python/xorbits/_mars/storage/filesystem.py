@@ -162,7 +162,10 @@ class AlluxioStorage(FileSystemStorage):
         level: StorageLevel = None,
         size: int = None,
     ):
-        super().__init__(LocalFileSystem(), [root_dir], level, size)
+        self._fs = AioFilesystem(LocalFileSystem())
+        self._root_dirs = [root_dir]
+        self._level = level
+        self._size = size
         self._local_environ = local_environ
 
     @classmethod
