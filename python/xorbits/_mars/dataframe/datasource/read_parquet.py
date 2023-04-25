@@ -586,7 +586,11 @@ class DataFrameReadParquet(
             .astype(np.int64)
             .item()
         )
-        all_columns = list(op.outputs[0].dtypes.index)
+        if op.columns is not None:
+            with open_file(op.path, storage_options=op.storage_options) as f:
+                all_columns = list(get_engine(op.engine).read_dtypes(f).index)
+        else:
+            all_columns = list(op.outputs[0].dtypes.index)
         columns = op.columns if op.columns else all_columns
         if op.use_arrow_dtype:
             scale = op.memory_scale or PARQUET_MEMORY_SCALE_WITH_ARROW_DTYPE

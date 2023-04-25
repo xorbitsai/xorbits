@@ -674,22 +674,14 @@ def test_read_parquet_estimate_size():
         chunk = tiled.chunks[0]
         estimate_size(sizes, chunk.op)
         estimated_size = sizes[chunk.key][0]
-        assert estimated_size > test_df.memory_usage(deep=True).sum()
+        assert estimated_size > test_df.memory_usage(deep=True).sum() * 1.5
 
-        df = read_parquet(file_path)
+        df = read_parquet(file_path, columns=["a", "c"])
         tiled = tile(df)
         sizes = dict()
         chunk = tiled.chunks[0]
         estimate_size(sizes, chunk.op)
-        estimated_size = sizes[chunk.key][0]
-        assert estimated_size > test_df.memory_usage(deep=True).sum()
-
-        df = read_parquet(file_path, columns=["a", "b"])
-        tiled = tile(df)
-        sizes = dict()
-        chunk = tiled.chunks[0]
-        estimate_size(sizes, chunk.op)
-        sizes[chunk.key][0] == estimated_size * 2 / 3
+        assert sizes[chunk.key][0] < estimated_size * (2 / 3)
 
         df = read_parquet(file_path, use_arrow_dtype=True)
         tiled = tile(df)
@@ -698,12 +690,12 @@ def test_read_parquet_estimate_size():
         estimate_size(sizes, chunk.op)
         estimated_size_arrow = sizes[chunk.key][0]
         estimated_size_arrow < estimated_size
-        assert estimated_size_arrow > test_df.memory_usage(deep=True).sum()
+        assert estimated_size_arrow > test_df.memory_usage(deep=True).sum() * 1.5
 
-        df = read_parquet(file_path, use_arrow_dtype=True, columns=["a", "b"])
+        df = read_parquet(file_path, use_arrow_dtype=True, columns=["a", "c"])
         tiled = tile(df)
         sizes = dict()
         chunk = tiled.chunks[0]
         estimate_size(sizes, chunk.op)
         estimated_size_arrow = sizes[chunk.key][0]
-        sizes[chunk.key][0] == estimated_size * 2 / 3
+        assert sizes[chunk.key][0] < estimated_size * 2 / 3
