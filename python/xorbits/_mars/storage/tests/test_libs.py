@@ -15,6 +15,7 @@
 
 import os
 import pkgutil
+import subprocess as sp
 import sys
 import tempfile
 
@@ -29,7 +30,7 @@ from ...lib.sparse import SparseMatrix, SparseNDArray
 from ...tests.core import require_cudf, require_cupy
 from ..base import StorageLevel
 from ..cuda import CudaStorage
-from ..filesystem import DiskStorage
+from ..filesystem import AlluxioStorage, DiskStorage
 from ..plasma import PlasmaStorage
 from ..shared_memory import SharedMemoryStorage
 from ..vineyard import VineyardStorage
@@ -49,6 +50,9 @@ if (
     and pkgutil.find_loader("pyarrow.plasma") is not None
 ):
     params.append("plasma")
+alluxio = sp.getoutput("echo $ALLUXIO_HOME")
+if "alluxio" in alluxio:
+    params.append("alluxio")
 if vineyard is not None:
     params.append("vineyard")
 
@@ -65,6 +69,16 @@ async def storage_context(request):
 
         yield storage
 
+        await storage.teardown(**teardown_params)
+    elif request.param == "alluxio":
+        tempdir = tempfile.mkdtemp()
+        params, teardown_params = await AlluxioStorage.setup(
+            root_dir=tempdir, local_environ=True
+        )
+        storage = AlluxioStorage(**params)
+        assert storage.level == StorageLevel.MEMORY
+
+        yield storage
         await storage.teardown(**teardown_params)
     elif request.param == "plasma":
         plasma_storage_size = 10 * 1024 * 1024
