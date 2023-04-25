@@ -23,8 +23,11 @@ from ...config import options
 from ...core import OutputType
 from ...serialization.serializables import BoolField, DataTypeField, IndexField
 from ...tensor.utils import get_chunk_slices
+from ...utils import lazy_import
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import decide_series_chunk_size, is_cudf, parse_index
+
+cudf = lazy_import("cudf")
 
 
 class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):
@@ -235,18 +238,20 @@ class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):
 
     @classmethod
     def execute(cls, ctx, op):
+        xdf = cudf if op.is_gpu() else pd
+
         if not op.inputs:
             # from pandas
-            ctx[op.outputs[0].key] = op.data
+            ctx[op.outputs[0].key] = xdf.Index(op.data)
         else:
             out = op.outputs[0]
             inp = ctx[op.inputs[0].key]
             dtype = out.dtype if out.dtype != object else None
             if hasattr(inp, "index"):
                 # DataFrame, Series
-                ctx[out.key] = pd.Index(inp.index, dtype=dtype, name=out.name)
+                ctx[out.key] = xdf.Index(inp.index, dtype=dtype, name=out.name)
             else:
-                ctx[out.key] = pd.Index(inp, dtype=dtype, name=out.name)
+                ctx[out.key] = xdf.Index(inp, dtype=dtype, name=out.name)
 
 
 def from_pandas(data, chunk_size=None, gpu=None, sparse=False, store_data=False):
