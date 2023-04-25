@@ -157,27 +157,19 @@ class AlluxioStorage(FileSystemStorage):
 
     def __init__(
         self,
-        root_dirs: List[str],
+        root_dir: str,
         local_environ: bool,
-        fs: FileSystem = None,
         level: StorageLevel = None,
         size: int = None,
     ):
-        if fs is None:
-            fs = LocalFileSystem()
-        super().__init__(fs, root_dirs, level, size)
+        super().__init__(LocalFileSystem(), [root_dir], level, size)
         self._local_environ = local_environ
 
     @classmethod
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
-        root_dirs = kwargs.get("root_dirs")
-        if len(root_dirs) > 1:
-            raise ValueError(
-                "Please specify only one root directory for alluxio storage."
-            )
-        root_dir = root_dirs[0]
+        root_dir = kwargs.get("root_dir")
         local_environ = kwargs.get("local_environ")
         if local_environ:
             proc = await asyncio.create_subprocess_shell(
@@ -187,18 +179,17 @@ class AlluxioStorage(FileSystemStorage):
             )
             await proc.wait()
         params = dict(
-            fs=LocalFileSystem(),
-            root_dirs=[root_dir],
+            root_dir=root_dir,
             level=StorageLevel.MEMORY,
             size=None,
             local_environ=local_environ,
         )
-        return params, params
+        return params, dict(root_dir=root_dir)
 
     @staticmethod
     @implements(StorageBackend.teardown)
     async def teardown(**kwargs):
-        root_dir = kwargs.get("root_dirs")[0]
+        root_dir = kwargs.get("root_dir")
         proc = await asyncio.create_subprocess_shell(
             f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage
             $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage
