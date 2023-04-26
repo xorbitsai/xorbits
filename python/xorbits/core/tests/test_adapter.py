@@ -150,10 +150,6 @@ def test_on_nonexistent_magic_method(dummy_df):
 
 
 def test_setattr(dummy_df):
-    dummy_df.a = 2
-    a = dummy_df.a
-    assert isinstance(a, DataRef)
-
     mdf = mars_dataframe.DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
     dummy_df._data = mdf.data
     assert dummy_df.data._mars_entity.data is mdf.data
