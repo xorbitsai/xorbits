@@ -1171,7 +1171,10 @@ def merge(
         raise ValueError(
             f"auto_merge can only be `both`, `none`, `before` or `after`, got {auto_merge}"
         )
-    if df.op.gpu or right.op.gpu:
+    if (df.op.gpu or right.op.gpu) and bloom_filter is not False:
+        logger.warning(
+            "Currently we do not support ``bloom_filter`` option on GPU, due to some limitations of CUDF."
+        )
         bloom_filter = False
 
     if bloom_filter not in [True, False, "auto"]:
