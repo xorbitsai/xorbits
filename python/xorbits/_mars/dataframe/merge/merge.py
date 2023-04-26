@@ -115,11 +115,28 @@ class DataFrameMergeAlign(MapReduceOperand, DataFrameOperandMixin):
         for index_idx, index_filter in enumerate(filters):
             reducer_index = (index_idx, chunk.index[1])
             if index_filter is not None and index_filter is not list():
-                ctx[chunk.key, reducer_index] = (
-                    op.mapper_id,
-                    ctx.get_current_chunk().index,
-                    df.iloc[index_filter],
-                )
+                # for MultiIndex in cudf,
+                # get each line of df and then concat them.
+                if is_cudf(df) and isinstance(df.index, cudf.MultiIndex):
+                    filtered_dfs = [
+                        df.iloc[int(index) : int(index) + 1]
+                        for index in index_filter.values
+                    ]
+                    if filtered_dfs:
+                        filtered_df = cudf.concat(filtered_dfs, axis=0)
+                    else:  # empty dataframe
+                        filtered_df = df.iloc[0:0]
+                    ctx[chunk.key, reducer_index] = (
+                        op.mapper_id,
+                        ctx.get_current_chunk().index,
+                        filtered_df,
+                    )
+                else:
+                    ctx[chunk.key, reducer_index] = (
+                        op.mapper_id,
+                        ctx.get_current_chunk().index,
+                        df.iloc[index_filter],
+                    )
             else:
                 ctx[chunk.key, reducer_index] = (
                     op.mapper_id,
@@ -855,25 +872,66 @@ class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
                 right = right.iloc[index]
 
         def execute_merge(x, y):
+            """
+            All merge and join operations are transformed into specific merge operations.
+            In particular, for join operations on the GPU without the ``on`` column
+            (CUDF does not support join with ``on`` parameter),
+            The key of merge is always transformed into a column on one side (left_on / right_on) and
+            an index on the other side (left_index=True / right_index=True).
+            In this case, CUDF takes the result of the ``on`` column as the index instead of the data column,
+            which is different from pandas.
+            so we should reset the index before the real calculation, and
+            then restore the column to the ``on`` data column.
+            """
+            left_index = None
+            left_on = None
+            right_index = None
+            right_on = None
+            rename_mapping = None
+            magic_index_col_name = "__index__"
             if not op.gpu:
                 kwargs = dict(
                     copy=op.copy, validate=op.validate, indicator=op.indicator
                 )
-            else:  # pragma: no cover
+            else:
                 # cudf doesn't support 'validate' and 'copy'
                 kwargs = dict(indicator=op.indicator)
-            return x.merge(
+                # TODO: support MultiIndex case
+                if len(x.index.shape) == 1 and len(y.index.shape) == 1:
+                    if op.how == "left" and op.left_index is True:
+                        x.index.name = magic_index_col_name
+                        x = x.reset_index()
+                        left_on = magic_index_col_name
+                        left_index = False
+                        rename_mapping = {magic_index_col_name: op.right_on}
+                    elif op.how == "right" and op.right_index is True:
+                        y.index.name = magic_index_col_name
+                        y = y.reset_index()
+                        right_on = magic_index_col_name
+                        right_index = False
+                        rename_mapping = {magic_index_col_name: op.left_on}
+
+            res = x.merge(
                 y,
                 how=op.how,
                 on=op.on,
-                left_on=op.left_on,
-                right_on=op.right_on,
-                left_index=op.left_index,
-                right_index=op.right_index,
+                left_on=left_on if left_on is not None else op.left_on,
+                right_on=right_on if right_on is not None else op.right_on,
+                left_index=left_index if left_index is not None else op.left_index,
+                right_index=right_index if right_index is not None else op.right_index,
                 sort=op.sort,
                 suffixes=op.suffixes,
                 **kwargs,
             )
+
+            if rename_mapping is not None:
+                col = list(rename_mapping.values())[0]
+                if col in res.columns:
+                    res[col] = res[magic_index_col_name]
+                    res = res.drop(columns=[magic_index_col_name])
+                else:
+                    res = res.rename(columns=rename_mapping)
+            return res
 
         # workaround for: https://github.com/pandas-dev/pandas/issues/27943
         try:
@@ -1113,6 +1171,9 @@ def merge(
         raise ValueError(
             f"auto_merge can only be `both`, `none`, `before` or `after`, got {auto_merge}"
         )
+    if df.op.gpu or right.op.gpu:
+        bloom_filter = False
+
     if bloom_filter not in [True, False, "auto"]:
         raise ValueError(
             f'bloom_filter can only be True, False, or "auto", got {bloom_filter}'

@@ -27,11 +27,10 @@ from xoscar.serialization import AioSerializer
 from ....core import ChunkGraph, ExecutionError, OperandType, enter_mode
 from ....core.context import get_context
 from ....core.operand import Fetch, FetchShuffle, execute
-from ....dataframe.utils import is_cudf
+from ....dataframe.utils import get_storage_level_gpu_or_memory
 from ....lib.aio import alru_cache
 from ....optimization.physical import optimize
 from ....storage import StorageLevel
-from ....tensor.array_utils import is_cupy
 from ....typing import BandType, ChunkType
 from ....utils import Timer, calc_data_size, get_chunk_key_to_data_keys
 from ...context import ThreadedServiceContext
@@ -323,11 +322,7 @@ class SubtaskProcessor:
             if isinstance(key, tuple) and is_storage_seekable:
                 shuffle_key_to_data[key] = data
             else:
-                storage_level = (
-                    StorageLevel.GPU
-                    if is_cudf(data) or is_cupy(data)
-                    else StorageLevel.MEMORY
-                )
+                storage_level = get_storage_level_gpu_or_memory(data)
                 put = self._storage_api.put.delay(key, data)
                 level_to_data_key_to_puts[storage_level][key] = put
 
