@@ -395,9 +395,10 @@ def test_series_median(setup):
     assert np.isnan(raw.median(skipna=False)) and np.isnan(result)
 
 
-def test_to_arr_and_array():
+def test_to_arr_and_array(setup):
     raw = pd.DataFrame(np.random.rand(4, 3), columns=list("ABC"))
     df = DataFrame(raw)
+    df.execute()
 
     arr = df._to_arr()
     expected = raw.to_numpy()
