@@ -897,7 +897,10 @@ class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
                 # cudf doesn't support 'validate' and 'copy'
                 kwargs = dict(indicator=op.indicator)
                 # TODO: support MultiIndex case
-                if len(x.index.shape) == 1 and len(y.index.shape) == 1:
+                if not (
+                    isinstance(x.index, cudf.MultiIndex)
+                    or isinstance(y.index, cudf.MultiIndex)
+                ):
                     if op.how == "left" and op.left_index is True:
                         x.index.name = magic_index_col_name
                         x = x.reset_index()
