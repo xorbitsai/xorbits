@@ -79,14 +79,19 @@ def _get_index_for_on(data: pd.Series, size: int) -> List[pd.Index]:
     if is_cudf(data):
         # Since cudf does not support groupby for RangeIndex,
         # the following code is the equivalent implementation in the pandas (CPU) case.
-        series = cudf.Series([i for i in range(len(data))], index=(data % size).values)
-        groupby = series.groupby(level=0)
-        return [
-            cudf.Index(groupby.get_group(i).drop_duplicates())
-            if i in groupby.groups
-            else cudf.Index([])
-            for i in range(size)
-        ]
+        series = cudf.Series(range(len(data)))
+        # reset_index(drop=True) is required,
+        # since series groupby will raise an exception if the index has duplicate values
+        groups = (data % size).reset_index(drop=True)
+        groupby = series.groupby(groups)
+        result = []
+        for i in range(size):
+            try:
+                idx = cudf.Index(groupby.get_group(i).drop_duplicates())
+            except KeyError:
+                idx = cudf.Index([])
+            result.append(idx)
+        return result
     else:
         idx_to_grouped = pd.RangeIndex(0, len(data)).groupby(data % size)
         return [idx_to_grouped.get(i, pd.Index([])) for i in range(size)]
