@@ -170,7 +170,6 @@ def test_merge(setup_gpu, gpu):
 
 @support_cuda
 def test_join(setup_gpu, gpu):
-    gpu = True
     df1 = pd.DataFrame([[1, 3, 3], [4, 2, 6], [7, 8, 9]], index=["a1", "a2", "a3"])
     df2 = pd.DataFrame([[1, 2, 3], [1, 5, 6], [7, 8, 9]], index=["a1", "b2", "b3"]) + 1
     df2 = pd.concat([df2, df2 + 1])
@@ -226,7 +225,6 @@ def test_join(setup_gpu, gpu):
 
 @support_cuda
 def test_join_on(setup_gpu, gpu):
-    gpu = True
     df1 = pd.DataFrame([[1, 3, 3], [4, 2, 6], [7, 8, 9]], columns=["a1", "a2", "a3"])
     df2 = (
         pd.DataFrame([[1, 2, 3], [1, 5, 6], [7, 8, 9]], columns=["a1", "b2", "b3"]) + 1
