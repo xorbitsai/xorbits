@@ -208,7 +208,7 @@ class MemberProxy:
             # call the setter of the specified property.
             getattr(type(mars_entity), key).fset(mars_entity, to_mars(value))
         else:
-            mars_entity.__setattr__(key, value)
+            mars_entity.__setattr__(key, to_mars(value))
 
 
 class MarsGetItemProxy:
