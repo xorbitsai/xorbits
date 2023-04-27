@@ -142,11 +142,8 @@ def test_dataframe_getitem(setup, dummy_df):
         idx += 1
 
 
-def test_dataframe_setitem(setup, dummy_df, test_setattr):
-    if test_setattr:
-        dummy_df.baz = (0.0, 1.0, 2.0)
-    else:
-        dummy_df["baz"] = (0.0, 1.0, 2.0)
+def test_dataframe_setitem(setup, dummy_df):
+    dummy_df["baz"] = (0.0, 1.0, 2.0)
     baz = dummy_df.baz
     assert isinstance(baz, DataRef)
 
@@ -174,7 +171,15 @@ def test_dataframe_setattr(setup, dummy_df):
 
     dummy_df.columns = ["c1", "c2"]
     assert ["c1", "c2"] == list(dummy_df.dtypes.index)
-    test_dataframe_setitem(setup, dummy_df, True)
+    dummy_df.baz = (0.0, 1.0, 2.0)
+    baz = dummy_df.baz
+    assert isinstance(baz, DataRef)
+
+    idx = 0
+    for i, val in baz.items():
+        assert idx == i
+        assert val == float(idx)
+        idx += 1
 
 
 def test_dataframe_items(setup, dummy_df):
