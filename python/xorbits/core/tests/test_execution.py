@@ -255,6 +255,11 @@ def test_array_conversion(setup):
 
     df = pd.DataFrame(data)
     xdf = xpd.DataFrame(data)
+
+    expected = df.__array__()
+    np.testing.assert_array_equal(xdf.__array__(), expected)
+    np.testing.assert_array_equal(np.array(xdf), expected)
+
     # ensure the dataframe needs to be executed.
     df = pd.concat([df, df], axis=0)
     xdf = xpd.concat([xdf, xdf], axis=0)
