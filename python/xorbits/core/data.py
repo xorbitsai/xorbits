@@ -197,10 +197,13 @@ class DataRef(metaclass=DataRefMeta):
         return MemberProxy.getattr(self, item)
 
     def __setattr__(self, key, value):
-        if key in self.__fields:
-            object.__setattr__(self, key, value)
-        else:
-            self.data.__setattr__(key, value)
+        try:
+            if key in self.__fields:
+                object.__setattr__(self, key, value)
+            else:
+                self.data.__setattr__(key, value)
+        except AttributeError:
+            self.__setitem__(key, value)
 
     def _own_data(self):
         from .adapter import own_data
@@ -292,9 +295,9 @@ class DataRef(metaclass=DataRefMeta):
 
         data_type = self.data.data_type
         if (
-            data_type == DataType.tensor
-            and len(self.shape) == 0
-            and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
+                data_type == DataType.tensor
+                and len(self.shape) == 0
+                and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
         ):
             run(self)
             return conversion.convert(self.to_numpy())
@@ -329,9 +332,9 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return bool(self.to_object())
         elif (
-            data_type == DataType.dataframe
-            or data_type == DataType.series
-            or data_type == DataType.index
+                data_type == DataType.dataframe
+                or data_type == DataType.series
+                or data_type == DataType.index
         ):
             raise ValueError(
                 f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."

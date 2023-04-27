@@ -2304,12 +2304,6 @@ class DataFrame(HasShapeTileable, _ToPandasMixin):
             else:
                 raise
 
-    def __setattr__(self, key, value):
-        try:
-            object.__setattr__(self, key, value)
-        except AttributeError:
-            self.__setitem__(key, value)
-
     def __dir__(self):
         result = list(super().__dir__())
         return sorted(
