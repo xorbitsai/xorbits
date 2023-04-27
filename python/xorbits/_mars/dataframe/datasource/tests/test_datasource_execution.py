@@ -236,6 +236,39 @@ def test_dataframe_initializer_gpu(setup_gpu, data):
     cudf.testing.assert_frame_equal(expected, actual)
 
 
+@require_cupy
+@require_cudf
+@pytest.mark.parametrize(
+    "data",
+    [
+        # TODO: creating GPU dataframe from CPU tensor results in KeyError in teardown stage.
+        # mt.arange(1000),
+        mt.arange(1000, gpu=True),
+        list(range(1000)),
+        np.arange(1000),
+    ],
+)
+def test_series_initializer_gpu(setup_gpu, data):
+    def to_object(data_):
+        if isinstance(data_, TENSOR_TYPE):
+            return data_.execute().fetch(to_cpu=False)
+        if isinstance(data_, dict):
+            return dict((k, to_object(v)) for k, v in data_.items())
+        else:
+            return data_
+
+    import cudf
+    import cudf.testing
+
+    expected = cudf.Series(to_object(data))
+
+    s = md.Series(data, gpu=True, chunk_size=500)
+    actual = s.execute().fetch(to_cpu=False)
+    print(type(actual))
+    assert isinstance(actual, cudf.Series)
+    cudf.testing.assert_series_equal(expected, actual)
+
+
 def test_index_only(setup):
     df = md.DataFrame(index=[1, 2, 3])
     pd.testing.assert_frame_equal(df.execute().fetch(), pd.DataFrame(index=[1, 2, 3]))
