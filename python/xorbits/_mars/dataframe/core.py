@@ -743,7 +743,7 @@ class IndexChunkData(ChunkData):
         cls, data: "Union[pd.Index, cudf.core.index.BaseIndex]"
     ) -> Dict[str, Any]:
         # cudf multi index doesn't have attribute 'dtype'.
-        dtype = getattr(data, "dtype", np.dtype(np.object))
+        dtype = getattr(data, "dtype", np.dtype(object))
         return {
             "shape": data.shape,
             "dtype": dtype,
