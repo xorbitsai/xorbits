@@ -81,6 +81,7 @@ def _collect_tensor_magic_methods() -> Set[str]:
         "__setattr__",
         "__getattr__",
         "__len__",
+        "__array__",
     }
 
     for mars_cls in MARS_TENSOR_TYPE:

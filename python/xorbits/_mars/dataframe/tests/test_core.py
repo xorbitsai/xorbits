@@ -395,6 +395,19 @@ def test_series_median(setup):
     assert np.isnan(raw.median(skipna=False)) and np.isnan(result)
 
 
+def test_to_arr_and_array(setup):
+    raw = pd.DataFrame(np.random.rand(4, 3), columns=list("ABC"))
+    df = DataFrame(raw)
+    df.execute()
+
+    arr = df._to_arr()
+    expected = raw.to_numpy()
+    np.testing.assert_array_equal(arr, expected)
+
+    arr_from_array_method = np.array(df)
+    np.testing.assert_array_equal(arr_from_array_method, expected)
+
+
 def test_mars_tensor_magic(setup):
     a = np.random.rand(10)
     expected = a
