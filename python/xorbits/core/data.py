@@ -23,6 +23,7 @@ from ..utils import safe_repr_str
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
+import warnings
 
 
 class DataType(Enum):
@@ -203,7 +204,11 @@ class DataRef(metaclass=DataRefMeta):
             else:
                 self.data.__setattr__(key, value)
         except AttributeError:
-            self.__setitem__(key, value)
+            if key in self.dtypes:
+                self.__setitem__(key, value)
+            else:
+                warnings.warn("UserWarning: Xorbits.pandas doesn't allow columns to be created via a new attribute name.")
+                object.__setattr__(self, key, value)
 
     def _own_data(self):
         from .adapter import own_data
@@ -295,9 +300,9 @@ class DataRef(metaclass=DataRefMeta):
 
         data_type = self.data.data_type
         if (
-            data_type == DataType.tensor
-            and len(self.shape) == 0
-            and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
+                data_type == DataType.tensor
+                and len(self.shape) == 0
+                and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
         ):
             run(self)
             return conversion.convert(self.to_numpy())
@@ -332,9 +337,9 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return bool(self.to_object())
         elif (
-            data_type == DataType.dataframe
-            or data_type == DataType.series
-            or data_type == DataType.index
+                data_type == DataType.dataframe
+                or data_type == DataType.series
+                or data_type == DataType.index
         ):
             raise ValueError(
                 f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
