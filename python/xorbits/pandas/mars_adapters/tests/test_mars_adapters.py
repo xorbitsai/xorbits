@@ -11,8 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import warnings
 
 import pandas as pd
+import pytest
 
 from .... import pandas as xpd
 from ....core import DataRef
@@ -171,15 +173,11 @@ def test_dataframe_setattr(setup, dummy_df):
 
     dummy_df.columns = ["c1", "c2"]
     assert ["c1", "c2"] == list(dummy_df.dtypes.index)
-    dummy_df.baz = (0.0, 1.0, 2.0)
-    baz = dummy_df.baz
-    assert isinstance(baz, DataRef)
-
-    idx = 0
-    for i, val in baz.items():
-        assert idx == i
-        assert val == float(idx)
-        idx += 1
+    dummy_df.c1 = (0.0, 1.0, 2.0)
+    c1 = dummy_df.c1
+    assert isinstance(c1, DataRef)
+    with pytest.warns(UserWarning, match="UserWarning: Xorbits.pandas doesn't allow columns to be created via a new attribute name."):
+        dummy_df.baz = (0.0, 1.0, 2.0)
 
 
 def test_dataframe_items(setup, dummy_df):
