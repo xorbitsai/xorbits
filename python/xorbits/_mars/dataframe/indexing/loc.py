@@ -30,7 +30,7 @@ from ...tensor.utils import calc_sliced_size, filter_inputs
 from ...utils import is_full_slice, lazy_import
 from ..core import DATAFRAME_TYPE, IndexValue
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import is_index_value_identical, parse_index
+from ..utils import is_cudf, is_index_value_identical, parse_index
 from .iloc import DataFrameIlocSetItem
 from .index_lib import DataFrameLocIndexesHandler
 
@@ -528,7 +528,10 @@ class DataFrameLocGetItem(DataFrameOperand, DataFrameOperandMixin):
                     new_indexes.append(index)
 
             try:
-                r = df.loc[tuple(new_indexes)]
+                if is_cudf(df) and len(new_indexes) == 1:
+                    r = df.loc[new_indexes[0]]
+                else:
+                    r = df.loc[tuple(new_indexes)]
                 if str_loc_on_datetime_index:
                     # convert back to DataFrame or Series
                     if r.ndim == 0:
