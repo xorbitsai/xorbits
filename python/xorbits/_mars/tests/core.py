@@ -490,7 +490,12 @@ class ObjectCheckMixin:
                 f"real name {real.name}"
             )
 
-        self.assert_dtype_consistent(expected.dtype, real.dtype)
+        if hasattr(real, "dtype"):
+            self.assert_dtype_consistent(expected.dtype, real.dtype)
+        else:
+            assert isinstance(real, cudf.core.index.BaseIndex)
+            # cudf multi index doesn't have attribute 'dtype'.
+            self.assert_dtype_consistent(expected.dtype, np.dtype(np.object))
         self.assert_index_value_consistent(expected.index_value, real)
 
     def assert_categorical_consistent(self, expected, real):

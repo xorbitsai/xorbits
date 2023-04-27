@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import itertools
 import os
 import tempfile
 import time
@@ -40,6 +39,8 @@ try:
 except ImportError:  # pragma: no cover
     sqlalchemy = None
 
+
+import itertools
 
 from .... import dataframe as md
 from .... import tensor as mt
@@ -200,6 +201,15 @@ def test_initializer_execution(setup):
     pd.testing.assert_index_equal(pi, result)
 
 
+def to_object(data_):
+    if isinstance(data_, TENSOR_TYPE):
+        return data_.execute().fetch(to_cpu=False)
+    if isinstance(data_, dict):
+        return dict((k, to_object(v)) for k, v in data_.items())
+    else:
+        return data_
+
+
 @require_cupy
 @require_cudf
 @pytest.mark.parametrize(
@@ -207,24 +217,16 @@ def test_initializer_execution(setup):
     [
         # TODO: creating GPU dataframe from CPU tensor results in KeyError in teardown stage.
         # mt.arange(1000),
-        mt.arange(1000, gpu=True),
+        mt.arange(1000, gpu=True, chunk_size=500),
         # {"foo": mt.arange(1000), "bar": mt.arange(1000)},
-        {"foo": mt.arange(1000, gpu=True), "bar": mt.arange(1000, gpu=True)},
+        {"foo": mt.arange(500, gpu=True), "bar": mt.arange(500, gpu=True)},
         list(range(1000)),
-        {"foo": list(range(1000)), "bar": list(range(1000))},
+        {"foo": list(range(500)), "bar": list(range(500))},
         np.arange(1000),
-        {"foo": np.arange(1000), "bar": np.arange(1000)},
+        {"foo": np.arange(500), "bar": np.arange(500)},
     ],
 )
 def test_dataframe_initializer_gpu(setup_gpu, data):
-    def to_object(data_):
-        if isinstance(data_, TENSOR_TYPE):
-            return data_.execute().fetch(to_cpu=False)
-        if isinstance(data_, dict):
-            return dict((k, to_object(v)) for k, v in data_.items())
-        else:
-            return data_
-
     import cudf
     import cudf.testing
 
@@ -249,14 +251,6 @@ def test_dataframe_initializer_gpu(setup_gpu, data):
     ],
 )
 def test_series_initializer_gpu(setup_gpu, data):
-    def to_object(data_):
-        if isinstance(data_, TENSOR_TYPE):
-            return data_.execute().fetch(to_cpu=False)
-        if isinstance(data_, dict):
-            return dict((k, to_object(v)) for k, v in data_.items())
-        else:
-            return data_
-
     import cudf
     import cudf.testing
 
@@ -267,6 +261,34 @@ def test_series_initializer_gpu(setup_gpu, data):
     print(type(actual))
     assert isinstance(actual, cudf.Series)
     cudf.testing.assert_series_equal(expected, actual)
+
+
+@require_cupy
+@require_cudf
+@pytest.mark.parametrize(
+    "data",
+    [
+        # TODO: creating GPU index from CPU objects results in KeyError in teardown stage.
+        # mt.arange(1000, chunk_size=500),
+        mt.arange(1000, gpu=True, chunk_size=500),
+        np.arange(1000),
+        list(range(1000)),
+        list(itertools.product(["foo", "bar"], list(range(500)))),
+    ],
+)
+def test_index_initializer_gpu(setup_gpu, data):
+    import cudf
+    import cudf.testing
+
+    if isinstance(data, list) and isinstance(data[0], tuple):
+        expected = cudf.from_pandas(pd.Index(data))
+    else:
+        expected = cudf.Index(to_object(data))
+
+    idx = md.Index(data, gpu=True, chunk_size=500)
+    actual = idx.execute().fetch(to_cpu=False)
+    assert isinstance(actual, cudf.core.index.BaseIndex)
+    cudf.testing.assert_index_equal(expected, actual)
 
 
 def test_index_only(setup):
