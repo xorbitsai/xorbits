@@ -295,9 +295,9 @@ class DataRef(metaclass=DataRefMeta):
 
         data_type = self.data.data_type
         if (
-                data_type == DataType.tensor
-                and len(self.shape) == 0
-                and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
+            data_type == DataType.tensor
+            and len(self.shape) == 0
+            and (is_integer_dtype(self.dtype) or is_float_dtype(self.dtype))
         ):
             run(self)
             return conversion.convert(self.to_numpy())
@@ -332,9 +332,9 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return bool(self.to_object())
         elif (
-                data_type == DataType.dataframe
-                or data_type == DataType.series
-                or data_type == DataType.index
+            data_type == DataType.dataframe
+            or data_type == DataType.series
+            or data_type == DataType.index
         ):
             raise ValueError(
                 f"The truth value of a {data_type} is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
