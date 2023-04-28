@@ -65,13 +65,14 @@ def test_set_index(setup, chunk_size):
     pd.testing.assert_frame_equal(expected, df2.execute().fetch())
 
 
-def test_iloc_getitem(setup):
+@support_cuda
+def test_iloc_getitem(setup_gpu, gpu):
     df1 = pd.DataFrame(
         [[1, 3, 3], [4, 2, 6], [7, 8, 9]],
         index=["a1", "a2", "a3"],
         columns=["x", "y", "z"],
     )
-    df2 = md.DataFrame(df1, chunk_size=2)
+    df2 = md.DataFrame(df1, chunk_size=2, gpu=gpu)
 
     # plain index
     expected = df1.iloc[1]
@@ -125,65 +126,71 @@ def test_iloc_getitem(setup):
     pd.testing.assert_frame_equal(expected, df12.execute().fetch())
 
     # bool index array on axis 1
-    expected = df1.iloc[[2, 1], [True, False, True]]
-    df14 = df2.iloc[[2, 1], [True, False, True]]
-    pd.testing.assert_frame_equal(expected, df14.execute().fetch())
+    if not gpu:
+        # TODO: skipped due to an cudf boolean indexing issue.
+        expected = df1.iloc[[2, 1], [True, False, True]]
+        df14 = df2.iloc[[2, 1], [True, False, True]]
+        pd.testing.assert_frame_equal(expected, df14.execute().fetch())
 
     # bool index
-    expected = df1.iloc[[True, False, True], [2, 1]]
-    df13 = df2.iloc[md.Series([True, False, True], chunk_size=1), [2, 1]]
-    pd.testing.assert_frame_equal(expected, df13.execute().fetch())
+    if not gpu:
+        # TODO: skipped due to an cudf boolean indexing issue.
+        expected = df1.iloc[[True, False, True], [2, 1]]
+        df13 = df2.iloc[md.Series([True, False, True], chunk_size=1, gpu=gpu), [2, 1]]
+        pd.testing.assert_frame_equal(expected, df13.execute().fetch())
 
     # test Series
     data = pd.Series(np.arange(10))
-    series = md.Series(data, chunk_size=3).iloc[:3]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[:3]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[:3])
 
-    series = md.Series(data, chunk_size=3).iloc[4]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[4]
     assert series.execute().fetch() == data.iloc[4]
 
-    series = md.Series(data, chunk_size=3).iloc[[2, 3, 4, 9]]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[[2, 3, 4, 9]]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[[2, 3, 4, 9]])
 
-    series = md.Series(data, chunk_size=3).iloc[[4, 3, 9, 2]]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[[4, 3, 9, 2]]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[[4, 3, 9, 2]])
 
-    series = md.Series(data).iloc[5:]
+    series = md.Series(data, gpu=gpu).iloc[5:]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[5:])
 
     # bool index array
     selection = np.random.RandomState(0).randint(2, size=10, dtype=bool)
-    series = md.Series(data).iloc[selection]
+    series = md.Series(data, gpu=gpu).iloc[selection]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[selection])
 
     # bool index
-    series = md.Series(data).iloc[md.Series(selection, chunk_size=4)]
+    series = md.Series(data, gpu=gpu).iloc[md.Series(selection, chunk_size=4, gpu=gpu)]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[selection])
 
     # test index
     data = pd.Index(np.arange(10))
-    index = md.Index(data, chunk_size=3)[:3]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[:3]
     pd.testing.assert_index_equal(index.execute().fetch(), data[:3])
 
-    index = md.Index(data, chunk_size=3)[4]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[4]
     assert index.execute().fetch() == data[4]
 
-    index = md.Index(data, chunk_size=3)[[2, 3, 4, 9]]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[[2, 3, 4, 9]]
     pd.testing.assert_index_equal(index.execute().fetch(), data[[2, 3, 4, 9]])
 
-    index = md.Index(data, chunk_size=3)[[4, 3, 9, 2]]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[[4, 3, 9, 2]]
     pd.testing.assert_index_equal(index.execute().fetch(), data[[4, 3, 9, 2]])
 
-    index = md.Index(data)[5:]
+    index = md.Index(data, gpu=gpu)[5:]
     pd.testing.assert_index_equal(index.execute().fetch(), data[5:])
 
     # bool index array
     selection = np.random.RandomState(0).randint(2, size=10, dtype=bool)
-    index = md.Index(data)[selection]
+    index = md.Index(data, gpu=gpu)[selection]
     pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
 
-    index = md.Index(data)[mt.tensor(selection, chunk_size=4)]
-    pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
+    if not gpu:
+        # TODO: skipped due to an cudf boolean indexing issue.
+        index = md.Index(data, gpu=gpu)[mt.tensor(selection, chunk_size=4, gpu=gpu)]
+        pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
 
 
 def test_iloc_setitem(setup):

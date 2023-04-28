@@ -541,7 +541,7 @@ class SeriesIlocGetItem(DataFrameOperand, HeadTailOptimizedOperandMixin):
         return [(yield from handler.handle(op))]
 
     @classmethod
-    def execute(cls, ctx, op):
+    def execute(cls, ctx, op: "SeriesIlocGetItem"):
         chunk = op.outputs[0]
         series = ctx[op.input.key]
         if len(op.inputs) > 1:
@@ -551,6 +551,8 @@ class SeriesIlocGetItem(DataFrameOperand, HeadTailOptimizedOperandMixin):
             )
         else:
             indexes = tuple(op.indexes)
+        if op.is_gpu() and len(indexes) == 1:
+            indexes = indexes[0]
         if hasattr(series, "iloc"):
             ctx[chunk.key] = series.iloc[indexes]
         else:
