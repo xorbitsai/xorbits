@@ -668,6 +668,8 @@ class SeriesFromTensor(DataFrameOperand, DataFrameOperandMixin):
 
     @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "SeriesFromTensor"):
+        xdf = cudf if op.is_gpu() else pd
+
         chunk = op.outputs[0]
         if op.input is not None:
             tensor_data = ctx[op.input.key]
@@ -686,7 +688,7 @@ class SeriesFromTensor(DataFrameOperand, DataFrameOperandMixin):
                 # index not specified
                 index_data = None
 
-        ctx[chunk.key] = pd.Series(
+        ctx[chunk.key] = xdf.Series(
             tensor_data, index=index_data, name=chunk.name, dtype=chunk.dtype
         )
 

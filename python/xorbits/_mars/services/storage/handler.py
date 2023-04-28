@@ -111,8 +111,14 @@ class StorageHandlerActor(mo.Actor):
                 )
             except NotImplementedError:
                 data = yield self._clients[data_info.level].get(data_info.object_id)
+
                 try:
-                    sliced_value = data.iloc[tuple(conditions)]
+                    from ...dataframe.utils import is_cudf
+
+                    if is_cudf(data) and len(conditions) == 1:
+                        sliced_value = data.iloc[conditions[0]]
+                    else:
+                        sliced_value = data.iloc[tuple(conditions)]
                 except AttributeError:
                     sliced_value = data[tuple(conditions)]
                 res = sliced_value
