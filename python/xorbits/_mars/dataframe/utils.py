@@ -31,6 +31,8 @@ from ..config import options
 from ..core import Entity, ExecutableTuple
 from ..core.context import Context
 from ..lib.mmh3 import hash as mmh_hash
+from ..storage import StorageLevel
+from ..tensor.array_utils import is_cupy
 from ..tensor.utils import dictify_chunk_size, normalize_chunk_sizes
 from ..typing import ChunkType, TileableType
 from ..utils import (
@@ -61,31 +63,71 @@ def hash_index(index, size):
     return [idx_to_grouped.get(i, list()) for i in range(size)]
 
 
+def _get_hash(
+    data: Union[
+        pd.DataFrame, pd.Series, pd.Index, "cudf.DataFrame", "cudf.Series", "cudf.Index"
+    ],
+    **kwargs,
+) -> Union[pd.Series, "cudf.Series"]:
+    """
+    The hash value of the cudf object is obtained by the ``hash_values`` interface.
+    Specifically, for the Index obj in cudf, convert it to DataFrame first.
+    """
+    return (
+        (data.to_frame().hash_values() if is_index(data) else data.hash_values())
+        if is_cudf(data)
+        else pd.util.hash_pandas_object(data, **kwargs)
+    )
+
+
+def _get_index_for_on(
+    data: Union[pd.Series, "cudf.Series"], size: int
+) -> List[Union[pd.Index, "cudf.Index"]]:
+    if is_cudf(data):
+        # Since cudf does not support groupby for RangeIndex,
+        # the following code is the equivalent implementation in the pandas (CPU) case.
+        series = cudf.Series(range(len(data)))
+        # reset_index(drop=True) is required,
+        # since series groupby will raise an exception if the index has duplicate values
+        groups = (data % size).reset_index(drop=True)
+        groupby = series.groupby(groups)
+        result = []
+        for i in range(size):
+            try:
+                idx = cudf.Index(groupby.get_group(i).drop_duplicates())
+            except KeyError:
+                idx = cudf.Index([])
+            result.append(idx)
+        return result
+    else:
+        idx_to_grouped = pd.RangeIndex(0, len(data)).groupby(data % size)
+        return [idx_to_grouped.get(i, pd.Index([])) for i in range(size)]
+
+
 def hash_dataframe_on(df, on, size, level=None):
     if on is None:
         idx = df.index
         if level is not None:
             idx = idx.to_frame(False)[level]
-        if cudf and isinstance(idx, cudf.Index):  # pragma: no cover
-            idx = idx.to_pandas()
-        hashed_label = pd.util.hash_pandas_object(idx, categorize=False)
+        hashed_label = _get_hash(idx, categorize=False)
     elif callable(on):
         # todo optimization can be added, if ``on`` is a numpy ufunc or sth can be vectorized
-        hashed_label = pd.util.hash_pandas_object(df.index.map(on), categorize=False)
+        # TODO: cudf index may not have attribute ``map``
+        hashed_label = _get_hash(df.index.map(on), categorize=False)
     else:
         if isinstance(on, list):
             to_concat = []
             for v in on:
-                if isinstance(v, pd.Series):
+                if is_series(v):
                     to_concat.append(v)
                 else:
                     to_concat.append(df[v])
-            data = pd.concat(to_concat, axis=1)
+            xpd = cudf if is_cudf(df) else pd
+            data = xpd.concat(to_concat, axis=1)
         else:
             data = df[on]
-        hashed_label = pd.util.hash_pandas_object(data, index=False, categorize=False)
-    idx_to_grouped = pd.RangeIndex(0, len(hashed_label)).groupby(hashed_label % size)
-    return [idx_to_grouped.get(i, pd.Index([])) for i in range(size)]
+        hashed_label = _get_hash(data, index=False, categorize=False)
+    return _get_index_for_on(hashed_label, size)
 
 
 def hash_dtypes(dtypes, size):
@@ -1345,6 +1387,16 @@ def is_cudf(x):
         if isinstance(x, (cudf.DataFrame, cudf.Series, cudf.Index)):
             return True
     return False
+
+
+def get_storage_level_gpu_or_memory(data: Any) -> StorageLevel:
+    if isinstance(data, (tuple, list, set)):
+        return (
+            StorageLevel.GPU
+            if any([is_cudf(v) or is_cupy(v) for v in data])
+            else StorageLevel.MEMORY
+        )
+    return StorageLevel.GPU if is_cudf(data) or is_cupy(data) else StorageLevel.MEMORY
 
 
 def auto_merge_chunks(

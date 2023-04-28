@@ -18,13 +18,35 @@ import pandas as pd
 import pytest
 
 from ....core.graph.builder.utils import build_graph
+from ....tests.core import support_cuda
 from ...datasource.dataframe import from_pandas
 from ...datasource.series import from_pandas as series_from_pandas
 from ...utils import is_pandas_2, sort_dataframe_inplace
 from .. import DataFrameConcat, DataFrameMergeAlign, concat
 
 
-def test_merge(setup):
+def _reset_index_and_sort_values(data, sort_columns):
+    """
+    For cudf, the hash method is different from pandas,
+    so the rules for partitioning data during shuffle are different,
+    and the relative positions and index columns for the resulting data rows are not guaranteed.
+    In addition, the to_pandas method when fetching data causes the NA type in the data to become None,
+    so it needs to be replaced back.
+    """
+    return (
+        data.replace({None: pd.NA}).sort_values(by=sort_columns).reset_index(drop=True)
+    )
+
+
+def _assert_frame_equal_on_gpu(expected, actual):
+    cols = list(expected.columns)
+    expected = _reset_index_and_sort_values(expected, cols)
+    actual = _reset_index_and_sort_values(actual, cols)
+    pd.testing.assert_frame_equal(expected, actual)
+
+
+@support_cuda
+def test_merge(setup_gpu, gpu):
     df1 = pd.DataFrame(
         np.arange(20).reshape((4, 5)) + 1, columns=["a", "b", "c", "d", "e"]
     )
@@ -36,10 +58,10 @@ def test_merge(setup):
         [(i, i + 1) for i in range(4)], names=["i1", "i2"]
     )
 
-    mdf1 = from_pandas(df1, chunk_size=2)
-    mdf2 = from_pandas(df2, chunk_size=2)
-    mdf3 = from_pandas(df3, chunk_size=3)
-    mdf4 = from_pandas(df4, chunk_size=2)
+    mdf1 = from_pandas(df1, gpu=gpu, chunk_size=2)
+    mdf2 = from_pandas(df2, gpu=gpu, chunk_size=2)
+    mdf3 = from_pandas(df3, gpu=gpu, chunk_size=3)
+    mdf4 = from_pandas(df4, gpu=gpu, chunk_size=2)
 
     # Note [Index of Merge]
     #
@@ -146,61 +168,82 @@ def test_merge(setup):
     )
 
 
-def test_join(setup):
+@support_cuda
+def test_join(setup_gpu, gpu):
     df1 = pd.DataFrame([[1, 3, 3], [4, 2, 6], [7, 8, 9]], index=["a1", "a2", "a3"])
     df2 = pd.DataFrame([[1, 2, 3], [1, 5, 6], [7, 8, 9]], index=["a1", "b2", "b3"]) + 1
     df2 = pd.concat([df2, df2 + 1])
 
-    mdf1 = from_pandas(df1, chunk_size=2)
-    mdf2 = from_pandas(df2, chunk_size=2)
+    mdf1 = from_pandas(df1, gpu=gpu, chunk_size=2)
+    mdf2 = from_pandas(df2, gpu=gpu, chunk_size=2)
 
     # default `how`
     expected0 = df1.join(df2, lsuffix="l_", rsuffix="r_")
     jdf0 = mdf1.join(mdf2, lsuffix="l_", rsuffix="r_", auto_merge="none")
     result0 = jdf0.execute().fetch()
-    pd.testing.assert_frame_equal(expected0.sort_index(), result0.sort_index())
+    if gpu:
+        _assert_frame_equal_on_gpu(expected0, result0)
+    else:
+        pd.testing.assert_frame_equal(expected0.sort_index(), result0.sort_index())
 
     # how = 'left'
     expected1 = df1.join(df2, how="left", lsuffix="l_", rsuffix="r_")
     jdf1 = mdf1.join(mdf2, how="left", lsuffix="l_", rsuffix="r_", auto_merge="none")
     result1 = jdf1.execute().fetch()
-    pd.testing.assert_frame_equal(expected1.sort_index(), result1.sort_index())
+    if gpu:
+        _assert_frame_equal_on_gpu(expected1, result1)
+    else:
+        pd.testing.assert_frame_equal(expected1.sort_index(), result1.sort_index())
 
     # how = 'right'
     expected2 = df1.join(df2, how="right", lsuffix="l_", rsuffix="r_")
     jdf2 = mdf1.join(mdf2, how="right", lsuffix="l_", rsuffix="r_", auto_merge="none")
     result2 = jdf2.execute().fetch()
-    pd.testing.assert_frame_equal(expected2.sort_index(), result2.sort_index())
+    if gpu:
+        _assert_frame_equal_on_gpu(expected2, result2)
+    else:
+        pd.testing.assert_frame_equal(expected2.sort_index(), result2.sort_index())
 
     # how = 'inner'
     expected3 = df1.join(df2, how="inner", lsuffix="l_", rsuffix="r_")
     jdf3 = mdf1.join(mdf2, how="inner", lsuffix="l_", rsuffix="r_", auto_merge="none")
     result3 = jdf3.execute().fetch()
-    pd.testing.assert_frame_equal(expected3.sort_index(), result3.sort_index())
+    if gpu:
+        _assert_frame_equal_on_gpu(expected3, result3)
+    else:
+        pd.testing.assert_frame_equal(expected3.sort_index(), result3.sort_index())
 
     # how = 'outer'
     expected4 = df1.join(df2, how="outer", lsuffix="l_", rsuffix="r_")
     jdf4 = mdf1.join(mdf2, how="outer", lsuffix="l_", rsuffix="r_", auto_merge="none")
     result4 = jdf4.execute().fetch()
-    pd.testing.assert_frame_equal(expected4.sort_index(), result4.sort_index())
+    if gpu:
+        _assert_frame_equal_on_gpu(expected4, result4)
+    else:
+        pd.testing.assert_frame_equal(expected4.sort_index(), result4.sort_index())
 
 
-def test_join_on(setup):
+@support_cuda
+def test_join_on(setup_gpu, gpu):
     df1 = pd.DataFrame([[1, 3, 3], [4, 2, 6], [7, 8, 9]], columns=["a1", "a2", "a3"])
     df2 = (
         pd.DataFrame([[1, 2, 3], [1, 5, 6], [7, 8, 9]], columns=["a1", "b2", "b3"]) + 1
     )
     df2 = pd.concat([df2, df2 + 1])
 
-    mdf1 = from_pandas(df1, chunk_size=2)
-    mdf2 = from_pandas(df2, chunk_size=2)
+    mdf1 = from_pandas(df1, gpu=gpu, chunk_size=2)
+    mdf2 = from_pandas(df2, gpu=gpu, chunk_size=2)
 
     expected0 = df1.join(df2, on=None, lsuffix="_l", rsuffix="_r")
     jdf0 = mdf1.join(mdf2, on=None, lsuffix="_l", rsuffix="_r", auto_merge="none")
     result0 = jdf0.execute().fetch()
-    pd.testing.assert_frame_equal(
-        sort_dataframe_inplace(expected0, 0), sort_dataframe_inplace(result0, 0)
-    )
+
+    if gpu:
+        _assert_frame_equal_on_gpu(expected0, result0)
+    else:
+        pd.testing.assert_frame_equal(
+            sort_dataframe_inplace(expected0, 0), sort_dataframe_inplace(result0, 0)
+        )
 
     expected1 = df1.join(df2, how="left", on="a1", lsuffix="_l", rsuffix="_r")
     jdf1 = mdf1.join(
@@ -312,12 +355,17 @@ def test_join_on(setup):
 
     expected4.set_index("a2", inplace=True)
     result4.set_index("a2", inplace=True)
-    pd.testing.assert_frame_equal(
-        sort_dataframe_inplace(expected4, 0), sort_dataframe_inplace(result4, 0)
-    )
+
+    if gpu:
+        _assert_frame_equal_on_gpu(expected4, result4)
+    else:
+        pd.testing.assert_frame_equal(
+            sort_dataframe_inplace(expected4, 0), sort_dataframe_inplace(result4, 0)
+        )
 
 
-def test_merge_one_chunk(setup):
+@support_cuda
+def test_merge_one_chunk(setup_gpu, gpu):
     df1 = pd.DataFrame(
         {"lkey": ["foo", "bar", "baz", "foo"], "value": [1, 2, 3, 5]},
         index=["a1", "a2", "a3", "a4"],
@@ -328,8 +376,8 @@ def test_merge_one_chunk(setup):
     )
 
     # all have one chunk
-    mdf1 = from_pandas(df1)
-    mdf2 = from_pandas(df2)
+    mdf1 = from_pandas(df1, gpu=gpu)
+    mdf2 = from_pandas(df2, gpu=gpu)
 
     expected = df1.merge(df2, left_on="lkey", right_on="rkey")
     jdf = mdf1.merge(mdf2, left_on="lkey", right_on="rkey", auto_merge="none")
@@ -341,8 +389,8 @@ def test_merge_one_chunk(setup):
     )
 
     # left have one chunk
-    mdf1 = from_pandas(df1)
-    mdf2 = from_pandas(df2, chunk_size=2)
+    mdf1 = from_pandas(df1, gpu=gpu)
+    mdf2 = from_pandas(df2, gpu=gpu, chunk_size=2)
 
     expected = df1.merge(df2, left_on="lkey", right_on="rkey")
     jdf = mdf1.merge(mdf2, left_on="lkey", right_on="rkey", auto_merge="none")
@@ -354,8 +402,8 @@ def test_merge_one_chunk(setup):
     )
 
     # right have one chunk
-    mdf1 = from_pandas(df1, chunk_size=3)
-    mdf2 = from_pandas(df2)
+    mdf1 = from_pandas(df1, gpu=gpu, chunk_size=3)
+    mdf2 = from_pandas(df2, gpu=gpu)
 
     expected = df1.merge(df2, left_on="lkey", right_on="rkey")
     jdf = mdf1.merge(mdf2, left_on="lkey", right_on="rkey", auto_merge="none")
@@ -368,8 +416,8 @@ def test_merge_one_chunk(setup):
 
     # left have one chunk and how="left", then one chunk tile
     # will result in wrong results, see #GH 2107
-    mdf1 = from_pandas(df1, chunk_size=2)
-    mdf2 = from_pandas(df2)
+    mdf1 = from_pandas(df1, gpu=gpu, chunk_size=2)
+    mdf2 = from_pandas(df2, gpu=gpu)
 
     expected = df2.merge(df1, left_on="rkey", right_on="lkey", how="left")
     jdf = mdf2.merge(
@@ -383,7 +431,8 @@ def test_merge_one_chunk(setup):
     )
 
 
-def test_broadcast_merge(setup):
+@support_cuda
+def test_broadcast_merge(setup_gpu, gpu):
     ns = np.random.RandomState(0)
     # small dataframe
     raw1 = pd.DataFrame(
@@ -403,8 +452,8 @@ def test_broadcast_merge(setup):
     )
 
     # test broadcast right and how="inner"
-    df1 = from_pandas(raw1, chunk_size=5)
-    df2 = from_pandas(raw2, chunk_size=10)
+    df1 = from_pandas(raw1, gpu=gpu, chunk_size=5)
+    df2 = from_pandas(raw2, gpu=gpu, chunk_size=10)
     r = df2.merge(df1, on="key", auto_merge="none", bloom_filter=False)
     # make sure it selects broadcast merge, for broadcast, there must be
     # DataFrameConcat operands
@@ -416,15 +465,13 @@ def test_broadcast_merge(setup):
     result = r.execute().fetch()
     expected = raw2.merge(raw1, on="key")
 
-    expected.set_index("key", inplace=True)
-    result.set_index("key", inplace=True)
-    pd.testing.assert_frame_equal(
-        sort_dataframe_inplace(expected, 0), sort_dataframe_inplace(result, 0)
-    )
+    expected = _reset_index_and_sort_values(expected, ["key", "value_x", "value_y"])
+    result = _reset_index_and_sort_values(result, ["key", "value_x", "value_y"])
+    pd.testing.assert_frame_equal(expected, result)
 
     # test broadcast right and how="left"
-    df1 = from_pandas(raw1, chunk_size=5)
-    df2 = from_pandas(raw2, chunk_size=10)
+    df1 = from_pandas(raw1, gpu=gpu, chunk_size=5)
+    df2 = from_pandas(raw2, gpu=gpu, chunk_size=10)
     r = df2.merge(df1, on="key", how="left", auto_merge="none", method="broadcast")
     # make sure it selects broadcast merge, for broadcast, there must be
     # DataFrameConcat operands
@@ -436,16 +483,13 @@ def test_broadcast_merge(setup):
     result = r.execute().fetch()
     expected = raw2.merge(raw1, on="key", how="left")
 
-    expected.set_index("key", inplace=True)
-    result.set_index("key", inplace=True)
-    pd.testing.assert_frame_equal(
-        expected.sort_values(by=["key", "value_x"]),
-        result.sort_values(by=["key", "value_x"]),
-    )
+    expected = _reset_index_and_sort_values(expected, ["key", "value_x"])
+    result = _reset_index_and_sort_values(result, ["key", "value_x"])
+    pd.testing.assert_frame_equal(expected, result)
 
     # test broadcast left
-    df1 = from_pandas(raw1, chunk_size=5)
-    df2 = from_pandas(raw2, chunk_size=10)
+    df1 = from_pandas(raw1, gpu=gpu, chunk_size=5)
+    df2 = from_pandas(raw2, gpu=gpu, chunk_size=10)
     r = df1.merge(df2, on="key", auto_merge="none", bloom_filter=False)
     # make sure it selects broadcast merge, for broadcast, there must be
     # DataFrameConcat operands
@@ -457,15 +501,13 @@ def test_broadcast_merge(setup):
     result = r.execute().fetch()
     expected = raw1.merge(raw2, on="key")
 
-    expected.set_index("key", inplace=True)
-    result.set_index("key", inplace=True)
-    pd.testing.assert_frame_equal(
-        sort_dataframe_inplace(expected, 0), sort_dataframe_inplace(result, 0)
-    )
+    expected = _reset_index_and_sort_values(expected, ["key", "value_x"])
+    result = _reset_index_and_sort_values(result, ["key", "value_x"])
+    pd.testing.assert_frame_equal(expected, result)
 
     # test broadcast left and how="right"
-    df1 = from_pandas(raw1, chunk_size=5)
-    df2 = from_pandas(raw2, chunk_size=10)
+    df1 = from_pandas(raw1, gpu=gpu, chunk_size=5)
+    df2 = from_pandas(raw2, gpu=gpu, chunk_size=10)
     r = df1.merge(df2, on="key", how="right", auto_merge="none")
     # make sure it selects broadcast merge, for broadcast, there must be
     # DataFrameConcat operands
@@ -477,15 +519,15 @@ def test_broadcast_merge(setup):
     result = r.execute().fetch()
     expected = raw1.merge(raw2, on="key", how="right")
 
-    expected.set_index("key", inplace=True)
-    result.set_index("key", inplace=True)
-    pd.testing.assert_frame_equal(
-        expected.sort_values(by=["key", "value_x"]),
-        result.sort_values(by=["key", "value_x"]),
-    )
+    expected = _reset_index_and_sort_values(expected, ["key", "value_x"])
+    result = _reset_index_and_sort_values(result, ["key", "value_x"])
+    pd.testing.assert_frame_equal(expected, result)
 
 
 def test_merge_with_bloom_filter(setup):
+    """
+    This test will skip on GPU since udf may not work in cudf
+    """
     ns = np.random.RandomState(0)
     raw_df1 = pd.DataFrame(
         {
@@ -602,6 +644,9 @@ def test_merge_with_bloom_filter(setup):
 
 @pytest.mark.parametrize("filter", ["small", "large", "both"])
 def test_merge_with_bloom_filter_options(setup, filter):
+    """
+    This test will skip on GPU since udf may not work in cudf
+    """
     ns = np.random.RandomState(0)
     raw_df1 = pd.DataFrame(
         {
@@ -637,20 +682,29 @@ def test_merge_with_bloom_filter_options(setup, filter):
     )
 
 
+@support_cuda
 @pytest.mark.parametrize("auto_merge", ["none", "both", "before", "after"])
-def test_merge_on_duplicate_columns(setup, auto_merge):
-    raw1 = pd.DataFrame(
-        [["foo", 1, "bar"], ["bar", 2, "foo"], ["baz", 3, "foo"]],
-        columns=["lkey", "value", "value"],
-        index=["a1", "a2", "a3"],
-    )
+def test_merge_on_duplicate_columns(auto_merge, setup_gpu, gpu):
+    if gpu:
+        # CUDF does not support df with duplicate columns.
+        raw1 = pd.DataFrame(
+            [["foo", 1, "bar"], ["bar", 2, "foo"], ["baz", 3, "foo"]],
+            columns=["lkey", "number", "value"],
+            index=["a1", "a2", "a3"],
+        )
+    else:
+        raw1 = pd.DataFrame(
+            [["foo", 1, "bar"], ["bar", 2, "foo"], ["baz", 3, "foo"]],
+            columns=["lkey", "value", "value"],
+            index=["a1", "a2", "a3"],
+        )
     raw2 = pd.DataFrame(
         {"rkey": ["foo", "bar", "baz", "foo"], "value": [5, 6, 7, 8]},
         index=["a1", "a2", "a3", "a4"],
     )
 
-    df1 = from_pandas(raw1, chunk_size=2)
-    df2 = from_pandas(raw2, chunk_size=3)
+    df1 = from_pandas(raw1, gpu=gpu, chunk_size=2)
+    df2 = from_pandas(raw2, gpu=gpu, chunk_size=3)
 
     r = df1.merge(
         df2,
@@ -661,6 +715,10 @@ def test_merge_on_duplicate_columns(setup, auto_merge):
     )
     result = r.execute().fetch()
     expected = raw1.merge(raw2, left_on="lkey", right_on="rkey")
+    if gpu:
+        sort_columns = ["lkey", "rkey"]
+        expected = _reset_index_and_sort_values(expected, sort_columns)
+        result = _reset_index_and_sort_values(result, sort_columns)
     pd.testing.assert_frame_equal(expected, result)
 
 
