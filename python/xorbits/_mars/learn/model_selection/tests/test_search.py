@@ -13,5 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ._search import ParameterGrid
-from ._split import KFold, train_test_split
+from typing import Iterable, Sized
+
+from .... import tensor as mt
+from .. import ParameterGrid
+
+
+def test_parameter_grid(setup):
+    params1 = {"foo": [1, 2, 3]}
+    grid1 = ParameterGrid(params1)
+    assert isinstance(grid1, Iterable)
+    assert isinstance(grid1, Sized)
+    assert len(grid1) == 3
+
+    for k, v in grid1:
+        assert k == "foo"
+        assert isinstance(v, mt.Tensor)
