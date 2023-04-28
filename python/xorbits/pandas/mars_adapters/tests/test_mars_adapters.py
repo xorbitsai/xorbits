@@ -180,6 +180,7 @@ def test_dataframe_setattr(setup, dummy_df):
         match="xorbits.pandas doesn't allow columns to be created via a new attribute name.",
     ):
         dummy_df.baz = (0.0, 1.0, 2.0)
+    assert not isinstance(dummy_df.baz, DataRef)
 
 
 def test_dataframe_items(setup, dummy_df):
