@@ -189,7 +189,7 @@ def test_iloc_getitem(setup_gpu, gpu):
 
     if not gpu:
         # TODO: skipped due to an cudf boolean indexing issue.
-        index = md.Index(data, gpu=gpu)[mt.tensor(selection, chunk_size=4, gpu=True)]
+        index = md.Index(data, gpu=gpu)[mt.tensor(selection, chunk_size=4, gpu=gpu)]
         pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
 
 
