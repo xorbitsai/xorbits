@@ -178,10 +178,10 @@ class DataFrameSetAxis(DataFrameOperand, DataFrameOperandMixin):
         else:
             # cudf does not support set_axis.
             if op.axis == 0:
-                ctx[op.outputs[0].key] = in_data.set_index(value)
+                in_data.index = value
             else:
                 in_data.columns = value
-                ctx[op.outputs[0].key] = in_data
+            ctx[op.outputs[0].key] = in_data
 
 
 def _set_axis(df_or_axis, labels, axis=0, copy=False):
