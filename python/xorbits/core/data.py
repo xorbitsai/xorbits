@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import warnings
 from collections import defaultdict
 from enum import Enum
 from itertools import count
@@ -23,7 +23,6 @@ from ..utils import safe_repr_str
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
-import warnings
 
 
 class DataType(Enum):
@@ -208,7 +207,8 @@ class DataRef(metaclass=DataRefMeta):
                 self.__setitem__(key, value)
             else:
                 warnings.warn(
-                    "UserWarning: Xorbits.pandas doesn't allow columns to be created via a new attribute name."
+                    "xorbits.pandas doesn't allow columns to be created via a new attribute name.",
+                    UserWarning,
                 )
                 object.__setattr__(self, key, value)
 
