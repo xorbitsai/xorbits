@@ -203,18 +203,12 @@ class StorageHandlerActor(mo.Actor):
         raise mo.Return(results)
 
     def _get_default_level(self, obj):
-        obj = obj[0] if isinstance(obj, (list, tuple)) else obj
+        from ...dataframe.utils import get_storage_level_gpu_or_memory
+
         if self.highest_level != StorageLevel.GPU:
             return self.highest_level
-        else:  # pragma: no cover
-            if cudf is not None and isinstance(
-                obj, (cudf.DataFrame, cudf.Series, cudf.Index)
-            ):
-                return StorageLevel.GPU
-            elif cupy is not None and isinstance(obj, cupy.ndarray):
-                return StorageLevel.GPU
-            else:
-                return StorageLevel.MEMORY
+        else:
+            return get_storage_level_gpu_or_memory(obj)
 
     @mo.extensible
     async def put(
