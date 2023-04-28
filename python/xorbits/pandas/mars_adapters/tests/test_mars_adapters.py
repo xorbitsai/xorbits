@@ -177,7 +177,7 @@ def test_dataframe_setattr(setup, dummy_df):
     assert isinstance(c1, DataRef)
     with pytest.warns(
         UserWarning,
-        match="UserWarning: Xorbits.pandas doesn't allow columns to be created via a new attribute name.",
+        match="xorbits.pandas doesn't allow columns to be created via a new attribute name.",
     ):
         dummy_df.baz = (0.0, 1.0, 2.0)
 
