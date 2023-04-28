@@ -63,7 +63,12 @@ def hash_index(index, size):
     return [idx_to_grouped.get(i, list()) for i in range(size)]
 
 
-def _get_hash(data: Union[pd.DataFrame, pd.Series, pd.Index], **kwargs) -> pd.Series:
+def _get_hash(
+    data: Union[
+        pd.DataFrame, pd.Series, pd.Index, "cudf.DataFrame", "cudf.Series", "cudf.Index"
+    ],
+    **kwargs,
+) -> Union[pd.Series, "cudf.Series"]:
     """
     The hash value of the cudf object is obtained by the ``hash_values`` interface.
     Specifically, for the Index obj in cudf, convert it to DataFrame first.
@@ -75,7 +80,9 @@ def _get_hash(data: Union[pd.DataFrame, pd.Series, pd.Index], **kwargs) -> pd.Se
     )
 
 
-def _get_index_for_on(data: pd.Series, size: int) -> List[pd.Index]:
+def _get_index_for_on(
+    data: Union[pd.Series, "cudf.Series"], size: int
+) -> List[Union[pd.Index, "cudf.Index"]]:
     if is_cudf(data):
         # Since cudf does not support groupby for RangeIndex,
         # the following code is the equivalent implementation in the pandas (CPU) case.
@@ -105,12 +112,13 @@ def hash_dataframe_on(df, on, size, level=None):
         hashed_label = _get_hash(idx, categorize=False)
     elif callable(on):
         # todo optimization can be added, if ``on`` is a numpy ufunc or sth can be vectorized
+        # TODO: cudf index may not have attribute ``map``
         hashed_label = _get_hash(df.index.map(on), categorize=False)
     else:
         if isinstance(on, list):
             to_concat = []
             for v in on:
-                if isinstance(v, pd.Series):
+                if is_series(v):
                     to_concat.append(v)
                 else:
                     to_concat.append(df[v])
