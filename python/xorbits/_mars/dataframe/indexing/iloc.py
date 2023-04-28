@@ -391,10 +391,7 @@ class DataFrameIlocGetItem(DataFrameOperand, HeadTailOptimizedOperandMixin):
             )
         else:
             indexes = tuple(op.indexes)
-        try:
-            r = df.iloc[indexes]
-        except IndexError:
-            raise
+        r = df.iloc[indexes]
         if isinstance(r, pd.Series) and r.dtype != chunk.dtype:
             r = r.astype(chunk.dtype)
         if is_cudf(r):  # pragma: no cover
