@@ -14,16 +14,13 @@
 # limitations under the License.
 
 
+from numbers import Number
 from typing import Dict, Iterable, List, Mapping, Sequence, Union
 
 import numpy as np
-from sklearn.model_selection._search import BaseSearchCV as _SK_BaseSearchCV
-from sklearn.model_selection._search import GridSearchCV as _SK_GridSearchCV
 from sklearn.model_selection._search import ParameterGrid as _SK_ParameterGrid
 
 from ... import tensor as mt
-
-# from ..utils.validation import indexable
 
 
 class ParameterGrid(_SK_ParameterGrid):
@@ -45,12 +42,22 @@ class ParameterGrid(_SK_ParameterGrid):
             if not isinstance(grid, dict):
                 raise TypeError(f"Parameter grid is not a dict ({grid!r})")
             for key, value in grid.items():
-                if isinstance(value, np.ndarray):
+                if isinstance(value, Iterable):
+                    is_num = False
+                    for i, v in enumerate(value):
+                        if isinstance(v, (np.ndarray, Number)):
+                            is_num = True
+                            xnp_value = mt.array(v)
+                            value[i] = xnp_value
+                            grid[key][i] = xnp_value
+                    if is_num:
+                        grid[key] = mt.ExecutableTuple(grid[key])
+                elif isinstance(value, (np.ndarray, Number)):
                     xnp_value = mt.array(value)
                     value = xnp_value
                     grid[key] = xnp_value
 
-                if isinstance(value, (mt.Tensor, Sequence)) and value.ndim > 1:
+                if isinstance(value, (mt.Tensor)) and value.ndim > 1:
                     raise ValueError(
                         f"Parameter array for {key!r} should be one-dimensional, got:"
                         f" {value!r} with shape {value.shape}"
@@ -60,7 +67,7 @@ class ParameterGrid(_SK_ParameterGrid):
                 ):
                     raise TypeError(
                         f"Parameter grid for parameter {key!r} needs to be a list or a"
-                        f" numpy array, but got {value!r} (of type "
+                        f" mars array, but got {value!r} (of type "
                         f"{type(value).__name__}) instead. Single values "
                         "need to be wrapped in a list with one element."
                     )
@@ -78,38 +85,3 @@ class ParameterGrid(_SK_ParameterGrid):
             if isinstance(v, mt.Tensor):
                 out[k] = v.execute()
         return out
-
-
-class BaseSearchCV(_SK_BaseSearchCV):
-    def fit(self, X, y=None, *, groups=None, **fit_params):
-        _dtype = [mt.float64, mt.float32]
-        X, y = self._validate_data(X, y, accept_sparse=True, dtype=_dtype, order="C")
-        # estimator = self.estimator
-        # refit_metric = "score"
-
-        # # only support using estimator fit for now
-        # scorers = self.estimator.score
-
-        # X, y, groups = indexable(X, y, groups)
-        # fit_params = _check_fit_params(X, fit_params)
-
-        # cv_orig = check_cv(self.cv, y, classifier=is_classifier(estimator))
-        # n_splits = cv_orig.get_n_splits(X, y, groups)
-
-        # base_estimator = clone(self.estimator)
-
-        # fit_and_score_kwargs = dict(
-        #     scorer=scorers,
-        #     fit_params=fit_params,
-        #     return_train_score=self.return_train_score,
-        #     return_n_test_samples=True,
-        #     return_times=True,
-        #     return_parameters=False,
-        #     error_score=self.error_score,
-        #     verbose=self.verbose,
-        # )
-        # results = {}
-
-
-class GridSearchCV(_SK_GridSearchCV):
-    pass
