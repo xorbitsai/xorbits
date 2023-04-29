@@ -27,10 +27,12 @@ from ...tensor.core import Tensor
 from ...tensor.datasource import tensor as astensor
 from ...tensor.utils import unify_chunks
 from ...typing import EntityType, TileableType
-from ...utils import has_unknown_shape
+from ...utils import has_unknown_shape, lazy_import
 from ..core import INDEX_TYPE, SERIES_TYPE
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import is_pandas_2, parse_index
+
+cudf = lazy_import("cudf")
 
 
 class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
@@ -69,7 +71,7 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
 
     def __call__(
         self,
-        input_tensor: Tensor,
+        input_tensor: Union[Tensor, Dict],
         index: Union[TileableType, pd.Index],
         columns: pd.Index,
         dtypes: pd.Series,
@@ -441,8 +443,9 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
 
     @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "DataFrameFromTensor"):
-        chunk = op.outputs[0]
+        xdf = cudf if op.is_gpu() else pd
 
+        chunk = op.outputs[0]
         if isinstance(op.input, dict):
             d = OrderedDict()
             for k, v in op.input.items():
@@ -454,10 +457,10 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
                 index_data = ctx[op.index.key]
             else:
                 index_data = op.index
-            ctx[chunk.key] = pd.DataFrame(d, index=index_data, columns=op.columns)
+            ctx[chunk.key] = xdf.DataFrame(d, index=index_data, columns=op.columns)
         elif op.input is not None:
             tensor_data = ctx[op.inputs[0].key]
-            if isinstance(tensor_data, pd.Series):
+            if isinstance(tensor_data, xdf.Series):
                 ctx[chunk.key] = tensor_data.to_frame(name=chunk.dtypes.index[0])
             else:
                 if op.index is not None and hasattr(op.index, "key"):
@@ -465,16 +468,16 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
                     index_data = ctx[op.inputs[1].key]
                 else:
                     index_data = op.index
-                    if isinstance(index_data, pd.RangeIndex) and len(index_data) == 0:
+                    if isinstance(index_data, xdf.RangeIndex) and len(index_data) == 0:
                         index_data = None
-                ctx[chunk.key] = pd.DataFrame(
+                ctx[chunk.key] = xdf.DataFrame(
                     tensor_data,
                     index=index_data,
                     columns=op.columns,
                 )
         else:
             index_data = ctx[op.index.key]
-            ctx[chunk.key] = pd.DataFrame(index=index_data, columns=op.columns)
+            ctx[chunk.key] = xdf.DataFrame(index=index_data, columns=op.columns)
 
 
 def dataframe_from_tensor(
@@ -536,6 +539,7 @@ def dataframe_from_1d_tileables(
         columns = list(d.keys())
         tileables = list(d.values())
 
+    # TODO: This is quite random. Better use any() or all() to determine if the result should be in varm.
     gpu = (
         next((t.op.gpu for t in tileables if hasattr(t, "op")), False)
         if gpu is None
@@ -664,6 +668,8 @@ class SeriesFromTensor(DataFrameOperand, DataFrameOperandMixin):
 
     @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "SeriesFromTensor"):
+        xdf = cudf if op.is_gpu() else pd
+
         chunk = op.outputs[0]
         if op.input is not None:
             tensor_data = ctx[op.input.key]
@@ -682,7 +688,7 @@ class SeriesFromTensor(DataFrameOperand, DataFrameOperandMixin):
                 # index not specified
                 index_data = None
 
-        ctx[chunk.key] = pd.Series(
+        ctx[chunk.key] = xdf.Series(
             tensor_data, index=index_data, name=chunk.name, dtype=chunk.dtype
         )
 

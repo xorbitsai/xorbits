@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import asyncio
 import os
 import uuid
 from typing import Dict, List, Optional, Tuple
@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Tuple
 from xoscar.serialization import AioDeserializer, AioSerializer
 
 from ..lib.aio import AioFilesystem
-from ..lib.filesystem import FileSystem, get_fs
+from ..lib.filesystem import FileSystem, LocalFileSystem, get_fs
 from ..utils import implements, mod_hash
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import StorageFileObject
@@ -149,3 +149,53 @@ class DiskStorage(FileSystemStorage):
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.DISK
         return await super().setup(**kwargs)
+
+
+@register_storage_backend
+class AlluxioStorage(FileSystemStorage):
+    name = "alluxio"
+
+    def __init__(
+        self,
+        root_dir: str,
+        local_environ: bool,
+        level: StorageLevel = None,
+        size: int = None,
+    ):
+        self._fs = AioFilesystem(LocalFileSystem())
+        self._root_dirs = [root_dir]
+        self._level = level
+        self._size = size
+        self._local_environ = local_environ
+
+    @classmethod
+    @implements(StorageBackend.setup)
+    async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
+        kwargs["level"] = StorageLevel.MEMORY
+        root_dir = kwargs.get("root_dir")
+        local_environ = kwargs.get("local_environ")
+        if local_environ:
+            proc = await asyncio.create_subprocess_shell(
+                f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
+                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage
+                """
+            )
+            await proc.wait()
+        params = dict(
+            root_dir=root_dir,
+            level=StorageLevel.MEMORY,
+            size=None,
+            local_environ=local_environ,
+        )
+        return params, dict(root_dir=root_dir)
+
+    @staticmethod
+    @implements(StorageBackend.teardown)
+    async def teardown(**kwargs):
+        root_dir = kwargs.get("root_dir")
+        proc = await asyncio.create_subprocess_shell(
+            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage
+            $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage
+            """
+        )
+        await proc.wait()

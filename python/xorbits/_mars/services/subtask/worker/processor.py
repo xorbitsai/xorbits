@@ -27,8 +27,10 @@ from xoscar.serialization import AioSerializer
 from ....core import ChunkGraph, ExecutionError, OperandType, enter_mode
 from ....core.context import get_context
 from ....core.operand import Fetch, FetchShuffle, execute
+from ....dataframe.utils import get_storage_level_gpu_or_memory
 from ....lib.aio import alru_cache
 from ....optimization.physical import optimize
+from ....storage import StorageLevel
 from ....typing import BandType, ChunkType
 from ....utils import Timer, calc_data_size, get_chunk_key_to_data_keys
 from ...context import ThreadedServiceContext
@@ -308,54 +310,67 @@ class SubtaskProcessor:
 
     async def _store_data(self, chunk_graph: ChunkGraph):
         # store data into storage
-        data_key_to_puts = {}
+        # The data stored in the storage needs to be separated based on levels
+        # (here we only have two levels: memory and GPU).
+        # Otherwise, it is hard to uniformly plan the storage region when writing data in batch.
+        level_to_data_key_to_puts: Dict[StorageLevel, Dict[str, Any]] = defaultdict(
+            dict
+        )
         shuffle_key_to_data = {}
         is_storage_seekable = await self._storage_api.is_seekable()
         for key, data, _ in iter_output_data(chunk_graph, self._processor_context):
             if isinstance(key, tuple) and is_storage_seekable:
                 shuffle_key_to_data[key] = data
             else:
+                storage_level = get_storage_level_gpu_or_memory(data)
                 put = self._storage_api.put.delay(key, data)
-                data_key_to_puts[key] = put
+                level_to_data_key_to_puts[storage_level][key] = put
 
-        stored_keys = list(data_key_to_puts.keys())
-        puts = data_key_to_puts.values()
-        logger.debug(
-            "Start putting data keys: %s, subtask id: %s",
-            stored_keys,
-            self.subtask.subtask_id,
-        )
+        stored_keys = []
         data_key_to_store_size = dict()
         data_key_to_memory_size = dict()
         data_key_to_object_id = dict()
-        if puts:
-            put_infos = asyncio.create_task(self._storage_api.put.batch(*puts))
-            try:
-                store_infos = await put_infos
-                for store_key, store_info in zip(stored_keys, store_infos):
-                    data_key_to_store_size[store_key] = store_info.store_size
-                    data_key_to_memory_size[store_key] = store_info.memory_size
-                    data_key_to_object_id[store_key] = store_info.object_id
-                logger.debug(
-                    "Finish putting data keys: %s, subtask id: %s",
-                    stored_keys,
-                    self.subtask.subtask_id,
-                )
-            except asyncio.CancelledError:
-                logger.debug(
-                    "Cancelling put data keys: %s, subtask id: %s",
-                    stored_keys,
-                    self.subtask.subtask_id,
-                )
-                put_infos.cancel()
+        data_info_fmt = "data keys: %s, subtask id: %s, storage level: %s"
+        for storage_level, data_key_to_puts in level_to_data_key_to_puts.items():
+            stored_keys.extend(list(data_key_to_puts.keys()))
+            puts = data_key_to_puts.values()
+            logger.debug(
+                f"Start putting {data_info_fmt}",
+                stored_keys,
+                self.subtask.subtask_id,
+                storage_level,
+            )
+            if puts:
+                put_infos = asyncio.create_task(self._storage_api.put.batch(*puts))
+                try:
+                    store_infos = await put_infos
+                    for store_key, store_info in zip(stored_keys, store_infos):
+                        data_key_to_store_size[store_key] = store_info.store_size
+                        data_key_to_memory_size[store_key] = store_info.memory_size
+                        data_key_to_object_id[store_key] = store_info.object_id
+                    logger.debug(
+                        f"Finish putting {data_info_fmt}",
+                        stored_keys,
+                        self.subtask.subtask_id,
+                        storage_level,
+                    )
+                except asyncio.CancelledError:  # pragma: no cover
+                    logger.debug(
+                        f"Cancelling put {data_info_fmt}",
+                        stored_keys,
+                        self.subtask.subtask_id,
+                        storage_level,
+                    )
+                    put_infos.cancel()
 
-                logger.debug(
-                    "Cancelled put data keys: %s, subtask id: %s",
-                    stored_keys,
-                    self.subtask.subtask_id,
-                )
-                self.result.status = SubtaskStatus.cancelled
-                raise
+                    logger.debug(
+                        f"Cancelled put {data_info_fmt}",
+                        stored_keys,
+                        self.subtask.subtask_id,
+                        storage_level,
+                    )
+                    self.result.status = SubtaskStatus.cancelled
+                    raise
 
         if shuffle_key_to_data:
             await self._store_mapper_data(

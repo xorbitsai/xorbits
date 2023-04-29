@@ -20,6 +20,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from ....tests.core import support_cuda
+
 try:
     import pyarrow as pa
 except ImportError:  # pragma: no cover
@@ -63,13 +65,14 @@ def test_set_index(setup, chunk_size):
     pd.testing.assert_frame_equal(expected, df2.execute().fetch())
 
 
-def test_iloc_getitem(setup):
+@support_cuda
+def test_iloc_getitem(setup_gpu, gpu):
     df1 = pd.DataFrame(
         [[1, 3, 3], [4, 2, 6], [7, 8, 9]],
         index=["a1", "a2", "a3"],
         columns=["x", "y", "z"],
     )
-    df2 = md.DataFrame(df1, chunk_size=2)
+    df2 = md.DataFrame(df1, chunk_size=2, gpu=gpu)
 
     # plain index
     expected = df1.iloc[1]
@@ -123,65 +126,71 @@ def test_iloc_getitem(setup):
     pd.testing.assert_frame_equal(expected, df12.execute().fetch())
 
     # bool index array on axis 1
-    expected = df1.iloc[[2, 1], [True, False, True]]
-    df14 = df2.iloc[[2, 1], [True, False, True]]
-    pd.testing.assert_frame_equal(expected, df14.execute().fetch())
+    if not gpu:
+        # TODO: skipped due to an cudf boolean indexing issue.
+        expected = df1.iloc[[2, 1], [True, False, True]]
+        df14 = df2.iloc[[2, 1], [True, False, True]]
+        pd.testing.assert_frame_equal(expected, df14.execute().fetch())
 
     # bool index
-    expected = df1.iloc[[True, False, True], [2, 1]]
-    df13 = df2.iloc[md.Series([True, False, True], chunk_size=1), [2, 1]]
-    pd.testing.assert_frame_equal(expected, df13.execute().fetch())
+    if not gpu:
+        # TODO: skipped due to an cudf boolean indexing issue.
+        expected = df1.iloc[[True, False, True], [2, 1]]
+        df13 = df2.iloc[md.Series([True, False, True], chunk_size=1, gpu=gpu), [2, 1]]
+        pd.testing.assert_frame_equal(expected, df13.execute().fetch())
 
     # test Series
     data = pd.Series(np.arange(10))
-    series = md.Series(data, chunk_size=3).iloc[:3]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[:3]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[:3])
 
-    series = md.Series(data, chunk_size=3).iloc[4]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[4]
     assert series.execute().fetch() == data.iloc[4]
 
-    series = md.Series(data, chunk_size=3).iloc[[2, 3, 4, 9]]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[[2, 3, 4, 9]]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[[2, 3, 4, 9]])
 
-    series = md.Series(data, chunk_size=3).iloc[[4, 3, 9, 2]]
+    series = md.Series(data, chunk_size=3, gpu=gpu).iloc[[4, 3, 9, 2]]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[[4, 3, 9, 2]])
 
-    series = md.Series(data).iloc[5:]
+    series = md.Series(data, gpu=gpu).iloc[5:]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[5:])
 
     # bool index array
     selection = np.random.RandomState(0).randint(2, size=10, dtype=bool)
-    series = md.Series(data).iloc[selection]
+    series = md.Series(data, gpu=gpu).iloc[selection]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[selection])
 
     # bool index
-    series = md.Series(data).iloc[md.Series(selection, chunk_size=4)]
+    series = md.Series(data, gpu=gpu).iloc[md.Series(selection, chunk_size=4, gpu=gpu)]
     pd.testing.assert_series_equal(series.execute().fetch(), data.iloc[selection])
 
     # test index
     data = pd.Index(np.arange(10))
-    index = md.Index(data, chunk_size=3)[:3]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[:3]
     pd.testing.assert_index_equal(index.execute().fetch(), data[:3])
 
-    index = md.Index(data, chunk_size=3)[4]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[4]
     assert index.execute().fetch() == data[4]
 
-    index = md.Index(data, chunk_size=3)[[2, 3, 4, 9]]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[[2, 3, 4, 9]]
     pd.testing.assert_index_equal(index.execute().fetch(), data[[2, 3, 4, 9]])
 
-    index = md.Index(data, chunk_size=3)[[4, 3, 9, 2]]
+    index = md.Index(data, chunk_size=3, gpu=gpu)[[4, 3, 9, 2]]
     pd.testing.assert_index_equal(index.execute().fetch(), data[[4, 3, 9, 2]])
 
-    index = md.Index(data)[5:]
+    index = md.Index(data, gpu=gpu)[5:]
     pd.testing.assert_index_equal(index.execute().fetch(), data[5:])
 
     # bool index array
     selection = np.random.RandomState(0).randint(2, size=10, dtype=bool)
-    index = md.Index(data)[selection]
+    index = md.Index(data, gpu=gpu)[selection]
     pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
 
-    index = md.Index(data)[mt.tensor(selection, chunk_size=4)]
-    pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
+    if not gpu:
+        # TODO: skipped due to an cudf boolean indexing issue.
+        index = md.Index(data, gpu=gpu)[mt.tensor(selection, chunk_size=4, gpu=gpu)]
+        pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
 
 
 def test_iloc_setitem(setup):
@@ -1481,14 +1490,15 @@ def test_where_execution(setup):
     pd.testing.assert_frame_equal(new_df.execute().fetch(), raw_df.mask(raw_df < 0))
 
 
-def test_set_axis_execution(setup):
+@support_cuda
+def test_set_axis_execution(setup_gpu, gpu):
     raw_df = pd.DataFrame(np.random.rand(10, 5), columns=["c1", "c2", "c3", "c4", "c5"])
-    df = md.DataFrame(raw_df, chunk_size=3)
+    df = md.DataFrame(raw_df, chunk_size=3, gpu=gpu)
 
     # test axis=0
     idx_data = np.arange(0, 10)
     np.random.shuffle(idx_data)
-    new_idx = md.Index(idx_data, chunk_size=4)
+    new_idx = md.Index(idx_data, chunk_size=4, gpu=gpu)
 
     r = df.set_axis(new_idx)
     pd.testing.assert_frame_equal(r.execute().fetch(), raw_df.set_axis(idx_data))
@@ -1501,7 +1511,7 @@ def test_set_axis_execution(setup):
     df1.index = pd.Index(range(9, -1, -1))
     pd.testing.assert_frame_equal(df1.execute().fetch(), raw_df.set_axis(new_idx))
 
-    ser = md.Series(idx_data)
+    ser = md.Series(idx_data, gpu=gpu)
     with pytest.raises(ValueError):
         df.set_axis(ser[ser > 5]).execute()
 
@@ -1512,7 +1522,7 @@ def test_set_axis_execution(setup):
         r.execute().fetch(), raw_df.set_axis(new_axis, axis=1)
     )
 
-    r = df.set_axis(md.Index(new_axis, store_data=True), axis=1)
+    r = df.set_axis(md.Index(new_axis, store_data=True, gpu=gpu), axis=1)
     pd.testing.assert_frame_equal(
         r.execute().fetch(), raw_df.set_axis(new_axis, axis=1)
     )
@@ -1528,11 +1538,11 @@ def test_set_axis_execution(setup):
 
     # test series
     raw_series = pd.Series(np.random.rand(10))
-    s = md.Series(raw_series, chunk_size=3)
+    s = md.Series(raw_series, chunk_size=3, gpu=gpu)
 
     idx_data = np.arange(0, 10)
     np.random.shuffle(idx_data)
-    new_idx = md.Index(idx_data, chunk_size=4)
+    new_idx = md.Index(idx_data, chunk_size=4, gpu=gpu)
 
     r = s.set_axis(new_idx)
     pd.testing.assert_series_equal(r.execute().fetch(), raw_series.set_axis(idx_data))

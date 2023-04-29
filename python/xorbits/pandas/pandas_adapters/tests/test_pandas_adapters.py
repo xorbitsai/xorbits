@@ -475,3 +475,7 @@ def test_docstring():
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from pandas.core.indexes.base.Index."
     )
+
+
+def test_dir(setup):
+    assert pd.__dir__().sort() == xpd.__dir__().sort()

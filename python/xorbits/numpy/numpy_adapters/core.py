@@ -14,6 +14,7 @@
 
 import inspect
 import warnings
+from functools import lru_cache
 from types import ModuleType
 from typing import Any, Callable, Dict
 
@@ -71,6 +72,7 @@ def _get_output_type(func: Callable) -> MarsOutputType:
         return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
 
+@lru_cache(maxsize=1)
 def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
     from ..mars_adapters.core import MARS_TENSOR_CALLABLES
 

@@ -111,8 +111,14 @@ class StorageHandlerActor(mo.Actor):
                 )
             except NotImplementedError:
                 data = yield self._clients[data_info.level].get(data_info.object_id)
+
                 try:
-                    sliced_value = data.iloc[tuple(conditions)]
+                    from ...dataframe.utils import is_cudf
+
+                    if is_cudf(data) and len(conditions) == 1:
+                        sliced_value = data.iloc[conditions[0]]
+                    else:
+                        sliced_value = data.iloc[tuple(conditions)]
                 except AttributeError:
                     sliced_value = data[tuple(conditions)]
                 res = sliced_value
@@ -197,18 +203,12 @@ class StorageHandlerActor(mo.Actor):
         raise mo.Return(results)
 
     def _get_default_level(self, obj):
-        obj = obj[0] if isinstance(obj, (list, tuple)) else obj
+        from ...dataframe.utils import get_storage_level_gpu_or_memory
+
         if self.highest_level != StorageLevel.GPU:
             return self.highest_level
-        else:  # pragma: no cover
-            if cudf is not None and isinstance(
-                obj, (cudf.DataFrame, cudf.Series, cudf.Index)
-            ):
-                return StorageLevel.GPU
-            elif cupy is not None and isinstance(obj, cupy.ndarray):
-                return StorageLevel.GPU
-            else:
-                return StorageLevel.MEMORY
+        else:
+            return get_storage_level_gpu_or_memory(obj)
 
     @mo.extensible
     async def put(
