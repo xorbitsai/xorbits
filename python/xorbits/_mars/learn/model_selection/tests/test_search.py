@@ -48,6 +48,17 @@ def test_parameter_grid(setup):
         )
         assert error_str == e.value
 
+    with pytest.raises(TypeError) as e:
+        invalid_param = [{"foo": "s"}]
+        _ = ParameterGrid(invalid_param)
+        error_str = (
+            f"Parameter grid for parameter foo needs to be a list or a"
+            f" mars array, but got {'s'!r} (of type "
+            f"{type('s').__name__}) instead. Single values "
+            "need to be wrapped in a list with one element."
+        )
+        assert error_str == e.value
+
     with pytest.raises(ValueError) as e:
         invalid_param = [{"foo": []}]
         _ = ParameterGrid(invalid_param)
@@ -69,6 +80,7 @@ def test_parameter_grid(setup):
         assert key == "foo"
         assert isinstance(value, mt.Tensor)
         np.testing.assert_equal(np.int32(value.execute().fetch()), np.int32(arr1[i]))
+        np.testing.assert_equal(np.int32(grid1[i]["foo"].fetch()), np.int32(arr1[i]))
 
     arr2 = [np.int32(1), np.int32(2), np.int32(3)]
     params2 = {"foo": arr2}
@@ -82,6 +94,7 @@ def test_parameter_grid(setup):
         assert key == "foo"
         assert isinstance(value, mt.Tensor)
         np.testing.assert_equal(np.int32(value.execute().fetch()), np.int32(arr2[i]))
+        np.testing.assert_equal(np.int32(grid2[i]["foo"].fetch()), np.int32(arr2[i]))
 
     arr3 = [mt.array(1), mt.array(2), mt.array(3)]
     params3 = {"foo": arr3}
@@ -95,22 +108,37 @@ def test_parameter_grid(setup):
         assert key == "foo"
         assert isinstance(value, mt.Tensor)
         np.testing.assert_equal(np.int32(value.execute().fetch()), np.int32(arr3[i]))
+        np.testing.assert_equal(np.int32(grid3[i]["foo"].fetch()), np.int32(arr3[i]))
 
-    params4 = {
+    arr4 = np.ones(5)
+    params4 = {"foo": arr4}
+    grid4 = ParameterGrid(params4)
+    assert isinstance(grid4, Iterable)
+    assert isinstance(grid4, Sized)
+    assert len(grid4) == 5
+
+    for i, param in enumerate(grid4):
+        key, value = next(iter(param.items()))
+        assert key == "foo"
+        assert isinstance(value, mt.Tensor)
+        np.testing.assert_equal(np.int32(value.execute().fetch()), np.int32(arr4[i]))
+        np.testing.assert_equal(np.int32(grid4[i]["foo"].fetch()), np.int32(arr4[i]))
+
+    params5 = {
         "k1": [1, np.int32(2), mt.array(3)],
         "k2": ["a", "b", "c"],
         "k3": [True, False],
     }
-    grid4 = ParameterGrid(params4)
-    assert isinstance(grid4, Iterable)
-    assert isinstance(grid4, Sized)
-    assert len(grid4) == 18
+    grid5 = ParameterGrid(params5)
+    assert isinstance(grid5, Iterable)
+    assert isinstance(grid5, Sized)
+    assert len(grid5) == 18
 
     expected = []
-    for values in itertools.product(*params4.values()):
-        new_dict = {key: value for key, value in zip(params4.keys(), values)}
+    for values in itertools.product(*params5.values()):
+        new_dict = {key: value for key, value in zip(params5.keys(), values)}
         expected.append(new_dict)
 
-    res = list(grid4)
+    res = list(grid5)
     for expected_param, res_param in zip(expected, res):
         assert expected_param == res_param

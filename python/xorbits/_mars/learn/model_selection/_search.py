@@ -42,7 +42,11 @@ class ParameterGrid(_SK_ParameterGrid):
             if not isinstance(grid, dict):
                 raise TypeError(f"Parameter grid is not a dict ({grid!r})")
             for key, value in grid.items():
-                if isinstance(value, Iterable):
+                if isinstance(value, (np.ndarray, Number)):
+                    xnp_value = mt.array(value)
+                    value = xnp_value
+                    grid[key] = xnp_value
+                elif isinstance(value, Iterable):
                     is_num = False
                     for i, v in enumerate(value):
                         if isinstance(v, (np.ndarray, Number)):
@@ -52,10 +56,6 @@ class ParameterGrid(_SK_ParameterGrid):
                             grid[key][i] = xnp_value
                     if is_num:
                         grid[key] = mt.ExecutableTuple(grid[key])
-                elif isinstance(value, (np.ndarray, Number)):
-                    xnp_value = mt.array(value)
-                    value = xnp_value
-                    grid[key] = xnp_value
 
                 if isinstance(value, (mt.Tensor)) and value.ndim > 1:
                     raise ValueError(
