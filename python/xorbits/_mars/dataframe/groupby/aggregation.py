@@ -17,7 +17,7 @@ import functools
 import itertools
 import logging
 import uuid
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -1006,7 +1006,13 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             return custom_agg_functions[func_name].execute_agg(op, in_data)
 
     @staticmethod
-    def _do_predefined_agg(input_obj, agg_func, single_func=False, **kwds):
+    def _do_predefined_agg(
+        input_obj,
+        agg_func,
+        single_func: bool = False,
+        gpu: Optional[bool] = False,
+        **kwds,
+    ):
         ndim = getattr(input_obj, "ndim", None) or input_obj.obj.ndim
         if agg_func == "str_concat":
             agg_func = lambda x: x.str.cat(**kwds)
@@ -1017,7 +1023,14 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
 
         if ndim == 2:
             if single_func:
-                result = input_obj.agg(agg_func)
+                # DataFrameGroupby.agg('size') returns empty df in cudf, which is not correct
+                # The index order of .size() is wrong in cudf,
+                # however, for performance considerations, sort_index() will not be called here
+                result = (
+                    input_obj.size()
+                    if gpu and agg_func == "size"
+                    else input_obj.agg(agg_func)
+                )
                 if result.ndim == 1:
                     # when agg_func == size, agg only returns one single series.
                     result = result.to_frame(agg_func)
@@ -1110,7 +1123,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 single_func = map_func_name == op.raw_func
                 agg_dfs.append(
                     cls._do_predefined_agg(
-                        input_obj, map_func_name, single_func, **kwds
+                        input_obj, map_func_name, single_func, op.gpu, **kwds
                     )
                 )
 
@@ -1156,7 +1169,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 combines.append(cls._do_custom_agg(raw_func_name, op, raw_input))
             else:
                 combines.append(
-                    cls._do_predefined_agg(input_obj, agg_func_name, **kwds)
+                    cls._do_predefined_agg(input_obj, agg_func_name, gpu=op.gpu, **kwds)
                 )
         ctx[op.outputs[0].key] = tuple(combines)
 
@@ -1199,7 +1212,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             else:
                 input_obj = cls._get_grouped(op, in_data_dict[output_key], ctx)
                 in_data_dict[output_key] = cls._do_predefined_agg(
-                    input_obj, agg_func_name, **kwds
+                    input_obj, agg_func_name, gpu=op.gpu, **kwds
                 )
 
         aggs = []

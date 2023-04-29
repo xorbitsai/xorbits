@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import itertools
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -23,8 +24,11 @@ from ...config import options
 from ...core import OutputType
 from ...serialization.serializables import BoolField, DataTypeField, IndexField
 from ...tensor.utils import get_chunk_slices
+from ...utils import lazy_import
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import decide_series_chunk_size, is_cudf, parse_index
+
+cudf = lazy_import("cudf")
 
 
 class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):
@@ -110,7 +114,7 @@ class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):
             )
 
     @classmethod
-    def _tile_from_pandas(cls, op):
+    def _tile_from_pandas(cls, op: "IndexDataSource"):
         index = op.outputs[0]
         raw_index = op.data
 
@@ -125,7 +129,7 @@ class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):
         ):
             chunk_op = op.copy().reset_key()
             slc = get_chunk_slices(chunk_size, chunk_index)
-            if is_cudf(raw_index):  # pragma: no cover
+            if is_cudf(raw_index) or op.is_gpu():
                 chunk_op.data = chunk_data = raw_index[slc[0]]
             else:
                 chunk_op.data = chunk_data = raw_index[slc]
@@ -233,27 +237,46 @@ class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):
             # from tensor
             return cls._tile_from_tensor(op)
 
+    @staticmethod
+    def to_cudf_index(idx: "Union[pd.Index, cudf.core.index.BaseIndex]"):
+        if isinstance(idx, cudf.core.index.BaseIndex):
+            return idx
+
+        return cudf.from_pandas(idx)
+
     @classmethod
-    def execute(cls, ctx, op):
+    def execute(cls, ctx, op: "IndexDataSource"):
+        xdf = cudf if op.is_gpu() else pd
+
+        out = op.outputs[0]
         if not op.inputs:
-            # from pandas
-            ctx[op.outputs[0].key] = op.data
+            # from pandas.
+            idx = op.data
         else:
             out = op.outputs[0]
             inp = ctx[op.inputs[0].key]
             dtype = out.dtype if out.dtype != object else None
             if hasattr(inp, "index"):
-                # DataFrame, Series
-                ctx[out.key] = pd.Index(inp.index, dtype=dtype, name=out.name)
+                # inp could be a DataFrame or Series.
+                idx = inp.index
             else:
-                ctx[out.key] = pd.Index(inp, dtype=dtype, name=out.name)
+                # inp could be an array.
+                idx = xdf.Index(inp, dtype=dtype, name=out.name)
+
+        ctx[out.key] = cls.to_cudf_index(idx) if op.is_gpu() else idx
 
 
 def from_pandas(data, chunk_size=None, gpu=None, sparse=False, store_data=False):
     op = IndexDataSource(
         data=data, gpu=gpu, sparse=sparse, dtype=data.dtype, store_data=store_data
     )
-    return op(shape=data.shape, chunk_size=chunk_size)
+
+    shape = data.shape
+    if gpu and hasattr(data, "levels"):
+        # the shape of cudf multi index is a 2-d tuple where the first element represents the
+        # number of rows and the second element represents the number of levels.
+        shape = (data.shape[0], len(data.levels))
+    return op(shape=shape, chunk_size=chunk_size)
 
 
 def from_tileable(tileable, dtype=None, name=None, names=None):

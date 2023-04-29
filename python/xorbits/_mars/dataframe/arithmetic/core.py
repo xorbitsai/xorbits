@@ -213,6 +213,7 @@ class DataFrameBinOpMixin(DataFrameOperandMixin):
         for chunk in tileable.chunks:
             out_op = op.copy().reset_key()
             if chunk.ndim == 2:
+                dtypes = df.dtypes[chunk.dtypes.index]
                 if lazy_chunk_meta:
                     out_chunk = out_op.new_chunk(
                         [chunk],
@@ -224,14 +225,14 @@ class DataFrameBinOpMixin(DataFrameOperandMixin):
                         nsplits=tileable.nsplits,
                         index_value=df.index_value,
                         columns_value=df.columns_value,
-                        dtypes=df.dtypes,
+                        dtypes=dtypes,
                     )
                 else:
                     out_chunk = out_op.new_chunk(
                         [chunk],
                         shape=chunk.shape,
                         index=chunk.index,
-                        dtypes=chunk.dtypes,
+                        dtypes=dtypes,
                         index_value=chunk.index_value,
                         columns_value=getattr(chunk, "columns_value"),
                     )
@@ -241,7 +242,7 @@ class DataFrameBinOpMixin(DataFrameOperandMixin):
                         [chunk],
                         shape=chunk.shape,
                         index=chunk.index,
-                        dtype=chunk.dtype,
+                        dtype=df.dtype,
                         name=getattr(chunk, "name"),
                     )
                     out_chunk._set_tileable_meta(
@@ -254,7 +255,7 @@ class DataFrameBinOpMixin(DataFrameOperandMixin):
                         [chunk],
                         shape=chunk.shape,
                         index=chunk.index,
-                        dtype=chunk.dtype,
+                        dtype=df.dtype,
                         index_value=chunk.index_value,
                         name=getattr(chunk, "name"),
                     )

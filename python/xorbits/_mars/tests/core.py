@@ -174,6 +174,12 @@ def require_cudf(func):
     return func
 
 
+def support_cuda(func):
+    if pytest:
+        func = pytest.mark.cuda(func)
+    return func
+
+
 def require_ray(func):
     if pytest:
         func = pytest.mark.ray(func)
@@ -484,7 +490,12 @@ class ObjectCheckMixin:
                 f"real name {real.name}"
             )
 
-        self.assert_dtype_consistent(expected.dtype, real.dtype)
+        if hasattr(real, "dtype"):
+            self.assert_dtype_consistent(expected.dtype, real.dtype)
+        else:
+            assert isinstance(real, cudf.core.index.BaseIndex)
+            # cudf multi index doesn't have attribute 'dtype'.
+            self.assert_dtype_consistent(expected.dtype, np.dtype(object))
         self.assert_index_value_consistent(expected.index_value, real)
 
     def assert_categorical_consistent(self, expected, real):

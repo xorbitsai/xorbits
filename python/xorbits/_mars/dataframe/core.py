@@ -63,6 +63,7 @@ from ..utils import (
     calc_nsplits,
     ceildiv,
     estimate_pandas_size,
+    lazy_import,
     on_deserialize_shape,
     on_serialize_numpy_type,
     on_serialize_shape,
@@ -75,6 +76,8 @@ from .utils import (
     merge_index_value,
     parse_index,
 )
+
+cudf = lazy_import("cudf")
 
 
 class IndexValue(Serializable):
@@ -736,10 +739,14 @@ class IndexChunkData(ChunkData):
             raise TypeError(f"Unknown params: {list(params)}")
 
     @classmethod
-    def get_params_from_data(cls, data: pd.Index) -> Dict[str, Any]:
+    def get_params_from_data(
+        cls, data: "Union[pd.Index, cudf.core.index.BaseIndex]"
+    ) -> Dict[str, Any]:
+        # cudf multi index doesn't have attribute 'dtype'.
+        dtype = getattr(data, "dtype", np.dtype(object))
         return {
             "shape": data.shape,
-            "dtype": data.dtype,
+            "dtype": dtype,
             "index_value": parse_index(data, store_data=False),
             "name": data.name,
         }
@@ -2203,6 +2210,16 @@ class DataFrameData(_BatchedFetcher, BaseDataFrameData):
 
     def __str__(self):
         return self._to_str(representation=False)
+
+    def _to_arr(self):
+        if len(self._executed_sessions) == 0:
+            raise NotImplementedError
+
+        data = self.fetch(session=self._executed_sessions[-1])
+        return np.asarray(data)
+
+    def __array__(self):
+        return self._to_arr()
 
     def __repr__(self):
         return self._to_str(representation=True)

@@ -239,6 +239,36 @@ def test_is_in_final_results(setup, dummy_df, dummy_str_series):
     )
 
 
+def test_array_conversion(setup):
+    import numpy as np
+    import pandas as pd
+
+    from ... import pandas as xpd
+
+    data = {
+        "foo": [1, 2, 3],
+        "bar": [1.0, 2.0, 3.0],
+        "baz": ["a", "b", "c"],
+        "qux": [True, False, True],
+        "mixed": [1, 2.0, "a"],
+    }
+
+    df = pd.DataFrame(data)
+    xdf = xpd.DataFrame(data)
+
+    expected = df.__array__()
+    np.testing.assert_array_equal(xdf.__array__(), expected)
+    np.testing.assert_array_equal(np.array(xdf), expected)
+
+    # ensure the dataframe needs to be executed.
+    df = pd.concat([df, df], axis=0)
+    xdf = xpd.concat([xdf, xdf], axis=0)
+
+    expected = df.__array__()
+    np.testing.assert_array_equal(xdf.__array__(), expected)
+    np.testing.assert_array_equal(np.array(xdf), expected)
+
+
 @pytest.fixture
 def ip():
     from IPython.testing.globalipapp import start_ipython

@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import asyncio
+import datetime
 import os
 import tempfile
 import time
@@ -26,6 +27,7 @@ import pandas as pd
 import pytest
 import xoscar as mo
 
+from ..... import dataframe as md
 from ..... import remote as mr
 from .....core import (
     ChunkGraph,
@@ -34,11 +36,13 @@ from .....core import (
     TileableGraph,
     TileableGraphBuilder,
 )
+from .....dataframe import to_datetime
 from .....oscar import create_actor_pool
 from .....remote.core import RemoteFunction
 from .....resource import Resource
 from .....tensor.arithmetic import TensorTreeAdd
 from .....tensor.fetch import TensorFetch
+from .....tests.core import require_cudf
 from .....utils import Timer
 from ....cluster import MockClusterAPI
 from ....lifecycle import MockLifecycleAPI
@@ -569,3 +573,41 @@ async def test_cancel_without_kill(actor_pool):
     if os.path.exists(executed_file):
         assert await storage_api.get(remote_result.key)
         os.unlink(executed_file)
+
+
+def _generate_params_for_gpu():
+    for data_type in ("df", "series"):
+        for chunked in (False, True):
+            yield data_type, chunked
+
+
+@require_cudf
+@pytest.mark.parametrize(
+    "data_type,chunked",
+    _generate_params_for_gpu(),
+)
+def test_fetch_data_from_both_cpu_and_gpu(data_type, chunked, setup_gpu):
+    chunk_size = 3 if chunked else None
+    pd_date = pd.Timestamp("1998-01-01")
+    # data from CPU
+    mars_date = to_datetime("1998-01-01")
+
+    data1 = [datetime.datetime(1989, 1, 1), datetime.datetime(2001, 1, 1)]
+    data2 = [datetime.datetime(1990, 1, 1), datetime.datetime(2021, 1, 1)]
+
+    if data_type == "df":
+        data = {"date1": data1, "date2": data2}
+        pandas_data = pd.DataFrame(data)
+        mars_data = md.DataFrame(data, chunk_size=chunk_size).to_gpu()
+    else:
+        data = data1 + data2
+        pandas_data = pd.Series(data)
+        mars_data = md.Series(data, chunk_size=chunk_size).to_gpu()
+
+    actual = mars_data >= mars_date
+    expected = pandas_data >= pd_date
+
+    if isinstance(expected, pd.DataFrame):
+        pd.testing.assert_frame_equal(expected, actual.execute().fetch(to_cpu=True))
+    else:
+        pd.testing.assert_series_equal(expected, actual.execute().fetch(to_cpu=True))
