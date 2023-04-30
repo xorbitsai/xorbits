@@ -132,7 +132,7 @@ def test_parameter_grid(setup):
     grid5 = ParameterGrid(params5)
     assert isinstance(grid5, Iterable)
     assert isinstance(grid5, Sized)
-    assert len(grid5) == 18
+    assert len(grid5) == 3 * 3 * 2
 
     expected = []
     for values in itertools.product(*params5.values()):
@@ -140,5 +140,24 @@ def test_parameter_grid(setup):
         expected.append(new_dict)
 
     res = list(grid5)
+    for expected_param, res_param in zip(expected, res):
+        assert expected_param == res_param
+
+    params6 = [
+        {"k1": ["a"]},
+        {"k1": ["b"], "k2": [1, 2]},
+    ]
+    grid6 = ParameterGrid(params6)
+    assert isinstance(grid6, Iterable)
+    assert isinstance(grid6, Sized)
+    assert len(grid6) == 1 + 1 * 2
+
+    expected = []
+    for params in params6:
+        for values in itertools.product(*params.values()):
+            new_dict = {key: value for key, value in zip(params.keys(), values)}
+            expected.append(new_dict)
+
+    res = list(grid6)
     for expected_param, res_param in zip(expected, res):
         assert expected_param == res_param
