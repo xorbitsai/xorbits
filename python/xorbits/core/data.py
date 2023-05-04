@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import warnings
 from collections import defaultdict
 from enum import Enum
 from itertools import count
@@ -197,10 +197,20 @@ class DataRef(metaclass=DataRefMeta):
         return MemberProxy.getattr(self, item)
 
     def __setattr__(self, key, value):
-        if key in self.__fields:
-            object.__setattr__(self, key, value)
-        else:
-            self.data.__setattr__(key, value)
+        try:
+            if key in self.__fields:
+                object.__setattr__(self, key, value)
+            else:
+                self.data.__setattr__(key, value)
+        except AttributeError:
+            if key in self.dtypes:
+                self.__setitem__(key, value)
+            else:
+                warnings.warn(
+                    "xorbits.pandas doesn't allow columns to be created via a new attribute name.",
+                    UserWarning,
+                )
+                object.__setattr__(self, key, value)
 
     def _own_data(self):
         from .adapter import own_data

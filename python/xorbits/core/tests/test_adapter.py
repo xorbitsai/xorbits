@@ -150,9 +150,6 @@ def test_on_nonexistent_magic_method(dummy_df):
 
 
 def test_setattr(dummy_df):
-    with pytest.raises(AttributeError):
-        dummy_df.a = 1
-
     mdf = mars_dataframe.DataFrame({"foo": (1, 2, 3), "bar": (4, 5, 6)})
     dummy_df._data = mdf.data
     assert dummy_df.data._mars_entity.data is mdf.data

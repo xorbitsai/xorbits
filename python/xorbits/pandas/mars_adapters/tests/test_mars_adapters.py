@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import pandas as pd
+import pytest
 
 from .... import pandas as xpd
 from ....core import DataRef
@@ -171,6 +172,15 @@ def test_dataframe_setattr(setup, dummy_df):
 
     dummy_df.columns = ["c1", "c2"]
     assert ["c1", "c2"] == list(dummy_df.dtypes.index)
+    dummy_df.c1 = (0.0, 1.0, 2.0)
+    c1 = dummy_df.c1
+    assert isinstance(c1, DataRef)
+    with pytest.warns(
+        UserWarning,
+        match="xorbits.pandas doesn't allow columns to be created via a new attribute name.",
+    ):
+        dummy_df.baz = (0.0, 1.0, 2.0)
+    assert not isinstance(dummy_df.baz, DataRef)
 
 
 def test_dataframe_items(setup, dummy_df):
