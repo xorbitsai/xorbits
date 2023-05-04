@@ -118,7 +118,7 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        pip install numpy scipy cython coverage flaky
+        pip install numpy scipy cython coverage flaky pyarrow\<12.0.0
         
         if [[ "$PYTHON" == '3.9' ]]; then
           conda install numba
@@ -177,7 +177,7 @@ jobs:
         fi
         if [[ "$MODULE" == "_mars/learn" ]]; then
           pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
-            statsmodels tsfresh dask[complete] mimesis
+            statsmodels tsfresh dask[complete] mimesis\<9.0.0
         fi
         if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
           pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
