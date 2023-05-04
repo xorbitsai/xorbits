@@ -197,8 +197,15 @@ class MemberProxy:
                 data_type=data_type,
             )
         else:
+            if item == "id":
+                return wrap_mars_callable(
+                    getattr(mars_entity, "__getitem__"),
+                    attach_docstring=False,
+                    is_cls_member=True,
+                )(item=item)
             # e.g. string accessor
-            return from_mars(attr)
+            else:
+                return from_mars(attr)
 
     @classmethod
     def setattr(cls, ref: DataRef, key: str, value: Any):
