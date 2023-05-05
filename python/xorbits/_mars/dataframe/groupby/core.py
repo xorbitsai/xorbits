@@ -476,7 +476,9 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
                         else:
                             by[i] = v
         else:
-            r = pd.concat(res, axis=0)
+            # execute_pd = cudf if is_cudf(res[0]) else pd
+            # r = execute_pd.concat(res, axis=0)
+            r = xdf.concat(res, axis=0)
 
         if chunk.index_value is not None:
             if isinstance(r, tuple):
@@ -513,7 +515,10 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
                 level=op.level,
                 as_index=op.as_index,
                 sort=op.sort,
-                group_keys=op.group_keys if op.group_keys is not None else no_default,
+                # For GPU, unexpected problems would happen if ``group_keys=no_default``.
+                group_keys=op.group_keys
+                if op.group_keys is not None or op.is_gpu() is True
+                else no_default,
             )
 
 
