@@ -118,7 +118,7 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        pip install numpy scipy cython coverage flaky pyarrow\<12.0.0
+        pip install numpy scipy cython coverage flaky
         
         if [[ "$PYTHON" == '3.9' ]]; then
           conda install numba
