@@ -1674,13 +1674,12 @@ def test_gpu_groupby_size(data_type, chunked, as_index, sort, setup_gpu):
         pd.testing.assert_series_equal(expected, actual)
 
 
-# TODO: support cuda
-# @support_cuda
+@support_cuda
 @pytest.mark.parametrize(
     "as_index",
     [True, False],
 )
-def test_groupby_agg_on_same_funcs(setup_gpu, as_index, gpu):
+def test_groupby_agg_on_custom_funcs(setup_gpu, as_index, gpu):
     rs = np.random.RandomState(0)
     df = pd.DataFrame(
         {
@@ -1706,16 +1705,20 @@ def test_groupby_agg_on_same_funcs(setup_gpu, as_index, gpu):
         df.groupby("a", as_index=False).agg((g1, g2, g3)),
         mdf.groupby("a", as_index=False).agg((g1, g2, g3)).execute().fetch(),
     )
-    pd.testing.assert_frame_equal(
-        df.groupby("a", as_index=as_index).agg((g1, g1)),
-        mdf.groupby("a", as_index=as_index).agg((g1, g1)).execute().fetch(),
-    )
+    if not gpu:
+        # cuDF doesn't support having multiple columns with same names yet.
+        pd.testing.assert_frame_equal(
+            df.groupby("a", as_index=as_index).agg((g1, g1)),
+            mdf.groupby("a", as_index=as_index).agg((g1, g1)).execute().fetch(),
+        )
 
     pd.testing.assert_frame_equal(
         df.groupby("a", as_index=as_index)["b"].agg((g1, g2, g3)),
         mdf.groupby("a", as_index=as_index)["b"].agg((g1, g2, g3)).execute().fetch(),
     )
-    pd.testing.assert_frame_equal(
-        df.groupby("a", as_index=as_index)["b"].agg((g1, g1)),
-        mdf.groupby("a", as_index=as_index)["b"].agg((g1, g1)).execute().fetch(),
-    )
+    if not gpu:
+        # cuDF doesn't support having multiple columns with same names yet.
+        pd.testing.assert_frame_equal(
+            df.groupby("a", as_index=as_index)["b"].agg((g1, g1)),
+            mdf.groupby("a", as_index=as_index)["b"].agg((g1, g1)).execute().fetch(),
+        )
