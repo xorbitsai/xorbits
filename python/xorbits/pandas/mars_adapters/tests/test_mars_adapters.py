@@ -166,6 +166,18 @@ def test_dataframe_getattr(setup, dummy_df):
         idx += 1
 
 
+def test_dataframe_getattr_id(setup, dummy_df):
+    dummy_df["id"] = (0.0, 1.0, 2.0)
+    id_values = dummy_df.id
+    assert isinstance(id_values, DataRef)
+
+    idx = 0
+    for i, val in id_values.items():
+        assert idx == i
+        assert val == float(idx)
+        idx += 1
+
+
 def test_dataframe_setattr(setup, dummy_df):
     assert isinstance(dummy_df.columns, DataRef)
     assert ["foo", "bar"] == list(dummy_df.dtypes.index)

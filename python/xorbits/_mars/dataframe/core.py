@@ -2296,13 +2296,9 @@ class DataFrame(HasShapeTileable, _ToPandasMixin):
         return self._data.__mars_tensor__(dtype=dtype, order=order)
 
     def __getattr__(self, key):
-        try:
-            return getattr(self._data, key)
-        except AttributeError:
-            if key in self.dtypes:
-                return self[key]
-            else:
-                raise
+        if self.dtypes is not None and key in self.dtypes:
+            return self[key]
+        return getattr(self._data, key)
 
     def __dir__(self):
         result = list(super().__dir__())
