@@ -14,7 +14,6 @@
 # limitations under the License.
 from collections import OrderedDict
 
-import cudf
 import numpy as np
 import pandas as pd
 import pytest
@@ -28,11 +27,12 @@ from .... import dataframe as md
 from ....config import option_context
 from ....core.operand import OperandStage
 from ....tests.core import assert_groupby_equal, require_cudf, support_cuda
-from ....utils import arrow_array_to_objects, pd_release_version
+from ....utils import arrow_array_to_objects, lazy_import, pd_release_version
 from ...core import DATAFRAME_OR_SERIES_TYPE
 from ...utils import is_pandas_2
 from ..aggregation import DataFrameGroupByAgg
 
+cudf = lazy_import("cudf")
 pytestmark = pytest.mark.pd_compat
 
 _agg_size_as_frame = pd_release_version[:2] > (1, 0)

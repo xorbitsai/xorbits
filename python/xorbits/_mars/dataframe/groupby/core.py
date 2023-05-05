@@ -476,8 +476,6 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
                         else:
                             by[i] = v
         else:
-            # execute_pd = cudf if is_cudf(res[0]) else pd
-            # r = execute_pd.concat(res, axis=0)
             r = xdf.concat(res, axis=0)
 
         if chunk.index_value is not None:
