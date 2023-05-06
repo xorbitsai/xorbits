@@ -47,13 +47,14 @@ class ParameterGrid(_SK_ParameterGrid):
                     value = xnp_value
                     grid[key] = xnp_value
                 elif isinstance(value, Iterable):
-                    is_num = False
+                    is_num = True
                     for i, v in enumerate(value):
                         if isinstance(v, (np.ndarray, Number)):
-                            is_num = True
                             xnp_value = mt.array(v)
                             value[i] = xnp_value
                             grid[key][i] = xnp_value
+                        else:
+                            is_num = False
                     if is_num:
                         grid[key] = mt.ExecutableTuple(grid[key])
 
