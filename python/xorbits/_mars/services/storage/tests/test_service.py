@@ -147,19 +147,11 @@ async def test_storage_service_with_cuda(actor_pools_with_gpu):
 
     worker_pool = actor_pools_with_gpu
 
-    if sys.platform == "darwin":
-        plasma_dir = "/tmp"
-    else:
-        plasma_dir = "/dev/shm"
-    plasma_setup_params = dict(
-        store_memory=10 * 1024 * 1024, plasma_directory=plasma_dir, check_dir_size=False
-    )
-
     config = {
         "services": ["storage"],
         "storage": {
-            "backends": ["plasma" if not _is_windows else "shared_memory", "cuda"],
-            "plasma": plasma_setup_params,
+            "backends": ["shared_memory", "cuda"],
+            "shared_memory": dict(),
             "cuda": dict(),
         },
     }

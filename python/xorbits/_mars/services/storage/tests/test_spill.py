@@ -79,23 +79,26 @@ def _build_storage_config():
     return storage_configs
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 async def create_actors(actor_pool):
+    _ = await MockClusterAPI.create(address=actor_pool.external_address)
+    storage_configs = _build_storage_config()
+    manager_ref = await mo.create_actor(
+        StorageManagerActor,
+        storage_configs,
+        uid=StorageManagerActor.default_uid(),
+        address=actor_pool.external_address,
+    )
+
+    sub_processes = list(actor_pool.sub_processes)
+    yield actor_pool.external_address, sub_processes[0], sub_processes[1]
+    await mo.destroy_actor(manager_ref)
+
+
+@pytest.fixture(autouse=True)
+async def skip_wihtout_plasma():
     if pyarrow.__version__ >= "12.0.0":
         pytest.skip("Pyarrow.Plasma is deprecated since v12.0.0")
-    else:
-        _ = await MockClusterAPI.create(address=actor_pool.external_address)
-        storage_configs = _build_storage_config()
-        manager_ref = await mo.create_actor(
-            StorageManagerActor,
-            storage_configs,
-            uid=StorageManagerActor.default_uid(),
-            address=actor_pool.external_address,
-        )
-
-        sub_processes = list(actor_pool.sub_processes)
-        yield actor_pool.external_address, sub_processes[0], sub_processes[1]
-        await mo.destroy_actor(manager_ref)
 
 
 @pytest.mark.asyncio
