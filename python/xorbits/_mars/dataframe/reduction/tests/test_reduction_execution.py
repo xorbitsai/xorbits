@@ -27,7 +27,7 @@ except ImportError:  # pragma: no cover
 from .... import dataframe as md
 from ....config import option_context
 from ....deploy.oscar.session import get_default_session
-from ....tests.core import require_cudf, require_cupy
+from ....tests.core import require_cudf, require_cupy, support_cuda
 from ....utils import lazy_import, pd_release_version
 from ... import CustomReduction, NamedAgg
 from ...base import to_gpu
@@ -1192,3 +1192,31 @@ def test_gpu_multi_agg_methods(setup_gpu):
 
     res = mars_series.agg(["sum", "prod"]).execute().fetch(to_cpu=False)
     pd.testing.assert_series_equal(expected, res.to_pandas())
+
+
+@support_cuda
+def test_agg_on_same_funcs(setup_gpu, gpu):
+    rs = np.random.RandomState(0)
+    df = pd.DataFrame(
+        {
+            "a": rs.choice(["foo", "bar", "bar"], size=100),
+            "b": rs.choice(["foo", "bar", "bar"], size=100),
+            "c": rs.choice(["foo", "bar", "bar"], size=100),
+        },
+    )
+
+    mdf = md.DataFrame(df, chunk_size=34, gpu=gpu)
+
+    def g1(x):
+        return (x == "foo").sum()
+
+    def g2(x):
+        return (x != "bar").sum()
+
+    def g3(x):
+        # same as g2
+        return (x != "bar").sum()
+
+    pd.testing.assert_frame_equal(
+        df.aggregate((g1, g2, g3)), mdf.aggregate((g1, g2, g3)).execute().fetch()
+    )

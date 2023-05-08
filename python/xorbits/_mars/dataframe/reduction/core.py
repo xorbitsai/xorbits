@@ -896,16 +896,24 @@ class ReductionCompiler:
         return fun
 
     @staticmethod
-    def _build_mock_return_object(func, input_dtype, ndim):
+    def _build_mock_return_object(func, func_name: Optional[str], input_dtype, ndim):
         from ..initializer import DataFrame as MarsDataFrame
         from ..initializer import Series as MarsSeries
 
+        # if function names are not involved and the input functions are exactly the same, the
+        # output objects will have the same keys, which may cause incorrect results.
+        if func_name is None:
+            func_name = ""
+
         if ndim == 1:
-            mock_series = build_empty_series(np.dtype(input_dtype))
+            mock_series = build_empty_series(np.dtype(input_dtype), name=func_name)
             mock_obj = MarsSeries(mock_series)
         else:
             mock_df = build_empty_df(
-                pd.Series([np.dtype(input_dtype)] * 2, index=["A", "B"])
+                pd.Series(
+                    [np.dtype(input_dtype)] * 2,
+                    index=[f"{func_name}_A", f"{func_name}_B"],
+                )
             )
             mock_obj = MarsDataFrame(mock_df)
 
@@ -930,10 +938,10 @@ class ReductionCompiler:
         self._check_function_valid(func)
 
         try:
-            func_ret = self._build_mock_return_object(func, float, ndim=ndim)
+            func_ret = self._build_mock_return_object(func, func_name, float, ndim=ndim)
         except (TypeError, AttributeError):
             # we may encounter lambda x: x.str.cat(...), use an object series to test
-            func_ret = self._build_mock_return_object(func, object, ndim=1)
+            func_ret = self._build_mock_return_object(func, func_name, object, ndim=1)
         output_limit = getattr(func, "output_limit", None) or 1
 
         if not isinstance(func_ret, ENTITY_TYPE):
