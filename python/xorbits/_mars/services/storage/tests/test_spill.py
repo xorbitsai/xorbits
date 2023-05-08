@@ -19,6 +19,7 @@ import sys
 import tempfile
 
 import numpy as np
+import pyarrow
 import pytest
 import xoscar as mo
 
@@ -92,6 +93,12 @@ async def create_actors(actor_pool):
     sub_processes = list(actor_pool.sub_processes)
     yield actor_pool.external_address, sub_processes[0], sub_processes[1]
     await mo.destroy_actor(manager_ref)
+
+
+@pytest.fixture(autouse=True)
+async def skip_wihtout_plasma():
+    if pyarrow.__version__ >= "12.0.0":
+        pytest.skip("Pyarrow.Plasma is deprecated since v12.0.0")
 
 
 @pytest.mark.asyncio
