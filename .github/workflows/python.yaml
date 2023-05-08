@@ -89,7 +89,7 @@ jobs:
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
           - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
-          - { os: ubuntu-latest, module: pandas-1.0, python-version: 3.9 }
+          - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
     steps:
     - name: Check out code
@@ -182,8 +182,8 @@ jobs:
         if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
           pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
         fi
-        if [[ "$MODULE" == "pandas-1.0" ]]; then
-          # test if compatible with pandas 1.0
+        if [[ "$MODULE" == "compatibility" ]]; then
+          # test if compatible with older versions
           pip install pandas==1.5.3 pyarrow\<12.0.0 sqlalchemy\<2
         fi
         pip install -e ".[dev,extra,aws]"
@@ -280,7 +280,7 @@ jobs:
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         elif [ "$MODULE" == "gpu" ]; then
           pytest -m cuda --gpu --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits  
-        elif [ "$MODULE" == "pandas-1.0" ]; then
+        elif [ "$MODULE" == "compatibility" ]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/_mars/dataframe
