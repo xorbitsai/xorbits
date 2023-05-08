@@ -273,7 +273,9 @@ def test_array_conversion(setup):
 def ip():
     from IPython.testing.globalipapp import start_ipython
 
-    yield start_ipython()
+    ip = start_ipython()
+    yield ip
+    ip.run_cell("exit")
 
 
 def test_interactive_execution(setup, ip):
