@@ -1031,9 +1031,6 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                     if gpu and agg_func == "size"
                     else input_obj.agg(agg_func)
                 )
-                if result.ndim == 1:
-                    # when agg_func == size, agg only returns one single series.
-                    result = result.to_frame(agg_func)
             else:
                 result = input_obj.agg([agg_func])
                 result.columns = result.columns.droplevel(-1)
