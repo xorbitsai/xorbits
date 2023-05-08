@@ -1086,8 +1086,8 @@ def test_groupby_apply_closure(setup_gpu, gpu):
 def test_groupby_apply_as_index(chunked, as_index, setup_gpu, gpu):
     df = pd.DataFrame(
         {
-            "a": [i + 1 for i in range(10)],
-            "b": [10 - i for i in range(10)],
+            "a": list(range(1, 11)),
+            "b": list(range(1, 11))[::-1],
             "c": list("aabbccddac"),
         }
     )
