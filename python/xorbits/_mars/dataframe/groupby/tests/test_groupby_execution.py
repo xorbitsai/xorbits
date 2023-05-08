@@ -875,8 +875,8 @@ def test_groupby_apply(setup_gpu, gpu):
     # Pandas is not compatible with the results of cudf in this case
     # cudf return a series, however, pandas returns empty dataframe.
     # So gpu is not tested here.
-    applied = mdf.groupby("b").apply(lambda df: None)
     if not gpu:
+        applied = mdf.groupby("b").apply(lambda df: None)
         pd.testing.assert_frame_equal(
             applied.execute().fetch(), df1.groupby("b").apply(lambda df: None)
         )
@@ -917,8 +917,8 @@ def test_groupby_apply(setup_gpu, gpu):
     # For this case, cudf does not handle as_index is True,
     # resulting in a mismatch between the output type and the actual type.
     # Therefore, just test cpu here.
-    applied = mdf.groupby("b").apply(lambda df: df.a, output_type="series")
     if not gpu:
+        applied = mdf.groupby("b").apply(lambda df: df.a, output_type="series")
         pd.testing.assert_series_equal(
             applied.execute().fetch().sort_index(),
             df1.groupby("b").apply(lambda df: df.a).sort_index(),
@@ -957,9 +957,9 @@ def test_groupby_apply(setup_gpu, gpu):
     series2 = pd.Series(list("CDECEDABC"), index=sindex2)
     ms2 = md.Series(series2, gpu=gpu, chunk_size=3)
 
-    applied = ms2.groupby(lambda x: x[0] % 3).apply(apply_series)
     # do not test multi index on gpu for now
     if not gpu:
+        applied = ms2.groupby(lambda x: x[0] % 3).apply(apply_series)
         pd.testing.assert_series_equal(
             applied.execute().fetch().sort_index(),
             series2.groupby(lambda x: x[0] % 3).apply(apply_series).sort_index(),

@@ -24,11 +24,12 @@ import pytest
 
 from ...config import option_context
 from ...core import tile
-from ...tests.core import require_cudf
-from ...utils import Timer
+from ...tests.core import require_cudf, support_cuda
+from ...utils import Timer, lazy_import
 from ..core import IndexValue
 from ..initializer import DataFrame, Index, Series
 from ..utils import (
+    _get_index_map,
     auto_merge_chunks,
     build_concatenated_rows_frame,
     build_split_idx_to_origin_idx,
@@ -45,6 +46,8 @@ from ..utils import (
     split_monotonic_index_min_max,
     validate_axis,
 )
+
+cudf = lazy_import("cudf")
 
 
 def test_decide_dataframe_chunks():
@@ -675,3 +678,55 @@ def test_auto_merge_chunks():
     assert isinstance(s2.chunks[1].op, DataFrameConcat)
     assert s2.chunks[1].name == "a"
     assert len(s2.chunks[1].op.inputs) == 2
+
+
+@support_cuda
+def test_index_map(setup_gpu, gpu):
+    df = pd.DataFrame({"a": [1, 2, 3]}, index=[3, 2, 1])
+    if gpu:
+        src = cudf.DataFrame(df)
+    else:
+        src = df
+
+    # ok
+    func1 = lambda x: x + 1
+    actual = _get_index_map(src, func1)
+    expected = df.index.map(func1)
+    if gpu:
+        actual = actual.to_pandas()
+
+    pd.testing.assert_index_equal(actual, expected)
+
+    # change dtype
+    func2 = lambda x: str(x) + "foo"
+    if gpu:
+        # udf compilation failed on GPU
+        with pytest.raises(ValueError):
+            _get_index_map(src, func2)
+    else:
+        actual = _get_index_map(src, func2)
+        expected = df.index.map(func2)
+        pd.testing.assert_index_equal(actual, expected)
+
+    # up dimension
+    func3 = lambda x: (x, x + 1)
+    if gpu:
+        # udf compilation failed on GPU
+        with pytest.raises(ValueError):
+            _get_index_map(src, func3)
+    else:
+        actual = _get_index_map(src, func3)
+        expected = df.index.map(func3)
+        pd.testing.assert_index_equal(actual, expected)
+
+    # test multi index
+    func4 = lambda x: (x[0] + 1, x[1] + 1)
+    if gpu:
+        src.index = cudf.MultiIndex.from_tuples([(1, 2), (3, 4), (5, 6)])
+        with pytest.raises(NotImplementedError):
+            _get_index_map(src, func4)
+    else:
+        src.index = pd.MultiIndex.from_tuples([(1, 2), (3, 4), (5, 6)])
+        actual = _get_index_map(src, func4)
+        expected = df.index.map(func4)
+        pd.testing.assert_index_equal(actual, expected)
