@@ -902,7 +902,7 @@ class ReductionCompiler:
 
         # if function names are not involved and the input functions are exactly the same, the
         # output objects will have the same keys, which may cause incorrect results.
-        if func_name is None:
+        if func_name is None:  # pragma: no cover
             func_name = ""
 
         if ndim == 1:
@@ -939,7 +939,7 @@ class ReductionCompiler:
 
         try:
             func_ret = self._build_mock_return_object(func, func_name, float, ndim=ndim)
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError):  # pragma: no cover
             # we may encounter lambda x: x.str.cat(...), use an object series to test
             func_ret = self._build_mock_return_object(func, func_name, object, ndim=1)
         output_limit = getattr(func, "output_limit", None) or 1
