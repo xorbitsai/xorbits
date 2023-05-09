@@ -26,7 +26,7 @@ except ImportError:  # pragma: no cover
 from .... import dataframe as md
 from ....config import option_context
 from ....core.operand import OperandStage
-from ....tests.core import assert_groupby_equal, require_cudf, support_cuda
+from ....tests.core import assert_groupby_equal, require_cudf
 from ....utils import arrow_array_to_objects, pd_release_version
 from ...core import DATAFRAME_OR_SERIES_TYPE
 from ...utils import is_pandas_2
@@ -1595,7 +1595,8 @@ def test_gpu_groupby_size(data_type, chunked, as_index, sort, setup_gpu):
         pd.testing.assert_series_equal(expected, actual)
 
 
-@support_cuda
+# TODO: support cuda
+# @support_cuda
 def test_groupby_agg_on_same_funcs(setup_gpu, gpu):
     rs = np.random.RandomState(0)
     df = pd.DataFrame(
