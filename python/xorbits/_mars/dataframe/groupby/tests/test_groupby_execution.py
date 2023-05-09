@@ -1597,13 +1597,17 @@ def test_gpu_groupby_size(data_type, chunked, as_index, sort, setup_gpu):
 
 # TODO: support cuda
 # @support_cuda
-def test_groupby_agg_on_same_funcs(setup_gpu, gpu):
+@pytest.mark.parametrize(
+    "as_index",
+    [True, False],
+)
+def test_groupby_agg_on_same_funcs(setup_gpu, as_index, gpu):
     rs = np.random.RandomState(0)
     df = pd.DataFrame(
         {
-            "a": rs.choice(["foo", "bar", "bar"], size=100),
-            "b": rs.choice(["foo", "bar", "bar"], size=100),
-            "c": rs.choice(["foo", "bar", "bar"], size=100),
+            "a": rs.choice(["foo", "bar", "baz"], size=100),
+            "b": rs.choice(["foo", "bar", "baz"], size=100),
+            "c": rs.choice(["foo", "bar", "baz"], size=100),
         },
     )
 
@@ -1623,8 +1627,16 @@ def test_groupby_agg_on_same_funcs(setup_gpu, gpu):
         df.groupby("a", as_index=False).agg((g1, g2, g3)),
         mdf.groupby("a", as_index=False).agg((g1, g2, g3)).execute().fetch(),
     )
+    pd.testing.assert_frame_equal(
+        df.groupby("a", as_index=as_index).agg((g1, g1)),
+        mdf.groupby("a", as_index=as_index).agg((g1, g1)).execute().fetch(),
+    )
 
     pd.testing.assert_frame_equal(
-        df.groupby("a", as_index=False)["b"].agg((g1, g2, g3)),
-        mdf.groupby("a", as_index=False)["b"].agg((g1, g2, g3)).execute().fetch(),
+        df.groupby("a", as_index=as_index)["b"].agg((g1, g2, g3)),
+        mdf.groupby("a", as_index=as_index)["b"].agg((g1, g2, g3)).execute().fetch(),
+    )
+    pd.testing.assert_frame_equal(
+        df.groupby("a", as_index=as_index)["b"].agg((g1, g1)),
+        mdf.groupby("a", as_index=as_index)["b"].agg((g1, g1)).execute().fetch(),
     )

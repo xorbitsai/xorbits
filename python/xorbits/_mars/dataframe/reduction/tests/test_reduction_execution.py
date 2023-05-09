@@ -1194,19 +1194,26 @@ def test_gpu_multi_agg_methods(setup_gpu):
     pd.testing.assert_series_equal(expected, res.to_pandas())
 
 
+def test_agg_and_aggregate():
+    assert md.DataFrame.agg is md.DataFrame.aggregate
+    assert md.Series.agg is md.Series.aggregate
+
+
 # TODO: support cuda
 # @support_cuda
-def test_agg_on_same_funcs(setup_gpu, gpu):
+def test_aggregate_on_same_funcs(setup_gpu, gpu):
     rs = np.random.RandomState(0)
     df = pd.DataFrame(
         {
-            "a": rs.choice(["foo", "bar", "bar"], size=100),
-            "b": rs.choice(["foo", "bar", "bar"], size=100),
-            "c": rs.choice(["foo", "bar", "bar"], size=100),
+            "a": rs.choice(["foo", "bar", "baz"], size=100),
+            "b": rs.choice(["foo", "bar", "baz"], size=100),
+            "c": rs.choice(["foo", "bar", "baz"], size=100),
         },
     )
+    s = pd.Series(rs.choice(["foo", "bar", "baz"], size=100))
 
     mdf = md.DataFrame(df, chunk_size=34, gpu=gpu)
+    ms = md.Series(s, chunk_size=34, gpu=gpu)
 
     def g1(x):
         return (x == "foo").sum()
@@ -1219,5 +1226,11 @@ def test_agg_on_same_funcs(setup_gpu, gpu):
         return (x != "bar").sum()
 
     pd.testing.assert_frame_equal(
-        df.aggregate((g1, g2, g3)), mdf.aggregate((g1, g2, g3)).execute().fetch()
+        df.agg((g1, g2, g3)), mdf.agg((g1, g2, g3)).execute().fetch()
     )
+    pd.testing.assert_frame_equal(df.agg((g1, g1)), mdf.agg((g1, g1)).execute().fetch())
+
+    pd.testing.assert_series_equal(
+        s.agg((g1, g2, g3)), ms.agg((g1, g2, g3)).execute().fetch()
+    )
+    pd.testing.assert_series_equal(s.agg((g1, g1)), ms.agg((g1, g1)).execute().fetch())
