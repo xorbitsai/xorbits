@@ -21,7 +21,7 @@ from ..serialization.serializables import SerializableMeta
 from ..tensor import stack
 from ..tensor import tensor as astensor
 from ..tensor.array_utils import is_cupy
-from ..tensor.core import TENSOR_TYPE
+from ..tensor.core import TENSOR_TYPE, TensorData
 from ..utils import ceildiv, lazy_import
 from .core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
 from .core import DataFrame as _Frame
@@ -39,6 +39,19 @@ from .datasource.series import from_pandas as from_pandas_series
 from .utils import is_cudf, is_index
 
 cudf = lazy_import("cudf")
+
+
+def fetch_data_helper(x):
+    if hasattr(x, "data") and isinstance(x.data, TensorData) and len(x.data.shape) == 0:
+        return x.execute().fetch()
+    else:
+        return x
+
+
+def convert_data(d):
+    return [
+        fetch_data_helper(v) if not isinstance(v, list) else convert_data(v) for v in d
+    ]
 
 
 class InitializerMeta(SerializableMeta):
@@ -109,6 +122,8 @@ class DataFrame(_Frame, metaclass=InitializerMeta):
                 if copy:
                     pdf = pdf.copy()
             else:
+                if isinstance(data, list):
+                    data = convert_data(data)
                 pdf = pd.DataFrame(
                     data, index=index, columns=columns, dtype=dtype, copy=copy
                 )
