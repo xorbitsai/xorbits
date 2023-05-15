@@ -896,16 +896,24 @@ class ReductionCompiler:
         return fun
 
     @staticmethod
-    def _build_mock_return_object(func, input_dtype, ndim):
+    def _build_mock_return_object(func, func_idx: int, input_dtype, ndim):
         from ..initializer import DataFrame as MarsDataFrame
         from ..initializer import Series as MarsSeries
 
+        # for identical functions, the output objects will have the same keys, which may cause
+        # incorrect results.
+        # the index could be an ideal way to identify each of the functions.
+        func_name = f"f_{func_idx}"
+
         if ndim == 1:
-            mock_series = build_empty_series(np.dtype(input_dtype))
+            mock_series = build_empty_series(np.dtype(input_dtype), name=func_name)
             mock_obj = MarsSeries(mock_series)
         else:
             mock_df = build_empty_df(
-                pd.Series([np.dtype(input_dtype)] * 2, index=["A", "B"])
+                pd.Series(
+                    [np.dtype(input_dtype)] * 2,
+                    index=[f"{func_name}_A", f"{func_name}_B"],
+                )
             )
             mock_obj = MarsDataFrame(mock_df)
 
@@ -922,7 +930,8 @@ class ReductionCompiler:
         from ..datasource.series import SeriesDataSource
         from ..indexing.where import DataFrameWhere
 
-        func_token = tokenize(func, self._axis, func_name, ndim)
+        func_idx = len(self._compiled_funcs)
+        func_token = tokenize(func, self._axis, func_name, func_idx, ndim)
         if func_token in _func_compile_cache:
             return _func_compile_cache[func_token]
         custom_reduction = func if isinstance(func, CustomReduction) else None
@@ -930,10 +939,10 @@ class ReductionCompiler:
         self._check_function_valid(func)
 
         try:
-            func_ret = self._build_mock_return_object(func, float, ndim=ndim)
-        except (TypeError, AttributeError):
+            func_ret = self._build_mock_return_object(func, func_idx, float, ndim=ndim)
+        except (TypeError, AttributeError):  # pragma: no cover
             # we may encounter lambda x: x.str.cat(...), use an object series to test
-            func_ret = self._build_mock_return_object(func, object, ndim=1)
+            func_ret = self._build_mock_return_object(func, func_idx, object, ndim=1)
         output_limit = getattr(func, "output_limit", None) or 1
 
         if not isinstance(func_ret, ENTITY_TYPE):

@@ -999,7 +999,7 @@ def is_funcs_aggregate(func, func_kw=None, ndim=2):
             else:
                 to_check.append(v[1])
 
-    compiler = ReductionCompiler()
+    compiler = ReductionCompiler(store_source=True)
     for f in to_check:
         if f in _agg_functions:
             continue
