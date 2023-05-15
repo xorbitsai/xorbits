@@ -15,12 +15,16 @@
 
 import sys
 from collections.abc import Iterable
+from typing import Any, Optional
 
 import cloudpickle
 import numpy as np
 from pandas.core.groupby import DataFrameGroupBy, SeriesGroupBy
 
-from ..utils import estimate_pandas_size, no_default, pd_release_version
+from ..dataframe.utils import is_cudf
+from ..utils import estimate_pandas_size, lazy_import, no_default, pd_release_version
+
+cudf = lazy_import("cudf")
 
 _HAS_SQUEEZE = pd_release_version < (1, 1, 0)
 _HAS_DROPNA = pd_release_version >= (1, 1, 0)
@@ -48,23 +52,36 @@ class GroupByWrapper:
         dropna=True,
         grouper_cache=None,
     ):
-        def fill_value(v, key):
+        def fill_value(v, key: str, gpu_key: Optional[str] = None):
             return (
-                v if v is not None or groupby_obj is None else getattr(groupby_obj, key)
+                v
+                if v is not None or groupby_obj is None
+                else (
+                    getattr(groupby_obj, key)
+                    if hasattr(groupby_obj, key)
+                    else (v if gpu_key is None else getattr(groupby_obj, gpu_key))
+                )
             )
 
+        def _is_frame_groupby(data: Any) -> bool:
+            if cudf is not None:
+                if isinstance(data, cudf.core.groupby.groupby.DataFrameGroupBy):
+                    return True
+            return isinstance(data, DataFrameGroupBy)
+
         self.obj = obj
-        self.keys = fill_value(keys, "keys")
+        self.keys = fill_value(keys, "keys", "_by")
+        # cudf groupby obj has no attribute ``axis``, same as below
         self.axis = fill_value(axis, "axis")
-        self.level = fill_value(level, "level")
+        self.level = fill_value(level, "level", "_level")
         self.exclusions = fill_value(exclusions, "exclusions")
         self.selection = selection
-        self.as_index = fill_value(as_index, "as_index")
-        self.sort = fill_value(sort, "sort")
-        self.group_keys = fill_value(group_keys, "group_keys")
+        self.as_index = fill_value(as_index, "as_index", "_as_index")
+        self.sort = fill_value(sort, "sort", "_sort")
+        self.group_keys = fill_value(group_keys, "group_keys", "_group_keys")
         self.squeeze = fill_value(squeeze, "squeeze")
         self.observed = fill_value(observed, "observed")
-        self.dropna = fill_value(dropna, "dropna")
+        self.dropna = fill_value(dropna, "dropna", "_dropna")
 
         if groupby_obj is None:
             groupby_kw = dict(
@@ -91,12 +108,12 @@ class GroupByWrapper:
         else:
             self.groupby_obj = groupby_obj
 
-        if grouper_cache:
+        if grouper_cache and hasattr(self.groupby_obj, "grouper"):
             self.groupby_obj.grouper._cache = grouper_cache
         if selection:
             self.groupby_obj = self.groupby_obj[selection]
 
-        self.is_frame = isinstance(self.groupby_obj, DataFrameGroupBy)
+        self.is_frame = _is_frame_groupby(self.groupby_obj)
 
     def __getitem__(self, item):
         return GroupByWrapper(
@@ -127,11 +144,16 @@ class GroupByWrapper:
 
     def __sizeof__(self):
         return sys.getsizeof(self.obj) + sys.getsizeof(
-            getattr(self.groupby_obj.grouper, "_cache", None)
+            getattr(getattr(self.groupby_obj, "grouper", None), "_cache", None)
         )
 
     def estimate_size(self):
-        return estimate_pandas_size(self.obj) + estimate_pandas_size(self.obj.index)
+        # TODO: impl estimate_pandas_size on GPU
+        return (
+            0
+            if is_cudf(self.obj)
+            else estimate_pandas_size(self.obj) + estimate_pandas_size(self.obj.index)
+        )
 
     def __reduce__(self):
         return (
@@ -155,7 +177,7 @@ class GroupByWrapper:
 
     @property
     def _selected_obj(self):
-        return getattr(self.groupby_obj, "_selected_obj")
+        return getattr(self.groupby_obj, "_selected_obj", None)
 
     def to_tuple(self, truncate=False, pickle_function=False):
         if self.selection and truncate:
@@ -200,7 +222,7 @@ class GroupByWrapper:
             self.squeeze,
             self.observed,
             self.dropna,
-            getattr(self.groupby_obj.grouper, "_cache", dict()),
+            getattr(getattr(self.groupby_obj, "grouper", None), "_cache", dict()),
         )
 
     @classmethod

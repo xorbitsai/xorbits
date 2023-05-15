@@ -35,6 +35,8 @@ from ..utils import (
     auto_merge_chunks,
     build_empty_df,
     build_empty_series,
+    is_cudf,
+    is_series,
     make_dtype,
     make_dtypes,
     parse_index,
@@ -76,10 +78,12 @@ class GroupByApply(
         out = op.outputs[0]
         if not in_data:
             if op.output_types[0] == OutputType.dataframe:
-                ctx[op.outputs[0].key] = build_empty_df(op.outputs[0].dtypes)
+                ctx[op.outputs[0].key] = build_empty_df(
+                    op.outputs[0].dtypes, gpu=op.is_gpu()
+                )
             elif op.output_types[0] == OutputType.series:
                 ctx[op.outputs[0].key] = build_empty_series(
-                    op.outputs[0].dtype, name=out.name
+                    op.outputs[0].dtype, name=out.name, gpu=op.is_gpu()
                 )
             else:
                 raise ValueError(
@@ -88,7 +92,11 @@ class GroupByApply(
                 )
             return
 
-        applied = in_data.apply(func, *op.args, **op.kwds)
+        if op.is_gpu():
+            # cudf groupby apply does not receive kwargs parameters.
+            applied = in_data.apply(func, *op.args)
+        else:
+            applied = in_data.apply(func, *op.args, **op.kwds)
 
         if isinstance(applied, pd.DataFrame):
             # when there is only one group, pandas tend to return a DataFrame, while
@@ -107,6 +115,20 @@ class GroupByApply(
                 )
             else:
                 applied.columns.name = None
+
+        # ``as_index=False`` is not work in cudf groupby apply under certain conditions.
+        # So the result needs to be converted to df,
+        # and also restore the column name(s) according to the index name(s).
+        if (
+            is_cudf(applied)
+            and is_series(applied)
+            and in_data.as_index is False
+            and op.output_types[0] == OutputType.dataframe
+        ):
+            series_name = applied.name
+            applied = applied.reset_index()
+            cols = list(applied.columns)
+            applied.columns = cols[:-1] + [series_name]
         ctx[out.key] = applied
 
     @classmethod

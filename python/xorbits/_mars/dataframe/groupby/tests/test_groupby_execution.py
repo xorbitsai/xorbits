@@ -26,12 +26,13 @@ except ImportError:  # pragma: no cover
 from .... import dataframe as md
 from ....config import option_context
 from ....core.operand import OperandStage
-from ....tests.core import assert_groupby_equal, require_cudf
-from ....utils import arrow_array_to_objects, pd_release_version
+from ....tests.core import assert_groupby_equal, require_cudf, support_cuda
+from ....utils import arrow_array_to_objects, lazy_import, pd_release_version
 from ...core import DATAFRAME_OR_SERIES_TYPE
 from ...utils import is_pandas_2
 from ..aggregation import DataFrameGroupByAgg
 
+cudf = lazy_import("cudf")
 pytestmark = pytest.mark.pd_compat
 
 _agg_size_as_frame = pd_release_version[:2] > (1, 0)
@@ -843,7 +844,8 @@ def test_gpu_groupby_agg(setup_gpu):
     )
 
 
-def test_groupby_apply(setup):
+@support_cuda
+def test_groupby_apply(setup_gpu, gpu):
     df1 = pd.DataFrame(
         {
             "a": [3, 4, 5, 3, 5, 4, 1, 2, 3],
@@ -868,30 +870,59 @@ def test_groupby_apply(setup):
             s = s.iloc[:-1]
         return s
 
-    mdf = md.DataFrame(df1, chunk_size=3)
+    mdf = md.DataFrame(df1, gpu=gpu, chunk_size=3)
 
-    applied = mdf.groupby("b").apply(lambda df: None)
-    pd.testing.assert_frame_equal(
-        applied.execute().fetch(), df1.groupby("b").apply(lambda df: None)
-    )
+    # Pandas is not compatible with the results of cudf in this case
+    # cudf return a series, however, pandas returns empty dataframe.
+    # So gpu is not tested here.
+    if not gpu:
+        applied = mdf.groupby("b").apply(lambda df: None)
+        pd.testing.assert_frame_equal(
+            applied.execute().fetch(), df1.groupby("b").apply(lambda df: None)
+        )
 
+    # For the index of result in this case, pandas is not compatible with cudf.
+    # See ``Pandas Compatibility Note`` in cudf doc:
+    # https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.core.groupby.groupby.groupby.apply/
     applied = mdf.groupby("b").apply(apply_df)
-    pd.testing.assert_frame_equal(
-        applied.execute().fetch().sort_index(),
-        df1.groupby("b").apply(apply_df).sort_index(),
-    )
+    if gpu:
+        cdf = cudf.DataFrame(df1)
+        cudf.testing.assert_frame_equal(
+            applied.execute().fetch(to_cpu=False).sort_index(),
+            cdf.groupby("b").apply(apply_df).sort_index(),
+        )
+    else:
+        pd.testing.assert_frame_equal(
+            applied.execute().fetch().sort_index(),
+            df1.groupby("b").apply(apply_df).sort_index(),
+        )
 
-    applied = mdf.groupby("b").apply(apply_df, ret_series=True)
-    pd.testing.assert_frame_equal(
-        applied.execute().fetch().sort_index(),
-        df1.groupby("b").apply(apply_df, ret_series=True).sort_index(),
-    )
+    # For this case, cudf groupby apply method do not receive kwargs.
+    # Also, cudf does not handle as_index is True.
+    # So here only determine whether the results are consistent with cudf.
+    if gpu:
+        cdf = cudf.DataFrame(df1)
+        applied = mdf.groupby("b").apply(apply_df, True)
+        cudf.testing.assert_frame_equal(
+            applied.execute().fetch(to_cpu=False).sort_index(),
+            cdf.groupby("b").apply(apply_df, True).sort_index(),
+        )
+    else:
+        applied = mdf.groupby("b").apply(apply_df, ret_series=True)
+        pd.testing.assert_frame_equal(
+            applied.execute().fetch().sort_index(),
+            df1.groupby("b").apply(apply_df, ret_series=True).sort_index(),
+        )
 
-    applied = mdf.groupby("b").apply(lambda df: df.a, output_type="series")
-    pd.testing.assert_series_equal(
-        applied.execute().fetch().sort_index(),
-        df1.groupby("b").apply(lambda df: df.a).sort_index(),
-    )
+    # For this case, cudf does not handle as_index is True,
+    # resulting in a mismatch between the output type and the actual type.
+    # Therefore, just test cpu here.
+    if not gpu:
+        applied = mdf.groupby("b").apply(lambda df: df.a, output_type="series")
+        pd.testing.assert_series_equal(
+            applied.execute().fetch().sort_index(),
+            df1.groupby("b").apply(lambda df: df.a).sort_index(),
+        )
 
     applied = mdf.groupby("b").apply(lambda df: df.a.sum())
     pd.testing.assert_series_equal(
@@ -900,32 +931,43 @@ def test_groupby_apply(setup):
     )
 
     series1 = pd.Series([3, 4, 5, 3, 5, 4, 1, 2, 3])
-    ms1 = md.Series(series1, chunk_size=3)
+    ms1 = md.Series(series1, gpu=gpu, chunk_size=3)
 
     applied = ms1.groupby(lambda x: x % 3).apply(lambda df: None)
     pd.testing.assert_series_equal(
-        applied.execute().fetch(),
-        series1.groupby(lambda x: x % 3).apply(lambda df: None),
+        applied.execute().fetch().sort_index(),
+        series1.groupby(lambda x: x % 3).apply(lambda df: None).sort_index(),
     )
 
+    # For this case, ``group_keys`` option does not take effect in cudf
     applied = ms1.groupby(lambda x: x % 3).apply(apply_series)
-    pd.testing.assert_series_equal(
-        applied.execute().fetch().sort_index(),
-        series1.groupby(lambda x: x % 3).apply(apply_series).sort_index(),
-    )
+    if gpu:
+        cs = cudf.Series(series1)
+        cudf.testing.assert_series_equal(
+            applied.execute().fetch(to_cpu=False).sort_index(),
+            cs.groupby(lambda x: x % 3).apply(apply_series).sort_index(),
+        )
+    else:
+        pd.testing.assert_series_equal(
+            applied.execute().fetch().sort_index(),
+            series1.groupby(lambda x: x % 3).apply(apply_series).sort_index(),
+        )
 
     sindex2 = pd.MultiIndex.from_arrays([list(range(9)), list("ABCDEFGHI")])
     series2 = pd.Series(list("CDECEDABC"), index=sindex2)
-    ms2 = md.Series(series2, chunk_size=3)
+    ms2 = md.Series(series2, gpu=gpu, chunk_size=3)
 
-    applied = ms2.groupby(lambda x: x[0] % 3).apply(apply_series)
-    pd.testing.assert_series_equal(
-        applied.execute().fetch().sort_index(),
-        series2.groupby(lambda x: x[0] % 3).apply(apply_series).sort_index(),
-    )
+    # do not test multi index on gpu for now
+    if not gpu:
+        applied = ms2.groupby(lambda x: x[0] % 3).apply(apply_series)
+        pd.testing.assert_series_equal(
+            applied.execute().fetch().sort_index(),
+            series2.groupby(lambda x: x[0] % 3).apply(apply_series).sort_index(),
+        )
 
 
-def test_groupby_apply_with_df_or_series_output(setup):
+@support_cuda
+def test_groupby_apply_with_df_or_series_output(setup_gpu, gpu):
     raw = pd.DataFrame(
         {
             "a": [3, 4, 5, 3, 5, 4, 1, 2, 3],
@@ -933,7 +975,7 @@ def test_groupby_apply_with_df_or_series_output(setup):
             "c": list("aabaabbbb"),
         }
     )
-    mdf = md.DataFrame(raw, chunk_size=3)
+    mdf = md.DataFrame(raw, gpu=gpu, chunk_size=3)
 
     def f1(df):
         return df.a.iloc[2]
@@ -945,7 +987,7 @@ def test_groupby_apply_with_df_or_series_output(setup):
         mdf.groupby("c").apply(f1, output_types=["df_or_series"]).execute()
 
     for kwargs in [dict(output_type="df_or_series"), dict(skip_infer=True)]:
-        mdf = md.DataFrame(raw, chunk_size=5)
+        mdf = md.DataFrame(raw, gpu=gpu, chunk_size=5)
         applied = mdf.groupby("c").apply(f1, **kwargs)
         assert isinstance(applied, DATAFRAME_OR_SERIES_TYPE)
         applied = applied.execute()
@@ -959,7 +1001,7 @@ def test_groupby_apply_with_df_or_series_output(setup):
     def f2(df):
         return df[["a"]]
 
-    mdf = md.DataFrame(raw, chunk_size=5)
+    mdf = md.DataFrame(raw, gpu=gpu, chunk_size=5)
     applied = mdf.groupby("c").apply(f2, output_types=["df_or_series"])
     assert isinstance(applied, DATAFRAME_OR_SERIES_TYPE)
     applied = applied.execute()
@@ -971,7 +1013,8 @@ def test_groupby_apply_with_df_or_series_output(setup):
     pd.testing.assert_frame_equal(applied.fetch().sort_index(), expected.sort_index())
 
 
-def test_groupby_apply_closure(setup):
+@support_cuda
+def test_groupby_apply_closure(setup_gpu, gpu):
     # DataFrame
     df1 = pd.DataFrame(
         {
@@ -1003,7 +1046,7 @@ def test_groupby_apply_closure(setup):
         def __call__(self, s):
             return s.mean() * y
 
-    mdf = md.DataFrame(df1, chunk_size=3)
+    mdf = md.DataFrame(df1, gpu=gpu, chunk_size=3)
 
     applied = mdf.groupby("b").apply(apply_closure_df)
     pd.testing.assert_series_equal(
@@ -1020,7 +1063,7 @@ def test_groupby_apply_closure(setup):
 
     # Series
     series1 = pd.Series([3, 4, 5, 3, 5, 4, 1, 2, 3])
-    ms1 = md.Series(series1, chunk_size=3)
+    ms1 = md.Series(series1, gpu=gpu, chunk_size=3)
 
     applied = ms1.groupby(lambda x: x % 3).apply(apply_closure_series)
     pd.testing.assert_series_equal(
@@ -1034,6 +1077,42 @@ def test_groupby_apply_closure(setup):
         applied.execute().fetch().sort_index(),
         series1.groupby(lambda x: x % 3).apply(cs).sort_index(),
     )
+
+
+@support_cuda
+@pytest.mark.parametrize(
+    "chunked,as_index", [(True, True), (True, False), (False, True), (False, False)]
+)
+def test_groupby_apply_as_index(chunked, as_index, setup_gpu, gpu):
+    df = pd.DataFrame(
+        {
+            "a": list(range(1, 11)),
+            "b": list(range(1, 11))[::-1],
+            "c": list("aabbccddac"),
+        }
+    )
+
+    def udf(v):
+        denominator = v["a"].sum() * v["a"].mean()
+        v = v[v["c"] == "c"]
+        numerator = v["a"].sum()
+        return numerator / float(denominator)
+
+    chunk_size = 3 if chunked else None
+    mdf = md.DataFrame(df, gpu=gpu, chunk_size=chunk_size)
+    applied = mdf.groupby("b", as_index=as_index).apply(udf)
+    actual = applied.execute().fetch()
+    expected = df.groupby("b", as_index=as_index).apply(udf)
+
+    # cannot ensure the index for this case
+    if chunked is True and as_index is False:
+        actual = actual.sort_values(by="b").reset_index(drop=True)
+        expected = expected.sort_values(by="b").reset_index(drop=True)
+
+    if isinstance(expected, pd.DataFrame):
+        pd.testing.assert_frame_equal(actual.sort_index(), expected.sort_index())
+    else:
+        pd.testing.assert_series_equal(actual.sort_index(), expected.sort_index())
 
 
 def test_groupby_transform(setup):
