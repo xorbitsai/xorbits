@@ -12,6 +12,8 @@ pytest-forked
 scipy
 pandas
 numexpr
+jax
+jaxlib
 scikit-learn
 psutil
 tornado

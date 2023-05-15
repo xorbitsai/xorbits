@@ -23,13 +23,15 @@ ARG PYTHON_VERSION=3.9
 RUN if [ "$PYTHON_VERSION" == "3.11" ] ; then \
     /opt/conda/bin/conda install --freeze-installed -c conda-forge \
     python=3.11 numpy\>=1.14.0 pandas\>=1.5.0 cython\>=0.29.33 scipy\>=1.9.2 \
-    mkl numexpr psutil scikit-learn sqlalchemy tornado lz4 ; fi
+    mkl numexpr jax jaxlib psutil scikit-learn sqlalchemy tornado lz4 ; fi
 
 FROM py${PYTHON_VERSION}-base AS final
 RUN /opt/conda/bin/conda install \
     cython \
     mkl \
     numexpr \
+    jax \
+    jaxlib \
     psutil \
     scikit-learn \
     scipy \

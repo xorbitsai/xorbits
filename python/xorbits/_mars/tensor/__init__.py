@@ -368,7 +368,12 @@ from numpy import (
 from numpy import finfo
 
 # register fuse op and fetch op
-from .fuse import TensorFuseChunk, TensorCpFuseChunk, TensorNeFuseChunk
+from .fuse import (
+    TensorFuseChunk,
+    TensorCpFuseChunk,
+    TensorNeFuseChunk,
+    TensorJAXFuseChunk,
+)
 from .fetch import TensorFetch, TensorFetchShuffle
 from . import ufunc
 
@@ -376,6 +381,7 @@ del (
     TensorFuseChunk,
     TensorCpFuseChunk,
     TensorNeFuseChunk,
+    TensorJAXFuseChunk,
     TensorFetch,
     TensorFetchShuffle,
     ufunc,
