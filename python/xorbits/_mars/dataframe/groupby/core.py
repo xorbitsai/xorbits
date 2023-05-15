@@ -476,7 +476,7 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
                         else:
                             by[i] = v
         else:
-            r = pd.concat(res, axis=0)
+            r = xdf.concat(res, axis=0)
 
         if chunk.index_value is not None:
             if isinstance(r, tuple):
@@ -513,7 +513,16 @@ class DataFrameGroupByOperand(MapReduceOperand, DataFrameOperandMixin):
                 level=op.level,
                 as_index=op.as_index,
                 sort=op.sort,
-                group_keys=op.group_keys if op.group_keys is not None else no_default,
+                # For GPU, unexpected problems would happen if ``group_keys=no_default``:
+                # ValueError: Length mismatch: Expected axis has 4 elements, new values have 8 elements
+                # from stack:
+                # cudf/core/groupby/groupby.py:784: in apply
+                #     result.index = cudf.MultiIndex._from_data(index_data)
+                # cudf/core/dataframe.py:1108: in __setattr__
+                #     super().__setattr__(key, col)
+                group_keys=op.group_keys
+                if op.group_keys is not None or op.is_gpu() is True
+                else no_default,
             )
 
 

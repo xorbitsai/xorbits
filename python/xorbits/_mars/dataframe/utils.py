@@ -19,7 +19,7 @@ import logging
 import operator
 from contextlib import contextmanager
 from numbers import Integral
-from typing import Any, List, Union
+from typing import Any, Callable, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -104,6 +104,28 @@ def _get_index_for_on(
         return [idx_to_grouped.get(i, pd.Index([])) for i in range(size)]
 
 
+def _get_index_map(
+    data: Union[pd.Series, pd.DataFrame, "cudf.DataFrame", "cudf.Series"], on: Callable
+) -> Union["cudf.Index", pd.Index]:
+    if is_cudf(data):
+        index = data.index
+        if not isinstance(index, cudf.MultiIndex):
+            # TODO: If ``on`` makes data change dimension, cudf would raise an error
+            return cudf.Index(index.to_series().map(on).values)
+        else:
+            # For cudf MultiIndex,
+            # cudf does not implement ``to_series`` method,
+            # if converted to dataframe first,
+            # df apply method in cudf has many restrictions,
+            # for example, does not support lambda function, etc.
+            # Therefore, cannot find a suitable way to implement ``MultiIndex.map`` for now.
+            raise NotImplementedError(
+                "Cannot support cudf.MultiIndex map method for now."
+            )
+    else:
+        return data.index.map(on)
+
+
 def hash_dataframe_on(df, on, size, level=None):
     if on is None:
         idx = df.index
@@ -113,7 +135,7 @@ def hash_dataframe_on(df, on, size, level=None):
     elif callable(on):
         # todo optimization can be added, if ``on`` is a numpy ufunc or sth can be vectorized
         # TODO: cudf index may not have attribute ``map``
-        hashed_label = _get_hash(df.index.map(on), categorize=False)
+        hashed_label = _get_hash(_get_index_map(df, on), categorize=False)
     else:
         if isinstance(on, list):
             to_concat = []
@@ -396,6 +418,7 @@ def parse_index(index_value, *args, store_data=False, key=None):
         )
     if hasattr(index_value, "to_pandas"):  # pragma: no cover
         # convert cudf.Index to pandas
+        # TODO: may lead to performance issue here due to data copy from cuda to memory
         index_value = index_value.to_pandas()
 
     if isinstance(index_value, _get_range_index_type()):
@@ -590,16 +613,19 @@ def _generate_value(dtype, fill_value):
     return convert(fill_value)
 
 
-def build_empty_df(dtypes, index=None):
+def build_empty_df(dtypes, index=None, gpu: Optional[bool] = False):
+    xpd = cudf if gpu is True else pd
     columns = dtypes.index
     length = len(index) if index is not None else 0
     record = [[_generate_value(dtype, 1) for dtype in dtypes]] * max(1, length)
 
     # duplicate column may exist,
     # so use RangeIndex first
-    df = pd.DataFrame(record, columns=range(len(dtypes)), index=index)
+    df = xpd.DataFrame(record, columns=range(len(dtypes)), index=index)
     for i, dtype in enumerate(dtypes):
         s = df.iloc[:, i]
+        # Even if ``s`` is a cudf object, ``s.dtype`` is always a numpy type,
+        # so ``pd.api.types.is_dtype_equal`` method is called properly here.
         if not pd.api.types.is_dtype_equal(s.dtype, dtype):
             df.iloc[:, i] = s.astype(dtype)
 
@@ -656,9 +682,10 @@ def build_df(df_obj, fill_value=1, size=1, ensure_string=False):
     return ret_df
 
 
-def build_empty_series(dtype, index=None, name=None):
+def build_empty_series(dtype, index=None, name=None, gpu: Optional[bool] = False):
+    xpd = cudf if gpu is True else pd
     length = len(index) if index is not None else 0
-    return pd.Series(
+    return xpd.Series(
         [_generate_value(dtype, 1) for _ in range(length)],
         dtype=dtype,
         index=index,

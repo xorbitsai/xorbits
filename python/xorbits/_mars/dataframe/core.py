@@ -72,6 +72,7 @@ from ..utils import (
 from .utils import (
     ReprSeries,
     fetch_corner_data,
+    is_dataframe,
     is_pandas_2,
     merge_index_value,
     parse_index,
@@ -3114,7 +3115,7 @@ class DataFrameOrSeriesChunkData(ChunkData):
 
     @classmethod
     def get_params_from_data(cls, data: Any) -> Dict[str, Any]:
-        if isinstance(data, pd.DataFrame):
+        if is_dataframe(data):
             return {
                 "data_type": "dataframe",
                 "data_params": DataFrameChunkData.get_params_from_data(data),
