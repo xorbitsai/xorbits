@@ -41,17 +41,26 @@ from .utils import is_cudf, is_index
 cudf = lazy_import("cudf")
 
 
-def fetch_data_helper(x):
-    if hasattr(x, "data") and isinstance(x.data, TensorData) and len(x.data.shape) == 0:
-        return x.execute().fetch()
-    else:
-        return x
+def check_data_helper(x):
+    for i in x:
+        if isinstance(i, list):
+            for item in i:
+                if (
+                    hasattr(item, "data")
+                    and isinstance(item.data, TensorData)
+                    and len(item.data.shape) == 0
+                ):
+                    return True
+    return False
 
 
-def convert_data(d):
-    return [
-        fetch_data_helper(v) if not isinstance(v, list) else convert_data(v) for v in d
-    ]
+def convert_data_to_dict(data, cols):
+    dic = {}
+    for i in range(0, len(cols)):
+        dic[cols[i]] = []
+        for lis in data:
+            dic[cols[i]].append(lis[i])
+    return dic
 
 
 class InitializerMeta(SerializableMeta):
@@ -117,20 +126,25 @@ class DataFrame(_Frame, metaclass=InitializerMeta):
                 )
             need_repart = num_partitions is not None
         else:
-            if is_cudf(data) or is_cupy(data):  # pragma: no cover
-                pdf = cudf.DataFrame(data, index=index, columns=columns, dtype=dtype)
-                if copy:
-                    pdf = pdf.copy()
-            else:
-                if isinstance(data, list):
-                    data = convert_data(data)
-                pdf = pd.DataFrame(
-                    data, index=index, columns=columns, dtype=dtype, copy=copy
+            if isinstance(data, list) and check_data_helper(data):
+                data = convert_data_to_dict(data, columns)
+                df = dataframe_from_1d_tileables(
+                    data, index=index, columns=columns, gpu=gpu, sparse=sparse
                 )
-            if num_partitions is not None:
-                chunk_size = ceildiv(len(pdf), num_partitions)
-            df = from_pandas_df(pdf, chunk_size=chunk_size, gpu=gpu, sparse=sparse)
-
+            else:
+                if is_cudf(data) or is_cupy(data):  # pragma: no cover
+                    pdf = cudf.DataFrame(
+                        data, index=index, columns=columns, dtype=dtype
+                    )
+                    if copy:
+                        pdf = pdf.copy()
+                else:
+                    pdf = pd.DataFrame(
+                        data, index=index, columns=columns, dtype=dtype, copy=copy
+                    )
+                if num_partitions is not None:
+                    chunk_size = ceildiv(len(pdf), num_partitions)
+                df = from_pandas_df(pdf, chunk_size=chunk_size, gpu=gpu, sparse=sparse)
         if need_repart:
             df = df.rebalance(num_partitions=num_partitions)
         super().__init__(df.data)

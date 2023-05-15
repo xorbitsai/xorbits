@@ -218,3 +218,7 @@ def test_fetch_data_initializer(setup):
 
     assert df2["max_col1"][0].execute().fetch() == 2
     assert df2["max_col2"][0].execute().fetch() == 4
+
+    df3 = md.DataFrame({"max_col1": [df["col1"].max()], "max_col2": [df["col2"].max()]})
+
+    assert df2 == df3
