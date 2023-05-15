@@ -489,22 +489,23 @@ def test_compile_function():
         )
         result = compiler.compile()
         # check pre_funcs
-        assert len(result.pre_funcs) == 2
+        assert len(result.pre_funcs) == 3
         assert (
-            "pow" in result.pre_funcs[0].func.__source__
-            or "pow" in result.pre_funcs[1].func.__source__
+            len([step for step in result.pre_funcs if "pow" in step.func.__source__])
+            == 2
         )
-        assert (
-            "pow" not in result.pre_funcs[0].func.__source__
-            or "pow" not in result.pre_funcs[1].func.__source__
-        )
+
         # check agg_funcs
-        assert len(result.agg_funcs) == 2
-        assert set(result.agg_funcs[i].map_func_name for i in range(2)) == {
+        assert len(result.agg_funcs) == 3
+        assert set(
+            result.agg_funcs[i].map_func_name for i in range(len(result.agg_funcs))
+        ) == {
             "count",
             "prod",
         }
-        assert set(result.agg_funcs[i].agg_func_name for i in range(2)) == {
+        assert set(
+            result.agg_funcs[i].agg_func_name for i in range(len(result.agg_funcs))
+        ) == {
             "sum",
             "prod",
         }
@@ -558,10 +559,19 @@ def test_compile_function():
     compiler.add_function(lambda x: -1 + x.sum(), ndim=2, cols=["b", "c"])
     result = compiler.compile()
     # check pre_funcs
-    assert len(result.pre_funcs) == 1
-    assert set(result.pre_funcs[0].columns) == set("abc")
+    assert len(result.pre_funcs) == 2
+    assert set([tuple(pre_func.columns) for pre_func in result.pre_funcs]) == {
+        (
+            "a",
+            "b",
+        ),
+        (
+            "b",
+            "c",
+        ),
+    }
     # check agg_funcs
-    assert len(result.agg_funcs) == 1
+    assert len(result.agg_funcs) == 2
     assert result.agg_funcs[0].map_func_name == "sum"
     assert result.agg_funcs[0].agg_func_name == "sum"
     # check post_funcs
@@ -578,15 +588,23 @@ def test_compile_function():
     compiler.add_function(lambda x: x.min(), ndim=2, cols=["c"])
     result = compiler.compile()
     # check pre_funcs
-    assert len(result.pre_funcs) == 1
-    assert set(result.pre_funcs[0].columns) == set("abc")
+    assert len(result.pre_funcs) == 3
+    assert set([tuple(pre_func.columns) for pre_func in result.pre_funcs]) == {
+        ("a",),
+        ("b",),
+        ("c",),
+    }
     # check agg_funcs
-    assert len(result.agg_funcs) == 2
+    assert len(result.agg_funcs) == 3
     assert result.agg_funcs[0].map_func_name == "sum"
     assert result.agg_funcs[0].agg_func_name == "sum"
     # check post_funcs
-    assert len(result.post_funcs) == 2
-    assert set(result.post_funcs[0].columns) == set("ab")
+    assert len(result.post_funcs) == 3
+    assert set([tuple(post_func.columns) for post_func in result.post_funcs]) == {
+        ("a",),
+        ("b",),
+        ("c",),
+    }
 
 
 def test_custom_aggregation():

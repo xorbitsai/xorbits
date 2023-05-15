@@ -1259,7 +1259,14 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 result.reset_index(
                     inplace=True, drop=result.index.name in result.columns
                 )
-            result = result.reindex(col_value, axis=1)
+            if isinstance(col_value, xdf.MultiIndex) and not col_value.is_unique:
+                # reindex doesn't work when the agg function list contains duplicated
+                # functions, e.g. df.groupby(...)agg((func, func))
+                result = result.iloc[:, result.columns.duplicated()]
+                result = xdf.concat([result[c] for c in col_value], axis=1)
+                result.columns = col_value
+            else:
+                result = result.reindex(col_value, axis=1)
 
             if result.ndim == 2 and len(result) == 0:
                 result = result.astype(out_chunk.dtypes)
