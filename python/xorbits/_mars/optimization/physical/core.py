@@ -241,7 +241,7 @@ def register_optimizer(optimizer_cls: Type[RuntimeOptimizer]):
 
 def optimize(graph: ChunkGraph, engines: List[str] = None) -> ChunkGraph:
     if engines is None:
-        engines = ["numexpr", "cupy"]
+        engines = ["numexpr", "jax", "cupy"]
 
     for engine in engines:
         optimizer_cls = _engine_to_optimizers[engine]
