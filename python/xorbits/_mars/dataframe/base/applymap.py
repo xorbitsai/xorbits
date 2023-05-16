@@ -13,17 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import inspect
-
 import cloudpickle
 import numpy as np
 import pandas as pd
 
 from ... import opcodes
 from ...config import options
-from ...core import OutputType, recursive_tile
+from ...core import OutputType
 from ...core.custom_log import redirect_custom_log
-from ...core.operand import OperatorLogicKeyGeneratorMixin
+
 from ...serialization.serializables import (
     AnyField,
     BoolField,
@@ -37,34 +35,19 @@ from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
     build_df,
     build_empty_df,
-    build_empty_series,
-    build_series,
     make_dtype,
     make_dtypes,
     parse_index,
-    validate_axis,
     validate_output_types,
 )
 
 
-class ApplyOperandLogicKeyGeneratorMixin(OperatorLogicKeyGeneratorMixin):
-    def _get_logic_key_token_values(self):
-        return super()._get_logic_key_token_values() + [
-            self.convert_dtype,
-            self.result_type,
-            self.func_token,
-        ]
-
-
-class ApplymapOperand(
-    DataFrameOperand, DataFrameOperandMixin, ApplyOperandLogicKeyGeneratorMixin
-):
+class ApplymapOperand(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = opcodes.APPLYMAP
 
     func = AnyField("func")
+    na_action = StringField("na_action", default=None)
     func_token = StringField("func_token", default=None)
-    convert_dtype = BoolField("convert_dtype", default=None)
-    result_type = StringField("result_type", default=None)
     logic_key = StringField("logic_key", default=None)
     args = TupleField("args", default=None)
     kwds = DictField("kwds", default=None)
@@ -92,8 +75,7 @@ class ApplymapOperand(
         if isinstance(input_data, pd.DataFrame):
             result = input_data.applymap(
                 func,
-                result_type=op.result_type,
-                args=op.args,
+                na_action=op.na_action,
                 **op.kwds,
             )
         ctx[out.key] = result
@@ -102,20 +84,14 @@ class ApplymapOperand(
     def _tile_df(cls, op):
         in_df = op.inputs[0]
         out_df = op.outputs[0]
-        print(type(op))
         chunks = []
         for c in in_df.chunks:
             new_shape = c.shape
-            
+
             new_index_value, new_columns_value = c.index_value, c.columns_value
 
             new_dtypes = out_df.dtypes
 
-            print(f"new shape: {new_shape}")
-            print(f"new index value: {new_index_value}")
-            print(f"new columns value: {new_columns_value}")
-            print(f"new dtypes: {new_dtypes}")
-            
             new_op = op.copy().reset_key()
             new_op.tileable_op_key = op.key
             chunks.append(
@@ -128,9 +104,7 @@ class ApplymapOperand(
                     columns_value=new_columns_value,
                 )
             )
-        print(chunks)
         new_nsplits = list(in_df.nsplits)
-        print(new_nsplits)
         new_op = op.copy()
         kw = out_df.params.copy()
         new_nsplits = tuple(new_nsplits)
@@ -139,7 +113,7 @@ class ApplymapOperand(
 
     @classmethod
     def tile(cls, op):
-        return (yield from cls._tile_df(op))
+        return cls._tile_df(op)
 
     def _infer_df_func_returns(self, df, dtypes, dtype=None, name=None, index=None):
         func = self._load_func()
@@ -162,6 +136,7 @@ class ApplymapOperand(
             with np.errstate(all="ignore"), quiet_stdio():
                 infer_df = empty_df.applymap(
                     func,
+                    na_action=self.na_action,
                     **self.kwds,
                 )
             if index_value is None:
@@ -202,20 +177,11 @@ class ApplymapOperand(
         if index_value == "inherit":
             index_value = df.index_value
 
-        print(df.shape)
-        # if self.elementwise:
         shape = df.shape
-        # elif self.output_types[0] == OutputType.dataframe:
-        #     shape = [np.nan, np.nan]
-        #     shape[1 - self.axis] = df.shape[1 - self.axis]
-        #     shape = tuple(shape)
-        # else:
-        #     shape = (df.shape[1 - self.axis],)
-        # serialize in advance to reduce overhead
+
         self.func = cloudpickle.dumps(self.func)
 
         if self.output_types[0] == OutputType.dataframe:
-            # if self.axis == 0:
             return self.new_dataframe(
                 [df],
                 shape=shape,
@@ -223,32 +189,24 @@ class ApplymapOperand(
                 index_value=index_value,
                 columns_value=parse_index(dtypes.index, store_data=True),
             )
-            # else:
-            #     return self.new_dataframe(
-            #         [df],
-            #         shape=shape,
-            #         dtypes=dtypes,
-            #         index_value=df.index_value,
-            #         columns_value=parse_index(dtypes.index, store_data=True),
-            #     )
-        # else:
-        #     name, dtype = dtypes
-        #     return self.new_series(
-        #         [df], shape=shape, name=name, dtype=dtype, index_value=index_value
-        #     )
 
-    def __call__(self, df_or_series, dtypes=None, dtype=None, name=None, index=None):
+    def __call__(self, df, dtypes=None, dtype=None, name=None, index=None):
         dtypes = make_dtypes(dtypes)
         dtype = make_dtype(dtype)
         self.func_token = get_func_token(self.func)
+        if self.output_types and self.output_types[0] == OutputType.dataframe:
+            self.func = cloudpickle.dumps(self.func)
+            return self.new_dataframe([df])
 
-        return self._call_dataframe(df_or_series, dtypes=dtypes, dtype=dtype, name=name, index=index)
+        return self._call_dataframe(
+            df, dtypes=dtypes, dtype=dtype, name=name, index=index
+        )
 
 
 def df_applymap(
     df,
     func,
-    result_type=None,
+    na_action=None,
     args=(),
     dtypes=None,
     dtype=None,
@@ -258,6 +216,94 @@ def df_applymap(
     skip_infer=False,
     **kwds,
 ):
+    """
+    Apply a function to a Dataframe elementwise.
+
+    This method applies a function that accepts and returns a scalar
+    to every element of a DataFrame.
+
+    Parameters
+    ----------
+    func : callable
+        Python function, returns a single value from a single value.
+
+    na_action : {None, 'ignore'}, default None
+        If 'ignore', propagate NaN values, without passing them to func.
+
+    output_type : {'dataframe', 'series'}, default None
+        Specify type of returned object. See `Notes` for more details.
+
+    dtypes : Series, default None
+        Specify dtypes of returned DataFrames. See `Notes` for more details.
+
+    dtype : numpy.dtype, default None
+        Specify dtype of returned Series. See `Notes` for more details.
+
+    name : str, default None
+        Specify name of returned Series. See `Notes` for more details.
+
+    index : Index, default None
+        Specify index of returned object. See `Notes` for more details.
+
+    skip_infer: bool, default False
+        Whether infer dtypes when dtypes or output_type is not specified.
+
+    args : tuple
+        Positional arguments to pass to `func` in addition to the
+        array/series.
+
+    **kwds
+        Additional keyword arguments to pass as keywords arguments to
+        `func`.
+
+    Returns
+    -------
+    DataFrame
+        Transformed DataFrame.
+
+    See Also
+    --------
+    DataFrame.apply : Apply a function along input axis of DataFrame.
+
+    Examples
+    --------
+    >>> df = pd.DataFrame([[1, 2.12], [3.356, 4.567]])
+    >>> df
+            0      1
+    0  1.000  2.120
+    1  3.356  4.567
+
+    >>> df.applymap(lambda x: len(str(x)))
+        0  1
+    0  3  4
+    1  5  5
+
+    Like Series.map, NA values can be ignored:
+
+    >>> df_copy = df.copy()
+    >>> df_copy.iloc[0, 0] = pd.NA
+    >>> df_copy.applymap(lambda x: len(str(x)), na_action='ignore')
+            0  1
+    0  NaN  4
+    1  5.0  5
+
+    Note that a vectorized version of `func` often exists, which will
+    be much faster. You could square each number elementwise.
+
+    >>> df.applymap(lambda x: x**2)
+                0          1
+    0   1.000000   4.494400
+    1  11.262736  20.857489
+
+    But it's better to avoid applymap in that case.
+
+    >>> df ** 2
+                0          1
+    0   1.000000   4.494400
+    1  11.262736  20.857489
+    """
+    if na_action not in {"ignore", None}:
+        raise ValueError(f"na_action must be 'ignore' or None. Got {repr(na_action)}")
     output_types = kwds.pop("output_types", None)
     object_type = kwds.pop("object_type", None)
     output_types = validate_output_types(
@@ -265,8 +311,7 @@ def df_applymap(
     )
     output_type = output_types[0] if output_types else None
     if skip_infer and output_type is None:
-        output_types = [OutputType.df_or_series]
-
+        output_types = [OutputType.dataframe]
     # calling member function
     if isinstance(func, str):
         func = getattr(df, func)
@@ -274,7 +319,7 @@ def df_applymap(
 
     op = ApplymapOperand(
         func=func,
-        result_type=result_type,
+        na_action=na_action,
         args=args,
         kwds=kwds,
         output_types=output_types,
