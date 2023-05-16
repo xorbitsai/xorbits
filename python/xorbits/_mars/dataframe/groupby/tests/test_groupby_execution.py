@@ -1679,7 +1679,7 @@ def test_gpu_groupby_size(data_type, chunked, as_index, sort, setup_gpu):
     "as_index",
     [True, False],
 )
-def test_groupby_agg_on_custom_funcs(setup_gpu, as_index, gpu):
+def test_groupby_agg_on_same_funcs(setup_gpu, as_index, gpu):
     rs = np.random.RandomState(0)
     df = pd.DataFrame(
         {
@@ -1722,3 +1722,40 @@ def test_groupby_agg_on_custom_funcs(setup_gpu, as_index, gpu):
             df.groupby("a", as_index=as_index)["b"].agg((g1, g1)),
             mdf.groupby("a", as_index=as_index)["b"].agg((g1, g1)).execute().fetch(),
         )
+
+
+@support_cuda
+def test_groupby_agg_on_custom_funcs(setup_gpu, gpu):
+    rs = np.random.RandomState(0)
+    df = pd.DataFrame(
+        {
+            "a": rs.choice(["foo", "bar", "baz"], size=100),
+            "b": rs.choice(["foo", "bar", "baz"], size=100),
+            "c": rs.choice(["foo", "bar", "baz"], size=100),
+        },
+    )
+
+    mdf = md.DataFrame(df, chunk_size=34, gpu=gpu)
+
+    def g1(x):
+        return ("foo" == x).sum()
+
+    def g2(x):
+        return ("foo" != x).sum()
+
+    def g3(x):
+        return (x > "bar").sum()
+
+    def g4(x):
+        return (x >= "bar").sum()
+
+    def g5(x):
+        return (x < "baz").sum()
+
+    def g6(x):
+        return (x <= "baz").sum()
+
+    pd.testing.assert_frame_equal(
+        df.groupby("a", as_index=False).agg((g1, g2, g3, g4, g5, g6,)),
+        mdf.groupby("a", as_index=False).agg((g1, g2, g3, g4, g5, g6,)).execute().fetch(),
+    )
