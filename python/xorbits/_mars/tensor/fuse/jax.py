@@ -63,7 +63,7 @@ def _evaluate(chunk, input_dict):
         data = _evaluate(chunk.inputs[0], input_dict)
 
         if len(ax) == data.ndim:
-            return _get_jax_function(chunk.op)(data, keepdims=True)
+            return _get_jax_function(chunk.op)(data)
         else:
             return _get_jax_function(chunk.op)(data, axis=ax)
     elif chunk.key in input_dict:
