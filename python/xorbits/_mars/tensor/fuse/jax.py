@@ -36,6 +36,9 @@ class TensorJAXFuseChunk(TensorFuse, TensorFuseChunkMixin):
         inputs = as_same_device([ctx[c.key] for c in op.inputs], device=op.device)
         input_dict = {c.key: i for c, i in zip(op.inputs, inputs)}
         res = np.array(_evaluate(chunk, input_dict))
+        res = _maybe_keepdims(chunk, res)
+        if chunk.ndim == 0 and res.ndim == 1 and res.size == 0:
+            res = res.dtype.type(0)
         ctx[chunk.key] = res
 
 
@@ -43,7 +46,9 @@ class TensorJAXFuseChunk(TensorFuse, TensorFuseChunkMixin):
 def _evaluate(chunk, input_dict):
     op_type = type(chunk.op)
 
-    if op_type is TensorJAXFuseChunk:
+    if chunk.key in input_dict:
+        return input_dict[chunk.key]
+    elif op_type is TensorJAXFuseChunk:
         return _evaluate(chunk.composed[-1], input_dict)
     elif op_type in ARITHMETIC_SUPPORT:
         if hasattr(chunk.op, "inputs"):
@@ -67,11 +72,9 @@ def _evaluate(chunk, input_dict):
         data = _evaluate(chunk.inputs[0], input_dict)
 
         if len(ax) == data.ndim:
-            return _get_jax_function(chunk.op)(data, keepdims=True)
+            return _get_jax_function(chunk.op)(data)
         else:
             return _get_jax_function(chunk.op)(data, axis=ax)
-    elif chunk.key in input_dict:
-        return input_dict[chunk.key]
     else:
         raise TypeError(f"unsupported operator in jax: {op_type.__name__}")
 
@@ -79,6 +82,13 @@ def _evaluate(chunk, input_dict):
 def _get_jax_function(operand):
     func_name = getattr(operand, "_func_name")
     return getattr(jax.numpy, func_name)
+
+
+def _maybe_keepdims(chunk, res):
+    out_chunk = chunk.composed[-1] if type(chunk.op) == TensorJAXFuseChunk else chunk
+    if type(out_chunk.op) in REDUCTION_SUPPORT and out_chunk.op.keepdims:
+        res = np.reshape(res, out_chunk.shape)
+    return res
 
 
 ARITHMETIC_SUPPORT = {
@@ -91,5 +101,6 @@ ARITHMETIC_SUPPORT = {
 
 REDUCTION_SUPPORT = {
     reduction.TensorSum,
-    reduction.TensorProd,
+    reduction.TensorMax,
+    reduction.TensorMin,
 }

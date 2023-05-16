@@ -29,7 +29,8 @@ SUPPORT_OP = {
     arithmetic.TensorSubtract,
     arithmetic.TensorDivide,
     reduction.TensorSum,
-    reduction.TensorProd,
+    reduction.TensorMax,
+    reduction.TensorMin,
 }
 
 
