@@ -20,13 +20,7 @@ import pandas as pd
 from ... import opcodes
 from ...core import OutputType
 from ...core.custom_log import redirect_custom_log
-
-from ...serialization.serializables import (
-    AnyField,
-    DictField,
-    StringField,
-    TupleField,
-)
+from ...serialization.serializables import AnyField, DictField, StringField, TupleField
 from ...utils import enter_current_session, get_func_token, quiet_stdio
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
