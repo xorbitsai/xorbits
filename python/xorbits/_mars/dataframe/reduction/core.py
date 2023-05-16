@@ -1165,7 +1165,17 @@ class ReductionCompiler:
                     op_str = _func_name_to_op[func_name]
                     if t.op.lhs is t.inputs[0]:
                         if (
-                            (func_name in ("gt", "ge", "lt", "le", "eq", "ne",))
+                            (
+                                func_name
+                                in (
+                                    "gt",
+                                    "ge",
+                                    "lt",
+                                    "le",
+                                    "eq",
+                                    "ne",
+                                )
+                            )
                             and isinstance(t.op.lhs, DATAFRAME_TYPE)
                             and isinstance(t.op.rhs, str)
                         ):
