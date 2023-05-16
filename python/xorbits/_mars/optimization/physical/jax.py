@@ -15,7 +15,7 @@
 import logging
 
 from ...core import ChunkType
-from ...tensor import arithmetic
+from ...tensor import arithmetic, reduction
 from ...tensor.fuse import TensorJAXFuseChunk
 from ...tensor.fuse.jax import JAX_INSTALLED
 from .core import GraphTraversalOptimizer, register_optimizer
@@ -28,6 +28,8 @@ SUPPORT_OP = {
     arithmetic.TensorTreeAdd,
     arithmetic.TensorSubtract,
     arithmetic.TensorDivide,
+    reduction.TensorSum,
+    reduction.TensorProd,
 }
 
 

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import numpy as np
+
 try:
     import jax
 
@@ -19,7 +21,7 @@ try:
 except ImportError:
     JAX_INSTALLED = False
 
-from .. import arithmetic
+from .. import arithmetic, reduction
 from ..array_utils import as_same_device
 from ..operands import TensorFuse
 from .core import TensorFuseChunkMixin
@@ -32,34 +34,40 @@ class TensorJAXFuseChunk(TensorFuse, TensorFuseChunkMixin):
     def execute(cls, ctx, op):
         chunk = op.outputs[0]
         inputs = as_same_device([ctx[c.key] for c in op.inputs], device=op.device)
-        jit_func = _evaluate(chunk)
-        try:
-            res = jit_func(*inputs)
-        except Exception as e:
-            raise RuntimeError(
-                f"Failed to evaluate jax function {repr(jit_func)}."
-            ) from e
+        input_dict = {c.key: i for c, i in zip(op.inputs, inputs)}
+        res = np.array(_evaluate(chunk, input_dict))
         ctx[chunk.key] = res
 
 
-def _evaluate(chunk):
+# recursively compute the inputs
+def _evaluate(chunk, input_dict):
     op_type = type(chunk.op)
 
     if op_type is TensorJAXFuseChunk:
-        funcs = []
-        for node in chunk.composed:
-            _func = _evaluate(node)
-            funcs.append(_func)
-
-        def _fusion(inputs):
-            output = funcs[0](*inputs)
-            for func in funcs[1:]:
-                output = func(*output)
-            return output
-
-        return jax.jit(_fusion)
+        return _evaluate(chunk.composed[-1], input_dict)
     elif op_type in ARITHMETIC_SUPPORT:
+        if hasattr(chunk.op, "inputs"):
+            if np.isscalar(chunk.op.lhs):
+                rhs = _evaluate(chunk.op.rhs, input_dict)
+                return _get_jax_function(chunk.op)(chunk.op.lhs, rhs)
+            elif np.isscalar(chunk.op.rhs):
+                lhs = _evaluate(chunk.op.lhs, input_dict)
+                return _get_jax_function(chunk.op)(lhs, chunk.op.rhs)
+            else:
+                lhs = _evaluate(chunk.op.lhs, input_dict)
+                rhs = _evaluate(chunk.op.rhs, input_dict)
+                return _get_jax_function(chunk.op)(lhs, rhs)
         return _get_jax_function(chunk.op)
+    elif op_type in REDUCTION_SUPPORT:
+        ax = chunk.op.axis
+        data = _evaluate(chunk.inputs[0], input_dict)
+
+        if len(ax) == data.ndim:
+            return _get_jax_function(chunk.op)(data, keepdims=True)
+        else:
+            return _get_jax_function(chunk.op)(data, axis=ax)
+    elif chunk.key in input_dict:
+        return input_dict[chunk.key]
     else:
         raise TypeError(f"unsupported operator in jax: {op_type.__name__}")
 
@@ -74,4 +82,10 @@ ARITHMETIC_SUPPORT = {
     arithmetic.TensorTreeAdd,
     arithmetic.TensorSubtract,
     arithmetic.TensorDivide,
+    arithmetic.TensorNegative,
+}
+
+REDUCTION_SUPPORT = {
+    reduction.TensorSum,
+    reduction.TensorProd,
 }
