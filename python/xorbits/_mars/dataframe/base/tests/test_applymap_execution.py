@@ -16,8 +16,6 @@ import pandas as pd
 import pytest
 
 from .... import dataframe as md
-from ....dataframe.core import DATAFRAME_OR_SERIES_TYPE, DataFrame
-from ....dataframe.fetch.core import DataFrameFetch
 
 
 def test_frame_applymap_execution(setup):
