@@ -1164,6 +1164,24 @@ class ReductionCompiler:
                     axis_expr = f"axis={op_axis!r}, " if op_axis is not None else ""
                     op_str = _func_name_to_op[func_name]
                     if t.op.lhs is t.inputs[0]:
+                        if (
+                            (
+                                func_name
+                                in (
+                                    "gt",
+                                    "ge",
+                                    "lt",
+                                    "le",
+                                    "eq",
+                                    "ne",
+                                )
+                            )
+                            and isinstance(t.op.lhs, DATAFRAME_TYPE)
+                            and isinstance(t.op.rhs, str)
+                        ):
+                            # for a cudf dataframe, df == 'foo' doesn't work, so we convert the rhs
+                            # to a tuple.
+                            rhs = f"({rhs},) * len({lhs}.columns)"
                         statements = [
                             f"try:",
                             f"    {var_name} = {lhs}.{func_name}({rhs}, {axis_expr})",
