@@ -1756,6 +1756,27 @@ def test_groupby_agg_on_custom_funcs(setup_gpu, gpu):
         return (x <= "baz").sum()
 
     pd.testing.assert_frame_equal(
-        df.groupby("a", as_index=False).agg((g1, g2, g3, g4, g5, g6,)),
-        mdf.groupby("a", as_index=False).agg((g1, g2, g3, g4, g5, g6,)).execute().fetch(),
+        df.groupby("a", as_index=False).agg(
+            (
+                g1,
+                g2,
+                g3,
+                g4,
+                g5,
+                g6,
+            )
+        ),
+        mdf.groupby("a", as_index=False)
+        .agg(
+            (
+                g1,
+                g2,
+                g3,
+                g4,
+                g5,
+                g6,
+            )
+        )
+        .execute()
+        .fetch(),
     )
