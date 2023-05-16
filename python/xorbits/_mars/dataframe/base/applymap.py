@@ -18,13 +18,11 @@ import numpy as np
 import pandas as pd
 
 from ... import opcodes
-from ...config import options
 from ...core import OutputType
 from ...core.custom_log import redirect_custom_log
 
 from ...serialization.serializables import (
     AnyField,
-    BoolField,
     DictField,
     StringField,
     TupleField,
