@@ -101,6 +101,7 @@ ARITHMETIC_SUPPORT = {
 
 REDUCTION_SUPPORT = {
     reduction.TensorSum,
+    reduction.TensorProd,
     reduction.TensorMax,
     reduction.TensorMin,
 }

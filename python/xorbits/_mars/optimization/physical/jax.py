@@ -18,17 +18,21 @@ from ...core import ChunkType
 from ...tensor import arithmetic, reduction
 from ...tensor.fuse import TensorJAXFuseChunk
 from ...tensor.fuse.jax import JAX_INSTALLED
-from .core import GraphTraversalOptimizer, register_optimizer
+from .core import REDUCTION, GraphTraversalOptimizer, register_optimizer
 
 logger = logging.getLogger(__name__)
 
 
-SUPPORT_OP = {
+ARITHMETIC_OP = {
     arithmetic.TensorAdd,
     arithmetic.TensorTreeAdd,
     arithmetic.TensorSubtract,
     arithmetic.TensorDivide,
+}
+
+REDUCTION_OP = {
     reduction.TensorSum,
+    reduction.TensorProd,
     reduction.TensorMax,
     reduction.TensorMin,
 }
@@ -41,7 +45,12 @@ class JAXRuntimeOptimizer(GraphTraversalOptimizer):
     def _can_fuse(self, node: ChunkType):
         op = node.op
         op_type = type(op)
-        if op_type not in SUPPORT_OP:
+        if op_type in REDUCTION_OP:
+            if len(op.axis) == 1 or len(op.axis) == node.ndim:
+                return REDUCTION
+            else:
+                return False
+        if op_type not in ARITHMETIC_OP:
             return False
         return True
 
