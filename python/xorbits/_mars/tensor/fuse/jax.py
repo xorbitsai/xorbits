@@ -47,7 +47,11 @@ def _evaluate(chunk, input_dict):
         return _evaluate(chunk.composed[-1], input_dict)
     elif op_type in ARITHMETIC_SUPPORT:
         if hasattr(chunk.op, "inputs"):
-            if np.isscalar(chunk.op.lhs):
+            if hasattr(chunk.op, "input"):
+                return _get_jax_function(chunk.op)(
+                    _evaluate(chunk.op.input, input_dict)
+                )
+            elif np.isscalar(chunk.op.lhs):
                 rhs = _evaluate(chunk.op.rhs, input_dict)
                 return _get_jax_function(chunk.op)(chunk.op.lhs, rhs)
             elif np.isscalar(chunk.op.rhs):
