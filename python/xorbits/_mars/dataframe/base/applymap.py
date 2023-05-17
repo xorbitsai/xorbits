@@ -33,7 +33,7 @@ from ..utils import (
 )
 
 
-class ApplymapOperand(DataFrameOperand, DataFrameOperandMixin):
+class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = opcodes.APPLYMAP
 
     func = AnyField("func")
@@ -60,19 +60,17 @@ class ApplymapOperand(DataFrameOperand, DataFrameOperandMixin):
         input_data = ctx[op.inputs[0].key]
         out = op.outputs[0]
         if len(input_data) == 0:
-            if op.output_types[0] == OutputType.dataframe:
-                ctx[out.key] = build_empty_df(out.dtypes)
+            ctx[out.key] = build_empty_df(out.dtypes)
 
-        if isinstance(input_data, pd.DataFrame):
-            result = input_data.applymap(
-                func,
-                na_action=op.na_action,
-                **op.kwds,
-            )
+        result = input_data.applymap(
+            func,
+            na_action=op.na_action,
+            **op.kwds,
+        )
         ctx[out.key] = result
 
     @classmethod
-    def _tile_df(cls, op):
+    def tile(cls, op):
         in_df = op.inputs[0]
         out_df = op.outputs[0]
         chunks = []
@@ -101,10 +99,6 @@ class ApplymapOperand(DataFrameOperand, DataFrameOperandMixin):
         new_nsplits = tuple(new_nsplits)
         kw.update(dict(chunks=chunks, nsplits=new_nsplits))
         return new_op.new_tileables(op.inputs, **kw)
-
-    @classmethod
-    def tile(cls, op):
-        return cls._tile_df(op)
 
     def _infer_df_func_returns(self, df, dtypes, dtype=None, name=None, index=None):
         func = self._load_func()
@@ -136,9 +130,8 @@ class ApplymapOperand(DataFrameOperand, DataFrameOperandMixin):
                 else:
                     index_value = parse_index(pd.RangeIndex(-1))
 
-            if isinstance(infer_df, pd.DataFrame):
-                output_type = output_type or OutputType.dataframe
-                new_dtypes = new_dtypes or infer_df.dtypes
+            output_type = output_type or OutputType.dataframe
+            new_dtypes = new_dtypes or infer_df.dtypes
         except:  # noqa: E722  # nosec
             pass
 
@@ -172,20 +165,21 @@ class ApplymapOperand(DataFrameOperand, DataFrameOperandMixin):
 
         self.func = cloudpickle.dumps(self.func)
 
-        if self.output_types[0] == OutputType.dataframe:
-            return self.new_dataframe(
-                [df],
-                shape=shape,
-                dtypes=dtypes,
-                index_value=index_value,
-                columns_value=parse_index(dtypes.index, store_data=True),
-            )
+        return self.new_dataframe(
+            [df],
+            shape=shape,
+            dtypes=dtypes,
+            index_value=index_value,
+            columns_value=parse_index(dtypes.index, store_data=True),
+        )
 
-    def __call__(self, df, dtypes=None, dtype=None, name=None, index=None):
+    def __call__(
+        self, df, dtypes=None, dtype=None, name=None, index=None, skip_infer=False
+    ):
         dtypes = make_dtypes(dtypes)
         dtype = make_dtype(dtype)
         self.func_token = get_func_token(self.func)
-        if self.output_types and self.output_types[0] == OutputType.dataframe:
+        if skip_infer:
             self.func = cloudpickle.dumps(self.func)
             return self.new_dataframe([df])
 
@@ -301,18 +295,19 @@ def df_applymap(
         output_type=output_type, output_types=output_types, object_type=object_type
     )
     output_type = output_types[0] if output_types else None
-    if skip_infer and output_type is None:
-        output_types = [OutputType.dataframe]
+
     # calling member function
     if isinstance(func, str):
         func = getattr(df, func)
         return func(*args, **kwds)
 
-    op = ApplymapOperand(
+    op = DataFrameApplymap(
         func=func,
         na_action=na_action,
         args=args,
         kwds=kwds,
         output_types=output_types,
     )
-    return op(df, dtypes=dtypes, dtype=dtype, name=name, index=index)
+    return op(
+        df, dtypes=dtypes, dtype=dtype, name=name, index=index, skip_infer=skip_infer
+    )
