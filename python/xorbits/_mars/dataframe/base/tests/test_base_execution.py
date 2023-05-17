@@ -632,6 +632,10 @@ def test_data_frame_applymap_execute(setup):
     expected = df_raw.applymap(np.sqrt, na_action="ignore")
     pd.testing.assert_frame_equal(result, expected)
 
+    # test skip_infer error
+    with pytest.raises(TypeError):
+        df.applymap(np.sqrt, na_action="ignore").execute()
+
     # test custom function
     def custom_func(x):
         if isinstance(x, float):
@@ -651,6 +655,19 @@ def test_data_frame_applymap_execute(setup):
     r = df.applymap(custom_func)
     result = r.execute().fetch()
     expected = df_raw.applymap(custom_func)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test na_action error
+    with pytest.raises(ValueError):
+        df.applymap(lambda x: len(str(x)), na_action="unknown")
+
+    # test empty dataframe
+    df_raw = pd.DataFrame()
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    r = df.applymap(lambda x: len(str(x)))
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: len(str(x)))
     pd.testing.assert_frame_equal(result, expected)
 
 
