@@ -127,9 +127,7 @@ class GroupByRolling(Serializable):
             # for convenience, since pairwise aggregations are axis irrelevant.
             params["axis"] = 0
 
-        op = DataFrameGroupbyRollingAgg(
-            func=func, func_args=args, func_kwargs=kwargs, **params
-        )
+        op = GroupbyRollingAgg(func=func, func_args=args, func_kwargs=kwargs, **params)
         return op(self)
 
     def agg(self, func, *args, **kwargs):
@@ -172,7 +170,7 @@ class GroupByRolling(Serializable):
         return self.aggregate("cov", **kwargs)
 
 
-class DataFrameGroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
+class GroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = opcodes.GROUPBY_ROLLING_AGG
 
     _input = KeyField("input")
@@ -217,7 +215,7 @@ class DataFrameGroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
             **kw
         )
 
-    def __call__(self: "DataFrameGroupbyRollingAgg", r: "GroupByRolling"):
+    def __call__(self: "GroupbyRollingAgg", r: "GroupByRolling"):
         groupby = r._input
         mock_obj = (
             groupby.op.build_mock_groupby()
@@ -244,7 +242,7 @@ class DataFrameGroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
             )
 
     @classmethod
-    def tile(cls, op: "DataFrameGroupbyRollingAgg"):
+    def tile(cls, op: "GroupbyRollingAgg"):
         in_groupby = op.inputs[0]
         out_df = op.outputs[0]
 
@@ -287,7 +285,7 @@ class DataFrameGroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         return new_op.new_tileable([in_groupby], **kw)
 
     @classmethod
-    def execute(cls, ctx, op: "DataFrameGroupbyRollingAgg"):
+    def execute(cls, ctx, op: "GroupbyRollingAgg"):
         inp = ctx[op.inputs[0].key]
 
         r = inp.rolling(
