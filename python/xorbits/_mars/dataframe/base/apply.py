@@ -59,7 +59,7 @@ class ApplyOperandLogicKeyGeneratorMixin(OperatorLogicKeyGeneratorMixin):
         ]
 
 
-class DataFrameApply(
+class ApplyOperand(
     DataFrameOperand, DataFrameOperandMixin, ApplyOperandLogicKeyGeneratorMixin
 ):
     _op_type_ = opcodes.APPLY
@@ -669,7 +669,7 @@ def df_apply(
             kwds["axis"] = axis
         return func(*args, **kwds)
 
-    op = DataFrameApply(
+    op = ApplyOperand(
         func=func,
         axis=axis,
         raw=raw,
@@ -847,7 +847,7 @@ def series_apply(
     if output_types is None:
         output_types = [output_type]
 
-    op = DataFrameApply(
+    op = ApplyOperand(
         func=func,
         convert_dtype=convert_dtype,
         args=args,
