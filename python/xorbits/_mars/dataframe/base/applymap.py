@@ -22,17 +22,10 @@ from ... import opcodes
 from ...core import OutputType
 from ...core.context import Context
 from ...core.custom_log import redirect_custom_log
-from ...serialization.serializables import AnyField, DictField, StringField, TupleField
+from ...serialization.serializables import AnyField, DictField, StringField
 from ...utils import enter_current_session, get_func_token, quiet_stdio
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import (
-    build_df,
-    build_empty_df,
-    make_dtype,
-    make_dtypes,
-    parse_index,
-    validate_output_types,
-)
+from ..utils import build_df, build_empty_df, parse_index
 
 
 class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
