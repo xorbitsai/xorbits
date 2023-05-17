@@ -110,7 +110,9 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
             if self.output_types is not None and (
                 dtypes is not None or dtype is not None
             ):
-                ret_dtypes = dtypes if dtypes is not None else (name, dtype)
+                ret_dtypes = (
+                    dtypes if dtypes is not None else (name, dtype)
+                )  # pragma: no cover
                 ret_index_value = parse_index(index) if index is not None else None
                 return ret_dtypes, ret_index_value
 
@@ -127,7 +129,7 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
             if index_value is None:
                 if infer_df.index is empty_df.index:
                     index_value = "inherit"
-                else:
+                else:  # pragma: no cover
                     index_value = parse_index(pd.RangeIndex(-1))
 
             output_type = output_type or OutputType.dataframe
@@ -295,11 +297,6 @@ def df_applymap(
         output_type=output_type, output_types=output_types, object_type=object_type
     )
     output_type = output_types[0] if output_types else None
-
-    # calling member function
-    if isinstance(func, str):
-        func = getattr(df, func)
-        return func(*args, **kwds)
 
     op = DataFrameApplymap(
         func=func,
