@@ -670,6 +670,20 @@ def test_data_frame_applymap_execute(setup):
     expected = df_raw.applymap(lambda x: len(str(x)))
     pd.testing.assert_frame_equal(result, expected)
 
+    # test func kwargs input
+    def kw_func(x, dete=False):
+        if dete:
+            return x**2
+        else:
+            return x + 1
+
+    df_raw = pd.DataFrame([[1.0, 2.0], [3.0, 4.0]])
+    df = from_pandas_df(df_raw, chunk_size=2)
+    r = df.applymap(kw_func, dete=True)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(kw_func, dete=True)
+    pd.testing.assert_frame_equal(result, expected)
+
 
 def test_transform_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]

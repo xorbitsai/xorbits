@@ -1,5 +1,4 @@
 # Copyright 2022-2023 XProbe Inc.
-# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Callable, Union
+
 import cloudpickle
 import numpy as np
 import pandas as pd
 
 from ... import opcodes
 from ...core import OutputType
+from ...core.context import Context
 from ...core.custom_log import redirect_custom_log
 from ...serialization.serializables import AnyField, DictField, StringField, TupleField
 from ...utils import enter_current_session, get_func_token, quiet_stdio
@@ -39,12 +41,10 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
     func = AnyField("func")
     na_action = StringField("na_action", default=None)
     func_token = StringField("func_token", default=None)
-    logic_key = StringField("logic_key", default=None)
-    args = TupleField("args", default=None)
     kwds = DictField("kwds", default=None)
 
-    def __init__(self, output_types=None, **kw):
-        super().__init__(_output_types=output_types, **kw)
+    def __init__(self, **kw):
+        super().__init__(**kw)
 
     def _load_func(self):
         if isinstance(self.func, bytes):
@@ -55,7 +55,7 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
     @classmethod
     @redirect_custom_log
     @enter_current_session
-    def execute(cls, ctx, op):
+    def execute(cls, ctx: Union[dict, Context], op: "DataFrameApplymap"):
         func = op._load_func()
         input_data = ctx[op.inputs[0].key]
         out = op.outputs[0]
@@ -70,7 +70,7 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
         ctx[out.key] = result
 
     @classmethod
-    def tile(cls, op):
+    def tile(cls, op: "DataFrameApplymap"):
         in_df = op.inputs[0]
         out_df = op.outputs[0]
         chunks = []
@@ -100,22 +100,13 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
         kw.update(dict(chunks=chunks, nsplits=new_nsplits))
         return new_op.new_tileables(op.inputs, **kw)
 
-    def _infer_df_func_returns(self, df, dtypes, dtype=None, name=None, index=None):
+    def _infer_df_func_returns(self, df: pd.DataFrame):
         func = self._load_func()
         if isinstance(func, np.ufunc):
             output_type = OutputType.dataframe
             new_dtypes = None
             index_value = "inherit"
         else:
-            if self.output_types is not None and (
-                dtypes is not None or dtype is not None
-            ):
-                ret_dtypes = (
-                    dtypes if dtypes is not None else (name, dtype)
-                )  # pragma: no cover
-                ret_index_value = parse_index(index) if index is not None else None
-                return ret_dtypes, ret_index_value
-
             output_type = new_dtypes = index_value = None
 
         try:
@@ -140,16 +131,17 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
         self.output_types = (
             [output_type] if not self.output_types else self.output_types
         )
-        dtypes = new_dtypes if dtypes is None else dtypes
-        index_value = index_value if index is None else parse_index(index)
+        dtypes = new_dtypes
         return dtypes, index_value
 
-    def _call_dataframe(self, df, dtypes=None, dtype=None, name=None, index=None):
+    def __call__(self, df: pd.DataFrame, skip_infer: bool = False):
+        self.func_token = get_func_token(self.func)
+        if skip_infer:
+            self.func = cloudpickle.dumps(self.func)
+            return self.new_dataframe([df])
+
         # for backward compatibility
-        dtype = dtype if dtype is not None else dtypes
-        dtypes, index_value = self._infer_df_func_returns(
-            df, dtypes, dtype=dtype, name=name, index=index
-        )
+        dtypes, index_value = self._infer_df_func_returns(df)
 
         if index_value is None:
             index_value = parse_index(None, (df.key, df.index_value.key))
@@ -175,32 +167,12 @@ class DataFrameApplymap(DataFrameOperand, DataFrameOperandMixin):
             columns_value=parse_index(dtypes.index, store_data=True),
         )
 
-    def __call__(
-        self, df, dtypes=None, dtype=None, name=None, index=None, skip_infer=False
-    ):
-        dtypes = make_dtypes(dtypes)
-        dtype = make_dtype(dtype)
-        self.func_token = get_func_token(self.func)
-        if skip_infer:
-            self.func = cloudpickle.dumps(self.func)
-            return self.new_dataframe([df])
-
-        return self._call_dataframe(
-            df, dtypes=dtypes, dtype=dtype, name=name, index=index
-        )
-
 
 def df_applymap(
-    df,
-    func,
-    na_action=None,
-    args=(),
-    dtypes=None,
-    dtype=None,
-    name=None,
-    output_type=None,
-    index=None,
-    skip_infer=False,
+    df: pd.DataFrame,
+    func: Callable,
+    na_action: str = None,
+    skip_infer: bool = False,
     **kwds,
 ):
     """
@@ -217,27 +189,8 @@ def df_applymap(
     na_action : {None, 'ignore'}, default None
         If 'ignore', propagate NaN values, without passing them to func.
 
-    output_type : {'dataframe', 'series'}, default None
-        Specify type of returned object. See `Notes` for more details.
-
-    dtypes : Series, default None
-        Specify dtypes of returned DataFrames. See `Notes` for more details.
-
-    dtype : numpy.dtype, default None
-        Specify dtype of returned Series. See `Notes` for more details.
-
-    name : str, default None
-        Specify name of returned Series. See `Notes` for more details.
-
-    index : Index, default None
-        Specify index of returned object. See `Notes` for more details.
-
     skip_infer: bool, default False
         Whether infer dtypes when dtypes or output_type is not specified.
-
-    args : tuple
-        Positional arguments to pass to `func` in addition to the
-        array/series.
 
     **kwds
         Additional keyword arguments to pass as keywords arguments to
@@ -291,20 +244,6 @@ def df_applymap(
     """
     if na_action not in {"ignore", None}:
         raise ValueError(f"na_action must be 'ignore' or None. Got {repr(na_action)}")
-    output_types = kwds.pop("output_types", None)
-    object_type = kwds.pop("object_type", None)
-    output_types = validate_output_types(
-        output_type=output_type, output_types=output_types, object_type=object_type
-    )
-    output_type = output_types[0] if output_types else None
 
-    op = DataFrameApplymap(
-        func=func,
-        na_action=na_action,
-        args=args,
-        kwds=kwds,
-        output_types=output_types,
-    )
-    return op(
-        df, dtypes=dtypes, dtype=dtype, name=name, index=index, skip_infer=skip_infer
-    )
+    op = DataFrameApplymap(func=func, na_action=na_action, kwds=kwds)
+    return op(df, skip_infer=skip_infer)
