@@ -22,7 +22,6 @@ except ImportError:
     JAX_INSTALLED = False
 
 from .. import arithmetic, reduction
-from ..array_utils import as_same_device
 from ..operands import TensorFuse
 from .core import TensorFuseChunkMixin
 
