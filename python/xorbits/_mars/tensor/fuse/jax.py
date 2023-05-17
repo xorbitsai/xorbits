@@ -33,7 +33,7 @@ class TensorJAXFuseChunk(TensorFuse, TensorFuseChunkMixin):
     @classmethod
     def execute(cls, ctx, op):
         chunk = op.outputs[0]
-        inputs = as_same_device([ctx[c.key] for c in op.inputs], device=op.device)
+        inputs = [ctx[c.key] for c in op.inputs]
         input_dict = {c.key: i for c, i in zip(op.inputs, inputs)}
         res = np.array(_evaluate(chunk, input_dict))
         res = _maybe_keepdims(chunk, res)
