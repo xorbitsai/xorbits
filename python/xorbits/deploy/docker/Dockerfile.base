@@ -30,8 +30,6 @@ RUN /opt/conda/bin/conda install \
     cython \
     mkl \
     numexpr \
-    jax \
-    jaxlib \
     psutil \
     scikit-learn \
     scipy \
@@ -41,6 +39,8 @@ RUN /opt/conda/bin/conda install \
   && /opt/conda/bin/conda install -c conda-forge \
     pyarrow\>=1.0 \
     python-kubernetes \
+    jax \
+    jaxlib \
     uvloop \
   && pip install -U \
     xoscar \
