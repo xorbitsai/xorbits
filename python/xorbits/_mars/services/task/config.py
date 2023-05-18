@@ -25,5 +25,5 @@ task_options.register_option("reserved_finish_tasks", 25, validator=is_integer)
 
 # worker
 task_options.register_option(
-    "runtime_engines", ["numexpr", "jax", "cupy"], validator=is_list
+    "runtime_engines", ["jax", "numexpr", "cupy"], validator=is_list
 )
