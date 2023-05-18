@@ -119,10 +119,7 @@ jobs:
       if: ${{ matrix.module != 'gpu' }}
       run: |
         pip install numpy scipy cython coverage flaky
-        
-        if [[ "$PYTHON" == '3.9' ]]; then
-          conda install numba
-        fi
+      
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
         fi
