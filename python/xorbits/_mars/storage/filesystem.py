@@ -199,3 +199,52 @@ class AlluxioStorage(FileSystemStorage):
             """
         )
         await proc.wait()
+
+
+@register_storage_backend
+class JuiceFSStorage(FileSystemStorage):
+    name = "juicefs"
+
+    def __init__(
+        self,
+        root_dir: str,
+        local_environ: bool,
+        level: StorageLevel = None,
+        size: int = None,
+    ):
+        self._fs = AioFilesystem(LocalFileSystem())
+        self._root_dirs = [root_dir]
+        self._level = level
+        self._size = size
+        self._local_environ = local_environ
+
+    @classmethod
+    @implements(StorageBackend.setup)
+    async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
+        kwargs["level"] = StorageLevel.MEMORY
+        root_dir = kwargs.get("root_dir")
+        local_environ = kwargs.get("local_environ")
+        if local_environ:
+            proc = await asyncio.create_subprocess_shell(
+                f"""juicefs format redis://127.0.0.1:6379/1 myjfs
+                juicefs mount redis://127.0.0.1:6379/1 {root_dir} -d
+                """
+            )
+            await proc.wait()
+        params = dict(
+            root_dir=root_dir,
+            level=StorageLevel.MEMORY,
+            size=None,
+            local_environ=local_environ,
+        )
+        return params, dict(root_dir=root_dir)
+
+    @staticmethod
+    @implements(StorageBackend.teardown)
+    async def teardown(**kwargs):
+        root_dir = kwargs.get("root_dir")
+        proc = await asyncio.create_subprocess_shell(
+            f"""juicefs unmount {root_dir}
+            """
+        )
+        await proc.wait()
