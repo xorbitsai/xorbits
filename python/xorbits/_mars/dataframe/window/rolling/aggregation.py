@@ -351,7 +351,11 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         input_ndim = inp.ndim
         output_ndim = out.ndim
 
-        is_pairwise_corr = op.func == "corr" and op.func_kwargs.get("pairwise", True)
+        from ..rolling.core import _PAIRWISE_AGG
+
+        is_pairwise_agg = op.func in _PAIRWISE_AGG and op.func_kwargs.get(
+            "pairwise", True
+        )
 
         # check if can be tiled
         inp = yield from cls._check_can_be_tiled(op, is_window_int)
@@ -406,8 +410,8 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
                     chunk_params["index_value"] = inp_chunk.index_value
                     chunk_params["columns_value"] = out.columns_value
                 else:
-                    if is_pairwise_corr:
-                        # the calculation of corr is axis irrelevant.
+                    if is_pairwise_agg:
+                        # pairwise aggregation is axis irrelevant.
                         out_shape = list(out.shape)
                         out_shape[0] = inp_chunk.shape[0] * out_shape[1]
                         chunk_params["shape"] = tuple(out_shape)
@@ -442,7 +446,7 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         if out.ndim == 1:
             params["shape"] = (inp.shape[0],)
         else:
-            if is_pairwise_corr:
+            if is_pairwise_agg:
                 params["shape"] = (
                     inp.shape[0] * params["shape"][1],
                     params["shape"][1],
@@ -462,7 +466,12 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         if win_type == "freq":
             win_type = None
             window = pd.Timedelta(window)
-        is_pairwise_corr = op.func == "corr" and op.func_kwargs.get("pairwise", True)
+
+        from ..rolling.core import _PAIRWISE_AGG
+
+        is_pairwise_agg = op.func in _PAIRWISE_AGG and op.func_kwargs.get(
+            "pairwise", True
+        )
 
         preds = [ctx[pred.key] for pred in op.preds]
         pred_size = sum(pred.shape[axis] for pred in preds)
@@ -500,7 +509,7 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
 
         if pred_size > 0 or succ_size > 0:
             slc = [slice(None)] * result.ndim
-            if is_pairwise_corr:
+            if is_pairwise_agg:
                 slc[axis] = slice(
                     pred_size * len(inp.dtypes),
                     result.shape[axis] - succ_size * len(inp.dtypes),
