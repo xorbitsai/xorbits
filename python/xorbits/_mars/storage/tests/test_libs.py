@@ -88,7 +88,7 @@ async def storage_context(request):
         params, teardown_params = await JuiceFSStorage.setup(
             root_dir=tempdir, local_environ=True
         )
-        storage = AlluxioStorage(**params)
+        storage = JuiceFSStorage(**params)
         assert storage.level == StorageLevel.MEMORY
 
         yield storage
