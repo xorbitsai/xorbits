@@ -543,6 +543,7 @@ def test_apply_with_arrow_dtype_execution(setup):
 
 
 def test_data_frame_applymap_execute(setup):
+    # TODO: support GPU for appltmap operation
     # test one chunk
     df_raw = pd.DataFrame([[1, 2.12], [3.356, 4.567]])
     df = from_pandas_df(df_raw, chunk_size=4)
