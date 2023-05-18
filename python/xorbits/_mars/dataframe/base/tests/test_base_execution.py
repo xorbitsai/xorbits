@@ -542,6 +542,150 @@ def test_apply_with_arrow_dtype_execution(setup):
     pd.testing.assert_series_equal(result, expected)
 
 
+def test_data_frame_applymap_execute(setup):
+    # TODO: support GPU for appltmap operation
+    # test one chunk
+    df_raw = pd.DataFrame([[1, 2.12], [3.356, 4.567]])
+    df = from_pandas_df(df_raw, chunk_size=4)
+
+    r = df.applymap(lambda x: len(str(x)))
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: len(str(x)))
+    pd.testing.assert_frame_equal(result, expected)
+
+    r = df.applymap(np.sqrt)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(np.sqrt)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test multiple chunks
+    df_raw = pd.DataFrame(np.random.rand(10, 2))
+    df = from_pandas_df(df_raw, chunk_size=3)
+
+    r = df.applymap(lambda x: len(str(x)))
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: len(str(x)))
+    pd.testing.assert_frame_equal(result, expected)
+
+    r = df.applymap(np.square)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(np.square)
+    pd.testing.assert_frame_equal(result, expected)
+
+    r = df.applymap(np.sqrt, na_action="ignore", skip_infer=True)
+    result = r.execute().fetch()
+    excepted = df_raw.applymap(np.sqrt, na_action="ignore")
+    pd.testing.assert_frame_equal(result, excepted)
+
+    df_raw = pd.DataFrame([[1.0, 2.0], [3.0, 4.0]])
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    r = df.applymap(lambda x: int(x))
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: int(x))
+    pd.testing.assert_frame_equal(result, expected)
+
+    r = df.applymap(lambda x: int(x) ** 2 if x > 2 else x * 2)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: int(x) ** 2 if x > 2 else x * 2)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test with strings and numbers
+    df_raw = pd.DataFrame([["a", 1], ["b", 2]])
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    r = df.applymap(lambda x: str(x))
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: str(x))
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test with timestamp
+    df_raw = pd.DataFrame([[pd.Timestamp.now(), 2], [pd.Timestamp.now(), 3]])
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    r = df.applymap(lambda x: str(x))
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: str(x))
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test na_action with different data types
+    df_raw = pd.DataFrame(
+        [[pd.NA, 2.12], [3.356, "hello"], [pd.Timestamp.now(), 4.567]]
+    )
+    df = from_pandas_df(df_raw, chunk_size=3)
+
+    r = df.applymap(lambda x: len(str(x)), na_action="ignore", skip_infer=True)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: len(str(x)), na_action="ignore")
+    pd.testing.assert_frame_equal(result, expected)
+
+    r = df.applymap(lambda x: str(x), na_action="ignore", skip_infer=True)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: str(x), na_action="ignore")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test na_action with sqrt on int
+    df_raw = pd.DataFrame([[pd.NA, 2], [3, 4]])
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    r = df.applymap(np.sqrt, na_action="ignore", skip_infer=True)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(np.sqrt, na_action="ignore")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test skip_infer error
+    with pytest.raises(TypeError):
+        df.applymap(np.sqrt, na_action="ignore").execute()
+
+    # test custom function
+    def custom_func(x):
+        if isinstance(x, float):
+            return int(x)
+        elif isinstance(x, int):
+            return float(x) ** 2
+        elif isinstance(x, str):
+            return len(x)
+        elif isinstance(x, pd.Timestamp):
+            return x.year
+        else:
+            return x
+
+    df_raw = pd.DataFrame([[1.0, "hello"], [3, pd.Timestamp.now()]])
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    r = df.applymap(custom_func)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(custom_func)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test na_action error
+    with pytest.raises(ValueError):
+        df.applymap(lambda x: len(str(x)), na_action="unknown")
+
+    # test empty dataframe
+    df_raw = pd.DataFrame()
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    r = df.applymap(lambda x: len(str(x)))
+    result = r.execute().fetch()
+    expected = df_raw.applymap(lambda x: len(str(x)))
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test func kwargs input
+    def kw_func(x, dete=False):
+        if dete:
+            return x**2
+        else:
+            return x + 1
+
+    df_raw = pd.DataFrame([[1.0, 2.0], [3.0, 4.0]])
+    df = from_pandas_df(df_raw, chunk_size=2)
+    r = df.applymap(kw_func, dete=True)
+    result = r.execute().fetch()
+    expected = df_raw.applymap(kw_func, dete=True)
+    pd.testing.assert_frame_equal(result, expected)
+
+
 def test_transform_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]
     df_raw = pd.DataFrame(dict((c, [i**2 for i in range(20)]) for c in cols))
