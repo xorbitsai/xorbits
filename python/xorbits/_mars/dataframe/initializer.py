@@ -54,7 +54,7 @@ def check_data_helper(x):
     return False
 
 
-def convert_data_to_dict(data, cols):
+def _convert_data_to_dict(data, cols):
     dic = {}
     for i in range(0, len(cols)):
         dic[cols[i]] = []
