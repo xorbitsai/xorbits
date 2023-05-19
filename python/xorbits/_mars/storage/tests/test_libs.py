@@ -30,7 +30,7 @@ from ...lib.sparse import SparseMatrix, SparseNDArray
 from ...tests.core import require_cudf, require_cupy
 from ..base import StorageLevel
 from ..cuda import CudaStorage
-from ..filesystem import AlluxioStorage, DiskStorage
+from ..filesystem import AlluxioStorage, DiskStorage, JuiceFSStorage
 from ..plasma import PlasmaStorage
 from ..shared_memory import SharedMemoryStorage
 from ..vineyard import VineyardStorage
@@ -51,8 +51,11 @@ if (
 ):
     params.append("plasma")
 alluxio = sp.getoutput("echo $ALLUXIO_HOME")
+juicefs = sp.getoutput("echo $JUICEFS_HOME")
 if "alluxio" in alluxio:
     params.append("alluxio")
+if "juicefs" in juicefs:
+    params.append("juicefs")
 if vineyard is not None:
     params.append("vineyard")
 
@@ -76,6 +79,16 @@ async def storage_context(request):
             root_dir=tempdir, local_environ=True
         )
         storage = AlluxioStorage(**params)
+        assert storage.level == StorageLevel.MEMORY
+
+        yield storage
+        await storage.teardown(**teardown_params)
+    elif request.param == "juicefs":
+        tempdir = tempfile.mkdtemp()
+        params, teardown_params = await JuiceFSStorage.setup(
+            root_dir=tempdir, local_environ=True
+        )
+        storage = JuiceFSStorage(**params)
         assert storage.level == StorageLevel.MEMORY
 
         yield storage
@@ -162,7 +175,11 @@ async def test_base_operations(storage_context):
     # FIXME: remove when list functionality is ready for vineyard.
     if not isinstance(storage, (VineyardStorage, SharedMemoryStorage)):
         num = len(await storage.list())
-        assert num == 2
+        # juicefs automatically generates 4 files accesslog, config, stats and trash so the num should be 6 for juicefs
+        if isinstance(storage, JuiceFSStorage):
+            assert num == 6
+        else:
+            assert num == 2
         await storage.delete(info2.object_id)
 
     # test SparseMatrix
