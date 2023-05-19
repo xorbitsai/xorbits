@@ -41,7 +41,7 @@ from .utils import is_cudf, is_index
 cudf = lazy_import("cudf")
 
 
-def check_data_helper(x):
+def _check_expr_in_list_of_list(x: list):
     for i in x:
         if isinstance(i, list):
             for item in i:
@@ -125,26 +125,23 @@ class DataFrame(_Frame, metaclass=InitializerMeta):
                     data, index=index, columns=columns, gpu=gpu, sparse=sparse
                 )
             need_repart = num_partitions is not None
+        elif isinstance(data, list) and _check_expr_in_list_of_list(data):
+            data = _convert_data_to_dict(data, columns)
+            df = dataframe_from_1d_tileables(
+                data, index=index, columns=columns, gpu=gpu, sparse=sparse
+            )
         else:
-            if isinstance(data, list) and check_data_helper(data):
-                data = convert_data_to_dict(data, columns)
-                df = dataframe_from_1d_tileables(
-                    data, index=index, columns=columns, gpu=gpu, sparse=sparse
-                )
+            if is_cudf(data) or is_cupy(data):  # pragma: no cover
+                pdf = cudf.DataFrame(data, index=index, columns=columns, dtype=dtype)
+                if copy:
+                    pdf = pdf.copy()
             else:
-                if is_cudf(data) or is_cupy(data):  # pragma: no cover
-                    pdf = cudf.DataFrame(
-                        data, index=index, columns=columns, dtype=dtype
-                    )
-                    if copy:
-                        pdf = pdf.copy()
-                else:
-                    pdf = pd.DataFrame(
-                        data, index=index, columns=columns, dtype=dtype, copy=copy
-                    )
-                if num_partitions is not None:
-                    chunk_size = ceildiv(len(pdf), num_partitions)
-                df = from_pandas_df(pdf, chunk_size=chunk_size, gpu=gpu, sparse=sparse)
+                pdf = pd.DataFrame(
+                    data, index=index, columns=columns, dtype=dtype, copy=copy
+                )
+            if num_partitions is not None:
+                chunk_size = ceildiv(len(pdf), num_partitions)
+            df = from_pandas_df(pdf, chunk_size=chunk_size, gpu=gpu, sparse=sparse)
         if need_repart:
             df = df.rebalance(num_partitions=num_partitions)
         super().__init__(df.data)
