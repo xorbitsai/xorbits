@@ -244,7 +244,7 @@ class JuiceFSStorage(FileSystemStorage):
     async def teardown(**kwargs):
         root_dir = kwargs.get("root_dir")
         proc = await asyncio.create_subprocess_shell(
-            f"""juicefs unmount {root_dir}
+            f"""juicefs umount {root_dir}
             """
         )
         await proc.wait()
