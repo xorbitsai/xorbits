@@ -48,7 +48,7 @@ def check_data_helper(x):
                 if (
                     hasattr(item, "data")
                     and isinstance(item.data, TensorData)
-                    and len(item.data.shape) == 0
+                    and item.data.ndim == 0
                 ):
                     return True
     return False
