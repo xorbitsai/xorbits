@@ -175,7 +175,10 @@ async def test_base_operations(storage_context):
     # FIXME: remove when list functionality is ready for vineyard.
     if not isinstance(storage, (VineyardStorage, SharedMemoryStorage)):
         num = len(await storage.list())
-        assert num == 2
+        if isinstance(storage, JuiceFSStorage):
+            assert num == 6
+        else:
+            assert num == 2
         await storage.delete(info2.object_id)
 
     # test SparseMatrix
