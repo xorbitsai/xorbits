@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Any, Dict, List
 
 import pandas as pd
 from pandas.core.dtypes.common import pandas_dtype
@@ -54,7 +55,7 @@ def _check_expr_in_list_of_list(x: list):
     return False
 
 
-def _convert_data_to_dict(data: List[list], cols: list) -> DIct[Any, list]:
+def _convert_data_to_dict(data: List[list], cols: list) -> Dict[Any, list]:
     dic = {}
     for i in range(0, len(cols)):
         dic[cols[i]] = []
