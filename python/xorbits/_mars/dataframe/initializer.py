@@ -54,7 +54,7 @@ def _check_expr_in_list_of_list(x: list):
     return False
 
 
-def _convert_data_to_dict(data, cols):
+def _convert_data_to_dict(data: List[list], cols: list) -> DIct[Any, list]:
     dic = {}
     for i in range(0, len(cols)):
         dic[cols[i]] = []
