@@ -175,6 +175,7 @@ async def test_base_operations(storage_context):
     # FIXME: remove when list functionality is ready for vineyard.
     if not isinstance(storage, (VineyardStorage, SharedMemoryStorage)):
         num = len(await storage.list())
+        # juicefs automatically generates 4 files accesslog, config, stats and trash so the num should be 6 for juicefs
         if isinstance(storage, JuiceFSStorage):
             assert num == 6
         else:
