@@ -186,7 +186,7 @@ jobs:
         fi
         if [[ "$MODULE" == "jax" ]]; then
           # test jax
-          pip install jax>=0.4.0 jaxlib>=0.4.0
+          pip install "jax>=0.4.0" "jaxlib>=0.4.0"
         fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
