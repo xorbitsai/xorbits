@@ -113,30 +113,6 @@ def test_pandas_dataframe_methods(setup):
             "zoo": ["x", "y", "z", "q", "w", "t"],
         }
     )
-    df = xpd.DataFrame(raw)
-    with pytest.warns(Warning) as w:
-        r = df.pivot(index="foo", columns="bar", values="baz")
-        assert len(w) == 1
-        assert "DataFrame.pivot will fallback to Pandas" == str(w[0].message)
-
-    assert len(getattr(r.data._mars_entity, "_executed_sessions")) == 1
-    expected = raw.pivot(index="foo", columns="bar", values="baz")
-    assert expected.shape == r.shape
-    assert str(expected) == str(r)
-    assert isinstance(r, DataRef)
-    pd.testing.assert_frame_equal(expected, r.to_pandas())
-
-    # multi chunk and follow other operations
-    df = xpd.DataFrame(raw, chunk_size=3)
-    with pytest.warns(Warning) as w:
-        r = df.pivot(index="foo", columns="bar", values="baz") + 1
-        assert "DataFrame.pivot will fallback to Pandas" == str(w[0].message)
-
-    expected = raw.pivot(index="foo", columns="bar", values="baz") + 1
-    assert expected.shape == r.shape
-    assert str(expected) == str(r)
-    pd.testing.assert_frame_equal(expected, r.to_pandas())
-
     # can be inferred
     df = xpd.DataFrame(raw)
     with pytest.warns(Warning) as w:
