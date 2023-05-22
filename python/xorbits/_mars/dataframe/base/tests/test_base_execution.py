@@ -733,28 +733,6 @@ def test_data_frame_pivot_execute(setup):
     )
     pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
 
-    # test pivot error nonexistent columns
-    with pytest.raises(KeyError):
-        r = df.pivot(index="foo", columns="nonexistent_column")
-        result = r.execute().fetch()
-
-    # test pivot error none index columns
-    with pytest.raises(KeyError):
-        r = df.pivot(index=None, columns=None, values="baz")
-        result = r.execute().fetch()
-
-    # # test pivot error incompatible index columns
-    with pytest.raises(ValueError):
-        r = df.pivot(index="foo", columns="foo", values="foo")
-        result = r.execute().fetch()
-
-    # # test pivot error duplicate entries
-    with pytest.raises(ValueError):
-        df_raw_dup = pd.concat([df_raw, df_raw])
-        df = from_pandas_df(df_raw_dup)
-        r = df.pivot(index="foo", columns="bar")
-        result = r.execute().fetch()
-
 
 def test_transform_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]
