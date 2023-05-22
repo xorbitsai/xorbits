@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../source/development/contributing_documentation.rst:5
 msgid "Contributing to the documentation"
-msgstr ""
+msgstr "参与 Xorbits 文档开发"
 
 #: ../../source/development/contributing_documentation.rst:7
 msgid ""
@@ -34,14 +34,18 @@ msgid ""
 "desc+label%3Adocumentation>`__ for a full list of issues that are "
 "currently open regarding the Xorbits documentation."
 msgstr ""
+"优化文档将帮助到使每一个 Xorbits 的用户。帮助 Xorbits 提升文档质量并不需要对 Xorbits 有特别深入的理解。"
+"事实上，某些文档不适合由资深开发者进行撰写。因此，我们鼓励所有人参与 Xorbits 的文档开发！"
+"如果文档中有什么不清楚的地方，弄清楚并更新相关内容将会帮助到下一个人。"
+"请访问 `issues 页面 <https://github.com/xprobe-inc/xorbits/issues?page=1&q=is%3Aopen+sort%3Aupdated-desc+label%3Adocumentation>`__ ，查看 Xorbits 文档相关 issue。"
 
 #: ../../source/development/contributing_documentation.rst:21
 msgid "Documentation:"
-msgstr ""
+msgstr "文档"
 
 #: ../../source/development/contributing_documentation.rst:24
 msgid "About the Xorbits documentation"
-msgstr ""
+msgstr "关于 Xorbits 文档"
 
 #: ../../source/development/contributing_documentation.rst:26
 msgid ""
@@ -52,16 +56,18 @@ msgid ""
 "doc.org/en/master/usage/restructuredtext/basics.html>`__. Review the "
 "Sphinx docs to perform more complex changes to the documentation as well."
 msgstr ""
+"Xorbits 的文档是 reStructuredText 格式，几乎就像用普通英语写作一样，使用 Sphinx 构建。"
+"Sphinx 的文档中有 `reST 教程 <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`__ 。请查看该文档，以了解文档操作。"
 
 #: ../../source/development/contributing_documentation.rst:32
 msgid "Some other important things to know about the docs:"
-msgstr ""
+msgstr "以下是有关文档的其他重要事项："
 
 #: ../../source/development/contributing_documentation.rst:34
 msgid ""
 "The Xorbits documentation consists of two parts: the docstrings in the "
 "code itself and the docs in this folder ``doc/``."
-msgstr ""
+msgstr "Xorbits 文档由两部分组成：代码本身的 docstrings 和位于 ``doc/`` 文件夹中的文档。"
 
 #: ../../source/development/contributing_documentation.rst:37
 msgid ""
@@ -69,13 +75,13 @@ msgid ""
 " functions, while the documentation in this folder consists of tutorial-"
 "like overviews per topic together with some other information (what's "
 "new, installation, etc)."
-msgstr ""
+msgstr "docstrings 为各个函数的使用方式提供了清晰的解释，而位于此文件夹中的文档则由一个个主题教程以及一些其他信息（新功能介绍、安装等）组成。"
 
 #: ../../source/development/contributing_documentation.rst:42
 msgid ""
 "The docstrings follow a Xorbits convention, based on the **Numpy "
 "Docstring Standard**."
-msgstr ""
+msgstr "docstrings 遵循 Xorbits 的规范，由 **Numpy Docstring 规范** 演化而来。"
 
 #: ../../source/development/contributing_documentation.rst:45
 msgid ""
@@ -83,11 +89,12 @@ msgid ""
 "<https://matplotlib.org/sampledoc/ipython_directive.html>`_ sphinx "
 "extension. This directive lets you put code in the documentation which "
 "will be run during the doc build. For example::"
-msgstr ""
+msgstr "教程中大量使用了 sphinx 的 `IPython directive <https://matplotlib.org/sampledoc/ipython_directive.html>`_ 插件。"
+"IPython directive 允许你把代码嵌入文档，并在构建文档时运行这部分代码。举例来说："
 
 #: ../../source/development/contributing_documentation.rst:55
 msgid "will be rendered as::"
-msgstr ""
+msgstr "会显示为："
 
 #: ../../source/development/contributing_documentation.rst:62
 msgid ""
@@ -95,6 +102,7 @@ msgid ""
 "during the doc build. This approach means that code examples will always "
 "be up to date, but it does make the doc building a bit more complex."
 msgstr ""
+"文档中的几乎所有代码示例都会在文档构建期间运行（并保存输出）。这种方法意味着代码示例始终是最新的，但也使文档构建变得更加复杂。"
 
 #: ../../source/development/contributing_documentation.rst:66
 msgid ""
@@ -103,6 +111,7 @@ msgid ""
 " subtleties around controlling which methods and attributes have pages "
 "auto-generated."
 msgstr ""
+"我们的 API 文档文件位于 doc/source/reference，包含从 docstrings 自动生成的文档。对于一个类，我们要控制哪些方法和属性需要自动生成文档页面。"
 
 #: ../../source/development/contributing_documentation.rst:70
 msgid "We have two autosummary templates for classes."
