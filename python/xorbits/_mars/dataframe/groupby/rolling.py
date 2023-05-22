@@ -37,14 +37,14 @@ _PAIRWISE_AGG = ["corr", "cov"]
 
 
 class GroupByRolling(Serializable):
-    _input = KeyField("input")
-    _window = AnyField("window")
-    _min_periods = Int64Field("min_periods")
-    _center = BoolField("center")
-    _win_type = StringField("win_type")
-    _on = StringField("on")
-    _axis = Int32Field("axis")
-    _closed = StringField("closed")
+    input = KeyField("input")
+    window = AnyField("window")
+    min_periods = Int64Field("min_periods")
+    center = BoolField("center")
+    win_type = StringField("win_type")
+    on = StringField("on")
+    axis = Int32Field("axis")
+    closed = StringField("closed")
 
     def __init__(
         self,
@@ -59,14 +59,14 @@ class GroupByRolling(Serializable):
         **kw
     ):
         super().__init__(
-            _input=input,
-            _window=window,
-            _min_periods=min_periods,
-            _center=center,
-            _win_type=win_type,
-            _on=on,
-            _axis=axis,
-            _closed=closed,
+            input=input,
+            window=window,
+            min_periods=min_periods,
+            center=center,
+            win_type=win_type,
+            on=on,
+            axis=axis,
+            closed=closed,
             **kw
         )
 
@@ -74,36 +74,8 @@ class GroupByRolling(Serializable):
         """
         leverage pandas itself to validate the parameters.
         """
-        groupby = self._input
+        groupby = self.input
         groupby.op.build_mock_groupby().rolling(**self.params)
-
-    @property
-    def window(self):
-        return self._window
-
-    @property
-    def min_periods(self):
-        return self._min_periods
-
-    @property
-    def center(self):
-        return self._center
-
-    @property
-    def win_type(self):
-        return self._win_type
-
-    @property
-    def on(self):
-        return self._on
-
-    @property
-    def axis(self):
-        return self._axis
-
-    @property
-    def closed(self):
-        return self._closed
 
     @property
     def params(self):
@@ -173,17 +145,17 @@ class GroupByRolling(Serializable):
 class GroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = opcodes.GROUPBY_ROLLING_AGG
 
-    _input = KeyField("input")
-    _window = AnyField("window")
-    _min_periods = Int64Field("min_periods")
-    _center = BoolField("center")
-    _win_type = StringField("win_type")
-    _on = StringField("on")
-    _axis = Int32Field("axis")
-    _closed = StringField("closed")
-    _func = AnyField("func")
-    _func_args = TupleField("func_args")
-    _func_kwargs = DictField("func_kwargs")
+    input = KeyField("input")
+    window = AnyField("window")
+    min_periods = Int64Field("min_periods")
+    center = BoolField("center")
+    win_type = StringField("win_type")
+    on = StringField("on")
+    axis = Int32Field("axis")
+    closed = StringField("closed")
+    func = AnyField("func")
+    func_args = TupleField("func_args")
+    func_kwargs = DictField("func_kwargs")
 
     def __init__(
         self,
@@ -201,26 +173,26 @@ class GroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         **kw
     ):
         super().__init__(
-            _input=input,
-            _window=window,
-            _min_periods=min_periods,
-            _center=center,
-            _win_type=win_type,
-            _on=on,
-            _axis=axis,
-            _closed=closed,
-            _func=func,
-            _func_args=func_args,
-            _func_kwargs=func_kwargs,
+            input=input,
+            window=window,
+            min_periods=min_periods,
+            center=center,
+            win_type=win_type,
+            on=on,
+            axis=axis,
+            closed=closed,
+            func=func,
+            func_args=func_args,
+            func_kwargs=func_kwargs,
             **kw
         )
 
     def __call__(self: "GroupbyRollingAgg", r: "GroupByRolling"):
-        groupby = r._input
+        groupby = r.input
         mock_obj = (
             groupby.op.build_mock_groupby()
             .rolling(**r.params)
-            .agg(self._func, *self._func_args, **self._func_kwargs)
+            .agg(self.func, *self.func_args, **self.func_kwargs)
         )
 
         index_value = parse_index(mock_obj.index)
@@ -289,15 +261,15 @@ class GroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
         inp = ctx[op.inputs[0].key]
 
         r = inp.rolling(
-            window=op._window,
-            min_periods=op._min_periods,
-            center=op._center,
-            win_type=op._win_type,
-            on=op._on,
-            axis=op._axis,
-            closed=op._closed,
+            window=op.window,
+            min_periods=op.min_periods,
+            center=op.center,
+            win_type=op.win_type,
+            on=op.on,
+            axis=op.axis,
+            closed=op.closed,
         )
-        result = r.aggregate(op._func, *op._func_args, **op._func_kwargs)
+        result = r.aggregate(op.func, *op.func_args, **op.func_kwargs)
 
         ctx[op.outputs[0].key] = result
 
