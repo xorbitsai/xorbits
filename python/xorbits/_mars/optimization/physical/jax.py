@@ -48,7 +48,7 @@ class JAXRuntimeOptimizer(GraphTraversalOptimizer):
         if op_type in REDUCTION_OP:
             if len(op.axis) == 1 or len(op.axis) == node.ndim:
                 return REDUCTION
-            else:
+            else:  # pragma: no cover
                 return False
         if op_type not in ARITHMETIC_OP:
             return False
@@ -63,7 +63,7 @@ class JAXRuntimeOptimizer(GraphTraversalOptimizer):
             logger, "Refused fusing for jax because the tail node count > 1."
         )
 
-        if fuses == ([], []):
+        if fuses == ([], []):  # pragma: no cover
             return [], []
 
         return self._fuse_nodes(fuses, TensorJAXFuseChunk)
