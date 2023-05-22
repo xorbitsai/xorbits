@@ -69,7 +69,6 @@ def _evaluate(chunk, input_dict):
     elif op_type in REDUCTION_SUPPORT:
         ax = chunk.op.axis
         data = _evaluate(chunk.inputs[0], input_dict)
-
         if len(ax) == data.ndim:
             return _get_jax_function(chunk.op)(data)
         else:
