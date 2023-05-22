@@ -46,30 +46,6 @@ class GroupByRolling(Serializable):
     axis = Int32Field("axis")
     closed = StringField("closed")
 
-    def __init__(
-        self,
-        input=None,
-        window=None,
-        min_periods=None,
-        center=None,
-        win_type=None,
-        on=None,
-        axis=None,
-        closed=None,
-        **kw
-    ):
-        super().__init__(
-            input=input,
-            window=window,
-            min_periods=min_periods,
-            center=center,
-            win_type=win_type,
-            on=on,
-            axis=axis,
-            closed=closed,
-            **kw
-        )
-
     def validate(self):
         """
         leverage pandas itself to validate the parameters.
@@ -156,36 +132,6 @@ class GroupbyRollingAgg(DataFrameOperand, DataFrameOperandMixin):
     func = AnyField("func")
     func_args = TupleField("func_args")
     func_kwargs = DictField("func_kwargs")
-
-    def __init__(
-        self,
-        input=None,
-        window=None,
-        min_periods=None,
-        center=None,  # pylint: disable=redefined-builtin
-        win_type=None,
-        on=None,
-        axis=None,
-        closed=None,
-        func=None,
-        func_args=None,
-        func_kwargs=None,
-        **kw
-    ):
-        super().__init__(
-            input=input,
-            window=window,
-            min_periods=min_periods,
-            center=center,
-            win_type=win_type,
-            on=on,
-            axis=axis,
-            closed=closed,
-            func=func,
-            func_args=func_args,
-            func_kwargs=func_kwargs,
-            **kw
-        )
 
     def __call__(self: "GroupbyRollingAgg", r: "GroupByRolling"):
         groupby = r.input
