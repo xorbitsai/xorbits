@@ -208,3 +208,17 @@ def test_index_gpu_initializer(setup_gpu):
     result = r.execute().fetch(to_cpu=False)
     expected = cudf.Index(raw, name="a")
     pd.testing.assert_index_equal(result.to_pandas(), expected.to_pandas())
+
+
+def test_fetch_data_initializer(setup):
+    df = md.DataFrame(data=[[1, 3], [2, 4]], columns=["col1", "col2"])
+    df2 = md.DataFrame(
+        [[df["col1"].max(), df["col2"].max()]], columns=["max_col1", "max_col2"]
+    )
+
+    assert df2["max_col1"][0].execute().fetch() == 2
+    assert df2["max_col2"][0].execute().fetch() == 4
+
+    df3 = md.DataFrame({"max_col1": [df["col1"].max()], "max_col2": [df["col2"].max()]})
+
+    assert df2 == df3
