@@ -19,21 +19,21 @@ msgstr ""
 
 #: ../../source/development/contributing.rst:5
 msgid "Contributing to Xorbits"
-msgstr ""
+msgstr "参与 Xorbits 项目"
 
 #: ../../source/development/contributing.rst:8
 msgid "Table of contents:"
-msgstr ""
+msgstr "目录"
 
 #: ../../source/development/contributing.rst:11
 msgid "Where to start?"
-msgstr ""
+msgstr "如何开始"
 
 #: ../../source/development/contributing.rst:13
 msgid ""
 "All contributions, bug reports, bug fixes, documentation improvements, "
 "enhancements, and ideas are welcome."
-msgstr ""
+msgstr "我们欢迎你以任何形式参与 Xorbits，包括报告 bug，修复 bug，文档优化，功能增强，或是贡献新的想法。"
 
 #: ../../source/development/contributing.rst:16
 msgid ""
@@ -46,7 +46,12 @@ msgid ""
 "inc/xorbits/issues?labels=good+first+issue&sort=updated&state=open>`_ "
 "where you could start out. Once you've found an interesting issue, you "
 "can return here to get your development environment setup."
-msgstr ""
+msgstr "如果你对 Xorbits 不熟悉，或是第一次接触开源开发，我们建议从 `GitHub issues 页面"
+" <https://github.com/xprobe-inc/xorbits/issues>`_ 下寻找你感兴趣的 issue。"
+"从 `文档 <https://github.com/xprobe-"
+"inc/xorbits/issues?labels=documentation&sort=updated&state=open>`_ 或 "
+"`good first issue <https://github.com/xprobe-"
+"inc/xorbits/issues?labels=good+first+issue&sort=updated&state=open>`_ 开始是不错的选择。当你找到感兴趣的 issue 后，可以回到本文档来设置你的开发环境。"
 
 #: ../../source/development/contributing.rst:25
 msgid ""
@@ -58,6 +63,7 @@ msgid ""
 "check each issue individually, and it's not possible to find the "
 "unassigned ones."
 msgstr ""
+"当你开始解决一个 issue 时，请先将 issue 分配给自己，避免其他人重复你的工作。"
 
 #: ../../source/development/contributing.rst:31
 msgid ""
@@ -67,6 +73,7 @@ msgid ""
 "require refreshing the page to see it). By doing this, it's possible to "
 "filter the list of issues and find only the unassigned ones."
 msgstr ""
+"你可以在 issue 下回复 ``take``，此时 GitHub 将自动把这个 issue 分配给你（这可能需要几秒钟，并且需要刷新页面）。这样，我们便可以过滤出未被分配的 issue。"
 
 #: ../../source/development/contributing.rst:36
 #, python-format
@@ -78,6 +85,12 @@ msgid ""
 " and assign yourself one you like by writing a comment with the exact "
 "text ``take``."
 msgstr ""
+"综上，找到一个适合你的 issue 的最好途径是查看"
+" `尚未分配的 good first issues <https://github.com"
+"/xprobe-"
+"inc/xorbits/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+no%3Aassignee>`_ "
+"，并回复 ``take`` 将这个 issue 分配给自己。"
+
 
 #: ../../source/development/contributing.rst:40
 msgid ""
@@ -89,6 +102,7 @@ msgid ""
 "allow at least a week of inactivity before considering work in the issue "
 "discontinued)."
 msgstr ""
+"如果因为某些原因，你无法继续解决这个问题，请取消分配。你也可以查看已被分配的 issue 列表。如果你想解决已被分配的问题，请礼貌地询问当前在处理该 issue 的人是否可以接手（请在考虑接手前至少等待一周时间）。"
 
 #: ../../source/development/contributing.rst:46
 msgid ""
@@ -103,10 +117,11 @@ msgid ""
 "work, and where things are. Take a look at the next sections to learn "
 "more."
 msgstr ""
+"欢迎加入我们的社区交流群，讨论 Xorbits 的相关问题。我们有 slack 群与微信群等方式，以帮助 Xorbits 的开发者相互取得联系。即使是熟练的开发者，在刚开始的时候也和您一样对 Xorbits 感到陌生和好奇。他们很乐意欢迎你并帮助你了解 Xorbits。请查看下一节以了解更多信息。"
 
 #: ../../source/development/contributing.rst:57
 msgid "Bug reports and enhancement requests"
-msgstr ""
+msgstr "报告 bug 与提出功能诉求"
 
 #: ../../source/development/contributing.rst:59
 msgid ""
@@ -117,6 +132,8 @@ msgid ""
 "<https://matthewrocklin.com/minimal-bug-reports>`_ for tips on writing a "
 "good bug report."
 msgstr ""
+"Bug 报告是让 Xorbits 更加稳定的重要方式。一份完整的 bug 报告能够让维护者复现你遇到的 bug 并提出修复建议。"
+"关于撰写 Bug 报告，请参考这篇 `stackoverflow 文章 <https://stackoverflow.com/help/mcve>`_ 与这篇 `博客 <https://matthewrocklin.com/minimal-bug-reports>`_ 。"
 
 #: ../../source/development/contributing.rst:65
 msgid ""
@@ -125,10 +142,11 @@ msgid ""
 "searching existing bug reports and pull requests to see if the issue has "
 "already been reported and/or fixed."
 msgstr ""
+"报告 bug 前，我们建议在 *主干 (main) 分支* 尝试运行 bug 复现代码，以确认 bug 仍存在。此外，也建议先查看现有的 bug 报告和 pull request，看看该问题是否已经被报告或修复了。"
 
 #: ../../source/development/contributing.rst:69
 msgid "Bug reports must:"
-msgstr ""
+msgstr "Bug 报告需要:"
 
 #: ../../source/development/contributing.rst:71
 msgid ""
@@ -136,26 +154,30 @@ msgid ""
 "You can format the code nicely by using `GitHub Flavored Markdown "
 "<https://github.github.com/github-flavored-markdown/>`_::"
 msgstr ""
+"包含一段简短，自洽的 Python 代码片段，以便重现问题::"
 
 #: ../../source/development/contributing.rst:81
 msgid "Include the full version string of Xorbits and its dependencies."
 msgstr ""
+"包含 Xorbits 的完整版本及相关依赖的版本。"
 
 #: ../../source/development/contributing.rst:83
 msgid ""
 "Explain why the current behavior is wrong/not desired and what you expect"
 " instead."
 msgstr ""
+"解释为什么当前的行为不正确，以及预期的行为是什么。"
 
 #: ../../source/development/contributing.rst:85
 msgid ""
 "The issue will then show up to the Xorbits community and be open to "
 "comments/ideas from others."
 msgstr ""
+"提交 bug 报告后，该 issue 将会稍后显示在 Xorbits 社区中，并允许其他开发者进行回复。"
 
 #: ../../source/development/contributing.rst:90
 msgid "Working with the code"
-msgstr ""
+msgstr "代码开发"
 
 #: ../../source/development/contributing.rst:92
 msgid ""
@@ -163,10 +185,11 @@ msgid ""
 "documentation to improve, you need to learn how to work with GitHub and "
 "the Xorbits code base."
 msgstr ""
+"当你有一个需要修复的问题、需要添加的增强功能或需要改进的文档时，你需要学习如何使用 GitHub 并了解 Xorbits 代码库。"
 
 #: ../../source/development/contributing.rst:98
 msgid "Version control, Git, and GitHub"
-msgstr ""
+msgstr "版本控制，Git，以及 GitHub"
 
 #: ../../source/development/contributing.rst:100
 msgid ""
@@ -176,6 +199,8 @@ msgid ""
 "straightforward and mostly trouble free.  As always, if you are having "
 "difficulties please feel free to ask for help."
 msgstr ""
+"对新用户来说,使用 Git 是参与 Xorbits 开发最令人畏惧的方面之一。开发工作可能因为 Git 变得混乱不堪。"
+"以下指南会帮助你把 Git 变得简单直接且基本上不出错。如果您遇到难以解决的问题，欢迎在社区寻求帮助。"
 
 #: ../../source/development/contributing.rst:105
 msgid ""
@@ -185,26 +210,29 @@ msgid ""
 "scm.com/>`_ for version control to allow many people to work together on "
 "the project."
 msgstr ""
+"Xorbits 的代码托管在 `GitHub <https://www.github.com/xprobe-inc/xorbits>`_ 。"
+"为了参与 Xorbits，你需要注册一个 `免费 GitHub 账户 <https://github.com/signup/free>`_ 。"
+"我们使用 `Git <https://git-scm.com/>`_ 进行版本控制，这样大家可以共同参与项目的开发。"
 
 #: ../../source/development/contributing.rst:110
 msgid "Some great resources for learning Git:"
-msgstr ""
+msgstr "以下是一些很好的学习 Git 的资源:"
 
 #: ../../source/development/contributing.rst:112
 msgid "the `GitHub help pages <https://help.github.com/>`_."
-msgstr ""
+msgstr "`GitHub 帮助页面 <https://help.github.com/>`_ 。"
 
 #: ../../source/development/contributing.rst:113
 msgid "the `NumPy documentation <https://numpy.org/doc/stable/dev/index.html>`_."
-msgstr ""
+msgstr "`NumPy 开发流程 <https://www.numpy.org.cn/dev/development_workflow.html>`_ 。"
 
 #: ../../source/development/contributing.rst:114
 msgid "Matthew Brett's `Pydagogue <https://matthew-brett.github.io/pydagogue/>`_."
-msgstr ""
+msgstr "Matthew Brett 的 `Pydagogue <https://matthew-brett.github.io/pydagogue/>`_ 。"
 
 #: ../../source/development/contributing.rst:117
 msgid "Getting started with Git"
-msgstr ""
+msgstr "开始使用 Git"
 
 #: ../../source/development/contributing.rst:119
 msgid ""
@@ -212,11 +240,12 @@ msgid ""
 " for installing git, setting up your SSH key, and configuring git. All "
 "these steps need to be completed before you can work seamlessly between "
 "your local repository and GitHub."
-msgstr ""
+msgstr "你可以参考 `GitHub 指南 <https://help.github.com/set-up-git-redirect>`_ 来安装 git，设置 SSH key，并配置 git。"
+"你需要完成这些步骤以确保你的本地仓库和 GitHub 可以正常工作，后续的工作才可以顺利进行。"
 
 #: ../../source/development/contributing.rst:126
 msgid "Forking"
-msgstr ""
+msgstr "创建分叉 (forking)"
 
 #: ../../source/development/contributing.rst:128
 msgid ""
@@ -224,32 +253,33 @@ msgid ""
 "project page <https://github.com/xprobe-inc/xorbits>`_ and hit the "
 "``Fork`` button. You will want to clone your fork to your machine::"
 msgstr ""
+"在开发之前，你需要创建自己的 fork。访问 `Xorbits 项目页面 <https://github.com/xprobe-inc/xorbits>`_ 并点击右上角 ``Fork`` 按钮。之后克隆你的 fork 到本地::"
 
 #: ../../source/development/contributing.rst:136
 msgid ""
 "This creates the directory ``xorbits-yourname`` and connects your "
 "repository to the upstream (main project) *Xorbits* repository."
-msgstr ""
+msgstr "上面的代码会创建一个名为 ``xorbits-yourname`` 的本地仓库，并将该本地仓库与 *Xorbits 主仓* 关联。"
 
 #: ../../source/development/contributing.rst:139
 msgid ""
 "Note that performing a shallow clone (with ``--depth==N``, for some ``N``"
 " greater or equal to 1) might break some tests."
-msgstr ""
+msgstr "需要注意的是，进行浅克隆 (带有选项 ``--depth==N``, ``N`` 大于等于 1) 可能会导致某些测试失败。"
 
 #: ../../source/development/contributing.rst:143
 msgid "Creating a branch"
-msgstr ""
+msgstr "创建分支"
 
 #: ../../source/development/contributing.rst:145
 msgid ""
 "You want your main branch to reflect only production-ready code, so "
 "create a feature branch for making your changes. For example::"
-msgstr ""
+msgstr "你的主干 (main) 分支通常应该是能够用于正式生产的，因此在进行代码修改前，你需要创建新的功能 (feature) 分支。举例来说::"
 
 #: ../../source/development/contributing.rst:151
 msgid "The above can be simplified to::"
-msgstr ""
+msgstr "上面的代码可以简化为::"
 
 #: ../../source/development/contributing.rst:155
 msgid ""
@@ -257,14 +287,14 @@ msgid ""
 " any changes in this branch specific to one bug or feature so it is clear"
 " what the branch brings to Xorbits. You can have many shiny-new-features "
 "and switch in between them using the git checkout command."
-msgstr ""
+msgstr "这会将你的当前分支切换为 ``shiny-new-feature``。在这个分支下的改动应该限制在一个 bug 或功能的范围内，这样这个分支上的改动对 Xorbits 的影响将会非常清晰。你可以有多个功能分支，并使用 ``git checkout`` 命令在这些分支之间来回切换。"
 
 #: ../../source/development/contributing.rst:160
 msgid ""
 "When creating this branch, make sure your main branch is up to date with "
 "the latest upstream main version. To update your local main branch, you "
 "can do::"
-msgstr ""
+msgstr "从主干分支创建分支前，请确保你的主干分支是最新的。你可以用下面的命令更新主干分支::"
 
 #: ../../source/development/contributing.rst:167
 msgid ""
@@ -272,6 +302,7 @@ msgid ""
 " created the branch, check the section on :ref:`updating a PR "
 "<contributing.update-pr>`."
 msgstr ""
+"当你想添加主干分支的改动到你的功能分支时，请见 :ref:`更新 PR <contributing.update-pr>` 。"
 
 #: ../../source/development/contributing.rst:172
 msgid "Contributing your changes to Xorbits"
