@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/set.rst:2
 msgid "Set routines"
@@ -53,6 +53,16 @@ msgstr ""
 
 #: ../../source/reference/numpy/set.rst:28:<autosummary>:1
 msgid ""
+":py:obj:`intersect1d <xorbits.numpy.intersect1d>`\\ \\(ar1\\, ar2\\[\\, "
+"assume\\_unique\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/set.rst:28:<autosummary>:1
+msgid "Find the intersection of two arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/set.rst:28:<autosummary>:1
+msgid ""
 ":py:obj:`isin <xorbits.numpy.isin>`\\ \\(element\\, test\\_elements\\[\\,"
 " ...\\]\\)"
 msgstr ""
@@ -69,6 +79,16 @@ msgstr ""
 
 #: ../../source/reference/numpy/set.rst:28:<autosummary>:1
 msgid "Find the set difference of two arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/set.rst:28:<autosummary>:1
+msgid ""
+":py:obj:`setxor1d <xorbits.numpy.setxor1d>`\\ \\(ar1\\, ar2\\[\\, "
+"assume\\_unique\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/set.rst:28:<autosummary>:1
+msgid "Find the set exclusive-or of two arrays."
 msgstr ""
 
 #: ../../source/reference/numpy/set.rst:28:<autosummary>:1

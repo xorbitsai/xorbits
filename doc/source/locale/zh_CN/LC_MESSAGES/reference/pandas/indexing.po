@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/pandas/indexing.rst:5
 msgid "Index objects"
@@ -68,9 +68,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
-msgid ""
-"Return if the index is monotonic increasing (only equal or increasing) "
-"values."
+msgid "Return a boolean if the values are equal or increasing."
 msgstr ""
 
 #: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
@@ -80,9 +78,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
-msgid ""
-"Return if the index is monotonic decreasing (only equal or decreasing) "
-"values."
+msgid "Return a boolean if the values are equal or decreasing."
 msgstr ""
 
 #: ../../source/reference/pandas/indexing.rst:44:<autosummary>:1
@@ -253,7 +249,7 @@ msgstr ""
 #: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
 msgid ""
 ":py:obj:`Index.factorize <xorbits.pandas.Index.factorize>`\\ "
-"\\(\\[sort\\, na\\_sentinel\\]\\)"
+"\\(\\[sort\\, na\\_sentinel\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/indexing.rst:83:<autosummary>:1
@@ -668,9 +664,7 @@ msgid "Append a collection of Index options together."
 msgstr ""
 
 #: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
-msgid ""
-":py:obj:`Index.join <xorbits.pandas.Index.join>`\\ \\(other\\[\\, how\\, "
-"level\\, ...\\]\\)"
+msgid ":py:obj:`Index.join <xorbits.pandas.Index.join>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/indexing.rst:144:<autosummary>:1
