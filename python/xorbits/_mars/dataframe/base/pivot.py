@@ -40,7 +40,7 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         super().__init__(**kw)
 
     @classmethod
-    def execute_map(cls, ctx, op):
+    def execute_map(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
         chunk = op.outputs[0]
         df = ctx[op.inputs[0].key]
 
@@ -55,7 +55,7 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
             )
 
     @classmethod
-    def execute_reduce(cls, ctx, op):
+    def execute_reduce(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
         chunk = op.outputs[0]
         input_idx_to_df = dict(op.iter_mapper_data(ctx))
         row_idxes = sorted(input_idx_to_df.keys())
@@ -91,7 +91,6 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         in_df = build_concatenated_rows_frame(op.inputs[0])
         out_df = op.outputs[0]
         output_type = OutputType.dataframe
-        # chunk_shape = (in_df.chunk_shape[0], 1)
         chunk_shape = in_df.chunk_shape
 
         # generate map chunks
