@@ -20,10 +20,8 @@ import pandas as pd
 from ... import opcodes
 from ...core import OutputType
 from ...core.context import Context
-from ...core.custom_log import redirect_custom_log
 from ...core.operand import MapReduceOperand, OperandStage
 from ...serialization.serializables import AnyField, Int32Field
-from ...utils import enter_current_session
 from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
 from ..utils import build_concatenated_rows_frame, hash_dataframe_on, parse_index
 
@@ -64,8 +62,6 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         ctx[chunk.key] = pd.concat(res, axis=0)
 
     @classmethod
-    @redirect_custom_log
-    @enter_current_session
     def execute(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
         if op.stage == OperandStage.map:
             cls.execute_map(ctx, op)
