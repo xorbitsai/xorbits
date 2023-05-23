@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/pandas/frame.rst:5
 msgid "DataFrame"
@@ -692,7 +692,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:127:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.applymap <xorbits.pandas.DataFrame.applymap>`\\ "
-"\\(func\\[\\, na\\_action\\]\\)"
+"\\(func\\[\\, na\\_action\\, skip\\_infer\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:127:<autosummary>:1
@@ -760,7 +760,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:127:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.expanding <xorbits.pandas.DataFrame.expanding>`\\ "
-"\\(\\[min\\_periods\\, center\\, axis\\]\\)"
+"\\(\\[min\\_periods\\, axis\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:127:<autosummary>:1
@@ -822,7 +822,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:171:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.corr <xorbits.pandas.DataFrame.corr>`\\ "
-"\\(\\[method\\, min\\_periods\\]\\)"
+"\\(\\[method\\, min\\_periods\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:171:<autosummary>:1
@@ -832,7 +832,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:171:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.corrwith <xorbits.pandas.DataFrame.corrwith>`\\ "
-"\\(other\\[\\, axis\\, drop\\, method\\]\\)"
+"\\(other\\[\\, axis\\, drop\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:171:<autosummary>:1
@@ -852,7 +852,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:171:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.cov <xorbits.pandas.DataFrame.cov>`\\ "
-"\\(\\[min\\_periods\\, ddof\\]\\)"
+"\\(\\[min\\_periods\\, ddof\\, numeric\\_only\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:171:<autosummary>:1
@@ -1249,7 +1249,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:203:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.idxmax <xorbits.pandas.DataFrame.idxmax>`\\ "
-"\\(\\[axis\\, skipna\\]\\)"
+"\\(\\[axis\\, skipna\\, numeric\\_only\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:203:<autosummary>:1
@@ -1259,7 +1259,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:203:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.idxmin <xorbits.pandas.DataFrame.idxmin>`\\ "
-"\\(\\[axis\\, skipna\\]\\)"
+"\\(\\[axis\\, skipna\\, numeric\\_only\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:203:<autosummary>:1
@@ -1338,7 +1338,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:203:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.set_axis <xorbits.pandas.DataFrame.set_axis>`\\ "
-"\\(labels\\[\\, axis\\, inplace\\]\\)"
+"\\(labels\\[\\, axis\\, copy\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:203:<autosummary>:1
@@ -1499,8 +1499,8 @@ msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:247:<autosummary>:1
 msgid ""
-":py:obj:`DataFrame.pivot <xorbits.pandas.DataFrame.pivot>`\\ "
-"\\(\\[index\\, columns\\, values\\]\\)"
+":py:obj:`DataFrame.pivot <xorbits.pandas.DataFrame.pivot>`\\ \\(\\*\\[\\,"
+" index\\, columns\\, values\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:247:<autosummary>:1
@@ -2049,6 +2049,16 @@ msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
 msgid ""
+":py:obj:`DataFrame.to_orc <xorbits.pandas.DataFrame.to_orc>`\\ "
+"\\(\\[path\\, engine\\, index\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
+msgid "Write a DataFrame to the ORC format."
+msgstr ""
+
+#: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
+msgid ""
 ":py:obj:`DataFrame.to_parquet <xorbits.pandas.DataFrame.to_parquet>`\\ "
 "\\(path\\[\\, engine\\, ...\\]\\)"
 msgstr ""
@@ -2098,9 +2108,7 @@ msgid "Write records stored in a DataFrame to a SQL database."
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
-msgid ""
-":py:obj:`DataFrame.to_dict <xorbits.pandas.DataFrame.to_dict>`\\ "
-"\\(\\[orient\\, into\\]\\)"
+msgid ":py:obj:`DataFrame.to_dict <xorbits.pandas.DataFrame.to_dict>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
@@ -2128,9 +2136,7 @@ msgid "Convert the object to a JSON string."
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
-msgid ""
-":py:obj:`DataFrame.to_html <xorbits.pandas.DataFrame.to_html>`\\ "
-"\\(\\[buf\\, columns\\, col\\_space\\, ...\\]\\)"
+msgid ":py:obj:`DataFrame.to_html <xorbits.pandas.DataFrame.to_html>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
@@ -2160,7 +2166,7 @@ msgstr ""
 #: ../../source/reference/pandas/frame.rst:393:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.to_stata <xorbits.pandas.DataFrame.to_stata>`\\ "
-"\\(path\\[\\, convert\\_dates\\, ...\\]\\)"
+"\\(path\\, \\*\\[\\, convert\\_dates\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/frame.rst:393:<autosummary>:1

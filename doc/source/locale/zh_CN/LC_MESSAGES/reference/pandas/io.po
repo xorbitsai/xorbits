@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/pandas/io.rst:5
 msgid "Input/output"
@@ -50,9 +50,7 @@ msgid "Flat file"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:25:<autosummary>:1
-msgid ""
-":py:obj:`read_table <xorbits.pandas.read_table>`\\ "
-"\\(filepath\\_or\\_buffer\\[\\, sep\\, ...\\]\\)"
+msgid ":py:obj:`read_table <xorbits.pandas.read_table>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:25:<autosummary>:1
@@ -82,7 +80,7 @@ msgstr ""
 #: ../../source/reference/pandas/io.rst:25:<autosummary>:1
 msgid ""
 ":py:obj:`read_fwf <xorbits.pandas.read_fwf>`\\ "
-"\\(filepath\\_or\\_buffer\\[\\, colspecs\\, ...\\]\\)"
+"\\(filepath\\_or\\_buffer\\, \\*\\[\\, colspecs\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:25:<autosummary>:1
@@ -138,9 +136,7 @@ msgid "JSON"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:67:<autosummary>:1
-msgid ""
-":py:obj:`read_json <xorbits.pandas.read_json>`\\ \\(\\[path\\_or\\_buf\\,"
-" orient\\, typ\\, dtype\\, ...\\]\\)"
+msgid ":py:obj:`read_json <xorbits.pandas.read_json>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:67:<autosummary>:1
@@ -173,8 +169,8 @@ msgstr ""
 
 #: ../../source/reference/pandas/io.rst:84:<autosummary>:1
 msgid ""
-":py:obj:`read_html <xorbits.pandas.read_html>`\\ \\(io\\[\\, match\\, "
-"flavor\\, header\\, ...\\]\\)"
+":py:obj:`read_html <xorbits.pandas.read_html>`\\ \\(io\\, \\*\\[\\, "
+"match\\, flavor\\, header\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:84:<autosummary>:1
@@ -182,9 +178,7 @@ msgid "Read HTML tables into a ``list`` of ``DataFrame`` objects."
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:84:<autosummary>:1
-msgid ""
-":py:obj:`DataFrame.to_html <xorbits.pandas.DataFrame.to_html>`\\ "
-"\\(\\[buf\\, columns\\, col\\_space\\, ...\\]\\)"
+msgid ":py:obj:`DataFrame.to_html <xorbits.pandas.DataFrame.to_html>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:84:<autosummary>:1
@@ -197,8 +191,8 @@ msgstr ""
 
 #: ../../source/reference/pandas/io.rst:101:<autosummary>:1
 msgid ""
-":py:obj:`read_xml <xorbits.pandas.read_xml>`\\ "
-"\\(path\\_or\\_buffer\\[\\, xpath\\, ...\\]\\)"
+":py:obj:`read_xml <xorbits.pandas.read_xml>`\\ \\(path\\_or\\_buffer\\, "
+"\\*\\[\\, xpath\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:101:<autosummary>:1
@@ -309,6 +303,16 @@ msgstr ""
 msgid "Load an ORC object from the file path, returning a DataFrame."
 msgstr ""
 
+#: ../../source/reference/pandas/io.rst:161:<autosummary>:1
+msgid ""
+":py:obj:`DataFrame.to_orc <xorbits.pandas.DataFrame.to_orc>`\\ "
+"\\(\\[path\\, engine\\, index\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/io.rst:161:<autosummary>:1
+msgid "Write a DataFrame to the ORC format."
+msgstr ""
+
 #: ../../source/reference/pandas/io.rst:163
 msgid "SAS"
 msgstr ""
@@ -400,7 +404,7 @@ msgstr ""
 #: ../../source/reference/pandas/io.rst:200:<autosummary>:1
 msgid ""
 ":py:obj:`read_stata <xorbits.pandas.read_stata>`\\ "
-"\\(filepath\\_or\\_buffer\\[\\, ...\\]\\)"
+"\\(filepath\\_or\\_buffer\\, \\*\\[\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:200:<autosummary>:1
@@ -410,7 +414,7 @@ msgstr ""
 #: ../../source/reference/pandas/io.rst:200:<autosummary>:1
 msgid ""
 ":py:obj:`DataFrame.to_stata <xorbits.pandas.DataFrame.to_stata>`\\ "
-"\\(path\\[\\, convert\\_dates\\, ...\\]\\)"
+"\\(path\\, \\*\\[\\, convert\\_dates\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/io.rst:200:<autosummary>:1

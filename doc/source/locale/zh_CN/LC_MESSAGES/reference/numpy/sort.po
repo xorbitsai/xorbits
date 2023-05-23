@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/sort.rst:2
 msgid "Sorting, searching, and counting"
@@ -36,6 +36,14 @@ msgid "Return a sorted copy of an array."
 msgstr ""
 
 #: ../../source/reference/numpy/sort.rst:18:<autosummary>:1
+msgid ":py:obj:`lexsort <xorbits.numpy.lexsort>`\\ \\(keys\\[\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/sort.rst:18:<autosummary>:1
+msgid "Perform an indirect stable sort using a sequence of keys."
+msgstr ""
+
+#: ../../source/reference/numpy/sort.rst:18:<autosummary>:1
 msgid ""
 ":py:obj:`argsort <xorbits.numpy.argsort>`\\ \\(a\\[\\, axis\\, kind\\, "
 "parallel\\_kind\\, ...\\]\\)"
@@ -53,6 +61,14 @@ msgstr ""
 
 #: ../../source/reference/numpy/sort.rst:18:<autosummary>:1
 msgid "Sort an array in-place."
+msgstr ""
+
+#: ../../source/reference/numpy/sort.rst:18:<autosummary>:1
+msgid ":py:obj:`sort_complex <xorbits.numpy.sort_complex>`\\ \\(a\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/sort.rst:18:<autosummary>:1
+msgid "Sort a complex array using the real part first, then the imaginary part."
 msgstr ""
 
 #: ../../source/reference/numpy/sort.rst:18:<autosummary>:1
