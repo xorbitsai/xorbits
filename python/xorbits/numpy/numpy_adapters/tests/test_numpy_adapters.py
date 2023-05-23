@@ -145,6 +145,20 @@ def test_tensorinv_fallback(setup):
         assert np.equal(xnp_output.all(), np_output.all())
 
 
+def test_ndarray_fallback(setup):
+    with pytest.warns(Warning) as w:
+        a = np.array([1, 2, 3])
+        b = xnp.array([1, 2, 3])
+        xnp_output = b.tolist().fetch()
+        np_output = a.tolist()
+
+        assert f"Tensor.tolist will fallback to Numpy" == str(w[0].message)
+        assert isinstance(xnp_output, list)
+        for i in range(0, len(b)):
+            assert np_output[i] == xnp_output[i]
+            assert xnp_output[i] == i + 1
+
+
 def test_busday_offset(setup):
     with pytest.warns(Warning) as w:
         xnp_output = xnp.busday_offset("2011-10", 0, roll="forward").execute().fetch()
@@ -191,4 +205,9 @@ def test_docstring():
     docstring = xnp.random.default_rng.__doc__
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from numpy.random."
+    )
+
+    docstring = xnp.ndarray.__doc__
+    assert docstring is not None and docstring.endswith(
+        "This docstring was copied from numpy."
     )

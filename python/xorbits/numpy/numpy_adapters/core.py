@@ -16,11 +16,17 @@ import inspect
 import warnings
 from functools import lru_cache
 from types import ModuleType
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Type
 
 import numpy as np
 
-from ...core.adapter import MarsOutputType, wrap_mars_callable
+from ...core import DataType
+from ...core.adapter import (
+    ClsMethodWrapper,
+    MarsOutputType,
+    get_cls_members,
+    wrap_mars_callable,
+)
 from ...core.utils.fallback import wrap_fallback_module_method
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
@@ -55,21 +61,47 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
 }
 
 
-def _get_output_type(func: Callable) -> MarsOutputType:
-    try:  # pragma: no cover
-        return_annotation = inspect.signature(func).return_annotation
-        if return_annotation is inspect.Signature.empty:
-            # mostly for python3.7 whose return_annotation is always empty
-            return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
-        all_types = [t.strip() for t in return_annotation.split("|")]
+class NumpyClsMethodWrapper(ClsMethodWrapper):
+    def generate_fallback_data(self, mars_entity):
+        return mars_entity.to_numpy()
 
-        return (
-            MarsOutputType.tensor if "ndarray" in all_types else MarsOutputType.object
-        )
-    except (
-        ValueError
-    ):  # some np methods return objects and inspect.signature throws a ValueError
-        return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
+    def generate_warning_msg(self, entity, func_name):
+        return f"{type(entity).__name__}.{func_name} will fallback to Numpy"
+
+    def _get_output_type(self, func: Callable) -> MarsOutputType:
+        try:  # pragma: no cover
+            return_annotation = inspect.signature(func).return_annotation
+            if return_annotation is inspect.Signature.empty:
+                # mostly for python3.7 whose return_annotation is always empty
+                return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
+            all_types = [t.strip() for t in return_annotation.split("|")]
+
+            return (
+                MarsOutputType.tensor
+                if "ndarray" in all_types
+                else MarsOutputType.object
+            )
+        except (
+            ValueError
+        ):  # some np methods return objects and inspect.signature throws a ValueError
+            return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
+
+    def generate_docstring(self):
+        return np
+
+
+def _collect_numpy_cls_members(np_cls: Type, data_type: DataType):
+    members = get_cls_members(data_type)
+    for name, np_cls_member in inspect.getmembers(np_cls):
+        if name not in members and not name.startswith("_"):
+            numpy_cls_method_wrapper = NumpyClsMethodWrapper(
+                library_cls=np_cls, func_name=name, fallback_warning=True
+            )
+            members[name] = numpy_cls_method_wrapper.wrap_methods()
+
+
+def _collect_numpy_ndarray_members():
+    _collect_numpy_cls_members(np.ndarray, DataType.tensor)
 
 
 @lru_cache(maxsize=1)
@@ -91,7 +123,12 @@ def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
                     else "numpy." + np_mod.__name__
                 )
                 warning_str = f"xorbits.{np_mod_str}.{name} will fallback to NumPy"
-                output_type = _get_output_type(getattr(np_mod, name))
+                numpy_cls_method_wrapper = NumpyClsMethodWrapper(
+                    library_cls=np_mod_str, func_name=name
+                )
+                output_type = numpy_cls_method_wrapper._get_output_type(
+                    func=getattr(np_mod, name)
+                )
 
                 module_methods[name] = wrap_mars_callable(
                     wrap_fallback_module_method(np_mod, name, output_type, warning_str),
