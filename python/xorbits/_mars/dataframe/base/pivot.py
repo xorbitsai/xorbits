@@ -34,21 +34,17 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
     columns = AnyField("columns", default=None)
     index = AnyField("index", default=None)
     values = AnyField("values", default=None)
-    _shuffle_size = Int32Field("shuffle_size")
-
-    def __init__(self, **kw):
-        super().__init__(**kw)
+    shuffle_size = Int32Field("shuffle_size")
 
     @classmethod
     def execute_map(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
         chunk = op.outputs[0]
         df = ctx[op.inputs[0].key]
 
-        filters = hash_dataframe_on(df, op.index, op._shuffle_size)
+        filters = hash_dataframe_on(df, op.index, op.shuffle_size)
 
-        for index_idx, _ in enumerate(filters):
+        for index_idx, index_filter in enumerate(filters):
             reducer_index = (index_idx, chunk.index[1])
-            index_filter = filters[index_idx]
             ctx[chunk.key, reducer_index] = (
                 ctx.get_current_chunk().index,
                 df.iloc[index_filter],
@@ -98,7 +94,7 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         for chunk in in_df.chunks:
             map_op = op.copy().reset_key()
             map_op.stage = OperandStage.map
-            map_op._shuffle_size = chunk_shape[0]
+            map_op.shuffle_size = chunk_shape[0]
             map_op._output_types = [output_type]
             chunk_inputs = [chunk]
             map_chunks.append(
