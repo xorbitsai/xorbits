@@ -106,15 +106,15 @@ class GraphTraversalOptimizer(RuntimeOptimizer):
         graph: ChunkGraph,
         node: ChunkType,
         graph_results: Set[ChunkType],
-        cached_can_fuse: Callable[[int, str], bool],
-    ):
+        cached_can_fuse: Callable,
+    ) -> _Fuse:
         fuse_graph = ChunkGraph()
         fuse_graph.add_node(node)
-        fuse_heads = []
-        fuse_tails = []
-        tail_reduction_node = None
+        fuse_heads: ChunkType = []
+        fuse_tails: ChunkType = []
+        tail_reduction_node: ChunkType = None
 
-        stack = [node]
+        stack: List[ChunkType] = [node]
         # Do a full search of sub graph even the fuse tails > 1
         while len(stack) != 0:
             node = stack.pop()
@@ -158,9 +158,9 @@ class GraphTraversalOptimizer(RuntimeOptimizer):
 
         return _Fuse(fuse_graph, fuse_heads, fuse_tails)
 
-    def _graph_traverse(self, logger, logger_str):
-        fuses = []
-        explored = set()
+    def _graph_traverse(self, logger, logger_str: str) -> List[_Fuse]:
+        fuses: List[_Fuse] = []
+        explored: Set[ChunkType] = set()
         cached_can_fuse = functools.lru_cache(maxsize=None)(self._can_fuse)
 
         graph = self._graph
@@ -182,9 +182,11 @@ class GraphTraversalOptimizer(RuntimeOptimizer):
                         logger.info(logger_str)
         return fuses
 
-    def _fuse_nodes(self, fuses: List[_Fuse], fuse_cls):
+    def _fuse_nodes(
+        self, fuses: List[_Fuse], fuse_cls
+    ) -> Tuple[List[_Fuse], List[ChunkType]]:
         graph = self._graph
-        fused_nodes = []
+        fused_nodes: List[ChunkType] = []
 
         for fuse in fuses:
             fuse_graph = fuse.graph
