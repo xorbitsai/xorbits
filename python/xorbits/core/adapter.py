@@ -160,7 +160,7 @@ class ClsMethodWrapper(ABC):
 
         Parameters
         ----------
-        mars_entity
+        mars_entity: MarsEntity
 
         Returns
         -------
@@ -174,8 +174,8 @@ class ClsMethodWrapper(ABC):
 
         Parameters
         ----------
-        mars_entity
-        func_name
+        mars_entity: MarsEntity
+        func_name: str
 
         Returns
         -------
@@ -189,7 +189,7 @@ class ClsMethodWrapper(ABC):
 
         Parameters
         ----------
-        func
+        func: Callable
 
         Returns
         -------
@@ -205,14 +205,6 @@ class ClsMethodWrapper(ABC):
     def wrap_method(self):
         """
         wrap pd.DataFrame member functions, np.ndarray methods, and other methods
-
-        Parameters
-        ----------
-        entity
-
-        Returns
-        -------
-
         """
 
         @functools.wraps(getattr(self.library_cls, self.func_name))
