@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/linalg.rst:6
 msgid "Linear algebra (:mod:`xorbits.numpy.linalg`)"
@@ -85,6 +85,18 @@ msgid "Dot product of two arrays."
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`linalg.multi_dot <xorbits.numpy.linalg.multi_dot>`\\ "
+"\\(arrays\\, \\*\\[\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+"Compute the dot product of two or more arrays in a single function call, "
+"while automatically selecting the fastest evaluation order."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
 msgid ":py:obj:`vdot <xorbits.numpy.vdot>`\\ \\(a\\, b\\, \\/\\)"
 msgstr ""
 
@@ -98,6 +110,14 @@ msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
 msgid "Inner product of two arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ":py:obj:`outer <xorbits.numpy.outer>`\\ \\(a\\, b\\[\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Compute the outer product of two vectors."
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
@@ -128,6 +148,36 @@ msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
 msgid "einsum(subscripts, *operands, out=None, dtype=None, order='K',"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`einsum_path <xorbits.numpy.einsum_path>`\\ \\(subscripts\\, "
+"\\*operands\\[\\, optimize\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+"Evaluates the lowest cost contraction order for an einsum expression by "
+"considering the creation of intermediate arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`linalg.matrix_power <xorbits.numpy.linalg.matrix_power>`\\ "
+"\\(a\\, n\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Raise a square matrix to the (integer) power `n`."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid ":py:obj:`kron <xorbits.numpy.kron>`\\ \\(a\\, b\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:67:<autosummary>:1
+msgid "Kronecker product of two arrays."
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:69
@@ -164,6 +214,42 @@ msgstr ""
 msgid "Matrix eigenvalues"
 msgstr ""
 
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid ":py:obj:`linalg.eig <xorbits.numpy.linalg.eig>`\\ \\(a\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid "Compute the eigenvalues and right eigenvectors of a square array."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid ":py:obj:`linalg.eigh <xorbits.numpy.linalg.eigh>`\\ \\(a\\[\\, UPLO\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid ""
+"Return the eigenvalues and eigenvectors of a complex Hermitian (conjugate"
+" symmetric) or a real symmetric matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid ":py:obj:`linalg.eigvals <xorbits.numpy.linalg.eigvals>`\\ \\(a\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid "Compute the eigenvalues of a general matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid ""
+":py:obj:`linalg.eigvalsh <xorbits.numpy.linalg.eigvalsh>`\\ \\(a\\[\\, "
+"UPLO\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:86:<autosummary>:1
+msgid "Compute the eigenvalues of a complex Hermitian or real symmetric matrix."
+msgstr ""
+
 #: ../../source/reference/numpy/linalg.rst:88
 msgid "Norms and other numbers"
 msgstr ""
@@ -179,11 +265,47 @@ msgid "Matrix or vector norm."
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
-msgid ":py:obj:`trace <trace>`\\"
+msgid ":py:obj:`linalg.cond <xorbits.numpy.linalg.cond>`\\ \\(x\\[\\, p\\]\\)"
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
-msgid "program/module to trace Python program or function execution"
+msgid "Compute the condition number of a matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid ":py:obj:`linalg.det <xorbits.numpy.linalg.det>`\\ \\(a\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid "Compute the determinant of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid ""
+":py:obj:`linalg.matrix_rank <xorbits.numpy.linalg.matrix_rank>`\\ "
+"\\(A\\[\\, tol\\, hermitian\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid "Return matrix rank of array using SVD method"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid ":py:obj:`linalg.slogdet <xorbits.numpy.linalg.slogdet>`\\ \\(a\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid "Compute the sign and (natural) logarithm of the determinant of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid ""
+":py:obj:`trace <xorbits.numpy.trace>`\\ \\(a\\[\\, offset\\, axis1\\, "
+"axis2\\, dtype\\, out\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:98:<autosummary>:1
+msgid "Return the sum along diagonals of the array."
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:100
@@ -201,6 +323,26 @@ msgid "Solve a linear matrix equation, or system of linear scalar equations."
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid ""
+":py:obj:`linalg.tensorsolve <xorbits.numpy.linalg.tensorsolve>`\\ \\(a\\,"
+" b\\[\\, axes\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid "Solve the tensor equation ``a x = b`` for x."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid ""
+":py:obj:`linalg.lstsq <xorbits.numpy.linalg.lstsq>`\\ \\(a\\, b\\[\\, "
+"rcond\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid "Return the least-squares solution to a linear matrix equation."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
 msgid ":py:obj:`linalg.inv <xorbits.numpy.linalg.inv>`\\ \\(a\\[\\, sparse\\]\\)"
 msgstr ""
 
@@ -208,8 +350,36 @@ msgstr ""
 msgid "Compute the (multiplicative) inverse of a matrix."
 msgstr ""
 
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid ""
+":py:obj:`linalg.pinv <xorbits.numpy.linalg.pinv>`\\ \\(a\\[\\, rcond\\, "
+"hermitian\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid "Compute the (Moore-Penrose) pseudo-inverse of a matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid ""
+":py:obj:`linalg.tensorinv <xorbits.numpy.linalg.tensorinv>`\\ \\(a\\[\\, "
+"ind\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:110:<autosummary>:1
+msgid "Compute the 'inverse' of an N-dimensional array."
+msgstr ""
+
 #: ../../source/reference/numpy/linalg.rst:112
 msgid "Exceptions"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:117:<autosummary>:1
+msgid ":py:obj:`linalg.LinAlgError <xorbits.numpy.linalg.LinAlgError>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/linalg.rst:117:<autosummary>:1
+msgid "Generic Python-exception-derived object raised by linalg functions."
 msgstr ""
 
 #: ../../source/reference/numpy/linalg.rst:121
@@ -236,4 +406,3 @@ msgid ""
 "array are interpreted as vectors or matrices, as appropriate for each "
 "operation."
 msgstr ""
-

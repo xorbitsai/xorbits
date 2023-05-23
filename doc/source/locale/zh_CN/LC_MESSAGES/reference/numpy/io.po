@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/io.rst:4
 msgid "Input and output"
@@ -23,6 +23,46 @@ msgstr ""
 
 #: ../../source/reference/numpy/io.rst:9
 msgid "NumPy binary files (NPY, NPZ)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid ""
+":py:obj:`load <xorbits.numpy.load>`\\ \\(file\\[\\, mmap\\_mode\\, "
+"allow\\_pickle\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid "Load arrays or pickled objects from ``.npy``, ``.npz`` or pickled files."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid ""
+":py:obj:`save <xorbits.numpy.save>`\\ \\(file\\, arr\\[\\, "
+"allow\\_pickle\\, fix\\_imports\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid "Save an array to a binary file in NumPy ``.npy`` format."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid ""
+":py:obj:`savez <xorbits.numpy.savez>`\\ \\(file\\, \\*args\\, "
+"\\*\\*kwds\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid "Save several arrays into a single file in uncompressed ``.npz`` format."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid ""
+":py:obj:`savez_compressed <xorbits.numpy.savez_compressed>`\\ \\(file\\, "
+"\\*args\\, \\*\\*kwds\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:17:<autosummary>:1
+msgid "Save several arrays into a single file in compressed ``.npz`` format."
 msgstr ""
 
 #: ../../source/reference/numpy/io.rst:18
@@ -35,8 +75,68 @@ msgstr ""
 msgid "Text files"
 msgstr ""
 
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`loadtxt <xorbits.numpy.loadtxt>`\\ \\(fname\\[\\, dtype\\, "
+"comments\\, delimiter\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid "Load data from a text file."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`savetxt <xorbits.numpy.savetxt>`\\ \\(fname\\, X\\[\\, fmt\\, "
+"delimiter\\, newline\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid "Save an array to a text file."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`genfromtxt <xorbits.numpy.genfromtxt>`\\ \\(fname\\[\\, dtype\\,"
+" comments\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid "Load data from a text file, with missing values handled as specified."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`fromregex <xorbits.numpy.fromregex>`\\ \\(file\\, regexp\\, "
+"dtype\\[\\, encoding\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid "Construct an array from a text file, using regular expression parsing."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`fromstring <xorbits.numpy.fromstring>`\\ \\(string\\[\\, "
+"dtype\\, count\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:33:<autosummary>:1
+msgid "A new 1-D array initialized from text data in a string."
+msgstr ""
+
 #: ../../source/reference/numpy/io.rst:35
 msgid "Raw binary files"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid ""
+":py:obj:`fromfile <xorbits.numpy.fromfile>`\\ \\(file\\[\\, dtype\\, "
+"count\\, sep\\, offset\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:47:<autosummary>:1
+msgid "Construct an array from data in a text or binary file."
 msgstr ""
 
 #: ../../source/reference/numpy/io.rst:47:<autosummary>:1
@@ -79,20 +179,146 @@ msgstr ""
 msgid "String formatting"
 msgstr ""
 
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid ""
+":py:obj:`array2string <xorbits.numpy.array2string>`\\ \\(a\\[\\, "
+"max\\_line\\_width\\, precision\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid "Return a string representation of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid ""
+":py:obj:`array_repr <xorbits.numpy.array_repr>`\\ \\(arr\\[\\, "
+"max\\_line\\_width\\, precision\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid "Return the string representation of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid ""
+":py:obj:`array_str <xorbits.numpy.array_str>`\\ \\(a\\[\\, "
+"max\\_line\\_width\\, precision\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid "Return a string representation of the data in an array."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid ""
+":py:obj:`format_float_positional "
+"<xorbits.numpy.format_float_positional>`\\ \\(x\\[\\, precision\\, "
+"...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid "Format a floating-point scalar as a decimal string in positional notation."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid ""
+":py:obj:`format_float_scientific "
+"<xorbits.numpy.format_float_scientific>`\\ \\(x\\[\\, precision\\, "
+"...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:58:<autosummary>:1
+msgid "Format a floating-point scalar as a decimal string in scientific notation."
+msgstr ""
+
 #: ../../source/reference/numpy/io.rst:60
 msgid "Memory mapping files"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:66:<autosummary>:1
+msgid ":py:obj:`memmap <xorbits.numpy.memmap>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:66:<autosummary>:1
+msgid "Create a memory-map to an array stored in a *binary* file on disk."
 msgstr ""
 
 #: ../../source/reference/numpy/io.rst:68
 msgid "Text formatting options"
 msgstr ""
 
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid ""
+":py:obj:`set_printoptions <xorbits.numpy.set_printoptions>`\\ "
+"\\(\\[precision\\, threshold\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid "Set printing options."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid ":py:obj:`get_printoptions <xorbits.numpy.get_printoptions>`\\ \\(\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid "Return the current print options."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid ""
+":py:obj:`set_string_function <xorbits.numpy.set_string_function>`\\ "
+"\\(f\\[\\, repr\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid "Set a Python function to be used when pretty printing arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid ""
+":py:obj:`printoptions <xorbits.numpy.printoptions>`\\ \\(\\*args\\, "
+"\\*\\*kwargs\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:76:<autosummary>:1
+msgid "Context manager for setting print options."
+msgstr ""
+
 #: ../../source/reference/numpy/io.rst:78
 msgid "Base-n representations"
 msgstr ""
 
+#: ../../source/reference/numpy/io.rst:84:<autosummary>:1
+msgid ""
+":py:obj:`binary_repr <xorbits.numpy.binary_repr>`\\ \\(num\\[\\, "
+"width\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:84:<autosummary>:1
+msgid "Return the binary representation of the input number as a string."
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:84:<autosummary>:1
+msgid ""
+":py:obj:`base_repr <xorbits.numpy.base_repr>`\\ \\(number\\[\\, base\\, "
+"padding\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:84:<autosummary>:1
+msgid "Return a string representation of a number in the given base system."
+msgstr ""
+
 #: ../../source/reference/numpy/io.rst:86
 msgid "Data sources"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:91:<autosummary>:1
+msgid ":py:obj:`DataSource <xorbits.numpy.DataSource>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/io.rst:91:<autosummary>:1
+msgid "DataSource(destpath='.')"
 msgstr ""
 
 #: ../../source/reference/numpy/io.rst:93
