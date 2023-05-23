@@ -59,6 +59,9 @@ jobs:
         run: cd python/xorbits/web/ui && npx eslint .
       - name: Prettier Check
         run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
+      # check doc build
+      - name: Build doc
+        run: cd doc && pip install -r requirements-doc.txt && make html && make html_zh_cn
 
   build_test_job:
     runs-on: ${{ matrix.os }}
