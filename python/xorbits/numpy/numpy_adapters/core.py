@@ -20,6 +20,7 @@ from typing import Any, Callable, Dict, Type
 
 import numpy as np
 
+from ..._mars.core import Entity as MarsEntity
 from ...core import DataType
 from ...core.adapter import (
     ClsMethodWrapper,
@@ -62,10 +63,10 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
 
 
 class NumpyClsMethodWrapper(ClsMethodWrapper):
-    def generate_fallback_data(self, mars_entity):
+    def generate_fallback_data(self, mars_entity: MarsEntity):
         return mars_entity.to_numpy()
 
-    def generate_warning_msg(self, entity, func_name):
+    def generate_warning_msg(self, entity: MarsEntity, func_name: str):
         return f"{type(entity).__name__}.{func_name} will fallback to Numpy"
 
     def _get_output_type(self, func: Callable) -> MarsOutputType:
@@ -86,7 +87,7 @@ class NumpyClsMethodWrapper(ClsMethodWrapper):
         ):  # some np methods return objects and inspect.signature throws a ValueError
             return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
-    def generate_docstring(self):
+    def get_docstring_src_module(self):
         return np
 
 
@@ -97,7 +98,7 @@ def _collect_numpy_cls_members(np_cls: Type, data_type: DataType):
             numpy_cls_method_wrapper = NumpyClsMethodWrapper(
                 library_cls=np_cls, func_name=name, fallback_warning=True
             )
-            members[name] = numpy_cls_method_wrapper.wrap_methods()
+            members[name] = numpy_cls_method_wrapper.wrap_method()
 
 
 def _collect_numpy_ndarray_members():
@@ -123,9 +124,7 @@ def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
                     else "numpy." + np_mod.__name__
                 )
                 warning_str = f"xorbits.{np_mod_str}.{name} will fallback to NumPy"
-                numpy_cls_method_wrapper = NumpyClsMethodWrapper(
-                    library_cls=np_mod_str, func_name=name
-                )
+                numpy_cls_method_wrapper = NumpyClsMethodWrapper()
                 output_type = numpy_cls_method_wrapper._get_output_type(
                     func=getattr(np_mod, name)
                 )

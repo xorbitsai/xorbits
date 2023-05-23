@@ -143,13 +143,18 @@ def register_converter(from_cls_list: List[Type]):
 
 
 class ClsMethodWrapper(ABC):
-    def __init__(self, library_cls, func_name, fallback_warning=False):
+    def __init__(
+        self,
+        func_name: str = "",
+        library_cls: Type = object,
+        fallback_warning: bool = False,
+    ):
         self.library_cls = library_cls
         self.func_name = func_name
         self.fallback_warning = fallback_warning
 
     @abstractmethod
-    def generate_fallback_data(self, mars_entity):
+    def generate_fallback_data(self, mars_entity: MarsEntity):
         """
         let mars entity fallback to data according to the library
 
@@ -163,7 +168,7 @@ class ClsMethodWrapper(ABC):
         """
 
     @abstractmethod
-    def generate_warning_msg(self, mars_entity, func_name):
+    def generate_warning_msg(self, mars_entity: MarsEntity, func_name: str):
         """
         generate fallback warning message according to the library
 
@@ -178,13 +183,13 @@ class ClsMethodWrapper(ABC):
         """
 
     @abstractmethod
-    def _get_output_type(self, func_name):
+    def _get_output_type(self, func: Callable):
         """
         get output type according to the library
 
         Parameters
         ----------
-        func_name
+        func
 
         Returns
         -------
@@ -192,14 +197,14 @@ class ClsMethodWrapper(ABC):
         """
 
     @abstractmethod
-    def generate_docstring(self):
+    def get_docstring_src_module(self):
         """
         get docstring src module according to the library
         """
 
-    def wrap_methods(self):
+    def wrap_method(self):
         """
-        wrap pd.DataFrame member functions and np.ndarray methods
+        wrap pd.DataFrame member functions, np.ndarray methods, and other methods
 
         Parameters
         ----------
@@ -220,8 +225,8 @@ class ClsMethodWrapper(ABC):
                 def execute_func(
                     mars_entity: MarsEntity, f_name: str, *args, **kwargs
                 ) -> Any:
-                    pd_data = self.generate_fallback_data(mars_entity)
-                    return getattr(pd_data, f_name)(*args, **kwargs)
+                    ret = self.generate_fallback_data(mars_entity)
+                    return getattr(ret, f_name)(*args, **kwargs)
 
                 new_args = (entity, self.func_name) + args
                 ret = mars_remote.spawn(
@@ -273,7 +278,7 @@ class ClsMethodWrapper(ABC):
         attach_cls_member_docstring(
             _wrapped,
             self.func_name,
-            docstring_src_module=self.generate_docstring(),
+            docstring_src_module=self.get_docstring_src_module(),
             docstring_src_cls=self.library_cls,
             fallback_warning=self.fallback_warning,
         )

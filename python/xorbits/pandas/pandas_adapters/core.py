@@ -19,6 +19,7 @@ from typing import Any, Callable, Dict, Type
 
 import pandas as pd
 
+from ..._mars.core import Entity as MarsEntity
 from ...core.adapter import (
     ClsMethodWrapper,
     MarsOutputType,
@@ -59,10 +60,10 @@ if pd.__version__ >= "1.3.0":  # pragma: no branch
 
 
 class PandasClsMethodWrapper(ClsMethodWrapper):
-    def generate_fallback_data(self, mars_entity):
+    def generate_fallback_data(self, mars_entity: MarsEntity):
         return mars_entity.to_pandas()
 
-    def generate_warning_msg(self, entity, func_name):
+    def generate_warning_msg(self, entity: MarsEntity, func_name: str):
         return f"{type(entity).__name__}.{func_name} will fallback to Pandas"
 
     def _get_output_type(self, func: Callable) -> MarsOutputType:
@@ -87,7 +88,7 @@ class PandasClsMethodWrapper(ClsMethodWrapper):
             output_type = MarsOutputType.object
         return output_type
 
-    def generate_docstring(self):
+    def get_docstring_src_module(self):
         return pd
 
 
@@ -98,7 +99,7 @@ def _collect_pandas_cls_members(pd_cls: Type, data_type: DataType):
             pandas_cls_method_wrapper = PandasClsMethodWrapper(
                 library_cls=pd_cls, func_name=name, fallback_warning=True
             )
-            members[name] = pandas_cls_method_wrapper.wrap_methods()
+            members[name] = pandas_cls_method_wrapper.wrap_method()
     # make to_numpy an alias of to_tensor
     members["to_numpy"] = members["to_tensor"]
 
@@ -142,9 +143,7 @@ def collect_pandas_module_members() -> Dict[str, Any]:
                 and not name.startswith("_")
             ):
                 warning_str = f"xorbits.pandas.{name} will fallback to Pandas"
-                pandas_cls_method_wrapper = PandasClsMethodWrapper(
-                    library_cls=pd, func_name=name
-                )
+                pandas_cls_method_wrapper = PandasClsMethodWrapper()
                 output_type = pandas_cls_method_wrapper._get_output_type(
                     func=getattr(pd, name)
                 )
