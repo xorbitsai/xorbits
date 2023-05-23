@@ -60,10 +60,10 @@ if pd.__version__ >= "1.3.0":  # pragma: no branch
 
 
 class PandasClsMethodWrapper(ClsMethodWrapper):
-    def generate_fallback_data(self, mars_entity: MarsEntity):
+    def _generate_fallback_data(self, mars_entity: MarsEntity):
         return mars_entity.to_pandas()
 
-    def generate_warning_msg(self, entity: MarsEntity, func_name: str):
+    def _generate_warning_msg(self, entity: MarsEntity, func_name: str):
         return f"{type(entity).__name__}.{func_name} will fallback to Pandas"
 
     def _get_output_type(self, func: Callable) -> MarsOutputType:
@@ -88,7 +88,7 @@ class PandasClsMethodWrapper(ClsMethodWrapper):
             output_type = MarsOutputType.object
         return output_type
 
-    def get_docstring_src_module(self):
+    def _get_docstring_src_module(self):
         return pd
 
 

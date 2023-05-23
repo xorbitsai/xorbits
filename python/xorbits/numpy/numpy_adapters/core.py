@@ -63,10 +63,10 @@ _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
 
 
 class NumpyClsMethodWrapper(ClsMethodWrapper):
-    def generate_fallback_data(self, mars_entity: MarsEntity):
+    def _generate_fallback_data(self, mars_entity: MarsEntity):
         return mars_entity.to_numpy()
 
-    def generate_warning_msg(self, entity: MarsEntity, func_name: str):
+    def _generate_warning_msg(self, entity: MarsEntity, func_name: str):
         return f"{type(entity).__name__}.{func_name} will fallback to Numpy"
 
     def _get_output_type(self, func: Callable) -> MarsOutputType:
@@ -87,7 +87,7 @@ class NumpyClsMethodWrapper(ClsMethodWrapper):
         ):  # some np methods return objects and inspect.signature throws a ValueError
             return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
 
-    def get_docstring_src_module(self):
+    def _get_docstring_src_module(self):
         return np
 
 

@@ -154,7 +154,7 @@ class ClsMethodWrapper(ABC):
         self.fallback_warning = fallback_warning
 
     @abstractmethod
-    def generate_fallback_data(self, mars_entity: MarsEntity):
+    def _generate_fallback_data(self, mars_entity: MarsEntity) -> Any:
         """
         let mars entity fallback to data according to the library
 
@@ -168,7 +168,7 @@ class ClsMethodWrapper(ABC):
         """
 
     @abstractmethod
-    def generate_warning_msg(self, mars_entity: MarsEntity, func_name: str):
+    def _generate_warning_msg(self, mars_entity: MarsEntity, func_name: str) -> str:
         """
         generate fallback warning message according to the library
 
@@ -179,11 +179,11 @@ class ClsMethodWrapper(ABC):
 
         Returns
         -------
-
+        warning_msg: str
         """
 
     @abstractmethod
-    def _get_output_type(self, func: Callable):
+    def _get_output_type(self, func: Callable) -> MarsOutputType:
         """
         get output type according to the library
 
@@ -193,11 +193,11 @@ class ClsMethodWrapper(ABC):
 
         Returns
         -------
-
+        output_type: MarsOutputType
         """
 
     @abstractmethod
-    def get_docstring_src_module(self):
+    def _get_docstring_src_module(self) -> ModuleType:
         """
         get docstring src module according to the library
         """
@@ -217,7 +217,7 @@ class ClsMethodWrapper(ABC):
                 def execute_func(
                     mars_entity: MarsEntity, f_name: str, *args, **kwargs
                 ) -> Any:
-                    ret = self.generate_fallback_data(mars_entity)
+                    ret = self._generate_fallback_data(mars_entity)
                     return getattr(ret, f_name)(*args, **kwargs)
 
                 new_args = (entity, self.func_name) + args
@@ -243,7 +243,7 @@ class ClsMethodWrapper(ABC):
                 return from_mars(ret)
 
             warnings.warn(
-                self.generate_warning_msg(entity, self.func_name),
+                self._generate_warning_msg(entity, self.func_name),
                 RuntimeWarning,
             )
 
@@ -270,7 +270,7 @@ class ClsMethodWrapper(ABC):
         attach_cls_member_docstring(
             _wrapped,
             self.func_name,
-            docstring_src_module=self.get_docstring_src_module(),
+            docstring_src_module=self._get_docstring_src_module(),
             docstring_src_cls=self.library_cls,
             fallback_warning=self.fallback_warning,
         )
