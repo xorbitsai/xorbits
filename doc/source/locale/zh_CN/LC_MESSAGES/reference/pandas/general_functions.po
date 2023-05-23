@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/pandas/general_functions.rst:5
 msgid "General functions"
@@ -39,7 +39,7 @@ msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
 msgid ""
-":py:obj:`pivot <xorbits.pandas.pivot>`\\ \\(data\\[\\, index\\, "
+":py:obj:`pivot <xorbits.pandas.pivot>`\\ \\(data\\, \\*\\[\\, index\\, "
 "columns\\, values\\]\\)"
 msgstr ""
 
@@ -124,9 +124,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
-msgid ""
-"Concatenate pandas objects along a particular axis with optional set "
-"logic along the other axes."
+msgid "Concatenate pandas objects along a particular axis."
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
@@ -141,8 +139,20 @@ msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
 msgid ""
+":py:obj:`from_dummies <xorbits.pandas.from_dummies>`\\ \\(data\\[\\, "
+"sep\\, default\\_category\\]\\)"
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
+"Create a categorical ``DataFrame`` from a ``DataFrame`` of dummy "
+"variables."
+msgstr ""
+
+#: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
+msgid ""
 ":py:obj:`factorize <xorbits.pandas.factorize>`\\ \\(values\\[\\, sort\\, "
-"na\\_sentinel\\, size\\_hint\\]\\)"
+"na\\_sentinel\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:29:<autosummary>:1
@@ -234,9 +244,7 @@ msgid "Convert argument to datetime."
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
-msgid ""
-":py:obj:`to_timedelta <xorbits.pandas.to_timedelta>`\\ \\(arg\\[\\, "
-"unit\\, errors\\]\\)"
+msgid ":py:obj:`to_timedelta <xorbits.pandas.to_timedelta>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
@@ -260,9 +268,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
-msgid ""
-"Return a fixed frequency DatetimeIndex, with business day as the default "
-"frequency."
+msgid "Return a fixed frequency DatetimeIndex with business day as the default."
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
@@ -282,9 +288,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1
-msgid ""
-"Return a fixed frequency TimedeltaIndex, with day as the default "
-"frequency."
+msgid "Return a fixed frequency TimedeltaIndex with day as the default."
 msgstr ""
 
 #: ../../source/reference/pandas/general_functions.rst:59:<autosummary>:1

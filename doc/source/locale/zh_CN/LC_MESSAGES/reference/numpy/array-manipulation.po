@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/array-manipulation.rst:2
 msgid "Array manipulation routines"
@@ -162,6 +162,14 @@ msgid "View inputs as arrays with at least three dimensions."
 msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid ":py:obj:`broadcast <xorbits.numpy.broadcast>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
+msgid "Produce an object that mimics broadcasting."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:49:<autosummary>:1
 msgid ""
 ":py:obj:`broadcast_to <xorbits.numpy.broadcast_to>`\\ \\(tensor\\, "
 "shape\\)"
@@ -213,6 +221,32 @@ msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
 msgid ""
+":py:obj:`asanyarray <xorbits.numpy.asanyarray>`\\ \\(a\\[\\, dtype\\, "
+"order\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Convert the input to an ndarray, but pass ndarray subclasses through."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ":py:obj:`asmatrix <xorbits.numpy.asmatrix>`\\ \\(data\\[\\, dtype\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Interpret the input as a matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ":py:obj:`asfarray <xorbits.numpy.asfarray>`\\ \\(a\\[\\, dtype\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Return an array converted to a float type."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ""
 ":py:obj:`asfortranarray <xorbits.numpy.asfortranarray>`\\ \\(a\\[\\, "
 "dtype\\, like\\]\\)"
 msgstr ""
@@ -229,6 +263,26 @@ msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
 msgid "Return a contiguous array (ndim >= 1) in memory (C order)."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ""
+":py:obj:`asarray_chkfinite <xorbits.numpy.asarray_chkfinite>`\\ "
+"\\(a\\[\\, dtype\\, order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Convert the input to an array, checking for NaNs or Infs."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid ""
+":py:obj:`require <xorbits.numpy.require>`\\ \\(a\\[\\, dtype\\, "
+"requirements\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:63:<autosummary>:1
+msgid "Return an ndarray of the provided type that satisfies requirements."
 msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:65
@@ -291,6 +345,10 @@ msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
 msgid "Stack 1-D arrays as columns into a 2-D array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:77:<autosummary>:1
+msgid ":py:obj:`row_stack <xorbits.numpy.row_stack>`\\ \\(tup\\)"
 msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:79
@@ -400,6 +458,22 @@ msgid "Append values to the end of an array."
 msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid ":py:obj:`resize <xorbits.numpy.resize>`\\ \\(a\\, new\\_shape\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid "Return a new array with the specified shape."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid ":py:obj:`trim_zeros <xorbits.numpy.trim_zeros>`\\ \\(filt\\[\\, trim\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
+msgid "Trim the leading and/or trailing zeros from a 1-D array or sequence."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:108:<autosummary>:1
 msgid ""
 ":py:obj:`unique <xorbits.numpy.unique>`\\ \\(ar\\[\\, return\\_index\\, "
 "return\\_inverse\\, ...\\]\\)"
@@ -443,5 +517,13 @@ msgstr ""
 
 #: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
 msgid "Roll array elements along a given axis."
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid ":py:obj:`rot90 <xorbits.numpy.rot90>`\\ \\(m\\[\\, k\\, axes\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-manipulation.rst:119:<autosummary>:1
+msgid "Rotate an array by 90 degrees in the plane specified by axes."
 msgstr ""
 

@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/statistics.rst:2
 msgid "Statistics"
@@ -47,12 +47,36 @@ msgstr ""
 
 #: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
 msgid ""
+":py:obj:`nanpercentile <xorbits.numpy.nanpercentile>`\\ \\(a\\, q\\[\\, "
+"axis\\, out\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid ""
+"Compute the qth percentile of the data along the specified axis, while "
+"ignoring nan values."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid ""
 ":py:obj:`quantile <xorbits.numpy.quantile>`\\ \\(a\\, q\\[\\, axis\\, "
 "out\\, overwrite\\_input\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
 msgid "Compute the q-th quantile of the data along the specified axis."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid ""
+":py:obj:`nanquantile <xorbits.numpy.nanquantile>`\\ \\(a\\, q\\[\\, "
+"axis\\, out\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:18:<autosummary>:1
+msgid ""
+"Compute the qth quantile of the data along the specified axis, while "
+"ignoring nan values."
 msgstr ""
 
 #: ../../source/reference/numpy/statistics.rst:20
@@ -111,6 +135,16 @@ msgstr ""
 
 #: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
 msgid ""
+":py:obj:`nanmedian <xorbits.numpy.nanmedian>`\\ \\(a\\[\\, axis\\, out\\,"
+" overwrite\\_input\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid "Compute the median along the specified axis, while ignoring NaNs."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:34:<autosummary>:1
+msgid ""
 ":py:obj:`nanmean <xorbits.numpy.nanmean>`\\ \\(a\\[\\, axis\\, dtype\\, "
 "out\\, keepdims\\, ...\\]\\)"
 msgstr ""
@@ -154,6 +188,14 @@ msgid "Return Pearson product-moment correlation coefficients."
 msgstr ""
 
 #: ../../source/reference/numpy/statistics.rst:44:<autosummary>:1
+msgid ":py:obj:`correlate <xorbits.numpy.correlate>`\\ \\(a\\, v\\[\\, mode\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:44:<autosummary>:1
+msgid "Cross-correlation of two 1-dimensional sequences."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:44:<autosummary>:1
 msgid ""
 ":py:obj:`cov <xorbits.numpy.cov>`\\ \\(m\\[\\, y\\, rowvar\\, bias\\, "
 "ddof\\, fweights\\, ...\\]\\)"
@@ -175,6 +217,26 @@ msgstr ""
 
 #: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
 msgid "Compute the histogram of a dataset."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid ""
+":py:obj:`histogram2d <xorbits.numpy.histogram2d>`\\ \\(x\\, y\\[\\, "
+"bins\\, range\\, normed\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid "Compute the bi-dimensional histogram of two data samples."
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid ""
+":py:obj:`histogramdd <xorbits.numpy.histogramdd>`\\ \\(sample\\[\\, "
+"bins\\, range\\, normed\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1
+msgid "Compute the multidimensional histogram of some data."
 msgstr ""
 
 #: ../../source/reference/numpy/statistics.rst:56:<autosummary>:1

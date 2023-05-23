@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/array-creation.rst:4
 msgid "Array creation routines"
@@ -151,6 +151,16 @@ msgstr ""
 
 #: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
 msgid ""
+":py:obj:`asanyarray <xorbits.numpy.asanyarray>`\\ \\(a\\[\\, dtype\\, "
+"order\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Convert the input to an ndarray, but pass ndarray subclasses through."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
 ":py:obj:`ascontiguousarray <xorbits.numpy.ascontiguousarray>`\\ "
 "\\(a\\[\\, dtype\\, like\\]\\)"
 msgstr ""
@@ -160,11 +170,90 @@ msgid "Return a contiguous array (ndim >= 1) in memory (C order)."
 msgstr ""
 
 #: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ":py:obj:`asmatrix <xorbits.numpy.asmatrix>`\\ \\(data\\[\\, dtype\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+#: ../../source/reference/numpy/array-creation.rst:74:<autosummary>:1
+msgid "Interpret the input as a matrix."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
 msgid ":py:obj:`copy <xorbits.numpy.copy>`\\ \\(a\\[\\, order\\]\\)"
 msgstr ""
 
 #: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
 msgid "Return an array copy of the given object."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`frombuffer <xorbits.numpy.frombuffer>`\\ \\(buffer\\[\\, "
+"dtype\\, count\\, offset\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Interpret a buffer as a 1-dimensional array."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ":py:obj:`from_dlpack <xorbits.numpy.from_dlpack>`\\ \\(x\\, \\/\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+"Create a NumPy array from an object implementing the ``__dlpack__`` "
+"protocol."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`fromfile <xorbits.numpy.fromfile>`\\ \\(file\\[\\, dtype\\, "
+"count\\, sep\\, offset\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Construct an array from data in a text or binary file."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`fromfunction <xorbits.numpy.fromfunction>`\\ \\(function\\, "
+"shape\\, \\*\\[\\, dtype\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Construct an array by executing a function over each coordinate."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`fromiter <xorbits.numpy.fromiter>`\\ \\(iter\\, dtype\\[\\, "
+"count\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Create a new 1-dimensional array from an iterable object."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`fromstring <xorbits.numpy.fromstring>`\\ \\(string\\[\\, "
+"dtype\\, count\\, like\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "A new 1-D array initialized from text data in a string."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid ""
+":py:obj:`loadtxt <xorbits.numpy.loadtxt>`\\ \\(fname\\[\\, dtype\\, "
+"comments\\, delimiter\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:42:<autosummary>:1
+msgid "Load data from a text file."
 msgstr ""
 
 #: ../../source/reference/numpy/array-creation.rst:44
@@ -189,6 +278,26 @@ msgstr ""
 
 #: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
 msgid "Return evenly spaced numbers over a specified interval."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid ""
+":py:obj:`logspace <xorbits.numpy.logspace>`\\ \\(start\\, stop\\[\\, "
+"num\\, endpoint\\, base\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid "Return numbers spaced evenly on a log scale."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid ""
+":py:obj:`geomspace <xorbits.numpy.geomspace>`\\ \\(start\\, stop\\[\\, "
+"num\\, endpoint\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
+msgid "Return numbers spaced evenly on a log scale (a geometric progression)."
 msgstr ""
 
 #: ../../source/reference/numpy/array-creation.rst:55:<autosummary>:1
@@ -240,6 +349,16 @@ msgid "Create a two-dimensional array with the flattened input as a diagonal."
 msgstr ""
 
 #: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`tri <xorbits.numpy.tri>`\\ \\(N\\[\\, M\\, k\\, dtype\\, "
+"chunk\\_size\\, gpu\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid "An array with ones at and below the given diagonal and zeros elsewhere."
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
 msgid ":py:obj:`tril <xorbits.numpy.tril>`\\ \\(m\\[\\, k\\, gpu\\]\\)"
 msgstr ""
 
@@ -255,7 +374,27 @@ msgstr ""
 msgid "Upper triangle of an array."
 msgstr ""
 
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid ":py:obj:`vander <xorbits.numpy.vander>`\\ \\(x\\[\\, N\\, increasing\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:67:<autosummary>:1
+msgid "Generate a Vandermonde matrix."
+msgstr ""
+
 #: ../../source/reference/numpy/array-creation.rst:69
 msgid "The Matrix class"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:74:<autosummary>:1
+msgid ":py:obj:`mat <xorbits.numpy.mat>`\\ \\(data\\[\\, dtype\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:74:<autosummary>:1
+msgid ":py:obj:`bmat <xorbits.numpy.bmat>`\\ \\(obj\\[\\, ldict\\, gdict\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/array-creation.rst:74:<autosummary>:1
+msgid "Build a matrix object from a string, nested sequence, or array."
 msgstr ""
 
