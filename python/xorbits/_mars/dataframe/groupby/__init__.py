@@ -30,6 +30,7 @@ def _install():
     # Just for enabling custom agg function registration.
     # Therefore, del this immediately after import.
     from .nunique import DataFrameCustomGroupByNuniqueMixin
+    from .rolling import rolling
     from .sample import groupby_sample
     from .transform import groupby_transform
 
@@ -72,6 +73,8 @@ def _install():
         setattr(cls, "cumsum", cumsum)
 
         setattr(cls, "head", head)
+
+        setattr(cls, "rolling", rolling)
 
         setattr(cls, "sample", groupby_sample)
 
