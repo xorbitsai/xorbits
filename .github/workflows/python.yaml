@@ -90,6 +90,7 @@ jobs:
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
           - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
           - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
+          - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
     steps:
     - name: Check out code
@@ -189,6 +190,10 @@ jobs:
           # test if compatible with older versions
           pip install pandas==1.5.3 pyarrow\<12.0.0 sqlalchemy\<2
         fi
+        if [[ "$MODULE" == "doc-build" ]]; then
+          # test if compatible with older versions
+          pip install -r ../doc/requirements-doc.txt
+        fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
@@ -199,7 +204,15 @@ jobs:
         python setup.py build_ext -i
       working-directory: ./python
 
+    - name: Build doc
+      if: ${{ matrix.module == 'doc-build' }}
+      run: |
+        make html
+        make html_zh_cn
+      working-directory: ./doc
+
     - name: Test with pytest
+      if: ${{ matrix.module != 'doc-build' }}
       env:
         MODULE: ${{ matrix.module }}
       run: |
