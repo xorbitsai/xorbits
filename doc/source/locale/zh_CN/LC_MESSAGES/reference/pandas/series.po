@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/pandas/series.rst:5
 msgid "Series"
@@ -218,9 +218,7 @@ msgid "Return a list of the values."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:54:<autosummary>:1
-msgid ""
-":py:obj:`Series.__array__ <xorbits.pandas.Series.__array__>`\\ "
-"\\(\\*args\\, \\*\\*kwargs\\)"
+msgid ":py:obj:`Series.__array__ <xorbits.pandas.Series.__array__>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:56
@@ -284,9 +282,7 @@ msgid "Lazily iterate over (index, value) tuples."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:72:<autosummary>:1
-msgid ""
-":py:obj:`Series.iteritems <xorbits.pandas.Series.iteritems>`\\ "
-"\\(\\[batch\\_size\\, session\\]\\)"
+msgid ":py:obj:`Series.iteritems <xorbits.pandas.Series.iteritems>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:72:<autosummary>:1
@@ -697,7 +693,7 @@ msgstr ""
 #: ../../source/reference/pandas/series.rst:124:<autosummary>:1
 msgid ""
 ":py:obj:`Series.expanding <xorbits.pandas.Series.expanding>`\\ "
-"\\(\\[min\\_periods\\, center\\, axis\\]\\)"
+"\\(\\[min\\_periods\\, axis\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:124:<autosummary>:1
@@ -877,7 +873,7 @@ msgstr ""
 #: ../../source/reference/pandas/series.rst:174:<autosummary>:1
 msgid ""
 ":py:obj:`Series.factorize <xorbits.pandas.Series.factorize>`\\ "
-"\\(\\[sort\\, na\\_sentinel\\]\\)"
+"\\(\\[sort\\, na\\_sentinel\\, ...\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:174:<autosummary>:1
@@ -1089,7 +1085,7 @@ msgid ":py:obj:`Series.is_monotonic <xorbits.pandas.Series.is_monotonic>`\\"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:174:<autosummary>:1
-msgid "Return boolean if values in the object are monotonic_increasing."
+msgid "Return boolean if values in the object are monotonically increasing."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:174:<autosummary>:1
@@ -1099,17 +1095,13 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:174:<autosummary>:1
-msgid "Alias for is_monotonic."
-msgstr ""
-
-#: ../../source/reference/pandas/series.rst:174:<autosummary>:1
 msgid ""
 ":py:obj:`Series.is_monotonic_decreasing "
 "<xorbits.pandas.Series.is_monotonic_decreasing>`\\"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:174:<autosummary>:1
-msgid "Return boolean if values in the object are monotonic_decreasing."
+msgid "Return boolean if values in the object are monotonically decreasing."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:174:<autosummary>:1
@@ -1300,7 +1292,7 @@ msgstr ""
 #: ../../source/reference/pandas/series.rst:207:<autosummary>:1
 msgid ""
 ":py:obj:`Series.set_axis <xorbits.pandas.Series.set_axis>`\\ "
-"\\(labels\\[\\, axis\\, inplace\\]\\)"
+"\\(labels\\[\\, axis\\, copy\\]\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:207:<autosummary>:1
@@ -1878,9 +1870,7 @@ msgid ":py:obj:`Series.dt.timetz <xorbits.pandas.Series.dt.timetz>`\\"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:335:<autosummary>:1
-msgid ""
-"Returns numpy array of :class:`datetime.time` objects with timezone "
-"information."
+msgid "Returns numpy array of :class:`datetime.time` objects with timezones."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:335:<autosummary>:1
@@ -2196,9 +2186,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:355:<autosummary>:1
-msgid ""
-"Return the month names of the :class:`~pandas.Series` or "
-":class:`~pandas.DatetimeIndex` with specified locale."
+msgid "Return the month names with specified locale."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:355:<autosummary>:1
@@ -2208,9 +2196,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:355:<autosummary>:1
-msgid ""
-"Return the day names of the :class:`~pandas.Series` or "
-":class:`~pandas.DatetimeIndex` with specified locale."
+msgid "Return the day names with specified locale."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:357
@@ -2226,7 +2212,15 @@ msgid ":py:obj:`Series.dt.start_time <xorbits.pandas.Series.dt.start_time>`\\"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:366:<autosummary>:1
+msgid "Get the Timestamp for the start of the period."
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:366:<autosummary>:1
 msgid ":py:obj:`Series.dt.end_time <xorbits.pandas.Series.dt.end_time>`\\"
+msgstr ""
+
+#: ../../source/reference/pandas/series.rst:366:<autosummary>:1
+msgid "Get the Timestamp for the end of the period."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:368
@@ -2455,7 +2449,9 @@ msgid ":py:obj:`Series.str.get <xorbits.pandas.Series.str.get>`\\ \\(i\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:460:<autosummary>:1
-msgid "Extract element from each component at specified position."
+msgid ""
+"Extract element from each component at specified position or with "
+"specified key."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:460:<autosummary>:1
@@ -3085,9 +3081,7 @@ msgid "Convert the object to a JSON string."
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:607:<autosummary>:1
-msgid ""
-":py:obj:`Series.to_string <xorbits.pandas.Series.to_string>`\\ "
-"\\(\\[buf\\, na\\_rep\\, ...\\]\\)"
+msgid ":py:obj:`Series.to_string <xorbits.pandas.Series.to_string>`\\ \\(\\)"
 msgstr ""
 
 #: ../../source/reference/pandas/series.rst:607:<autosummary>:1
