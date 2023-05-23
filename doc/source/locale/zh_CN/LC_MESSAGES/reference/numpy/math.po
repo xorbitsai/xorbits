@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/math.rst:2
 msgid "Mathematical functions"
@@ -123,6 +123,18 @@ msgstr ""
 
 #: ../../source/reference/numpy/math.rst:24:<autosummary>:1
 msgid "Convert angles from degrees to radians."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+":py:obj:`unwrap <xorbits.numpy.unwrap>`\\ \\(p\\[\\, discont\\, axis\\, "
+"period\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:24:<autosummary>:1
+msgid ""
+"Unwrap by taking the complement of large deltas with respect to the "
+"period."
 msgstr ""
 
 #: ../../source/reference/numpy/math.rst:24:<autosummary>:1
@@ -372,6 +384,26 @@ msgid "The differences between consecutive elements of an array."
 msgstr ""
 
 #: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`gradient <xorbits.numpy.gradient>`\\ \\(f\\, \\*varargs\\[\\, "
+"axis\\, edge\\_order\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Return the gradient of an N-dimensional array."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid ""
+":py:obj:`cross <xorbits.numpy.cross>`\\ \\(a\\, b\\[\\, axisa\\, axisb\\,"
+" axisc\\, axis\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
+msgid "Return the cross product of two (arrays of) vectors."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:67:<autosummary>:1
 msgid ":py:obj:`trapz <xorbits.numpy.trapz>`\\ \\(y\\[\\, x\\, dx\\, axis\\]\\)"
 msgstr ""
 
@@ -561,6 +593,26 @@ msgstr ""
 msgid "Rational routines"
 msgstr ""
 
+#: ../../source/reference/numpy/math.rst:110:<autosummary>:1
+msgid ":py:obj:`lcm <xorbits.numpy.lcm>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:110:<autosummary>:1
+msgid ""
+"lcm(x1, x2, /, out=None, *, where=True, casting='same_kind', order='K', "
+"dtype=None, subok=True[, signature, extobj])"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:110:<autosummary>:1
+msgid ":py:obj:`gcd <xorbits.numpy.gcd>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:110:<autosummary>:1
+msgid ""
+"gcd(x1, x2, /, out=None, *, where=True, casting='same_kind', order='K', "
+"dtype=None, subok=True[, signature, extobj])"
+msgstr ""
+
 #: ../../source/reference/numpy/math.rst:112
 msgid "Arithmetic operations"
 msgstr ""
@@ -709,6 +761,17 @@ msgid ""
 "out\\, where\\, casting\\, ...\\]\\)"
 msgstr ""
 
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ":py:obj:`divmod <xorbits.numpy.divmod>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:133:<autosummary>:1
+msgid ""
+"divmod(x1, x2[, out1, out2], / [, out=(None, None)], *, where=True, "
+"casting='same_kind', order='K', dtype=None, subok=True[, signature, "
+"extobj])"
+msgstr ""
+
 #: ../../source/reference/numpy/math.rst:135
 msgid "Handling complex numbers"
 msgstr ""
@@ -840,6 +903,14 @@ msgid "Miscellaneous"
 msgstr ""
 
 #: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ":py:obj:`convolve <xorbits.numpy.convolve>`\\ \\(a\\, v\\[\\, mode\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid "Returns the discrete, linear convolution of two one-dimensional sequences."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
 msgid ""
 ":py:obj:`clip <xorbits.numpy.clip>`\\ \\(a\\, a\\_min\\, a\\_max\\[\\, "
 "out\\]\\)"
@@ -910,6 +981,16 @@ msgid "Returns an element-wise indication of the sign of a number."
 msgstr ""
 
 #: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ":py:obj:`heaviside <xorbits.numpy.heaviside>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+"heaviside(x1, x2, /, out=None, *, where=True, casting='same_kind', "
+"order='K', dtype=None, subok=True[, signature, extobj])"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
 msgid ":py:obj:`nan_to_num <xorbits.numpy.nan_to_num>`\\ \\(x\\[\\, copy\\]\\)"
 msgstr ""
 
@@ -918,5 +999,29 @@ msgid ""
 "Replace NaN with zero and infinity with large finite numbers (default "
 "behaviour) or with the numbers defined by the user using the `nan`, "
 "`posinf` and/or `neginf` keywords."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`real_if_close <xorbits.numpy.real_if_close>`\\ \\(a\\[\\, "
+"tol\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+"If input is complex with all imaginary parts close to zero, return real "
+"parts."
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+":py:obj:`interp <xorbits.numpy.interp>`\\ \\(x\\, xp\\, fp\\[\\, left\\, "
+"right\\, period\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/math.rst:181:<autosummary>:1
+msgid ""
+"One-dimensional linear interpolation for monotonically increasing sample "
+"points."
 msgstr ""
 

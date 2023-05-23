@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/numpy/indexing.rst:5
 msgid "Indexing routines"
@@ -74,11 +74,31 @@ msgid "Return an array representing the indices of a grid."
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ":py:obj:`ix_ <xorbits.numpy.ix_>`\\ \\(\\*args\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Construct an open mesh from multiple sequences."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
 msgid ":py:obj:`ogrid <xorbits.numpy.ogrid>`\\"
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
 msgid "`nd_grid` instance which returns an open multi-dimensional \"meshgrid\"."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`ravel_multi_index <xorbits.numpy.ravel_multi_index>`\\ "
+"\\(multi\\_index\\, dims\\[\\, mode\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+"Converts a tuple of index arrays into an array of flat indices, applying "
+"boundary modes to the multi-index."
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
@@ -93,6 +113,74 @@ msgid ""
 " arrays."
 msgstr ""
 
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`diag_indices <xorbits.numpy.diag_indices>`\\ \\(n\\[\\, "
+"ndim\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Return the indices to access the main diagonal of an array."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ":py:obj:`diag_indices_from <xorbits.numpy.diag_indices_from>`\\ \\(arr\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Return the indices to access the main diagonal of an n-dimensional array."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`mask_indices <xorbits.numpy.mask_indices>`\\ \\(n\\, "
+"mask\\_func\\[\\, k\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Return the indices to access (n, n) arrays, given a masking function."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`tril_indices <xorbits.numpy.tril_indices>`\\ \\(n\\[\\, k\\, "
+"m\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Return the indices for the lower-triangle of an (n, m) array."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`tril_indices_from <xorbits.numpy.tril_indices_from>`\\ "
+"\\(arr\\[\\, k\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Return the indices for the lower-triangle of arr."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`triu_indices <xorbits.numpy.triu_indices>`\\ \\(n\\[\\, k\\, "
+"m\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Return the indices for the upper-triangle of an (n, m) array."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid ""
+":py:obj:`triu_indices_from <xorbits.numpy.triu_indices_from>`\\ "
+"\\(arr\\[\\, k\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:33:<autosummary>:1
+msgid "Return the indices for the upper-triangle of arr."
+msgstr ""
+
 #: ../../source/reference/numpy/indexing.rst:35
 msgid "Indexing-like operations"
 msgstr ""
@@ -105,6 +193,16 @@ msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
 msgid "Take elements from an array along an axis."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
+msgid ""
+":py:obj:`take_along_axis <xorbits.numpy.take_along_axis>`\\ \\(arr\\, "
+"indices\\, axis\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
+msgid "Take values from the input array by matching 1d index and data slices."
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
@@ -140,15 +238,65 @@ msgid "Extract a diagonal or construct a diagonal array."
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
-msgid ":py:obj:`select <select>`\\"
+msgid ""
+":py:obj:`diagonal <xorbits.numpy.diagonal>`\\ \\(a\\[\\, offset\\, "
+"axis1\\, axis2\\]\\)"
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
-msgid "This module supports asynchronous I/O on multiple file descriptors."
+msgid "Return specified diagonals."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
+msgid ""
+":py:obj:`select <xorbits.numpy.select>`\\ \\(condlist\\, choicelist\\[\\,"
+" default\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:48:<autosummary>:1
+msgid ""
+"Return an array drawn from elements in choicelist, depending on "
+"conditions."
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:50
 msgid "Inserting data into arrays"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid ":py:obj:`place <xorbits.numpy.place>`\\ \\(arr\\, mask\\, vals\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid "Change elements of an array based on conditional and input values."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid ":py:obj:`put <xorbits.numpy.put>`\\ \\(a\\, ind\\, v\\[\\, mode\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid "Replaces specified elements of an array with given values."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid ""
+":py:obj:`put_along_axis <xorbits.numpy.put_along_axis>`\\ \\(arr\\, "
+"indices\\, values\\, axis\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid ""
+"Put values into the destination array by matching 1d index and data "
+"slices."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid ":py:obj:`putmask <xorbits.numpy.putmask>`\\ \\(a\\, mask\\, values\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
+msgid "Changes elements of an array based on conditional and input values."
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:59:<autosummary>:1
@@ -166,6 +314,24 @@ msgid "Iterating over arrays"
 msgstr ""
 
 #: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid ":py:obj:`nditer <xorbits.numpy.nditer>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid ""
+"nditer(op, flags=None, op_flags=None, op_dtypes=None, order='K', "
+"casting='safe', op_axes=None, itershape=None, buffersize=0)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid ":py:obj:`ndenumerate <xorbits.numpy.ndenumerate>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid "Multidimensional index iterator."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
 msgid ":py:obj:`ndindex <xorbits.numpy.ndindex>`\\ \\(\\*shape\\)"
 msgstr ""
 
@@ -173,3 +339,28 @@ msgstr ""
 msgid "An N-dimensional iterator object to index arrays."
 msgstr ""
 
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid ""
+":py:obj:`nested_iters <xorbits.numpy.nested_iters>`\\ \\(op\\, axes\\[\\,"
+" flags\\, op\\_flags\\, ...\\]\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid "Create nditers for use in nested loops"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid ":py:obj:`flatiter <xorbits.numpy.flatiter>`\\"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid "Flat iterator object to iterate over arrays."
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid ":py:obj:`iterable <xorbits.numpy.iterable>`\\ \\(y\\)"
+msgstr ""
+
+#: ../../source/reference/numpy/indexing.rst:71:<autosummary>:1
+msgid "Check whether or not an object can be iterated over."
+msgstr ""

@@ -195,6 +195,14 @@ def test_dataframe_setattr(setup, dummy_df):
     assert not isinstance(dummy_df.baz, DataRef)
 
 
+def test_dataframe_initializer(setup, dummy_df):
+    df = pd.DataFrame(
+        [[dummy_df["foo"].max(), dummy_df["foo"].min()]], columns=["max_col", "min_col"]
+    )
+    assert df["max_col"][0] == 2
+    assert df["min_col"][0] == 0
+
+
 def test_dataframe_items(setup, dummy_df):
     for label, content in dummy_df.items():
         assert isinstance(content, DataRef)

@@ -90,6 +90,7 @@ jobs:
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
           - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
           - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
+          - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
     steps:
     - name: Check out code
@@ -166,6 +167,12 @@ jobs:
           export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
           ${ALLUXIO_HOME}/bin/alluxio format
           ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
+          curl -sSL https://d.juicefs.com/install | sh -
+          curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+          sudo apt-get update
+          sudo apt-get install redis
+          export JUICEFS_HOME="/usr/local/bin/juicefs"
         fi
         if [[ "$PYTHON" == '3.9' ]]; then
           pip install h5py zarr matplotlib fastparquet
@@ -183,6 +190,10 @@ jobs:
           # test if compatible with older versions
           pip install pandas==1.5.3 pyarrow\<12.0.0 sqlalchemy\<2
         fi
+        if [[ "$MODULE" == "doc-build" ]]; then
+          # test if compatible with older versions
+          pip install -r ../doc/requirements-doc.txt
+        fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
@@ -193,7 +204,15 @@ jobs:
         python setup.py build_ext -i
       working-directory: ./python
 
+    - name: Build doc
+      if: ${{ matrix.module == 'doc-build' }}
+      run: |
+        make html
+        make html_zh_cn
+      working-directory: ./doc
+
     - name: Test with pytest
+      if: ${{ matrix.module != 'doc-build' }}
       env:
         MODULE: ${{ matrix.module }}
       run: |
@@ -233,6 +252,7 @@ jobs:
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
         elif [[ "$MODULE" == "external-storage" ]]; then
           export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
+          export JUICEFS_HOME="/usr/local/bin/juicefs"
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
         elif [[ "$MODULE" == "_mars/learn" ]]; then

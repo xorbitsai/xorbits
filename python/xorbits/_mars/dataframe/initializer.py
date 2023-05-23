@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Any, Dict, List
 
 import pandas as pd
 from pandas.core.dtypes.common import pandas_dtype
@@ -21,7 +22,7 @@ from ..serialization.serializables import SerializableMeta
 from ..tensor import stack
 from ..tensor import tensor as astensor
 from ..tensor.array_utils import is_cupy
-from ..tensor.core import TENSOR_TYPE
+from ..tensor.core import TENSOR_TYPE, TensorData
 from ..utils import ceildiv, lazy_import
 from .core import DATAFRAME_TYPE, INDEX_TYPE, SERIES_TYPE
 from .core import DataFrame as _Frame
@@ -39,6 +40,28 @@ from .datasource.series import from_pandas as from_pandas_series
 from .utils import is_cudf, is_index
 
 cudf = lazy_import("cudf")
+
+
+def _check_expr_in_list_of_list(x: list):
+    for i in x:
+        if isinstance(i, list):
+            for item in i:
+                if (
+                    hasattr(item, "data")
+                    and isinstance(item.data, TensorData)
+                    and item.data.ndim == 0
+                ):
+                    return True
+    return False
+
+
+def _convert_data_to_dict(data: List[list], cols: list) -> Dict[Any, list]:
+    dic = {}
+    for i in range(0, len(cols)):
+        dic[cols[i]] = []
+        for lis in data:
+            dic[cols[i]].append(lis[i])
+    return dic
 
 
 class InitializerMeta(SerializableMeta):
@@ -103,6 +126,11 @@ class DataFrame(_Frame, metaclass=InitializerMeta):
                     data, index=index, columns=columns, gpu=gpu, sparse=sparse
                 )
             need_repart = num_partitions is not None
+        elif isinstance(data, list) and _check_expr_in_list_of_list(data):
+            data = _convert_data_to_dict(data, columns)
+            df = dataframe_from_1d_tileables(
+                data, index=index, columns=columns, gpu=gpu, sparse=sparse
+            )
         else:
             if is_cudf(data) or is_cupy(data):  # pragma: no cover
                 pdf = cudf.DataFrame(data, index=index, columns=columns, dtype=dtype)
@@ -115,7 +143,6 @@ class DataFrame(_Frame, metaclass=InitializerMeta):
             if num_partitions is not None:
                 chunk_size = ceildiv(len(pdf), num_partitions)
             df = from_pandas_df(pdf, chunk_size=chunk_size, gpu=gpu, sparse=sparse)
-
         if need_repart:
             df = df.rebalance(num_partitions=num_partitions)
         super().__init__(df.data)
