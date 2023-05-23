@@ -16,7 +16,7 @@
 import dataclasses
 import functools
 from abc import ABC, abstractmethod
-from typing import Dict, List, Set, Tuple, Type, Union
+from typing import Callable, Dict, List, Set, Tuple, Type, Union
 
 from ...core import ChunkGraph, ChunkType, OperandType
 from ...utils import build_fuse_chunk
@@ -106,7 +106,7 @@ class GraphTraversalOptimizer(RuntimeOptimizer):
         graph: ChunkGraph,
         node: ChunkType,
         graph_results: Set[ChunkType],
-        cached_can_fuse,
+        cached_can_fuse: Callable[[int, str], bool],
     ):
         fuse_graph = ChunkGraph()
         fuse_graph.add_node(node)
