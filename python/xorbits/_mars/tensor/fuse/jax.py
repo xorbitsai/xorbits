@@ -16,7 +16,9 @@ import numpy as np
 
 try:
     import jax
+    from jax import config
 
+    config.update("jax_enable_x64", True)
     JAX_INSTALLED = True
 except ImportError:
     JAX_INSTALLED = False
