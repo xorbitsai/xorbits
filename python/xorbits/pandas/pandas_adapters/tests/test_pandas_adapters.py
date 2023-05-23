@@ -27,7 +27,6 @@ def test_pandas_dataframe_methods(setup):
     """
     All the fallbacks:
 
-    applymap
     asfreq
     asof
     at_time
@@ -65,7 +64,6 @@ def test_pandas_dataframe_methods(setup):
     nlargest
     nsmallest
     pipe
-    pivot
     pivot_table
     rank
     reorder_levels
@@ -105,6 +103,34 @@ def test_pandas_dataframe_methods(setup):
     value_counts
     xs
     """
+
+    raw = pd.DataFrame(
+        np.array(([1, 2, 3], [4, 5, 6])),
+        index=["mouse", "rabbit"],
+        columns=["one", "two", "three"],
+    )
+    df = xpd.DataFrame(raw)
+    with pytest.warns(Warning) as w:
+        r = df.filter(items=["one", "three"])
+        assert len(w) == 1
+        assert "DataFrame.filter will fallback to Pandas" == str(w[0].message)
+
+    assert len(getattr(r.data._mars_entity, "_executed_sessions")) == 0
+    expected = raw.filter(items=["one", "three"])
+    assert str(expected) == str(r)
+    assert isinstance(r, DataRef)
+    pd.testing.assert_frame_equal(expected, r.to_pandas())
+
+    # multi chunk and follow other operations
+    df = xpd.DataFrame(raw, chunk_size=1)
+    with pytest.warns(Warning) as w:
+        r = df.filter(items=["one", "three"])
+        assert "DataFrame.filter will fallback to Pandas" == str(w[0].message)
+
+    expected = raw.filter(items=["one", "three"])
+    assert str(expected) == str(r)
+    pd.testing.assert_frame_equal(expected, r.to_pandas())
+
     raw = pd.DataFrame(
         {
             "foo": ["one", "one", "one", "two", "two", "two"],
