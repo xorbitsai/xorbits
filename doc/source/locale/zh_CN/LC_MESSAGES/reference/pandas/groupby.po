@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 11:23+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/reference/pandas/groupby.rst:5
 msgid "GroupBy"
@@ -113,10 +113,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
-msgid ""
-"Call function producing a like-indexed Series on each group and return a "
-"Series having the same indexes as the original object filled with the "
-"transformed values."
+msgid "Call function producing a same-indexed Series on each group."
 msgstr ""
 
 #: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
@@ -127,10 +124,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/reference/pandas/groupby.rst:59:<autosummary>:1
-msgid ""
-"Call function producing a like-indexed DataFrame on each group and return"
-" a DataFrame having the same indexes as the original object filled with "
-"the transformed values."
+msgid "Call function producing a same-indexed DataFrame on each group."
 msgstr ""
 
 #: ../../source/reference/pandas/groupby.rst:61
