@@ -46,7 +46,7 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
 
         filters = hash_dataframe_on(df, op.index, op._shuffle_size)
 
-        for index_idx in range(len(filters)):
+        for index_idx, _ in enumerate(filters):
             reducer_index = (index_idx, chunk.index[1])
             index_filter = filters[index_idx]
             ctx[chunk.key, reducer_index] = (
@@ -164,7 +164,7 @@ def df_pivot(
     columns. See the :ref:`User Guide <reshaping>` for more on reshaping.
 
     Parameters
-    ----------%s
+    ----------
     columns : str or object or a list of str
         Column to use to make new frame's columns.
 
