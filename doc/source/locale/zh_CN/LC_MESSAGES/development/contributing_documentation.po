@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-18 17:50+0800\n"
+"POT-Creation-Date: 2023-05-22 15:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,10 +34,12 @@ msgid ""
 "desc+label%3Adocumentation>`__ for a full list of issues that are "
 "currently open regarding the Xorbits documentation."
 msgstr ""
-"优化文档将帮助到使每一个 Xorbits 的用户。帮助 Xorbits 提升文档质量并不需要对 Xorbits 有特别深入的理解。"
-"事实上，某些文档不适合由资深开发者进行撰写。因此，我们鼓励所有人参与 Xorbits 的文档开发！"
-"如果文档中有什么不清楚的地方，弄清楚并更新相关内容将会帮助到下一个人。"
-"请访问 `issues 页面 <https://github.com/xprobe-inc/xorbits/issues?page=1&q=is%3Aopen+sort%3Aupdated-desc+label%3Adocumentation>`__ ，查看 Xorbits 文档相关 issue。"
+"优化文档将帮助到每一个使用 Xorbits 的用户。帮助 Xorbits 提升文档质量"
+"并不需要对 Xorbits 有特别深入的理解。事实上，某些文档不适合由资深开发者"
+"进行撰写。因此，我们鼓励所有人参与 Xorbits 的文档开发！如果文档中有什么不"
+"清楚的地方，弄清楚并更新相关内容将会帮助到下一个人。请访问 `issues 页面 <"
+"https://github.com/xprobe-inc/xorbits/issues?page=1&q=is%3Aopen+sort%"
+"3Aupdated-desc+label%3Adocumentation>`__ ，查看 Xorbits 文档相关 issue。"
 
 #: ../../source/development/contributing_documentation.rst:21
 msgid "Documentation:"
@@ -56,8 +58,10 @@ msgid ""
 "doc.org/en/master/usage/restructuredtext/basics.html>`__. Review the "
 "Sphinx docs to perform more complex changes to the documentation as well."
 msgstr ""
-"Xorbits 的文档是 reStructuredText 格式，几乎就像用普通英语写作一样，使用 Sphinx 构建。"
-"Sphinx 的文档中有 `reST 教程 <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`__ 。请查看该文档，以了解文档操作。"
+"Xorbits 的文档是 reStructuredText 格式，几乎就像用普通英语写作一样，使用 "
+"Sphinx 构建。Sphinx 的文档中有 `reST 教程 <https://www.sphinx-doc.org/en/"
+"master/usage/restructuredtext/basics.html>`__ 。请查看该文档，以了解文档"
+"操作。"
 
 #: ../../source/development/contributing_documentation.rst:32
 msgid "Some other important things to know about the docs:"
@@ -67,7 +71,9 @@ msgstr "以下是有关文档的其他重要事项："
 msgid ""
 "The Xorbits documentation consists of two parts: the docstrings in the "
 "code itself and the docs in this folder ``doc/``."
-msgstr "Xorbits 文档由两部分组成：代码本身的 docstrings 和位于 ``doc/`` 文件夹中的文档。"
+msgstr ""
+"Xorbits 文档由两部分组成：代码本身的 docstrings 和位于 ``doc/`` 文件夹中"
+"的文档。"
 
 #: ../../source/development/contributing_documentation.rst:37
 msgid ""
@@ -75,7 +81,9 @@ msgid ""
 " functions, while the documentation in this folder consists of tutorial-"
 "like overviews per topic together with some other information (what's "
 "new, installation, etc)."
-msgstr "docstrings 为各个函数的使用方式提供了清晰的解释，而位于此文件夹中的文档则由一个个主题教程以及一些其他信息（新功能介绍、安装等）组成。"
+msgstr ""
+"docstrings 为各个函数的使用方式提供了清晰的解释，而位于此文件夹中的文档则"
+"由一个个主题教程以及一些其他信息（新功能介绍、安装等）组成。"
 
 #: ../../source/development/contributing_documentation.rst:42
 msgid ""
@@ -89,8 +97,10 @@ msgid ""
 "<https://matplotlib.org/sampledoc/ipython_directive.html>`_ sphinx "
 "extension. This directive lets you put code in the documentation which "
 "will be run during the doc build. For example::"
-msgstr "教程中大量使用了 sphinx 的 `IPython directive <https://matplotlib.org/sampledoc/ipython_directive.html>`_ 插件。"
-"IPython directive 允许你把代码嵌入文档，并在构建文档时运行这部分代码。举例来说："
+msgstr ""
+"教程中大量使用了 sphinx 的 `IPython directive <https://matplotlib.org/"
+"sampledoc/ipython_directive.html>`_ 插件。IPython directive 允许你把代码"
+"嵌入文档，并在构建文档时运行这部分代码。举例来说："
 
 #: ../../source/development/contributing_documentation.rst:55
 msgid "will be rendered as::"
@@ -102,7 +112,8 @@ msgid ""
 "during the doc build. This approach means that code examples will always "
 "be up to date, but it does make the doc building a bit more complex."
 msgstr ""
-"文档中的几乎所有代码示例都会在文档构建期间运行（并保存输出）。这种方法意味着代码示例始终是最新的，但也使文档构建变得更加复杂。"
+"文档中的几乎所有代码示例都会在文档构建期间运行（并保存输出）。这种方法"
+"意味着代码示例始终是最新的，但也使文档构建变得更加复杂。"
 
 #: ../../source/development/contributing_documentation.rst:66
 msgid ""
@@ -111,155 +122,193 @@ msgid ""
 " subtleties around controlling which methods and attributes have pages "
 "auto-generated."
 msgstr ""
-"我们的 API 文档文件位于 doc/source/reference，包含从 docstrings 自动生成的文档。对于一个类，我们要控制哪些方法和属性需要自动生成文档页面。"
+"我们的 API 文档文件位于 doc/source/reference，包含从 docstrings 自动生成"
+"的文档。对于一个类，我们要控制哪些方法和属性需要自动生成文档页面。"
 
 #: ../../source/development/contributing_documentation.rst:70
-msgid "We have two autosummary templates for classes."
-msgstr ""
-
-#: ../../source/development/contributing_documentation.rst:72
-msgid ""
-"``_templates/autosummary/class.rst``. Use this when you want to "
-"automatically generate a page for every public method and attribute on "
-"the class. The ``Attributes`` and ``Methods`` sections will be "
-"automatically added to the class' rendered documentation by numpydoc. See"
-" ``DataFrame`` for an example."
-msgstr ""
-
-#: ../../source/development/contributing_documentation.rst:78
-msgid ""
-"``_templates/autosummary/class_without_autosummary``. Use this when you "
-"want to pick a subset of methods / attributes to auto-generate pages for."
-" When using this template, you should include an ``Attributes`` and "
-"``Methods`` section in the class docstring. See ``CategoricalIndex`` for "
-"an example."
-msgstr ""
-
-#: ../../source/development/contributing_documentation.rst:84
 msgid ""
 "Every method should be included in a ``toctree`` in one of the "
 "documentation files in ``doc/source/reference``, else Sphinx will emit a "
 "warning."
 msgstr ""
+"每个方法都应对应 ``doc/source/reference`` 下的一个文件，并被包含在 ``"
+"toctree`` 中，否则 Sphinx 会提示警告。"
 
-#: ../../source/development/contributing_documentation.rst:88
+#: ../../source/development/contributing_documentation.rst:74
 msgid ""
-"The utility script ``scripts/validate_docstrings.py`` can be used to get "
-"a csv summary of the API documentation. And also validate common errors "
-"in the docstring of a specific class, function or method. The summary "
-"also compares the list of methods documented in the files in "
-"``doc/source/reference`` (which is used to generate the `API Reference "
-"<https://doc.xorbits.io/en/latest/reference/index.html>`_ page) and the "
-"actual public methods. This will identify methods documented in "
-"``doc/source/reference`` that are not actually class methods, and "
-"existing methods that are not documented in ``doc/source/reference``."
+"Xorbits leverages `sphinx-intl <https://www.sphinx-"
+"doc.org/en/master/usage/advanced/intl.html>`_ to manage documentation in "
+"multiple languages. Currently, documentation in Chinese is supported."
 msgstr ""
+"Xorbits利用 `sphinx-intl <https://www.sphinx-doc.org/en/master/usage/"
+"advanced/intl.html>`_ 来管理多种语言的文档。目前支持中文文档。"
 
-#: ../../source/development/contributing_documentation.rst:99
+#: ../../source/development/contributing_documentation.rst:78
 msgid "Updating a Xorbits docstring"
-msgstr ""
+msgstr "更新 Xorbits docstring"
 
-#: ../../source/development/contributing_documentation.rst:101
+#: ../../source/development/contributing_documentation.rst:80
 msgid ""
 "When improving a single function or method's docstring, it is not "
 "necessarily needed to build the full documentation (see next section)."
-msgstr ""
+msgstr "改进某个函数或方法的 docstring 后，不一定要从头构建文档（请参见下一节）。"
 
-#: ../../source/development/contributing_documentation.rst:104
+#: ../../source/development/contributing_documentation.rst:83
 msgid ""
 "The examples in the docstring ('doctests') must be valid Python code, "
 "that in a deterministic way returns the presented output, and that can be"
-" copied and run by users. This can be checked with the script above, and "
-"is also tested on Travis. A failing doctest will be a blocker for merging"
+" copied and run by users. A failing doctest will be a blocker for merging"
 " a PR."
 msgstr ""
+"docstring 中的示例必须是有效的Python代码，以确定性的方式返回所呈现的输出"
+"，可以被用户复制并运行。doctest 运行失败将阻止合并 PR。"
 
-#: ../../source/development/contributing_documentation.rst:109
+#: ../../source/development/contributing_documentation.rst:89
+#, fuzzy
+msgid "Updating Xorbits documentation"
+msgstr "更新 Xorbits 文档"
+
+#: ../../source/development/contributing_documentation.rst:91
 msgid ""
-"When doing a PR with a docstring update, it is good to post the output of"
-" the validation script in a comment on github."
+"After updating the docs in this folder ``doc/``, you also need to update "
+"the pot files. POT (portable object template), is a format generated by "
+"GNU gettext to streamline software localization and internationalization."
 msgstr ""
+"在更新 ``doc/`` 目录下的文档后，你还需要更新 pot 文件。POT（portable "
+"object template）是 GNU gettext 生成的文件格式，用于软件的本地化与国际化"
+"。"
 
-#: ../../source/development/contributing_documentation.rst:114
+#: ../../source/development/contributing_documentation.rst:95
+msgid "To update pot files, run::"
+msgstr "运行以下命令更新 pot 文件::"
+
+#: ../../source/development/contributing_documentation.rst:99
+msgid ""
+"The generated pot files will be placed in the below directories: "
+"``doc/source/locale/zh_CN/LC_MESSAGES/``."
+msgstr "更新后的 pot 文件会出现在 ``doc/source/locale/zh_CN/LC_MESSAGES/``。"
+
+#: ../../source/development/contributing_documentation.rst:103
+#, fuzzy
+msgid "Translating Xorbits documentation"
+msgstr "翻译 Xorbits 文档"
+
+#: ../../source/development/contributing_documentation.rst:105
+msgid ""
+"Translating the documentation can greatly help non-English users and "
+"could be a great start for new contributors."
+msgstr ""
+"翻译文档可以大大帮助非英语使用者和开发者，同时也是参与 Xorbits 的很好的"
+"起点。"
+
+#: ../../source/development/contributing_documentation.rst:108
+msgid ""
+"You need to update the pot files located in "
+"``doc/source/locale/zh_CN/LC_MESSAGES/``. An example of one such file, "
+"from Sphinx, builders.po, is given below::"
+msgstr ""
+"你需要做的是更新 ``doc/source/locale/zh_CN/LC_MESSAGES/`` 目录下的 pot "
+"文件。以 Sphinx 的 builders.po 为例::"
+
+#: ../../source/development/contributing_documentation.rst:116
+msgid "You can build the documentation to view your changes (see next section)."
+msgstr "在完成翻译后，你可以重新构建文档来查看你的修改（请参见下一节）。"
+
+#: ../../source/development/contributing_documentation.rst:120
 msgid "How to build the Xorbits documentation"
-msgstr ""
+msgstr "如何构建 Xorbits 文档"
 
-#: ../../source/development/contributing_documentation.rst:117
+#: ../../source/development/contributing_documentation.rst:123
 msgid "Requirements"
-msgstr ""
+msgstr "前置条件"
 
-#: ../../source/development/contributing_documentation.rst:119
+#: ../../source/development/contributing_documentation.rst:125
 msgid ""
 "First, you need to have a development environment to be able to build "
 "Xorbits (see the docs on :ref:`creating a development environment "
 "<contributing_environment>`)."
 msgstr ""
+"首先你需要一个能够构建 Xorbits 的开发环境（请见 :ref:`配置开发环境 <"
+"contributing_environment>`）。"
 
-#: ../../source/development/contributing_documentation.rst:123
+#: ../../source/development/contributing_documentation.rst:129
 msgid "Building the documentation"
-msgstr ""
+msgstr "构建文档"
 
-#: ../../source/development/contributing_documentation.rst:125
+#: ../../source/development/contributing_documentation.rst:131
 msgid ""
 "So how do you build the docs? Navigate to your local ``doc/`` directory "
 "in the console and run::"
-msgstr ""
+msgstr "那么如何构建文档？在命令行中切换到 ``doc/`` 目录，并执行::"
 
-#: ../../source/development/contributing_documentation.rst:130
+#: ../../source/development/contributing_documentation.rst:136
 msgid "Then you can find the HTML output in the folder ``doc/build/html/``."
-msgstr ""
+msgstr "你可以在 ``doc/build/html/`` 目录下看到生成的 HTML 文件。"
 
-#: ../../source/development/contributing_documentation.rst:132
+#: ../../source/development/contributing_documentation.rst:138
+msgid "To build the docs in Chinese, run::"
+msgstr "若想构建中文文档，执行以下命令::"
+
+#: ../../source/development/contributing_documentation.rst:142
+msgid "Then you can find the HTML output in the folder ``doc/build/html_zh_cn/``."
+msgstr "你可以在 ``doc/build/html_zh_cn/`` 目录下看到生成的中文 HTML 文件。"
+
+#: ../../source/development/contributing_documentation.rst:144
 msgid ""
 "The first time you build the docs, it will take quite a while because it "
 "has to run all the code examples and build all the generated docstring "
 "pages. In subsequent evocations, sphinx will try to only build the pages "
 "that have been modified."
 msgstr ""
+"第一次构建文档需要相当长的时间，因为它必须运行所有代码示例并构建所有生成"
+"的 docstring 页面。在后续调用中，Sphinx 将尝试仅构建发生修改的页面。"
 
-#: ../../source/development/contributing_documentation.rst:136
+#: ../../source/development/contributing_documentation.rst:148
 msgid "If you want to do a full clean build, do::"
-msgstr ""
+msgstr "如果你想要从头构建，执行以下命令::"
 
-#: ../../source/development/contributing_documentation.rst:141
+#: ../../source/development/contributing_documentation.rst:153
 msgid ""
 "Open the following file in a web browser to see the full documentation "
 "you just built::"
-msgstr ""
+msgstr "在浏览器中打开以下文件来查看你构建的文档::"
 
-#: ../../source/development/contributing_documentation.rst:146
+#: ../../source/development/contributing_documentation.rst:158
 msgid ""
 "And you'll have the satisfaction of seeing your new and improved "
 "documentation!"
-msgstr ""
+msgstr "此时你会看到你修改后或新添加的文档！是不是很有成就感呢？"
 
-#: ../../source/development/contributing_documentation.rst:151
+#: ../../source/development/contributing_documentation.rst:163
 msgid "Building main branch documentation"
-msgstr ""
+msgstr "构建主干分支（main）的文档"
 
-#: ../../source/development/contributing_documentation.rst:153
+#: ../../source/development/contributing_documentation.rst:165
 msgid ""
 "When pull requests are merged into the Xorbits ``main`` branch, the main "
 "parts of the documentation are also built by readthedocs. These docs are "
 "then hosted `here <https://doc.xorbits.io/en/latest/>`__, see also the "
 ":any:`Continuous Integration <contributing.ci>` section."
 msgstr ""
+"当 pull requests 合并到 Xorbits 主干分支后，readthedocs 会构建文档的主要"
+"部分。主干分支的文档会托管在 `这里 <https://doc.xorbits.io/en/latest/>`__"
+"，另见 :any:`持续集成 <contributing.ci>` 一节。"
 
-#: ../../source/development/contributing_documentation.rst:159
+#: ../../source/development/contributing_documentation.rst:171
 msgid "Previewing changes"
-msgstr ""
+msgstr "预览改动"
 
-#: ../../source/development/contributing_documentation.rst:161
+#: ../../source/development/contributing_documentation.rst:173
 msgid ""
 "Once, the pull request is submitted, GitHub Actions will automatically "
 "build the documentation. To view the built site:"
-msgstr ""
+msgstr "当 pull request 提交后，GitHub Actions 会自动构建文档。若想要查看文档:"
 
-#: ../../source/development/contributing_documentation.rst:164
+#: ../../source/development/contributing_documentation.rst:176
 msgid "Wait for the ``docs/readthedocs.org:xorbits`` check to complete."
-msgstr ""
+msgstr "等待 ``docs/readthedocs.org:xorbits`` 执行结束。"
 
-#: ../../source/development/contributing_documentation.rst:165
+#: ../../source/development/contributing_documentation.rst:177
 msgid "Click ``Details`` for preview."
-msgstr ""
+msgstr "点击 ``Details`` 进行预览。"
 
