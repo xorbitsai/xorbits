@@ -290,7 +290,7 @@ jobs:
         elif [ "$MODULE" == "gpu" ]; then
           pytest -m cuda --gpu --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [ "$MODULE" == "jax" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits/_mars/tensor/fuse.jax
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits/_mars/tensor/fuse.jax xorbits/_mars/tensor
         elif [ "$MODULE" == "compatibility" ]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
