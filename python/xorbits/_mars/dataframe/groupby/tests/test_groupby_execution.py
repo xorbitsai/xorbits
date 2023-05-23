@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from collections import OrderedDict
+from itertools import product
 
 import numpy as np
 import pandas as pd
@@ -31,6 +32,7 @@ from ....utils import arrow_array_to_objects, lazy_import, pd_release_version
 from ...core import DATAFRAME_OR_SERIES_TYPE
 from ...utils import is_pandas_2
 from ..aggregation import DataFrameGroupByAgg
+from ..rolling import _PAIRWISE_AGG
 
 cudf = lazy_import("cudf")
 pytestmark = pytest.mark.pd_compat
@@ -1780,3 +1782,107 @@ def test_groupby_agg_on_custom_funcs(setup_gpu, gpu):
         .execute()
         .fetch(),
     )
+
+
+@pytest.mark.parametrize(
+    "window,min_periods,center,on,closed,agg",
+    list(
+        product(
+            [5, 10],
+            [1, 3],
+            [False, True],
+            [None, "c_1"],
+            ["right", "left", "both", "neither"],
+            [
+                "corr",
+                "cov",
+                "count",
+                "sum",
+                "mean",
+                "median",
+                "var",
+                "std",
+                "min",
+                "max",
+                "skew",
+                "kurt",
+            ],
+        )
+    ),
+)
+def test_df_groupby_rolling_agg(setup, window, min_periods, center, on, closed, agg):
+    # skipped for now due to https://github.com/pandas-dev/pandas/issues/52299
+    if agg in _PAIRWISE_AGG and on is not None:
+        return
+
+    pdf = pd.DataFrame(
+        data=np.random.randint(low=0, high=10, size=(10, 10)),
+        index=pd.date_range(start="2023-01-01", end="2023-01-10", freq="D"),
+        columns=[f"c_{i}" for i in range(10)],
+    )
+    pr = pdf.groupby(by="c_0").rolling(
+        window=window,
+        min_periods=min_periods,
+        center=center,
+        on=on,
+        axis=0,
+        closed=closed,
+    )
+    presult = getattr(pr, agg)()
+
+    mdf = md.DataFrame(pdf, chunk_size=5)
+    mr = mdf.groupby(by="c_0").rolling(
+        window=window,
+        min_periods=min_periods,
+        center=center,
+        on=on,
+        axis=0,
+        closed=closed,
+    )
+    mresult = getattr(mr, agg)()
+    mresult = mresult.execute().fetch()
+
+    pd.testing.assert_frame_equal(presult, mresult.sort_index())
+
+
+@pytest.mark.parametrize(
+    "window,min_periods,center,closed,agg",
+    list(
+        product(
+            [5, 10],
+            [1, 3],
+            [False, True],
+            ["right", "left", "both", "neither"],
+            [
+                "count",
+                "sum",
+                "mean",
+                "median",
+                "var",
+                "std",
+                "min",
+                "max",
+                "skew",
+                "kurt",
+            ],
+        )
+    ),
+)
+def test_series_groupby_rolling_agg(setup, window, min_periods, center, closed, agg):
+    ps = pd.Series(
+        data=np.random.randint(low=0, high=10, size=10),
+        index=pd.date_range(start="2023-01-01", end="2023-01-10", freq="D"),
+    )
+    pr = ps.groupby(ps > 5).rolling(
+        window=window, min_periods=min_periods, center=center, axis=0, closed=closed
+    )
+    presult = getattr(pr, agg)()
+
+    ms = md.Series(ps, chunk_size=5)
+    mr = ms.groupby(ms > 5).rolling(
+        window=window, min_periods=min_periods, center=center, axis=0, closed=closed
+    )
+    mresult = getattr(mr, agg)()
+    mresult = mresult.execute().fetch()
+
+    pd.testing.assert_series_equal(presult, mresult.sort_index())
