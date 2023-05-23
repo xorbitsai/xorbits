@@ -132,8 +132,6 @@ ARITHMETIC_SUPPORT = {
     arithmetic.TensorGreaterEqual,
     arithmetic.TensorAnd,
     arithmetic.TensorOr,
-    arithmetic.TensorTreeAdd,
-    arithmetic.TensorTreeMultiply,
 }
 
 REDUCTION_SUPPORT = {
