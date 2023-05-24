@@ -68,6 +68,16 @@ def _evaluate(chunk, input_dict):
                 rhs = _evaluate(chunk.op.rhs, input_dict)
                 return _get_jax_function(chunk.op)(lhs, rhs)
         return _get_jax_function(chunk.op)
+    elif op_type in TREE_SUPPORT:
+        func = _get_jax_function(chunk.op)
+
+        def _fusion(func, inputs):
+            output = func(inputs[0], inputs[1])
+            for input in inputs[2:]:
+                output = func(output, input)
+            return output
+
+        return jax.jit(_fusion)(func, chunk.inputs)
     elif op_type in REDUCTION_SUPPORT:
         ax = chunk.op.axis
         data = _evaluate(chunk.inputs[0], input_dict)
@@ -132,6 +142,11 @@ ARITHMETIC_SUPPORT = {
     arithmetic.TensorGreaterEqual,
     arithmetic.TensorAnd,
     arithmetic.TensorOr,
+}
+
+TREE_SUPPORT = {
+    arithmetic.TensorTreeAdd,
+    arithmetic.TensorTreeMultiply,
 }
 
 REDUCTION_SUPPORT = {

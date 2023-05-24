@@ -16,7 +16,12 @@ import logging
 
 from ...core import ChunkType
 from ...tensor.fuse import TensorJAXFuseChunk
-from ...tensor.fuse.jax import ARITHMETIC_SUPPORT, JAX_INSTALLED, REDUCTION_SUPPORT
+from ...tensor.fuse.jax import (
+    ARITHMETIC_SUPPORT,
+    JAX_INSTALLED,
+    REDUCTION_SUPPORT,
+    TREE_SUPPORT,
+)
 from .core import REDUCTION, GraphTraversalOptimizer, register_optimizer
 
 logger = logging.getLogger(__name__)
@@ -34,7 +39,7 @@ class JAXRuntimeOptimizer(GraphTraversalOptimizer):
                 return REDUCTION
             else:  # pragma: no cover
                 return False
-        if op_type not in ARITHMETIC_SUPPORT:
+        if op_type not in ARITHMETIC_SUPPORT and op_type not in TREE_SUPPORT:
             return False
         return True
 
