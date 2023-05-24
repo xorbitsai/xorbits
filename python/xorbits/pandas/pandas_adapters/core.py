@@ -99,7 +99,7 @@ def _collect_pandas_cls_members(pd_cls: Type, data_type: DataType):
             pandas_cls_method_wrapper = PandasClsMethodWrapper(
                 library_cls=pd_cls, func_name=name, fallback_warning=True
             )
-            members[name] = pandas_cls_method_wrapper.wrap_method()
+            members[name] = pandas_cls_method_wrapper.get_wrapped()
     # make to_numpy an alias of to_tensor
     members["to_numpy"] = members["to_tensor"]
 

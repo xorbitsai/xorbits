@@ -202,7 +202,7 @@ class ClsMethodWrapper(ABC):
         get docstring src module according to the library
         """
 
-    def wrap_method(self) -> Callable:
+    def get_wrapped(self) -> Callable:
         """
         wrap pd.DataFrame member functions, np.ndarray methods, and other methods
 

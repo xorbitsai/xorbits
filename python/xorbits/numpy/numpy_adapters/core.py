@@ -98,7 +98,7 @@ def _collect_numpy_cls_members(np_cls: Type, data_type: DataType):
             numpy_cls_method_wrapper = NumpyClsMethodWrapper(
                 library_cls=np_cls, func_name=name, fallback_warning=True
             )
-            members[name] = numpy_cls_method_wrapper.wrap_method()
+            members[name] = numpy_cls_method_wrapper.get_wrapped()
 
 
 def _collect_numpy_ndarray_members():
