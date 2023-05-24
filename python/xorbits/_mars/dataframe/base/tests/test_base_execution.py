@@ -686,6 +686,54 @@ def test_data_frame_applymap_execute(setup):
     pd.testing.assert_frame_equal(result, expected)
 
 
+def test_data_frame_pivot_execute(setup):
+    def sorted_df(df):
+        return df.sort_index(axis=0).sort_index(axis=1)
+
+    df_raw = pd.DataFrame(
+        {
+            "foo": ["one", "one", "one", "two", "two", "two"],
+            "bar": ["A", "B", "C", "A", "B", "C"],
+            "baz": [1, 2, 3, 4, 5, 6],
+            "qux": [10, 20, 30, 40, 50, 60],
+        }
+    )
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    # test basic pivot
+    r = df.pivot(index="foo", columns="bar", values="baz")
+    result = r.execute().fetch()
+    expected = df_raw.pivot(index="foo", columns="bar", values="baz")
+    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+
+    # test pivot without values
+    r = df.pivot(index="foo", columns="bar")
+    result = r.execute().fetch()
+    expected = df_raw.pivot(index="foo", columns="bar")
+    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+
+    # test pivot without index
+    r = df.pivot(columns="foo", values="baz")
+    result = r.execute().fetch()
+    expected = df_raw.pivot(columns="foo", values="baz")
+    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+
+    # test pivot without values and index
+    r = df.pivot(columns="foo")
+    result = r.execute().fetch()
+    expected = df_raw.pivot(columns="foo")
+    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+
+    # test pivot with list of inputs
+    df = from_pandas_df(df_raw)  # Avoid shape check
+    r = df.pivot(index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"])
+    result = r.execute().fetch()
+    expected = df_raw.pivot(
+        index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"]
+    )
+    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+
+
 def test_transform_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]
     df_raw = pd.DataFrame(dict((c, [i**2 for i in range(20)]) for c in cols))
