@@ -306,7 +306,7 @@ msgstr ""
 
 #: ../../source/development/contributing.rst:172
 msgid "Contributing your changes to Xorbits"
-msgstr "将你的更改成果同步给Xorbits"
+msgstr "将改动贡献到 Xorbits"
 
 #: ../../source/development/contributing.rst:177
 msgid "Committing your code"
@@ -316,7 +316,7 @@ msgstr "提交你的代码"
 msgid ""
 "Keep style fixes to a separate commit to make your pull request more "
 "readable."
-msgstr "请保持每次commit的代码风格一致，以便使你的pull request更具有可读性"
+msgstr "请保持每次commit的代码风格一致，以便使你的pull request更具有可读性。"
 
 #: ../../source/development/contributing.rst:181
 msgid "Once you've made changes, you can see them by typing::"
@@ -355,7 +355,7 @@ msgstr "BUG: Bug 修复"
 
 #: ../../source/development/contributing.rst:203
 msgid "DOC: Additions/updates to documentation"
-msgstr "DOC: 文件(documentation)的删改与添加"
+msgstr "DOC: 文档(documentation)的删改与添加"
 
 #: ../../source/development/contributing.rst:204
 msgid "TST: Additions/updates to tests"
@@ -464,7 +464,7 @@ msgstr "跳转至你的Github repository -- https://github.com/your-user-name/xo
 
 #: ../../source/development/contributing.rst:259
 msgid "Click on ``Branches``"
-msgstr "点击 ``Compare``"
+msgstr "点击 ``Branches``"
 
 #: ../../source/development/contributing.rst:260
 msgid "Click on the ``Compare`` button for your feature branch"
@@ -488,7 +488,7 @@ msgid ""
 " version.  This pull request and its associated changes will eventually "
 "be committed to the main branch and available in the next release.  To "
 "submit a pull request:"
-msgstr "若无异常，你就准备好提交pull request了。Pull Request是将本地仓库中的代码提供给 GitHub 社区并进行查看和最终合并到主要版本的方式"
+msgstr "若无异常，你就准备好提交pull request了。Pull Request是将本地仓库中的代码提供给 GitHub 社区并进行查看和最终合并到主要版本的方式。"
 "这个pull request及其关联的更改最终将被提交到主分支，并在下一个版本中可用。要提交一个pull request，请按照以下步骤进行:"
 
 #: ../../source/development/contributing.rst:273
@@ -511,13 +511,13 @@ msgstr "在 ``Preview Discussion`` 中描述你的更改"
 
 #: ../../source/development/contributing.rst:278
 msgid "Click ``Send Pull Request``."
-msgstr "点击 ``Send Pull Request``"
+msgstr "点击 ``Send Pull Request``。"
 
 #: ../../source/development/contributing.rst:280
 msgid ""
 "This request then goes to the repository maintainers, and they will "
 "review the code."
-msgstr "你的请求将会送达到核心开发人员端并被审查"
+msgstr "你的请求将会送达到核心开发人员端并被审查。"
 
 #: ../../source/development/contributing.rst:286
 msgid "Updating your pull request"
