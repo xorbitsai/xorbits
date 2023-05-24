@@ -211,3 +211,8 @@ def test_docstring():
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from numpy."
     )
+
+    docstring = xnp.ndarray.tolist.__doc__
+    assert docstring is not None and docstring.endswith(
+        "This docstring was copied from numpy.ndarray."
+    )
