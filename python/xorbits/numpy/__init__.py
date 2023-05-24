@@ -73,9 +73,11 @@ from ..core.utils.fallback import unimplemented_func
 
 
 def _install():
-    from .mars_adapters import _install as _install_mars_adapters
+    from .mars_adapters import _install as _install_mars_methods
+    from .numpy_adapters import _install as _install_numpy_methods
 
-    _install_mars_adapters()
+    _install_mars_methods()
+    _install_numpy_methods()
 
 
 try:
