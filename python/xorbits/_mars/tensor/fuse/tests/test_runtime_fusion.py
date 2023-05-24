@@ -17,6 +17,7 @@ import numpy as np
 
 from ....utils import ignore_warning
 from ...arithmetic import abs as mt_abs
+from ...arithmetic import tree_add, tree_multiply
 from ...datasource import arange, tensor
 from ...reduction import sum as mt_sum
 
@@ -205,3 +206,21 @@ def test_order_execution(setup):
     np.testing.assert_array_equal(res, expected)
     assert res.flags["C_CONTIGUOUS"] == expected.flags["C_CONTIGUOUS"]
     assert res.flags["F_CONTIGUOUS"] == expected.flags["F_CONTIGUOUS"]
+
+
+def test_tree_execution(setup):
+    rs = np.random.RandomState(0)
+    raw1 = rs.randint(10, size=(10, 10, 10))
+    raw2 = rs.randint(10, size=(10, 10, 10))
+    raw3 = rs.randint(10, size=(10, 10, 10))
+    arr1 = tensor(raw1, chunk_size=5)
+    arr2 = tensor(raw2, chunk_size=5)
+    arr3 = tensor(raw3, chunk_size=5)
+
+    expected = raw1 + raw2 + raw3
+    res = tree_add(arr1, arr2, arr3).execute().fetch()
+    np.testing.assert_array_equal(expected, res)
+
+    expected = raw1 * raw2 * raw3
+    res = tree_multiply(arr1, arr2, arr3).execute().fetch()
+    np.testing.assert_array_equal(expected, res)
