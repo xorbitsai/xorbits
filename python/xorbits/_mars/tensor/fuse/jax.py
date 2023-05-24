@@ -69,8 +69,8 @@ def _evaluate(chunk, input_dict):
                 return _get_jax_function(chunk.op)(lhs, rhs)
         return _get_jax_function(chunk.op)
     elif op_type in TREE_SUPPORT:
-        print("tree")
         func = _get_jax_function(chunk.op)
+        inputs = [_evaluate(input, input_dict) for input in chunk.inputs]
 
         def _fusion(func, inputs):
             output = func(inputs[0], inputs[1])
@@ -78,7 +78,7 @@ def _evaluate(chunk, input_dict):
                 output = func(output, input)
             return output
 
-        return jax.jit(_fusion)(func, chunk.inputs)
+        return jax.jit(_fusion)(func, inputs)
     elif op_type in REDUCTION_SUPPORT:
         ax = chunk.op.axis
         data = _evaluate(chunk.inputs[0], input_dict)

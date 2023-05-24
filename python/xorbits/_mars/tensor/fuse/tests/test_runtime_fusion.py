@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
+import operator
+
 import numpy as np
 
 from ....utils import ignore_warning
@@ -209,18 +212,15 @@ def test_order_execution(setup):
 
 
 def test_tree_execution(setup):
-    rs = np.random.RandomState(0)
-    raw1 = rs.randint(10, size=(10, 10, 10))
-    raw2 = rs.randint(10, size=(10, 10, 10))
-    raw3 = rs.randint(10, size=(10, 10, 10))
-    arr1 = tensor(raw1, chunk_size=5)
-    arr2 = tensor(raw2, chunk_size=5)
-    arr3 = tensor(raw3, chunk_size=5)
+    raws = [np.random.rand(10, 10) for _ in range(10)]
+    tensors = [tensor(a, chunk_size=3) for a in raws]
 
-    expected = raw1 + raw2 + raw3
-    res = tree_add(arr1, arr2, arr3).execute().fetch()
-    np.testing.assert_array_equal(expected, res)
+    res = tree_add(*tensors, 1.0).execute().fetch()
+    np.testing.assert_array_almost_equal(
+        res, 1.0 + functools.reduce(operator.add, raws)
+    )
 
-    expected = raw1 * raw2 * raw3
-    res = tree_multiply(arr1, arr2, arr3).execute().fetch()
-    np.testing.assert_array_equal(expected, res)
+    res = tree_multiply(*tensors, 2.0).execute().fetch()
+    np.testing.assert_array_almost_equal(
+        res, 2.0 * functools.reduce(operator.mul, raws)
+    )
