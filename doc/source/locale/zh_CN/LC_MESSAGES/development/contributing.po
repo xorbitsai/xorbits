@@ -1,4 +1,4 @@
-   # SOME DESCRIPTIVE TITLE.
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) 2022-2023, Xprobe Inc.
 # This file is distributed under the same license as the Xorbits package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
