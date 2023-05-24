@@ -13,3 +13,9 @@
 # limitations under the License.
 
 from .core import collect_numpy_module_members
+
+
+def _install():
+    from .core import _collect_numpy_ndarray_members
+
+    _collect_numpy_ndarray_members()
