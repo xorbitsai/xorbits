@@ -72,13 +72,14 @@ def _evaluate(chunk, input_dict):
         func = _get_jax_function(chunk.op)
         inputs = [_evaluate(input, input_dict) for input in chunk.inputs]
 
-        def _fusion(func, inputs):
+        # passing func and inputs as parameters seems to cause error with jax.jit
+        def _fusion():
             output = func(inputs[0], inputs[1])
             for input in inputs[2:]:
                 output = func(output, input)
             return output
 
-        return jax.jit(_fusion)(func, inputs)
+        return jax.jit(_fusion)()
     elif op_type in REDUCTION_SUPPORT:
         ax = chunk.op.axis
         data = _evaluate(chunk.inputs[0], input_dict)
