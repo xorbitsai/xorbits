@@ -140,7 +140,7 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         return new_op.new_tileables(op.inputs, **kw)
 
     def __call__(self, df):
-        return self.new_dataframe([df], dtypes=df.dtypes)
+        return self.new_dataframe([df])
 
 
 def df_pivot(
