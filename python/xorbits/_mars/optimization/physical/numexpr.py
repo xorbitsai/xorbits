@@ -101,7 +101,7 @@ class NumexprRuntimeOptimizer(GraphTraversalOptimizer):
         if op_type in (arithmetic.TensorOr, arithmetic.TensorAnd):
             # numexpr only support logical and or:
             # https://numexpr.readthedocs.io/projects/NumExpr3/en/latest/user_guide.html#supported-operators
-            if np.isscalar(op.lhs) or np.isscalar(op.rhs):
+            if np.isscalar(op.lhs) or np.isscalar(op.rhs):  # pragma: no cover
                 return False
         return True
 
