@@ -164,7 +164,6 @@ msgstr ""
 "，可以被用户复制并运行。doctest 运行失败将阻止合并 PR。"
 
 #: ../../source/development/contributing_documentation.rst:89
-#, fuzzy
 msgid "Updating Xorbits documentation"
 msgstr "更新 Xorbits 文档"
 
@@ -189,7 +188,6 @@ msgid ""
 msgstr "更新后的 pot 文件会出现在 ``doc/source/locale/zh_CN/LC_MESSAGES/``。"
 
 #: ../../source/development/contributing_documentation.rst:103
-#, fuzzy
 msgid "Translating Xorbits documentation"
 msgstr "翻译 Xorbits 文档"
 
