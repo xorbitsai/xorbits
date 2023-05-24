@@ -69,6 +69,7 @@ def _evaluate(chunk, input_dict):
                 return _get_jax_function(chunk.op)(lhs, rhs)
         return _get_jax_function(chunk.op)
     elif op_type in TREE_SUPPORT:
+        print("tree")
         func = _get_jax_function(chunk.op)
 
         def _fusion(func, inputs):

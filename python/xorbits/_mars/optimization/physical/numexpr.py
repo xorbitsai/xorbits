@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import logging
+from typing import List, Tuple, Union
 
 import numpy as np
 
@@ -21,7 +22,7 @@ from ...core import ChunkType
 from ...tensor import arithmetic, reduction
 from ...tensor.fuse import TensorNeFuseChunk
 from ...tensor.fuse.numexpr import NUMEXPR_INSTALLED
-from .core import REDUCTION, GraphTraversalOptimizer, register_optimizer
+from .core import REDUCTION, GraphTraversalOptimizer, _Fuse, register_optimizer
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +87,7 @@ SUPPORT_OP = {
 class NumexprRuntimeOptimizer(GraphTraversalOptimizer):
     engine = "numexpr"
 
-    def _can_fuse(self, node: ChunkType):
+    def _can_fuse(self, node: ChunkType) -> Union[bool, object]:
         op = node.op
         op_type = type(op)
         if op_type in REDUCTION_OP:
@@ -108,7 +109,7 @@ class NumexprRuntimeOptimizer(GraphTraversalOptimizer):
     def is_available(cls) -> bool:
         return NUMEXPR_INSTALLED
 
-    def optimize(self):
+    def optimize(self) -> Tuple[List[_Fuse], List[ChunkType]]:
         fuses = self._graph_traverse(
             logger, "Refused fusing for numexpr because the tail node count > 1."
         )

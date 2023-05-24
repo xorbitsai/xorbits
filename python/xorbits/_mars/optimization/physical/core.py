@@ -50,7 +50,7 @@ class RuntimeOptimizer(ABC):
         """
 
     @abstractmethod
-    def optimize(self):
+    def optimize(self) -> Tuple[List[_Fuse], List[ChunkType]]:
         """
         Optimize chunk graph.
         """
