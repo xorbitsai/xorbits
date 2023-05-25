@@ -531,20 +531,20 @@ msgid ""
 " request will be automatically updated.  Pushing them to GitHub again is "
 "done by::"
 msgstr "基于核心开发人员对你的代码的审查结果，你可能需要对其做一些改动。你可以在你的分支上进行进行修改，随后commit并将这些修改"
-"提交到Github上。你的pull request会根据提交结果自动更新。用以下操作将你的更新提交至Github::"
+"提交到Github上。你的 pull request 会根据提交结果自动更新。用以下操作将你的更新提交至Github::"
 
 #: ../../source/development/contributing.rst:295
 msgid ""
 "This will automatically update your pull request with the latest code and"
 " restart the :any:`Continuous Integration <contributing.ci>` tests."
-msgstr "这串代码会自动更新你的pull request至最新的代码版本并且重新执行 :any:`Continuous Integration <contributing.ci>` 测试"
+msgstr "这串代码会自动更新你的 pull request 至最新的代码版本并且重新执行 :any:`Continuous Integration <contributing.ci>` 测试"
 
 #: ../../source/development/contributing.rst:298
 msgid ""
 "Another reason you might need to update your pull request is to solve "
 "conflicts with changes that have been merged into the main branch since "
 "you opened your pull request."
-msgstr "另外， 当与自你提交pull request以来已合并到主分支的更改产生的冲突时，你也需要对pull request进行更改。"
+msgstr "另外， 当与自你提交 pull request 以来已合并到主分支的更改产生的冲突时，你也需要对pull request进行更改。"
 
 #: ../../source/development/contributing.rst:302
 msgid "To do this, you need to \"merge upstream main\" in your branch::"
@@ -555,7 +555,7 @@ msgid ""
 "If there are no conflicts (or they could be fixed automatically), a file "
 "with a default commit message will open, and you can simply save and quit"
 " this file."
-msgstr "如果没有冲突，将会自动打开一份含有默认commit message的文件，然后你就可以保存并关闭这个文档。"
+msgstr "如果没有冲突，将会自动打开一份含有默认 commit message 的文件，然后你就可以保存并关闭这个文档。"
 
 #: ../../source/development/contributing.rst:311
 msgid ""
@@ -582,7 +582,7 @@ msgstr "如果你在要更新同步本地分支与主分支的代码之前有本
 msgid ""
 "After the feature branch has been update locally, you can now update your"
 " pull request by pushing to the branch on GitHub::"
-msgstr "在本地更新了功能分支之后，你可以通过将其推送(push)到 GitHub 上的分支来更新你的pull request"
+msgstr "在本地更新了功能分支之后，你可以通过将其推送到 GitHub 上的分支来更新你的 pull request"
 
 #: ../../source/development/contributing.rst:328
 msgid "Autofixing formatting errors"
@@ -592,7 +592,7 @@ msgstr "自动修正格式问题"
 msgid ""
 "We use several styling checks (e.g. ``black``, ``flake8``, ``isort``) "
 "which are run after you make a pull request."
-msgstr "Xorbits项目使用多个样式检查工具（例如 ``black``、 ``flake8``、 ``isort``），这些工具会在你发起pull request后运行。"
+msgstr "Xorbits项目使用多个样式检查工具（例如 ``black``、 ``flake8``、 ``isort``），这些工具会在你发起 pull request 后运行。"
 
 #: ../../source/development/contributing.rst:333
 msgid ""
@@ -614,7 +614,7 @@ msgid ""
 "to get rid of the branch. First, merge upstream main into your branch so "
 "git knows it is safe to delete your branch::"
 msgstr "当upstream 接受并合并了你的功能分支后，你可以删掉这些功能分支。"
-"首先，将upstream main分支合并到你的分支，让git了解到你可以安全的删除当前功能分支"
+"首先，将 upstream main 分支合并到你的分支，让 git 了解到你可以安全的删除当前功能分支"
 
 #: ../../source/development/contributing.rst:348
 msgid "Then you can do::"
@@ -624,11 +624,11 @@ msgstr "然后你可以执行::"
 msgid ""
 "Make sure you use a lower-case ``-d``, or else git won't warn you if your"
 " feature branch has not actually been merged."
-msgstr "确保你输入的是小写 ``-d`` ，否则若你的功能分支没有合并成功，git将不会警告。"
+msgstr "确保你输入的是小写 ``-d`` ，否则若你的功能分支没有合并成功，git 将不会警告。"
 
 #: ../../source/development/contributing.rst:355
 msgid "The branch will still exist on GitHub, so to delete it there do::"
-msgstr "当你执行完上述操作以后，这个分支还会存在在Github上，你可以通过以下指令进行删除::"
+msgstr "当你执行完上述操作以后，这个分支还会存在在 GitHub 上，你可以通过以下指令进行删除::"
 
 #: ../../source/development/contributing.rst:361
 msgid "Tips for a successful pull request"
@@ -645,19 +645,19 @@ msgstr "如果您已经进入了 `检查你的代码`_ 阶段，核心贡献者�
 
 #: ../../source/development/contributing.rst:367
 msgid "To improve the chances of your pull request being reviewed, you should:"
-msgstr "为了提高你的pull request被核心开发者查看的机会，你应该:"
+msgstr "为了提高你的 pull request 被核心开发者查看的机会，你应该:"
 
 #: ../../source/development/contributing.rst:369
 msgid ""
 "**Reference an open issue** for non-trivial changes to clarify the PR's "
 "purpose"
-msgstr "对于较为复杂的更改，可以 **引用一个开放的问题(open issue)** 来明确pull request的目的。"
+msgstr "对于较为复杂的更改，可以 **引用一个开放的问题(open issue)** 来明确 pull request 的目的。"
 
 #: ../../source/development/contributing.rst:370
 msgid ""
 "**Ensure you have appropriate tests**. These should be the first part of "
 "any PR"
-msgstr "**恰当全面的测试** 是所有PR提交的首要部分。"
+msgstr "**恰当全面的测试** 是所有 pull request 提交的首要部分。"
 
 #: ../../source/development/contributing.rst:371
 msgid ""
@@ -669,7 +669,7 @@ msgstr "**PR 应当越简洁越好** ，因为越长的PRs需要越久的审查�
 msgid ""
 "**Ensure that CI is in a green state**. Reviewers may not even look "
 "otherwise"
-msgstr "审查人可能不会审查不通过 **Github Continuous Integration check** 的PRs，所以请确保你的PRs提交时 **CI check** 为绿色(passed)"
+msgstr "审查人可能不会审查不通过 **GitHub Continuous Integration check** 的 pull request，所以请确保你的 pull request 提交时 **CI check** 为绿色"
 
 #: ../../source/development/contributing.rst:373
 msgid ""
