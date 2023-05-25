@@ -663,7 +663,7 @@ msgstr "**恰当全面的测试** 是所有 pull request 提交的首要部分�
 msgid ""
 "**Keep your pull requests as simple as possible**. Larger PRs take longer"
 " to review"
-msgstr "**PR 应当越简洁越好** ，因为越长的PRs需要越久的审查时间。 "
+msgstr "**pull request 应当越简洁越好** ，因为越长的 pull request 需要越久的审查时间。 "
 
 #: ../../source/development/contributing.rst:372
 msgid ""
