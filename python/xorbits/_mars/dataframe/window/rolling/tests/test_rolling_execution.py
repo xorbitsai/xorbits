@@ -150,7 +150,7 @@ def test_rolling_agg_execution(setup):
 
 
 @pytest.mark.parametrize(
-    "window,min_periods,center,on,axis,closed,pairwise,",
+    "window,min_periods,center,on,axis,closed,pairwise,agg",
     list(
         product(
             [3, "3D"],
@@ -160,11 +160,12 @@ def test_rolling_agg_execution(setup):
             [0, 1],
             ["right", "left", "both", "neither"],
             [True, False],
+            ["corr", "cov"],
         )
     ),
 )
-def test_datetime_indexed_df_rolling_corr_execution(
-    window, min_periods, center, on, axis, closed, pairwise, setup
+def test_datetime_indexed_df_rolling_pairwise_agg_execution(
+    window, min_periods, center, on, axis, closed, pairwise, agg, setup
 ):
     # skipped for now due to https://github.com/pandas-dev/pandas/issues/52299
     if on is not None:
@@ -181,7 +182,9 @@ def test_datetime_indexed_df_rolling_corr_execution(
     ):
         return
 
-    with tempfile.TemporaryDirectory("mars_test_df_rolling_corr_execution") as tempdir:
+    with tempfile.TemporaryDirectory(
+        "mars_test_df_rolling_pairwise_agg_execution"
+    ) as tempdir:
         path = os.path.join(tempdir, "datetime_indexed_df.csv")
         index = pd.date_range(start="2023-01-01", end="2023-01-05", freq="D")
         pd.DataFrame(
@@ -201,8 +204,9 @@ def test_datetime_indexed_df_rolling_corr_execution(
             on=on,
             axis=axis,
             closed=closed,
-        ).corr(pairwise=pairwise)
-        mr.execute()
+        )
+        mresult = getattr(mr, agg)(pairwise=pairwise)
+        mresult.execute()
 
         pdf = pd.read_csv(path, index_col=0, parse_dates=True)
         pr = pdf.rolling(
@@ -212,8 +216,9 @@ def test_datetime_indexed_df_rolling_corr_execution(
             on=on,
             axis=axis,
             closed=closed,
-        ).corr(pairwise=pairwise)
-        pd.testing.assert_frame_equal(pr, mr.fetch())
+        )
+        presult = getattr(pr, agg)(pairwise=pairwise)
+        pd.testing.assert_frame_equal(presult, mresult.fetch())
 
 
 @pytest.mark.parametrize(
