@@ -99,22 +99,35 @@ Option 1: using conda (recommended)
 Option 2: using Docker
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Xorbits provides a ``DockerFile`` in the root directory to build a Docker image
+Unless you have a specific requirement to install additional Python libraries,
+it is **highly recommended** to use the Xorbits image available
+on our `Dockerhub <https://hub.docker.com/repository/docker/xprobe/xorbits/general>`_.
+It includes the complete environment required to run Xorbits.
+
+The images available on Dockerhub include versions for all supported Python versions, with the suffix ``py<python_version>``.
+For the image tag prefixes, ``nightly-main`` represents the latest code from `Xorbits GitHub repository <https://github.com/xprobe-inc/xorbits>`_ on a daily basis,
+while ``v<release_version>`` represents version numbers for each release.
+You can choose to pull the image based on your specific requirements.
+
+If you indeed need to manually build Xorbits image, Xorbits provides a ``DockerFile`` in the ``python/xorbits/deploy/docker`` directory to build a Docker image
 with a full Xorbits development environment.
 
 **Docker Commands**
 
 Build the Docker image::
 
+    # Switch the current working directory to the top-level "xorbits" directory
+    $ cd xorbits
+
     # Build the image
-    docker build -t xorbits-dev .
+    $ docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=<your_python_version>
 
 Run Container::
 
     # Run a container and bind your local repo to the container
     # This command assumes you are running from your local repo
     # but if not alter ${PWD} to match your local repo path
-    docker run -it --rm xorbits-dev /bin/bash
+    $ docker run -it --rm xorbits-dev /bin/bash
 
 *Even easier, you can integrate Docker with the following IDEs:*
 
