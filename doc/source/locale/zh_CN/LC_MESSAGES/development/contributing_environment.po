@@ -8,273 +8,273 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-03 14:44+0800\n"
+"POT-Creation-Date: 2023-05-24 15:33+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/development/contributing_environment.rst:5
 msgid "Creating a development environment"
-msgstr ""
+msgstr "创建开发环境"
 
 #: ../../source/development/contributing_environment.rst:7
 msgid ""
 "To test out code changes, you'll need to build Xorbits from source, which"
-" requires a C/C++ compiler and Python environment. If you're making "
-"documentation changes, you can skip to :ref:`contributing to the "
-"documentation <contributing_documentation>` but if you skip creating the "
-"development environment you won't be able to build the documentation "
-"locally before pushing your changes. It's recommended to also install the"
-" :ref:`pre-commit hooks <contributing.pre-commit>`."
+" requires a C/C++ compiler, Node.js, and Python environment. It's "
+"recommended to also install the :ref:`pre-commit hooks <contributing.pre-"
+"commit>`."
 msgstr ""
+"为了测试修改后的代码，你需要从源码构建 Xorbits。这需要安装一个 C/C++ "
+"编译器，Node.js，以及 Python 环境。另外强烈推荐安装 :ref:`pre-commit "
+"hooks <contributing.pre-commit>`。"
 
-#: ../../source/development/contributing_environment.rst:14
+#: ../../source/development/contributing_environment.rst:12
 msgid "Table of contents:"
-msgstr ""
+msgstr "目录"
+
+#: ../../source/development/contributing_environment.rst:15
+msgid "Step 1: install a C compiler"
+msgstr "步骤 1：安装 C 编译器"
 
 #: ../../source/development/contributing_environment.rst:17
-msgid "Step 1: install a C compiler"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:19
 msgid ""
 "How to do this will depend on your platform. If you choose to user "
 "``Docker`` in the next step, then you can skip this step."
 msgstr ""
+"如何安装 C 编译器取决于你所使用的平台。如果你在下一步选择使用 ``Docker``"
+"，可以跳过当前步骤。"
+
+#: ../../source/development/contributing_environment.rst:20
+msgid "**Windows**"
+msgstr "**Windows**"
 
 #: ../../source/development/contributing_environment.rst:22
-#: ../../source/development/contributing_environment.rst:133
-msgid "**Windows**"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:24
 msgid ""
 "You will need `Build Tools for Visual Studio 2022 "
 "<https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-"
 "studio-2022>`_."
 msgstr ""
+"你需要安装 `Build Tools for Visual Studio 2022 <https://visualstudio."
+"microsoft.com/downloads/#build-tools-for-visual-studio-2022>`_。"
 
-#: ../../source/development/contributing_environment.rst:28
+#: ../../source/development/contributing_environment.rst:26
 msgid ""
 "You DO NOT need to install Visual Studio 2022. You only need \"Build "
 "Tools for Visual Studio 2022\" found by scrolling down to \"All "
 "downloads\" -> \"Tools for Visual Studio\". In the installer, select the "
 "\"Desktop development with C++\" Workloads."
 msgstr ""
+"你不需要安装 Visual Studio 2022。仅需要下滑到 \"All downloads\" -> \""
+"Tools for Visual Studio\" 并安装 \"Build Tools for Visual Studio 2022\"。"
+"在安装过程中，选择 \"Desktop development with C++\"。"
 
-#: ../../source/development/contributing_environment.rst:33
+#: ../../source/development/contributing_environment.rst:31
 msgid ""
 "Alternatively, you can install the necessary components on the "
 "commandline using `vs_BuildTools.exe <https://learn.microsoft.com/en-"
 "us/visualstudio/install/use-command-line-parameters-to-install-visual-"
 "studio?source=recommendations&view=vs-2022>`_"
 msgstr ""
+"或者，你可以使用命令行工具 `vs_BuildTools.exe <https://learn.microsoft.com"
+"/en-us/visualstudio/install/use-command-line-parameters-to-install-visual"
+"-studio?source=recommendations&view=vs-2022>`_ 安装所需的组件。"
 
-#: ../../source/development/contributing_environment.rst:36
+#: ../../source/development/contributing_environment.rst:34
 msgid ""
 "Alternatively, you could use the `WSL <https://learn.microsoft.com/en-"
 "us/windows/wsl/install>`_ and consult the ``Linux`` instructions below."
 msgstr ""
+"此外你还可以选择使用 `WSL <https://learn.microsoft.com/en-us/windows/wsl/"
+"install>`_ 。请参考下方 ``Linux`` 一节。"
+
+#: ../../source/development/contributing_environment.rst:37
+msgid "**macOS**"
+msgstr "**macOS**"
 
 #: ../../source/development/contributing_environment.rst:39
-msgid "**macOS**"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:41
 msgid ""
-"To use the :ref:`mamba <contributing.mamba>`-based compilers, you will "
+"To use the :ref:`conda <contributing.conda>`-based compilers, you will "
 "need to install the Developer Tools using ``xcode-select --install``. "
 "Otherwise information about compiler installation can be found here: "
 "https://devguide.python.org/setup/#macos"
 msgstr ""
+"为了使用 :ref:`conda <contributing.conda>`-based 的编译器，你需要执行 ``"
+"xcode-select --install`` 以安装开发者工具（Developer Tools）。安装编译器"
+"相关的其他信息请参考：https://devguide.python.org/setup/#macos"
+
+#: ../../source/development/contributing_environment.rst:44
+msgid "**Linux**"
+msgstr "**Linux**"
 
 #: ../../source/development/contributing_environment.rst:46
-msgid "**Linux**"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:48
 msgid ""
-"For Linux-based :ref:`mamba <contributing.mamba>` installations, you "
-"won't have to install any additional components outside of the mamba "
+"For Linux-based :ref:`conda <contributing.conda>` installations, you "
+"won't have to install any additional components outside of the conda "
 "environment. The instructions below are only needed if your setup isn't "
-"based on mamba environments."
-msgstr ""
+"based on conda environments."
+msgstr "若在 Linux 环境下使用 conda，则不需要安装其他依赖。因此，如果你使用 "
+"conda，请忽略下面的步骤。"
 
-#: ../../source/development/contributing_environment.rst:52
+#: ../../source/development/contributing_environment.rst:50
 msgid ""
 "Some Linux distributions will come with a pre-installed C compiler. To "
 "find out which compilers (and versions) are installed on your system::"
 msgstr ""
+"某些 Linux 发行版自带了 C 编译器。执行以下命令检查系统中安装了哪些编译器"
+"及其版本::"
 
-#: ../../source/development/contributing_environment.rst:60
+#: ../../source/development/contributing_environment.rst:58
 msgid ""
 "`GCC (GNU Compiler Collection) <https://gcc.gnu.org/>`_, is a widely used"
 " compiler, which supports C and a number of other languages. If GCC is "
 "listed as an installed compiler nothing more is required."
 msgstr ""
+"`GCC (GNU Compiler Collection) <https://gcc.gnu.org/>`_ 是广泛使用的"
+"编译器之一，支持 C 及一些其他语言。如果已经安装了 GCC，则不需要再安装其他"
+"编译器。"
 
-#: ../../source/development/contributing_environment.rst:64
+#: ../../source/development/contributing_environment.rst:62
 msgid ""
 "If no C compiler is installed, or you wish to upgrade, or you're using a "
 "different Linux distribution, consult your favorite search engine for "
 "compiler installation/update instructions."
 msgstr ""
+"如果没有安装任何 C 编译器，或你想要升级当前的编译器，又或你使用了其他 Linux"
+" 发行版，请搜索相关文档进行安装/升级。"
 
-#: ../../source/development/contributing_environment.rst:68
+#: ../../source/development/contributing_environment.rst:66
 msgid ""
 "Let us know if you have any difficulties by opening an issue or reaching "
 "out on our contributor community, join slack in `Community "
 "<https://xorbits.io/community>`_."
 msgstr ""
+"如果你碰到了任何困难，请通过 issue，或 `开发者社区 <https://xorbits.io/"
+"community>`_ 联系我们。"
+
+#: ../../source/development/contributing_environment.rst:70
+msgid "Step 2: install Node.js"
+msgstr "步骤 2：安装 Node.js"
 
 #: ../../source/development/contributing_environment.rst:72
-msgid "Step 2: create an isolated environment"
+msgid ""
+"To build Xorbits web UI, you will need `Node.js "
+"<https://nodejs.org/en>`_. It is recommended to install Node.js with `nvm"
+" <https://github.com/nvm-sh/nvm>`_ ."
 msgstr ""
-
-#: ../../source/development/contributing_environment.rst:74
-msgid "Before we begin, please:"
-msgstr ""
+"为构建 Xorbits web UI，你需要安装 `Node.js <https://nodejs.org/en>`_。"
+"推荐使用 `nvm <https://github.com/nvm-sh/nvm>`_ 进行安装。"
 
 #: ../../source/development/contributing_environment.rst:76
+msgid "The minimum supported Node.js version is 18."
+msgstr "Xorbits 支持的 Node.js 最小版本为 18。"
+
+#: ../../source/development/contributing_environment.rst:79
+msgid "Step 3: create an isolated environment"
+msgstr "步骤 3：创建隔离的 Python 环境"
+
+#: ../../source/development/contributing_environment.rst:81
+msgid "Before we begin, please:"
+msgstr "在开始之前:"
+
+#: ../../source/development/contributing_environment.rst:83
 msgid ""
 "Make sure that you have :any:`cloned the repository "
 "<contributing.forking>`"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:77
-msgid "``cd`` to the xorbits source directory"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:82
-msgid "Option 1: using mamba (recommended)"
-msgstr ""
+msgstr "确保你已经完成了 :any:`克隆代码仓库 <contributing.forking>`"
 
 #: ../../source/development/contributing_environment.rst:84
+msgid "``cd`` to the xorbits source directory"
+msgstr "使用 ``cd`` 命令进入代码仓库目录"
+
+#: ../../source/development/contributing_environment.rst:89
+msgid "Option 1: using conda (recommended)"
+msgstr "选择 1：使用 conda （强烈推荐）"
+
+#: ../../source/development/contributing_environment.rst:91
 msgid ""
-"Install `mamba "
-"<https://mamba.readthedocs.io/en/latest/installation.html>`_"
+"Install `conda <https://conda.io/projects/conda/en/latest/user-"
+"guide/install/index.html>`_"
 msgstr ""
+"安装 `conda <https://conda.io/projects/conda/en/latest/user-guide/install"
+"/index.html>`_"
 
-#: ../../source/development/contributing_environment.rst:85
-msgid "Make sure your mamba is up to date (``mamba update mamba``)"
-msgstr ""
+#: ../../source/development/contributing_environment.rst:100
+msgid "Option 2: using Docker"
+msgstr "选择 2：使用 Docker"
 
-#: ../../source/development/contributing_environment.rst:94
-msgid "Option 2: using pip"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:96
-msgid ""
-"You'll need to have at least the :ref:`minimum Python version "
-"<install.version>` that Xorbits supports. You also need to have "
-"``setuptools`` 51.0.0 or later to build Xorbits."
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:99
-msgid "**Unix**/**macOS with virtualenv**"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:114
-msgid "**Unix**/**macOS with pyenv**"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:116
-msgid ""
-"Consult the docs for setting up pyenv `here "
-"<https://github.com/pyenv/pyenv>`__."
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:135
-msgid ""
-"Below is a brief overview on how to set-up a virtual environment with "
-"Powershell under Windows. For details please refer to the `official "
-"virtualenv user guide "
-"<https://virtualenv.pypa.io/en/latest/user_guide.html#activators>`__."
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:139
-msgid ""
-"Use an ENV_DIR of your choice. We'll use ``~\\\\virtualenvs\\\\xorbits-"
-"dev`` where ``~`` is the folder pointed to by either ``$env:USERPROFILE``"
-" (Powershell) or ``%USERPROFILE%`` (cmd.exe) environment variable. Any "
-"parent directories should already exist."
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:156
-msgid "Option 3: using Docker"
-msgstr ""
-
-#: ../../source/development/contributing_environment.rst:158
+#: ../../source/development/contributing_environment.rst:102
 msgid ""
 "Xorbits provides a ``DockerFile`` in the root directory to build a Docker"
 " image with a full Xorbits development environment."
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:161
+#: ../../source/development/contributing_environment.rst:105
 msgid "**Docker Commands**"
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:163
+#: ../../source/development/contributing_environment.rst:107
 msgid "Build the Docker image::"
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:168
+#: ../../source/development/contributing_environment.rst:112
 msgid "Run Container::"
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:175
+#: ../../source/development/contributing_environment.rst:119
 msgid "*Even easier, you can integrate Docker with the following IDEs:*"
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:177
+#: ../../source/development/contributing_environment.rst:121
 msgid "**Visual Studio Code**"
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:179
+#: ../../source/development/contributing_environment.rst:123
 msgid ""
 "You can use the DockerFile to launch a remote session with Visual Studio "
 "Code, a popular free IDE, using the ``.devcontainer.json`` file. See "
 "https://code.visualstudio.com/docs/remote/containers for details."
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:183
+#: ../../source/development/contributing_environment.rst:127
 msgid "**PyCharm (Professional)**"
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:185
+#: ../../source/development/contributing_environment.rst:129
 msgid ""
 "Enable Docker support and use the Services tool window to build and "
 "manage images as well as run and interact with containers. See "
 "https://www.jetbrains.com/help/pycharm/docker.html for details."
 msgstr ""
 
-#: ../../source/development/contributing_environment.rst:190
-msgid "Step 3: build and install Xorbits"
-msgstr ""
+#: ../../source/development/contributing_environment.rst:134
+msgid "Step 4: build and install Xorbits"
+msgstr "步骤 4：构建并安装 Xorbits"
 
-#: ../../source/development/contributing_environment.rst:192
+#: ../../source/development/contributing_environment.rst:136
 msgid "You can now run::"
-msgstr ""
+msgstr "你可以执行::"
 
-#: ../../source/development/contributing_environment.rst:198
+#: ../../source/development/contributing_environment.rst:143
 msgid ""
 "At this point you should be able to import Xorbits from your locally "
 "built version::"
-msgstr ""
+msgstr "现在，你可以 import 本地构建的 Xorbits::"
 
-#: ../../source/development/contributing_environment.rst:205
+#: ../../source/development/contributing_environment.rst:150
 msgid ""
 "This will create the new environment, and not touch any of your existing "
 "environments, nor any existing Python installation."
-msgstr ""
+msgstr "上述步骤会创建一个新的 Python 环境，不会对已有的环境造成影响。"
 
-#: ../../source/development/contributing_environment.rst:209
+#: ../../source/development/contributing_environment.rst:154
 msgid ""
-"You will need to repeat this step each time the C extensions change, or "
-"if you did a fetch and merge from ``upstream/main``."
+"You will need to repeat this step each time the web UI or C extensions "
+"change, or if you did a fetch and merge from ``upstream/main``."
 msgstr ""
+"每当 web UI，C 的扩展代码，或从 ``upstream/main`` 合并代码后，你都需要"
+"重复上面的构建与安装过程。"
 
