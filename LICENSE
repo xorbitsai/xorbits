@@ -217,6 +217,7 @@ Apache Software Foundation License 2.0
 - uvloop:0.15.2
 - oss2:2.12.0
 - pymars:0.10.0
+- jax:0.4.0
 
 
 BSD 3-Clause
