@@ -734,6 +734,29 @@ def test_data_frame_pivot_execute(setup):
     pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
 
 
+def test_data_frame_pivot_table_execute(setup):
+    def align_df(df):
+        return df.sort_index(axis=0).sort_index(axis=1).astype(float)
+
+    df_raw = pd.DataFrame({"A": ["foo", "foo", "foo", "foo", "foo",
+                         "bar", "bar", "bar", "bar"],
+                   "B": ["one", "one", "one", "two", "two",
+                         "one", "one", "two", "two"],
+                   "C": ["small", "large", "large", "small",
+                         "small", "large", "small", "small",
+                         "large"],
+                   "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
+                   "E": [2, 4, 5, 5, 6, 6, 8, 9, 9]})
+
+    df = from_pandas_df(df_raw, chunk_size=2)
+    
+    # test basic pivot_table
+    r = df.pivot_table(values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum)
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum)
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+    
+
 def test_transform_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]
     df_raw = pd.DataFrame(dict((c, [i**2 for i in range(20)]) for c in cols))

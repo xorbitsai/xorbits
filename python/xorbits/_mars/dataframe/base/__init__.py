@@ -41,6 +41,7 @@ from .map_chunk import map_chunk
 from .melt import melt
 from .memory_usage import df_memory_usage, index_memory_usage, series_memory_usage
 from .pct_change import pct_change
+from .pivot_table import df_pivot_table
 from .pivot import df_pivot
 from .qcut import qcut
 from .rebalance import rebalance
@@ -78,6 +79,7 @@ def _install():
         setattr(t, "drop", df_drop)
         setattr(t, "pop", df_pop)
         setattr(t, "pivot", df_pivot)
+        setattr(t, "pivot_table", df_pivot_table)
         setattr(
             t, "__delitem__", lambda df, items: df_drop(df, items, axis=1, inplace=True)
         )
