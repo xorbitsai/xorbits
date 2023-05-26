@@ -41,8 +41,8 @@ from .map_chunk import map_chunk
 from .melt import melt
 from .memory_usage import df_memory_usage, index_memory_usage, series_memory_usage
 from .pct_change import pct_change
-from .pivot_table import df_pivot_table
 from .pivot import df_pivot
+from .pivot_table import df_pivot_table
 from .qcut import qcut
 from .rebalance import rebalance
 from .rechunk import rechunk

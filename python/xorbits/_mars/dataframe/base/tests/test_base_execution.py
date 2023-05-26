@@ -738,24 +738,118 @@ def test_data_frame_pivot_table_execute(setup):
     def align_df(df):
         return df.sort_index(axis=0).sort_index(axis=1).astype(float)
 
-    df_raw = pd.DataFrame({"A": ["foo", "foo", "foo", "foo", "foo",
-                         "bar", "bar", "bar", "bar"],
-                   "B": ["one", "one", "one", "two", "two",
-                         "one", "one", "two", "two"],
-                   "C": ["small", "large", "large", "small",
-                         "small", "large", "small", "small",
-                         "large"],
-                   "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
-                   "E": [2, 4, 5, 5, 6, 6, 8, 9, 9]})
+    df_raw = pd.DataFrame(
+        {
+            "A": ["foo", "foo", "foo", "foo", "foo", "bar", "bar", "bar", "bar"],
+            "B": ["one", "one", "one", "two", "two", "one", "one", "two", "two"],
+            "C": [
+                "small",
+                "large",
+                "large",
+                "small",
+                "small",
+                "large",
+                "small",
+                "small",
+                "large",
+            ],
+            "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
+            "E": [2, 4, 5, 5, 6, 6, 8, 9, 9],
+        }
+    )
 
     df = from_pandas_df(df_raw, chunk_size=2)
-    
+
     # test basic pivot_table
     r = df.pivot_table(values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum)
     result = r.execute(extra_config={"check_dtypes": False}).fetch()
-    expected = df_raw.pivot_table(values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum)
+    expected = df_raw.pivot_table(
+        values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum
+    )
     pd.testing.assert_frame_equal(align_df(result), align_df(expected))
-    
+
+    # test fill value
+    r = df.pivot_table(
+        values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test multi-value and multi-index
+    r = df.pivot_table(
+        values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test multiple aggfunc
+    def range_func(data):
+        return data.max() - data.min()
+
+    r = df.pivot_table(
+        values=["D", "E"],
+        index=["A", "C"],
+        aggfunc={"D": [range_func, np.mean], "E": [min, max, np.mean]},
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"],
+        index=["A", "C"],
+        aggfunc={"D": [range_func, np.mean], "E": [min, max, np.mean]},
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test complex case
+    r = df.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test one chunk
+    df = from_pandas_df(df_raw, chunk_size=9)
+    r = df.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test margins=True
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, margins=True
+        )
+
+    # test dropna=False
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, dropna=False
+        )
+
 
 def test_transform_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]

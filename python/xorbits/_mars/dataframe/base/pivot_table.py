@@ -18,19 +18,20 @@ import numpy as np
 import pandas as pd
 
 from ... import opcodes
-from ...core import OutputType, recursive_tile
+from ...core import OutputType
 from ...core.context import Context
-from ...core.operand import MapReduceOperand, OperandStage
 from ...core.custom_log import redirect_custom_log
-from ...serialization.serializables import AnyField, BoolField, Int32Field, StringField, ListField
-from ...utils import enter_current_session, get_func_token, quiet_stdio
-from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
-from ..utils import (
-    build_concatenated_rows_frame,
-    hash_dataframe_on,
-    parse_index,
-    build_empty_df,
+from ...core.operand import MapReduceOperand, OperandStage
+from ...serialization.serializables import (
+    AnyField,
+    BoolField,
+    Int32Field,
+    ListField,
+    StringField,
 )
+from ...utils import enter_current_session
+from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
+from ..utils import build_concatenated_rows_frame, hash_dataframe_on, parse_index
 
 
 class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
@@ -47,14 +48,14 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
     observed = BoolField("observed", default=False)
     sort = BoolField("sort", default=True)
     shuffle_size = Int32Field("shuffle_size")
-    total_dtypes = ListField("total_dtypes", default=None)
+    all_dtype_index = ListField("all_dtype_index", default=None)
 
     @classmethod
     def execute_map(cls, ctx: Union[dict, Context], op: "DataFramePivotTable"):
         chunk = op.outputs[0]
         df = ctx[op.inputs[0].key]
         filters = hash_dataframe_on(df, op.index, op.shuffle_size)
-        
+
         for index_idx, index_filter in enumerate(filters):
             reducer_index = (index_idx, chunk.index[1])
             ctx[chunk.key, reducer_index] = (
@@ -80,11 +81,11 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
     def execute_combine(cls, ctx: Union[dict, Context], op: "DataFramePivotTable"):
         input_data = ctx[op.inputs[0].key]
         out = op.outputs[0]
-        print(input_data.shape)
-        for dtype in op.total_dtypes:
+
+        for dtype in op.all_dtype_index:
             if dtype not in input_data.dtypes.index:
-                input_data[dtype] = np.nan
-        print(input_data.shape)
+                input_data[dtype] = np.nan if op.fill_value is None else op.fill_value
+
         ctx[out.key] = input_data
 
     @classmethod
@@ -96,7 +97,6 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         elif op.stage == OperandStage.reduce:
             cls.execute_reduce(ctx, op)
         elif op.stage == OperandStage.combine:
-            print("execute combine")
             cls.execute_combine(ctx, op)
         else:
             input_data = ctx[op.inputs[0].key]
@@ -115,8 +115,38 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
             ctx[out.key] = result
 
     @classmethod
+    def tile_one_chunk(cls, op: "DataFramePivotTable"):
+        in_df = op.inputs[0]
+        out_df = op.outputs[0]
+
+        chunks = []
+        for c in in_df.chunks:
+            new_op = op.copy().reset_key()
+            new_op.tileable_op_key = op.key
+            chunks.append(
+                new_op.new_chunk(
+                    [c],
+                    shape=(np.nan, np.nan),
+                    index=c.index,
+                    dtypes=out_df.dtypes,
+                    index_value=c.index_value,
+                    columns_value=c.columns_value,
+                )
+            )
+
+        new_op = op.copy()
+        kw = out_df.params.copy()
+        new_nsplits = ((np.nan,), (np.nan,))
+        kw.update(dict(chunks=chunks, nsplits=new_nsplits))
+        return new_op.new_tileables(op.inputs, **kw)
+
+    @classmethod
     def tile(cls, op: "DataFramePivotTable"):
         in_df = build_concatenated_rows_frame(op.inputs[0])
+
+        if len(in_df.chunks) == 1:
+            return cls.tile_one_chunk(op)
+
         out_df = op.outputs[0]
         output_type = OutputType.dataframe
         chunk_shape = in_df.chunk_shape
@@ -155,6 +185,7 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
                 )
             )
 
+        # generate output chunks
         out_chunks = []
         for chunk in reduce_chunks:
             new_op = op.copy().reset_key()
@@ -168,35 +199,43 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
                 )
             )
             out_chunks.append(new_op.new_chunk([chunk], **params))
-        yield out_chunks 
+        yield out_chunks
+
         filtered_chunks = [chunk for chunk in out_chunks if chunk.shape[1] != 0]
-        
         for i, chunk in enumerate(filtered_chunks):
             chunk._index = (i, 0)
-    
-        total_dtypes = set().union(*[set(chunk.dtypes.index) for chunk in filtered_chunks])
-        dtypes_series = pd.concat([chunk.dtypes for chunk in filtered_chunks])
-        dtypes_series = dtypes_series.groupby(dtypes_series.index).first()
 
-        out_chunks = []
+        all_dtype_index = set().union(
+            *[set(chunk.dtypes.index) for chunk in filtered_chunks]
+        )
+        dtypes_chunks = pd.concat([chunk.dtypes for chunk in filtered_chunks])
+        dtypes_chunks = dtypes_chunks.groupby(dtypes_chunks.index).first()
+
+        # generate combine chunks
+        combine_chunks = []
         for chunk in filtered_chunks:
             combine_op = op.copy().reset_key()
             combine_op.stage = OperandStage.combine
-            combine_op.total_dtypes = total_dtypes
-            params = dict(shape=(chunk.shape[0], len(total_dtypes)), index=chunk.index)
+            combine_op.all_dtype_index = all_dtype_index
+            params = dict(
+                shape=(chunk.shape[0], len(all_dtype_index)), index=chunk.index
+            )
             params.update(
                 dict(
-                    dtypes=dtypes_series,
+                    dtypes=dtypes_chunks,
                     columns_value=in_df.columns_value,
                     index_value=chunk.index_value,
                 )
             )
-            out_chunks.append(combine_op.new_chunk([chunk], **params))
+            combine_chunks.append(combine_op.new_chunk([chunk], **params))
 
         new_op = op.copy()
         kw = out_df.params.copy()
-        new_nsplits = (tuple(chunk.shape[0] for chunk in out_chunks), (2, ))
-        kw.update(dict(chunks=out_chunks, nsplits=new_nsplits))
+        new_nsplits = (
+            tuple(chunk.shape[0] for chunk in combine_chunks),
+            (len(all_dtype_index),),
+        )
+        kw.update(dict(chunks=combine_chunks, nsplits=new_nsplits))
 
         return new_op.new_tileables(op.inputs, **kw)
 
@@ -213,7 +252,7 @@ def df_pivot_table(
     fill_value=None,
     margins: bool = False,
     dropna: bool = True,
-    margins_name="All",
+    margins_name: str = "All",
     observed: bool = False,
     sort: bool = True,
 ) -> pd.DataFrame:
@@ -250,18 +289,22 @@ def df_pivot_table(
     margins : bool, default False
         If ``margins=True``, special ``All`` columns and rows
         will be added with partial group aggregates across the categories
-        on the rows and columns.
+        on the rows and columns. This feature is currently not supported
+        in xorbits.
     dropna : bool, default True
         Do not include columns whose entries are all NaN. If True,
         rows with a NaN value in any column will be omitted before
-        computing margins.
+        computing margins. This feature is currently not supported in
+        xorbits.
     margins_name : str, default 'All'
         Name of the row / column that will contain the totals
-        when margins is True.
+        when margins is True. This feature is currently not supported in
+        xorbits.
     observed : bool, default False
         This only applies if any of the groupers are Categoricals.
         If True: only show observed values for categorical groupers.
-        If False: show all values for categorical groupers.
+        If False: show all values for categorical groupers. This
+        feature is currently not supported in xorbits.
 
     sort : bool, default True
         Specifies if the result should be sorted.
@@ -361,8 +404,20 @@ def df_pivot_table(
         small  2.333333   6  4.333333    2
     """
     if margins:
-        raise NotImplementedError("margins is not supported yet in xorbits.")
-    
+        raise NotImplementedError(
+            "The 'margins=True' configuration is not currently supported in this version of xorbits."
+        )
+
+    if observed:
+        raise NotImplementedError(
+            "The 'observed=True' configuration is not currently supported in this version of xorbits."
+        )
+
+    if dropna == False:
+        raise NotImplementedError(
+            "The 'dropna=False' configuration is not currently supported in this version of xorbits."
+        )
+
     op = DataFramePivotTable(
         values=values,
         index=index,
