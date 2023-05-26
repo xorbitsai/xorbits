@@ -299,11 +299,3 @@ msgid ""
 "You will need to repeat this step each time the web UI or C extensions "
 "change, or if you did a fetch and merge from ``upstream/main``."
 msgstr "每当 web UI，C 的扩展代码，或从 ``upstream/main`` 合并代码后，你都需要重复上面的构建与安装过程。"
-
-#~ msgid ""
-#~ "Xorbits provides a ``DockerFile`` in the"
-#~ " root directory to build a Docker "
-#~ "image with a full Xorbits development"
-#~ " environment."
-#~ msgstr ""
-
