@@ -302,7 +302,7 @@ msgid ""
 " created the branch, check the section on :ref:`updating a PR "
 "<contributing.update-pr>`."
 msgstr ""
-"当你想添加主干分支的改动到你的功能分支时，请见 :ref:`更新你的pull request <contributing.update-pr>` 。"
+"当你想添加主干分支的改动到你的功能分支时，请见 :ref:`更新你的 pull request <contributing.update-pr>` 。"
 
 #: ../../source/development/contributing.rst:172
 msgid "Contributing your changes to Xorbits"
@@ -488,12 +488,12 @@ msgid ""
 " version.  This pull request and its associated changes will eventually "
 "be committed to the main branch and available in the next release.  To "
 "submit a pull request:"
-msgstr "若无异常，你就准备好提交pull request了。Pull Request是将本地仓库中的代码提供给 GitHub 社区并进行查看和最终合并到主要版本的方式。"
+msgstr "若无异常，你就准备好提交pull request了。Pull request 是将本地仓库中的代码提供给 GitHub 社区并进行查看和最终合并到主要版本的方式。"
 "这个pull request及其关联的更改最终将被提交到主分支，并在下一个版本中可用。要提交一个pull request，请按照以下步骤进行:"
 
 #: ../../source/development/contributing.rst:273
 msgid "Navigate to your repository on GitHub"
-msgstr "跳转到你的 ``Github repository``"
+msgstr "跳转到你的 ``GitHub repository``"
 
 #: ../../source/development/contributing.rst:274
 msgid "Click on the ``Pull Request`` button"
@@ -530,25 +530,25 @@ msgid ""
 " branch, add a new commit to that branch, push it to GitHub, and the pull"
 " request will be automatically updated.  Pushing them to GitHub again is "
 "done by::"
-msgstr "基于核心开发人员对你的代码的审查结果，你可能需要对其做一些改动。你可以在你的分支上进行进行修改，随后commit并将这些修改"
-"提交到Github上。你的 pull request 会根据提交结果自动更新。用以下操作将你的更新提交至Github::"
+msgstr "基于核心开发人员对你的代码的审查结果，你可能需要对其做一些改动。你可以在你的分支上进行进行修改，随后 commit 并将这些修改"
+"提交至 GitHub 上。你的 pull request 会根据提交结果自动更新。用以下操作将你的更新提交至 GitHub::"
 
 #: ../../source/development/contributing.rst:295
 msgid ""
 "This will automatically update your pull request with the latest code and"
 " restart the :any:`Continuous Integration <contributing.ci>` tests."
-msgstr "这串代码会自动更新你的 pull request 至最新的代码版本并且重新执行 :any:`Continuous Integration <contributing.ci>` 测试"
+msgstr "这会自动更新你的 pull request 至最新的代码版本并且重新执行 :any:`持续集成 <contributing.ci>` 测试。"
 
 #: ../../source/development/contributing.rst:298
 msgid ""
 "Another reason you might need to update your pull request is to solve "
 "conflicts with changes that have been merged into the main branch since "
 "you opened your pull request."
-msgstr "另外， 当与自你提交 pull request 以来已合并到主分支的更改产生的冲突时，你也需要对pull request进行更改。"
+msgstr "另外， 当与自你提交 pull request 以来已合并到主分支的更改产生的冲突时，你也需要对 pull request 进行更改。"
 
 #: ../../source/development/contributing.rst:302
 msgid "To do this, you need to \"merge upstream main\" in your branch::"
-msgstr "你需要在你的分支上执行 \"merge upstream main\" 来解决上述问题"
+msgstr "你需要合并上游代码仓库的主干分支来解决上述问题::"
 
 #: ../../source/development/contributing.rst:308
 msgid ""
@@ -565,7 +565,7 @@ msgid ""
 "conflicts are merged and the files where the conflicts were solved are "
 "added, you can run ``git commit`` to save those fixes."
 msgstr "如果有合并冲突，则你需要解决这些冲突，请通过以下例子：https://help.github.com/articles/resolving-a-merge-conflict-"
-"using-the-command-line/了解如何解决。当所有的冲突都被解决并合并后，执行 ``git commit`` 来保存这些更改。"
+"using-the-command-line/ 了解如何解决。当所有的冲突都被解决并合并后，执行 ``git commit`` 来保存这些更改。"
 
 #: ../../source/development/contributing.rst:317
 msgid ""
@@ -574,9 +574,9 @@ msgid ""
 "the `stash docs <https://git-scm.com/book/en/v2/Git-Tools-Stashing-and-"
 "Cleaning>`__). This will effectively store your changes and they can be "
 "reapplied after updating."
-msgstr "如果你在要更新同步本地分支与主分支的代码之前有本地分支还有未提交的更改，你需要在更新之前将它们存储(stash)起来"
+msgstr "如果你在要更新同步本地分支与主分支的代码之前有本地分支还有未提交的更改，你需要在更新之前将它们存储 (stash) 起来"
 "(请参见文档 `stash docs <https://git-scm.com/book/en/v2/Git-Tools-Stashing-and-"
-"Cleaning>`__). 这将有效地保存你的更改，并且在更新后可以重新应用它们。"
+"Cleaning>`__)。 这将有效地保存你的更改，并且在更新后可以重新应用它们。"
 
 #: ../../source/development/contributing.rst:322
 msgid ""
@@ -592,7 +592,7 @@ msgstr "自动修正格式问题"
 msgid ""
 "We use several styling checks (e.g. ``black``, ``flake8``, ``isort``) "
 "which are run after you make a pull request."
-msgstr "Xorbits项目使用多个样式检查工具（例如 ``black``、 ``flake8``、 ``isort``），这些工具会在你发起 pull request 后运行。"
+msgstr "Xorbits 项目使用多个样式检查工具（例如 ``black``、 ``flake8``、 ``isort``），这些工具会在你发起 pull request 后运行。"
 
 #: ../../source/development/contributing.rst:333
 msgid ""
@@ -600,7 +600,7 @@ msgid ""
 "set up pre-commit yourself. First, create a Python :ref:`environment "
 "<contributing_environment>` and then set up :ref:`pre-commit "
 "<contributing.pre-commit>`."
-msgstr "你可以通过自己配置pre-commit工具来自动修正每一次commit中的格式错误。"
+msgstr "你可以通过自己配置 pre-commit 工具来自动修正每一次 commit 中的格式错误。"
 "首先，创建一个Python :ref:`环境 <contributing_environment>`，然后配置 :ref:`pre-commit "
 "<contributing.pre-commit>` 。"
 
@@ -613,8 +613,8 @@ msgid ""
 "Once your feature branch is accepted into upstream, you'll probably want "
 "to get rid of the branch. First, merge upstream main into your branch so "
 "git knows it is safe to delete your branch::"
-msgstr "当upstream 接受并合并了你的功能分支后，你可以删掉这些功能分支。"
-"首先，将 upstream main 分支合并到你的分支，让 git 了解到你可以安全的删除当前功能分支"
+msgstr "当上游代码仓库接受并合并了你的功能分支后，你可以删掉这些功能分支。"
+"首先，将上游主干分支合并到你的分支，让 git 了解可以安全的删除当前功能分支::"
 
 #: ../../source/development/contributing.rst:348
 msgid "Then you can do::"
@@ -641,7 +641,7 @@ msgid ""
 "people are responsible for reviewing all of the contributions, which can "
 "often lead to bottlenecks."
 msgstr "如果您已经进入了 `检查你的代码`_ 阶段，核心贡献者之一可能会进行审查。"
-"然而，只有少数人负责审查所有的贡献，这往往会导致我们的审查无法顾及所有的需求。"
+"然而，少数核心开发者需要负责审查所有的贡献，这往往会导致我们的审查无法顾及所有的需求。"
 
 #: ../../source/development/contributing.rst:367
 msgid "To improve the chances of your pull request being reviewed, you should:"
@@ -651,7 +651,7 @@ msgstr "为了提高你的 pull request 被核心开发者查看的机会，你�
 msgid ""
 "**Reference an open issue** for non-trivial changes to clarify the PR's "
 "purpose"
-msgstr "对于较为复杂的更改，可以 **引用一个开放的问题(open issue)** 来明确 pull request 的目的。"
+msgstr "对于较为复杂的更改，可以 **引用一个尚未解决的 issue** 来明确 pull request 的目的。"
 
 #: ../../source/development/contributing.rst:370
 msgid ""
@@ -669,7 +669,7 @@ msgstr "**pull request 应当越简洁越好** ，因为越长的 pull request �
 msgid ""
 "**Ensure that CI is in a green state**. Reviewers may not even look "
 "otherwise"
-msgstr "审查人可能不会审查不通过 **GitHub Continuous Integration check** 的 pull request，所以请确保你的 pull request 提交时 **CI check** 为绿色"
+msgstr "审查人可能不会审查不通过 **GitHub 持续集成测试** 的 pull request，所以请确保你的 pull request 提交时 **CI check** 为绿色"
 
 #: ../../source/development/contributing.rst:373
 msgid ""
