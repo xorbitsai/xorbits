@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
+import operator
+
 import numpy as np
 
 from ....utils import ignore_warning
 from ...arithmetic import abs as mt_abs
+from ...arithmetic import tree_add, tree_multiply
 from ...datasource import arange, tensor
 from ...reduction import sum as mt_sum
 
@@ -205,3 +209,18 @@ def test_order_execution(setup):
     np.testing.assert_array_equal(res, expected)
     assert res.flags["C_CONTIGUOUS"] == expected.flags["C_CONTIGUOUS"]
     assert res.flags["F_CONTIGUOUS"] == expected.flags["F_CONTIGUOUS"]
+
+
+def test_tree_execution(setup):
+    raws = [np.random.rand(10, 10) for _ in range(10)]
+    tensors = [tensor(a, chunk_size=3) for a in raws]
+
+    res = tree_add(*tensors, 1.0).execute().fetch()
+    np.testing.assert_array_almost_equal(
+        res, 1.0 + functools.reduce(operator.add, raws)
+    )
+
+    res = tree_multiply(*tensors, 2.0).execute().fetch()
+    np.testing.assert_array_almost_equal(
+        res, 2.0 * functools.reduce(operator.mul, raws)
+    )
