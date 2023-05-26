@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import functools
 import inspect
 import warnings
 from functools import lru_cache
@@ -96,6 +96,7 @@ class PandasFetchDataMethodWrapper(PandasClsMethodWrapper):
     def get_wrapped(self):
         wrapped = super().get_wrapped()
 
+        @functools.wraps(getattr(self.library_cls, self.func_name))
         def _wrapped(entity: MarsEntity, *args, **kwargs):
             def fetch_wrapped(func):
                 ret = func(entity, *args, **kwargs)
