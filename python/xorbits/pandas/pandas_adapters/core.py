@@ -92,10 +92,29 @@ class PandasClsMethodWrapper(ClsMethodWrapper):
         return pd
 
 
+class PandasFetchDataMethodWrapper(PandasClsMethodWrapper):
+    def get_wrapped(self):
+        wrapped = super().get_wrapped()
+
+        def _wrapped(entity: MarsEntity, *args, **kwargs):
+            def fetch_wrapped(func):
+                ret = func(entity, *args, **kwargs)
+                return ret.fetch()
+
+            return fetch_wrapped(wrapped)
+
+        return _wrapped
+
+
 def _collect_pandas_cls_members(pd_cls: Type, data_type: DataType):
     members = get_cls_members(data_type)
     for name, pd_cls_member in inspect.getmembers(pd_cls, inspect.isfunction):
-        if name not in members and not name.startswith("_"):
+        if name == "tolist" and pd_cls == pd.Series:
+            pandas_series_tolist_method_wrapper = PandasFetchDataMethodWrapper(
+                library_cls=pd_cls, func_name=name, fallback_warning=True
+            )
+            members[name] = pandas_series_tolist_method_wrapper.get_wrapped()
+        elif name not in members and not name.startswith("_"):
             pandas_cls_method_wrapper = PandasClsMethodWrapper(
                 library_cls=pd_cls, func_name=name, fallback_warning=True
             )
