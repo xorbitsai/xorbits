@@ -120,14 +120,14 @@ Build the Docker image::
     $ cd xorbits
 
     # Build the image
-    $ docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=<your_python_version>
+    docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=<your_python_version>
 
 Run Container::
 
     # Run a container and bind your local repo to the container
     # This command assumes you are running from your local repo
     # but if not alter ${PWD} to match your local repo path
-    $ docker run -it --rm xorbits-dev /bin/bash
+    docker run -it --rm xorbits-dev /bin/bash
 
 *Even easier, you can integrate Docker with the following IDEs:*
 
