@@ -157,21 +157,3 @@ just built::
 
 And you'll have the satisfaction of seeing your new and improved documentation!
 
-.. _contributing.dev_docs:
-
-Building main branch documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When pull requests are merged into the Xorbits ``main`` branch, the main parts of
-the documentation are also built by readthedocs. These docs are then hosted `here
-<https://doc.xorbits.io/en/latest/>`__, see also
-the :any:`Continuous Integration <contributing.ci>` section.
-
-Previewing changes
-------------------
-
-Once, the pull request is submitted, GitHub Actions will automatically build the
-documentation. To view the built site:
-
-#. Wait for the ``docs/readthedocs.org:xorbits`` check to complete.
-#. Click ``Details`` for preview.
