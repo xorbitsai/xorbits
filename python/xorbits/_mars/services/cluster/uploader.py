@@ -92,13 +92,13 @@ class NodeInfoUploaderActor(mo.Actor):
                 break
             except RuntimeError as ex:  # pragma: no cover
                 if "cannot schedule new futures after interpreter shutdown" not in str(
-                        ex
+                    ex
                 ):
                     # when atexit is triggered, the default pool might be shutdown
                     # and to_thread will fail
                     break
             except (
-                    Exception
+                Exception
             ) as ex:  # pragma: no cover  # noqa: E722  # nosec  # pylint: disable=bare-except
                 logger.error(f"Failed to upload node info: {ex}")
                 if not self._uploaded_future.done():
@@ -163,7 +163,7 @@ class NodeInfoUploaderActor(mo.Actor):
                         address=self.address,
                         role=self._info.role,
                         env=self._info.env if not self._env_uploaded else None,
-                        resource=self._info.resource,     # assign the resources updated from the previous part here.
+                        resource=self._info.resource,  # assign the resources updated from the previous part here.
                         detail=self._info.detail,
                         status=status,
                     )

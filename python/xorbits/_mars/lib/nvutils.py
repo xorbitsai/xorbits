@@ -435,7 +435,7 @@ def get_device_info(dev_index: int) -> _cu_device_info:
         name=name_buf.value.decode(),
         multiprocessors=cores.value,
         cuda_cores=cores.value
-                   * _cu_get_processor_cores(cc_major.value, cc_minor.value),
+        * _cu_get_processor_cores(cc_major.value, cc_minor.value),
         threads=cores.value * threads_per_core.value,
     )
     return info
@@ -538,7 +538,6 @@ def get_handle_by_uuid(uuid: bytes) -> _nvmlDevice_t:
 
 
 def get_mig_mode(device: _nvmlDevice_t) -> Tuple[int, int]:
-
     if _nvml_lib is None:
         return None
 
