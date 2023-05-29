@@ -90,7 +90,7 @@ class NodeInfo extends React.Component {
     let target = data.at(0).resource
     console.log(target)
 
-    //change the naming of the prop this afternon coherant to the cpu_memory_total format and everything should be fine
+    //change the naming of the prop this afternoon coherent to the cpu_memory_total format and everything should be fine
     const resourceStats = {
       cpu_total: gatherResourceStats('cpu_total'),
       cpu_avail: gatherResourceStats('cpu_avail'),
