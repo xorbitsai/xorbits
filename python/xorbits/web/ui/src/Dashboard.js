@@ -173,7 +173,7 @@ class NodeInfo extends React.Component {
         </Table>
       )
     } else {
-      //case that we have gpu avaliable.
+      //case that we have gpu ready.
       resourceStats.gpu_used = resourceStats.gpu_total - resourceStats.gpu_avail
       resourceStats.gpu_memory_used =
         resourceStats.gpu_memory_total - resourceStats.gpu_memory_avail
