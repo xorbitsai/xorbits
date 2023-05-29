@@ -323,6 +323,7 @@ def _init():
         _init_pid = os.getpid()
 
 
+# count the number of CUDA GPU devices, will return all GPU devices if no CUDA appeared
 def get_device_count() -> int:
     global _gpu_count
 
@@ -346,6 +347,7 @@ def get_device_count() -> int:
     return _gpu_count
 
 
+# check all kinds of GPU running in the process.
 def _get_all_device_count() -> int:
     _init_nvml()
     if _nvml_lib is None:
@@ -356,6 +358,7 @@ def _get_all_device_count() -> int:
     return n_gpus.value
 
 
+# returning information of the current driver.
 def get_driver_info() -> _nvml_driver_info:
     global _driver_info
 
@@ -432,7 +435,7 @@ def get_device_info(dev_index: int) -> _cu_device_info:
         name=name_buf.value.decode(),
         multiprocessors=cores.value,
         cuda_cores=cores.value
-        * _cu_get_processor_cores(cc_major.value, cc_minor.value),
+                   * _cu_get_processor_cores(cc_major.value, cc_minor.value),
         threads=cores.value * threads_per_core.value,
     )
     return info
@@ -535,7 +538,7 @@ def get_handle_by_uuid(uuid: bytes) -> _nvmlDevice_t:
 
 
 def get_mig_mode(device: _nvmlDevice_t) -> Tuple[int, int]:
-    _init_nvml()
+
     if _nvml_lib is None:
         return None
 

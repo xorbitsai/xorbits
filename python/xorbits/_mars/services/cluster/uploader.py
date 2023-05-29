@@ -92,13 +92,13 @@ class NodeInfoUploaderActor(mo.Actor):
                 break
             except RuntimeError as ex:  # pragma: no cover
                 if "cannot schedule new futures after interpreter shutdown" not in str(
-                    ex
+                        ex
                 ):
                     # when atexit is triggered, the default pool might be shutdown
                     # and to_thread will fail
                     break
             except (
-                Exception
+                    Exception
             ) as ex:  # pragma: no cover  # noqa: E722  # nosec  # pylint: disable=bare-except
                 logger.error(f"Failed to upload node info: {ex}")
                 if not self._uploaded_future.done():
@@ -141,10 +141,12 @@ class NodeInfoUploaderActor(mo.Actor):
                 )
             )
 
+            # receive the res returned by gather_node_resource, and asyncio ensure that it will be fully executed.
             band_resources = await asyncio.to_thread(
                 gather_node_resource, self._band_to_resource, use_gpu=self._use_gpu
             )
 
+            # update the self._info.resource by the returning res by gather node resources if needed.
             for band, res in band_resources.items():
                 try:
                     res_dict = self._info.resource[band]
@@ -161,7 +163,7 @@ class NodeInfoUploaderActor(mo.Actor):
                         address=self.address,
                         role=self._info.role,
                         env=self._info.env if not self._env_uploaded else None,
-                        resource=self._info.resource,
+                        resource=self._info.resource,     # assign the resources updated from the previous part here.
                         detail=self._info.detail,
                         status=status,
                     )
