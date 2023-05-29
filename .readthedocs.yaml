@@ -14,7 +14,7 @@ python:
     - method: pip
       path: python
       extra_requirements:
-        - dev
+        - doc
 
 submodules:
   include: all
