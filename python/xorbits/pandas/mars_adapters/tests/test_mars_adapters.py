@@ -206,3 +206,11 @@ def test_dataframe_initializer(setup, dummy_df):
 def test_dataframe_items(setup, dummy_df):
     for label, content in dummy_df.items():
         assert isinstance(content, DataRef)
+
+
+def test_series_tolist(setup, dummy_int_series):
+    lis = dummy_int_series.tolist()
+    idx = 1
+    for i in range(0, len(lis)):
+        assert idx == lis[i]
+        idx += 1

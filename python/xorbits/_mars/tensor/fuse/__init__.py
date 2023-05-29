@@ -15,4 +15,5 @@
 
 from .core import TensorFuseChunk
 from .cupy import TensorCpFuseChunk
+from .jax import TensorJAXFuseChunk
 from .numexpr import TensorNeFuseChunk

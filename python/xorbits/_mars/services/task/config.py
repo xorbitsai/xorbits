@@ -24,4 +24,6 @@ task_options.register_option("fuse_enabled", True, validator=is_bool)
 task_options.register_option("reserved_finish_tasks", 25, validator=is_integer)
 
 # worker
-task_options.register_option("runtime_engines", ["numexpr", "cupy"], validator=is_list)
+task_options.register_option(
+    "runtime_engines", ["jax", "numexpr", "cupy"], validator=is_list
+)

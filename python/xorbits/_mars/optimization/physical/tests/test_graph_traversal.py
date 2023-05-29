@@ -12,16 +12,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import operator
+
+import pytest
 
 from ....core import ChunkGraph
 from ....tensor.arithmetic import TensorTreeAdd
 from ....tensor.indexing import TensorSlice
 from ....tensor.reduction import TensorSum
+from ..jax import JAXRuntimeOptimizer
 from ..numexpr import NumexprRuntimeOptimizer
 
 
-def test_numexpr():
+@pytest.mark.parametrize(
+    "runtime_optimizer", [NumexprRuntimeOptimizer, JAXRuntimeOptimizer]
+)
+def test_graph_traversal_optimizer(runtime_optimizer):
     r"""
         graph(@: node, S: Slice Chunk, #: fused_node):
 
@@ -31,7 +38,7 @@ def test_numexpr():
           /               \                          \
         @                   @                          @
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(6)
@@ -48,7 +55,7 @@ def test_numexpr():
     graph.add_edge(chunk_slice, chunks[4])
     graph.add_edge(chunk_slice, chunks[5])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert fused_nodes[0].composed == chunks[:4]
     assert len(graph) == 4
@@ -62,7 +69,7 @@ def test_numexpr():
           /               \
         @                   @
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(7)
@@ -76,7 +83,7 @@ def test_numexpr():
     graph.add_edge(chunks[4], chunks[5])
     graph.add_edge(chunks[4], chunks[6])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 0
     assert len(graph) == 7
@@ -90,7 +97,7 @@ def test_numexpr():
           /               \
         @                   @
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(6)
@@ -109,7 +116,7 @@ def test_numexpr():
     graph.add_edge(chunks[4], chunks[5])
     graph.add_edge(chunks[4], chunk_slices[1])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 0
     assert len(graph) == 8
@@ -129,7 +136,7 @@ def test_numexpr():
           /
         @
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(7)
@@ -143,7 +150,7 @@ def test_numexpr():
     graph.add_edge(chunks[2], chunks[6])
     graph.add_edge(chunks[5], chunks[6])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     sorted_composed = sorted(fused_nodes[0].composed, key=operator.attrgetter("key"))
     assert sorted_composed == chunks
@@ -164,7 +171,7 @@ def test_numexpr():
           /
         @
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(8)
@@ -181,7 +188,7 @@ def test_numexpr():
     graph.add_edge(chunk_slice, chunks[6])
     graph.add_edge(chunks[6], chunks[7])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 3
     assert sorted(len(n.composed) for n in fused_nodes) == [2, 3, 3]
@@ -203,7 +210,7 @@ def test_numexpr():
           /
         S
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(6)
@@ -223,7 +230,7 @@ def test_numexpr():
     graph.add_edge(chunks[4], chunks[5])
     graph.add_edge(chunk_slices[2], chunks[5])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 1
     sorted_composed = sorted(fused_nodes[0].composed, key=operator.attrgetter("key"))
@@ -236,7 +243,7 @@ def test_numexpr():
 
         @ --> @ --> S --> @  ========>  # --> S --> @
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(4)
@@ -248,7 +255,7 @@ def test_numexpr():
     graph.add_edge(chunks[1], chunk_slice)
     graph.add_edge(chunk_slice, chunks[2])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert fused_nodes[0].composed == chunks[:2]
     assert len(fused_nodes) == 1
@@ -258,7 +265,7 @@ def test_numexpr():
 
         @ --> @ --> S --> @ --> @   ========>  # --> S --> #
 
-        fuse stopped at S, because numexpr don't support Slice op
+        fuse stopped at S, because graph traversal optimizers don't support Slice op
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(4)
@@ -271,7 +278,7 @@ def test_numexpr():
     graph.add_edge(chunk_slice, chunks[2])
     graph.add_edge(chunks[2], chunks[3])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert fused_nodes[0].composed == chunks[:2]
     assert fused_nodes[1].composed == chunks[2:4]
@@ -281,7 +288,7 @@ def test_numexpr():
 
         @ --> @ --> R --> @ --> @   ========>  # --> #
 
-        fuse stopped at R, because reduction should be the last in the numexpr stack.
+        fuse stopped at R, because reduction should be the last in the graph traversal optimizers stack.
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(4)
@@ -294,7 +301,7 @@ def test_numexpr():
     graph.add_edge(chunk_reduction, chunks[2])
     graph.add_edge(chunks[2], chunks[3])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 2
     assert fused_nodes[0].composed == chunks[:2] + [chunk_reduction]
@@ -306,7 +313,7 @@ def test_numexpr():
 
         R --> @ --> @   ========>  R --> #
 
-        fuse stopped at R, because reduction should be the last in the numexpr stack.
+        fuse stopped at R, because reduction should be the last in the graph traversal optimizers stack.
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(2)
@@ -317,7 +324,7 @@ def test_numexpr():
     graph.add_edge(chunk_reduction, chunks[0])
     graph.add_edge(chunks[0], chunks[1])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 1
     assert fused_nodes[0].composed == chunks[:2]
@@ -328,7 +335,7 @@ def test_numexpr():
 
         @ --> @ --> R   ========>  #
 
-        fuse stopped at R, because reduction should be the last in the numexpr stack.
+        fuse stopped at R, because reduction should be the last in the graph traversal optimizers stack.
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(2)
@@ -339,7 +346,7 @@ def test_numexpr():
     graph.add_edge(chunks[0], chunks[1])
     graph.add_edge(chunks[1], chunk_reduction)
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 1
     assert fused_nodes[0].composed == chunks[:2] + [chunk_reduction]
@@ -356,7 +363,7 @@ def test_numexpr():
              /   \  /                               @ --> R
             @     @ --> R
 
-        fuse stopped at R, because reduction should be the last in the numexpr stack.
+        fuse stopped at R, because reduction should be the last in the graph traversal optimizers stack.
         """
     chunks = [
         TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(4)
@@ -376,7 +383,7 @@ def test_numexpr():
     graph.add_edge(chunks[3], chunk_reductions[3])
     graph.add_edge(chunks[3], chunk_reductions[4])
 
-    optimizer = NumexprRuntimeOptimizer(graph)
+    optimizer = runtime_optimizer(graph)
     _, fused_nodes = optimizer.optimize()
     assert len(fused_nodes) == 2
     assert fused_nodes[0].composed == [chunks[2], chunk_reductions[1]]
