@@ -86,11 +86,6 @@ class NodeInfo extends React.Component {
         )
       )
 
-    let data = Object.values(roleData)
-    let target = data.at(0).resource
-    console.log(target)
-
-    //change the naming of the prop this afternoon coherent to the cpu_memory_total format and everything should be fine
     const resourceStats = {
       cpu_total: gatherResourceStats('cpu_total'),
       cpu_avail: gatherResourceStats('cpu_avail'),
@@ -102,16 +97,12 @@ class NodeInfo extends React.Component {
       gpu_memory_avail: gatherResourceStats('gpu_memory_avail')
     }
 
-    //test for output values.
-    // console.log(resourceStats.memory_avail + ' break: ' + resourceStats.memory_total)
-    // console.log(resourceStats.gpu_memory_avail + ' break: ' + resourceStats.gpu_memory_total)
-
-    //need to implement the display of gpu specifically and try to split the memory usage.********//
     resourceStats.cpu_used = resourceStats.cpu_total - resourceStats.cpu_avail
     resourceStats.memory_used =
       resourceStats.memory_total - resourceStats.memory_avail
     resourceStats.gpu_used = resourceStats.gpu_total - resourceStats.gpu_avail
-    resourceStats.gpu_memory_used = resourceStats.gpu_memory_total - resourceStats.gpu_memory_avail
+    resourceStats.gpu_memory_used =
+        resourceStats.gpu_memory_total - resourceStats.gpu_memory_avail
 
     return (
       <Table size="small">
@@ -136,13 +127,14 @@ class NodeInfo extends React.Component {
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
-
           <StyledTableRow>
             <StyledTableCell>CPU Info</StyledTableCell>
             <StyledTableCell>
               <Grid container>
-                <Grid xs={4}>Usage: {resourceStats.cpu_used.toFixed(2)}</Grid>
-                <Grid xs={8}>Total: {resourceStats.cpu_total.toFixed(2)}</Grid>
+                <Grid xs={4}>Usage:
+                  {resourceStats.cpu_used.toFixed(2)}</Grid>
+                <Grid xs={8}>Total:
+                  {resourceStats.cpu_total.toFixed(2)}</Grid>
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
@@ -159,13 +151,14 @@ class NodeInfo extends React.Component {
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
-
           <StyledTableRow>
             <StyledTableCell>GPU Info</StyledTableCell>
             <StyledTableCell>
               <Grid container>
-                <Grid xs={4}>Usage: {resourceStats.gpu_used.toFixed(2)}</Grid>
-                <Grid xs={8}>Total: {resourceStats.gpu_total.toFixed(2)}</Grid>
+                <Grid xs={4}>
+                  Usage: {resourceStats.gpu_used.toFixed(2)}</Grid>
+                <Grid xs={8}>
+                  Total: {resourceStats.gpu_total.toFixed(2)}</Grid>
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
@@ -182,7 +175,6 @@ class NodeInfo extends React.Component {
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
-
           <StyledTableRow>
             <StyledTableCell>Version</StyledTableCell>
             <StyledTableCell>
