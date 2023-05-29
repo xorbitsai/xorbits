@@ -157,3 +157,11 @@ just built::
 
 And you'll have the satisfaction of seeing your new and improved documentation!
 
+.. _contributing.dev_docs:
+
+Building main branch documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When pull requests are merged into the Xorbits ``main`` branch, the main parts of
+the documentation are also built by readthedocs. These docs are then hosted `here
+<https://doc.xorbits.io/en/latest/>`__.
