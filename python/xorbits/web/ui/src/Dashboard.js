@@ -94,7 +94,7 @@ class NodeInfo extends React.Component {
       gpu_total: gatherResourceStats('gpu_total'),
       gpu_avail: gatherResourceStats('gpu_avail'),
       gpu_memory_total: gatherResourceStats('gpu_memory_total'),
-      gpu_memory_avail: gatherResourceStats('gpu_memory_avail')
+      gpu_memory_avail: gatherResourceStats('gpu_memory_avail'),
     }
 
     resourceStats.cpu_used = resourceStats.cpu_total - resourceStats.cpu_avail
@@ -102,7 +102,7 @@ class NodeInfo extends React.Component {
       resourceStats.memory_total - resourceStats.memory_avail
     resourceStats.gpu_used = resourceStats.gpu_total - resourceStats.gpu_avail
     resourceStats.gpu_memory_used =
-        resourceStats.gpu_memory_total - resourceStats.gpu_memory_avail
+      resourceStats.gpu_memory_total - resourceStats.gpu_memory_avail
 
     return (
       <Table size="small">
@@ -131,10 +131,14 @@ class NodeInfo extends React.Component {
             <StyledTableCell>CPU Info</StyledTableCell>
             <StyledTableCell>
               <Grid container>
-                <Grid xs={4}>Usage:
-                  {resourceStats.cpu_used.toFixed(2)}</Grid>
-                <Grid xs={8}>Total:
-                  {resourceStats.cpu_total.toFixed(2)}</Grid>
+                <Grid xs={4}>
+                  Usage:
+                  {resourceStats.cpu_used.toFixed(2)}
+                </Grid>
+                <Grid xs={8}>
+                  Total:
+                  {resourceStats.cpu_total.toFixed(2)}
+                </Grid>
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
@@ -156,9 +160,13 @@ class NodeInfo extends React.Component {
             <StyledTableCell>
               <Grid container>
                 <Grid xs={4}>
-                  Usage: {resourceStats.gpu_used.toFixed(2)}</Grid>
+                  Usage:
+                  {resourceStats.gpu_used.toFixed(2)}
+                </Grid>
                 <Grid xs={8}>
-                  Total: {resourceStats.gpu_total.toFixed(2)}</Grid>
+                  Total:
+                  {resourceStats.gpu_total.toFixed(2)}
+                </Grid>
               </Grid>
             </StyledTableCell>
           </StyledTableRow>
