@@ -161,7 +161,7 @@ class NodeInfoUploaderActor(mo.Actor):
                         address=self.address,
                         role=self._info.role,
                         env=self._info.env if not self._env_uploaded else None,
-                        resource=self._info.resource,  
+                        resource=self._info.resource,
                         detail=self._info.detail,
                         status=status,
                     )
