@@ -269,7 +269,7 @@ msgstr "需要注意的是，进行浅克隆 (带有选项 ``--depth==N``, ``N``
 
 #: ../../source/development/contributing.rst:143
 msgid "Creating a branch"
-msgstr "创建分支"
+msgstr "创建分支(branch)"
 
 #: ../../source/development/contributing.rst:145
 msgid ""
@@ -302,35 +302,35 @@ msgid ""
 " created the branch, check the section on :ref:`updating a PR "
 "<contributing.update-pr>`."
 msgstr ""
-"当你想添加主干分支的改动到你的功能分支时，请见 :ref:`更新 PR <contributing.update-pr>` 。"
+"当你想添加主干分支的改动到你的功能分支时，请见 :ref:`更新你的 pull request <contributing.update-pr>` 。"
 
 #: ../../source/development/contributing.rst:172
 msgid "Contributing your changes to Xorbits"
-msgstr ""
+msgstr "将改动贡献到 Xorbits"
 
 #: ../../source/development/contributing.rst:177
 msgid "Committing your code"
-msgstr ""
+msgstr "提交你的代码"
 
 #: ../../source/development/contributing.rst:179
 msgid ""
 "Keep style fixes to a separate commit to make your pull request more "
 "readable."
-msgstr ""
+msgstr "请保持每次 commit 的代码风格一致，以便使你的 pull request 更具有可读性。"
 
 #: ../../source/development/contributing.rst:181
 msgid "Once you've made changes, you can see them by typing::"
-msgstr ""
+msgstr "每当你对代码做出更改后，你可以通过输入如下指令来查看::"
 
 #: ../../source/development/contributing.rst:185
 msgid ""
 "If you have created a new file, it is not being tracked by git. Add it by"
 " typing::"
-msgstr ""
+msgstr "新创建的文件不会被 git 追踪，通过以下指令将其加入代码仓库::"
 
 #: ../../source/development/contributing.rst:189
 msgid "Doing 'git status' again should give something like::"
-msgstr ""
+msgstr "再次输入 'git status' 指令应出现::"
 
 #: ../../source/development/contributing.rst:196
 msgid ""
@@ -338,107 +338,112 @@ msgid ""
 " message. Xorbits uses a convention for commit message prefixes and "
 "layout.  Here are some common prefixes along with general guidelines for "
 "when to use them:"
-msgstr ""
+msgstr "最后，将你的更改和更改的解释说明commit到本地的repository当中。"
+"Xorbits 使用一种关于commit message前缀和布局的约定。以下是一些常见的前缀以及何时使用它们的一般指南："
 
 #: ../../source/development/contributing.rst:200
 msgid "FEATURE: Feature, new functionality"
-msgstr ""
+msgstr "FEATURE: 特性与新功能"
 
 #: ../../source/development/contributing.rst:201
 msgid "ENH: Enhancement"
-msgstr ""
+msgstr "ENH: 改进与提升"
 
 #: ../../source/development/contributing.rst:202
 msgid "BUG: Bug fix"
-msgstr ""
+msgstr "BUG: Bug 修复"
 
 #: ../../source/development/contributing.rst:203
 msgid "DOC: Additions/updates to documentation"
-msgstr ""
+msgstr "DOC: 文档的删改与添加"
 
 #: ../../source/development/contributing.rst:204
 msgid "TST: Additions/updates to tests"
-msgstr ""
+msgstr "TST: 测试的删改与添加"
 
 #: ../../source/development/contributing.rst:205
 msgid "BLD: Updates to the build process/scripts"
-msgstr ""
+msgstr "BLD: 构建过程或脚本的更新"
 
 #: ../../source/development/contributing.rst:206
 msgid "PERF: Performance improvement"
-msgstr ""
+msgstr "PERF: 性能提升"
 
 #: ../../source/development/contributing.rst:207
 msgid "TYP: Type annotations"
-msgstr ""
+msgstr "TYP: 类型注解"
 
 #: ../../source/development/contributing.rst:208
 msgid "CLN: Code cleanup"
-msgstr ""
+msgstr "CLN: 代码清理"
 
 #: ../../source/development/contributing.rst:209
 msgid "REF: Refactor"
-msgstr ""
+msgstr "REF: 重构"
 
 #: ../../source/development/contributing.rst:210
 msgid "CHORE: chore"
-msgstr ""
+msgstr "CHORE: 辅助任务"
 
 #: ../../source/development/contributing.rst:212
 msgid ""
 "The following defines how a commit message should be structured.  Please "
 "reference the relevant GitHub issues in your commit message using GH1234 "
 "or #1234.  Either style is fine, but the former is generally preferred:"
-msgstr ""
+msgstr "以下定义了 commit message 的结构应如何来书写。"
+"在 commit message 中，请用 GH1234 或 #1234 的格式关联与你的更改内容对应的 GitHub issues。"
+"两种格式均可，但推荐使用前者:"
 
 #: ../../source/development/contributing.rst:216
 msgid "a subject line with ``< 80`` chars."
-msgstr ""
+msgstr "小于 80 个字符的主题描述"
 
 #: ../../source/development/contributing.rst:217
 msgid "One blank line."
-msgstr ""
+msgstr "空一行"
 
 #: ../../source/development/contributing.rst:218
 msgid "Optionally, a commit message body."
-msgstr ""
+msgstr "commit message 主体 (可为空)"
 
 #: ../../source/development/contributing.rst:220
 msgid "Now you can commit your changes in your local repository::"
-msgstr ""
+msgstr "现在你可以将你的更改 commit 到本地的代码仓库::"
 
 #: ../../source/development/contributing.rst:227
 msgid "Pushing your changes"
-msgstr ""
+msgstr "提交你的更改"
 
 #: ../../source/development/contributing.rst:229
 msgid ""
 "When you want your changes to appear publicly on your GitHub page, push "
 "your forked feature branch's commits::"
-msgstr ""
+msgstr "当你想在你的 GitHub 页面上公开你的更改时，将你在 fork 的对应功能分支上所做的修改提交::"
 
 #: ../../source/development/contributing.rst:234
 msgid ""
 "Here ``origin`` is the default name given to your remote repository on "
 "GitHub. You can see the remote repositories::"
-msgstr ""
+msgstr "这里的 ``origin`` 是你 GitHub 上的远程代码仓库的默认命名，"
+"你可以通过如下指令查看所有远程代码仓库::"
 
 #: ../../source/development/contributing.rst:239
 msgid ""
 "If you added the upstream repository as described above you will see "
 "something like::"
-msgstr ""
+msgstr "如果你按照前面的指令正确添加了上游仓库，你应该能看到类似于以下的信息::"
 
 #: ../../source/development/contributing.rst:247
 msgid ""
 "Now your code is on GitHub, but it is not yet a part of the Xorbits "
 "project. For that to happen, a pull request needs to be submitted on "
 "GitHub."
-msgstr ""
+msgstr "现在你的代码已经被上传至 GitHub，但它还不是 Xorbits 代码的一部分。"
+"要想让你的代码真正合并到 Xorbits，你还需要创建一个 pull request。"
 
 #: ../../source/development/contributing.rst:251
 msgid "Review your code"
-msgstr ""
+msgstr "检查你的代码"
 
 #: ../../source/development/contributing.rst:253
 msgid ""
@@ -447,31 +452,33 @@ msgid ""
 "outlined in this document regarding code style, tests, performance tests,"
 " and documentation. You should also double check your branch changes "
 "against the branch it was based on:"
-msgstr ""
+msgstr "当你已经准备好请 Xorbits 核心开发人员对你的代码审查时，提交一个 pull request。"
+"请在提交前再次确认你的代码格式已符合所有要求，包括但不限于代码风格，测试，性能测试，文档等方面。"
+"同时，也请检查对应分支更改前后的变化:"
 
 #: ../../source/development/contributing.rst:258
 msgid ""
 "Navigate to your repository on GitHub -- https://github.com/your-user-"
 "name/xorbits"
-msgstr ""
+msgstr "跳转至你的GitHub 代码仓库 -- https://github.com/your-user-name/xorbits"
 
 #: ../../source/development/contributing.rst:259
 msgid "Click on ``Branches``"
-msgstr ""
+msgstr "点击 ``Branches``"
 
 #: ../../source/development/contributing.rst:260
 msgid "Click on the ``Compare`` button for your feature branch"
-msgstr ""
+msgstr "在你的功能分支上点击 ``Compare``"
 
 #: ../../source/development/contributing.rst:261
 msgid ""
 "Select the ``base`` and ``compare`` branches, if necessary. This will be "
 "``main`` and ``shiny-new-feature``, respectively."
-msgstr ""
+msgstr "如有必要，请选择 ``base`` 和 ``compare`` 分支。他们将会依次是 ``main`` 和 ``shiny-new-feature``。"
 
 #: ../../source/development/contributing.rst:265
 msgid "Finally, make the pull request"
-msgstr ""
+msgstr "最后，创建 pull request"
 
 #: ../../source/development/contributing.rst:267
 msgid ""
@@ -481,39 +488,40 @@ msgid ""
 " version.  This pull request and its associated changes will eventually "
 "be committed to the main branch and available in the next release.  To "
 "submit a pull request:"
-msgstr ""
+msgstr "若无异常，你就准备好提交pull request了。Pull request 是将本地仓库中的代码提供给 GitHub 社区并进行查看和最终合并到主要版本的方式。"
+"这个pull request及其关联的更改最终将被提交到主分支，并在下一个版本中可用。要提交一个pull request，请按照以下步骤进行:"
 
 #: ../../source/development/contributing.rst:273
 msgid "Navigate to your repository on GitHub"
-msgstr ""
+msgstr "跳转到你的 ``GitHub repository``"
 
 #: ../../source/development/contributing.rst:274
 msgid "Click on the ``Pull Request`` button"
-msgstr ""
+msgstr "点击 ``Pull Request`` 按钮"
 
 #: ../../source/development/contributing.rst:275
 msgid ""
 "You can then click on ``Commits`` and ``Files Changed`` to make sure "
 "everything looks okay one last time"
-msgstr ""
+msgstr "然后你可以点击 ``Commits`` 和 ``Files Changed`` 来最后确认你的更改"
 
 #: ../../source/development/contributing.rst:277
 msgid "Write a description of your changes in the ``Preview Discussion`` tab"
-msgstr ""
+msgstr "在 ``Preview Discussion`` 中描述你的更改"
 
 #: ../../source/development/contributing.rst:278
 msgid "Click ``Send Pull Request``."
-msgstr ""
+msgstr "点击 ``Send Pull Request``。"
 
 #: ../../source/development/contributing.rst:280
 msgid ""
 "This request then goes to the repository maintainers, and they will "
 "review the code."
-msgstr ""
+msgstr "你的请求将会送达到核心开发人员端并被审查。"
 
 #: ../../source/development/contributing.rst:286
 msgid "Updating your pull request"
-msgstr ""
+msgstr "更新你的 pull request"
 
 #: ../../source/development/contributing.rst:288
 msgid ""
@@ -522,31 +530,32 @@ msgid ""
 " branch, add a new commit to that branch, push it to GitHub, and the pull"
 " request will be automatically updated.  Pushing them to GitHub again is "
 "done by::"
-msgstr ""
+msgstr "基于核心开发人员对你的代码的审查结果，你可能需要对其做一些改动。你可以在你的分支上进行进行修改，随后 commit 并将这些修改"
+"提交至 GitHub 上。你的 pull request 会根据提交结果自动更新。用以下操作将你的更新提交至 GitHub::"
 
 #: ../../source/development/contributing.rst:295
 msgid ""
 "This will automatically update your pull request with the latest code and"
 " restart the :any:`Continuous Integration <contributing.ci>` tests."
-msgstr ""
+msgstr "这会自动更新你的 pull request 至最新的代码版本并且重新执行 :any:`持续集成 <contributing.ci>` 测试。"
 
 #: ../../source/development/contributing.rst:298
 msgid ""
 "Another reason you might need to update your pull request is to solve "
 "conflicts with changes that have been merged into the main branch since "
 "you opened your pull request."
-msgstr ""
+msgstr "另外， 当与自你提交 pull request 以来已合并到主分支的更改产生的冲突时，你也需要对 pull request 进行更改。"
 
 #: ../../source/development/contributing.rst:302
 msgid "To do this, you need to \"merge upstream main\" in your branch::"
-msgstr ""
+msgstr "你需要合并上游代码仓库的主干分支来解决上述问题::"
 
 #: ../../source/development/contributing.rst:308
 msgid ""
 "If there are no conflicts (or they could be fixed automatically), a file "
 "with a default commit message will open, and you can simply save and quit"
 " this file."
-msgstr ""
+msgstr "如果没有冲突，将会自动打开一份含有默认 commit message 的文件，然后你就可以保存并关闭这个文档。"
 
 #: ../../source/development/contributing.rst:311
 msgid ""
@@ -555,7 +564,8 @@ msgid ""
 "using-the-command-line/ for an explanation on how to do this. Once the "
 "conflicts are merged and the files where the conflicts were solved are "
 "added, you can run ``git commit`` to save those fixes."
-msgstr ""
+msgstr "如果有合并冲突，则你需要解决这些冲突，请通过以下例子：https://help.github.com/articles/resolving-a-merge-conflict-"
+"using-the-command-line/ 了解如何解决。当所有的冲突都被解决并合并后，执行 ``git commit`` 来保存这些更改。"
 
 #: ../../source/development/contributing.rst:317
 msgid ""
@@ -564,23 +574,25 @@ msgid ""
 "the `stash docs <https://git-scm.com/book/en/v2/Git-Tools-Stashing-and-"
 "Cleaning>`__). This will effectively store your changes and they can be "
 "reapplied after updating."
-msgstr ""
+msgstr "如果你在要更新同步本地分支与主分支的代码之前有本地分支还有未提交的更改，你需要在更新之前将它们存储 (stash) 起来"
+"(请参见文档 `stash docs <https://git-scm.com/book/en/v2/Git-Tools-Stashing-and-"
+"Cleaning>`__)。 这将有效地保存你的更改，并且在更新后可以重新应用它们。"
 
 #: ../../source/development/contributing.rst:322
 msgid ""
 "After the feature branch has been update locally, you can now update your"
 " pull request by pushing to the branch on GitHub::"
-msgstr ""
+msgstr "在本地更新了功能分支之后，你可以通过将其推送到 GitHub 上的分支来更新你的 pull request"
 
 #: ../../source/development/contributing.rst:328
 msgid "Autofixing formatting errors"
-msgstr ""
+msgstr "自动修正格式问题"
 
 #: ../../source/development/contributing.rst:330
 msgid ""
 "We use several styling checks (e.g. ``black``, ``flake8``, ``isort``) "
 "which are run after you make a pull request."
-msgstr ""
+msgstr "Xorbits 项目使用多个样式检查工具（例如 ``black``、 ``flake8``、 ``isort``），这些工具会在你发起 pull request 后运行。"
 
 #: ../../source/development/contributing.rst:333
 msgid ""
@@ -588,36 +600,39 @@ msgid ""
 "set up pre-commit yourself. First, create a Python :ref:`environment "
 "<contributing_environment>` and then set up :ref:`pre-commit "
 "<contributing.pre-commit>`."
-msgstr ""
+msgstr "你可以通过自己配置 pre-commit 工具来自动修正每一次 commit 中的格式错误。"
+"首先，创建一个Python :ref:`环境 <contributing_environment>`，然后配置 :ref:`pre-commit "
+"<contributing.pre-commit>` 。"
 
 #: ../../source/development/contributing.rst:338
 msgid "Delete your merged branch (optional)"
-msgstr ""
+msgstr "(可选) 删除已合并的分支。"
 
 #: ../../source/development/contributing.rst:340
 msgid ""
 "Once your feature branch is accepted into upstream, you'll probably want "
 "to get rid of the branch. First, merge upstream main into your branch so "
 "git knows it is safe to delete your branch::"
-msgstr ""
+msgstr "当上游代码仓库接受并合并了你的功能分支后，你可以删掉这些功能分支。"
+"首先，将上游主干分支合并到你的分支，让 git 了解可以安全的删除当前功能分支::"
 
 #: ../../source/development/contributing.rst:348
 msgid "Then you can do::"
-msgstr ""
+msgstr "然后你可以执行::"
 
 #: ../../source/development/contributing.rst:352
 msgid ""
 "Make sure you use a lower-case ``-d``, or else git won't warn you if your"
 " feature branch has not actually been merged."
-msgstr ""
+msgstr "确保你输入的是小写 ``-d`` ，否则若你的功能分支没有合并成功，git 将不会警告。"
 
 #: ../../source/development/contributing.rst:355
 msgid "The branch will still exist on GitHub, so to delete it there do::"
-msgstr ""
+msgstr "当你执行完上述操作以后，这个分支还会存在在 GitHub 上，你可以通过以下指令进行删除::"
 
 #: ../../source/development/contributing.rst:361
 msgid "Tips for a successful pull request"
-msgstr ""
+msgstr "如何创建一个成功的 pull request"
 
 #: ../../source/development/contributing.rst:363
 msgid ""
@@ -625,39 +640,41 @@ msgid ""
 "contributors may take a look. Please note however that a handful of "
 "people are responsible for reviewing all of the contributions, which can "
 "often lead to bottlenecks."
-msgstr ""
+msgstr "如果您已经进入了 `检查你的代码`_ 阶段，核心贡献者之一可能会进行审查。"
+"然而，少数核心开发者需要负责审查所有的贡献，这往往会导致我们的审查无法顾及所有的需求。"
 
 #: ../../source/development/contributing.rst:367
 msgid "To improve the chances of your pull request being reviewed, you should:"
-msgstr ""
+msgstr "为了提高你的 pull request 被核心开发者查看的机会，你应该:"
 
 #: ../../source/development/contributing.rst:369
 msgid ""
 "**Reference an open issue** for non-trivial changes to clarify the PR's "
 "purpose"
-msgstr ""
+msgstr "对于较为复杂的更改，可以 **引用一个尚未解决的 issue** 来明确 pull request 的目的。"
 
 #: ../../source/development/contributing.rst:370
 msgid ""
 "**Ensure you have appropriate tests**. These should be the first part of "
 "any PR"
-msgstr ""
+msgstr "**恰当全面的测试** 是所有 pull request 提交的首要部分。"
 
 #: ../../source/development/contributing.rst:371
 msgid ""
 "**Keep your pull requests as simple as possible**. Larger PRs take longer"
 " to review"
-msgstr ""
+msgstr "**pull request 应当越简洁越好** ，因为越长的 pull request 需要越久的审查时间。 "
 
 #: ../../source/development/contributing.rst:372
 msgid ""
 "**Ensure that CI is in a green state**. Reviewers may not even look "
 "otherwise"
-msgstr ""
+msgstr "审查人可能不会审查不通过 **GitHub 持续集成测试** 的 pull request，所以请确保你的 pull request 提交时 **CI check** 为绿色"
 
 #: ../../source/development/contributing.rst:373
 msgid ""
 "**Keep** `Updating your pull request`_, either by request or every few "
 "days"
-msgstr ""
+msgstr "**请持续** `更新你的 pull request`_ "
+
 
