@@ -17,6 +17,7 @@
 from .initializer import DataFrame, Series, Index
 
 # do imports to register operands
+from .base.pivot import df_pivot as pivot
 from .base.cut import cut
 from .base.eval import mars_eval as eval  # pylint: disable=redefined-builtin
 from .base.get_dummies import get_dummies

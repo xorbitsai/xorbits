@@ -11,9 +11,10 @@ build:
 
 python:
   install:
-    - requirements: doc/requirements-doc.txt
     - method: pip
       path: python
+      extra_requirements:
+        - doc
 
 submodules:
   include: all
