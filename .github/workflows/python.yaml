@@ -195,10 +195,6 @@ jobs:
           # test jax
           pip install "jax>=0.4.0" "jaxlib>=0.4.0"
         fi
-        if [[ "$MODULE" == "doc-build" ]]; then
-          # test if compatible with older versions
-          pip install -r ../doc/requirements-doc.txt
-        fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
