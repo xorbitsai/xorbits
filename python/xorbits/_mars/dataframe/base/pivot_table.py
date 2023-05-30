@@ -205,11 +205,9 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         for i, chunk in enumerate(filtered_chunks):
             chunk._index = (i, 0)
 
-        all_dtype_index = set().union(
-            *[set(chunk.dtypes.index) for chunk in filtered_chunks]
-        )
-        dtypes_chunks = pd.concat([chunk.dtypes for chunk in filtered_chunks])
-        dtypes_chunks = dtypes_chunks.groupby(dtypes_chunks.index).first()
+        combined_dtypes = pd.concat([chunk.dtypes for chunk in filtered_chunks]).to_dict()
+        output_columns = list(combined_dtypes.keys())
+        output_dtypes = pd.Series(combined_dtypes)
 
         # generate combine chunks
         combine_chunks = []
