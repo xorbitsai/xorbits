@@ -838,6 +838,15 @@ def test_data_frame_pivot_table_execute(setup):
     )
     pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
+    # test numpy input of index and columns
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D",
+            index=np.array(["A", "C"]),
+            columns=np.array(["C"]),
+            aggfunc=np.sum,
+        )
+
     # test margins=True
     with pytest.raises(NotImplementedError):
         r = df.pivot_table(
@@ -848,6 +857,12 @@ def test_data_frame_pivot_table_execute(setup):
     with pytest.raises(NotImplementedError):
         r = df.pivot_table(
             values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, dropna=False
+        )
+
+    # test observed=True
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, observed=True
         )
 
 

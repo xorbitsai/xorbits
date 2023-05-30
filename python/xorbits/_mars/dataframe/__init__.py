@@ -22,6 +22,7 @@ from .base.eval import mars_eval as eval  # pylint: disable=redefined-builtin
 from .base.get_dummies import get_dummies
 from .base.melt import melt
 from .base.qcut import qcut
+from .base.pivot_table import df_pivot_table as pivot_table
 from .base.to_numeric import to_numeric
 from .base.value_counts import value_counts
 from .datasource.from_tensor import dataframe_from_tensor, series_from_tensor

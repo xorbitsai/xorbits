@@ -48,7 +48,7 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
     observed = BoolField("observed", default=False)
     sort = BoolField("sort", default=True)
     shuffle_size = Int32Field("shuffle_size")
-    all_dtype_index = ListField("all_dtype_index", default=None)
+    output_columns = ListField("output_columns", default=None)
 
     @classmethod
     def execute_map(cls, ctx: Union[dict, Context], op: "DataFramePivotTable"):
@@ -82,7 +82,7 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         input_data = ctx[op.inputs[0].key]
         out = op.outputs[0]
 
-        for dtype in op.all_dtype_index:
+        for dtype in op.output_columns:
             if dtype not in input_data.dtypes.index:
                 input_data[dtype] = np.nan if op.fill_value is None else op.fill_value
 
@@ -205,7 +205,9 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         for i, chunk in enumerate(filtered_chunks):
             chunk._index = (i, 0)
 
-        combined_dtypes = pd.concat([chunk.dtypes for chunk in filtered_chunks]).to_dict()
+        combined_dtypes = pd.concat(
+            [chunk.dtypes for chunk in filtered_chunks]
+        ).to_dict()
         output_columns = list(combined_dtypes.keys())
         output_dtypes = pd.Series(combined_dtypes)
 
@@ -214,13 +216,13 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         for chunk in filtered_chunks:
             combine_op = op.copy().reset_key()
             combine_op.stage = OperandStage.combine
-            combine_op.all_dtype_index = all_dtype_index
+            combine_op.output_columns = output_columns
             params = dict(
-                shape=(chunk.shape[0], len(all_dtype_index)), index=chunk.index
+                shape=(chunk.shape[0], len(output_columns)), index=chunk.index
             )
             params.update(
                 dict(
-                    dtypes=dtypes_chunks,
+                    dtypes=output_dtypes,
                     columns_value=in_df.columns_value,
                     index_value=chunk.index_value,
                 )
@@ -231,7 +233,7 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         kw = out_df.params.copy()
         new_nsplits = (
             tuple(chunk.shape[0] for chunk in combine_chunks),
-            (len(all_dtype_index),),
+            (len(output_columns),),
         )
         kw.update(dict(chunks=combine_chunks, nsplits=new_nsplits))
 
@@ -401,6 +403,16 @@ def df_pivot_table(
     foo large  2.000000   5  4.500000    4
         small  2.333333   6  4.333333    2
     """
+    if index is not None and not isinstance(index, (str, list, pd.Index)):
+        raise NotImplementedError(
+            "The 'index' parameter should be of type str or list of str."
+        )
+
+    if columns is not None and not isinstance(columns, (str, list, pd.Index)):
+        raise NotImplementedError(
+            "The 'columns' parameter should be of type str or list of str."
+        )
+
     if margins:
         raise NotImplementedError(
             "The 'margins=True' configuration is not currently supported in this version of xorbits."
