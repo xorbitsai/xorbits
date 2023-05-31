@@ -92,7 +92,7 @@ msgid ""
 msgstr ""
 "从Xorbits存储库的根目录运行此命令。"
 "这样，每次提交更改时都会自动运行所有样式检查，无需手动运行每个检查。"
-"此外，使用``pre-commit``还可以更轻松地保持与我们的代码检查的最新状态。"
+"此外，使用 ``pre-commit`` 还可以更轻松地保持与我们的代码检查的最新状态。"
 
 #: ../../source/development/contributing_codebase.rst:49
 msgid ""
