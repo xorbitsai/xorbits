@@ -92,6 +92,7 @@ jobs:
           - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
+          - { os: ubuntu-latest, module: jax, python-version: 3.9 }
     steps:
     - name: Check out code
       uses: actions/checkout@v3
@@ -120,7 +121,7 @@ jobs:
       if: ${{ matrix.module != 'gpu' }}
       run: |
         pip install numpy scipy cython coverage flaky
-      
+
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
         fi
@@ -190,9 +191,9 @@ jobs:
           # test if compatible with older versions
           pip install pandas==1.5.3 pyarrow\<12.0.0 sqlalchemy\<2
         fi
-        if [[ "$MODULE" == "doc-build" ]]; then
-          # test if compatible with older versions
-          pip install -r ../doc/requirements-doc.txt
+        if [[ "$MODULE" == "jax" ]]; then
+          # test jax
+          pip install "jax>=0.4.0" "jaxlib>=0.4.0"
         fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
@@ -296,7 +297,10 @@ jobs:
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         elif [ "$MODULE" == "gpu" ]; then
-          pytest -m cuda --gpu --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits  
+          pytest -m cuda --gpu --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
+        elif [ "$MODULE" == "jax" ]; then
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
         elif [ "$MODULE" == "compatibility" ]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \

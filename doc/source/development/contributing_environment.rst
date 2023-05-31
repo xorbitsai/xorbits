@@ -5,10 +5,8 @@ Creating a development environment
 ==================================
 
 To test out code changes, you'll need to build Xorbits from source, which
-requires a C/C++ compiler and Python environment. If you're making documentation
-changes, you can skip to :ref:`contributing to the documentation <contributing_documentation>` but if you skip
-creating the development environment you won't be able to build the documentation
-locally before pushing your changes. It's recommended to also install the :ref:`pre-commit hooks <contributing.pre-commit>`.
+requires a C/C++ compiler, Node.js, and Python environment. It's recommended to also install
+the :ref:`pre-commit hooks <contributing.pre-commit>`.
 
 .. contents:: Table of contents:
    :local:
@@ -38,16 +36,16 @@ and consult the ``Linux`` instructions below.
 
 **macOS**
 
-To use the :ref:`mamba <contributing.mamba>`-based compilers, you will need to install the
+To use the :ref:`conda <contributing.conda>`-based compilers, you will need to install the
 Developer Tools using ``xcode-select --install``. Otherwise
 information about compiler installation can be found here:
 https://devguide.python.org/setup/#macos
 
 **Linux**
 
-For Linux-based :ref:`mamba <contributing.mamba>` installations, you won't have to install any
-additional components outside of the mamba environment. The instructions
-below are only needed if your setup isn't based on mamba environments.
+For Linux-based :ref:`conda <contributing.conda>` installations, you won't have to install any
+additional components outside of the conda environment. The instructions
+below are only needed if your setup isn't based on conda environments.
 
 Some Linux distributions will come with a pre-installed C compiler. To find out
 which compilers (and versions) are installed on your system::
@@ -68,102 +66,61 @@ instructions.
 Let us know if you have any difficulties by opening an issue or reaching out on our contributor
 community, join slack in `Community <https://xorbits.io/community>`_.
 
-Step 2: create an isolated environment
-----------------------------------------
+Step 2: install Node.js
+-----------------------
+
+To build Xorbits web UI, you will need `Node.js <https://nodejs.org/en>`_. It is recommended to
+install Node.js with `nvm <https://github.com/nvm-sh/nvm>`_ .
+
+.. note::
+        The minimum supported Node.js version is 18.
+
+Step 3: create an isolated environment
+--------------------------------------
 
 Before we begin, please:
 
 * Make sure that you have :any:`cloned the repository <contributing.forking>`
 * ``cd`` to the xorbits source directory
 
-.. _contributing.mamba:
+.. _contributing.conda:
 
-Option 1: using mamba (recommended)
+Option 1: using conda (recommended)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Install `mamba <https://mamba.readthedocs.io/en/latest/installation.html>`_
-* Make sure your mamba is up to date (``mamba update mamba``)
+* Install `conda <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_
 
 .. code-block:: none
 
    # Create and activate the build environment
-   mamba env create --file environment.yml
-   mamba activate xorbits
+   conda create --name xorbits-dev python=3.10
+   conda activate xorbits-dev
 
-Option 2: using pip
-~~~~~~~~~~~~~~~~~~~
-
-You'll need to have at least the :ref:`minimum Python version <install.version>` that Xorbits supports.
-You also need to have ``setuptools`` 51.0.0 or later to build Xorbits.
-
-**Unix**/**macOS with virtualenv**
-
-.. code-block:: bash
-
-   # Create a virtual environment
-   # Use an ENV_DIR of your choice. We'll use ~/virtualenvs/xorbits-dev
-   # Any parent directories should already exist
-   python3 -m venv ~/virtualenvs/xorbits-dev
-
-   # Activate the virtualenv
-   . ~/virtualenvs/xorbits-dev/bin/activate
-
-   # Install the build dependencies
-   python -m pip install -r requirements-dev.txt
-
-**Unix**/**macOS with pyenv**
-
-Consult the docs for setting up pyenv `here <https://github.com/pyenv/pyenv>`__.
-
-.. code-block:: bash
-
-   # Create a virtual environment
-   # Use an ENV_DIR of your choice. We'll use ~/Users/<yourname>/.pyenv/versions/xorbits-dev
-   pyenv virtualenv <version> <name-to-give-it>
-
-   # For instance:
-   pyenv virtualenv 3.9.10 xorbits-dev
-
-   # Activate the virtualenv
-   pyenv activate xorbits-dev
-
-   # Now install the build dependencies in the cloned Xorbits repo
-   python -m pip install -r requirements-dev.txt
-
-**Windows**
-
-Below is a brief overview on how to set-up a virtual environment with Powershell
-under Windows. For details please refer to the
-`official virtualenv user guide <https://virtualenv.pypa.io/en/latest/user_guide.html#activators>`__.
-
-Use an ENV_DIR of your choice. We'll use ``~\\virtualenvs\\xorbits-dev`` where
-``~`` is the folder pointed to by either ``$env:USERPROFILE`` (Powershell) or
-``%USERPROFILE%`` (cmd.exe) environment variable. Any parent directories
-should already exist.
-
-.. code-block:: powershell
-
-   # Create a virtual environment
-   python -m venv $env:USERPROFILE\virtualenvs\xorbits-dev
-
-   # Activate the virtualenv. Use activate.bat for cmd.exe
-   ~\virtualenvs\xorbits-dev\Scripts\Activate.ps1
-
-   # Install the build dependencies
-   python -m pip install -e ".[dev]"
-
-Option 3: using Docker
+Option 2: using Docker
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Xorbits provides a ``DockerFile`` in the root directory to build a Docker image
+Unless you have a specific requirement to install additional Python libraries,
+it is **highly recommended** to use the Xorbits image available
+on our `Dockerhub <https://hub.docker.com/repository/docker/xprobe/xorbits/general>`_.
+It includes the complete environment required to run Xorbits.
+
+The images available on Dockerhub include versions for all supported Python versions, with the suffix ``py<python_version>``.
+For the image tag prefixes, ``nightly-main`` represents the latest code from `Xorbits GitHub repository <https://github.com/xprobe-inc/xorbits>`_ on a daily basis,
+while ``v<release_version>`` represents version numbers for each release.
+You can choose to pull the image based on your specific requirements.
+
+If you indeed need to manually build Xorbits image, Xorbits provides a ``DockerFile`` in the ``python/xorbits/deploy/docker`` directory to build a Docker image
 with a full Xorbits development environment.
 
 **Docker Commands**
 
 Build the Docker image::
 
+    # Switch the current working directory to the top-level "xorbits" directory
+    $ cd xorbits
+
     # Build the image
-    docker build -t xorbits-dev .
+    docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=<your_python_version>
 
 Run Container::
 
@@ -186,14 +143,15 @@ Enable Docker support and use the Services tool window to build and manage image
 run and interact with containers.
 See https://www.jetbrains.com/help/pycharm/docker.html for details.
 
-Step 3: build and install Xorbits
+Step 4: build and install Xorbits
 ---------------------------------
 
 You can now run::
 
    # Build and install Xorbits
-   python setup.py build_ext -j 4
-   python -m pip install -e . --no-build-isolation --no-use-pep517
+   python setup.py build_ext -i
+   python setup.py build_web
+   python -m pip install -e ".[dev]"
 
 At this point you should be able to import Xorbits from your locally built version::
 
@@ -206,5 +164,5 @@ This will create the new environment, and not touch any of your existing environ
 nor any existing Python installation.
 
 .. note::
-   You will need to repeat this step each time the C extensions change,
+   You will need to repeat this step each time the web UI or C extensions change,
    or if you did a fetch and merge from ``upstream/main``.

@@ -15,4 +15,5 @@
 
 from .core import optimize
 from .cupy import CupyRuntimeOptimizer
+from .jax import JAXRuntimeOptimizer
 from .numexpr import NumexprRuntimeOptimizer
