@@ -38,7 +38,7 @@ msgid ""
 "Xorbits."
 msgstr ""
 "写好代码不仅仅是关于你写的内容，也与你如何写有关。"
-"在 :ref:`持续集成<contributing.ci>`测试期间，我们将运行几个工具来检查你的代码样式错误。"
+"在 :ref:`Continuous Integration <contributing.ci>`测试期间，我们将运行几个工具来检查你的代码样式错误。"
 "好的代码风格是提交代码给Xorbits的要求。"
 
 #: ../../source/development/contributing_codebase.rst:18
