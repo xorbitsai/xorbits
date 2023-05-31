@@ -136,7 +136,7 @@ msgid ""
 "If you have conflicting installations of ``virtualenv``, then you may get"
 " an error - see `here <https://github.com/pypa/virtualenv/issues/1875>`_."
 msgstr ""
-"如果您安装了冲突的版本 ``virtualenv``，可能会出现"
+"如果你安装了冲突的版本 ``virtualenv``，可能会出现"
 "错误 - 可以查看 `此处 <https://github.com/pypa/virtualenv/issues/1875>`的解决方案。"
 
 #: ../../source/development/contributing_codebase.rst:74
