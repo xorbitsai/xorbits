@@ -76,7 +76,7 @@ msgid ""
 msgstr ""
 "另外， :ref:`Continuous Integration <contributing.ci>` 将使用 `pre-commit hooks "
 "<https://pre-commit.com/>`_ 运行代码格式检查，例如 ``black``, ``flake8``, ``isort``等等 "
-"这些检查中的任何警告都将导致， :ref:`持续集成<contributing.ci>`失败"
+"这些检查中的任何警告都将导致， :ref:`Continuous Integration <contributing.ci>` 失败"
 "因此，在提交代码之前自己运行检查很有帮助。可以通过安装``pre-commit``来完成： "
 
 #: ../../source/development/contributing_codebase.rst:40
