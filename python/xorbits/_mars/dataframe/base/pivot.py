@@ -192,20 +192,23 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         # generate combine chunks
         combine_chunks = []
         for chunk in filtered_chunks:
-            combine_op = op.copy().reset_key()
-            combine_op.stage = OperandStage.combine
-            combine_op.output_columns = output_columns
-            params = dict(
-                shape=(chunk.shape[0], len(output_columns)), index=chunk.index
-            )
-            params.update(
-                dict(
-                    dtypes=output_dtypes,
-                    columns_value=in_df.columns_value,
-                    index_value=chunk.index_value,
+            if chunk.shape[1] < len(output_columns):
+                combine_op = op.copy().reset_key()
+                combine_op.stage = OperandStage.combine
+                combine_op.output_columns = output_columns
+                params = dict(
+                    shape=(chunk.shape[0], len(output_columns)), index=chunk.index
                 )
-            )
-            combine_chunks.append(combine_op.new_chunk([chunk], **params))
+                params.update(
+                    dict(
+                        dtypes=output_dtypes,
+                        columns_value=in_df.columns_value,
+                        index_value=chunk.index_value,
+                    )
+                )
+                combine_chunks.append(combine_op.new_chunk([chunk], **params))
+            else:
+                combine_chunks.append(chunk)
 
         new_op = op.copy()
         kw = out_df.params.copy()
