@@ -142,6 +142,9 @@ cdef inline list iterative_tokenize(object ob):
 cdef inline tuple tokenize_numpy(ob):
     cdef int offset
 
+    if ob.nbytes > 64 * 1024 ** 2:
+        return os.urandom(16), ob.dtype, ob.shape, ob.strides
+
     if not ob.shape:
         return str(ob), ob.dtype
     if hasattr(ob, 'mode') and getattr(ob, 'filename', None):
