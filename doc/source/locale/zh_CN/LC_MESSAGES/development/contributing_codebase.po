@@ -148,7 +148,7 @@ msgid ""
 msgstr ""
 "此外，由于 `virtualenv存在错误<https://github.com/pypa/virtualenv/issues/1986>`_"
 "如果你使用conda，可能会遇到问题。"
-"要解决此问题，您可以将 ``virtualenv``降级到版本 ``20.0.33``。"
+"要解决此问题，你可以将 ``virtualenv``降级到版本 ``20.0.33``。"
 
 #: ../../source/development/contributing_codebase.rst:79
 msgid "Optional dependencies"
