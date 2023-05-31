@@ -535,6 +535,7 @@ def get_handle_by_uuid(uuid: bytes) -> _nvmlDevice_t:
 
 
 def get_mig_mode(device: _nvmlDevice_t) -> Tuple[int, int]:
+    _init_nvml()
     if _nvml_lib is None:
         return None
 

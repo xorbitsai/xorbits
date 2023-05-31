@@ -161,7 +161,7 @@ class NodeInfo extends React.Component {
 
     let table_bodies
     //case that we do not have GPU presents.
-    if (resourceStats.gpu_memory_total === undefined) {
+    if (!resourceStats.gpu_memory_total) {
       table_bodies = [row_count, CPU_row, CPU_Memory_Info_row, version_row]
     } else {
       resourceStats.gpu_used = resourceStats.gpu_total - resourceStats.gpu_avail
