@@ -61,25 +61,74 @@ export default class NodeResourceTab extends React.Component {
 
   generateBandRows() {
     const converted = {}
+
+    const tablecontentReturn = (converted, band) => {
+      const table_style = (
+        <TableRow>
+          <TableCell rowSpan={3}>{band}</TableCell>
+        </TableRow>
+      )
+      const table_content = Object.keys(converted[band]).map((item) => (
+        <TableRow key={item}>
+          <TableCell align="right">{item}</TableCell>
+          {Object.keys(converted[band][item]).map((k) => (
+            <TableCell key={k} align="right">
+              {converted[band][item][k]}
+            </TableCell>
+          ))}
+        </TableRow>
+      ))
+
+      let table_total = [table_style, table_content]
+      return table_total
+    }
+
     Object.keys(this.state.resource).map((band) => {
       let detail = this.state.resource[band]
-      converted[band] = {
-        CPU: {},
-        Memory: {},
+      console.log(detail)
+      console.log(band)
+      if (band === 'numa-0') {
+        converted[band] = {
+          CPU: {},
+          Memory: {},
+        }
+
+        let cpuAvail = detail['cpu_avail']
+        let cpuTotal = detail['cpu_total']
+
+        console.log(cpuAvail)
+        let cpuUsage = (cpuTotal - cpuAvail).toFixed(2)
+
+        let memAvail = detail['memory_avail']
+        let memTotal = detail['memory_total']
+        let memUsage = toReadableSize(memTotal - memAvail)
+
+        converted[band]['CPU']['CpuUsage'] = cpuUsage
+        converted[band]['CPU']['CpuTotal'] = cpuTotal.toFixed(2)
+
+        converted[band]['Memory']['MemUsage'] = memUsage
+        converted[band]['Memory']['MemTotal'] = toReadableSize(memTotal)
+      } else if (band === 'gpu-0') {
+        converted[band] = {
+          GPU: {},
+          GPU_Memory: {},
+        }
+
+        let cpuAvail = detail['gpu_avail']
+        let cpuTotal = detail['gpu_total']
+
+        let cpuUsage = (cpuTotal - cpuAvail).toFixed(2)
+
+        let memAvail = detail['gpu_memory_avail']
+        let memTotal = detail['gpu_memory_total']
+        let memUsage = toReadableSize(memTotal - memAvail)
+
+        converted[band]['GPU']['GpuUsage'] = cpuUsage
+        converted[band]['GPU']['GpuTotal'] = cpuTotal.toFixed(2)
+
+        converted[band]['GPU_Memory']['GPU_MemUsage'] = memUsage
+        converted[band]['GPU_Memory']['GPU_MemTotal'] = toReadableSize(memTotal)
       }
-      let cpuAvail = detail['cpu_avail']
-      let cpuTotal = detail['cpu_total']
-      let cpuUsage = (cpuTotal - cpuAvail).toFixed(2)
-
-      let memAvail = detail['memory_avail']
-      let memTotal = detail['memory_total']
-      let memUsage = toReadableSize(memTotal - memAvail)
-
-      converted[band]['CPU']['CpuUsage'] = cpuUsage
-      converted[band]['CPU']['CpuTotal'] = cpuTotal.toFixed(2)
-
-      converted[band]['Memory']['MemUsage'] = memUsage
-      converted[band]['Memory']['MemTotal'] = toReadableSize(memTotal)
     })
 
     return (
@@ -104,20 +153,7 @@ export default class NodeResourceTab extends React.Component {
             <TableBody>
               {Object.keys(converted).map((band) => (
                 <Fragment key={band}>
-                  <TableRow>
-                    <TableCell rowSpan={3}>{band}</TableCell>
-                  </TableRow>
-
-                  {Object.keys(converted[band]).map((item) => (
-                    <TableRow key={item}>
-                      <TableCell align="right">{item}</TableCell>
-                      {Object.keys(converted[band][item]).map((k) => (
-                        <TableCell key={k} align="right">
-                          {converted[band][item][k]}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                  {tablecontentReturn(converted, band)}
                 </Fragment>
               ))}
             </TableBody>
