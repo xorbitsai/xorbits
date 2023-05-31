@@ -191,7 +191,7 @@ msgstr ""
 
 #: ../../source/development/contributing_codebase.rst:96
 msgid "You'll also need to"
-msgstr "您还需要"
+msgstr "你还需要"
 
 #: ../../source/development/contributing_codebase.rst:98
 msgid ""
