@@ -107,7 +107,7 @@ msgid ""
 "If you don't want to use ``pre-commit`` as part of your workflow, you can"
 " still use it to run its checks with::"
 msgstr ""
-"如果您不想将``pre-commit``作为工作流程的一部分使用，您"
+"如果你不想将``pre-commit``作为工作流程的一部分使用，你"
 "仍然可以使用以下命令运行检查："
 
 #: ../../source/development/contributing_codebase.rst:56
