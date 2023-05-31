@@ -27,7 +27,6 @@ def test_pandas_dataframe_methods(setup):
     """
     All the fallbacks:
 
-    applymap
     asfreq
     asof
     at_time
@@ -65,7 +64,6 @@ def test_pandas_dataframe_methods(setup):
     nlargest
     nsmallest
     pipe
-    pivot
     pivot_table
     rank
     reorder_levels
@@ -105,6 +103,34 @@ def test_pandas_dataframe_methods(setup):
     value_counts
     xs
     """
+
+    raw = pd.DataFrame(
+        np.array(([1, 2, 3], [4, 5, 6])),
+        index=["mouse", "rabbit"],
+        columns=["one", "two", "three"],
+    )
+    df = xpd.DataFrame(raw)
+    with pytest.warns(Warning) as w:
+        r = df.filter(items=["one", "three"])
+        assert len(w) == 1
+        assert "DataFrame.filter will fallback to Pandas" == str(w[0].message)
+
+    assert len(getattr(r.data._mars_entity, "_executed_sessions")) == 0
+    expected = raw.filter(items=["one", "three"])
+    assert str(expected) == str(r)
+    assert isinstance(r, DataRef)
+    pd.testing.assert_frame_equal(expected, r.to_pandas())
+
+    # multi chunk and follow other operations
+    df = xpd.DataFrame(raw, chunk_size=1)
+    with pytest.warns(Warning) as w:
+        r = df.filter(items=["one", "three"])
+        assert "DataFrame.filter will fallback to Pandas" == str(w[0].message)
+
+    expected = raw.filter(items=["one", "three"])
+    assert str(expected) == str(r)
+    pd.testing.assert_frame_equal(expected, r.to_pandas())
+
     raw = pd.DataFrame(
         {
             "foo": ["one", "one", "one", "two", "two", "two"],
@@ -113,30 +139,6 @@ def test_pandas_dataframe_methods(setup):
             "zoo": ["x", "y", "z", "q", "w", "t"],
         }
     )
-    df = xpd.DataFrame(raw)
-    with pytest.warns(Warning) as w:
-        r = df.pivot(index="foo", columns="bar", values="baz")
-        assert len(w) == 1
-        assert "DataFrame.pivot will fallback to Pandas" == str(w[0].message)
-
-    assert len(getattr(r.data._mars_entity, "_executed_sessions")) == 1
-    expected = raw.pivot(index="foo", columns="bar", values="baz")
-    assert expected.shape == r.shape
-    assert str(expected) == str(r)
-    assert isinstance(r, DataRef)
-    pd.testing.assert_frame_equal(expected, r.to_pandas())
-
-    # multi chunk and follow other operations
-    df = xpd.DataFrame(raw, chunk_size=3)
-    with pytest.warns(Warning) as w:
-        r = df.pivot(index="foo", columns="bar", values="baz") + 1
-        assert "DataFrame.pivot will fallback to Pandas" == str(w[0].message)
-
-    expected = raw.pivot(index="foo", columns="bar", values="baz") + 1
-    assert expected.shape == r.shape
-    assert str(expected) == str(r)
-    pd.testing.assert_frame_equal(expected, r.to_pandas())
-
     # can be inferred
     df = xpd.DataFrame(raw)
     with pytest.warns(Warning) as w:
@@ -430,17 +432,20 @@ def test_pandas_module_methods(setup):
     # input has xorbit data
     raw = pd.DataFrame(
         {
-            "foo": ["one", "one", "one", "two", "two", "two"],
-            "bar": ["A", "B", "C", "A", "B", "C"],
-            "baz": [1, 2, 3, 4, 5, 6],
-            "zoo": ["x", "y", "z", "q", "w", "t"],
+            "hr1": [514, 573],
+            "hr2": [545, 526],
+            "team": ["Red Sox", "Yankees"],
+            "year1": [2007, 2007],
+            "year2": [2008, 2008],
         }
     )
     with pytest.warns(Warning) as w:
-        r = xpd.pivot(xpd.DataFrame(raw), index="foo", columns="bar", values="baz")
-        assert "xorbits.pandas.pivot will fallback to Pandas" == str(w[0].message)
+        r = xpd.lreshape(
+            xpd.DataFrame(raw), {"year": ["year1", "year2"], "hr": ["hr1", "hr2"]}
+        )
+        assert "xorbits.pandas.lreshape will fallback to Pandas" == str(w[0].message)
 
-    expected = pd.pivot(raw, index="foo", columns="bar", values="baz")
+    expected = pd.lreshape(raw, {"year": ["year1", "year2"], "hr": ["hr1", "hr2"]})
     assert str(r) == str(expected)
     assert isinstance(r, DataRef)
     pd.testing.assert_frame_equal(r.to_pandas(), expected)
