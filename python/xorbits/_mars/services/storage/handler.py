@@ -531,19 +531,30 @@ class StorageHandlerActor(mo.Actor):
         fetch_band_name: str,
         error: str,
     ):
-        from .transfer import SenderManagerActor
+        from .transfer import ReceiverManagerActor, SenderManagerActor
 
         logger.debug("Begin to fetch %s from band %s", data_keys, remote_band)
+
+        receiver_ref: mo.ActorRefType[ReceiverManagerActor] = await mo.actor_ref(
+            address=self.address,
+            uid=ReceiverManagerActor.gen_uid(fetch_band_name),
+        )
+        is_transferring_list = await receiver_ref.open_writers(
+            session_id, data_keys, level, remote_band, error
+        )
+        if not is_transferring_list:
+            # no data to be transferred
+            return
+
         sender_ref: mo.ActorRefType[SenderManagerActor] = await mo.actor_ref(
             address=remote_band[0], uid=SenderManagerActor.gen_uid(remote_band[1])
         )
         await sender_ref.send_batch_data(
             session_id,
             data_keys,
+            is_transferring_list,
             self._data_manager_ref.address,
-            level,
             fetch_band_name,
-            error=error,
         )
         logger.debug("Finish fetching %s from band %s", data_keys, remote_band)
 
@@ -559,10 +570,8 @@ class StorageHandlerActor(mo.Actor):
         if error not in ("raise", "ignore"):  # pragma: no cover
             raise ValueError("error must be raise or ignore")
 
-        meta_api = await self._get_meta_api(session_id)
         remote_keys = defaultdict(set)
         missing_keys = []
-        get_metas = []
         get_info_delays = []
         for data_key in data_keys:
             get_info_delays.append(
@@ -586,6 +595,9 @@ class StorageHandlerActor(mo.Actor):
             else:
                 # Not exists in local, fetch from remote worker
                 missing_keys.append(data_key)
+        await self._data_manager_ref.pin.batch(*pin_delays)
+
+        meta_api = await self._get_meta_api(session_id)
         if address is None or band_name is None:
             # some mapper keys are absent, specify error='ignore'
             # remember that meta only records those main keys
@@ -599,9 +611,6 @@ class StorageHandlerActor(mo.Actor):
                 )
                 for data_key in missing_keys
             ]
-        await self._data_manager_ref.pin.batch(*pin_delays)
-
-        if get_metas:
             metas = await meta_api.get_chunk_meta.batch(*get_metas)
         else:  # pragma: no cover
             metas = [{"bands": [(address, band_name)]}] * len(missing_keys)
