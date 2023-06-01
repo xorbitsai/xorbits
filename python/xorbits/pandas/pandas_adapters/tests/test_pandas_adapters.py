@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import shutil
 import tempfile
 
 import numpy as np
@@ -484,3 +485,22 @@ def test_docstring():
 
 def test_dir(setup):
     assert pd.__dir__().sort() == xpd.__dir__().sort()
+
+
+def test_read_pickle(setup):
+    import pickle
+
+    pkl_data = (
+        np.array([1, 2, 3]),
+        np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
+    )
+    tempdir = tempfile.mkdtemp()
+    file_path = os.path.join(tempdir, "test.pkl")
+    try:
+        with open(file_path, "wb") as f:
+            pickle.dump(pkl_data, f)
+        mpkl = xpd.read_pickle(file_path).to_object()
+        for x, y in zip(pkl_data, mpkl):
+            assert (x == y).all()
+    finally:
+        shutil.rmtree(tempdir)
