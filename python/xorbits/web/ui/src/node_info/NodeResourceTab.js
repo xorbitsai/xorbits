@@ -105,7 +105,7 @@ export default class NodeResourceTab extends React.Component {
 
         converted[band]['Memory']['MemUsage'] = memUsage
         converted[band]['Memory']['MemTotal'] = toReadableSize(memTotal)
-      } else{
+      } else {
         converted[band] = {
           GPU: {},
           GPU_Memory: {},
