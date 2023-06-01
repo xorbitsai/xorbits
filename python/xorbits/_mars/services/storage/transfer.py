@@ -24,6 +24,7 @@ from xoscar.core import BufferRef
 
 from ...lib.aio import alru_cache
 from ...storage import StorageLevel
+from ...typing import BandType
 from ...utils import dataslots
 from .core import DataManagerActor, WrappedStorageFileObject
 from .handler import StorageHandlerActor
@@ -152,62 +153,12 @@ class SenderManagerActor(mo.StatelessActor):
         self,
         session_id: str,
         data_keys: List[str],
-        address: str,
-        level: StorageLevel,
-        band_name: str = "numa-0",
+        is_transferring_list: List[bool],
+        remote_band: BandType,
         block_size: int = None,
-        error: str = "raise",
     ):
         logger.debug(
-            "Begin to send data (%s, %s) to %s", session_id, data_keys, address
-        )
-
-        tasks = []
-        for key in data_keys:
-            tasks.append(self._data_manager_ref.get_store_key.delay(session_id, key))
-        data_keys = await self._data_manager_ref.get_store_key.batch(*tasks)
-        data_keys = list(set(data_keys))
-        sub_infos = await self._data_manager_ref.get_sub_infos.batch(
-            *[
-                self._data_manager_ref.get_sub_infos.delay(session_id, key)
-                for key in data_keys
-            ]
-        )
-
-        block_size = block_size or self._transfer_block_size
-        receiver_ref: mo.ActorRefType[
-            ReceiverManagerActor
-        ] = await self.get_receiver_ref(address, band_name)
-        get_infos = []
-        pin_tasks = []
-        for data_key in data_keys:
-            get_infos.append(
-                self._data_manager_ref.get_data_info.delay(
-                    session_id, data_key, self._band_name, error
-                )
-            )
-            pin_tasks.append(
-                self._data_manager_ref.pin.delay(
-                    session_id, data_key, self._band_name, error
-                )
-            )
-        await self._data_manager_ref.pin.batch(*pin_tasks)
-        infos = await self._data_manager_ref.get_data_info.batch(*get_infos)
-        filtered = [
-            (data_info, data_key)
-            for data_info, data_key in zip(infos, data_keys)
-            if data_info is not None
-        ]
-        if filtered:
-            infos, data_keys = zip(*filtered)
-        else:  # pragma: no cover
-            # no data to be transferred
-            return
-        data_sizes = [info.store_size for info in infos]
-        if level is None:
-            level = infos[0].level
-        is_transferring_list = await receiver_ref.open_writers(
-            session_id, data_keys, data_sizes, level, sub_infos, band_name
+            "Begin to send data (%s, %s) to %s", session_id, data_keys, remote_band
         )
         to_send_keys = []
         to_wait_keys = []
@@ -217,7 +168,12 @@ class SenderManagerActor(mo.StatelessActor):
             else:
                 to_send_keys.append(data_key)
 
+        receiver_ref: mo.ActorRefType[
+            ReceiverManagerActor
+        ] = await self.get_receiver_ref(remote_band[0], remote_band[1])
+
         if to_send_keys:
+            block_size = block_size or self._transfer_block_size
             await self._send_data(receiver_ref, session_id, to_send_keys, block_size)
         if to_wait_keys:
             await receiver_ref.wait_transfer_done(session_id, to_wait_keys)
@@ -230,11 +186,10 @@ class SenderManagerActor(mo.StatelessActor):
             )
         await self._data_manager_ref.unpin.batch(*unpin_tasks)
         logger.debug(
-            "Finish sending data (%s, %s) to %s, total size is %s",
+            "Finish sending data (%s, %s) to %s",
             session_id,
             data_keys,
-            address,
-            sum(data_sizes),
+            remote_band,
         )
 
 
@@ -336,7 +291,7 @@ class ReceiverManagerActor(mo.StatelessActor):
         level: StorageLevel,
         sub_infos: List,
         band_name: str,
-    ):
+    ) -> List[bool]:
         tasks = dict()
         key_to_sub_infos = dict()
         data_key_to_size = dict()
@@ -374,10 +329,10 @@ class ReceiverManagerActor(mo.StatelessActor):
         session_id: str,
         data_keys: List[str],
         data_sizes: List[int],
-        level: StorageLevel,
         sub_infos: List,
+        level: StorageLevel,
         band_name: str,
-    ):
+    ) -> List[bool]:
         async with self._lock:
             await self._storage_handler.request_quota_with_spill(level, sum(data_sizes))
             future = asyncio.create_task(

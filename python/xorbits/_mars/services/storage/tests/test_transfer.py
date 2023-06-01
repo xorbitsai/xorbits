@@ -17,7 +17,7 @@ import asyncio
 import os
 import sys
 import tempfile
-from typing import List
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
@@ -111,42 +111,65 @@ async def test_simple_transfer(create_actors):
         await storage_handler1.put(session_id, "data_key2", data2, level)
         await storage_handler2.put(session_id, "data_key3", data2, level)
 
-        sender_actor = await mo.actor_ref(
-            address=worker_address_1, uid=SenderManagerActor.gen_uid("numa-0")
-        )
+    receiver_actor: mo.ActorRefType[ReceiverManagerActor] = await mo.actor_ref(
+        address=worker_address_2, uid=ReceiverManagerActor.gen_uid("numa-0")
+    )
+    sender_actor: mo.ActorRefType[SenderManagerActor] = await mo.actor_ref(
+        address=worker_address_1, uid=SenderManagerActor.gen_uid("numa-0")
+    )
 
-        # send data to worker2 from worker1
-        await sender_actor.send_batch_data(
-            session_id,
-            ["data_key1"],
-            worker_address_2,
-            level,
-            block_size=1000,
-        )
+    is_transferring = await receiver_actor.open_writers(
+        session_id,
+        ["data_key1", "data_key2"],
+        StorageLevel.MEMORY,
+        (sender_actor.address, "numa-0"),
+        "raise",
+    )
 
-        await sender_actor.send_batch_data(
-            session_id,
-            ["data_key2"],
-            worker_address_2,
-            level,
-            block_size=1000,
-        )
+    # send data to worker2 from worker1
+    await sender_actor.send_batch_data(
+        session_id,
+        ["data_key1"],
+        is_transferring,
+        (receiver_actor.address, "numa-0"),
+        block_size=1000,
+    )
 
-        get_data1 = await storage_handler2.get(session_id, "data_key1")
-        np.testing.assert_array_equal(data1, get_data1)
+    await sender_actor.send_batch_data(
+        session_id,
+        ["data_key2"],
+        is_transferring,
+        (receiver_actor.address, "numa-0"),
+        block_size=1000,
+    )
 
-        get_data2 = await storage_handler2.get(session_id, "data_key2")
-        pd.testing.assert_frame_equal(data2, get_data2)
+    get_data1 = await storage_handler2.get(session_id, "data_key1")
+    np.testing.assert_array_equal(data1, get_data1)
 
-        # send data to worker1 from worker2
-        sender_actor = await mo.actor_ref(
-            address=worker_address_2, uid=SenderManagerActor.gen_uid("numa-0")
-        )
-        await sender_actor.send_batch_data(
-            session_id, ["data_key3"], worker_address_1, level
-        )
-        get_data3 = await storage_handler1.get(session_id, "data_key3")
-        pd.testing.assert_frame_equal(data2, get_data3)
+    get_data2 = await storage_handler2.get(session_id, "data_key2")
+    pd.testing.assert_frame_equal(data2, get_data2)
+
+    # send data to worker1 from worker2
+    receiver_actor: mo.ActorRefType[ReceiverManagerActor] = await mo.actor_ref(
+        address=worker_address_1, uid=ReceiverManagerActor.gen_uid("numa-0")
+    )
+    sender_actor: mo.ActorRefType[SenderManagerActor] = await mo.actor_ref(
+        address=worker_address_2, uid=SenderManagerActor.gen_uid("numa-0")
+    )
+
+    is_transferring = await receiver_actor.open_writers(
+        session_id,
+        ["data_key3"],
+        StorageLevel.MEMORY,
+        (sender_actor.address, "numa-0"),
+        "raise",
+    )
+
+    await sender_actor.send_batch_data(
+        session_id, ["data_key3"], is_transferring, (receiver_actor.address, "numa-0")
+    )
+    get_data3 = await storage_handler1.get(session_id, "data_key3")
+    pd.testing.assert_frame_equal(data2, get_data3)
 
 
 # test for cancelling happens when writing
@@ -201,16 +224,17 @@ class MockSenderManagerActor2(SenderManagerActor):
 
 
 @pytest.mark.parametrize(
-    "mock_sender, mock_receiver",
+    "mock_sender_cls, mock_receiver_cls",
     [
         (MockSenderManagerActor, MockReceiverManagerActor),
         (MockSenderManagerActor2, MockReceiverManagerActor2),
     ],
 )
 @pytest.mark.asyncio
-async def test_cancel_transfer(create_actors, mock_sender, mock_receiver):
+async def test_cancel_transfer(create_actors, mock_sender_cls, mock_receiver_cls):
     worker_address_1, worker_address_2 = create_actors
 
+    session_id = "mock_session"
     quota_refs = {
         StorageLevel.MEMORY: await mo.actor_ref(
             StorageQuotaActor,
@@ -230,73 +254,85 @@ async def test_cancel_transfer(create_actors, mock_sender, mock_receiver):
         uid=StorageHandlerActor.gen_uid("numa-0"), address=worker_address_2
     )
 
-    sender_actor = await mo.create_actor(
-        mock_sender,
+    sender_actor: mo.ActorRefType[SenderManagerActor] = await mo.create_actor(
+        mock_sender_cls,
         data_manager_ref=data_manager_ref,
-        uid=mock_sender.default_uid(),
+        uid=mock_sender_cls.default_uid(),
         address=worker_address_1,
-        allocate_strategy=IdleLabel("io", "mock_sender"),
+        allocate_strategy=IdleLabel("io", "mock_sender_cls"),
     )
-    await mo.create_actor(
-        mock_receiver,
+    receiver_actor: mo.ActorRefType[ReceiverManagerActor] = await mo.create_actor(
+        mock_receiver_cls,
         quota_refs,
-        uid=mock_receiver.default_uid(),
+        uid=mock_receiver_cls.default_uid(),
         address=worker_address_2,
-        allocate_strategy=IdleLabel("io", "mock_receiver"),
+        allocate_strategy=IdleLabel("io", "mock_receiver_cls"),
     )
 
     data1 = np.random.rand(10, 10)
-    await storage_handler1.put("mock", "data_key1", data1, StorageLevel.MEMORY)
+    await storage_handler1.put(session_id, "data_key1", data1, StorageLevel.MEMORY)
     data2 = pd.DataFrame(np.random.rand(100, 100))
-    await storage_handler1.put("mock", "data_key2", data2, StorageLevel.MEMORY)
+    await storage_handler1.put(session_id, "data_key2", data2, StorageLevel.MEMORY)
 
     used_before = (await quota_refs[StorageLevel.MEMORY].get_quota())[1]
 
-    send_task = asyncio.create_task(
-        sender_actor.send_batch_data(
-            "mock", ["data_key1"], worker_address_2, StorageLevel.MEMORY
+    async def transfer(
+        data_keys: List[Union[str, tuple]],
+        sender: mo.ActorRefType[SenderManagerActor],
+        receiver: mo.ActorRefType[ReceiverManagerActor],
+    ):
+        is_transferring_list = await receiver.open_writers(
+            session_id,
+            data_keys,
+            StorageLevel.MEMORY,
+            (sender.address, "numa-0"),
+            "raise",
         )
+        assert len(is_transferring_list) > 0
+        await sender.send_batch_data(
+            session_id,
+            data_keys,
+            is_transferring_list,
+            (receiver.address, "numa-0"),
+        )
+
+    transfer_task = asyncio.create_task(
+        transfer(["data_key1"], sender_actor, receiver_actor)
     )
 
     await asyncio.sleep(0.5)
-    send_task.cancel()
+    transfer_task.cancel()
 
     with pytest.raises(asyncio.CancelledError):
-        await send_task
+        await transfer_task
 
     used = (await quota_refs[StorageLevel.MEMORY].get_quota())[1]
     assert used == used_before
 
     with pytest.raises(DataNotExist):
-        await storage_handler2.get("mock", "data_key1")
+        await storage_handler2.get(session_id, "data_key1")
 
-    send_task = asyncio.create_task(
-        sender_actor.send_batch_data(
-            "mock", ["data_key1"], worker_address_2, StorageLevel.MEMORY
-        )
+    transfer_task = asyncio.create_task(
+        transfer(["data_key1"], sender_actor, receiver_actor)
     )
-    await send_task
-    get_data = await storage_handler2.get("mock", "data_key1")
+    await transfer_task
+    get_data = await storage_handler2.get(session_id, "data_key1")
     np.testing.assert_array_equal(data1, get_data)
 
     # cancel when fetch the same data Simultaneously
-    if mock_sender is MockSenderManagerActor:
-        send_task1 = asyncio.create_task(
-            sender_actor.send_batch_data(
-                "mock", ["data_key2"], worker_address_2, StorageLevel.MEMORY
-            )
+    if mock_sender_cls is MockSenderManagerActor:
+        transfer_task1 = asyncio.create_task(
+            transfer(["data_key2"], sender_actor, receiver_actor)
         )
-        send_task2 = asyncio.create_task(
-            sender_actor.send_batch_data(
-                "mock", ["data_key2"], worker_address_2, StorageLevel.MEMORY
-            )
+        transfer_task2 = asyncio.create_task(
+            transfer(["data_key2"], sender_actor, receiver_actor)
         )
         await asyncio.sleep(0.5)
-        send_task1.cancel()
+        transfer_task1.cancel()
         with pytest.raises(asyncio.CancelledError):
-            await send_task1
-        await send_task2
-        get_data2 = await storage_handler2.get("mock", "data_key2")
+            await transfer_task1
+        await transfer_task2
+        get_data2 = await storage_handler2.get(session_id, "data_key2")
         pd.testing.assert_frame_equal(get_data2, data2)
 
 
@@ -309,34 +345,30 @@ async def test_transfer_same_data(create_actors):
     storage_handler1 = await mo.actor_ref(
         uid=StorageHandlerActor.gen_uid("numa-0"), address=worker_address_1
     )
-    storage_handler2 = await mo.actor_ref(
+    await mo.actor_ref(
         uid=StorageHandlerActor.gen_uid("numa-0"), address=worker_address_2
     )
 
     await storage_handler1.put(session_id, "data_key1", data1, StorageLevel.MEMORY)
-    sender_actor = await mo.actor_ref(
-        address=worker_address_1, uid=SenderManagerActor.gen_uid("numa-0")
+
+    receiver_actor: mo.ActorRefType[ReceiverManagerActor] = await mo.actor_ref(
+        address=worker_address_2, uid=ReceiverManagerActor.gen_uid("numa-0")
+    )
+    task1 = receiver_actor.open_writers(
+        session_id,
+        ["data_key1"],
+        StorageLevel.MEMORY,
+        (worker_address_1, "numa-0"),
+        "raise",
+    )
+    task2 = receiver_actor.open_writers(
+        session_id,
+        ["data_key1"],
+        StorageLevel.MEMORY,
+        (worker_address_1, "numa-0"),
+        "raise",
     )
 
-    # send data to worker2 from worker1
-    task1 = asyncio.create_task(
-        sender_actor.send_batch_data(
-            session_id,
-            ["data_key1"],
-            worker_address_2,
-            StorageLevel.MEMORY,
-            block_size=1000,
-        )
-    )
-    task2 = asyncio.create_task(
-        sender_actor.send_batch_data(
-            session_id,
-            ["data_key1"],
-            worker_address_2,
-            StorageLevel.MEMORY,
-            block_size=1000,
-        )
-    )
-    await asyncio.gather(task1, task2)
-    get_data1 = await storage_handler2.get(session_id, "data_key1")
-    np.testing.assert_array_equal(data1, get_data1)
+    results = await asyncio.gather(task1, task2)
+    assert [False] in results
+    assert [True] in results
