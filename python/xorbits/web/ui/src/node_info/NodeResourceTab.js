@@ -37,6 +37,7 @@ export default class NodeResourceTab extends React.Component {
 
   refreshInfo() {
     fetch(
+      // eslint-disable-next-line react/prop-types
       `api/cluster/nodes?nodes=${this.props.endpoint}&resource=1&detail=1&exclude_statuses=-1`
     )
       .then((res) => res.json())
@@ -105,26 +106,30 @@ export default class NodeResourceTab extends React.Component {
 
         converted[band]['Memory']['MemUsage'] = memUsage
         converted[band]['Memory']['MemTotal'] = toReadableSize(memTotal)
+        // eslint-disable-next-line react/prop-types
       } else {
-        converted[band] = {
-          GPU: {},
-          GPU_Memory: {},
+        if (this.props.role === '1') {
+          converted[band] = {
+            GPU: {},
+            GPU_Memory: {},
+          }
+
+          let gpuAvail = detail['gpu_avail']
+          let gpuTotal = detail['gpu_total']
+
+          let gpuUsage = (gpuTotal - gpuAvail).toFixed(2)
+
+          let memAvail = detail['gpu_memory_avail']
+          let memTotal = detail['gpu_memory_total']
+          let memUsage = toReadableSize(memTotal - memAvail)
+
+          converted[band]['GPU']['GpuUsage'] = gpuUsage
+          converted[band]['GPU']['GpuTotal'] = gpuTotal.toFixed(2)
+
+          converted[band]['GPU_Memory']['GPU_MemUsage'] = memUsage
+          converted[band]['GPU_Memory']['GPU_MemTotal'] =
+            toReadableSize(memTotal)
         }
-
-        let gpuAvail = detail['gpu_avail']
-        let gpuTotal = detail['gpu_total']
-
-        let gpuUsage = (gpuTotal - gpuAvail).toFixed(2)
-
-        let memAvail = detail['gpu_memory_avail']
-        let memTotal = detail['gpu_memory_total']
-        let memUsage = toReadableSize(memTotal - memAvail)
-
-        converted[band]['GPU']['GpuUsage'] = gpuUsage
-        converted[band]['GPU']['GpuTotal'] = gpuTotal.toFixed(2)
-
-        converted[band]['GPU_Memory']['GPU_MemUsage'] = memUsage
-        converted[band]['GPU_Memory']['GPU_MemTotal'] = toReadableSize(memTotal)
       }
     })
 
@@ -443,4 +448,5 @@ export default class NodeResourceTab extends React.Component {
 
 NodeResourceTab.propTypes = {
   endpoint: PropTypes.string,
+  role: PropTypes.string, // Define 'role' as a required string prop
 }
