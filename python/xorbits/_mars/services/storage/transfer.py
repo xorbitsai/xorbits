@@ -173,10 +173,14 @@ class SenderManagerActor(mo.StatelessActor):
         ] = await self.get_receiver_ref(remote_band[0], remote_band[1])
 
         if to_send_keys:
+            logger.debug("Start sending %s", to_send_keys)
             block_size = block_size or self._transfer_block_size
             await self._send_data(receiver_ref, session_id, to_send_keys, block_size)
+            logger.debug("Done sending %s", to_send_keys)
         if to_wait_keys:
+            logger.debug("Start waiting %s", to_wait_keys)
             await receiver_ref.wait_transfer_done(session_id, to_wait_keys)
+            logger.debug("Done waiting %s", to_wait_keys)
         unpin_tasks = []
         for data_key in data_keys:
             unpin_tasks.append(
