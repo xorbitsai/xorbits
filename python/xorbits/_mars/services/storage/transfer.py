@@ -317,6 +317,7 @@ class ReceiverManagerActor(mo.StatelessActor):
                 being_processed.append(True)
                 self._writing_infos[(session_id, data_key)].ref_counts += 1
         if tasks:
+            logger.debug("Executing open_writer.batch")
             writers = await self._storage_handler.open_writer.batch(
                 *tuple(tasks.values())
             )
