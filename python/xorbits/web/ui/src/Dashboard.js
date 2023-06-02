@@ -91,10 +91,126 @@ class NodeInfo extends React.Component {
       cpu_avail: gatherResourceStats('cpu_avail'),
       memory_total: gatherResourceStats('memory_total'),
       memory_avail: gatherResourceStats('memory_avail'),
+      gpu_total: gatherResourceStats('gpu_total'),
+      gpu_avail: gatherResourceStats('gpu_avail'),
+      gpu_memory_total: gatherResourceStats('gpu_memory_total'),
+      gpu_memory_avail: gatherResourceStats('gpu_memory_avail'),
     }
+
+    //for all cases, we will at least have cpu information available.
     resourceStats.cpu_used = resourceStats.cpu_total - resourceStats.cpu_avail
     resourceStats.memory_used =
       resourceStats.memory_total - resourceStats.memory_avail
+
+    const row_count = (
+      <StyledTableRow>
+        <StyledTableCell>Count</StyledTableCell>
+        <StyledTableCell>
+          <Grid container>
+            <Grid>{Object.keys(this.state[this.nodeRole]).length}</Grid>
+          </Grid>
+        </StyledTableCell>
+      </StyledTableRow>
+    )
+
+    const CPU_row = (
+      <StyledTableRow>
+        <StyledTableCell>CPU Info</StyledTableCell>
+        <StyledTableCell>
+          <Grid container>
+            <Grid xs={4}>
+              Usage:
+              {resourceStats.cpu_used.toFixed(2)}
+            </Grid>
+            <Grid xs={8}>
+              Total:
+              {resourceStats.cpu_total.toFixed(2)}
+            </Grid>
+          </Grid>
+        </StyledTableCell>
+      </StyledTableRow>
+    )
+
+    const CPU_Memory_Info_row = (
+      <StyledTableRow>
+        <StyledTableCell>CPU Memory Info</StyledTableCell>
+        <StyledTableCell>
+          <Grid container>
+            <Grid xs={4}>
+              Usage: {toReadableSize(resourceStats.memory_used)}
+            </Grid>
+            <Grid xs={8}>
+              Total: {toReadableSize(resourceStats.memory_total)}
+            </Grid>
+          </Grid>
+        </StyledTableCell>
+      </StyledTableRow>
+    )
+
+    const version_row = (
+      <StyledTableRow>
+        <StyledTableCell>Version</StyledTableCell>
+        <StyledTableCell>
+          <Grid container>
+            <Grid xs={4}>Release: {this.state.version.release}</Grid>
+            <Grid xs={8}>Commit: {this.state.version.commit}</Grid>
+          </Grid>
+        </StyledTableCell>
+      </StyledTableRow>
+    )
+
+    let table_bodies
+    //case that we do not have GPU presents.
+    if (!resourceStats.gpu_memory_total) {
+      table_bodies = [row_count, CPU_row, CPU_Memory_Info_row, version_row]
+    } else {
+      resourceStats.gpu_used = resourceStats.gpu_total - resourceStats.gpu_avail
+      resourceStats.gpu_memory_used =
+        resourceStats.gpu_memory_total - resourceStats.gpu_memory_avail
+
+      const GPU_row = (
+        <StyledTableRow>
+          <StyledTableCell>GPU Info</StyledTableCell>
+          <StyledTableCell>
+            <Grid container>
+              <Grid xs={4}>
+                Usage:
+                {resourceStats.gpu_used.toFixed(2)}
+              </Grid>
+              <Grid xs={8}>
+                Total:
+                {resourceStats.gpu_total.toFixed(2)}
+              </Grid>
+            </Grid>
+          </StyledTableCell>
+        </StyledTableRow>
+      )
+
+      const GPU_Memory_Info_row = (
+        <StyledTableRow>
+          <StyledTableCell>GPU Memory Info</StyledTableCell>
+          <StyledTableCell>
+            <Grid container>
+              <Grid xs={4}>
+                Usage: {toReadableSize(resourceStats.gpu_memory_used)}
+              </Grid>
+              <Grid xs={8}>
+                Total: {toReadableSize(resourceStats.gpu_memory_total)}
+              </Grid>
+            </Grid>
+          </StyledTableCell>
+        </StyledTableRow>
+      )
+
+      table_bodies = [
+        row_count,
+        CPU_row,
+        CPU_Memory_Info_row,
+        GPU_row,
+        GPU_Memory_Info_row,
+        version_row,
+      ]
+    }
 
     return (
       <Table size="small">
@@ -110,47 +226,7 @@ class NodeInfo extends React.Component {
             </StyledTableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          <StyledTableRow>
-            <StyledTableCell>Count</StyledTableCell>
-            <StyledTableCell>
-              <Grid container>
-                <Grid>{Object.keys(this.state[this.nodeRole]).length}</Grid>
-              </Grid>
-            </StyledTableCell>
-          </StyledTableRow>
-          <StyledTableRow>
-            <StyledTableCell>CPU Info</StyledTableCell>
-            <StyledTableCell>
-              <Grid container>
-                <Grid xs={4}>Usage: {resourceStats.cpu_used.toFixed(2)}</Grid>
-                <Grid xs={8}>Total: {resourceStats.cpu_total.toFixed(2)}</Grid>
-              </Grid>
-            </StyledTableCell>
-          </StyledTableRow>
-          <StyledTableRow>
-            <StyledTableCell>Memory Info</StyledTableCell>
-            <StyledTableCell>
-              <Grid container>
-                <Grid xs={4}>
-                  Usage: {toReadableSize(resourceStats.memory_used)}
-                </Grid>
-                <Grid xs={8}>
-                  Total: {toReadableSize(resourceStats.memory_total)}
-                </Grid>
-              </Grid>
-            </StyledTableCell>
-          </StyledTableRow>
-          <StyledTableRow>
-            <StyledTableCell>Version</StyledTableCell>
-            <StyledTableCell>
-              <Grid container>
-                <Grid xs={4}>Release: {this.state.version.release}</Grid>
-                <Grid xs={8}>Commit: {this.state.version.commit}</Grid>
-              </Grid>
-            </StyledTableCell>
-          </StyledTableRow>
-        </TableBody>
+        <TableBody>{table_bodies}</TableBody>
       </Table>
     )
   }
