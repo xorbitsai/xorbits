@@ -66,5 +66,6 @@ RUN apt-get -y update \
   && rm -rf /var/lib/apt/lists/*
 
 RUN pip install -e "git+https://github.com/ChengjieLi28/xoscar.git@enh/ucx#subdirectory=python&egg=xoscar"
+RUN conda install -c conda-forge libnuma
 
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
