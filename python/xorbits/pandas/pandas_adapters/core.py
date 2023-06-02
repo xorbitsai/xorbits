@@ -30,7 +30,7 @@ from ...core.data import DataType
 from ...core.utils.fallback import wrap_fallback_module_method
 
 _NO_ANNOTATION_FUNCS: Dict[Callable, MarsOutputType] = {
-    pd.read_pickle: MarsOutputType.dataframe,
+    pd.read_pickle: MarsOutputType.object,
     pd.crosstab: MarsOutputType.dataframe,
     pd.infer_freq: MarsOutputType.object,
     pd.interval_range: MarsOutputType.index,
