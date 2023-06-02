@@ -42,13 +42,14 @@ RUN /opt/conda/bin/conda install \
     jaxlib \
     uvloop \
   && pip install -U \
-    xoscar \
     cloudpickle \
     adlfs \
     fsspec>=2022.7.1,!=2022.8.0 \
     s3fs \
     pyopenssl>=23.0.0 \
   && /opt/conda/bin/conda clean --all -f -y
+
+RUN /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 14.21.1
@@ -63,5 +64,7 @@ RUN apt-get -y update \
   && nvm use default \
   && apt-get -yq clean \
   && rm -rf /var/lib/apt/lists/*
+
+RUN pip install -e "git+https://github.com/ChengjieLi28/xoscar.git@enh/ucx#subdirectory=python&egg=xoscar"
 
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH

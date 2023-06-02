@@ -88,11 +88,19 @@ class SharedMemoryFileObject(BufferWrappedFileObject):
     def _read_close(self):
         pass
 
+    def get_buffer(self):
+        self.init()
+        return self._buffer
+
 
 class ShmStorageFileObject(StorageFileObject):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._shm = None
+
+    @property
+    def buffer(self):
+        return self._file.get_buffer()
 
     async def close(self):
         if _is_windows:

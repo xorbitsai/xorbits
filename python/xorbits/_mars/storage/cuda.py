@@ -21,6 +21,7 @@ from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
+from xoscar.backends.communication.utils import _convert_to_cupy_ndarray
 from xoscar.serialization import deserialize, serialize
 
 from ..utils import implements, lazy_import
@@ -62,9 +63,29 @@ class CudaFileObject:
     def mode(self):
         return self._mode
 
+    def set_buffers_by_sizes(self, sizes: List[int]):
+        from rmm import DeviceBuffer
+
+        self._buffers = [
+            _convert_to_cupy_ndarray(DeviceBuffer(size=size)) for size in sizes
+        ]
+
+    @property
+    def header(self):
+        return self._headers
+
+    @header.setter
+    def header(self, header):
+        self._headers = header
+
+    @property
+    def buffer(self):
+        return self._buffers
+
     def _initialize_read(self):
         from cudf.core.buffer import Buffer
-        from cupy.cuda.memory import UnownedMemory
+
+        # from cupy.cuda.memory import UnownedMemory
 
         self._offset = 0
         self._has_read_headers = False
@@ -74,17 +95,20 @@ class CudaFileObject:
         buffer_types = []
         for buf in buffers:
             if isinstance(buf, cupy.ndarray):
-                ptr, size = buf.data.ptr, buf.size
-                self._buffers.append(UnownedMemory(ptr, size, Buffer(ptr, size=size)))
-                buffer_types.append(["cuda", size])
+                # ptr, size = buf.data.ptr, buf.size
+                # self._buffers.append(UnownedMemory(ptr, size, Buffer(ptr, size=size)))
+                self._buffers.append(buf.astype("u1", copy=False))
+                buffer_types.append(["cuda", buf.size])
             elif isinstance(buf, Buffer):
-                ptr, size = buf.ptr, buf.size
-                if size == 0:
-                    # empty buffer cannot construct a UnownedMemory
-                    self._buffers.append(None)
-                else:
-                    self._buffers.append(UnownedMemory(ptr, size, Buffer(ptr, size)))
-                buffer_types.append(["cuda", size])
+                # ptr, size = buf.ptr, buf.size
+                # if size == 0:
+                #     print('This is size 0')
+                #     # empty buffer cannot construct a UnownedMemory
+                #     self._buffers.append(None)
+                # else:
+                #     # self._buffers.append(UnownedMemory(ptr, size, Buffer(ptr, size)))
+                self._buffers.append(_convert_to_cupy_ndarray(buf))
+                buffer_types.append(["cuda", buf.size])
             else:
                 size = getattr(buf, "size", len(buf))
                 self._buffers.append(buf)
@@ -109,15 +133,21 @@ class CudaFileObject:
             return pickle.dumps(self._headers)
         if len(self._buffers) == 0:
             return ""
-        cur_buf = self._buffers[0]
+        cur_buf = (
+            self._buffers[0].getbuffer()
+            if isinstance(self._buffers[0], BytesIO)
+            else self._buffers[0]
+        )
+        cur_size = getattr(cur_buf, "size", len(cur_buf))
+
         # current buf read to end
-        if cur_buf is None:
-            # empty cuda buffer
-            content = Buffer.empty(0)
-            self._offset = 0
-            self._buffers.pop(0)
-            return content
-        elif size >= cur_buf.size - self._offset:
+        # if cur_buf is None:
+        #     # empty cuda buffer
+        #     content = Buffer.empty(0)
+        #     self._offset = 0
+        #     self._buffers.pop(0)
+        #     return content
+        if size >= cur_size - self._offset:
             if isinstance(cur_buf, UnownedMemory):
                 cupy_pointer = MemoryPointer(cur_buf, self._offset)
                 content = Buffer(cupy_pointer.ptr, size=cur_buf.size - self._offset)
@@ -132,8 +162,9 @@ class CudaFileObject:
                 self._offset += size
                 return Buffer(cupy_pointer.ptr, size=size)
             else:
+                content = cur_buf[self._offset : self._offset + size]
                 self._offset += size
-                return cur_buf[self._offset, self._offset + size]
+                return content
 
     def write(self, content):
         from cupy.cuda import MemoryPointer
@@ -147,7 +178,7 @@ class CudaFileObject:
                 if buffer_type == "cuda":
                     self._buffers.append(DeviceBuffer(size=size))
                 else:
-                    self._buffers.append(BytesIO())
+                    self._buffers.append(BytesIO(b"0" * size))
             self._has_write_headers = True
             return
 
@@ -163,11 +194,18 @@ class CudaFileObject:
                     ctypes.c_void_p
                 )
             else:
-                source_mem = MemoryPointer(
-                    UnownedMemory(content.ptr, content.size, content), 0
-                )
-                content_length = source_mem.mem.size
+                source_mem = content.data
+                content_length = content.size
             cupy_pointer.copy_from(source_mem, content_length)
+
+            # content_length = content.size
+            # cur_buf.copy_from_device(content)
+
+            # try:
+            #     cupy_pointer.copy_from(source_mem, content_length)
+            # except Exception as e:
+            #     pass
+            # cur_buf.copy_from_device(content)
         else:
             content_length = len(content)
             cur_buf.write(content)

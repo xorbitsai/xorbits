@@ -414,6 +414,7 @@ class StorageHandlerActor(mo.Actor):
         size: int,
         level: StorageLevel,
         request_quota=True,
+        band_name: str = "numa-0",
     ) -> WrappedStorageFileObject:
         if level is None:
             level = self.highest_level
@@ -428,6 +429,7 @@ class StorageHandlerActor(mo.Actor):
             data_key,
             self._data_manager_ref,
             self._clients[level],
+            band_name,
         )
 
     @open_writer.batch

@@ -16,6 +16,7 @@
 import asyncio
 import os
 import sys
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -155,13 +156,28 @@ class MockSenderManagerActor(SenderManagerActor):
             address=address, uid=MockReceiverManagerActor.default_uid()
         )
 
+    async def _copy_to_receiver(
+        self,
+        receiver_ref: mo.ActorRefType["ReceiverManagerActor"],
+        local_buffers: List,
+        remote_buffers: List,
+        session_id: str,
+        data_keys: List[str],
+    ):
+        await asyncio.sleep(3)
+        await super()._copy_to_receiver(
+            receiver_ref, local_buffers, remote_buffers, session_id, data_keys
+        )
+
 
 # test for cancelling happens when creating writer
 class MockReceiverManagerActor2(ReceiverManagerActor):
-    async def create_writers(self, session_id, data_keys, data_sizes, level, sub_infos):
+    async def create_writers(
+        self, session_id, data_keys, data_sizes, level, sub_infos, band_name
+    ):
         await asyncio.sleep(3)
         return await super().create_writers(
-            session_id, data_keys, data_sizes, level, sub_infos
+            session_id, data_keys, data_sizes, level, sub_infos, band_name
         )
 
 
