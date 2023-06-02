@@ -336,7 +336,65 @@ class ReceiverManagerActor(mo.StatelessActor):
         sub_infos: List,
         level: StorageLevel,
         band_name: str,
+        remote_band,
+        error
     ) -> List[bool]:
+        logger.debug("Start opening writers for %s", data_keys)
+
+        remote_data_manager_ref: mo.ActorRefType[DataManagerActor] = await mo.actor_ref(
+            address=remote_band[0], uid=DataManagerActor.default_uid()
+        )
+
+        logger.debug("Getting actual keys for %s", data_keys)
+        tasks = []
+        for key in data_keys:
+            tasks.append(remote_data_manager_ref.get_store_key.delay(session_id, key))
+        data_keys = await remote_data_manager_ref.get_store_key.batch(*tasks)
+        data_keys = list(set(data_keys))
+
+        logger.debug("Getting sub infos for %s", data_keys)
+        sub_infos = await remote_data_manager_ref.get_sub_infos.batch(
+            *[
+                remote_data_manager_ref.get_sub_infos.delay(session_id, key)
+                for key in data_keys
+            ]
+        )
+
+        get_infos = []
+        pin_tasks = []
+        for data_key in data_keys:
+            get_infos.append(
+                remote_data_manager_ref.get_data_info.delay(
+                    session_id, data_key, remote_band[1], error
+                )
+            )
+            pin_tasks.append(
+                remote_data_manager_ref.pin.delay(
+                    session_id, data_key, remote_band[1], error
+                )
+            )
+
+        logger.debug("Pining %s", data_keys)
+        await remote_data_manager_ref.pin.batch(*pin_tasks)
+        logger.debug("Getting data infos for %s", data_keys)
+        infos = await remote_data_manager_ref.get_data_info.batch(*get_infos)
+
+        filtered = [
+            (data_info, data_key)
+            for data_info, data_key in zip(infos, data_keys)
+            if data_info is not None
+        ]
+        if filtered:
+            infos, data_keys = zip(*filtered)
+        else:  # pragma: no cover
+            # no data to be transferred
+            return []
+        data_sizes = [info.store_size for info in infos]
+
+        if level is None:
+            level = infos[0].level
+
+        logger.debug("Opening writers for %s", data_keys)
         async with self._lock:
             await self._storage_handler.request_quota_with_spill(level, sum(data_sizes))
             future = asyncio.create_task(
