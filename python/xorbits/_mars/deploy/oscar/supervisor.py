@@ -59,7 +59,10 @@ class SupervisorCommandRunner(OscarCommandRunner):
         if scheme_prefix:
             supervisors = []
             for s in args.supervisors.split(","):
-                supervisors.append(f"{scheme_prefix}://{s}")
+                if s.startswith(f"{scheme_prefix}://"):
+                    supervisors.append(s)
+                else:
+                    supervisors.append(f"{scheme_prefix}://{s}")
             args.supervisors = ",".join(supervisors)
         
         web_config = self.config.get("web", {})
