@@ -37,7 +37,6 @@ export default class NodeResourceTab extends React.Component {
 
   refreshInfo() {
     fetch(
-      // eslint-disable-next-line react/prop-types
       `api/cluster/nodes?nodes=${this.props.endpoint}&resource=1&detail=1&exclude_statuses=-1`
     )
       .then((res) => res.json())
@@ -106,7 +105,6 @@ export default class NodeResourceTab extends React.Component {
 
         converted[band]['Memory']['MemUsage'] = memUsage
         converted[band]['Memory']['MemTotal'] = toReadableSize(memTotal)
-        // eslint-disable-next-line react/prop-types
       } else {
         if (this.props.role === '1') {
           converted[band] = {
