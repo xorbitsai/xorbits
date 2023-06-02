@@ -546,6 +546,8 @@ class StorageHandlerActor(mo.Actor):
             # no data to be transferred
             return
 
+        logger.debug("Writers have been opened for %s", data_keys)
+
         sender_ref: mo.ActorRefType[SenderManagerActor] = await mo.actor_ref(
             address=remote_band[0], uid=SenderManagerActor.gen_uid(remote_band[1])
         )
@@ -553,8 +555,7 @@ class StorageHandlerActor(mo.Actor):
             session_id,
             data_keys,
             is_transferring_list,
-            self._data_manager_ref.address,
-            fetch_band_name,
+            (self._data_manager_ref.address, fetch_band_name),
         )
         logger.debug("Finish fetching %s from band %s", data_keys, remote_band)
 
