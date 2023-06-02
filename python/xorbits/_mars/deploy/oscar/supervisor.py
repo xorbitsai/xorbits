@@ -54,9 +54,13 @@ class SupervisorCommandRunner(OscarCommandRunner):
 
         scheme_prefix = None
         if self.config.get("oscar").get("numa").get("external_addr_scheme"):
-            scheme_prefix = self.config.get("oscar").get("numa").get("external_addr_scheme")
+            scheme_prefix = (
+                self.config.get("oscar").get("numa").get("external_addr_scheme")
+            )
         if self.config.get("oscar").get("gpu").get("external_addr_scheme"):
-            scheme_prefix = self.config.get("oscar").get("gpu").get("external_addr_scheme")
+            scheme_prefix = (
+                self.config.get("oscar").get("gpu").get("external_addr_scheme")
+            )
         if scheme_prefix:
             supervisors = []
             for s in args.supervisors.split(","):
