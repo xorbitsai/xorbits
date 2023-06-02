@@ -57,7 +57,7 @@ export default function WorkerDetailPage(props) {
             <NodeEnvTab endpoint={props.endpoint} />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <NodeResourceTab endpoint={props.endpoint} />
+            <NodeResourceTab endpoint={props.endpoint} role="1" />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <NodeStackTab endpoint={props.endpoint} />
