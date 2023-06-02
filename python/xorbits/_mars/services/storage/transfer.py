@@ -394,9 +394,10 @@ class ReceiverManagerActor(mo.StatelessActor):
         if level is None:
             level = infos[0].level
 
-        logger.debug("Opening writers for %s", data_keys)
         async with self._lock:
+            logger.debug("Requesting quota for %s", data_keys)
             await self._storage_handler.request_quota_with_spill(level, sum(data_sizes))
+            logger.debug("Opening writers for %s", data_keys)
             future = asyncio.create_task(
                 self.create_writers(
                     session_id, data_keys, data_sizes, level, sub_infos, band_name
