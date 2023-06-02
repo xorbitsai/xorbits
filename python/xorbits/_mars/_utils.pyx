@@ -142,6 +142,7 @@ cdef inline list iterative_tokenize(object ob):
 cdef inline tuple tokenize_numpy(ob):
     cdef int offset
 
+    # Return random bytes and metadata for objects > 64MB
     if ob.nbytes > 64 * 1024 ** 2:
         return os.urandom(16), ob.dtype, ob.shape, ob.strides
 
