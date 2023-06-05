@@ -74,6 +74,13 @@ class SupervisorCommandRunner(OscarCommandRunner):
         )
 
     async def start_services(self):
+        if (
+            "MARS_EXTERNAL_STORAGE_JUICEFS" in os.environ
+            and "MARS_EXTERNAL_STORAGE_JUICEFS" == "juicefs"
+        ):
+            self.config["storage"]["backends"] = ["juicefs"]
+            self.config["storage"]["juicefs"]["root_dirs"] = ["/data"]
+            self.config["storage"]["juicefs"]["is_k8s"] = True
         start_web = await start_supervisor(
             self.pool.external_address,
             self.args.supervisors,

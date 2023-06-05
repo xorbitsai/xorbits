@@ -86,7 +86,7 @@ async def storage_context(request):
     elif request.param == "juicefs":
         tempdir = tempfile.mkdtemp()
         params, teardown_params = await JuiceFSStorage.setup(
-            root_dir=tempdir, local_environ=True
+            root_dirs=[tempdir], local_environ=True
         )
         storage = JuiceFSStorage(**params)
         assert storage.level == StorageLevel.MEMORY

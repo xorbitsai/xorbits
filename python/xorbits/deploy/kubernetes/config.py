@@ -482,6 +482,7 @@ class ReplicationConfig(KubeConfig):
         startup_probe: Optional["ProbeConfig"] = None,
         pre_stop_command: Optional[List[str]] = None,
         kind: Optional[str] = None,
+        external_storage: str = "",
         **kwargs,
     ):
         self._name = name
@@ -502,6 +503,7 @@ class ReplicationConfig(KubeConfig):
         self._startup_probe = startup_probe
 
         self._pre_stop_command = pre_stop_command
+        self._external_storage = external_storage
         self._use_local_image = kwargs.pop("use_local_image", False)
         self._pip: Optional[Union[str, List[str]]] = kwargs.pop("pip", None)
         self._conda: Optional[Union[str, List[str]]] = kwargs.pop("conda", None)
@@ -607,7 +609,9 @@ class ReplicationConfig(KubeConfig):
                 "resources": dict((k, v) for k, v in resources_dict.items() if v)
                 or None,
                 "ports": [p.build() for p in self._ports] or None,
-                "volumeMounts": [vol.build_mount() for vol in self._volumes] or None,
+                "volumeMounts": [vol.build_mount() for vol in self._volumes] or None
+                if self._external_storage != "juicefs"
+                else [{"mountPath": "/data", "name": "data"}],
                 "livenessProbe": self._liveness_probe.build()
                 if self._liveness_probe
                 else None,
@@ -623,8 +627,14 @@ class ReplicationConfig(KubeConfig):
         result = {
             "containers": [self.build_container()],
             "initContainers": self.config_init_containers(),
-            "volumes": [vol.build() for vol in self._volumes],
         }
+
+        if self._external_storage != "juicefs":
+            result["volumes"] = [vol.build() for vol in self._volumes]
+        else:
+            result["volumes"] = [
+                {"name": "data", "persistentVolumeClaim": {"claimName": "juicefs-pvc"}}
+            ]
         return dict((k, v) for k, v in result.items() if v)
 
     def build(self):
@@ -665,6 +675,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         volumes: Optional[List[VolumeConfig]] = None,
         service_name: Optional[str] = None,
         service_port: Optional[int] = None,
+        external_storage: str = "",
         **kwargs,
     ):
         self._cpu = cpu
@@ -687,7 +698,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
 
         self._service_name = service_name
         self._service_port = service_port
-
+        self._external_storage = external_storage
         super().__init__(
             self.rc_name,
             image or self.get_default_image(),
@@ -696,6 +707,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             resource_limit=limit_res if limit_resources else None,
             liveness_probe=self.config_liveness_probe(),
             startup_probe=self.config_startup_probe(),
+            external_storage=self._external_storage,
             **kwargs,
         )
         if service_port:
@@ -735,6 +747,9 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
 
         if self._modules:
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
+
+        if self._external_storage == "juicefs":
+            self.add_env("MARS_EXTERNAL_STORAGE", "juicefs")
 
     def config_liveness_probe(self):
         """

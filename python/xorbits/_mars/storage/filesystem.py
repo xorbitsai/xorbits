@@ -207,44 +207,54 @@ class JuiceFSStorage(FileSystemStorage):
 
     def __init__(
         self,
-        root_dir: str,
-        local_environ: bool,
+        root_dirs: List[str],
+        is_k8s: bool = False,
+        local_environ: bool = False,
         level: StorageLevel = None,
         size: int = None,
     ):
-        self._fs = AioFilesystem(LocalFileSystem())
-        self._root_dirs = [root_dir]
-        self._level = level
-        self._size = size
-        self._local_environ = local_environ
+        self._root_dirs = root_dirs
+        self._is_k8s = is_k8s
+        if not self._is_k8s:
+            self._fs = AioFilesystem(LocalFileSystem())
+            self._level = level
+            self._size = size
+            self._local_environ = local_environ
 
     @classmethod
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
-        root_dir = kwargs.get("root_dir")
-        local_environ = kwargs.get("local_environ")
-        if local_environ:
-            proc = await asyncio.create_subprocess_shell(
-                f"""juicefs format redis://127.0.0.1:6379/1 myjfs
-                juicefs mount redis://127.0.0.1:6379/1 {root_dir} -d
-                """
-            )
-            await proc.wait()
+        is_k8s = kwargs.get("is_k8s")
+        root_dirs = kwargs.get("root_dirs")
         params = dict(
-            root_dir=root_dir,
+            root_dirs=root_dirs,
             level=StorageLevel.MEMORY,
             size=None,
-            local_environ=local_environ,
         )
-        return params, dict(root_dir=root_dir)
+        if not is_k8s:
+            local_environ = kwargs.get("local_environ")
+            if local_environ:
+                proc = await asyncio.create_subprocess_shell(
+                    f"""juicefs format redis://127.0.0.1:6379/1 myjfs
+                    juicefs mount redis://127.0.0.1:6379/1 {root_dirs[0]} -d
+                    """
+                )
+                await proc.wait()
+            params[local_environ] = local_environ
+        else:
+            return params, dict(root_dirs=root_dirs)
 
     @staticmethod
     @implements(StorageBackend.teardown)
     async def teardown(**kwargs):
-        root_dir = kwargs.get("root_dir")
-        proc = await asyncio.create_subprocess_shell(
-            f"""juicefs umount {root_dir}
-            """
-        )
-        await proc.wait()
+        is_k8s = kwargs.get("is_k8s")
+        if not is_k8s:
+            root_dirs = kwargs.get("root_dirs")
+            proc = await asyncio.create_subprocess_shell(
+                f"""juicefs umount {root_dirs[0]}
+                """
+            )
+            await proc.wait()
+        else:
+            pass
