@@ -115,13 +115,13 @@ class KubernetesCluster:
         from kubernetes import client as kube_client
 
         if worker_cpu is None or worker_mem is None:  # pragma: no cover
-            raise TypeError("worker_cpu and worker_mem must be specified")
+            raise TypeError("`worker_cpu` and `worker_mem` must be specified")
         if cluster_type not in ["auto", "eks", "kubernetes"]:  # pragma: no cover
-            raise ValueError("cluster_type must be auto, kubernetes or eks")
+            raise ValueError("`cluster_type` must be `auto`, `kubernetes` or `eks`")
         if pip is not None and not isinstance(pip, (str, list)):  # pragma: no cover
-            raise TypeError("pip must be str or List[str] type.")
+            raise TypeError("`pip` must be str or List[str] type.")
         if conda is not None and not isinstance(conda, (str, list)):  # pragma: no cover
-            raise TypeError("conda must be str or List[str] type.")
+            raise TypeError("`conda` must be str or List[str] type.")
         local_py_version = get_local_py_version()
         if (
             image is None and local_py_version not in SUPPORTED_PY_VERSIONS
@@ -242,7 +242,7 @@ class KubernetesCluster:
                 return KubernetesCluster._get_k8s_context(curr_context)
             except:  # pragma: no cover
                 raise ValueError(
-                    "cluster_type cannot be auto, please check your kubectl configuration or specify it as eks or kubernetes"
+                    "`cluster_type` cannot be `auto`, please check your kubectl configuration or specify it as `eks` or `kubernetes`"
                 )
         else:
             return cluster_type
@@ -469,7 +469,7 @@ class KubernetesCluster:
             )
         return log_dict
 
-    def _create_external_storage(self, storage_name: str, metadata_url: str):
+    def _create_external_storage(self, storage_name: str):
         if storage_name == "juicefs":
             juicefs_k8s_storage = JuicefsK8SStorage(
                 namespace=self.namespace,
@@ -484,9 +484,7 @@ class KubernetesCluster:
             self._create_roles_and_bindings()
 
             if self._external_storage:
-                self._create_external_storage(
-                    storage_name=self._external_storage, metadata_url=self._metadata_url
-                )
+                self._create_external_storage(storage_name=self._external_storage)
 
             self._create_services()
             self._create_kube_service()
@@ -554,70 +552,63 @@ def new_cluster(
     **kwargs,
 ) -> "KubernetesClusterClient":
     """
-    The entrance of deploying xorbits cluster.
+        The entrance of deploying xorbits cluster.
 
-    Parameters
-    ----------
-    kube_api_client :
-        Kubernetes API client, required, can be created with `new_client_from_config
-    worker_cpu :
-        Number of CPUs for every worker, required
-    worker_mem :
-        Memory size for every worker, required
-    image :
-        Docker image to use, xprobe/xorbits:<xorbits version> by default
-    supervisor_num :
-        Number of supervisors in the cluster, 1 by default
-    supervisor_cpu :
-        Number of CPUs for every supervisor, 1 by default
-    supervisor_mem :
-        Memory size for every supervisor, 4G by default
-    worker_num :
-        Number of workers in the cluster, 1 by default
-    worker_spill_paths :
-        Spill paths for worker pods on host
-    worker_cache_mem :
-        Size or ratio of cache memory for every worker
-    min_worker_num :
-        Minimal ready workers, equal to worker_num by default
-    pip :
-        Either a list of pip requirements specifiers,
-        or a string containing the path to a pip requirements.txt <https://pip.pypa.io/en/stable/user_guide/#requirements-files>_ file.
-        None by default.
-        Both supervisor and worker will install the specified pip packages.
-        Examples:
+        Parameters
+        ----------
+        kube_api_client :
+            Kubernetes API client, required, can be created with ``new_client_from_config``
+        worker_cpu :
+            Number of CPUs for every worker, required
+        worker_mem :
+            Memory size for every worker, required
+        image :
+            Docker image to use, ``xprobe/xorbits:<xorbits version>`` by default
+        supervisor_num :
+            Number of supervisors in the cluster, 1 by default
+        supervisor_cpu :
+    Expand All
+            @@ -556,34 +579,38 @@ def new_cluster(
+        worker_cache_mem :
+            Size or ratio of cache memory for every worker
+        min_worker_num :
+            Minimal ready workers, equal to ``worker_num`` by default
+        pip :
+            Either a list of pip requirements specifiers,
+            or a string containing the path to a pip `requirements.txt <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_ file.
+            None by default.
+            Both supervisor and worker will install the specified pip packages.
+            Examples:
+                * ``pip=["requests==1.0.0", "aiohttp"]``
+                * ``pip="/path/to/requirements.txt"``
+        conda :
+            Either a string containing the path to a `conda environment.yml <https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-file-manually>`_ file,
+            or a list of conda packages used for `conda install <https://docs.conda.io/projects/conda/en/latest/commands/install.html>`_ command.
+            None by default.
+            Both supervisor and worker will install the specified conda packages.
+            When this parameter is list type, install the conda packages from the `default channel <https://repo.anaconda.com/pkgs/>`_.
+            When this parameter is string type, the ``name`` attribute in the environment.yml file will not take effect,
+            since all package changes will occur in the ``base`` conda environment where Xorbits exists.
+            Examples:
+                * ``conda=["tensorflow", "tensorboard"]``
+                * ``conda="/path/to/environment.yml"``
+        timeout :
+            Timeout in seconds when creating clusters, never timeout by default
+        cluster_type :
+            K8s cluster type, ``auto``, ``kubernetes`` or ``eks`` supported, ``auto`` by default.
+            ``auto`` means that it will automatically detect whether the kubectl context is ``eks``.
+            You can also manually specify ``kubernetes`` or ``eks`` in some special cases.
+        external_storage:
+            You can specify an external storage, for example "juicefs"
+        metadata_url:
+            For external storage JuiceFS, you must specify the metadata url for its metadata storage.
+        kwargs :
+            Extra kwargs
 
-            * pip=["requests==1.0.0", "aiohttp"]
-            * pip="/path/to/requirements.txt"
-    conda :
-        Either a string containing the path to a conda environment.yml <https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-file-manually>_ file,
-        or a list of conda packages used for conda install <https://docs.conda.io/projects/conda/en/latest/commands/install.html>_ command.
-        None by default.
-        Both supervisor and worker will install the specified conda packages.
-        When this parameter is list type, install the conda packages from the default channel <https://repo.anaconda.com/pkgs/>_.
-        When this parameter is string type, the name attribute in the environment.yml file will not take effect,
-        since all package changes will occur in the base conda environment where Xorbits exists.
-        Examples:
-
-            * conda=["tensorflow", "tensorboard"]
-            * conda="/path/to/environment.yml"
-    timeout :
-        Timeout in seconds when creating clusters, never timeout by default
-    cluster_type :
-        K8s cluster type, auto, kubernetes or eks supported, auto by default.
-        auto means that it will automatically detect whether the kubectl context is eks.
-        You can also manually specify kubernetes or eks` in some special cases.
-    external_storage:
-        You can specify an external storage, for example "juicefs"
-    metadata_url:
-        For external storage JuiceFS, you must specify the metadata url for its metadata storage.
-    kwargs :
-        Extra kwargs
-
-    Returns
-    -------
-    KubernetesClusterClient
-        a KubernetesClusterClient instance
+        Returns
+        -------
+        KubernetesClusterClient
+            a KubernetesClusterClient instance
     """
     cluster_cls = kwargs.pop("cluster_cls", KubernetesCluster)
     if external_storage == "juicefs":
