@@ -21,7 +21,7 @@ from ... import opcodes
 from ...core import OutputType
 from ...core.context import Context
 from ...core.operand import MapReduceOperand, OperandStage
-from ...serialization.serializables import AnyField, Int32Field
+from ...serialization.serializables import AnyField, Int32Field, ListField
 from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
 from ..utils import build_concatenated_rows_frame, hash_dataframe_on, parse_index
 
@@ -33,6 +33,7 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
     index = AnyField("index", default=None)
     values = AnyField("values", default=None)
     shuffle_size = Int32Field("shuffle_size")
+    output_columns = ListField("output_columns", default=None)
 
     @classmethod
     def execute_map(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
@@ -62,11 +63,24 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         ctx[chunk.key] = pd.concat(res, axis=0)
 
     @classmethod
+    def execute_combine(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
+        input_data = ctx[op.inputs[0].key]
+        out = op.outputs[0]
+
+        for dtype in op.output_columns:
+            if dtype not in input_data.dtypes.index:
+                input_data[dtype] = np.nan
+
+        ctx[out.key] = input_data
+
+    @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
         if op.stage == OperandStage.map:
             cls.execute_map(ctx, op)
         elif op.stage == OperandStage.reduce:
             cls.execute_reduce(ctx, op)
+        elif op.stage == OperandStage.combine:
+            cls.execute_combine(ctx, op)
         else:
             input_data = ctx[op.inputs[0].key]
             out = op.outputs[0]
@@ -79,8 +93,38 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
             ctx[out.key] = result
 
     @classmethod
+    def tile_one_chunk(cls, op: "DataFramePivot"):
+        in_df = op.inputs[0]
+        out_df = op.outputs[0]
+
+        chunks = []
+        for c in in_df.chunks:
+            new_op = op.copy().reset_key()
+            new_op.tileable_op_key = op.key
+            chunks.append(
+                new_op.new_chunk(
+                    [c],
+                    shape=(np.nan, np.nan),
+                    index=c.index,
+                    dtypes=out_df.dtypes,
+                    index_value=c.index_value,
+                    columns_value=c.columns_value,
+                )
+            )
+
+        new_op = op.copy()
+        kw = out_df.params.copy()
+        new_nsplits = ((np.nan,), (np.nan,))
+        kw.update(dict(chunks=chunks, nsplits=new_nsplits))
+        return new_op.new_tileables(op.inputs, **kw)
+
+    @classmethod
     def tile(cls, op: "DataFramePivot"):
         in_df = build_concatenated_rows_frame(op.inputs[0])
+
+        if len(in_df.chunks) == 1:
+            return cls.tile_one_chunk(op)
+
         out_df = op.outputs[0]
         output_type = OutputType.dataframe
         chunk_shape = in_df.chunk_shape
@@ -133,10 +177,47 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
             )
             out_chunks.append(new_op.new_chunk([chunk], **params))
 
+        yield out_chunks
+
+        filtered_chunks = [chunk for chunk in out_chunks if chunk.shape[1] != 0]
+        for i, chunk in enumerate(filtered_chunks):
+            chunk._index = (i, 0)
+
+        combined_dtypes = pd.concat(
+            [chunk.dtypes for chunk in filtered_chunks]
+        ).to_dict()
+        output_columns = list(combined_dtypes.keys())
+        output_dtypes = pd.Series(combined_dtypes)
+
+        # generate combine chunks
+        combine_chunks = []
+        for chunk in filtered_chunks:
+            if chunk.shape[1] < len(output_columns):
+                combine_op = op.copy().reset_key()
+                combine_op.stage = OperandStage.combine
+                combine_op.output_columns = output_columns
+                params = dict(
+                    shape=(chunk.shape[0], len(output_columns)), index=chunk.index
+                )
+                params.update(
+                    dict(
+                        dtypes=output_dtypes,
+                        columns_value=in_df.columns_value,
+                        index_value=chunk.index_value,
+                    )
+                )
+                combine_chunks.append(combine_op.new_chunk([chunk], **params))
+            else:
+                combine_chunks.append(chunk)
+
         new_op = op.copy()
         kw = out_df.params.copy()
-        new_nsplits = ((np.nan,) * len(out_chunks), (np.nan,))
-        kw.update(dict(chunks=out_chunks, nsplits=new_nsplits))
+        new_nsplits = (
+            tuple(chunk.shape[0] for chunk in combine_chunks),
+            (len(output_columns),),
+        )
+        kw.update(dict(chunks=combine_chunks, nsplits=new_nsplits))
+
         return new_op.new_tileables(op.inputs, **kw)
 
     def __call__(self, df):

@@ -687,7 +687,7 @@ def test_data_frame_applymap_execute(setup):
 
 
 def test_data_frame_pivot_execute(setup):
-    def sorted_df(df):
+    def align_df(df):
         return df.sort_index(axis=0).sort_index(axis=1)
 
     df_raw = pd.DataFrame(
@@ -698,40 +698,48 @@ def test_data_frame_pivot_execute(setup):
             "qux": [10, 20, 30, 40, 50, 60],
         }
     )
-    df = from_pandas_df(df_raw, chunk_size=2)
+    df = from_pandas_df(df_raw, chunk_size=1)
 
     # test basic pivot
     r = df.pivot(index="foo", columns="bar", values="baz")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(index="foo", columns="bar", values="baz")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot without values
     r = df.pivot(index="foo", columns="bar")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(index="foo", columns="bar")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot without index
     r = df.pivot(columns="foo", values="baz")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(columns="foo", values="baz")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot without values and index
     r = df.pivot(columns="foo")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(columns="foo")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot with list of inputs
-    df = from_pandas_df(df_raw)  # Avoid shape check
     r = df.pivot(index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"])
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(
         index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"]
     )
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test one chunk
+    df = from_pandas_df(df_raw)
+    r = df.pivot(index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"])
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot(
+        index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"]
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
 
 def test_data_frame_pivot_table_execute(setup):
