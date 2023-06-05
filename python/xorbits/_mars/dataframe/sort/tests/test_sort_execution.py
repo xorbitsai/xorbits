@@ -365,6 +365,16 @@ def test_sort_index_execution(setup):
     expected = raw.sort_index(ascending=False)
     pd.testing.assert_series_equal(result, expected)
 
+    # test multi-level DataFrame and level attribute is None in sort_index
+    raw = pd.DataFrame({"foo": np.random.randint(10, size=100), "bar": range(100)})
+    raw_gb_rolling_mean = raw.groupby(by="foo", group_keys=True).apply(
+        lambda x: x.rolling(window=10).mean()
+    )
+    mdf = DataFrame(raw_gb_rolling_mean)
+    result = mdf.sort_index().execute().fetch()
+    expected = raw_gb_rolling_mean.sort_index()
+    pd.testing.assert_frame_equal(result, expected)
+
 
 def test_arrow_string_sort_values(setup):
     rs = np.random.RandomState(0)
