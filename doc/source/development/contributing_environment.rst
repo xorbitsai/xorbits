@@ -151,7 +151,6 @@ You can now run::
    # Build and install Xorbits
    python -m pip install -e ".[dev]"
    python setup.py build_ext -i
-   # install nodejs  >= 14
    python setup.py build_web
 
 At this point you should be able to import Xorbits from your locally built version::
