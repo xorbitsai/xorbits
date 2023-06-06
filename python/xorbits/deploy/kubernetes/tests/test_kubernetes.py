@@ -289,7 +289,7 @@ async def test_external_storage_juicefs():
     )
     with _start_kube_cluster(
         supervisor_cpu=0.1,
-        supervisor_mem="1G",
+        supervisor_mem="100M",
         worker_num=1,
         worker_cpu=0.1,
         worker_mem="1G",
@@ -306,7 +306,7 @@ async def test_external_storage_juicefs():
 async def test_external_storage_juicefs_missing_metadata_url():
     with pytest.raises(
         ValueError,
-        match="Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1': ",
+        match="Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1'.",
     ):
         py_version = get_local_py_version()
         _load_docker_env()
@@ -319,10 +319,10 @@ async def test_external_storage_juicefs_missing_metadata_url():
             image=image_name,
             worker_spill_paths=[temp_spill_dir],
             log_when_fail=True,
-            supervisor_cpu=1,
+            supervisor_cpu=0.1,
             supervisor_mem="1G",
             worker_num=1,
-            worker_cpu=1,
+            worker_cpu=0.1,
             worker_mem="1G",
             external_storage="juicefs",
             use_local_image=True,

@@ -57,7 +57,7 @@ class PersistentVolumeConfig(KubeConfig):
                 "labels": {"juicefs-name": "ten-pb-fs"},
             },
             "spec": {
-                "capacity": {"storage": "10Pi"},
+                "capacity": {"storage": "200M"},
                 # For now, JuiceFS CSI Driver doesn't support setting storage capacity. Fill in any valid string is
                 # fine. ( Reference: https://juicefs.com/docs/csi/guide/pv/ )
                 "volumeMode": "Filesystem",
@@ -100,7 +100,7 @@ class PersistentVolumeClaimConfig(KubeConfig):
                 "accessModes": ["ReadWriteMany"],
                 "volumeMode": "Filesystem",
                 "storageClassName": "",
-                "resources": {"requests": {"storage": "10Pi"}},
+                "resources": {"requests": {"storage": "200M"}},
                 "selector": {"matchLabels": {"juicefs-name": "ten-pb-fs"}},
             },
         }

@@ -584,6 +584,7 @@ def new_cluster(
         None by default.
         Both supervisor and worker will install the specified pip packages.
         Examples:
+
             * ``pip=["requests==1.0.0", "aiohttp"]``
             * ``pip="/path/to/requirements.txt"``
     conda :
@@ -595,6 +596,7 @@ def new_cluster(
         When this parameter is string type, the ``name`` attribute in the environment.yml file will not take effect,
         since all package changes will occur in the ``base`` conda environment where Xorbits exists.
         Examples:
+
             * ``conda=["tensorflow", "tensorboard"]``
             * ``conda="/path/to/environment.yml"``
     timeout :
@@ -619,7 +621,7 @@ def new_cluster(
     if external_storage == "juicefs":
         if not metadata_url:
             raise ValueError(
-                "Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1': "
+                "Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1'."
             )
         metadata_url = metadata_url
 

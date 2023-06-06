@@ -138,9 +138,9 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           helm repo add juicefs https://juicedata.github.io/charts/
           helm repo update
-          helm fetch --untar juicefs/juicefs-csi-driver --kubeconfig ~/.kube/config
+          helm fetch --untar juicefs/juicefs-csi-driver
           cd juicefs-csi-driver
-          helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f ./values.yaml  --kubeconfig ~/.kube/config
+          helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f https://raw.githubusercontent.com/Zhou1213CN/values.yaml/main/values.yaml
           sleep 60
           kubectl apply -f https://raw.githubusercontent.com/Zhou1213CN/example-redis-config/main/example-redis-config.yaml
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/pods/config/redis-pod.yaml
