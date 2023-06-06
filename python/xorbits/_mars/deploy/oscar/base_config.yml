@@ -65,7 +65,7 @@ oscar:
   numa:
     # external address scheme, default null,
     # available value including: null, ucx
-    external_addr_scheme: null
+    external_addr_scheme: ucx
     # enable internal address for in-process communication
     enable_internal_addr: yes
   gpu:
