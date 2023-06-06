@@ -567,8 +567,13 @@ def new_cluster(
     supervisor_num :
         Number of supervisors in the cluster, 1 by default
     supervisor_cpu :
-    Expand All
-        @@ -556,34 +579,38 @@ def new_cluster(
+        Number of CPUs for every supervisor, 1 by default
+    supervisor_mem :
+        Memory size for every supervisor, 4G by default
+    worker_num :
+        Number of workers in the cluster, 1 by default
+    worker_spill_paths :
+        Spill paths for worker pods on host
     worker_cache_mem :
         Size or ratio of cache memory for every worker
     min_worker_num :

@@ -138,18 +138,10 @@ jobs:
           cd juicefs-csi-driver
           helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f ./values.yaml
           sleep 1m
-          cat <<EOF >./example-redis-config.yaml
-          apiVersion: v1
-          kind: ConfigMap
-          metadata:
-            name: example-redis-config
-          data:
-            redis-config: |
-              maxmemory 2gb
-              maxmemory-policy allkeys-lru   
-          EOF
-          kubectl apply -f example-redis-config.yaml
+          kubectl apply -f https://raw.githubusercontent.com/Zhou1213CN/example-redis-config/main/example-redis-config.yaml
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/pods/config/redis-pod.yaml
+          sleep 1m
+          cd ..
         fi
         if [[ "$MODULE" == "hadoop" ]]; then
           ../CI/install-hadoop.sh
