@@ -55,6 +55,7 @@ def _collect_module_callables() -> Dict[str, Callable]:
         docstring_src_module=pandas,
         docstring_src=pandas.DataFrame,
     )
+
     mars_dataframe_callables[mars_dataframe.Series.__name__] = wrap_mars_callable(
         mars_dataframe.Series,
         attach_docstring=True,
