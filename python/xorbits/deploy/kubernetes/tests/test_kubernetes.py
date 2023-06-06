@@ -48,9 +48,7 @@ kube_available = (
     and k8s is not None
 )
 
-juicefs_csi_driver_available = "Running" in sp.getoutput(
-    "kubectl -n kube-system get pods -l app.kubernetes.io/name=juicefs-csi-driver"
-)
+juicefs_available = "juicefs" in sp.getoutput("echo $(helm repo list)")
 
 
 def _collect_coverage():
@@ -204,9 +202,7 @@ def simple_job():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(
-    juicefs_csi_driver_available, reason="Do not need run with juicefs sci driver"
-)
+@pytest.mark.skipif(juicefs_available, reason="Do not need run with juicefs")
 def test_run_in_kubernetes():
     with _start_kube_cluster(
         supervisor_cpu=0.5,
@@ -236,9 +232,7 @@ def test_run_in_kubernetes():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(
-    juicefs_csi_driver_available, reason="Do not need run with juicefs sci driver"
-)
+@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 @pytest.mark.asyncio
 async def test_request_workers():
     with _start_kube_cluster(
@@ -270,9 +264,7 @@ async def test_request_workers():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(
-    juicefs_csi_driver_available, reason="Do not need run with juicefs sci driver"
-)
+@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 @pytest.mark.asyncio
 async def test_request_workers_insufficient():
     with _start_kube_cluster(
@@ -289,6 +281,7 @@ async def test_request_workers_insufficient():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
 @pytest.mark.asyncio
 async def test_external_storage_juicefs():
     redis_ip = sp.getoutput(
@@ -308,6 +301,7 @@ async def test_external_storage_juicefs():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
 @pytest.mark.asyncio
 async def test_external_storage_juicefs_missing_metadata_url():
     with pytest.raises(

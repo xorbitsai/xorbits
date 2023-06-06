@@ -241,9 +241,8 @@ class JuiceFSStorage(FileSystemStorage):
                     """
                 )
                 await proc.wait()
-            params[local_environ] = local_environ
-        else:
-            return params, dict(root_dirs=root_dirs)
+            params["local_environ"] = local_environ
+        return params, dict(root_dirs=root_dirs)
 
     @staticmethod
     @implements(StorageBackend.teardown)
