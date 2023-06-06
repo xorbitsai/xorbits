@@ -178,7 +178,6 @@ def _start_kube_cluster(**kwargs):
 
         [p.terminate() for p in log_processes]
     finally:
-        # pass
         shutil.rmtree(temp_spill_dir)
         if cluster_client:
             try:

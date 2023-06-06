@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from kubernetes.client import ApiClient
-
 from .juicefs.config import (
     PersistentVolumeClaimConfig,
     PersistentVolumeConfig,
@@ -11,6 +9,8 @@ from .juicefs.config import (
 
 
 class ExternalStorage(ABC):
+    from kubernetes.client import ApiClient
+
     def __init__(
         self, namespace: Optional[str], api_client: ApiClient, metadata_url: str = ""
     ):
