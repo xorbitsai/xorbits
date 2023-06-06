@@ -138,6 +138,7 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           helm repo add juicefs https://juicedata.github.io/charts/
           helm repo update
+          kubectl config view --raw > ~/.kube/config
           helm fetch --untar juicefs/juicefs-csi-driver
           cd juicefs-csi-driver
           helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f ./values.yaml
