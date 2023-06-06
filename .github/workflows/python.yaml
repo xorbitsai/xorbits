@@ -111,7 +111,7 @@ jobs:
 
     - name: Start minikube
       uses: medyagh/setup-minikube@master
-      if: ${{ matrix.module == 'kubernetes' }}
+      if: ${{ matrix.module == 'kubernetes' or matrix.module == 'kubernetes-juicefs'}}
       with:
         driver: none
         kubernetes-version: v1.23.12
