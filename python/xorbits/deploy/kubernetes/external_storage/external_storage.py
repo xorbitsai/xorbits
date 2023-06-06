@@ -7,15 +7,18 @@ from .juicefs.config import (
     SecretConfig,
 )
 
+try:
+    from kubernetes import client as kube_client
+    from kubernetes.client import ApiClient
+except ImportError:  # pragma: no cover
+    client = None
+    ApiClient = None
+
 
 class ExternalStorage(ABC):
-    from kubernetes.client import ApiClient
-
     def __init__(
         self, namespace: Optional[str], api_client: ApiClient, metadata_url: str = ""
     ):
-        from kubernetes import client as kube_client
-
         self._namespace = namespace
         self._api_client = api_client
         self._core_api = kube_client.CoreV1Api(self._api_client)

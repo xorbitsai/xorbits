@@ -17,6 +17,7 @@ import logging
 import os
 import shutil
 import subprocess
+import subprocess as sp
 import tempfile
 import uuid
 from contextlib import contextmanager
@@ -45,6 +46,10 @@ kube_available = (
     find_executable("kubectl") is not None
     and find_executable("docker") is not None
     and k8s is not None
+)
+
+juicefs_csi_driver_available = "Running" in sp.getoutput(
+    "kubectl -n kube-system get pods -l app.kubernetes.io/name=juicefs-csi-driver"
 )
 
 
@@ -199,6 +204,9 @@ def simple_job():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(
+    juicefs_csi_driver_available, reason="Do not need run with juicefs sci driver"
+)
 def test_run_in_kubernetes():
     with _start_kube_cluster(
         supervisor_cpu=0.5,
@@ -228,6 +236,9 @@ def test_run_in_kubernetes():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(
+    juicefs_csi_driver_available, reason="Do not need run with juicefs sci driver"
+)
 @pytest.mark.asyncio
 async def test_request_workers():
     with _start_kube_cluster(
@@ -259,6 +270,9 @@ async def test_request_workers():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(
+    juicefs_csi_driver_available, reason="Do not need run with juicefs sci driver"
+)
 @pytest.mark.asyncio
 async def test_request_workers_insufficient():
     with _start_kube_cluster(
@@ -274,49 +288,48 @@ async def test_request_workers_insufficient():
             await cluster_api.request_workers(worker_num=1, timeout=30)
 
 
-# @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-# @pytest.mark.asyncio
-# async def test_external_storage_juicefs():
-#     redis_ip = sp.getoutput(
-#         "echo $(kubectl get po redis -o wide) | grep -o '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*'"
-#     )
-#     with _start_kube_cluster(
-#         supervisor_cpu=0.2,
-#         supervisor_mem="1G",
-#         worker_num=1,
-#         worker_cpu=0.2,
-#         worker_mem="1G",
-#         external_storage="juicefs",
-#         metadata_url="redis://" + redis_ip + ":6379/1",
-#         use_local_image=True,
-#     ):
-#         simple_job()
-#
-#
-# @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-# @pytest.mark.asyncio
-# async def test_external_storage_juicefs_missing_metadata_url():
-#     with pytest.raises(
-#         ValueError,
-#         match="Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1': ",
-#     ):
-#         py_version = get_local_py_version()
-#         _load_docker_env()
-#         image_name = _build_docker_images(py_version)
-#
-#         temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
-#         api_client = k8s.config.new_client_from_config()
-#         new_cluster(
-#             api_client,
-#             image=image_name,
-#             worker_spill_paths=[temp_spill_dir],
-#             timeout=600,
-#             log_when_fail=True,
-#             supervisor_cpu=1,
-#             supervisor_mem="1G",
-#             worker_num=1,
-#             worker_cpu=1,
-#             worker_mem="1G",
-#             external_storage="juicefs",
-#             use_local_image=True,
-#         )
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.asyncio
+async def test_external_storage_juicefs():
+    redis_ip = sp.getoutput(
+        "echo $(kubectl get po redis -o wide) | grep -o '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*'"
+    )
+    with _start_kube_cluster(
+        supervisor_cpu=0.1,
+        supervisor_mem="1G",
+        worker_num=1,
+        worker_cpu=0.1,
+        worker_mem="1G",
+        external_storage="juicefs",
+        metadata_url="redis://" + redis_ip + ":6379/1",
+        use_local_image=True,
+    ):
+        simple_job()
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.asyncio
+async def test_external_storage_juicefs_missing_metadata_url():
+    with pytest.raises(
+        ValueError,
+        match="Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1': ",
+    ):
+        py_version = get_local_py_version()
+        _load_docker_env()
+        image_name = _build_docker_images(py_version)
+
+        temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
+        api_client = k8s.config.new_client_from_config()
+        new_cluster(
+            api_client,
+            image=image_name,
+            worker_spill_paths=[temp_spill_dir],
+            log_when_fail=True,
+            supervisor_cpu=1,
+            supervisor_mem="1G",
+            worker_num=1,
+            worker_cpu=1,
+            worker_mem="1G",
+            external_storage="juicefs",
+            use_local_image=True,
+        )
