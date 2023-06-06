@@ -13,3 +13,4 @@
 # limitations under the License.
 
 from .external_storage import ExternalStorage, JuicefsK8SStorage
+from .juicefs import *

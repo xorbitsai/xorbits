@@ -137,10 +137,10 @@ jobs:
           helm fetch --untar juicefs/juicefs-csi-driver
           cd juicefs-csi-driver
           helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f ./values.yaml
-          sleep 1m
+          sleep 60
           kubectl apply -f https://raw.githubusercontent.com/Zhou1213CN/example-redis-config/main/example-redis-config.yaml
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/pods/config/redis-pod.yaml
-          sleep 1m
+          sleep 60
           cd ..
         fi
         if [[ "$MODULE" == "hadoop" ]]; then
