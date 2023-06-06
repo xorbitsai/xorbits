@@ -14,6 +14,7 @@
 
 import abc
 import functools
+import logging
 import math
 import os
 import re
@@ -24,6 +25,8 @@ from ..._mars.utils import calc_size_by_str, parse_readable_size
 from ...compat._constants import COMPATIBLE_DEPS
 from ...utils import get_local_package_version, get_local_py_version
 from ._constants import SERVICE_PID_FILE
+
+logger = logging.getLogger(__name__)
 
 try:
     from kubernetes.client import ApiClient
@@ -749,6 +752,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
 
         if self._external_storage == "juicefs":
+            logger.error("juicefs")
             self.add_env("MARS_EXTERNAL_STORAGE", "juicefs")
 
     def config_liveness_probe(self):
