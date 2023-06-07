@@ -151,7 +151,7 @@ def _start_kube_cluster(**kwargs):
             api_client,
             image=image_name,
             worker_spill_paths=[temp_spill_dir],
-            timeout=300,
+            timeout=600,
             log_when_fail=True,
             **kwargs,
         )
@@ -287,9 +287,11 @@ async def test_external_storage_juicefs():
     redis_ip = sp.getoutput(
         "echo $(kubectl get po redis -o wide) | grep -o '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*'"
     )
+    logger.info("redis_ip")
+    logger.info(redis_ip)
     with _start_kube_cluster(
         supervisor_cpu=0.1,
-        supervisor_mem="100M",
+        supervisor_mem="1G",
         worker_num=1,
         worker_cpu=0.1,
         worker_mem="1G",
