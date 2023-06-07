@@ -151,7 +151,7 @@ def _start_kube_cluster(**kwargs):
             api_client,
             image=image_name,
             worker_spill_paths=[temp_spill_dir],
-            timeout=600,
+            timeout=300,
             log_when_fail=True,
             **kwargs,
         )
