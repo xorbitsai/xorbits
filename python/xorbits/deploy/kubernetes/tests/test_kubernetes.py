@@ -287,8 +287,6 @@ async def test_external_storage_juicefs():
     redis_ip = sp.getoutput(
         "echo $(kubectl get po redis -o wide) | grep -o '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*'"
     )
-    logger.info("redis_ip")
-    logger.info(redis_ip)
     with _start_kube_cluster(
         supervisor_cpu=0.1,
         supervisor_mem="1G",
