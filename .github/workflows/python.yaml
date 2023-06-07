@@ -104,14 +104,14 @@ jobs:
 
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
-      if: ${{ matrix.module != 'gpu' }}
+      if: ${{ matrix.module != 'gpu' && "$MODULE" != "kubernetes-juicefs" }}
       with:
         python-version: ${{ matrix.python-version }}
         activate-environment: ${{ env.CONDA_ENV }}
 
     - name: Start minikube
       uses: medyagh/setup-minikube@master
-      if: ${{ matrix.module == 'kubernetes'}}
+      if: ${{ matrix.module == 'kubernetes' }}
       with:
         driver: none
         kubernetes-version: v1.23.12
