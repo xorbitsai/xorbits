@@ -496,16 +496,21 @@ def get_device_status(dev_index: int) -> _nvml_device_status:
         else:
             try:
                 gpu_util = int(util_node.find("gpu_util"))
-            except:
+            except TypeError:
+                # Solve the problem of illegal conversion from string to int
                 gpu_util = int(util_node.find("gpu_util").text.split()[0])
+            except Exception as e:
+                logger.warning(f"Caught exception of type: {type(e).__name__}")
         if util_node.find("memory_util").text == "N/A":
             mem_util = 0
         else:
             try:
                 mem_util = int(util_node.find("memory_util"))
-            except:
+            except TypeError:
+                # Solve the problem of illegal conversion from string to int
                 mem_util = int(util_node.find("memory_util").text.split()[0])
-
+            except Exception as e:
+                logger.warning(f"Caught exception of type: {type(e).__name__}")
         temperature = int(gpu_node.find("temperature").find("gpu_temp").text[:-1])
 
     return _nvml_device_status(

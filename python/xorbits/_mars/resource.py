@@ -411,6 +411,6 @@ def cuda_card_stats() -> List[_cuda_card_stat]:  # pragma: no cover
                     ),
                 )
             )
-        except:
-            pass
+        except Exception as e:
+            logger.warning(f"Caught exception of type: {type(e).__name__}")
     return infos
