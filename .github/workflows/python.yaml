@@ -269,7 +269,8 @@ jobs:
         elif [[ "$MODULE" == "learn" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/xgboost
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \ 
+            xorbits/xgboost
         elif [ "$MODULE" == "ray-deploy" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --log-level=DEBUG --timeout=200 xorbits/_mars --ignore=xorbits/_mars/deploy/oscar/ -m ray
