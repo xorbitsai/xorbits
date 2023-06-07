@@ -21,7 +21,7 @@ MARS_XGBOOST_CALLABLES = {}
 
 if xgboost is not None:
     import inspect
-    from typing import Callable, Dict
+    from typing import Callable, Dict, List, Optional
 
     from ..._mars.learn.contrib.xgboost.classifier import (
         XGBClassifier as mars_XGBClassifier,
@@ -45,7 +45,9 @@ if xgboost is not None:
         def __call__(self, data, **kws):
             return MarsDMatrix(data, **kws)
 
-    def _collect_module_callables() -> Dict[str, Callable]:
+    def _collect_module_callables(
+        skip_members: Optional[List[str]] = None,
+    ) -> Dict[str, Callable]:
         module_callables: Dict[str, Callable] = dict()
 
         module_callables[xgboost.XGBClassifier.__name__] = XGBClassifier
@@ -89,7 +91,7 @@ if xgboost is not None:
             )
 
         for name, func in inspect.getmembers(mars_xgboost, inspect.isfunction):
-            if name == "MarsDMatrix":
+            if skip_members is not None and name in skip_members:
                 continue
             module_callables[name] = wrap_mars_callable(
                 func,
@@ -100,4 +102,6 @@ if xgboost is not None:
             )
         return module_callables
 
-    MARS_XGBOOST_CALLABLES = _collect_module_callables()
+    MARS_XGBOOST_CALLABLES = _collect_module_callables(
+        skip_members=["MarsDMatrix", "register_op"]
+    )
