@@ -13,18 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+try:
+    import xgboost
+except ImportError:
+    xgboost = None
+
 import numpy as np
 import pytest
 
 from ... import xgboost as xxgb
 
-DMatrix = xxgb.DMatrix()
 
-
+@pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
 def test_local_predict_tensor(setup, dummy_xgb_cls_array):
+    from xgboost import Booster
+
     X, y = dummy_xgb_cls_array
+    DMatrix = xxgb.DMatrix()
     dtrain = DMatrix(X, label=y)
     booster = xxgb.train({}, dtrain, num_boost_round=2)
+    assert isinstance(booster, Booster)
 
     prediction = xxgb.predict(booster, X)
     assert isinstance(prediction.to_numpy(), np.ndarray)

@@ -12,17 +12,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+try:
+    import xgboost
+except ImportError:
+    xgboost = None
+
+
 import numpy as np
 import pytest
 
 from ... import xgboost as xxgb
 
-DMatrix = xxgb.DMatrix()
 
-
+@pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
 def test_train_evals(setup, dummy_xgb_cls_array):
+    from xgboost import Booster
+
     X, y = dummy_xgb_cls_array
     base_margin = np.random.rand(X.shape[0])
+    DMatrix = xxgb.DMatrix()
     dtrain = DMatrix(X, label=y, base_margin=base_margin)
     eval_x = DMatrix(X, label=y)
     evals = [(eval_x, "eval_x")]
@@ -31,6 +40,7 @@ def test_train_evals(setup, dummy_xgb_cls_array):
     booster = xxgb.train(
         {}, dtrain, num_boost_round=2, evals=evals, evals_result=evals_result
     )
+    assert isinstance(booster, Booster)
     assert len(evals_result) > 0
 
     prediction = xxgb.predict(booster, X)

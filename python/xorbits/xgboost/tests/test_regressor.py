@@ -12,12 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+try:
+    import xgboost
+except ImportError:
+    xgboost = None
+
 import numpy as np
 import pytest
 
 from ... import xgboost as xxgb
 
 
+@pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
 def test_XGBRegressor_array(setup, dummy_xgb_cls_array):
     X, y = dummy_xgb_cls_array
 
