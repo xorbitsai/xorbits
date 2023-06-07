@@ -495,20 +495,26 @@ def get_device_status(dev_index: int) -> _nvml_device_status:
             gpu_util = 0
         else:
             try:
-                gpu_util = int(util_node.find("gpu_util"))
-            except TypeError:
-                # Solve the problem of illegal conversion from string to int
-                gpu_util = int(util_node.find("gpu_util").text.split()[0])
+                gpu_util_element = util_node.find("gpu_util")
+                gpu_util_text = gpu_util_element.text if gpu_util_element is not None else None
+                if gpu_util_text:
+                    gpu_util = int(gpu_util_text.split()[0])
+                else:
+                    gpu_util = 0
+                    logger.warning("gpu_util element or text not found.")
             except Exception as e:
                 logger.warning(f"Caught exception of type: {type(e).__name__}")
         if util_node.find("memory_util").text == "N/A":
             mem_util = 0
         else:
             try:
-                mem_util = int(util_node.find("memory_util"))
-            except TypeError:
-                # Solve the problem of illegal conversion from string to int
-                mem_util = int(util_node.find("memory_util").text.split()[0])
+                mem_util_element = util_node.find("memory_util")
+                mem_util_text = mem_util_element.text if mem_util_element is not None else None
+                if mem_util_text:
+                    mem_util = int(mem_util_text.split()[0])
+                else:
+                    mem_util = 0
+                    logger.warning("memory_util element or text not found.")
             except Exception as e:
                 logger.warning(f"Caught exception of type: {type(e).__name__}")
         temperature = int(gpu_node.find("temperature").find("gpu_temp").text[:-1])
