@@ -94,7 +94,7 @@ jobs:
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
-          - { os: ubuntu-latest, module: kubernetes-juicefs, python-version: 3.9 }
+          - { os: self-hosted, module: kubernetes-juicefs, python-version: 3.9 }
     steps:
     - name: Check out code
       uses: actions/checkout@v3
@@ -215,7 +215,7 @@ jobs:
       working-directory: ./python
 
     - name: Install on GPU
-      if: ${{ matrix.module == 'gpu' }}
+      if: ${{ matrix.module == 'gpu' || matrix.module == 'kubernetes-juicefs' }}
       run: |
         pip install -U xoscar
         python setup.py build_ext -i

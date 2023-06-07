@@ -300,30 +300,30 @@ async def test_external_storage_juicefs():
         simple_job()
 
 
-# @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-# @pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
-# @pytest.mark.asyncio
-# async def test_external_storage_juicefs_missing_metadata_url():
-#     with pytest.raises(
-#         ValueError,
-#         match="Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1'.",
-#     ):
-#         py_version = get_local_py_version()
-#         _load_docker_env()
-#         image_name = _build_docker_images(py_version)
-#
-#         temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
-#         api_client = k8s.config.new_client_from_config()
-#         new_cluster(
-#             api_client,
-#             image=image_name,
-#             worker_spill_paths=[temp_spill_dir],
-#             log_when_fail=True,
-#             supervisor_cpu=0.1,
-#             supervisor_mem="1G",
-#             worker_num=1,
-#             worker_cpu=0.1,
-#             worker_mem="1G",
-#             external_storage="juicefs",
-#             use_local_image=True,
-#         )
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
+@pytest.mark.asyncio
+async def test_external_storage_juicefs_missing_metadata_url():
+    with pytest.raises(
+        ValueError,
+        match="Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1'.",
+    ):
+        py_version = get_local_py_version()
+        _load_docker_env()
+        image_name = _build_docker_images(py_version)
+
+        temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
+        api_client = k8s.config.new_client_from_config()
+        new_cluster(
+            api_client,
+            image=image_name,
+            worker_spill_paths=[temp_spill_dir],
+            log_when_fail=True,
+            supervisor_cpu=0.1,
+            supervisor_mem="1G",
+            worker_num=1,
+            worker_cpu=0.1,
+            worker_mem="1G",
+            external_storage="juicefs",
+            use_local_image=True,
+        )
