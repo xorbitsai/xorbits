@@ -398,9 +398,13 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     elif isinstance(inp, tuple):
         return tuple(to_mars(i) for i in inp)
     elif isinstance(inp, list):
-        return list(to_mars(i) for i in inp)
+        for i, item in enumerate(inp):
+            inp[i] = to_mars(item)
+        return inp
     elif isinstance(inp, dict):
-        return dict((k, to_mars(v)) for k, v in inp.items())
+        for k, v in inp.items():
+            inp[k] = to_mars(v)
+        return inp
     else:
         return inp
 
@@ -423,9 +427,13 @@ def from_mars(inp: Union[MarsEntity, Tuple, List, Dict, None]):
     elif isinstance(inp, tuple):
         return tuple(from_mars(i) for i in inp)
     elif isinstance(inp, list):
-        return list(from_mars(i) for i in inp)
+        for i, item in enumerate(inp):
+            inp[i] = from_mars(item)
+        return inp
     elif isinstance(inp, dict):
-        return dict((k, from_mars(v)) for k, v in inp.items())
+        for k, v in inp.items():
+            inp[k] = from_mars(v)
+        return inp
     elif isinstance(inp, Generator):
         return wrap_generator(inp)
     else:

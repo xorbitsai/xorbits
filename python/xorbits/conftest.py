@@ -69,11 +69,31 @@ def dummy_int_2d_array():
 
 
 @pytest.fixture
-def dummy_xgb_data():
+def dummy_xgb_cls_array():
     X = np.random.rand(100, 10)
-    y_classifier = np.random.randint(0, 2, 100)
-    y_regressor = np.random.rand(100)
-    return X, y_classifier, y_regressor
+    y = np.random.randint(0, 2, 100)
+    return X, y
+
+
+@pytest.fixture
+def dummy_xgb_reg_array():
+    X = np.random.rand(100, 10)
+    y = np.random.rand(100)
+    return X, y
+
+
+@pytest.fixture
+def dummy_xgb_cls_df():
+    X = np.random.rand(100, 10)
+    y = np.random.randint(0, 2, 100)
+    return pd.DataFrame(X), y
+
+
+@pytest.fixture
+def dummy_xgb_reg_df():
+    X = np.random.rand(100, 10)
+    y = np.random.rand(100)
+    return pd.DataFrame(X), y
 
 
 @pytest.fixture(scope="package")
