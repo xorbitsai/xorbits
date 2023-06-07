@@ -13,18 +13,3 @@
 # limitations under the License.
 
 from .core import MARS_XGBOOST_CALLABLES
-
-
-def _install():
-    from ...core.adapter import (
-        MARS_TENSOR_TYPE,
-        collect_cls_members,
-        register_data_members,
-        wrap_magic_method,
-    )
-    from ...core.data import DataRef, DataType
-
-    for cls in MARS_TENSOR_TYPE:
-        register_data_members(
-            DataType.tensor, collect_cls_members(cls, DataType.tensor)
-        )
