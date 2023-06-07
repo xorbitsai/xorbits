@@ -17,6 +17,8 @@ try:
 except ImportError:
     xgboost = None
 
+MARS_XGBOOST_CALLABLES = {}
+
 if xgboost is not None:
     import inspect
     from typing import Callable, Dict
@@ -98,4 +100,4 @@ if xgboost is not None:
             )
         return module_callables
 
-    MARS_XGBOOST_CALLABLES: Dict[str, Callable] = _collect_module_callables()
+    MARS_XGBOOST_CALLABLES = _collect_module_callables()
