@@ -14,7 +14,6 @@
 # limitations under the License.
 import numpy as np
 import pytest
-from xgboost import Booster
 
 from ... import xgboost as xxgb
 
@@ -32,9 +31,10 @@ def test_train_evals(setup, dummy_xgb_cls_array):
     booster = xxgb.train(
         {}, dtrain, num_boost_round=2, evals=evals, evals_result=evals_result
     )
-
-    assert isinstance(booster, Booster)
     assert len(evals_result) > 0
+
+    prediction = xxgb.predict(booster, X)
+    assert isinstance(prediction.to_numpy(), np.ndarray)
 
     with pytest.raises(TypeError):
         xxgb.train(

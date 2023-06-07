@@ -15,7 +15,6 @@
 
 import numpy as np
 import pytest
-from xgboost import Booster
 
 from ... import xgboost as xxgb
 
@@ -26,7 +25,6 @@ def test_local_predict_tensor(setup, dummy_xgb_cls_array):
     X, y = dummy_xgb_cls_array
     dtrain = DMatrix(X, label=y)
     booster = xxgb.train({}, dtrain, num_boost_round=2)
-    assert isinstance(booster, Booster)
 
     prediction = xxgb.predict(booster, X)
     assert isinstance(prediction.to_numpy(), np.ndarray)

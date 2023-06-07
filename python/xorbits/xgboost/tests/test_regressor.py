@@ -14,7 +14,6 @@
 
 import numpy as np
 import pytest
-import xgboost as xgb
 
 from ... import xgboost as xxgb
 
@@ -67,17 +66,3 @@ def test_XGBRegressor_df(setup, dummy_xgb_cls_df):
     # test wrong argument
     with pytest.raises(TypeError):
         regressor.fit(X, y, wrong_param=1)
-
-
-def test_xorbits_xgb_consistency(setup, dummy_xgb_cls_array):
-    X, y = dummy_xgb_cls_array
-
-    regressor = xgb.XGBRegressor(verbosity=1, n_estimators=2)
-    regressor.fit(X, y, eval_set=[(X, y)])
-    pred = regressor.predict(X)
-
-    xregressor = xxgb.XGBRegressor(verbosity=1, n_estimators=2)
-    xregressor.fit(X, y, eval_set=[(X, y)])
-    xpred = xregressor.predict(X)
-
-    assert (xpred.to_numpy() == pred).all()

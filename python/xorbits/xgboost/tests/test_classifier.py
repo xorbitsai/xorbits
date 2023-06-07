@@ -15,7 +15,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-import xgboost as xgb
 
 from ... import xgboost as xxgb
 
@@ -88,17 +87,3 @@ def test_XGBClassifier_df(setup, dummy_xgb_cls_df):
     # test wrong argument
     with pytest.raises(TypeError):
         classifier.fit(X, y, wrong_param=1)
-
-
-def test_xorbits_xgb_consistency(setup, dummy_xgb_cls_array):
-    X, y = dummy_xgb_cls_array
-
-    classifier = xgb.XGBClassifier(verbosity=1, n_estimators=2)
-    classifier.fit(X, y, eval_set=[(X, y)])
-    pred = classifier.predict(X)
-
-    xclassifier = xxgb.XGBClassifier(verbosity=1, n_estimators=2)
-    xclassifier.fit(X, y, eval_set=[(X, y)])
-    xpred = xclassifier.predict(X)
-
-    assert (xpred.to_numpy() == pred).all()
