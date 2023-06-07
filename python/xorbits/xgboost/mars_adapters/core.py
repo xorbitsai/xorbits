@@ -12,17 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import inspect
-from typing import Callable, Dict
-
-MARS_XGBOOST_CALLABLES = dict()
-
 try:
     import xgboost
 except ImportError:
     xgboost = None
 
 if xgboost is not None:
+    import inspect
+    from typing import Callable, Dict
+
     from ..._mars.learn.contrib.xgboost.classifier import (
         XGBClassifier as mars_XGBClassifier,
     )
@@ -100,4 +98,4 @@ if xgboost is not None:
             )
         return module_callables
 
-    MARS_XGBOOST_CALLABLES = _collect_module_callables()
+    MARS_XGBOOST_CALLABLES: Dict[str, Callable] = _collect_module_callables()
