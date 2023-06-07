@@ -104,7 +104,7 @@ jobs:
 
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
-      if: ${{ matrix.module != 'gpu' && "$MODULE" != "kubernetes-juicefs" }}
+      if: ${{ matrix.module != 'gpu' && matrix.module != "kubernetes-juicefs" }}
       with:
         python-version: ${{ matrix.python-version }}
         activate-environment: ${{ env.CONDA_ENV }}
