@@ -125,6 +125,29 @@ Extra Options for Workers
 |                    | devices                                                        |
 +--------------------+----------------------------------------------------------------+
 
+
+Custom configuration
+--------------------
+
+Default configuration can be modified by specifying a ``-f`` flag. Provide the path of your ``yml`` file which contains custom configuration along with ``-f`` flag.
+
+For example
+~~~~~~~~~~~
+
+If the user want to modify ``transfer_block_size``` and ``node_timeout``, specify ``-f your-config.yml``.
+
+your-config.yml
+
+.. code-block:: bash
+
+    "@inherits": "@default"
+    storage:
+    default_config: 
+        transfer_block_size: 10 * 1024 ** 2
+    cluster:
+    node_timeout: 1200
+
+
 Example
 -------
 
