@@ -12,4 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .core import MARS_XGBOOST_CALLABLES
+try:
+    import xgboost
+except ImportError:
+    xgboost = None
+
+if xgboost is not None:
+    from .core import MARS_XGBOOST_CALLABLES
