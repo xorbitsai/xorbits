@@ -222,7 +222,8 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ xorbits/xgboost --timeout=1500 \
+          pytest --ignore xorbits/_mars/ --ignore xorbits/xgboost \
+            --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
