@@ -13,15 +13,7 @@
 # limitations under the License.
 
 
-def _install():
-    from .mars_adapters import _install as _install_mars_methods
-
-    _install_mars_methods()
-
-
 def __dir__():
-    import xgboost
-
     from .mars_adapters import MARS_XGBOOST_CALLABLES
 
     return list(MARS_XGBOOST_CALLABLES.keys())

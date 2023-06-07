@@ -13,35 +13,39 @@
 # limitations under the License.
 
 import inspect
-from types import ModuleType
-from typing import Callable, Dict, List, Optional, Type
+from typing import Callable, Dict
 
 import xgboost
 
 from ..._mars.learn.contrib.xgboost.classifier import (
     XGBClassifier as mars_XGBClassifier,
 )
-from ...core.adapter import collect_cls_members, mars_xgboost, wrap_mars_callable
+from ..._mars.learn.contrib.xgboost.dmatrix import MarsDMatrix
+from ..._mars.learn.contrib.xgboost.regressor import XGBRegressor as mars_XGBRegressor
+from ...core.adapter import mars_xgboost, wrap_mars_callable
 
 
 class XGBClassifier(mars_XGBClassifier):
     pass
 
 
-def _collect_module_callables(
-    m: ModuleType,
-    docstring_src_module: ModuleType,
-    skip_members: Optional[List[str]] = None,
-) -> Dict[str, Callable]:
+class XGBRegressor(mars_XGBRegressor):
+    pass
+
+
+class DMatrix:
+    def __init__(self) -> None:
+        pass
+
+    def __call__(self, data, **kws):
+        return MarsDMatrix(data, **kws)
+
+
+def _collect_module_callables() -> Dict[str, Callable]:
     module_callables: Dict[str, Callable] = dict()
 
-    module_callables[mars_xgboost.XGBClassifier.__name__] = XGBClassifier
-
-    # install module functions.
+    module_callables[xgboost.XGBClassifier.__name__] = XGBClassifier
     for name, func in inspect.getmembers(XGBClassifier, inspect.isfunction):
-        if skip_members is not None and name in skip_members:
-            continue
-
         setattr(
             XGBClassifier,
             name,
@@ -54,64 +58,43 @@ def _collect_module_callables(
             ),
         )
 
+    module_callables[xgboost.XGBRegressor.__name__] = XGBRegressor
+    for name, func in inspect.getmembers(XGBRegressor, inspect.isfunction):
+        setattr(
+            XGBRegressor,
+            name,
+            wrap_mars_callable(
+                func,
+                attach_docstring=True,
+                is_cls_member=False,
+                docstring_src_module=xgboost.XGBRegressor,
+                docstring_src=getattr(xgboost.XGBRegressor, name, None),
+            ),
+        )
+
+    module_callables[xgboost.DMatrix.__name__] = DMatrix
+    for name, func in inspect.getmembers(DMatrix, inspect.isfunction):
+        setattr(
+            DMatrix,
+            name,
+            wrap_mars_callable(
+                func,
+                attach_docstring=False,
+                is_cls_member=False,
+            ),
+        )
+
+    for name, func in inspect.getmembers(mars_xgboost, inspect.isfunction):
+        if name == "MarsDMatrix":
+            continue
+        module_callables[name] = wrap_mars_callable(
+            func,
+            attach_docstring=True,
+            is_cls_member=False,
+            docstring_src_module=xgboost,
+            docstring_src=getattr(xgboost, name, None),
+        )
     return module_callables
 
 
-MARS_XGBOOST_CALLABLES: Dict[str, Callable] = _collect_module_callables(
-    mars_xgboost,
-    xgboost,
-)
-
-
-def install_members(
-    cls: Type, mars_cls: Type, docstring_src_module: ModuleType, docstring_src_cls: Type
-):
-    members = collect_cls_members(
-        mars_cls,
-        docstring_src_module=docstring_src_module,
-        docstring_src_cls=docstring_src_cls,
-    )
-    for name in members:
-        setattr(cls, name, members[name])
-
-
-# functions and class constructors defined by mars dataframe
-# def _collect_module_callables() -> Dict[str, Callable]:
-#     module_callables: Dict[str, Callable] = dict()
-
-#     # install class constructors.
-#     mars_dataframe_callables[mars_dataframe.DataFrame.__name__] = wrap_mars_callable(
-#         mars_dataframe.DataFrame,
-#         attach_docstring=True,
-#         is_cls_member=False,
-#         docstring_src_module=pandas,
-#         docstring_src=pandas.DataFrame,
-#     )
-#     mars_dataframe_callables[mars_dataframe.Series.__name__] = wrap_mars_callable(
-#         mars_dataframe.Series,
-#         attach_docstring=True,
-#         is_cls_member=False,
-#         docstring_src_module=pandas,
-#         docstring_src=pandas.Series,
-#     )
-#     mars_dataframe_callables[mars_dataframe.Index.__name__] = wrap_mars_callable(
-#         mars_dataframe.Index,
-#         attach_docstring=True,
-#         is_cls_member=False,
-#         docstring_src_module=pandas,
-#         docstring_src=pandas.Index,
-#     )
-#     # install module functions
-#     for name, func in inspect.getmembers(mars_dataframe, inspect.isfunction):
-#         mars_dataframe_callables[name] = wrap_mars_callable(
-#             func,
-#             attach_docstring=True,
-#             is_cls_member=False,
-#             docstring_src_module=pandas,
-#             docstring_src=getattr(pandas, name, None),
-#         )
-
-#     return mars_dataframe_callables
-
-
-# MARS_DATAFRAME_CALLABLES: Dict[str, Callable] = _collect_module_callables()
+MARS_XGBOOST_CALLABLES: Dict[str, Callable] = _collect_module_callables()
