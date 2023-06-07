@@ -411,6 +411,6 @@ def cuda_card_stats() -> List[_cuda_card_stat]:  # pragma: no cover
                     ),
                 )
             )
-        except Exception as e:
+        except Exception:
             logger.warning(f"Unexpected error happened when gathering stats of device {device_idx}", exc_info=True)
     return infos
