@@ -15,7 +15,7 @@
 import inspect
 from typing import Callable, Dict
 
-MARS_XGBOOST_CALLABLES = None
+MARS_XGBOOST_CALLABLES = dict()
 
 try:
     import xgboost
