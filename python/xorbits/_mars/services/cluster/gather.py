@@ -173,8 +173,8 @@ def gather_node_resource(band_to_resource: Dict[str, Resource] = None, use_gpu=T
             res[f"gpu-{idx}"] = {
                 "gpu_avail": 1 - gpu_card_stat.gpu_usage,
                 "gpu_total": num_gpu,
-                "memory_avail": gpu_card_stat.fb_mem_info.available,
-                "memory_total": gpu_card_stat.fb_mem_info.total,
+                "gpu_memory_avail": gpu_card_stat.fb_mem_info.available,
+                "gpu_memory_total": gpu_card_stat.fb_mem_info.total,
             }
     return res
 
