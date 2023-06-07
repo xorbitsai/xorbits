@@ -591,8 +591,7 @@ class ReplicationConfig(KubeConfig):
             "requests": self._resource_request.build()
             if self._resource_request
             else None,
-            # "limits": self._resource_limit.build() if self._resource_limit else None,
-            "limits": self._resource_request.build(),
+            "limits": self._resource_limit.build() if self._resource_limit else None,
         }
         lifecycle_dict = _remove_nones(
             {
