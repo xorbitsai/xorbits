@@ -496,7 +496,9 @@ def get_device_status(dev_index: int) -> _nvml_device_status:
         else:
             try:
                 gpu_util_element = util_node.find("gpu_util")
-                gpu_util_text = gpu_util_element.text if gpu_util_element is not None else None
+                gpu_util_text = (
+                    gpu_util_element.text if gpu_util_element is not None else None
+                )
                 if gpu_util_text:
                     gpu_util = int(gpu_util_text.split()[0])
                 else:
@@ -509,7 +511,9 @@ def get_device_status(dev_index: int) -> _nvml_device_status:
         else:
             try:
                 mem_util_element = util_node.find("memory_util")
-                mem_util_text = mem_util_element.text if mem_util_element is not None else None
+                mem_util_text = (
+                    mem_util_element.text if mem_util_element is not None else None
+                )
                 if mem_util_text:
                     mem_util = int(mem_util_text.split()[0])
                 else:
