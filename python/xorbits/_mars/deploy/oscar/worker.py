@@ -57,6 +57,18 @@ class WorkerCommandRunner(OscarCommandRunner):
         ):  # pragma: no cover
             raise ValueError("--supervisors is needed to start Mars Worker")
 
+        oscar_config = self.config.get("oscar")
+        if oscar_config is not None:
+            external_addr_scheme = oscar_config.get("numa").get("external_addr_scheme")
+            if external_addr_scheme:  # pragma: no cover
+                supervisors = []
+                for s in args.supervisors.split(","):
+                    if s.startswith(f"{external_addr_scheme}://"):  # pragma: no cover
+                        supervisors.append(s)
+                    else:  # pragma: no cover
+                        supervisors.append(f"{external_addr_scheme}://{s}")
+                args.supervisors = ",".join(supervisors)
+
         if args.endpoint is None:
             args.endpoint = f"{args.host}:{get_next_port()}"
         self.n_io_process = int(args.n_io_process)
