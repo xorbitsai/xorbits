@@ -176,36 +176,7 @@ def _start_kube_cluster(**kwargs):
                     ]
                 )
             )
-        external_storage = kwargs.get("external_storage", "")
-        if external_storage:
-            from kubernetes.stream import stream
-
-            pods_name_list = subprocess.getoutput(
-                "kubectl get pods -o name --no-headers=true -n {ns}".format(
-                    ns=cluster_client.namespace
-                )
-            ).split("\n")
-            pods_name_list = list(map(lambda x: x[x.index("/") + 1 :], pods_name_list))
-            import xorbits.pandas as pd
-
-            pd.DataFrame({"col": [1, 2, 3]}).sum()
-            for pod in pods_name_list:
-                exec_cmd = ["/bin/sh", "-c", "cd .. && ls data"]
-                resp = stream(
-                    kube_api.connect_get_namespaced_pod_exec,
-                    name=pod,
-                    namespace=cluster_client.namespace,
-                    command=exec_cmd,
-                    stderr=True,
-                    stdin=False,
-                    stdout=True,
-                    tty=False,
-                )
-                logger.info("resp")
-                logger.info(resp)
-                assert resp == "h"
         yield cluster_client
-
         [p.terminate() for p in log_processes]
     finally:
         shutil.rmtree(temp_spill_dir)
@@ -323,8 +294,34 @@ async def test_external_storage_juicefs():
         external_storage="juicefs",
         metadata_url="redis://" + redis_ip + ":6379/1",
         use_local_image=True,
-    ):
-        simple_job()
+    ) as cluster_client:
+        import xorbits.pandas as pd
+
+        print(pd.DataFrame({"col": [1, 2, 3]}).sum())
+
+        from kubernetes.stream import stream
+
+        api_client = k8s.config.new_client_from_config()
+        kube_api = k8s.client.CoreV1Api(api_client)
+        pods_name_list = subprocess.getoutput(
+            "kubectl get pods -o name --no-headers=true -n {ns}".format(
+                ns=cluster_client.namespace
+            )
+        ).split("\n")
+        pods_name_list = list(map(lambda x: x[x.index("/") + 1 :], pods_name_list))
+        for pod in pods_name_list:
+            exec_cmd = ["/bin/sh", "-c", "ls /data"]
+            resp = stream(
+                kube_api.connect_get_namespaced_pod_exec,
+                name=pod,
+                namespace=cluster_client.namespace,
+                command=exec_cmd,
+                stderr=True,
+                stdin=False,
+                stdout=True,
+                tty=False,
+            )
+            assert resp != ""
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
