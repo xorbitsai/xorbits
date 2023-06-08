@@ -15,11 +15,8 @@
 
 
 def __dir__():
-    import pdb
-
     from .mars_adapters import MARS_LIGHGBM_CALLABLES
 
-    pdb.set_trace()
     return list(MARS_LIGHGBM_CALLABLES.keys())
 
 
