@@ -201,7 +201,7 @@ def _start_kube_cluster(**kwargs):
                     stdout=True,
                     tty=False,
                 )
-                logger.info(resp)
+                assert resp != ""
                 print(c)
 
         yield cluster_client
