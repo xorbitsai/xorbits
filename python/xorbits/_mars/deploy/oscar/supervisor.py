@@ -51,18 +51,7 @@ class SupervisorCommandRunner(OscarCommandRunner):
         self._endpoint_file_name = self._write_supervisor_endpoint_file(args)
 
         args.supervisors = f"{args.supervisors},{args.endpoint}".strip(",")
-
-        oscar_config = self.config.get("oscar")
-        if oscar_config is not None:
-            external_addr_scheme = oscar_config.get("numa").get("external_addr_scheme")
-            if external_addr_scheme:  # pragma: no cover
-                supervisors = []
-                for s in args.supervisors.split(","):
-                    if s.startswith(f"{external_addr_scheme}://"):  # pragma: no cover
-                        supervisors.append(s)
-                    else:  # pragma: no cover
-                        supervisors.append(f"{external_addr_scheme}://{s}")
-                args.supervisors = ",".join(supervisors)
+        args.supervisors = self._process_supervisors_addr_scheme(args.supervisors)
 
         web_config = self.config.get("web", {})
         if args.web_port is not None:
