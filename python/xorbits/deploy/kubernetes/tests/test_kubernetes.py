@@ -176,6 +176,33 @@ def _start_kube_cluster(**kwargs):
                     ]
                 )
             )
+        external_storage = kwargs.get("external_storage", "")
+        if external_storage:
+            from kubernetes.stream import stream
+
+            pods_name_list = subprocess.getoutput(
+                "kubectl get pods -o name --no-headers=true -n {ns}".format(
+                    ns=cluster_client.namespace
+                )
+            ).split("\n")
+            pods_name_list = list(map(lambda x: x[x.index("/") + 1 :], pods_name_list))
+            for pod in pods_name_list:
+                a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
+                b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
+                c = (a * b * 2 + 1).sum()
+                exec_cmd = ["/bin/sh", "-c", "cd .. && ls data"]
+                resp = stream(
+                    kube_api.connect_get_namespaced_pod_exec,
+                    name=pod,
+                    namespace=cluster_client.namespace,
+                    command=exec_cmd,
+                    stderr=True,
+                    stdin=False,
+                    stdout=True,
+                    tty=False,
+                )
+                logger.info(resp)
+                print(c)
 
         yield cluster_client
 
