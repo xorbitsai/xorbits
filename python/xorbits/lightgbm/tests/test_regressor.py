@@ -13,23 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 import pandas as pd
 import pytest
+
+import xorbits.numpy as mt
 
 try:
     import lightgbm
 
 except ImportError:
     lightgbm = None
-# from ... import lightgbm as lgb
-from ..._mars.learn.contrib import lightgbm as lgb
+from ... import lightgbm as lgb
 
 n_rows = 1000
 n_columns = 10
-rs = np.random.RandomState(0)
-X = rs.rand(n_rows, n_columns)
-y = rs.randint(0, 10, n_rows)
+chunk_size = 200
+rs = mt.random.RandomState(0)
+X = rs.rand(n_rows, n_columns, chunk_size=chunk_size)
+y = rs.randint(0, 10, n_rows, chunk_size=chunk_size)
 
 
 @pytest.mark.skipif(lightgbm is None, reason="LightGBM not installed")
@@ -41,12 +42,12 @@ def test_local_regressor(setup):
     assert prediction.ndim == 1
     assert prediction.shape[0] == len(X)
 
-    assert isinstance(prediction.to_numpy(), np.ndarray)
+    assert isinstance(prediction, mt.ndarray)
     result = prediction.fetch()
     assert prediction.dtype == result.dtype
 
     # test weight
-    weight = np.random.rand(X.shape[0])
+    weight = mt.random.rand(X.shape[0])
     regressor = lgb.LGBMRegressor(verbosity=1, n_estimators=2)
     regressor.fit(X, y, sample_weight=weight)
     prediction = regressor.predict(X)
@@ -56,7 +57,7 @@ def test_local_regressor(setup):
     result = prediction.fetch()
     assert prediction.dtype == result.dtype
 
-    # test numpy array
+    # test numpy tensor
     try:
         from sklearn.datasets import make_classification
 
@@ -78,3 +79,13 @@ def test_local_regressor(setup):
         assert prediction.shape[0] == len(X_df)
     except ImportError:
         pass
+
+    # test existing model
+    X_np = X.execute().fetch()
+    y_np = y.execute().fetch()
+    raw_regressor = lightgbm.LGBMRegressor(verbosity=1, n_estimators=2)
+    raw_regressor.fit(X_np, y_np)
+    prediction = lgb.LGBMRegressor(raw_regressor).predict(X)
+
+    assert prediction.ndim == 1
+    assert prediction.shape[0] == len(X)

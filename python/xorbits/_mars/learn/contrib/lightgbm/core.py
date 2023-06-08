@@ -53,6 +53,7 @@ TrainTuple = namedtuple("TrainTuple", "data label sample_weight init_score")
 
 class LGBMScikitLearnBase:
     def __init__(self, *args, **kwargs):
+        # import pdb;pdb.set_trace()
         if args and isinstance(args[0], self._get_lgbm_class()):
             model = args[0]
             super().__init__(**model.get_params())
