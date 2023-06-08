@@ -375,6 +375,37 @@ def test_sort_index_execution(setup):
     expected = raw_gb_rolling_mean.sort_index()
     pd.testing.assert_frame_equal(result, expected)
 
+    # test multi-level DataFrame with multi-chunk
+    raw_index = pd.MultiIndex.from_arrays(np.random.randint(10, size=[2, 100]))
+    raw = pd.DataFrame(
+        {"foo": np.random.randint(100, size=100), "bar": range(100)}, index=raw_index
+    )
+    mdf = DataFrame(raw, chunk_size=20)
+
+    for level_ in [None, 0, 1, [0, 1], [1, 0]]:
+        for sort_remaining_ in [True, False]:
+            for ascending_ in [True, False]:
+                result = (
+                    mdf.sort_index(
+                        level=level_,
+                        ascending=ascending_,
+                        sort_remaining=sort_remaining_,
+                    )
+                    .execute()
+                    .fetch()
+                )
+                expected = raw.sort_index(
+                    level=level_, ascending=ascending_, sort_remaining=sort_remaining_
+                )
+                # When index is not unique and there's multi chunk size, the sorting result may be inconsistent with pandas. Because PSRS is an unstable sort.
+                if level_ in [0, 1] and sort_remaining_ is False:
+                    pd.testing.assert_index_equal(
+                        result.index.get_level_values(level_),
+                        expected.index.get_level_values(level_),
+                    )
+                else:
+                    pd.testing.assert_index_equal(result.index, expected.index)
+
 
 def test_arrow_string_sort_values(setup):
     rs = np.random.RandomState(0)

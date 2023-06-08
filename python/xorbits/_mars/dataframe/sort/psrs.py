@@ -665,10 +665,20 @@ class DataFramePSRSShuffle(MapReduceOperand, DataFrameOperandMixin):
         a, pivots = [ctx[c.key] for c in op.inputs]
         out = op.outputs[0]
 
-        if op.ascending:
-            poses = a.index.searchsorted(list(pivots), side="right")
+        if isinstance(a.index, pd.MultiIndex) and isinstance(pivots, pd.MultiIndex):
+            level = 0 if op.level is None else op.level[0]
+            a_single_index = a.index.get_level_values(level)
+            pivots_single_index = pivots.get_level_values(level)
         else:
-            poses = len(a) - a.index[::-1].searchsorted(list(pivots), side="right")
+            a_single_index = a.index
+            pivots_single_index = pivots
+
+        if op.ascending:
+            poses = a_single_index.searchsorted(list(pivots_single_index), side="right")
+        else:
+            poses = len(a) - a_single_index[::-1].searchsorted(
+                list(pivots_single_index), side="right"
+            )
         poses = (None,) + tuple(poses) + (None,)
         for i in range(op.n_partition):
             values = a.iloc[poses[i] : poses[i + 1]]
