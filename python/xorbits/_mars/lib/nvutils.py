@@ -520,7 +520,7 @@ def get_device_status(dev_index: int) -> _nvml_device_status:
                     mem_util = 0
                     logger.warning("memory_util element or text not found.")
             except Exception as e:
-                logger.warning(f"Caught exception of type: {type(e).__name__}")
+                logger.warning("Failed to get the memory util", exc_info=True)
         temperature = int(gpu_node.find("temperature").find("gpu_temp").text[:-1])
 
     return _nvml_device_status(
