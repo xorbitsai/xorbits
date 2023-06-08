@@ -186,10 +186,10 @@ def _start_kube_cluster(**kwargs):
                 )
             ).split("\n")
             pods_name_list = list(map(lambda x: x[x.index("/") + 1 :], pods_name_list))
+            import xorbits.pandas as pd
+
+            pd.DataFrame({"col": [1, 2, 3]}).sum()
             for pod in pods_name_list:
-                a = xnp.ones((100, 100), chunk_size=30) * 2 * 1 + 1
-                b = xnp.ones((100, 100), chunk_size=20) * 2 * 1 + 1
-                c = (a * b * 2 + 1).sum()
                 exec_cmd = ["/bin/sh", "-c", "cd .. && ls data"]
                 resp = stream(
                     kube_api.connect_get_namespaced_pod_exec,
@@ -201,9 +201,9 @@ def _start_kube_cluster(**kwargs):
                     stdout=True,
                     tty=False,
                 )
-                assert resp != ""
-                print(c)
-
+                logger.info("resp")
+                logger.info(resp)
+                assert resp == "h"
         yield cluster_client
 
         [p.terminate() for p in log_processes]
