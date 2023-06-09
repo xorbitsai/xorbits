@@ -186,7 +186,7 @@ class BuildWeb(Command):
         web_dest_path = os.path.join(repo_root, *cls._web_dest_path.split("/"))
 
         if npm_path is None:
-            warnings.warn("Cannot find NPM, may affect displaying Mars Web")
+            warnings.warn("Cannot find NPM, may affect displaying Xorbits web UI")
             return
         else:
             replacements = {"npm": npm_path}
