@@ -225,7 +225,7 @@ def sort_index(
         raise TypeError(f"Invalid na_position: {na_position}")
     psrs_kinds = _validate_sort_psrs_kinds(psrs_kinds)
     axis = validate_axis(axis, a)
-    level = level if isinstance(level, (list, tuple)) else [level]
+    level = level if level is None or isinstance(level, (list, tuple)) else [level]
     op = DataFrameSortIndex(
         level=level,
         axis=axis,

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import shutil
 import tempfile
 
 import numpy as np
@@ -432,17 +433,20 @@ def test_pandas_module_methods(setup):
     # input has xorbit data
     raw = pd.DataFrame(
         {
-            "foo": ["one", "one", "one", "two", "two", "two"],
-            "bar": ["A", "B", "C", "A", "B", "C"],
-            "baz": [1, 2, 3, 4, 5, 6],
-            "zoo": ["x", "y", "z", "q", "w", "t"],
+            "hr1": [514, 573],
+            "hr2": [545, 526],
+            "team": ["Red Sox", "Yankees"],
+            "year1": [2007, 2007],
+            "year2": [2008, 2008],
         }
     )
     with pytest.warns(Warning) as w:
-        r = xpd.pivot(xpd.DataFrame(raw), index="foo", columns="bar", values="baz")
-        assert "xorbits.pandas.pivot will fallback to Pandas" == str(w[0].message)
+        r = xpd.lreshape(
+            xpd.DataFrame(raw), {"year": ["year1", "year2"], "hr": ["hr1", "hr2"]}
+        )
+        assert "xorbits.pandas.lreshape will fallback to Pandas" == str(w[0].message)
 
-    expected = pd.pivot(raw, index="foo", columns="bar", values="baz")
+    expected = pd.lreshape(raw, {"year": ["year1", "year2"], "hr": ["hr1", "hr2"]})
     assert str(r) == str(expected)
     assert isinstance(r, DataRef)
     pd.testing.assert_frame_equal(r.to_pandas(), expected)
@@ -481,3 +485,22 @@ def test_docstring():
 
 def test_dir(setup):
     assert pd.__dir__().sort() == xpd.__dir__().sort()
+
+
+def test_read_pickle(setup):
+    import pickle
+
+    pkl_data = (
+        np.array([1, 2, 3]),
+        np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
+    )
+    tempdir = tempfile.mkdtemp()
+    file_path = os.path.join(tempdir, "test.pkl")
+    try:
+        with open(file_path, "wb") as f:
+            pickle.dump(pkl_data, f)
+        mpkl = xpd.read_pickle(file_path).to_object()
+        for x, y in zip(pkl_data, mpkl):
+            assert (x == y).all()
+    finally:
+        shutil.rmtree(tempdir)

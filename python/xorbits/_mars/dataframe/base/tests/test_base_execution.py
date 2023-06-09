@@ -687,7 +687,7 @@ def test_data_frame_applymap_execute(setup):
 
 
 def test_data_frame_pivot_execute(setup):
-    def sorted_df(df):
+    def align_df(df):
         return df.sort_index(axis=0).sort_index(axis=1)
 
     df_raw = pd.DataFrame(
@@ -698,40 +698,180 @@ def test_data_frame_pivot_execute(setup):
             "qux": [10, 20, 30, 40, 50, 60],
         }
     )
-    df = from_pandas_df(df_raw, chunk_size=2)
+    df = from_pandas_df(df_raw, chunk_size=1)
 
     # test basic pivot
     r = df.pivot(index="foo", columns="bar", values="baz")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(index="foo", columns="bar", values="baz")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot without values
     r = df.pivot(index="foo", columns="bar")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(index="foo", columns="bar")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot without index
     r = df.pivot(columns="foo", values="baz")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(columns="foo", values="baz")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot without values and index
     r = df.pivot(columns="foo")
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(columns="foo")
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
 
     # test pivot with list of inputs
-    df = from_pandas_df(df_raw)  # Avoid shape check
     r = df.pivot(index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"])
-    result = r.execute().fetch()
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
     expected = df_raw.pivot(
         index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"]
     )
-    pd.testing.assert_frame_equal(sorted_df(result), sorted_df(expected))
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test one chunk
+    df = from_pandas_df(df_raw)
+    r = df.pivot(index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"])
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot(
+        index=["foo", "qux"], columns=["bar", "baz"], values=["baz", "qux"]
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+
+def test_data_frame_pivot_table_execute(setup):
+    def align_df(df):
+        return df.sort_index(axis=0).sort_index(axis=1).astype(float)
+
+    df_raw = pd.DataFrame(
+        {
+            "A": ["foo", "foo", "foo", "foo", "foo", "bar", "bar", "bar", "bar"],
+            "B": ["one", "one", "one", "two", "two", "one", "one", "two", "two"],
+            "C": [
+                "small",
+                "large",
+                "large",
+                "small",
+                "small",
+                "large",
+                "small",
+                "small",
+                "large",
+            ],
+            "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
+            "E": [2, 4, 5, 5, 6, 6, 8, 9, 9],
+        }
+    )
+
+    df = from_pandas_df(df_raw, chunk_size=2)
+
+    # test basic pivot_table
+    r = df.pivot_table(values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum)
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test fill value
+    r = df.pivot_table(
+        values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test multi-value and multi-index
+    r = df.pivot_table(
+        values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test multiple aggfunc
+    def range_func(data):
+        return data.max() - data.min()
+
+    r = df.pivot_table(
+        values=["D", "E"],
+        index=["A", "C"],
+        aggfunc={"D": [range_func, np.mean], "E": [min, max, np.mean]},
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"],
+        index=["A", "C"],
+        aggfunc={"D": [range_func, np.mean], "E": [min, max, np.mean]},
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test complex case
+    r = df.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test one chunk
+    df = from_pandas_df(df_raw, chunk_size=9)
+    r = df.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    expected = df_raw.pivot_table(
+        values=["D", "E"],
+        index=["A", "B"],
+        columns=["C", "E"],
+        aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
+    )
+    pd.testing.assert_frame_equal(align_df(result), align_df(expected))
+
+    # test numpy input of index and columns
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D",
+            index=np.array(["A", "C"]),
+            columns=np.array(["C"]),
+            aggfunc=np.sum,
+        )
+
+    # test margins=True
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, margins=True
+        )
+
+    # test dropna=False
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, dropna=False
+        )
+
+    # test observed=True
+    with pytest.raises(NotImplementedError):
+        r = df.pivot_table(
+            values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, observed=True
+        )
 
 
 def test_transform_execute(setup):
