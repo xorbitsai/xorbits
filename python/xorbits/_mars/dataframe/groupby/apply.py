@@ -168,7 +168,7 @@ class GroupByApply(
                         index_value=out_df.index_value,
                     )
                 )
-        # read the users specification of chunk size.
+       
         new_op = op.copy()
         kw = out_df.params.copy()
         kw["chunks"] = chunks
