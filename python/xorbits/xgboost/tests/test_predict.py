@@ -31,8 +31,7 @@ y = np.random.randint(0, 2, 100)
 def test_local_predict_tensor(setup):
     from xgboost import Booster
 
-    DMatrix = xgb.DMatrix()
-    dtrain = DMatrix(X, label=y)
+    dtrain = xgb.DMatrix(X, label=y)
     booster = xgb.train({}, dtrain, num_boost_round=2)
     assert isinstance(booster, Booster)
 

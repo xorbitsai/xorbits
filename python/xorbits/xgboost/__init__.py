@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
+
+from ..core.utils.fallback import unimplemented_func
+
 
 def __dir__():
     from .mars_adapters import MARS_XGBOOST_CALLABLES
@@ -25,4 +29,16 @@ def __getattr__(name: str):
     if name in MARS_XGBOOST_CALLABLES:
         return MARS_XGBOOST_CALLABLES[name]
     else:
-        raise NotImplementedError(f"Xorbits.XGBoost does not support {name} yet")
+        try:
+            import xgboost
+        except ImportError:  # pragma: no cover
+            xgboost = None
+
+        if xgboost is not None:
+            if not hasattr(xgboost, name):
+                raise AttributeError(name)
+            else:  # pragma: no cover
+                if inspect.ismethod(getattr(xgboost, name)):
+                    return unimplemented_func
+                else:
+                    raise ArithmeticError(name)

@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections.abc import Iterable
-from typing import Any
-
 try:
     import xgboost
 except ImportError:  # pragma: no cover
@@ -23,13 +20,14 @@ except ImportError:  # pragma: no cover
 MARS_XGBOOST_CALLABLES = {}
 
 if xgboost is not None:
+    import functools
     import inspect
+    from collections.abc import Iterable
     from typing import Callable, Dict, List, Optional
 
     from ..._mars.learn.contrib.xgboost.classifier import (
         XGBClassifier as MarsXGBClassifier,
     )
-    from ..._mars.learn.contrib.xgboost.dmatrix import MarsDMatrix
     from ..._mars.learn.contrib.xgboost.regressor import (
         XGBRegressor as MarsXGBRegressor,
     )
@@ -44,57 +42,48 @@ if xgboost is not None:
 
     class XGBClassifier(BaseXGB):
         mars_cls = MarsXGBClassifier
+        __doc__ = MarsXGBClassifier.__doc__
 
     class XGBRegressor(BaseXGB):
         mars_cls = MarsXGBRegressor
+        __doc__ = MarsXGBClassifier.__doc__
 
-    def wrap_cls_func(func_name):
-        def wrapper(self, *args, **kwargs):
-            return wrap_mars_callable(
-                getattr(self.mars_instance, func_name),
-                attach_docstring=False,
-                is_cls_member=False,
-            )(*args, **kwargs)
+    xgboost_class_mappings: Dict = {
+        XGBClassifier: MarsXGBClassifier,
+        XGBRegressor: MarsXGBRegressor,
+    }
 
-        return wrapper
+    def wrap_cls_func(mars_cls: Callable, name: str):
+        @functools.wraps(getattr(mars_cls, name))
+        def wrapped(self, *args, **kwargs):
+            return getattr(self.mars_instance, name)(*args, **kwargs)
 
-    class DMatrix:
-        def __init__(self) -> None:
-            pass
-
-        def __call__(self, data, **kws) -> Any:
-            return MarsDMatrix(data, **kws)
+        return wrap_mars_callable(
+            wrapped,
+            attach_docstring=True,
+            is_cls_member=False,
+            docstring_src_module=xgboost,
+            docstring_src=mars_cls,
+        )
 
     def _collect_module_callables(
         skip_members: Optional[List[str]] = None,
     ) -> Dict[str, Callable]:
         module_callables: Dict[str, Callable] = dict()
 
-        module_callables[xgboost.XGBClassifier.__name__] = XGBClassifier
-        for name, func in inspect.getmembers(MarsXGBClassifier, inspect.isfunction):
-            if not name.startswith("_"):
-                setattr(XGBClassifier, name, wrap_cls_func(name))
-
-        module_callables[xgboost.XGBRegressor.__name__] = XGBRegressor
-        for name, func in inspect.getmembers(MarsXGBRegressor, inspect.isfunction):
-            if not name.startswith("_"):
-                setattr(XGBRegressor, name, wrap_cls_func(name))
-
-        module_callables[xgboost.DMatrix.__name__] = DMatrix
-        for name, func in inspect.getmembers(DMatrix, inspect.isfunction):
-            setattr(
-                DMatrix,
-                name,
-                wrap_mars_callable(
-                    func,
-                    attach_docstring=False,
-                    is_cls_member=False,
-                ),
-            )
+        for k, v in xgboost_class_mappings.items():
+            module_callables[k.__name__] = k
+            for name, func in inspect.getmembers(v, inspect.isfunction):
+                if not name.startswith("_"):
+                    setattr(k, name, wrap_cls_func(v, name))
 
         for name, func in inspect.getmembers(mars_xgboost, inspect.isfunction):
             if skip_members is not None and name in skip_members:
                 continue
+
+            if name == "MarsDMatrix":
+                name = "DMatrix"
+
             module_callables[name] = wrap_mars_callable(
                 func,
                 attach_docstring=True,
@@ -104,6 +93,4 @@ if xgboost is not None:
             )
         return module_callables
 
-    MARS_XGBOOST_CALLABLES = _collect_module_callables(
-        skip_members=["MarsDMatrix", "register_op"]
-    )
+    MARS_XGBOOST_CALLABLES = _collect_module_callables(skip_members=["register_op"])

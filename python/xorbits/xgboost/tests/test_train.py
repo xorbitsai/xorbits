@@ -32,9 +32,8 @@ def test_train_evals(setup):
     from xgboost import Booster
 
     base_margin = np.random.rand(X.shape[0])
-    DMatrix = xgb.DMatrix()
-    dtrain = DMatrix(X, label=y, base_margin=base_margin)
-    eval_x = DMatrix(X, label=y)
+    dtrain = xgb.DMatrix(X, label=y, base_margin=base_margin)
+    eval_x = xgb.DMatrix(X, label=y)
     evals = [(eval_x, "eval_x")]
     evals_result = dict()
 
