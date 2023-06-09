@@ -108,8 +108,7 @@ class KubernetesCluster:
         conda: Optional[Union[str, List[str]]] = None,
         timeout: Optional[int] = None,
         cluster_type: str = "auto",
-        external_storage: str = "",
-        metadata_url: str = "",
+        external_storage: Optional[str] = None,
         **kwargs,
     ):
         from kubernetes import client as kube_client
@@ -147,7 +146,16 @@ class KubernetesCluster:
         self._ingress_name = "xorbits-ingress"
         self._use_local_image = kwargs.pop("use_local_image", False)
         self._external_storage = external_storage
-        self._metadata_url = metadata_url
+        if not self._external_storage or self._external_storage != "juicefs":
+            raise ValueError(
+                "Currently, only shared memory and juicefs are supported as storage backends."
+            )
+        if self._external_storage == "juicefs":
+            self._metadata_url = kwargs.pop("metadata_url", None)
+            if not self._metadata_url:
+                raise ValueError(
+                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'."
+                )
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -547,8 +555,7 @@ def new_cluster(
     conda: Optional[Union[str, List[str]]] = None,
     timeout: Optional[int] = None,
     cluster_type: str = "auto",
-    external_storage: str = "",
-    metadata_url: str = "",
+    external_storage: Optional[str] = None,
     **kwargs,
 ) -> "KubernetesClusterClient":
     """
@@ -606,9 +613,7 @@ def new_cluster(
         ``auto`` means that it will automatically detect whether the kubectl context is ``eks``.
         You can also manually specify ``kubernetes`` or ``eks`` in some special cases.
     external_storage:
-        You can specify an external storage, for example "juicefs"
-    metadata_url:
-        For external storage JuiceFS, you must specify the metadata url for its metadata storage.
+        You can specify an external storage. Currently, only shared memory (default) and juicefs are supported as storage backends.
     kwargs :
         Extra kwargs
 
@@ -618,12 +623,6 @@ def new_cluster(
         a KubernetesClusterClient instance
     """
     cluster_cls = kwargs.pop("cluster_cls", KubernetesCluster)
-    if external_storage == "juicefs":
-        if not metadata_url:
-            raise ValueError(
-                "Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1'."
-            )
-        metadata_url = metadata_url
 
     cluster = cluster_cls(
         kube_api_client,
@@ -642,7 +641,6 @@ def new_cluster(
         timeout=timeout,
         cluster_type=cluster_type,
         external_storage=external_storage,
-        metadata_url=metadata_url,
         **kwargs,
     )
     client = KubernetesClusterClient(cluster)

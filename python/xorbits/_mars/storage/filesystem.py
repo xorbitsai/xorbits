@@ -255,5 +255,3 @@ class JuiceFSStorage(FileSystemStorage):
                 """
             )
             await proc.wait()
-        else:
-            pass

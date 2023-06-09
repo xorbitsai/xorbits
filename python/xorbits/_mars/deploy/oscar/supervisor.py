@@ -77,7 +77,7 @@ class SupervisorCommandRunner(OscarCommandRunner):
         if (
             "MARS_EXTERNAL_STORAGE" in os.environ
             and "MARS_EXTERNAL_STORAGE" == "juicefs"
-        ):
+        ):  # pragma: no cover
             self.config["storage"]["backends"] = ["juicefs"]
             self.config["storage"]["juicefs"]["root_dirs"] = ["/data"]
             self.config["storage"]["juicefs"]["is_k8s"] = True
