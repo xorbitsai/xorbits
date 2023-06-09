@@ -17,10 +17,10 @@ try:
 except ImportError:
     xgboost = None
 
-import numpy as np
-import pandas as pd
 import pytest
 
+from ... import numpy as np
+from ... import pandas as pd
 from ... import xgboost as xxgb
 
 X = np.random.rand(100, 10)

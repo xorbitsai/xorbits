@@ -14,14 +14,14 @@
 
 try:
     import xgboost
-except ImportError:
+except ImportError:  # pragma: no cover
     xgboost = None
 
-import numpy as np
-import pandas as pd
 import pytest
 
-from ... import xgboost as xxgb
+from ... import numpy as np
+from ... import pandas as pd
+from ... import xgboost as xgb
 
 X = np.random.rand(100, 10)
 X_df = pd.DataFrame(X)
@@ -30,7 +30,7 @@ y = np.random.rand(100)
 
 @pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
 def test_XGBRegressor_array(setup):
-    regressor = xxgb.XGBRegressor(verbosity=1, n_estimators=2)
+    regressor = xgb.XGBRegressor(verbosity=1, n_estimators=2)
 
     regressor.fit(X, y, eval_set=[(X, y)])
     pred = regressor.predict(X)
@@ -47,7 +47,7 @@ def test_XGBRegressor_array(setup):
 
 
 def test_XGBRegressor_df(setup):
-    regressor = xxgb.XGBRegressor(verbosity=1, n_estimators=2)
+    regressor = xgb.XGBRegressor(verbosity=1, n_estimators=2)
 
     regressor.fit(X_df, y, eval_set=[(X_df, y)])
     pred = regressor.predict(X_df)

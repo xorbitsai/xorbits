@@ -15,12 +15,12 @@
 
 try:
     import xgboost
-except ImportError:
+except ImportError:  # pragma: no cover
     xgboost = None
 
-import numpy as np
 import pytest
 
+from ... import numpy as np
 from ... import xgboost as xgb
 
 X = np.random.rand(100, 10)
@@ -45,7 +45,7 @@ def test_train_evals(setup):
     assert len(evals_result) > 0
 
     prediction = xgb.predict(booster, X)
-    assert isinstance(prediction.to_numpy(), np.ndarray)
+    assert isinstance(prediction, np.ndarray)
 
     with pytest.raises(TypeError):
         xgb.train(

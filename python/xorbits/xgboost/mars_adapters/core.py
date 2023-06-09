@@ -17,7 +17,7 @@ from typing import Any
 
 try:
     import xgboost
-except ImportError:
+except ImportError:  # pragma: no cover
     xgboost = None
 
 MARS_XGBOOST_CALLABLES = {}
@@ -33,7 +33,7 @@ if xgboost is not None:
     from ..._mars.learn.contrib.xgboost.regressor import (
         XGBRegressor as MarsXGBRegressor,
     )
-    from ...core.adapter import from_mars, mars_xgboost, wrap_mars_callable
+    from ...core.adapter import mars_xgboost, wrap_mars_callable
 
     class BaseXGB:
         def __init__(self, *args, **kwargs):
@@ -42,31 +42,21 @@ if xgboost is not None:
         def __dir__(self) -> Iterable[str]:
             return self.mars_instance.__dir__()
 
-        def __getattr__(self, name: str) -> Any:
-            try:
-                attr = getattr(self.mars_instance, name)
-                if callable(attr):
-                    return wrap_mars_callable(
-                        attr,
-                        attach_docstring=True,
-                        is_cls_member=False,
-                        docstring_src_module=self.xgboost_cls,
-                        docstring_src=getattr(self.xgboost_cls, name, None),
-                    )
-                else:
-                    return from_mars(attr)
-            except AttributeError:
-                raise AttributeError(
-                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
-                )
-
     class XGBClassifier(BaseXGB):
         mars_cls = MarsXGBClassifier
-        xgboost_cls = xgboost.XGBClassifier
 
     class XGBRegressor(BaseXGB):
         mars_cls = MarsXGBRegressor
-        xgboost_cls = xgboost.XGBRegressor
+
+    def wrap_cls_func(func_name):
+        def wrapper(self, *args, **kwargs):
+            return wrap_mars_callable(
+                getattr(self.mars_instance, func_name),
+                attach_docstring=False,
+                is_cls_member=False,
+            )(*args, **kwargs)
+
+        return wrapper
 
     class DMatrix:
         def __init__(self) -> None:
@@ -81,7 +71,14 @@ if xgboost is not None:
         module_callables: Dict[str, Callable] = dict()
 
         module_callables[xgboost.XGBClassifier.__name__] = XGBClassifier
+        for name, func in inspect.getmembers(MarsXGBClassifier, inspect.isfunction):
+            if not name.startswith("_"):
+                setattr(XGBClassifier, name, wrap_cls_func(name))
+
         module_callables[xgboost.XGBRegressor.__name__] = XGBRegressor
+        for name, func in inspect.getmembers(MarsXGBRegressor, inspect.isfunction):
+            if not name.startswith("_"):
+                setattr(XGBRegressor, name, wrap_cls_func(name))
 
         module_callables[xgboost.DMatrix.__name__] = DMatrix
         for name, func in inspect.getmembers(DMatrix, inspect.isfunction):

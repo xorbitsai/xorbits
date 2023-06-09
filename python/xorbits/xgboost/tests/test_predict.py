@@ -15,13 +15,13 @@
 
 try:
     import xgboost
-except ImportError:
+except ImportError:  # pragma: no cover
     xgboost = None
 
-import numpy as np
 import pytest
 
-from ... import xgboost as xxgb
+from ... import numpy as np
+from ... import xgboost as xgb
 
 X = np.random.rand(100, 10)
 y = np.random.randint(0, 2, 100)
@@ -31,16 +31,16 @@ y = np.random.randint(0, 2, 100)
 def test_local_predict_tensor(setup):
     from xgboost import Booster
 
-    DMatrix = xxgb.DMatrix()
+    DMatrix = xgb.DMatrix()
     dtrain = DMatrix(X, label=y)
-    booster = xxgb.train({}, dtrain, num_boost_round=2)
+    booster = xgb.train({}, dtrain, num_boost_round=2)
     assert isinstance(booster, Booster)
 
-    prediction = xxgb.predict(booster, X)
+    prediction = xgb.predict(booster, X)
     assert isinstance(prediction.to_numpy(), np.ndarray)
 
-    prediction = xxgb.predict(booster, dtrain)
+    prediction = xgb.predict(booster, dtrain)
     assert isinstance(prediction.fetch(), np.ndarray)
 
     with pytest.raises(TypeError):
-        xxgb.predict(None, X)
+        xgb.predict(None, X)
