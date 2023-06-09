@@ -132,8 +132,8 @@ class GroupByApply(
         ctx[out.key] = applied
 
     @classmethod
-    def tile(cls, op):
-        in_groupby = op.inputs[0]
+    def tile(cls, op: "GroupByApply"):
+        in_groupby = op.inputs[0]  # op.inputs[0] always refer to dataframe.
         out_df = op.outputs[0]
 
         chunks = []
@@ -168,7 +168,7 @@ class GroupByApply(
                         index_value=out_df.index_value,
                     )
                 )
-
+        # read the users specification of chunk size.
         new_op = op.copy()
         kw = out_df.params.copy()
         kw["chunks"] = chunks

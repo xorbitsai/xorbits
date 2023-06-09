@@ -231,7 +231,10 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             groupby, self.groupby_params, self.raw_func, **self.raw_func_kw
         )
 
-        shape = (np.nan, agg_df.shape[1])
+        shape = (
+            np.nan,
+            agg_df.shape[1],
+        )  # return the number of column inside dataframe.
         if isinstance(agg_df.index, pd.RangeIndex):
             index_value = parse_index(
                 pd.RangeIndex(-1), groupby.key, groupby.index_value.key
@@ -256,7 +259,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             columns_value=parse_index(agg_df.columns, store_data=True),
         )
 
-    def _call_series(self, groupby, in_series):
+    def _call_series(self, groupby, in_series):  # groupby is the input dataframe.
         agg_result = build_mock_agg_result(
             groupby, self.groupby_params, self.raw_func, **self.raw_func_kw
         )
@@ -307,7 +310,9 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             )
 
         if self.output_types[0] == OutputType.dataframe:
-            return self._call_dataframe(groupby, df)
+            return self._call_dataframe(
+                groupby, df
+            )  # call the corresponding series or dataframe above.
         else:
             return self._call_series(groupby, df)
 
