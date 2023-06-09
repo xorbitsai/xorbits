@@ -26,7 +26,41 @@ from pandas.api.types import (
 
 from ...utils import adapt_mars_docstring
 from .datetimes import SeriesDatetimeMethod, _datetime_method_to_handlers
-from .string_ import SeriesStringMethod, _string_method_to_handlers
+from .string_ import (
+    IndexStringMethod,
+    SeriesStringMethod,
+    _index_method_to_handlers,
+    _string_method_to_handlers,
+)
+
+
+class IndexAccessor:
+    def __init__(self, index):
+        self._index = index
+
+    @classmethod
+    def _gen_func(cls, method):
+        @wraps(getattr(pd.Index.str, method))
+        def _inner(self, *args, **kwargs):
+            op = IndexStringMethod(
+                method=method, method_args=args, method_kwargs=kwargs
+            )
+            return op(self._index)
+
+        _inner.__doc__ = adapt_mars_docstring(getattr(pd.Index.str, method).__doc__)
+        return _inner
+
+    def __getitem__(self, item):
+        return self._gen_func("__getitem__")(self, item)
+
+    def __dir__(self) -> Iterable[str]:
+        s = set(super().__dir__())
+        s.update(_index_method_to_handlers.keys())
+        return list(s)
+
+    @classmethod
+    def _register(cls, method):
+        setattr(cls, method, cls._gen_func(method))
 
 
 class StringAccessor:

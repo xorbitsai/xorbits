@@ -28,9 +28,127 @@ from ..align import align_series_series
 from ..core import SERIES_TYPE
 from ..initializer import Series as asseries
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_empty_series, infer_index_value, parse_index
+from ..utils import (
+    build_empty_index,
+    build_empty_series,
+    infer_index_value,
+    parse_index,
+)
 
 
+# ----------------------------------Index String Method implemented:-----------------------------------------#
+# Controller class handle the user call of Index.str, and determine which method after .str users demanding.
+class IndexStringMethod(DataFrameOperand, DataFrameOperandMixin):
+    _op_type_ = OperandDef.INDEX_METHOD
+
+    _input = KeyField("input")
+    _method = StringField("method")
+    _method_args = TupleField("method_args")
+    _method_kwargs = DictField("method_kwargs")
+
+    def __init__(
+        self, method=None, method_args=None, method_kwargs=None, output_types=None, **kw
+    ):
+        super().__init__(
+            _method=method,
+            _method_args=method_args,
+            _method_kwargs=method_kwargs,
+            _output_types=output_types,
+            **kw
+        )
+        if not self.output_types:
+            self.output_types = [OutputType.index]
+
+    # Getter and Setter of IndexStringMethod:
+    @property
+    def input(self):
+        return self._input
+
+    @property
+    def method(self):
+        return self._method
+
+    @property
+    def method_args(self):
+        return self._method_args
+
+    @property
+    def method_kwargs(self):
+        return self._method_kwargs
+
+    def _set_inputs(self, inputs):
+        super()._set_inputs(inputs)
+        self._input = self._inputs[0]
+        if len(self._inputs) == 2:
+            # for method cat
+            self._method_kwargs["others"] = self._inputs[1]
+
+    # call the corresponding handler based on "method" from Index.str.method
+    def __call__(self, inp):
+        return _index_method_to_handlers[self._method].call(self, inp)
+
+    # tile the input object and let them tile the input data based on corresponding values.
+    @classmethod
+    def tile(cls, op):
+        tiled = _index_method_to_handlers[op.method].tile(op)
+        if inspect.isgenerator(tiled):
+            return (yield from tiled)
+        else:
+            return tiled
+
+    # execute the tiled object.
+    @classmethod
+    def execute(cls, ctx, op):
+        return _index_method_to_handlers[op.method].execute(ctx, op)
+
+
+# Base handler for all normal methods generated from pd.Index.str
+class IndexStringMethodBaseHandler:
+    @classmethod
+    def call(cls, op, inp):
+        empty_index = build_empty_index(inp.dtype)  # need an new Index class
+        dtype = getattr(empty_index.str, op.method)(
+            *op.method_args, **op.method_kwargs
+        ).dtype
+        return op.new_index(  # need an new Index class
+            [inp],
+            shape=inp.shape,
+            dtype=dtype,
+            index_value=inp.index_value,
+            name=inp.name,
+        )
+
+    @classmethod
+    def tile(cls, op):
+        out = op.outputs[0]
+        out_chunks = []
+        for index_chunk in op.input.chunks:  # also need an Index Class perhaps.
+            chunk_op = op.copy().reset_key()
+            out_chunk = chunk_op.new_chunk(
+                [index_chunk],
+                shape=index_chunk.shape,
+                dtype=out.dtype,
+                index=index_chunk.index,
+                name=index_chunk.name,
+            )
+            out_chunks.append(out_chunk)
+
+        params = out.params
+        params["chunks"] = out_chunks
+        params["nsplits"] = op.input.nsplits
+        new_op = op.copy()
+        return new_op.new_tileables([op.input], kws=[params])
+
+    # similar method to execute the map.
+    @classmethod
+    def execute(cls, ctx, op):
+        inp = ctx[op.input.key]
+        ctx[op.outputs[0].key] = getattr(inp.str, op.method)(
+            *op.method_args, **op.method_kwargs
+        )
+
+
+# ----------------------------------original version of Series String Method:--------------------------------#
 class SeriesStringMethod(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = OperandDef.STRING_METHOD
 
@@ -399,6 +517,7 @@ class SeriesStringExtractHandler(SeriesStringMethodBaseHandler):
         return new_op.new_tileables([op.input], kws=[params])
 
 
+# -------------------------------All handlers method for series.str: -------------------------------------#
 _string_method_to_handlers = {}
 _not_implements = ["get_dummies"]
 # start to register handlers for string methods
@@ -417,3 +536,17 @@ for method in dir(pd.Series.str):
     if method in _string_method_to_handlers:
         continue
     _string_method_to_handlers[method] = SeriesStringMethodBaseHandler
+
+# -------------------------------All handlers method for Index.str:----------------------------------------#
+_index_method_to_handlers = {}
+_not_implements = ["get_dummies"]
+
+# get all normal method from Index.str class of pandas.
+for method in dir(pd.Index.str):
+    if method.startswith("_") and method != "__getitem__":
+        continue
+    if method in _not_implements:
+        continue
+    if method in _index_method_to_handlers:
+        continue
+    _index_method_to_handlers[method] = IndexStringMethodBaseHandler

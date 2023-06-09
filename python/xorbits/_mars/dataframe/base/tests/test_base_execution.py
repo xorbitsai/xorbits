@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import random
+import string
 from collections import OrderedDict
 
 import numpy as np
@@ -2801,3 +2802,66 @@ def test_bloom_filter(setup):
     pd.testing.assert_frame_equal(
         filtered_r[filtered_r["col1"] <= 10], raw1[raw1["col1"] <= 10]
     )
+
+
+def test_index_str_method(setup):
+    # naive sanity check on lower method:
+    data = ["John Doe", "Jane Smith", "Tom Johnson", ""]
+    index = pd.Index(data)
+
+    our_value = from_pandas_index(index, chunk_size=1)
+    ournew_value = our_value.str.lower().execute().fetch()
+    pandas_value = index.str.lower()
+
+    for i in range(len(ournew_value)):
+        assert ournew_value[i] == pandas_value[i]
+
+    assert ournew_value.all() == pandas_value.all()
+
+    # stress test on size of 1000 with randominized String
+    def generate_random_string(length):
+        characters = (
+            string.ascii_letters
+        )  # Includes both uppercase and lowercase letters
+        random_string = "".join(random.choice(characters) for _ in range(length))
+        return random_string
+
+    array_of_strings = []
+    for i in range(1, 1000):
+        rand = generate_random_string(1000)
+        array_of_strings.append(rand)
+
+    index = pd.Index(array_of_strings)
+    xorbits_index = from_pandas_index(index, chunk_size=20)
+
+    # All base Index.str methods supported by now.
+    pd.testing.assert_index_equal(
+        xorbits_index.str.upper().execute().fetch(), index.str.upper()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.upper().execute().fetch(), index.str.upper()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.len().execute().fetch(), index.str.len()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.lower().execute().fetch(), index.str.lower()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.title().execute().fetch(), index.str.title()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.strip(",").execute().fetch(), index.str.strip(",")
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.count("S").execute().fetch(), index.str.count("S")
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.replace("S", "s").execute().fetch(),
+        index.str.replace("S", "s"),
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.encode("utf-8").execute().fetch(), index.str.encode("utf-8")
+    )
+
+    # print(xorbits_index.str.split(',').execute().fetch())
