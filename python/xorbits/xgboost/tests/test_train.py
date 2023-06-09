@@ -21,7 +21,7 @@ except ImportError:
 import numpy as np
 import pytest
 
-from ... import xgboost as xxgb
+from ... import xgboost as xgb
 
 X = np.random.rand(100, 10)
 y = np.random.randint(0, 2, 100)
@@ -32,23 +32,23 @@ def test_train_evals(setup):
     from xgboost import Booster
 
     base_margin = np.random.rand(X.shape[0])
-    DMatrix = xxgb.DMatrix()
+    DMatrix = xgb.DMatrix()
     dtrain = DMatrix(X, label=y, base_margin=base_margin)
     eval_x = DMatrix(X, label=y)
     evals = [(eval_x, "eval_x")]
     evals_result = dict()
 
-    booster = xxgb.train(
+    booster = xgb.train(
         {}, dtrain, num_boost_round=2, evals=evals, evals_result=evals_result
     )
     assert isinstance(booster, Booster)
     assert len(evals_result) > 0
 
-    prediction = xxgb.predict(booster, X)
+    prediction = xgb.predict(booster, X)
     assert isinstance(prediction.to_numpy(), np.ndarray)
 
     with pytest.raises(TypeError):
-        xxgb.train(
+        xgb.train(
             {},
             dtrain,
             num_boost_round=2,

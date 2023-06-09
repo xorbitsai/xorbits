@@ -96,3 +96,7 @@ def test_XGBClassifier_df(setup):
     # test wrong argument
     with pytest.raises(TypeError):
         classifier.fit(X_df, y, wrong_param=1)
+
+    # test wrong attribute
+    with pytest.raises(AttributeError):
+        classifier.wrong_attribute()

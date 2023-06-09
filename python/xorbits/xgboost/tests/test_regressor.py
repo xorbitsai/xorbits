@@ -75,3 +75,7 @@ def test_XGBRegressor_df(setup):
     # test wrong argument
     with pytest.raises(TypeError):
         regressor.fit(X_df, y, wrong_param=1)
+
+    # test wrong attribute
+    with pytest.raises(AttributeError):
+        regressor.wrong_attribute()

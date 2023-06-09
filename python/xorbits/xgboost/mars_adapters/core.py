@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections.abc import Iterable
 from typing import Any
 
 try:
@@ -32,20 +33,31 @@ if xgboost is not None:
     from ..._mars.learn.contrib.xgboost.regressor import (
         XGBRegressor as MarsXGBRegressor,
     )
-    from ...core.adapter import mars_xgboost, wrap_mars_callable
+    from ...core.adapter import from_mars, mars_xgboost, wrap_mars_callable
 
     class BaseXGB:
         def __init__(self, *args, **kwargs):
             self.mars_instance = self.mars_cls(*args, **kwargs)
 
+        def __dir__(self) -> Iterable[str]:
+            return self.mars_instance.__dir__()
+
         def __getattr__(self, name: str) -> Any:
-            if callable(getattr(self.mars_instance, name)):
-                return wrap_mars_callable(
-                    getattr(self.mars_instance, name),
-                    attach_docstring=True,
-                    is_cls_member=False,
-                    docstring_src_module=self.xgboost_cls,
-                    docstring_src=getattr(self.xgboost_cls, name, None),
+            try:
+                attr = getattr(self.mars_instance, name)
+                if callable(attr):
+                    return wrap_mars_callable(
+                        attr,
+                        attach_docstring=True,
+                        is_cls_member=False,
+                        docstring_src_module=self.xgboost_cls,
+                        docstring_src=getattr(self.xgboost_cls, name, None),
+                    )
+                else:
+                    return from_mars(attr)
+            except AttributeError:
+                raise AttributeError(
+                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
                 )
 
     class XGBClassifier(BaseXGB):
@@ -60,7 +72,7 @@ if xgboost is not None:
         def __init__(self) -> None:
             pass
 
-        def __call__(self, data, **kws):
+        def __call__(self, data, **kws) -> Any:
             return MarsDMatrix(data, **kws)
 
     def _collect_module_callables(
