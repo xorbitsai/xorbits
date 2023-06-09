@@ -259,7 +259,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             columns_value=parse_index(agg_df.columns, store_data=True),
         )
 
-    def _call_series(self, groupby, in_series):  # groupby is the input dataframe.
+    def _call_series(self, groupby, in_series):  
         agg_result = build_mock_agg_result(
             groupby, self.groupby_params, self.raw_func, **self.raw_func_kw
         )
