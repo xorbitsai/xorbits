@@ -133,7 +133,7 @@ class GroupByApply(
 
     @classmethod
     def tile(cls, op):
-        in_groupby = op.inputs[0]
+        in_groupby = op.inputs[0] 
         out_df = op.outputs[0]
 
         chunks = []
@@ -168,7 +168,6 @@ class GroupByApply(
                         index_value=out_df.index_value,
                     )
                 )
-
         new_op = op.copy()
         kw = out_df.params.copy()
         kw["chunks"] = chunks
