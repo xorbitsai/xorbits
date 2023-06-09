@@ -57,6 +57,8 @@ class WorkerCommandRunner(OscarCommandRunner):
         ):  # pragma: no cover
             raise ValueError("--supervisors is needed to start Mars Worker")
 
+        args.supervisors = self._process_supervisors_addr_scheme(args.supervisors)
+
         if args.endpoint is None:
             args.endpoint = f"{args.host}:{get_next_port()}"
         self.n_io_process = int(args.n_io_process)

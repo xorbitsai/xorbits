@@ -51,6 +51,7 @@ class SupervisorCommandRunner(OscarCommandRunner):
         self._endpoint_file_name = self._write_supervisor_endpoint_file(args)
 
         args.supervisors = f"{args.supervisors},{args.endpoint}".strip(",")
+        args.supervisors = self._process_supervisors_addr_scheme(args.supervisors)
 
         web_config = self.config.get("web", {})
         if args.web_port is not None:
