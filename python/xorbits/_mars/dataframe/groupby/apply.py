@@ -132,7 +132,7 @@ class GroupByApply(
         ctx[out.key] = applied
 
     @classmethod
-    def tile(cls, op: "GroupByApply"):
+    def tile(cls, op):
         in_groupby = op.inputs[0]  # op.inputs[0] always refer to dataframe.
         out_df = op.outputs[0]
 
