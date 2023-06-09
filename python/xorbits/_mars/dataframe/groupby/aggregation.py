@@ -312,7 +312,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
         if self.output_types[0] == OutputType.dataframe:
             return self._call_dataframe(
                 groupby, df
-            )  # call the corresponding series or dataframe above.
+            )  
         else:
             return self._call_series(groupby, df)
 
