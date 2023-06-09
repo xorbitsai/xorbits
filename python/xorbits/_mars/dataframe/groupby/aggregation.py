@@ -234,7 +234,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
         shape = (
             np.nan,
             agg_df.shape[1],
-        )  # return the number of column inside dataframe.
+        )  
         if isinstance(agg_df.index, pd.RangeIndex):
             index_value = parse_index(
                 pd.RangeIndex(-1), groupby.key, groupby.index_value.key
