@@ -68,34 +68,6 @@ def dummy_int_2d_array():
     return np.arange(9).reshape(3, 3)
 
 
-@pytest.fixture
-def dummy_xgb_cls_array():
-    X = np.random.rand(100, 10)
-    y = np.random.randint(0, 2, 100)
-    return X, y
-
-
-@pytest.fixture
-def dummy_xgb_reg_array():
-    X = np.random.rand(100, 10)
-    y = np.random.rand(100)
-    return X, y
-
-
-@pytest.fixture
-def dummy_xgb_cls_df():
-    X = np.random.rand(100, 10)
-    y = np.random.randint(0, 2, 100)
-    return pd.DataFrame(X), y
-
-
-@pytest.fixture
-def dummy_xgb_reg_df():
-    X = np.random.rand(100, 10)
-    y = np.random.rand(100)
-    return pd.DataFrame(X), y
-
-
 @pytest.fixture(scope="package")
 def _setup_test_session():
     sess = init_test(

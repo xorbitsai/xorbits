@@ -23,12 +23,14 @@ import pytest
 
 from ... import xgboost as xxgb
 
+X = np.random.rand(100, 10)
+y = np.random.randint(0, 2, 100)
+
 
 @pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
-def test_local_predict_tensor(setup, dummy_xgb_cls_array):
+def test_local_predict_tensor(setup):
     from xgboost import Booster
 
-    X, y = dummy_xgb_cls_array
     DMatrix = xxgb.DMatrix()
     dtrain = DMatrix(X, label=y)
     booster = xxgb.train({}, dtrain, num_boost_round=2)

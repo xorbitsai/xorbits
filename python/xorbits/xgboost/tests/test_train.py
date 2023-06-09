@@ -18,18 +18,19 @@ try:
 except ImportError:
     xgboost = None
 
-
 import numpy as np
 import pytest
 
 from ... import xgboost as xxgb
 
+X = np.random.rand(100, 10)
+y = np.random.randint(0, 2, 100)
+
 
 @pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
-def test_train_evals(setup, dummy_xgb_cls_array):
+def test_train_evals(setup):
     from xgboost import Booster
 
-    X, y = dummy_xgb_cls_array
     base_margin = np.random.rand(X.shape[0])
     DMatrix = xxgb.DMatrix()
     dtrain = DMatrix(X, label=y, base_margin=base_margin)

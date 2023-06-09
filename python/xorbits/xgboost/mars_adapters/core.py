@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any
+
 try:
     import xgboost
 except ImportError:
@@ -24,19 +26,35 @@ if xgboost is not None:
     from typing import Callable, Dict, List, Optional
 
     from ..._mars.learn.contrib.xgboost.classifier import (
-        XGBClassifier as mars_XGBClassifier,
+        XGBClassifier as MarsXGBClassifier,
     )
     from ..._mars.learn.contrib.xgboost.dmatrix import MarsDMatrix
     from ..._mars.learn.contrib.xgboost.regressor import (
-        XGBRegressor as mars_XGBRegressor,
+        XGBRegressor as MarsXGBRegressor,
     )
     from ...core.adapter import mars_xgboost, wrap_mars_callable
 
-    class XGBClassifier(mars_XGBClassifier):
-        pass
+    class BaseXGB:
+        def __init__(self, *args, **kwargs):
+            self.mars_instance = self.mars_cls(*args, **kwargs)
 
-    class XGBRegressor(mars_XGBRegressor):
-        pass
+        def __getattr__(self, name: str) -> Any:
+            if callable(getattr(self.mars_instance, name)):
+                return wrap_mars_callable(
+                    getattr(self.mars_instance, name),
+                    attach_docstring=True,
+                    is_cls_member=False,
+                    docstring_src_module=self.xgboost_cls,
+                    docstring_src=getattr(self.xgboost_cls, name, None),
+                )
+
+    class XGBClassifier(BaseXGB):
+        mars_cls = MarsXGBClassifier
+        xgboost_cls = xgboost.XGBClassifier
+
+    class XGBRegressor(BaseXGB):
+        mars_cls = MarsXGBRegressor
+        xgboost_cls = xgboost.XGBRegressor
 
     class DMatrix:
         def __init__(self) -> None:
@@ -51,32 +69,7 @@ if xgboost is not None:
         module_callables: Dict[str, Callable] = dict()
 
         module_callables[xgboost.XGBClassifier.__name__] = XGBClassifier
-        for name, func in inspect.getmembers(XGBClassifier, inspect.isfunction):
-            setattr(
-                XGBClassifier,
-                name,
-                wrap_mars_callable(
-                    func,
-                    attach_docstring=False,
-                    is_cls_member=False,
-                    docstring_src_module=xgboost.XGBClassifier,
-                    docstring_src=getattr(xgboost.XGBClassifier, name, None),
-                ),
-            )
-
         module_callables[xgboost.XGBRegressor.__name__] = XGBRegressor
-        for name, func in inspect.getmembers(XGBRegressor, inspect.isfunction):
-            setattr(
-                XGBRegressor,
-                name,
-                wrap_mars_callable(
-                    func,
-                    attach_docstring=True,
-                    is_cls_member=False,
-                    docstring_src_module=xgboost.XGBRegressor,
-                    docstring_src=getattr(xgboost.XGBRegressor, name, None),
-                ),
-            )
 
         module_callables[xgboost.DMatrix.__name__] = DMatrix
         for name, func in inspect.getmembers(DMatrix, inspect.isfunction):
