@@ -37,10 +37,10 @@ def test_local_predict_tensor(setup):
     assert isinstance(booster, Booster)
 
     prediction = xgb.predict(booster, X)
-    assert isinstance(prediction.to_numpy(), np.ndarray)
+    assert isinstance(prediction, np.ndarray)
 
     prediction = xgb.predict(booster, dtrain)
-    assert isinstance(prediction.fetch(), np.ndarray)
+    assert isinstance(prediction, np.ndarray)
 
     with pytest.raises(TypeError):
         xgb.predict(None, X)
