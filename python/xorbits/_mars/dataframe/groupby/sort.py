@@ -67,7 +67,6 @@ class DataFrameGroupbyConcatPivot(DataFramePSRSChunkOperand, DataFrameOperandMix
         ctx[op.outputs[-1].key] = out
 
 
-# determine the partition of a input and store the resulting partition stratergy and index slicing back to context
 class DataFramePSRSGroupbySample(DataFramePSRSChunkOperand, DataFrameOperandMixin):
     _op_type_ = OperandDef.GROUPBY_SORT_REGULAR_SAMPLE
 
