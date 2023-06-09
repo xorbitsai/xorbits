@@ -41,4 +41,4 @@ def __getattr__(name: str):
                 if inspect.ismethod(getattr(xgboost, name)):
                     return unimplemented_func
                 else:
-                    raise ArithmeticError(name)
+                    raise AttributeError(name)
