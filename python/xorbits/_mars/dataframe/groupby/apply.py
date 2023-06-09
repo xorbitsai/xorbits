@@ -133,7 +133,7 @@ class GroupByApply(
 
     @classmethod
     def tile(cls, op):
-        in_groupby = op.inputs[0] 
+        in_groupby = op.inputs[0]
         out_df = op.outputs[0]
 
         chunks = []
