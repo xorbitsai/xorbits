@@ -415,14 +415,22 @@ class WorkerQuotaManagerActor(mo.Actor):
         for band in band_to_resource.keys():
             band_config = self._band_configs.get(band[1], self._default_config)
             hard_limit = band_config.get("hard_limit")
-            actor_cls = MemQuotaActor if hard_limit else QuotaActor
-            self._band_quota_refs[band] = await mo.create_actor(
-                actor_cls,
-                band,
-                **band_config,
-                uid=MemQuotaActor.gen_uid(band[1]),
-                address=self.address,
-            )
+            if hard_limit:
+                self._band_quota_refs[band] = await mo.create_actor(
+                    MemQuotaActor,
+                    band,
+                    **band_config,
+                    uid=MemQuotaActor.gen_uid(band[1]),
+                    address=self.address,
+                )
+            else:
+                self._band_quota_refs[band] = await mo.create_actor(
+                    QuotaActor,
+                    band,
+                    quota_size=band_config["quota_size"],
+                    uid=MemQuotaActor.gen_uid(band[1]),
+                    address=self.address,
+                )
 
     async def __pre_destroy__(self):
         await asyncio.gather(

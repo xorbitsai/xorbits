@@ -217,6 +217,11 @@ class LocalCluster:
             oscar_extra_conf=oscar_extra_conf,
         )
 
+        # modify scheduling config to make memory allocation policy
+        # more aggressive on local
+        if self._config.get("scheduling", {}).get("mem_hard_limit", None) is None:
+            self._config["scheduling"]["mem_hard_limit"] = None
+
         self._bands_to_resource = execution_config.get_deploy_band_resources()
         self._supervisor_pool = None
         self._worker_pools = []
