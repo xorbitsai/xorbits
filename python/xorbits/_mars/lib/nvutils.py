@@ -505,7 +505,7 @@ def get_device_status(dev_index: int) -> _nvml_device_status:
                     gpu_util = 0
                     logger.warning("gpu_util element or text not found.")
             except Exception as e:
-                logger.warning(f"Caught exception of type: {type(e).__name__}")
+                logger.warning("Failed to get the GPU util", exc_info=True)
         if util_node.find("memory_util").text == "N/A":
             mem_util = 0
         else:
