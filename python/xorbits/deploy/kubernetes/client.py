@@ -146,7 +146,7 @@ class KubernetesCluster:
         self._ingress_name = "xorbits-ingress"
         self._use_local_image = kwargs.pop("use_local_image", False)
         self._external_storage = external_storage
-        if not self._external_storage or self._external_storage != "juicefs":
+        if self._external_storage and self._external_storage != "juicefs":
             raise ValueError(
                 "Currently, only shared memory and juicefs are supported as storage backends."
             )
