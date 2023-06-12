@@ -614,7 +614,7 @@ class ReplicationConfig(KubeConfig):
                 "ports": [p.build() for p in self._ports] or None,
                 "volumeMounts": [vol.build_mount() for vol in self._volumes] or None
                 if self._external_storage != "juicefs"
-                else [{"mountPath": "/data", "name": "data"}],
+                else [{"mountPath": "/juicefs-data", "name": "data"}],
                 "livenessProbe": self._liveness_probe.build()
                 if self._liveness_probe
                 else None,

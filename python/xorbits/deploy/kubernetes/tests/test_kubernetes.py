@@ -310,7 +310,7 @@ async def test_external_storage_juicefs():
         ).split("\n")
         pods_name_list = list(map(lambda x: x[x.index("/") + 1 :], pods_name_list))
         for pod in pods_name_list:
-            exec_cmd = ["/bin/sh", "-c", "ls /data"]
+            exec_cmd = ["/bin/sh", "-c", "ls /juicefs-data"]
             resp = stream(
                 kube_api.connect_get_namespaced_pod_exec,
                 name=pod,
@@ -330,24 +330,15 @@ async def test_external_storage_juicefs():
 async def test_external_storage_juicefs_missing_metadata_url():
     with pytest.raises(
         ValueError,
-        match="Please specify the metaurl for JuiceFS's metadata storage, for example 'redis://172.17.0.5:6379/1'.",
+        match="For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'.",
     ):
-        py_version = get_local_py_version()
-        _load_docker_env()
-        image_name = _build_docker_images(py_version)
-
-        temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
-        api_client = k8s.config.new_client_from_config()
-        new_cluster(
-            api_client,
-            image=image_name,
-            worker_spill_paths=[temp_spill_dir],
-            log_when_fail=True,
-            supervisor_cpu=0.1,
-            supervisor_mem="1G",
-            worker_num=1,
-            worker_cpu=0.1,
-            worker_mem="1G",
-            external_storage="juicefs",
-            use_local_image=True,
-        )
+        with _start_kube_cluster(
+                supervisor_cpu=0.1,
+                supervisor_mem="1G",
+                worker_num=1,
+                worker_cpu=0.1,
+                worker_mem="1G",
+                external_storage="juicefs",
+                use_local_image=True,
+        ) as cluster_client:
+            simple_job()

@@ -79,7 +79,7 @@ class SupervisorCommandRunner(OscarCommandRunner):
             and "MARS_EXTERNAL_STORAGE" == "juicefs"
         ):  # pragma: no cover
             self.config["storage"]["backends"] = ["juicefs"]
-            self.config["storage"]["juicefs"]["root_dirs"] = ["/data"]
+            self.config["storage"]["juicefs"]["root_dirs"] = ["/juicefs-data"]
             self.config["storage"]["juicefs"]["is_k8s"] = True
         start_web = await start_supervisor(
             self.pool.external_address,
