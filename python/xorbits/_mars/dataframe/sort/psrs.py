@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import bisect
 import os
 
 import numpy as np
@@ -112,7 +112,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
                 kind=kind,
                 n_partition=axis_chunk_shape,
                 output_types=op.output_types,
-                **cls._collect_op_properties(op)
+                **cls._collect_op_properties(op),
             )
             kws = []
             sort_shape = in_chunk.shape
@@ -174,7 +174,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
             kind=kind,
             n_partition=axis_chunk_shape,
             output_types=output_types,
-            **cls._collect_op_properties(op)
+            **cls._collect_op_properties(op),
         )
         concat_pivot_shape = (
             sorted_chunks[0].shape[: op.axis]
@@ -202,7 +202,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
                 n_partition=axis_chunk_shape,
                 stage=OperandStage.map,
                 output_types=op.output_types,
-                **cls._collect_op_properties(op)
+                **cls._collect_op_properties(op),
             )
             if isinstance(chunk_inputs[0].index_value.value, IndexValue.RangeIndex):
                 index_value = parse_index(pd.Index([], dtype=np.int64))
@@ -240,7 +240,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
                 reducer_index=(i,),
                 n_reducers=len(partition_chunks),
                 output_types=op.output_types,
-                **cls._collect_op_properties(op)
+                **cls._collect_op_properties(op),
             )
             chunk_shape = list(partition_chunk.shape)
             chunk_shape[op.axis] = np.nan
@@ -661,23 +661,75 @@ class DataFramePSRSShuffle(MapReduceOperand, DataFrameOperandMixin):
                 ctx[out.key, (i,)] = values
 
     @classmethod
+    def _calc_pivots_poses(
+        cls, index, pivots, is_multi_index=False, level=None, sort_remaining=True
+    ):
+        if not is_multi_index:
+            return index.searchsorted(list(pivots), side="right")
+
+        if index.nlevels != pivots.nlevels:
+            raise TypeError(
+                f"Number of levels should be the same between index and pivots. But got nlevels of index is {index.nlevels}, and nlevels of pivots is {pivots.nlevels}"
+            )
+
+        if isinstance(level, list) and len(level) == 1 and not sort_remaining:
+            return index.get_level_values(level[0]).searchsorted(
+                list(pivots.get_level_values(level[0])), side="right"
+            )
+        else:
+            if level is None:
+                index_list = list(index)
+                pivots_list = list(pivots)
+            elif isinstance(level, list):
+                index_from_level = []
+                pivots_from_level = []
+                for l in level:
+                    index_from_level.append(index.get_level_values(l))
+                    pivots_from_level.append(pivots.get_level_values(l))
+                if sort_remaining:
+                    if len(level) < index.nlevels:
+                        remain_indexes = index.droplevel(level)
+                        remain_pivots = pivots.droplevel(level)
+                        for l in range(remain_indexes.nlevels):
+                            index_from_level.append(remain_indexes.get_level_values(l))
+                        for l in range(remain_pivots.nlevels):
+                            pivots_from_level.append(remain_pivots.get_level_values(l))
+                index_list = list(zip(*index_from_level))
+                pivots_list = list(zip(*pivots_from_level))
+            else:
+                raise TypeError(
+                    f"level should be list or None after processing, but got type {type(level)}."
+                )
+
+            poses = []
+            for pivot in pivots_list:
+                poses.append(bisect.bisect_right(index_list, pivot))
+
+            return np.array(poses)
+
+    @classmethod
     def _execute_sort_index_map(cls, ctx, op):
         a, pivots = [ctx[c.key] for c in op.inputs]
         out = op.outputs[0]
 
         if isinstance(a.index, pd.MultiIndex) and isinstance(pivots, pd.MultiIndex):
-            level = 0 if op.level is None else op.level[0]
-            a_single_index = a.index.get_level_values(level)
-            pivots_single_index = pivots.get_level_values(level)
+            is_multi_index = True
+        elif not isinstance(a.index, pd.MultiIndex) and not isinstance(
+            pivots, pd.MultiIndex
+        ):
+            is_multi_index = False
         else:
-            a_single_index = a.index
-            pivots_single_index = pivots
+            raise TypeError(
+                f"It can only handle the case where a.index and pivots are both MultiIndex or neither are MultiIndex. But get type of a.index is {type(a.index)} and type of pivots is {type(pivots)}"
+            )
 
         if op.ascending:
-            poses = a_single_index.searchsorted(list(pivots_single_index), side="right")
+            poses = cls._calc_pivots_poses(
+                a.index, pivots, is_multi_index, op.level, op.sort_remaining
+            )
         else:
-            poses = len(a) - a_single_index[::-1].searchsorted(
-                list(pivots_single_index), side="right"
+            poses = len(a) - cls._calc_pivots_poses(
+                a.index[::-1], pivots, is_multi_index, op.level, op.sort_remaining
             )
         poses = (None,) + tuple(poses) + (None,)
         for i in range(op.n_partition):
