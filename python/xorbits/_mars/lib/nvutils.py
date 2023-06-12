@@ -494,12 +494,33 @@ def get_device_status(dev_index: int) -> _nvml_device_status:
         if util_node.find("gpu_util").text == "N/A":
             gpu_util = 0
         else:
-            gpu_util = int(util_node.find("gpu_util"))
+            try:
+                gpu_util_element = util_node.find("gpu_util")
+                gpu_util_text = (
+                    gpu_util_element.text if gpu_util_element is not None else None
+                )
+                if gpu_util_text:
+                    gpu_util = int(gpu_util_text.split()[0])
+                else:
+                    gpu_util = 0
+                    logger.warning("gpu_util element or text not found.")
+            except Exception as e:
+                logger.warning("Failed to get the GPU util", exc_info=True)
         if util_node.find("memory_util").text == "N/A":
             mem_util = 0
         else:
-            mem_util = int(util_node.find("memory_util"))
-
+            try:
+                mem_util_element = util_node.find("memory_util")
+                mem_util_text = (
+                    mem_util_element.text if mem_util_element is not None else None
+                )
+                if mem_util_text:
+                    mem_util = int(mem_util_text.split()[0])
+                else:
+                    mem_util = 0
+                    logger.warning("memory_util element or text not found.")
+            except Exception as e:
+                logger.warning("Failed to get the memory util", exc_info=True)
         temperature = int(gpu_node.find("temperature").find("gpu_temp").text[:-1])
 
     return _nvml_device_status(
