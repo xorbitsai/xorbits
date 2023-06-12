@@ -393,22 +393,27 @@ def cuda_card_stats() -> List[_cuda_card_stat]:  # pragma: no cover
     if not device_count:
         return infos
     for device_idx in range(device_count):
-        device_info = nvutils.get_device_info(device_idx)
-        device_status = nvutils.get_device_status(device_idx)
-
-        infos.append(
-            _cuda_card_stat(
-                index=device_info.index,
-                product_name=device_info.name,
-                gpu_usage=device_status.gpu_util,
-                temperature=device_status.temperature,
-                fb_mem_info=_virt_memory_stat(
-                    total=device_status.fb_total_mem,
-                    used=device_status.fb_used_mem,
-                    free=device_status.fb_free_mem,
-                    available=device_status.fb_free_mem,
-                    percent=device_status.mem_util,
-                ),
+        try:
+            device_info = nvutils.get_device_info(device_idx)
+            device_status = nvutils.get_device_status(device_idx)
+            infos.append(
+                _cuda_card_stat(
+                    index=device_info.index,
+                    product_name=device_info.name,
+                    gpu_usage=device_status.gpu_util,
+                    temperature=device_status.temperature,
+                    fb_mem_info=_virt_memory_stat(
+                        total=device_status.fb_total_mem,
+                        used=device_status.fb_used_mem,
+                        free=device_status.fb_free_mem,
+                        available=device_status.fb_free_mem,
+                        percent=device_status.mem_util,
+                    ),
+                )
             )
-        )
+        except Exception:
+            logger.warning(
+                f"Unexpected error happened when gathering stats of device {device_idx}",
+                exc_info=True,
+            )
     return infos
