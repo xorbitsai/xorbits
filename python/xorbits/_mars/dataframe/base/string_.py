@@ -143,9 +143,51 @@ class IndexStringMethodBaseHandler:
     @classmethod
     def execute(cls, ctx, op):
         inp = ctx[op.input.key]
-        ctx[op.outputs[0].key] = getattr(inp.str, op.method)(
+        result = getattr(inp.str, op.method)(*op.method_args, **op.method_kwargs)
+        ctx[op.outputs[0].key] = result
+
+
+# handler for method split and rsplit in Index.str
+class IndexStringSplitHandler(IndexStringMethodBaseHandler):
+    def call(cls, op, inp):
+        mock_index = pd.Index(["ABC", "BC,D", "C,A", "D,B"])
+        dtype = getattr(mock_index.str, op.method)(
             *op.method_args, **op.method_kwargs
+        ).dtype
+        return op.new_index(  # need an new Index class
+            [inp],
+            shape=inp.shape,
+            dtype=dtype,
+            index_value=inp.index_value,
+            name=inp.name,
         )
+
+    @classmethod
+    def tile(cls, op):
+        out = op.outputs[0]
+
+        if out.op.output_types[0] == OutputType.series:
+            return super().tile(op)
+
+        out_chunks = []
+        columns = out.columns_value.to_pandas()
+        for series_chunk in op.input.chunks:
+            chunk_op = op.copy().reset_key()
+            out_chunk = chunk_op.new_chunk(
+                [series_chunk],
+                shape=(series_chunk.shape[0], len(columns)),
+                index=(series_chunk.index[0], 0),
+                dtypes=out.dtypes,
+                index_value=series_chunk.index_value,
+                columns_value=out.columns_value,
+            )
+            out_chunks.append(out_chunk)
+
+        params = out.params
+        params["chunks"] = out_chunks
+        params["nsplits"] = (op.input.nsplits[0], (len(columns),))
+        new_op = op.copy()
+        return new_op.new_tileables([op.input], kws=[params])
 
 
 # ----------------------------------original version of Series String Method:--------------------------------#
@@ -541,6 +583,8 @@ for method in dir(pd.Series.str):
 _index_method_to_handlers = {}
 _not_implements = ["get_dummies"]
 
+# _index_method_to_handlers["split"] = IndexStringSplitHandler
+# _index_method_to_handlers["rsplit"] = IndexStringSplitHandler
 # get all normal method from Index.str class of pandas.
 for method in dir(pd.Index.str):
     if method.startswith("_") and method != "__getitem__":
