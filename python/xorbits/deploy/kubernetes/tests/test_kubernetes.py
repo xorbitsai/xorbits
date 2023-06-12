@@ -333,12 +333,12 @@ async def test_external_storage_juicefs_missing_metadata_url():
         match="For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'.",
     ):
         with _start_kube_cluster(
-                supervisor_cpu=0.1,
-                supervisor_mem="1G",
-                worker_num=1,
-                worker_cpu=0.1,
-                worker_mem="1G",
-                external_storage="juicefs",
-                use_local_image=True,
-        ) as cluster_client:
+            supervisor_cpu=0.1,
+            supervisor_mem="1G",
+            worker_num=1,
+            worker_cpu=0.1,
+            worker_mem="1G",
+            external_storage="juicefs",
+            use_local_image=True,
+        ):
             simple_job()
