@@ -53,7 +53,7 @@ class PersistentVolumeConfig(KubeConfig):
         return {
             "kind": self._kind,
             "metadata": {
-                "name": "juicefs-pv",
+                "name": "juicefs-pv1",
                 "labels": {"juicefs-name": "ten-pb-fs"},
             },
             "spec": {
@@ -62,10 +62,10 @@ class PersistentVolumeConfig(KubeConfig):
                 # fine. ( Reference: https://juicefs.com/docs/csi/guide/pv/ )
                 "volumeMode": "Filesystem",
                 "accessModes": ["ReadWriteMany"],
-                "persistentVolumeReclaimPolicy": "Retain",
+                "persistentVolumeReclaimPolicy": "Delete",
                 "csi": {
                     "driver": "csi.juicefs.com",
-                    "volumeHandle": "juicefs-pv",
+                    "volumeHandle": "juicefs-pv1",
                     "fsType": "juicefs",
                     "nodePublishSecretRef": {
                         "name": "juicefs-secret",
