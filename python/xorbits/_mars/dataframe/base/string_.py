@@ -547,7 +547,6 @@ for method in dir(pd.Index.str):
         continue
     if method in _not_implements:
         continue
-    # uncommented when we implement self-customized methods such as reshape.
-    # if method in _index_method_to_handlers:
-    #     continue
+    if method in _index_method_to_handlers:
+        continue
     _index_method_to_handlers[method] = IndexStringMethodBaseHandler
