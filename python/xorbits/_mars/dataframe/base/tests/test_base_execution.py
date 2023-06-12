@@ -2805,19 +2805,6 @@ def test_bloom_filter(setup):
 
 
 def test_index_str_method(setup):
-    # naive sanity check on lower method:
-    data = ["John Doe", "Jane Smith", "Tom Johnson", ""]
-    index = pd.Index(data)
-
-    our_value = from_pandas_index(index, chunk_size=1)
-    ournew_value = our_value.str.lower().execute().fetch()
-    pandas_value = index.str.lower()
-
-    for i in range(len(ournew_value)):
-        assert ournew_value[i] == pandas_value[i]
-
-    assert ournew_value.all() == pandas_value.all()
-
     # stress test on size of 1000 with randominized String
     def generate_random_string(length):
         characters = (
@@ -2833,6 +2820,12 @@ def test_index_str_method(setup):
 
     index = pd.Index(array_of_strings)
     xorbits_index = from_pandas_index(index, chunk_size=20)
+
+    # Test the get item.
+    r = xorbits_index.str[:3]
+    result = r.execute().fetch()
+    expected = index.str[:3]
+    pd.testing.assert_index_equal(result, expected)
 
     # All base Index.str methods supported by now.
     pd.testing.assert_index_equal(
