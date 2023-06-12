@@ -404,7 +404,7 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
             inp[i] = to_mars(item)
         return inp
     elif isinstance(inp, dict):
-        # Modification: In-place modification of list.
+        # Modification: In-place modification of dict.
         # This preserves weak references to dict, avoiding access issues.
         for k, v in inp.items():
             inp[k] = to_mars(v)
@@ -437,7 +437,7 @@ def from_mars(inp: Union[MarsEntity, Tuple, List, Dict, None]):
             inp[i] = from_mars(item)
         return inp
     elif isinstance(inp, dict):
-        # Modification: In-place modification of list.
+        # Modification: In-place modification of dict.
         # This preserves weak references to dict, avoiding access issues.
         for k, v in inp.items():
             inp[k] = from_mars(v)
