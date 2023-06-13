@@ -752,7 +752,6 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
 
         if self._external_storage == "juicefs":
-            logger.error("juicefs")
             self.add_env("MARS_EXTERNAL_STORAGE", "juicefs")
 
     def config_liveness_probe(self):

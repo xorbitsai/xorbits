@@ -318,7 +318,9 @@ def test_init_container():
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
 @pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
 def test_juicefs_secret_object():
-    secret_config = SecretConfig(metadata_url="redis://172.17.0.5:6379/1")
+    secret_config = SecretConfig(
+        metadata_url="redis://172.17.0.5:6379/1", bucket="/var"
+    )
     secret_config_dict = secret_config.build()
     assert secret_config_dict["metadata"]["name"] == "juicefs-secret"
     assert secret_config_dict["stringData"]["metaurl"] == "redis://172.17.0.5:6379/1"
