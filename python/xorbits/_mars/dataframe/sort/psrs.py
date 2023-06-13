@@ -12,8 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import bisect
 import os
+from typing import Any, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -662,14 +664,29 @@ class DataFramePSRSShuffle(MapReduceOperand, DataFrameOperandMixin):
 
     @classmethod
     def _calc_pivots_poses(
-        cls, index, pivots, is_multi_index=False, level=None, sort_remaining=True
+        cls,
+        index: Any,
+        pivots: Any,
+        level: Optional[List] = None,
+        sort_remaining: bool = True,
     ):
+        if isinstance(index, pd.MultiIndex) and isinstance(pivots, pd.MultiIndex):
+            is_multi_index = True
+        elif not isinstance(index, pd.MultiIndex) and not isinstance(
+            pivots, pd.MultiIndex
+        ):
+            is_multi_index = False
+        else:  # pragma: no cover
+            raise TypeError(
+                f"Invalid types for index and pivots: index is {type(index)}, while pivots is {type(pivots)}."
+            )
+
         if not is_multi_index:
             return index.searchsorted(list(pivots), side="right")
 
-        if index.nlevels != pivots.nlevels:
-            raise TypeError(
-                f"Number of levels should be the same between index and pivots. But got nlevels of index is {index.nlevels}, and nlevels of pivots is {pivots.nlevels}"
+        if index.nlevels != pivots.nlevels:  # pragma: no cover
+            raise ValueError(
+                f"Inconsistent levels: index has {index.nlevels} levels, while pivots has {pivots.nlevels} levels."
             )
 
         if isinstance(level, list) and len(level) == 1 and not sort_remaining:
@@ -696,10 +713,8 @@ class DataFramePSRSShuffle(MapReduceOperand, DataFrameOperandMixin):
                             pivots_from_level.append(remain_pivots.get_level_values(l))
                 index_list = list(zip(*index_from_level))
                 pivots_list = list(zip(*pivots_from_level))
-            else:
-                raise TypeError(
-                    f"level should be list or None after processing, but got type {type(level)}."
-                )
+            else:  # pragma: no cover
+                raise TypeError(f"Invalid level type: {type(level)}")
 
             poses = []
             for pivot in pivots_list:
@@ -712,24 +727,11 @@ class DataFramePSRSShuffle(MapReduceOperand, DataFrameOperandMixin):
         a, pivots = [ctx[c.key] for c in op.inputs]
         out = op.outputs[0]
 
-        if isinstance(a.index, pd.MultiIndex) and isinstance(pivots, pd.MultiIndex):
-            is_multi_index = True
-        elif not isinstance(a.index, pd.MultiIndex) and not isinstance(
-            pivots, pd.MultiIndex
-        ):
-            is_multi_index = False
-        else:
-            raise TypeError(
-                f"It can only handle the case where a.index and pivots are both MultiIndex or neither are MultiIndex. But get type of a.index is {type(a.index)} and type of pivots is {type(pivots)}"
-            )
-
         if op.ascending:
-            poses = cls._calc_pivots_poses(
-                a.index, pivots, is_multi_index, op.level, op.sort_remaining
-            )
+            poses = cls._calc_pivots_poses(a.index, pivots, op.level, op.sort_remaining)
         else:
             poses = len(a) - cls._calc_pivots_poses(
-                a.index[::-1], pivots, is_multi_index, op.level, op.sort_remaining
+                a.index[::-1], pivots, op.level, op.sort_remaining
             )
         poses = (None,) + tuple(poses) + (None,)
         for i in range(op.n_partition):

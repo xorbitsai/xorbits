@@ -15,6 +15,7 @@
 
 import os
 import sys
+from itertools import product
 
 import numpy as np
 import pandas as pd
@@ -365,63 +366,68 @@ def test_sort_index_execution(setup):
     expected = raw.sort_index(ascending=False)
     pd.testing.assert_series_equal(result, expected)
 
-    # test multi-level DataFrame and level attribute is None in sort_index
-    raw = pd.DataFrame({"foo": np.random.randint(10, size=100), "bar": range(100)})
-    raw_gb_rolling_mean = raw.groupby(by="foo", group_keys=True).apply(
-        lambda x: x.rolling(window=10).mean()
-    )
-    mdf = DataFrame(raw_gb_rolling_mean)
-    result = mdf.sort_index().execute().fetch()
-    expected = raw_gb_rolling_mean.sort_index()
-    pd.testing.assert_frame_equal(result, expected)
 
-    # test multi-level DataFrame with multi-chunk
-    raw_index = pd.MultiIndex.from_arrays(np.random.randint(10, size=[4, 100]))
+@pytest.mark.parametrize(
+    "chunk_size, level, sort_remaining, ascending,",
+    list(
+        product(
+            [None, 20],
+            [
+                None,
+                (0,),
+                "index1",
+                2,
+                [0, 1],
+                ["index3", "index1"],
+                [3, 0, 1],
+                [2, "index1", 0],
+                ["index0", "index1", "index2", "index3"],
+                [2, 3, 1, 0],
+            ],
+            [True, False],
+            [True, False],
+        )
+    ),
+)
+def test_attributes_of_sort_index_execution(
+    chunk_size, level, sort_remaining, ascending, setup
+):
+    raw_index = pd.MultiIndex.from_arrays(
+        np.random.randint(10, size=[4, 100]),
+        names=["index0", "index1", "index2", "index3"],
+    )
     raw = pd.DataFrame(
         {"foo": np.random.randint(100, size=100), "bar": range(100)}, index=raw_index
     )
-    mdf = DataFrame(raw, chunk_size=20)
+    mdf = DataFrame(raw, chunk_size=chunk_size)
 
-    for level_ in [
-        None,
-        0,
-        2,
-        [3],
-        [0, 1],
-        [1, 0],
-        [3, 0, 1],
-        [0, 1, 2, 3],
-        [2, 3, 1, 0],
-    ]:
-        for sort_remaining_ in [True, False]:
-            for ascending_ in [True, False]:
-                result = (
-                    mdf.sort_index(
-                        level=level_,
-                        ascending=ascending_,
-                        sort_remaining=sort_remaining_,
-                    )
-                    .execute()
-                    .fetch()
+    result = (
+        mdf.sort_index(
+            level=level,
+            ascending=ascending,
+            sort_remaining=sort_remaining,
+        )
+        .execute()
+        .fetch()
+    )
+    expected = raw.sort_index(
+        level=level, ascending=ascending, sort_remaining=sort_remaining
+    )
+    # When index is not unique and there's multi chunk size, the sorting result may be inconsistent with pandas. Because PSRS is an unstable sort.
+    if level is not None and sort_remaining is False:
+        if isinstance(level, (list, tuple)):
+            for l in level:
+                pd.testing.assert_index_equal(
+                    result.index.get_level_values(l),
+                    expected.index.get_level_values(l),
                 )
-                expected = raw.sort_index(
-                    level=level_, ascending=ascending_, sort_remaining=sort_remaining_
-                )
-                # When index is not unique and there's multi chunk size, the sorting result may be inconsistent with pandas. Because PSRS is an unstable sort.
-                if level_ is not None and sort_remaining_ is False:
-                    if isinstance(level_, list):
-                        for l in level_:
-                            pd.testing.assert_index_equal(
-                                result.index.get_level_values(l),
-                                expected.index.get_level_values(l),
-                            )
-                    else:
-                        pd.testing.assert_index_equal(
-                            result.index.get_level_values(level_),
-                            expected.index.get_level_values(level_),
-                        )
-                else:
-                    pd.testing.assert_index_equal(result.index, expected.index)
+        else:
+            pd.testing.assert_index_equal(
+                result.index.get_level_values(level),
+                expected.index.get_level_values(level),
+            )
+    else:
+        pd.testing.assert_index_equal(result.index, expected.index)
 
 
 def test_arrow_string_sort_values(setup):
