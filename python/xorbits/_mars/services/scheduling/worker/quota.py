@@ -428,7 +428,7 @@ class WorkerQuotaManagerActor(mo.Actor):
                     QuotaActor,
                     band,
                     quota_size=band_config["quota_size"],
-                    uid=MemQuotaActor.gen_uid(band[1]),
+                    uid=QuotaActor.gen_uid(band[1]),
                     address=self.address,
                 )
 

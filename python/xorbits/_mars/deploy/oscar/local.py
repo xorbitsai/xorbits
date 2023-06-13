@@ -217,8 +217,8 @@ class LocalCluster:
             oscar_extra_conf=oscar_extra_conf,
         )
 
-        # modify scheduling config to make memory allocation policy
-        # more aggressive on local
+        # make memory allocation policy more aggressive on local by
+        # assuming all the memory are available.
         if self._config.get("scheduling", {}).get("mem_hard_limit", None) is None:
             self._config["scheduling"]["mem_hard_limit"] = None
 
