@@ -234,10 +234,15 @@ class JuiceFSStorage(FileSystemStorage):
         )
         if not is_k8s:
             local_environ = kwargs.get("local_environ")
+            metadata_url = kwargs.get("metadata_url", None)
+            if metadata_url is None:
+                raise ValueError(
+                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'."
+                )
             if local_environ:
                 proc = await asyncio.create_subprocess_shell(
-                    f"""juicefs format redis://127.0.0.1:6379/1 myjfs
-                    juicefs mount redis://127.0.0.1:6379/1 {root_dirs[0]} -d
+                    f"""juicefs format {metadata_url} myjfs
+                    juicefs mount {metadata_url} {root_dirs[0]} -d
                     """
                 )
                 await proc.wait()

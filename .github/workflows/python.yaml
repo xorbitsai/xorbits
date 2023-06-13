@@ -140,9 +140,9 @@ jobs:
           helm repo update
           helm fetch --untar juicefs/juicefs-csi-driver
           cd juicefs-csi-driver
-          helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f https://raw.githubusercontent.com/Zhou1213CN/values.yaml/main/values.yaml
+          helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
           sleep 60
-          kubectl apply -f https://raw.githubusercontent.com/Zhou1213CN/example-redis-config/main/example-redis-config.yaml
+          kubectl apply -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/example-redis-config.yaml
           sleep 60
           cd ..
         fi

@@ -48,7 +48,9 @@ kube_available = (
     and k8s is not None
 )
 
-juicefs_available = "juicefs" in sp.getoutput("echo $(helm repo list)")
+juicefs_available = "juicefs" in sp.getoutput(
+    "kubectl get pods --all-namespaces -o wide | grep 'juicefs-csi'"
+)
 
 
 def _collect_coverage():

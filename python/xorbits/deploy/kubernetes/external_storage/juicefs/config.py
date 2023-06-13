@@ -61,7 +61,9 @@ class PersistentVolumeConfig(KubeConfig):
                 # For now, JuiceFS CSI Driver doesn't support setting storage capacity. Fill in any valid string is
                 # fine. ( Reference: https://juicefs.com/docs/csi/guide/pv/ )
                 "volumeMode": "Filesystem",
-                "accessModes": ["ReadWriteMany"],
+                "accessModes": [
+                    "ReadWriteMany"
+                ],  # accessModes is restricted to ReadWriteMany because it's the most suitable mode for our system. See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more reference
                 "persistentVolumeReclaimPolicy": "Delete",
                 "csi": {
                     "driver": "csi.juicefs.com",
