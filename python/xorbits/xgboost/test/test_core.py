@@ -21,6 +21,7 @@ import pytest
 
 from ... import xgboost as xgb
 
+
 @pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
 def test_xgbclassifier_docstring():
     docstring = xgb.XGBClassifier.__doc__
@@ -32,6 +33,7 @@ def test_xgbclassifier_docstring():
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from xgboost.sklearn.XGBClassifier."
     )
+
 
 @pytest.mark.skipif(xgboost is None, reason="XGBoost not installed")
 def test_xgbregressor_docstring():

@@ -22,7 +22,6 @@ MARS_XGBOOST_CALLABLES = {}
 if xgboost is not None:
     import functools
     import inspect
-    from collections.abc import Iterable
     from typing import Callable, Dict, List, Optional
 
     from ..._mars.learn.contrib.xgboost.classifier import (
@@ -31,9 +30,9 @@ if xgboost is not None:
     from ..._mars.learn.contrib.xgboost.regressor import (
         XGBRegressor as MarsXGBRegressor,
     )
-    from ...core.adapter import mars_xgboost, wrap_mars_callable, to_mars
+    from ...core.adapter import mars_xgboost, to_mars, wrap_mars_callable
     from ...core.utils.docstring import attach_module_callable_docstring
-    
+
     class BaseXGB:
         def __init__(self, *args, **kwargs):
             self.mars_instance = self.mars_cls(*to_mars(args), **to_mars(kwargs))
@@ -92,7 +91,7 @@ if xgboost is not None:
                     setattr(k, name, wrap_cls_func(v, name))
 
     MARS_XGBOOST_CALLABLES = _collect_module_callables(skip_members=["register_op"])
-    
+
     _install_cls_members(MARS_XGBOOST_CALLABLES)
 
     attach_module_callable_docstring(XGBClassifier, xgboost, xgboost.XGBClassifier)
