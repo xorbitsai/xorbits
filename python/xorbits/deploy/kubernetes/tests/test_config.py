@@ -37,7 +37,9 @@ from ..external_storage.juicefs.config import (
 )
 
 kubernetes = lazy_import("kubernetes")
-juicefs_available = "juicefs" in sp.getoutput("echo $(helm repo list)")
+juicefs_available = "juicefs" in sp.getoutput(
+    "kubectl get pods --all-namespaces -o wide | grep 'juicefs-csi'"
+)
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")

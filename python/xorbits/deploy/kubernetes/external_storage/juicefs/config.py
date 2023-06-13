@@ -13,11 +13,13 @@ class SecretConfig(KubeConfig):
 
     def __init__(
         self,
+        metadata_url: str,
+        bucket: str,
         kind: Optional[str] = None,
-        metadata_url: str = "",
     ):
         self._kind = kind or self._default_kind
         self._metadata_url = metadata_url
+        self._bucket = bucket
 
     def build(self):
         return {
@@ -28,7 +30,7 @@ class SecretConfig(KubeConfig):
                 "name": "myjfs",
                 "metaurl": self._metadata_url,
                 "storage": "file",
-                "bucket": "/var",
+                "bucket": self._bucket,
             },
         }
 
@@ -53,7 +55,7 @@ class PersistentVolumeConfig(KubeConfig):
         return {
             "kind": self._kind,
             "metadata": {
-                "name": "juicefs-pv1",
+                "name": "juicefs-pv",
                 "labels": {"juicefs-name": "ten-pb-fs"},
             },
             "spec": {
@@ -67,7 +69,7 @@ class PersistentVolumeConfig(KubeConfig):
                 "persistentVolumeReclaimPolicy": "Delete",
                 "csi": {
                     "driver": "csi.juicefs.com",
-                    "volumeHandle": "juicefs-pv1",
+                    "volumeHandle": "juicefs-pv",
                     "fsType": "juicefs",
                     "nodePublishSecretRef": {
                         "name": "juicefs-secret",

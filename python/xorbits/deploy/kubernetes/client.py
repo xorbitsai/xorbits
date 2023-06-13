@@ -156,6 +156,11 @@ class KubernetesCluster:
                 raise ValueError(
                     "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'."
                 )
+            self._bucket = kwargs.pop("bucket", None)
+            if not self._bucket:
+                raise ValueError(
+                    "For external storage JuiceFS, you must specify the bucket for its metadata storage, for example '/var'."
+                )
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -483,6 +488,7 @@ class KubernetesCluster:
                 namespace=self.namespace,
                 api_client=self._api_client,
                 metadata_url=self._metadata_url,
+                bucket=self._bucket,
             )
             juicefs_k8s_storage.build()
 

@@ -139,6 +139,8 @@ jobs:
           helm repo add juicefs https://juicedata.github.io/charts/
           helm repo update
           helm fetch --untar juicefs/juicefs-csi-driver
+          echo $(pwd)
+          echo $(ls)
           cd juicefs-csi-driver
           helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
           sleep 60

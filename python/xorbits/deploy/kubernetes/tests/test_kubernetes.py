@@ -296,6 +296,7 @@ async def test_external_storage_juicefs():
         external_storage="juicefs",
         metadata_url="redis://" + redis_ip + ":6379/1",
         use_local_image=True,
+        bucket="/var",
     ) as cluster_client:
         import xorbits.pandas as pd
 
@@ -342,5 +343,29 @@ async def test_external_storage_juicefs_missing_metadata_url():
             worker_mem="1G",
             external_storage="juicefs",
             use_local_image=True,
+        ):
+            simple_job()
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
+@pytest.mark.asyncio
+async def test_external_storage_juicefs_missing_bucket():
+    redis_ip = sp.getoutput(
+        "echo $(kubectl get po redis -o wide) | grep -o '[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*'"
+    )
+    with pytest.raises(
+        ValueError,
+        match="For external storage JuiceFS, you must specify the bucket for its metadata storage, for example '/var'.",
+    ):
+        with _start_kube_cluster(
+            supervisor_cpu=0.1,
+            supervisor_mem="1G",
+            worker_num=1,
+            worker_cpu=0.1,
+            worker_mem="1G",
+            external_storage="juicefs",
+            use_local_image=True,
+            metadata_url="redis://" + redis_ip + ":6379/1",
         ):
             simple_job()

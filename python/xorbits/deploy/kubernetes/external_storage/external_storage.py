@@ -17,12 +17,17 @@ except ImportError:  # pragma: no cover
 
 class ExternalStorage(ABC):
     def __init__(
-        self, namespace: Optional[str], api_client: ApiClient, metadata_url: str = ""
+        self,
+        namespace: Optional[str],
+        api_client: ApiClient,
+        metadata_url: Optional[str] = None,
+        bucket: Optional[str] = None,
     ):
         self._namespace = namespace
         self._api_client = api_client
         self._core_api = kube_client.CoreV1Api(self._api_client)
         self._metadata_url = metadata_url
+        self._bucket = bucket
 
     @abstractmethod
     def build(self):
@@ -36,7 +41,9 @@ class JuicefsK8SStorage(ExternalStorage):
         """
         Create pv, secret, and pvc
         """
-        secret_config = SecretConfig(metadata_url=self._metadata_url)
+        secret_config = SecretConfig(
+            metadata_url=self._metadata_url, bucket=self._bucket
+        )
 
         persistent_volume_config = PersistentVolumeConfig(namespace=self._namespace)
 
