@@ -31,22 +31,18 @@ if xgboost is not None:
     from ..._mars.learn.contrib.xgboost.regressor import (
         XGBRegressor as MarsXGBRegressor,
     )
-    from ...core.adapter import mars_xgboost, wrap_mars_callable
-
+    from ...core.adapter import mars_xgboost, wrap_mars_callable, to_mars
+    from ...core.utils.docstring import attach_module_callable_docstring
+    
     class BaseXGB:
         def __init__(self, *args, **kwargs):
-            self.mars_instance = self.mars_cls(*args, **kwargs)
-
-        def __dir__(self) -> Iterable[str]:
-            return self.mars_instance.__dir__()
+            self.mars_instance = self.mars_cls(*to_mars(args), **to_mars(kwargs))
 
     class XGBClassifier(BaseXGB):
         mars_cls = MarsXGBClassifier
-        __doc__ = MarsXGBClassifier.__doc__
 
     class XGBRegressor(BaseXGB):
         mars_cls = MarsXGBRegressor
-        __doc__ = MarsXGBClassifier.__doc__
 
     xgboost_class_mappings: Dict = {
         XGBClassifier: MarsXGBClassifier,
@@ -60,22 +56,17 @@ if xgboost is not None:
 
         return wrap_mars_callable(
             wrapped,
+            member_name=name,
             attach_docstring=True,
-            is_cls_member=False,
+            is_cls_member=True,
             docstring_src_module=xgboost,
-            docstring_src=mars_cls,
+            docstring_src_cls=getattr(xgboost, mars_cls.__name__, None),
         )
 
     def _collect_module_callables(
         skip_members: Optional[List[str]] = None,
     ) -> Dict[str, Callable]:
         module_callables: Dict[str, Callable] = dict()
-
-        for k, v in xgboost_class_mappings.items():
-            module_callables[k.__name__] = k
-            for name, func in inspect.getmembers(v, inspect.isfunction):
-                if not name.startswith("_"):
-                    setattr(k, name, wrap_cls_func(v, name))
 
         for name, func in inspect.getmembers(mars_xgboost, inspect.isfunction):
             if skip_members is not None and name in skip_members:
@@ -93,4 +84,16 @@ if xgboost is not None:
             )
         return module_callables
 
+    def _install_cls_members(module_callables: Dict[str, Callable]):
+        for k, v in xgboost_class_mappings.items():
+            module_callables[k.__name__] = k
+            for name, _ in inspect.getmembers(v, inspect.isfunction):
+                if not name.startswith("_"):
+                    setattr(k, name, wrap_cls_func(v, name))
+
     MARS_XGBOOST_CALLABLES = _collect_module_callables(skip_members=["register_op"])
+    
+    _install_cls_members(MARS_XGBOOST_CALLABLES)
+
+    attach_module_callable_docstring(XGBClassifier, xgboost, xgboost.XGBClassifier)
+    attach_module_callable_docstring(XGBRegressor, xgboost, xgboost.XGBRegressor)

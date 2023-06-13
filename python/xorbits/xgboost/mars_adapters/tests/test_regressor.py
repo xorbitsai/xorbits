@@ -19,9 +19,9 @@ except ImportError:  # pragma: no cover
 
 import pytest
 
-from ... import numpy as np
-from ... import pandas as pd
-from ... import xgboost as xgb
+from .... import numpy as np
+from .... import pandas as pd
+from .... import xgboost as xgb
 
 X = np.random.rand(100, 10)
 X_df = pd.DataFrame(X)
