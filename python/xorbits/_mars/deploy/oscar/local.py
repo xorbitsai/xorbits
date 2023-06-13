@@ -218,7 +218,7 @@ class LocalCluster:
         )
 
         # make memory allocation policy more aggressive on local by
-        # assuming all the memory are available.
+        # assuming all the memory is available.
         if self._config.get("scheduling", {}).get("mem_hard_limit", None) is None:
             self._config["scheduling"]["mem_hard_limit"] = None
 
