@@ -16,7 +16,7 @@ Xorbits can be installed via pip from `PyPI <https://pypi.org/project/xorbits>`_
 Python version support
 ----------------------
 
-Officially Python 3,7, 3.8, 3.9 and 3.10.
+Officially Python 3.8, 3.9, 3.10 and 3.11.
 
 Dependencies
 ------------
@@ -31,8 +31,6 @@ Package                                                          Minimum support
 cloudpickle                                                      1.5.0
 pyyaml                                                           5.1
 psutil                                                           5.9.0
-pickle5 (for python version < 3.8)                               0.0.1
-shared-memory38 (for python version < 3.8)                       0.1.0
 tornado                                                          6.0
 sqlalchemy                                                       1.2.0
 defusedxml                                                       0.5.0
