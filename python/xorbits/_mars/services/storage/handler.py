@@ -611,9 +611,16 @@ class StorageHandlerActor(mo.Actor):
         sender_ref: mo.ActorRefType[SenderManagerActor] = await mo.actor_ref(
             address=remote_band[0], uid=SenderManagerActor.gen_uid(remote_band[1])
         )
+
+        open_reader_tasks = []
+        for data_key in data_keys:
+            open_reader_tasks.append(self.open_reader.delay(session_id, data_key))
+        readers = await self.open_reader.batch(*open_reader_tasks)
+
         await sender_ref.send_batch_data(
             session_id,
             data_keys,
+            readers,
             is_transferring_list,
             (self._data_manager_ref.address, fetch_band_name),
         )
