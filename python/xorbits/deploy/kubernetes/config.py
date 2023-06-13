@@ -612,9 +612,10 @@ class ReplicationConfig(KubeConfig):
                 "resources": dict((k, v) for k, v in resources_dict.items() if v)
                 or None,
                 "ports": [p.build() for p in self._ports] or None,
-                "volumeMounts": [vol.build_mount() for vol in self._volumes] or None
+                "volumeMounts": [vol.build_mount() for vol in self._volumes]
                 if self._external_storage != "juicefs"
-                else [{"mountPath": "/juicefs-data", "name": "data"}],
+                else [vol.build_mount() for vol in self._volumes]
+                + [{"mountPath": "/juicefs-data", "name": "data"}],
                 "livenessProbe": self._liveness_probe.build()
                 if self._liveness_probe
                 else None,
@@ -630,14 +631,14 @@ class ReplicationConfig(KubeConfig):
         result = {
             "containers": [self.build_container()],
             "initContainers": self.config_init_containers(),
+            "volumes": [vol.build() for vol in self._volumes],
         }
-
-        if self._external_storage != "juicefs":
-            result["volumes"] = [vol.build() for vol in self._volumes]
-        else:
-            result["volumes"] = [
+        if self._external_storage == "juicefs":
+            external_volumes = [
                 {"name": "data", "persistentVolumeClaim": {"claimName": "juicefs-pvc"}}
             ]
+            result["volumes"] = result["volumes"] + external_volumes
+
         return dict((k, v) for k, v in result.items() if v)
 
     def build(self):
