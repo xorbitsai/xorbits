@@ -142,7 +142,8 @@ def _start_kube_cluster(**kwargs):
     py_version = get_local_py_version()
     _load_docker_env()
     image_name = _build_docker_images(py_version)
-
+    logger.info("image_name")
+    logger.info(image_name)
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s.config.new_client_from_config()
     kube_api = k8s.client.CoreV1Api(api_client)
