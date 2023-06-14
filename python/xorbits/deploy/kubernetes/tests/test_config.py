@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-import subprocess as sp
 import tempfile
 
 import pytest
 
-from ...._mars.utils import lazy_import
 from ..client import KubernetesCluster
 from ..config import (
     EmptyDirVolumeConfig,
@@ -30,16 +28,7 @@ from ..config import (
     XorbitsSupervisorsConfig,
     XorbitsWorkersConfig,
 )
-from ..external_storage.juicefs.config import (
-    PersistentVolumeClaimConfig,
-    PersistentVolumeConfig,
-    SecretConfig,
-)
-
-kubernetes = lazy_import("kubernetes")
-juicefs_available = "juicefs" in sp.getoutput(
-    "kubectl get pods --all-namespaces -o wide | grep 'juicefs-csi'"
-)
+from ..utils.utils import juicefs_available, kubernetes
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
@@ -313,42 +302,3 @@ def test_init_container():
     assert "image" in init_container_conf
     assert "command" in init_container_conf
     assert "test" in init_container_conf["command"][2]
-
-
-@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
-def test_juicefs_secret_object():
-    secret_config = SecretConfig(
-        metadata_url="redis://172.17.0.5:6379/1", bucket="/var"
-    )
-    secret_config_dict = secret_config.build()
-    assert secret_config_dict["metadata"]["name"] == "juicefs-secret"
-    assert secret_config_dict["stringData"]["metaurl"] == "redis://172.17.0.5:6379/1"
-
-
-@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
-def test_juicefs_persistent_volume_object():
-    persistent_volume_config = PersistentVolumeConfig(
-        namespace="xorbits-ns-07ba172af1e94b9e84352e1aa790fefe"
-    )
-    persistent_volume_config_dict = persistent_volume_config.build()
-    assert (
-        persistent_volume_config_dict["spec"]["csi"]["nodePublishSecretRef"][
-            "namespace"
-        ]
-        == "xorbits-ns-07ba172af1e94b9e84352e1aa790fefe"
-    )
-
-
-@pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
-def test_juicefs_persistent_volume_claim_object():
-    persistent_volume_claim_config = PersistentVolumeClaimConfig(
-        namespace="xorbits-ns-07ba172af1e94b9e84352e1aa790fefe"
-    )
-    persistent_volume_claim_config_dict = persistent_volume_claim_config.build()
-    assert (
-        persistent_volume_claim_config_dict["metadata"]["namespace"]
-        == "xorbits-ns-07ba172af1e94b9e84352e1aa790fefe"
-    )
