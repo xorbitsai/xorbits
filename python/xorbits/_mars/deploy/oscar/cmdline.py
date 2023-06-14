@@ -102,6 +102,24 @@ class OscarCommandRunner:
                 endpoints.append(ep_file.read().strip())
         return endpoints
 
+    def _process_addr_scheme(self, addr: str):
+        oscar_config = self.config.get("oscar")
+        if oscar_config is not None:
+            # we will add gpu support in the future
+            external_addr_scheme = oscar_config.get("numa").get("external_addr_scheme")
+            if external_addr_scheme:  # pragma: no cover
+                if not addr.startswith(f"{external_addr_scheme}://"):
+                    return f"{external_addr_scheme}://{addr}"
+        return addr
+
+    def _process_supervisors_addr_scheme(self, supervisors):
+        supervisor_list = []
+        for s in supervisors.split(","):
+            s = self._process_addr_scheme(s)
+            supervisor_list.append(s)
+        supervisors = ",".join(supervisor_list)
+        return supervisors
+
     @classmethod
     def get_default_config_file(cls):
         mod_file_path = os.path.dirname(
