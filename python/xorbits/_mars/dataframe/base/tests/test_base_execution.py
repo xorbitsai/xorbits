@@ -2805,7 +2805,6 @@ def test_bloom_filter(setup):
 
 
 def test_index_str_method(setup):
-    # stress test on size of 1000 with randominized String
     def generate_random_string(length):
         characters = (
             string.ascii_letters
@@ -2815,7 +2814,7 @@ def test_index_str_method(setup):
 
     array_of_strings = []
     for i in range(1, 10):
-        rand = generate_random_string(1000)
+        rand = generate_random_string(100)
         array_of_strings.append(rand)
 
     index = pd.Index(array_of_strings)

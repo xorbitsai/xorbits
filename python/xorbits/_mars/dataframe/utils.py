@@ -689,21 +689,6 @@ def build_empty_index(dtype, index=None, name=None, gpu: Optional[bool] = False)
     return xpd.Index(series_of_index)
 
 
-def build_index(
-    series_obj=None,
-    fill_value=1,
-    size=1,
-    name=None,
-    ensure_string=False,
-    dtype=None,
-    index=None,
-):
-    ret_series = build_series(
-        series_obj, fill_value, size, name, ensure_string, dtype, index
-    )
-    return pd.Index(ret_series)
-
-
 def build_empty_series(dtype, index=None, name=None, gpu: Optional[bool] = False):
     xpd = cudf if gpu is True else pd
     length = len(index) if index is not None else 0

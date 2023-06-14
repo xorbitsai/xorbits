@@ -185,7 +185,10 @@ class SeriesStringSplitHandler(StringMethodBaseHandler):
     def tile(cls, op):
         out = op.outputs[0]
 
-        if out.op.output_types[0] == OutputType.series:
+        if (
+            out.op.output_types[0] == OutputType.series
+            or out.op.output_types[0] == OutputType.index
+        ):
             return super().tile(op)
 
         out_chunks = []
