@@ -465,7 +465,7 @@ msgid ""
 "Use `@pytest.mark.parameterize <https://docs.pytest.org/en/latest/how-"
 "to/parametrize.html>`__ when testing multiple cases."
 msgstr ""
-"当测试多个用例时，使用`@pytest.mark.parameterize <https://docs.pytest.org/en/latest/how-to/parametrize.html>`__。"
+"当测试多个用例时，使用 `@pytest.mark.parameterize <https://docs.pytest.org/en/latest/how-to/parametrize.html>`_ 。"
 
 #: ../../source/development/contributing_codebase.rst:261
 msgid ""
