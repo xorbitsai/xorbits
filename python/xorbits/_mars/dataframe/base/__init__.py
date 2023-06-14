@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from .accessor import IndexAccessor
 from .apply import df_apply, series_apply
 from .applymap import df_applymap
 from .astype import astype, index_astype
@@ -61,7 +60,7 @@ def _install():
     from .accessor import CachedAccessor, DatetimeAccessor, StringAccessor
     from .datetimes import _datetime_method_to_handlers
     from .standardize_range_index import ChunkStandardizeRangeIndex
-    from .string_ import _index_method_to_handlers, _string_method_to_handlers
+    from .string_ import _string_method_to_handlers
 
     for t in DATAFRAME_TYPE:
         setattr(t, "to_gpu", to_gpu)
@@ -149,16 +148,12 @@ def _install():
         if not hasattr(DatetimeAccessor, method):
             DatetimeAccessor._register(method)
 
-    for method in _index_method_to_handlers:
-        if not hasattr(IndexAccessor, method):
-            IndexAccessor._register(method)
-
     for series in SERIES_TYPE:
         series.str = CachedAccessor("str", StringAccessor)
         series.dt = CachedAccessor("dt", DatetimeAccessor)
 
     for indexes in INDEX_TYPE:
-        indexes.str = CachedAccessor("str", IndexAccessor)
+        indexes.str = CachedAccessor("str", StringAccessor)
 
 
 _install()

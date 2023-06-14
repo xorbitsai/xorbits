@@ -2821,40 +2821,40 @@ def test_index_str_method(setup):
     index = pd.Index(array_of_strings)
     xorbits_index = from_pandas_index(index, chunk_size=5)
 
-    # # Test the get item.
-    # r = xorbits_index.str[:3]
-    # result = r.execute().fetch()
-    # expected = index.str[:3]
-    # pd.testing.assert_index_equal(result, expected)
-    #
-    # # All base Index.str methods supported by now.
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.upper().execute().fetch(), index.str.upper()
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.upper().execute().fetch(), index.str.upper()
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.len().execute().fetch(), index.str.len()
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.lower().execute().fetch(), index.str.lower()
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.title().execute().fetch(), index.str.title()
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.strip(",").execute().fetch(), index.str.strip(",")
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.count("S").execute().fetch(), index.str.count("S")
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.replace("S", "s").execute().fetch(),
-    #     index.str.replace("S", "s"),
-    # )
-    # pd.testing.assert_index_equal(
-    #     xorbits_index.str.encode("utf-8").execute().fetch(), index.str.encode("utf-8")
-    # )
+    r = xorbits_index.str[:3]
+    result = r.execute().fetch()
+    expected = index.str[:3]
+    pd.testing.assert_index_equal(result, expected)
 
-    print(xorbits_index.str.split(",", n=2).execute().fetch())
+    # All base Index.str methods supported by now.
+    pd.testing.assert_index_equal(
+        xorbits_index.str.upper().execute().fetch(), index.str.upper()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.upper().execute().fetch(), index.str.upper()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.len().execute().fetch(), index.str.len()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.lower().execute().fetch(), index.str.lower()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.title().execute().fetch(), index.str.title()
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.strip(",").execute().fetch(), index.str.strip(",")
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.count("S").execute().fetch(), index.str.count("S")
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.replace("S", "s").execute().fetch(),
+        index.str.replace("S", "s"),
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.encode("utf-8").execute().fetch(), index.str.encode("utf-8")
+    )
+    pd.testing.assert_index_equal(
+        xorbits_index.str.capitalize().execute().fetch(), index.str.capitalize()
+    )
