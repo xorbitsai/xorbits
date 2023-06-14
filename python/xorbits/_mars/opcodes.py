@@ -390,7 +390,7 @@ ALIGN = 741
 APPLYMAP = 742
 PIVOT = 743
 PIVOT_TABLE = 744
-INDEX_METHOD = 745  # new inserted operand name.
+INDEX_METHOD = 745 
 
 FUSE = 801
 
