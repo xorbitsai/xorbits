@@ -554,10 +554,10 @@ class StorageHandlerActor(mo.Actor):
             ]
         )
 
-        get_infos = []
+        get_info_tasks = []
         pin_tasks = []
         for data_key in data_keys:
-            get_infos.append(
+            get_info_tasks.append(
                 remote_data_manager_ref.get_data_info.delay(
                     session_id, data_key, remote_band[1], error
                 )
@@ -567,11 +567,10 @@ class StorageHandlerActor(mo.Actor):
                     session_id, data_key, remote_band[1], error
                 )
             )
-
+        logger.debug("Getting data infos for %s", data_keys)
+        infos = await remote_data_manager_ref.get_data_info.batch(*get_info_tasks)
         logger.debug("Pining %s", data_keys)
         await remote_data_manager_ref.pin.batch(*pin_tasks)
-        logger.debug("Getting data infos for %s", data_keys)
-        infos = await remote_data_manager_ref.get_data_info.batch(*get_infos)
 
         filtered = [
             (data_info, data_key)
@@ -588,34 +587,41 @@ class StorageHandlerActor(mo.Actor):
         if level is None:
             level = infos[0].level
 
-        logger.debug("Requesting quota for %s", data_keys)
-        await self.request_quota_with_spill(level, sum(data_sizes))
-
+        logger.debug("Creating writers for %s", data_keys)
         receiver_ref: mo.ActorRefType[ReceiverManagerActor] = await mo.actor_ref(
             address=self.address,
             uid=ReceiverManagerActor.gen_uid(fetch_band_name),
         )
-        is_transferring_list = await receiver_ref.open_writers(
-            session_id,
-            data_keys,
-            data_sizes,
-            sub_infos,
-            level,
+        open_writer_tasks = []
+        for data_key, data_size, sub_info in zip(data_keys, data_sizes, sub_infos):
+            open_writer_tasks.append(
+                self.open_writer.delay(
+                    session_id, data_key, data_size, level, request_quota=False
+                )
+            )
+        writers = await self.open_writer.batch(*open_writer_tasks)
+        is_transferring_list = await receiver_ref.add_writers(
+            session_id, data_keys, data_sizes, sub_infos, writers, level
         )
-        if not is_transferring_list:
-            # no data to be transferred
-            return
+        required_quota = sum(
+            [
+                data_size
+                for is_transferring, data_size in zip(is_transferring_list, data_sizes)
+                if is_transferring
+            ]
+        )
+        await self.request_quota_with_spill(level, required_quota)
+        logger.debug("Writers have been created for %s", data_keys)
 
-        logger.debug("Writers have been opened for %s", data_keys)
-
+        logger.debug("Creating readers for %s", data_keys)
         sender_ref: mo.ActorRefType[SenderManagerActor] = await mo.actor_ref(
             address=remote_band[0], uid=SenderManagerActor.gen_uid(remote_band[1])
         )
-
         open_reader_tasks = []
         for data_key in data_keys:
             open_reader_tasks.append(self.open_reader.delay(session_id, data_key))
         readers = await self.open_reader.batch(*open_reader_tasks)
+        logger.debug("Readers have been created for %s", data_keys)
 
         await sender_ref.send_batch_data(
             session_id,

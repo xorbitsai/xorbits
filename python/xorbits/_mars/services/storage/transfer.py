@@ -19,6 +19,7 @@ from dataclasses import dataclass
 from io import UnsupportedOperation
 from typing import Any, Dict, List, Union
 from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 import xoscar as mo
 from xoscar.core import BufferRef
@@ -222,15 +223,16 @@ class ReceiverManagerActor(mo.StatelessActor):
         storage_handler_ref: mo.ActorRefType[StorageHandlerActor] = None,
     ):
         self._quota_refs = quota_refs
-        self._storage_handler = storage_handler_ref
+        # self._storage_handler = storage_handler_ref
         self._writing_infos: Dict[tuple, WritingInfo] = dict()
         self._lock = asyncio.Lock()
 
     async def __post_create__(self):
-        if self._storage_handler is None:  # for test
-            self._storage_handler = await mo.actor_ref(
-                self.address, StorageHandlerActor.gen_uid("numa-0")
-            )
+        # if self._storage_handler is None:  # for test
+        #     self._storage_handler = await mo.actor_ref(
+        #         self.address, StorageHandlerActor.gen_uid("numa-0")
+        #     )
+        pass
 
     async def get_buffers(
         self,
@@ -290,10 +292,47 @@ class ReceiverManagerActor(mo.StatelessActor):
     def gen_uid(cls, band_name: str):
         return f"receiver_manager_{band_name}"
 
+    def lock(self):
+        self._lock.acquire()
+
+    def unlock(self):
+        self._lock.release()
+
     def _decref_writing_key(self, session_id: str, data_key: str):
         self._writing_infos[(session_id, data_key)].ref_counts -= 1
         if self._writing_infos[(session_id, data_key)].ref_counts == 0:
             del self._writing_infos[(session_id, data_key)]
+
+    def is_writing_info_existed(
+        self, session_id: str, data_keys: List[Union[str, tuple]]
+    ) -> List[bool]:
+        return [(session_id, data_key) in self._writing_infos for data_key in data_keys]
+
+    async def add_writers(
+        self,
+        session_id: str,
+        data_keys: List[Union[str, tuple]],
+        data_sizes: List[int],
+        sub_infos: List,
+        writers: List[Optional[WrappedStorageFileObject]],
+        level: StorageLevel,
+    ) -> List[bool]:
+        is_transferring: List[bool] = []
+        async with self._lock:
+            for data_key, data_size, sub_info, writer in zip(
+                data_keys, data_sizes, sub_infos, writers
+            ):
+                if (session_id, data_key) not in self._writing_infos:
+                    is_transferring.append(False)
+
+                    self._writing_infos[(session_id, data_key)] = WritingInfo(
+                        writer, data_size, level, asyncio.Event(), 1
+                    )
+                    if sub_info is not None:
+                        writer._sub_key_infos = sub_info
+                else:
+                    is_transferring.append(True)
+        return is_transferring
 
     async def create_writers(
         self,
