@@ -215,7 +215,7 @@ msgid ""
 "existing code are accepted as well!"
 msgstr ""
 "Xorbits非常鼓励使用 :pep:`484` 格式的类型提示。新的"
-"开发应该包含类型提示，同时我们也接受请求来为现有代码添加注释！"
+"开发应该包含类型提示，同时我们也接受为现有代码添加注释的拉取请求"
 
 #: ../../source/development/contributing_codebase.rst:109
 msgid "Style guidelines"
@@ -308,7 +308,7 @@ msgstr ""
 " `GitHub Actions <https://github.com/features/actions/>`__持续集成"
 "服务。如果你希望在提交拉取请求之前在分支上运行测试套件，
 "则需要将持续集成服务与你的 GitHub 仓库钩子连接起来。"
-"这里有 `GitHub Actions <https://docs.github.com/en/actions/>`__的说明。"
+"这里有 `GitHub Actions <https://docs.github.com/en/actions/>`__ 的说明。"
 
 #: ../../source/development/contributing_codebase.rst:192
 msgid ""
@@ -381,7 +381,7 @@ msgid ""
 "best location to put your test, take your best guess, but note that "
 "reviewers may request that you move the test to a different location."
 msgstr ""
-"一般而言，可以使用集成开发环境 (IDE) 中的搜索功能或在终端中使用 git grep 命令来查找调用该方法的测试文件。"
+"一般而言，可以使用编译器中的搜索功能或在终端中使用 git grep 命令来查找调用该方法的测试文件。"
 "如果您不确定最佳位置来放置您的测试，请尽力猜测，"
 "但请注意，审阅人可能会要求您将测试移动到其他位置。"
 
@@ -401,7 +401,7 @@ msgid ""
 "for it."
 msgstr ""
 "这将在您的代码库中的所有文件中搜索文本"
-"``function_name(``。这是一个快速定位"
+"``function_name(`` 。这是一个快速定位"
 "代码库中函数并确定最佳位置添加测试的有用方式。"
 
 #: ../../source/development/contributing_codebase.rst:236
@@ -411,7 +411,7 @@ msgid ""
 "where a test should be located."
 msgstr ""
 "理想情况下，一个测试应该有一个且只有一个明显的位置。"
-"在我们达到这个理想状态之前，这里有一些关于测试放置位置的经验法则。"
+"在那之前，这里有一些关于测试放置位置的经验法则。"
 
 #: ../../source/development/contributing_codebase.rst:241
 msgid "Using ``pytest``"
@@ -441,8 +441,8 @@ msgid ""
 "Functional tests named ``def test_*`` and *only* take arguments that are "
 "either fixtures or parameters."
 msgstr ""
-"测试函数使用 ``def test_*`` 命名，只接受"
-"fixture 或 parameter 参数作为输入。"
+"测试函数使用 ``def test_*`` 命名， *只* 接受"
+" fixture 或 parameter 参数作为输入。"
 
 #: ../../source/development/contributing_codebase.rst:258
 msgid "Use a bare ``assert`` for testing scalars and truth-testing"
@@ -632,7 +632,7 @@ msgid ""
 "required, use the ``tm.network`` decorator."
 msgstr ""
 "强烈不建议添加连接到互联网的测试，因为网络连接的不稳定性和连"
-"接的服务器的所有权问题。如果绝对需要网络连接，请使用 ``tm.network`` 装饰器"
+"接的服务器的权限问题。如果必须使用网络连接，请使用 ``tm.network`` 装饰器"
 
 #: ../../source/development/contributing_codebase.rst:369
 msgid ""
@@ -714,7 +714,7 @@ msgid ""
 "information. Using the parallelization option can significantly reduce "
 "the time it takes to locally run tests before submitting a pull request."
 msgstr ""
-"摘要是可选的，如果您不需要附加"
+"摘要不是必须的，如果您不需要附加"
 "信息，可以删除它。使用并行化选项可以大大减少"
 "提交拉取请求之前在本地运行测试所需的时间。"
 
