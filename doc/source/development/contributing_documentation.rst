@@ -137,7 +137,7 @@ Then you can find the HTML output in the folder ``doc/build/html/``.
 
 To build the docs in Chinese, run::
 
-   make html_zh_cn
+   sphinx-build -b html -D language=zh_CN source build/html_zh_cn
 
 Then you can find the HTML output in the folder ``doc/build/html_zh_cn/``.
 
