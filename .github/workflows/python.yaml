@@ -135,7 +135,11 @@ jobs:
         fi
         if [[ "$MODULE" == "kubernetes-juicefs" ]]; then
           pip install kubernetes
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          if command -v helm >/dev/null 2>&1; then
+            continue
+          else
+            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          fi
           helm repo add juicefs https://juicedata.github.io/charts/
           helm repo update
           helm fetch --untar juicefs/juicefs-csi-driver
