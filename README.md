@@ -47,16 +47,16 @@ As long as you know how to use numpy, pandas and so forth, you would probably kn
 
 All Xorbits APIs implemented or planned include:
 
-| API                                                                            | Implemented version or plan |
-|--------------------------------------------------------------------------------|-----------------------------|
-| [xorbits.pandas](https://doc.xorbits.io/en/latest/reference/pandas/index.html) | v0.1.0                      |
-| [xorbits.numpy](https://doc.xorbits.io/en/latest/reference/numpy/index.html)   | v0.1.0                      |
-| xorbits.sklearn                                                                | Planned in the near future  |
-| [xorbits.xgboost](https://doc.xorbits.io/en/latest/reference/numpy/index.html) | v0.1.0                      |
-| xorbits.lightgbm                                                               | Planned in the near future  |
-| xorbits.xarray                                                                 | Planned in the future       |
-| xorbits.scipy                                                                  | Planned in the future       |
-| xorbits.statsmodels                                                            | Planned in the future       |
+| API                                                                             | Implemented version or plan |
+|---------------------------------------------------------------------------------|-----------------------------|
+| [xorbits.pandas](https://doc.xorbits.io/en/latest/reference/pandas/index.html)  | v0.1.0                      |
+| [xorbits.numpy](https://doc.xorbits.io/en/latest/reference/numpy/index.html)    | v0.1.0                      |
+| xorbits.sklearn                                                                 | Planned in the near future  |
+| [xorbits.xgboost](https://doc.xorbits.io/en/latest/reference/xgboost/index.html)| v0.1.0                      |
+| xorbits.lightgbm                                                                | Planned in the near future  |
+| xorbits.xarray                                                                  | Planned in the future       |
+| xorbits.scipy                                                                   | Planned in the future       |
+| xorbits.statsmodels                                                             | Planned in the future       |
 
 ## Lightning fast speed
 Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
