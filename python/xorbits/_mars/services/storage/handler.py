@@ -66,6 +66,7 @@ class StorageHandlerActor(mo.Actor):
         self._quota_refs = quota_refs
         self._band_name = band_name
         self._supervisor_address = None
+        self._lock = asyncio.Lock()
 
     @classmethod
     def gen_uid(cls, band_name: str):
@@ -284,6 +285,7 @@ class StorageHandlerActor(mo.Actor):
         level: StorageLevel,
     ):
         data_key = await self._data_manager_ref.get_store_key(session_id, data_key)
+        logger.debug("Delete object %s, %s on %s", session_id, data_key, self.address)
         await self._data_manager_ref.delete_data_info(
             session_id, data_key, level, self._band_name
         )
@@ -292,6 +294,7 @@ class StorageHandlerActor(mo.Actor):
 
     @mo.extensible
     async def delete(self, session_id: str, data_key: str, error: str = "raise"):
+        logger.debug("Delete %s, %s on %s", session_id, data_key, self.address)
         if error not in ("raise", "ignore"):  # pragma: no cover
             raise ValueError("error must be raise or ignore")
 
@@ -366,6 +369,9 @@ class StorageHandlerActor(mo.Actor):
                         self._data_manager_ref.delete_data_info.delay(
                             session_id, key, level, info.band
                         )
+                    )
+                    logger.debug(
+                        "Batch delete %s, %s on %s", session_id, key, self.address
                     )
                     to_removes.append((level, info.object_id))
                     level_sizes[level] += info.store_size
@@ -607,28 +613,26 @@ class StorageHandlerActor(mo.Actor):
             [
                 data_size
                 for is_transferring, data_size in zip(is_transferring_list, data_sizes)
-                if is_transferring
+                if not is_transferring
             ]
         )
         await self.request_quota_with_spill(level, required_quota)
         logger.debug("Writers have been created for %s", data_keys)
 
-        logger.debug("Creating readers for %s", data_keys)
+        logger.debug(
+            "Start transferring %s from %s to %s",
+            data_keys,
+            remote_band,
+            (self.address, fetch_band_name),
+        )
         sender_ref: mo.ActorRefType[SenderManagerActor] = await mo.actor_ref(
             address=remote_band[0], uid=SenderManagerActor.gen_uid(remote_band[1])
         )
-        open_reader_tasks = []
-        for data_key in data_keys:
-            open_reader_tasks.append(self.open_reader.delay(session_id, data_key))
-        readers = await self.open_reader.batch(*open_reader_tasks)
-        logger.debug("Readers have been created for %s", data_keys)
-
         await sender_ref.send_batch_data(
             session_id,
             data_keys,
-            readers,
             is_transferring_list,
-            (self._data_manager_ref.address, fetch_band_name),
+            (self.address, fetch_band_name),
         )
         logger.debug("Finish fetching %s from band %s", data_keys, remote_band)
 
@@ -692,6 +696,7 @@ class StorageHandlerActor(mo.Actor):
         for data_key, bands in zip(missing_keys, metas):
             if bands is not None:
                 remote_keys[bands["bands"][0]].add(data_key)
+
         transfer_tasks = []
         fetch_keys = []
         for band, keys in remote_keys.items():
