@@ -22,7 +22,7 @@ class K8SSupervisorCommandRunner(K8SServiceMixin, SupervisorCommandRunner):
     async def start_services(self):
         if (
             "MARS_EXTERNAL_STORAGE" in os.environ
-            and "MARS_EXTERNAL_STORAGE" == "juicefs"
+            and os.environ["MARS_EXTERNAL_STORAGE"] == "juicefs"
         ):  # pragma: no cover
             self.config["storage"]["backends"] = ["juicefs"]
             self.config["storage"]["juicefs"]["root_dirs"] = ["/juicefs-data"]

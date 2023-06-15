@@ -2,7 +2,4 @@
 cluster:
   backend: k8s
 storage:
-  backends: [juicefs]
-  juicefs:
-    root_dirs: ["/juicefs-data"]
-    is_k8s: True
+  backends: [shared_memory]
