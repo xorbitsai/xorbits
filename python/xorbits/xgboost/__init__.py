@@ -17,6 +17,10 @@ import inspect
 from ..core.utils.fallback import unimplemented_func
 
 
+def _install():
+    pass
+
+
 def __dir__():
     from .mars_adapters import MARS_XGBOOST_CALLABLES
 
