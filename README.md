@@ -52,7 +52,7 @@ All Xorbits APIs implemented or planned include:
 | [xorbits.pandas](https://doc.xorbits.io/en/latest/reference/pandas/index.html) | v0.1.0                      |
 | [xorbits.numpy](https://doc.xorbits.io/en/latest/reference/numpy/index.html)   | v0.1.0                      |
 | xorbits.sklearn                                                                | Planned in the near future  |
-| xorbits.xgboost                                                                | Planned in the near future  |
+| [xorbits.xgboost](https://doc.xorbits.io/en/latest/reference/numpy/index.html) | v0.1.0                      |
 | xorbits.lightgbm                                                               | Planned in the near future  |
 | xorbits.xarray                                                                 | Planned in the future       |
 | xorbits.scipy                                                                  | Planned in the future       |
