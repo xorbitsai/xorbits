@@ -183,10 +183,7 @@ class DataFrameReadSQL(
         if self.method == "offset":
             # fetch size
             size = list(
-                engine_or_conn.execute(
-                    ##sql.select([sql.func.count()]).select_from(selectable)
-                    select(func.count()).select_from(selectable)
-                )
+                engine_or_conn.execute(select(func.count()).select_from(selectable))
             )[0][0]
             shape = (size, test_df.shape[1])
         else:
