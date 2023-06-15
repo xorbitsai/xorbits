@@ -34,6 +34,7 @@ if lightgbm is not None:
         LGBMRegressor as MarsLGBMRegressor,
     )
     from ...core.adapter import mars_lightgbm, to_mars, wrap_mars_callable
+    from ...core.utils.docstring import attach_module_callable_docstring
 
     class LGBMBase:
         def __init__(self, *args, **kwargs):
@@ -83,5 +84,9 @@ if lightgbm is not None:
                 docstring_src=getattr(lightgbm, name, None),
             )
         return module_callables
+
+    attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifier)
+    attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
+    attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)
 
     MARS_LIGHGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
