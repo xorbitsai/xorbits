@@ -33,11 +33,11 @@ if lightgbm is not None:
     from ..._mars.learn.contrib.lightgbm.regressor import (
         LGBMRegressor as MarsLGBMRegressor,
     )
-    from ...core.adapter import mars_lightgbm, wrap_mars_callable
+    from ...core.adapter import mars_lightgbm, to_mars, wrap_mars_callable
 
     class LGBMBase:
         def __init__(self, *args, **kwargs):
-            self.mars_instance = self.marscls(*args, **kwargs)
+            self.mars_instance = self.marscls(*to_mars(args), **to_mars(kwargs))
 
         def __getattr__(self, name: str) -> Any:
             if callable(getattr(self.mars_instance, name)):

@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from ..core.utils.fallback import unimplemented_func
 
 
 def __dir__():
@@ -21,9 +22,22 @@ def __dir__():
 
 
 def __getattr__(name: str):
+    import inspect
+
     from .mars_adapters import MARS_LIGHGBM_CALLABLES
 
     if name in MARS_LIGHGBM_CALLABLES:
         return MARS_LIGHGBM_CALLABLES[name]
     else:
-        raise NotImplementedError(f"{__name__} does not support {name} now.")
+        try:
+            import lightgbm
+        except ImportError:  # pragma: no cover
+            lightgbm = None
+        if lightgbm is not None:
+            if not hasattr(lightgbm, name):
+                raise AttributeError(name)
+            else:
+                if inspect.ismethod(getattr(lightgbm, name)):
+                    return unimplemented_func()
+                else:
+                    raise AttributeError
