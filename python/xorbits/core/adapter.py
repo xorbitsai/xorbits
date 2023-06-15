@@ -70,6 +70,7 @@ from .._mars.dataframe.window.ewm.core import EWM as MarsEWM
 from .._mars.dataframe.window.expanding.core import Expanding as MarsExpanding
 from .._mars.dataframe.window.rolling.core import Rolling as MarsRolling
 from .._mars.deploy.oscar import session
+from .._mars.learn.contrib import xgboost as mars_xgboost
 from .._mars.tensor.core import TENSOR_TYPE as MARS_TENSOR_TYPE
 from .._mars.tensor.core import Tensor as MarsTensor
 from .._mars.tensor.core import flatiter as mars_flatiter
@@ -397,9 +398,17 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     elif isinstance(inp, tuple):
         return tuple(to_mars(i) for i in inp)
     elif isinstance(inp, list):
-        return list(to_mars(i) for i in inp)
+        # in-place modification of list
+        # preserve weak references to list, avoiding access issues
+        for i, item in enumerate(inp):
+            inp[i] = to_mars(item)
+        return inp
     elif isinstance(inp, dict):
-        return dict((k, to_mars(v)) for k, v in inp.items())
+        # in-place modification of dict
+        # preserve weak references to dict, avoiding access issues
+        for k, v in inp.items():
+            inp[k] = to_mars(v)
+        return inp
     else:
         return inp
 
@@ -422,9 +431,17 @@ def from_mars(inp: Union[MarsEntity, Tuple, List, Dict, None]):
     elif isinstance(inp, tuple):
         return tuple(from_mars(i) for i in inp)
     elif isinstance(inp, list):
-        return list(from_mars(i) for i in inp)
+        # in-place modification of list
+        # preserve weak references to list, avoiding access issues
+        for i, item in enumerate(inp):
+            inp[i] = from_mars(item)
+        return inp
     elif isinstance(inp, dict):
-        return dict((k, from_mars(v)) for k, v in inp.items())
+        # in-place modification of dict
+        # preserve weak references to dict, avoiding access issues
+        for k, v in inp.items():
+            inp[k] = from_mars(v)
+        return inp
     elif isinstance(inp, Generator):
         return wrap_generator(inp)
     else:
