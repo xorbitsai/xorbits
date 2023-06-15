@@ -17,9 +17,7 @@ import asyncio
 import logging
 from dataclasses import dataclass
 from io import UnsupportedOperation
-from typing import Any, Dict, List, Union
-from typing import TYPE_CHECKING, Dict, List
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 
 import xoscar as mo
 from xoscar.core import BufferRef
@@ -30,10 +28,6 @@ from ...typing import BandType
 from ...utils import dataslots
 from .core import DataManagerActor, WrappedStorageFileObject
 from .handler import StorageHandlerActor
-
-if TYPE_CHECKING:
-    from ...storage.core import StorageFileObject
-
 
 DEFAULT_TRANSFER_BLOCK_SIZE = 4 * 1024**2
 
@@ -159,7 +153,6 @@ class SenderManagerActor(mo.StatelessActor):
         self,
         session_id: str,
         data_keys: List[str],
-        readers: List["StorageFileObject"],
         is_transferring_list: List[bool],
         remote_band: BandType,
         block_size: int = None,
@@ -180,11 +173,9 @@ class SenderManagerActor(mo.StatelessActor):
         ] = await self.get_receiver_ref(remote_band[0], remote_band[1])
 
         if to_send_keys:
-            logger.debug("Start sending %s", to_send_keys)
+            logger.debug("Start sending %s to %s", to_send_keys, receiver_ref.address)
             block_size = block_size or self._transfer_block_size
-            await self._send_data(
-                receiver_ref, readers, session_id, to_send_keys, block_size
-            )
+            await self._send_data(receiver_ref, session_id, to_send_keys, block_size)
             logger.debug("Done sending %s", to_send_keys)
         if to_wait_keys:
             logger.debug("Start waiting %s", to_wait_keys)
