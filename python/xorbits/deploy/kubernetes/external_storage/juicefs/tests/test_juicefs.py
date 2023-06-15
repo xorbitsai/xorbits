@@ -72,7 +72,8 @@ async def test_external_storage_juicefs():
     ) as cluster_client:
         import xorbits.pandas as pd
 
-        print(pd.DataFrame({"col": [1, 2, 3]}).sum())
+        a = pd.DataFrame({"col": [1, 2, 3]}).sum()
+        print(a)
 
         from kubernetes.stream import stream
 
