@@ -25,6 +25,7 @@ class K8SSupervisorCommandRunner(K8SServiceMixin, SupervisorCommandRunner):
             and os.environ["MARS_EXTERNAL_STORAGE"] == "juicefs"
         ):  # pragma: no cover
             self.config["storage"]["backends"] = ["juicefs"]
+            self.config["storage"]["juicefs"] = dict()
             self.config["storage"]["juicefs"]["root_dirs"] = ["/juicefs-data"]
             self.config["storage"]["juicefs"]["is_k8s"] = True
         await super().start_services()

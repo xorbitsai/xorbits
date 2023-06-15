@@ -97,7 +97,7 @@ async def test_external_storage_juicefs():
                 stdout=True,
                 tty=False,
             )
-            assert resp == ""
+            assert resp != ""
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
