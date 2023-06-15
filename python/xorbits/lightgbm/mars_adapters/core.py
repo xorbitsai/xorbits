@@ -17,7 +17,7 @@ from typing import Any
 
 try:
     import lightgbm
-except ImportError:
+except ImportError:  # pragma: no cover
     lightgbm = None
 
 MARS_LIGHGBM_CALLABLES = {}
