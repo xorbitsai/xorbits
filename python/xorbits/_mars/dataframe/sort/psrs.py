@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import bisect
 import os
+from typing import Any, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -112,7 +114,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
                 kind=kind,
                 n_partition=axis_chunk_shape,
                 output_types=op.output_types,
-                **cls._collect_op_properties(op)
+                **cls._collect_op_properties(op),
             )
             kws = []
             sort_shape = in_chunk.shape
@@ -174,7 +176,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
             kind=kind,
             n_partition=axis_chunk_shape,
             output_types=output_types,
-            **cls._collect_op_properties(op)
+            **cls._collect_op_properties(op),
         )
         concat_pivot_shape = (
             sorted_chunks[0].shape[: op.axis]
@@ -202,7 +204,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
                 n_partition=axis_chunk_shape,
                 stage=OperandStage.map,
                 output_types=op.output_types,
-                **cls._collect_op_properties(op)
+                **cls._collect_op_properties(op),
             )
             if isinstance(chunk_inputs[0].index_value.value, IndexValue.RangeIndex):
                 index_value = parse_index(pd.Index([], dtype=np.int64))
@@ -240,7 +242,7 @@ class DataFramePSRSOperandMixin(DataFrameOperandMixin, PSRSOperandMixin):
                 reducer_index=(i,),
                 n_reducers=len(partition_chunks),
                 output_types=op.output_types,
-                **cls._collect_op_properties(op)
+                **cls._collect_op_properties(op),
             )
             chunk_shape = list(partition_chunk.shape)
             chunk_shape[op.axis] = np.nan
@@ -661,14 +663,76 @@ class DataFramePSRSShuffle(MapReduceOperand, DataFrameOperandMixin):
                 ctx[out.key, (i,)] = values
 
     @classmethod
+    def _calc_pivots_poses(
+        cls,
+        index: Any,
+        pivots: Any,
+        level: Optional[List] = None,
+        sort_remaining: bool = True,
+    ):
+        if isinstance(index, pd.MultiIndex) and isinstance(pivots, pd.MultiIndex):
+            is_multi_index = True
+        elif not isinstance(index, pd.MultiIndex) and not isinstance(
+            pivots, pd.MultiIndex
+        ):
+            is_multi_index = False
+        else:  # pragma: no cover
+            raise TypeError(
+                f"Invalid types for index and pivots: index is {type(index)}, while pivots is {type(pivots)}."
+            )
+
+        if not is_multi_index:
+            return index.searchsorted(list(pivots), side="right")
+
+        if index.nlevels != pivots.nlevels:  # pragma: no cover
+            raise ValueError(
+                f"Inconsistent levels: index has {index.nlevels} levels, while pivots has {pivots.nlevels} levels."
+            )
+
+        if isinstance(level, list) and len(level) == 1 and not sort_remaining:
+            return index.get_level_values(level[0]).searchsorted(
+                list(pivots.get_level_values(level[0])), side="right"
+            )
+        else:
+            if level is None:
+                index_list = list(index)
+                pivots_list = list(pivots)
+            elif isinstance(level, list):
+                index_from_level = []
+                pivots_from_level = []
+                for l in level:
+                    index_from_level.append(index.get_level_values(l))
+                    pivots_from_level.append(pivots.get_level_values(l))
+                if sort_remaining:
+                    if len(level) < index.nlevels:
+                        remain_indexes = index.droplevel(level)
+                        remain_pivots = pivots.droplevel(level)
+                        for l in range(remain_indexes.nlevels):
+                            index_from_level.append(remain_indexes.get_level_values(l))
+                        for l in range(remain_pivots.nlevels):
+                            pivots_from_level.append(remain_pivots.get_level_values(l))
+                index_list = list(zip(*index_from_level))
+                pivots_list = list(zip(*pivots_from_level))
+            else:  # pragma: no cover
+                raise TypeError(f"Invalid level type: {type(level)}")
+
+            poses = []
+            for pivot in pivots_list:
+                poses.append(bisect.bisect_right(index_list, pivot))
+
+            return np.array(poses)
+
+    @classmethod
     def _execute_sort_index_map(cls, ctx, op):
         a, pivots = [ctx[c.key] for c in op.inputs]
         out = op.outputs[0]
 
         if op.ascending:
-            poses = a.index.searchsorted(list(pivots), side="right")
+            poses = cls._calc_pivots_poses(a.index, pivots, op.level, op.sort_remaining)
         else:
-            poses = len(a) - a.index[::-1].searchsorted(list(pivots), side="right")
+            poses = len(a) - cls._calc_pivots_poses(
+                a.index[::-1], pivots, op.level, op.sort_remaining
+            )
         poses = (None,) + tuple(poses) + (None,)
         for i in range(op.n_partition):
             values = a.iloc[poses[i] : poses[i + 1]]
