@@ -90,7 +90,12 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
 
     @classmethod
     def execute(cls, ctx, op: "GroupByLen"):
-        ctx[op.output[0].key] = ctx[op.inputs[0].key]
+        if op.stage == OperandStage.map:
+            cls.execute_map(ctx, op)
+        elif op.stage == OperandStage.reduce:
+            cls.execute_reduce(ctx, op)
+        else:
+            ctx[op.output[0].key] = ctx[op.inputs[0].key]
 
 
 def groupby_len(groupby):
