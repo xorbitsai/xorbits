@@ -13,7 +13,7 @@
 
 from typing import Any
 
-from .. import lightgbm
+import lightgbm
 
 MARS_LIGHGBM_CALLABLES = {}
 

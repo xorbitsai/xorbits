@@ -12,17 +12,16 @@
 # limitations under the License.
 from ..core.utils.fallback import unimplemented_func
 
-try:
-    import lightgbm
-except ImportError:  # pragma: no cover
-    raise AttributeError("lightgbm is required but not installed.")
-
 
 def _install():
     pass
 
 
 def __dir__():
+    try:
+        import lightgbm
+    except ImportError:  # pragma: no cover
+        raise AttributeError("lightgbm is required but not installed.")
     from .mars_adapters import MARS_LIGHGBM_CALLABLES
 
     return list(MARS_LIGHGBM_CALLABLES.keys())
@@ -31,20 +30,19 @@ def __dir__():
 def __getattr__(name: str):
     import inspect
 
+    try:
+        import lightgbm
+    except ImportError:  # pragma: no cover
+        raise AttributeError("lightgbm is required but not installed.")
     from .mars_adapters import MARS_LIGHGBM_CALLABLES
 
     if name in MARS_LIGHGBM_CALLABLES:
         return MARS_LIGHGBM_CALLABLES[name]
     else:
-        try:
-            import lightgbm
-        except ImportError:  # pragma: no cover
-            lightgbm = None
-        if lightgbm is not None:
-            if not hasattr(lightgbm, name):
-                raise AttributeError(name)
+        if not hasattr(lightgbm, name):
+            raise AttributeError(name)
+        else:
+            if inspect.ismethod(getattr(lightgbm, name)):
+                return unimplemented_func()
             else:
-                if inspect.ismethod(getattr(lightgbm, name)):
-                    return unimplemented_func()
-                else:
-                    raise AttributeError
+                raise AttributeError
