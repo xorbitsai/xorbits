@@ -2,7 +2,7 @@ import subprocess as sp
 
 import pytest
 
-from ....utils.utils import (
+from ....tests.test_kubernetes import (
     _start_kube_cluster,
     juicefs_available,
     k8s,
