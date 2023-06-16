@@ -42,7 +42,7 @@ def _collect_coverage():
     dist_coverage_path = os.path.join(XORBITS_ROOT, ".dist-coverage")
     if os.path.exists(dist_coverage_path):
         # change ownership of coverage files
-        if find_executable("sudo"):
+        if find_executable("sudo"):  # pragma: no cover
             proc = subprocess.Popen(
                 [
                     "sudo",
@@ -58,11 +58,11 @@ def _collect_coverage():
 
         # rewrite paths in coverage result files
         for fn in glob.glob(os.path.join(dist_coverage_path, ".coverage.*")):
-            if "COVERAGE_FILE" in os.environ:
+            if "COVERAGE_FILE" in os.environ:  # pragma: no cover
                 new_cov_file = os.environ["COVERAGE_FILE"] + os.path.basename(
                     fn
                 ).replace(".coverage", "")
-            else:
+            else:  # pragma: no cover
                 new_cov_file = fn.replace(".dist-coverage" + os.sep, "")
             shutil.copyfile(fn, new_cov_file)
         shutil.rmtree(dist_coverage_path)
@@ -87,21 +87,21 @@ def _build_docker_images(py_version: str):
             ],
             cwd=XORBITS_ROOT,
         )
-        if build_proc.wait() != 0:
+        if build_proc.wait() != 0:  # pragma: no cover
             raise SystemError("Executing docker build failed.")
-    except:  # noqa: E722
+    except:  # noqa: E722  # pragma: no cover
         _remove_docker_image(image_name)
         raise
     return image_name
 
 
 def _remove_docker_image(image_name, raises=True):
-    if "CI" not in os.environ:
+    if "CI" not in os.environ:  # pragma: no cover
         # delete image iff in CI environment
         return
     proc = subprocess.Popen(["docker", "rmi", "-f", image_name])
     if proc.wait() != 0 and raises:
-        raise SystemError("Executing docker rmi failed.")
+        raise SystemError("Executing docker rmi failed.")  # pragma: no cover
 
 
 def _load_docker_env():
@@ -118,7 +118,7 @@ def _load_docker_env():
         os.environ[var] = value.strip('"')
 
     ingress_proc = subprocess.Popen(["minikube", "addons", "enable", "ingress"])
-    if ingress_proc.wait() != 0:
+    if ingress_proc.wait() != 0:  # pragma: no cover
         raise SystemError("Enable ingress failed!")
 
 

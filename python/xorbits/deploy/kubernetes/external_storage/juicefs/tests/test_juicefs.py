@@ -142,3 +142,25 @@ async def test_external_storage_juicefs_missing_bucket():
             metadata_url="redis://" + redis_ip + ":6379/1",
         ):
             simple_job()
+
+
+@pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
+@pytest.mark.skipif(not juicefs_available, reason="Cannot run without juicefs")
+@pytest.mark.asyncio
+async def test_external_storage_invalid_option():
+    with pytest.raises(
+        ValueError,
+        match="Currently, only shared memory and juicefs are supported as storage backends.",
+    ):
+        with _start_kube_cluster(
+            supervisor_cpu=0.1,
+            supervisor_mem="1G",
+            worker_num=1,
+            worker_cpu=0.1,
+            worker_mem="1G",
+            external_storage="Ceph",
+            use_local_image=True,
+            metadata_url="fake://127.0.0.1:6379/1",
+            bucket="/var",
+        ):
+            simple_job()
