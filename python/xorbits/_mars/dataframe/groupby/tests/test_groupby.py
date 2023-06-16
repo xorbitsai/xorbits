@@ -525,3 +525,18 @@ def test_groupby_fill():
     assert len(r.chunks) == 4
     assert r.shape == (len(s1),)
     assert r.chunks[0].shape == (np.nan,)
+
+
+def test_groupby_len(setup):
+    df = md.DataFrame(
+        {
+            "a": ["a", "b", "a", "c"],
+            "b": [0.1, 0.2, 0.3, 0.4],
+            "c": ["aa", "bb", "cc", "aa"],
+        }
+    )
+
+    grouped = df.groupby("b")
+
+    num_groups = len(grouped)
+    print(num_groups)
