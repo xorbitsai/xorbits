@@ -14,6 +14,15 @@
 # limitations under the License.
 from ..core.utils.fallback import unimplemented_func
 
+try:
+    import lightgbm
+except ImportError:  # pragma: no cover
+    raise ImportError("Failed to import lightgbm. Please make sure it is installed.")
+
+
+def _install():
+    pass
+
 
 def __dir__():
     from .mars_adapters import MARS_LIGHGBM_CALLABLES

@@ -15,78 +15,79 @@
 
 from typing import Any
 
-try:
-    import lightgbm
-except ImportError:  # pragma: no cover
-    lightgbm = None
+from .. import lightgbm
 
 MARS_LIGHGBM_CALLABLES = {}
 
-if lightgbm is not None:
-    import inspect
-    from typing import Callable, Dict, List, Optional
 
-    from ..._mars.learn.contrib.lightgbm.classifier import (
-        LGBMClassifier as MarsLGBMClassifier,
-    )
-    from ..._mars.learn.contrib.lightgbm.ranker import LGBMRanker as MarsLGBMRanker
-    from ..._mars.learn.contrib.lightgbm.regressor import (
-        LGBMRegressor as MarsLGBMRegressor,
-    )
-    from ...core.adapter import mars_lightgbm, to_mars, wrap_mars_callable
-    from ...core.utils.docstring import attach_module_callable_docstring
+import inspect
+from typing import Callable, Dict, List, Optional
 
-    class LGBMBase:
-        def __init__(self, *args, **kwargs):
-            self.mars_instance = self.marscls(*to_mars(args), **to_mars(kwargs))
+from ..._mars.learn.contrib.lightgbm.classifier import (
+    LGBMClassifier as MarsLGBMClassifier,
+)
+from ..._mars.learn.contrib.lightgbm.ranker import LGBMRanker as MarsLGBMRanker
+from ..._mars.learn.contrib.lightgbm.regressor import LGBMRegressor as MarsLGBMRegressor
+from ...core.adapter import mars_lightgbm, to_mars, wrap_mars_callable
+from ...core.utils.docstring import attach_module_callable_docstring
 
-        def __getattr__(self, name: str) -> Any:
-            if callable(getattr(self.mars_instance, name)):
-                return wrap_mars_callable(
-                    getattr(self.mars_instance, name),
-                    attach_docstring=True,
-                    is_cls_member=False,
-                    docstring_src_module=self.LGBCls,
-                    docstring_src=getattr(self.LGBCls, name, None),
-                )
 
-    class LGBMRegressor(LGBMBase):
-        marscls = MarsLGBMRegressor
-        LGBCls = lightgbm.LGBMRegressor
+class LGBMBase:
+    def __init__(self, *args, **kwargs):
+        self.mars_instance = self.marscls(*to_mars(args), **to_mars(kwargs))
 
-    class LGBMClassifier(LGBMBase):
-        marscls = MarsLGBMClassifier
-        LGBCls = lightgbm.LGBMClassifier
-
-    class LGBMRanker(LGBMBase):
-        marscls = MarsLGBMRanker
-        LGBCls = lightgbm.LGBMRanker
-
-    def _collect_module_callables(
-        skip_members: Optional[List[str]] = None,
-    ) -> Dict[str, Callable]:
-        module_callables: Dict[str, Callable] = dict()
-
-        module_callables[lightgbm.LGBMClassifier.__name__] = LGBMClassifier
-
-        module_callables[lightgbm.LGBMRegressor.__name__] = LGBMRegressor
-
-        module_callables[lightgbm.LGBMRanker.__name__] = LGBMRanker
-
-        for name, func in inspect.getmembers(mars_lightgbm, inspect.isfunction):
-            if skip_members is not None and name in skip_members:
-                continue
-            module_callables[name] = wrap_mars_callable(
-                func,
+    def __getattr__(self, name: str) -> Any:
+        if callable(getattr(self.mars_instance, name)):
+            return wrap_mars_callable(
+                getattr(self.mars_instance, name),
                 attach_docstring=True,
                 is_cls_member=False,
-                docstring_src_module=lightgbm,
-                docstring_src=getattr(lightgbm, name, None),
+                docstring_src_module=self.LGBCls,
+                docstring_src=getattr(self.LGBCls, name, None),
             )
-        return module_callables
 
-    attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifier)
-    attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
-    attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)
 
-    MARS_LIGHGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
+class LGBMRegressor(LGBMBase):
+    marscls = MarsLGBMRegressor
+    LGBCls = lightgbm.LGBMRegressor
+
+
+class LGBMClassifier(LGBMBase):
+    marscls = MarsLGBMClassifier
+    LGBCls = lightgbm.LGBMClassifier
+
+
+class LGBMRanker(LGBMBase):
+    marscls = MarsLGBMRanker
+    LGBCls = lightgbm.LGBMRanker
+
+
+def _collect_module_callables(
+    skip_members: Optional[List[str]] = None,
+) -> Dict[str, Callable]:
+    module_callables: Dict[str, Callable] = dict()
+
+    module_callables[lightgbm.LGBMClassifier.__name__] = LGBMClassifier
+
+    module_callables[lightgbm.LGBMRegressor.__name__] = LGBMRegressor
+
+    module_callables[lightgbm.LGBMRanker.__name__] = LGBMRanker
+
+    for name, func in inspect.getmembers(mars_lightgbm, inspect.isfunction):
+        if skip_members is not None and name in skip_members:
+            continue
+        module_callables[name] = wrap_mars_callable(
+            func,
+            attach_docstring=True,
+            is_cls_member=False,
+            docstring_src_module=lightgbm,
+            docstring_src=getattr(lightgbm, name, None),
+        )
+    return module_callables
+
+
+attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifier)
+attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
+attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)
+
+MARS_LIGHGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
