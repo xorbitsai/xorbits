@@ -225,7 +225,13 @@ def sort_index(
         raise TypeError(f"Invalid na_position: {na_position}")
     psrs_kinds = _validate_sort_psrs_kinds(psrs_kinds)
     axis = validate_axis(axis, a)
-    level = level if level is None or isinstance(level, (list, tuple)) else [level]
+    # The API description does not mention that level can be of tuple
+    # type, but the behavior of level when it is a tuple is the same
+    # as that of a list. It is directly converted into a list here.
+    if isinstance(level, tuple):
+        level = list(level)
+    elif level is not None and not isinstance(level, list):
+        level = [level]
     op = DataFrameSortIndex(
         level=level,
         axis=axis,
