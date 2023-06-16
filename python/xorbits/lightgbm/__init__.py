@@ -17,7 +17,7 @@ from ..core.utils.fallback import unimplemented_func
 try:
     import lightgbm
 except ImportError:  # pragma: no cover
-    raise ImportError("Failed to import lightgbm. Please make sure it is installed.")
+    raise AttributeError("lightgbm is required but not installed.")
 
 
 def _install():
