@@ -954,6 +954,16 @@ class IndexData(HasShapeTileableData, _ToPandasMixin):
     def __repr__(self):
         return self._to_str(representation=True)
 
+    def _to_arr(self):
+        if len(self._executed_sessions) == 0:
+            raise NotImplementedError
+
+        data = self.fetch(session=self._executed_sessions[-1])
+        return np.asarray(data)
+
+    def __array__(self):
+        return self._to_arr()
+
     def _to_mars_tensor(self, dtype=None, order="K", extract_multi_index=False):
         tensor = self.to_tensor(extract_multi_index=extract_multi_index)
         dtype = dtype if dtype is not None else tensor.dtype
@@ -1413,6 +1423,16 @@ class BaseSeriesData(HasShapeTileableData, _ToPandasMixin):
 
     def __repr__(self):
         return self._to_str(representation=False)
+
+    def _to_arr(self):
+        if len(self._executed_sessions) == 0:
+            raise NotImplementedError
+
+        data = self.fetch(session=self._executed_sessions[-1])
+        return np.asarray(data)
+
+    def __array__(self):
+        return self._to_arr()
 
     @property
     def dtype(self):
