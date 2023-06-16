@@ -140,12 +140,14 @@ jobs:
           else
             curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           fi
-          if ! helm repo list | grep "juicefs"; then
+          if helm repo list | grep "juicefs" >/dev/null 2>&1; then
+            echo "Repo juicefs existed. Skipping adding to helm repos."
+          else
             helm repo add juicefs https://juicedata.github.io/charts/
             helm repo update
             helm fetch --untar juicefs/juicefs-csi-driver
           fi
-          if kubectl get pods -n kube-system | grep -q "juicefs-csi"; then
+          if kubectl get pods -n kube-system | grep "juicefs-csi"; then
             echo "Juicefs-csi-driver installed. Skipping installation."
           else
             helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
