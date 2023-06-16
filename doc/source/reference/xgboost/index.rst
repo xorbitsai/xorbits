@@ -1,8 +1,8 @@
 .. _xgboost_api:
 
-==========
-Xgboost API
-==========
+===========
+XGBoost API
+===========
 
 .. toctree::
    :maxdepth: 2

@@ -1,11 +1,11 @@
 .. _api.sklearn:
 
-=========
+================
 Scikit-Learn API
-=========
+================
 
 XGBRegressor
-=========
+============
 .. currentmodule:: xorbits.xgboost
 
 Constructor
@@ -34,7 +34,7 @@ Attributes
    XGBRegressor.set_params
 
 XGBClassifier
-=========
+=============
 .. currentmodule:: xorbits.xgboost
 
 Constructor

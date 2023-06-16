@@ -1,8 +1,8 @@
 .. _api.learning_api:
 
-=================
+============
 Learning API
-=================
+============
 .. currentmodule:: xorbits.xgboost
 
 
