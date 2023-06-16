@@ -108,7 +108,7 @@ async def test_external_storage_juicefs():
 async def test_external_storage_juicefs_missing_metadata_url():
     with pytest.raises(
         ValueError,
-        match="For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'.",
+        match="For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example metadata_url='redis://172.17.0.5:6379/1'.",
     ):
         with _start_kube_cluster(
             supervisor_cpu=0.1,
