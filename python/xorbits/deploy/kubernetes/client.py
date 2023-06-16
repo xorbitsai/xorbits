@@ -146,21 +146,17 @@ class KubernetesCluster:
         self._ingress_name = "xorbits-ingress"
         self._use_local_image = kwargs.pop("use_local_image", False)
         self._external_storage = external_storage
-        if self._external_storage and self._external_storage != "juicefs":
+        if self._external_storage and self._external_storage not in ["juicefs"]:
             raise ValueError(
-                "Currently, only shared memory and juicefs are supported as storage backends."
+                "Currently, only juicefs is supported as one of our storage backend."
             )
         if self._external_storage == "juicefs":
             self._metadata_url = kwargs.pop("metadata_url", None)
             if not self._metadata_url:
                 raise ValueError(
-                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'."
+                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example metadata_url='redis://172.17.0.5:6379/1'."
                 )
-            self._bucket = kwargs.pop("bucket", None)
-            if not self._bucket:
-                raise ValueError(
-                    "For external storage JuiceFS, you must specify the bucket for its metadata storage, for example '/var'."
-                )
+            self._bucket = kwargs.pop("bucket", "/var")
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -619,7 +615,7 @@ def new_cluster(
         ``auto`` means that it will automatically detect whether the kubectl context is ``eks``.
         You can also manually specify ``kubernetes`` or ``eks`` in some special cases.
     external_storage:
-        You can specify an external storage. Currently, only shared memory (default) and juicefs are supported as storage backends.
+        You can specify an external storage. Currently, only juicefs is supported as one of our storage backend.
     kwargs :
         Extra kwargs
 

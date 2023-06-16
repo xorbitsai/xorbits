@@ -16,6 +16,7 @@ import tempfile
 
 import pytest
 
+from ...._mars.utils import lazy_import
 from ..client import KubernetesCluster
 from ..config import (
     EmptyDirVolumeConfig,
@@ -28,11 +29,11 @@ from ..config import (
     XorbitsSupervisorsConfig,
     XorbitsWorkersConfig,
 )
-from ..utils.utils import juicefs_available, kubernetes
+
+kubernetes = lazy_import("kubernetes")
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 def test_simple_objects():
     ns_config_dict = NamespaceConfig("ns_name").build()
     assert ns_config_dict["metadata"]["name"] == "ns_name"
@@ -59,7 +60,6 @@ def test_simple_objects():
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 def test_supervisor_object():
     supervisor_config = XorbitsSupervisorsConfig(
         1, cpu=2, memory="10g", limit_resources=False, modules=["xorbits.test_mod"]
@@ -99,7 +99,6 @@ def test_supervisor_object():
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 def test_worker_object():
     worker_config_dict = XorbitsWorkersConfig(
         4,
@@ -181,7 +180,6 @@ def test_worker_object():
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 def test_ingress_object():
     from kubernetes.client import V1Ingress
 
@@ -198,7 +196,6 @@ def test_ingress_object():
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 def test_cluster_type():
     from kubernetes import config
 
@@ -223,7 +220,6 @@ def test_cluster_type():
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 def test_install_command():
     _, file_path = tempfile.mkstemp()
 
@@ -278,7 +274,6 @@ def test_install_command():
 
 
 @pytest.mark.skipif(kubernetes is None, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 def test_init_container():
     supervisor_config = XorbitsSupervisorsConfig(
         1,

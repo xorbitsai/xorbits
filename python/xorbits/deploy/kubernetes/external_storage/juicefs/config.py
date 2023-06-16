@@ -27,7 +27,7 @@ class SecretConfig(KubeConfig):
             "metadata": {"name": "juicefs-secret"},
             "type": "Opaque",
             "stringData": {
-                "name": "myjfs",
+                "name": "jfs",
                 "metaurl": self._metadata_url,
                 "storage": "file",
                 "bucket": self._bucket,
@@ -56,17 +56,17 @@ class PersistentVolumeConfig(KubeConfig):
             "kind": self._kind,
             "metadata": {
                 "name": "juicefs-pv",
-                "labels": {"juicefs-name": "ten-pb-fs"},
+                "labels": {"juicefs-name": "juicefs-fs"},
             },
             "spec": {
-                "capacity": {"storage": "200M"},
-                # For now, JuiceFS CSI Driver doesn't support setting storage capacity. Fill in any valid string is
-                # fine. ( Reference: https://juicefs.com/docs/csi/guide/pv/ )
+                "capacity": {
+                    "storage": "200M"
+                },  # For now, JuiceFS CSI Driver doesn't support setting storage capacity. Fill in any valid string is fine. ( Reference: https://juicefs.com/docs/csi/guide/pv/ )
                 "volumeMode": "Filesystem",
                 "accessModes": [
                     "ReadWriteMany"
                 ],  # accessModes is restricted to ReadWriteMany because it's the most suitable mode for our system. See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more reference
-                "persistentVolumeReclaimPolicy": "Delete",
+                "persistentVolumeReclaimPolicy": "Delete",  # persistentVolumeReclaimPolicy is restricted to Delete so that pv is automatically deleted after namespace and the pvc that bounds to it are deleted.
                 "csi": {
                     "driver": "csi.juicefs.com",
                     "volumeHandle": "juicefs-pv",
@@ -105,6 +105,6 @@ class PersistentVolumeClaimConfig(KubeConfig):
                 "volumeMode": "Filesystem",
                 "storageClassName": "",
                 "resources": {"requests": {"storage": "200M"}},
-                "selector": {"matchLabels": {"juicefs-name": "ten-pb-fs"}},
+                "selector": {"matchLabels": {"juicefs-name": "juicefs-fs"}},
             },
         }

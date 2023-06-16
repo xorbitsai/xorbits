@@ -24,7 +24,6 @@ import glob
 import os
 import shutil
 import subprocess
-import subprocess as sp
 import tempfile
 import uuid
 from contextlib import contextmanager
@@ -43,12 +42,7 @@ XORBITS_ROOT = os.path.dirname(
 TEST_ROOT = os.path.dirname(os.path.abspath(__file__))
 DOCKER_ROOT = os.path.join((os.path.dirname(os.path.dirname(TEST_ROOT))), "docker")
 
-kubernetes = lazy_import("kubernetes")
 k8s = lazy_import("kubernetes")
-
-juicefs_available = "juicefs" in sp.getoutput(
-    "kubectl get pods --all-namespaces -o wide | grep 'juicefs-csi'"
-)
 
 kube_available = (
     find_executable("kubectl") is not None
@@ -146,8 +140,6 @@ def _start_kube_cluster(**kwargs):
     py_version = get_local_py_version()
     _load_docker_env()
     image_name = _build_docker_images(py_version)
-    logger.info("image_name")
-    logger.info(image_name)
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s.config.new_client_from_config()
     kube_api = k8s.client.CoreV1Api(api_client)
@@ -207,7 +199,6 @@ def simple_job():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need run with juicefs")
 def test_run_in_kubernetes():
     with _start_kube_cluster(
         supervisor_cpu=0.5,
@@ -237,7 +228,6 @@ def test_run_in_kubernetes():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 @pytest.mark.asyncio
 async def test_request_workers():
     with _start_kube_cluster(
@@ -269,7 +259,6 @@ async def test_request_workers():
 
 
 @pytest.mark.skipif(not kube_available, reason="Cannot run without kubernetes")
-@pytest.mark.skipif(juicefs_available, reason="Do not need to run with juicefs")
 @pytest.mark.asyncio
 async def test_request_workers_insufficient():
     with _start_kube_cluster(

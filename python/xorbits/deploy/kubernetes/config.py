@@ -485,7 +485,7 @@ class ReplicationConfig(KubeConfig):
         startup_probe: Optional["ProbeConfig"] = None,
         pre_stop_command: Optional[List[str]] = None,
         kind: Optional[str] = None,
-        external_storage: str = "",
+        external_storage: Optional[str] = None,
         **kwargs,
     ):
         self._name = name
@@ -602,6 +602,9 @@ class ReplicationConfig(KubeConfig):
                 else None,
             }
         )
+        volume_mounts_additional = []
+        if self._external_storage == "juicefs":
+            volume_mounts_additional += [{"mountPath": "/juicefs-data", "name": "data"}]
         return _remove_nones(
             {
                 "command": ["/bin/sh", "-c"],
@@ -613,9 +616,7 @@ class ReplicationConfig(KubeConfig):
                 or None,
                 "ports": [p.build() for p in self._ports] or None,
                 "volumeMounts": [vol.build_mount() for vol in self._volumes]
-                if self._external_storage != "juicefs"
-                else [vol.build_mount() for vol in self._volumes]
-                + [{"mountPath": "/juicefs-data", "name": "data"}],
+                + volume_mounts_additional,
                 "livenessProbe": self._liveness_probe.build()
                 if self._liveness_probe
                 else None,
@@ -679,7 +680,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         volumes: Optional[List[VolumeConfig]] = None,
         service_name: Optional[str] = None,
         service_port: Optional[int] = None,
-        external_storage: str = "",
+        external_storage: Optional[str] = None,
         **kwargs,
     ):
         self._cpu = cpu

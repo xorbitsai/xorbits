@@ -241,7 +241,7 @@ class JuiceFSStorage(FileSystemStorage):
                 )
             if local_environ:
                 proc = await asyncio.create_subprocess_shell(
-                    f"""juicefs format {metadata_url} myjfs
+                    f"""juicefs format {metadata_url} jfs
                     juicefs mount {metadata_url} {root_dirs[0]} -d
                     """
                 )
