@@ -13,8 +13,6 @@
 # limitations under the License.
 
 
-import xgboost
-
 from . import _version
 from .core import run
 from .deploy import init, shutdown
@@ -29,6 +27,7 @@ def _install():
     _install_pandas()
     _install_numpy()
     _install_web()
+    _install_xgboost()
 
 
 _install()
