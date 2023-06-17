@@ -1646,6 +1646,16 @@ def test_sample_execution(setup):
     r2 = df[:].sample(frac=0.1, weights=df["c2"], random_state=np.array([1, 2]))
     pd.testing.assert_frame_equal(r1.execute().fetch(), r2.execute().fetch())
 
+    # test parquet dataframe sample
+    with tempfile.TemporaryDirectory() as tempdir:
+        file_path = os.path.join(tempdir, "test.parquet")
+        raw_df.to_parquet(file_path)
+
+        df = md.read_parquet(file_path)
+        r1 = df.sample(frac=0.05, random_state=0)
+        r2 = pd.read_parquet(file_path).sample(frac=0.05, random_state=0)
+        pd.testing.assert_frame_equal(r1.execute().fetch(), r2)
+
     # test series
     raw_series = pd.Series(rs.rand(100))
     raw_weights = pd.Series(rs.rand(100))
