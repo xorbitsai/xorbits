@@ -121,7 +121,7 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        pip install numpy scipy cython coverage flaky
+        pip install numpy\<1.25 scipy cython coverage flaky
 
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
