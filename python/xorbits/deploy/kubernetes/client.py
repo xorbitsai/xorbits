@@ -524,6 +524,8 @@ class KubernetesCluster:
 
         api = CoreV1Api(self._api_client)
         api.delete_namespace(self._namespace)
+        if self._external_storage == "juicefs":
+            api.delete_persistent_volume("juicefs-pv")
         if wait:
             start_time = time.time()
             while True:

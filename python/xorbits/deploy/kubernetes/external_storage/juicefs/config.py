@@ -66,7 +66,7 @@ class PersistentVolumeConfig(KubeConfig):
                 "accessModes": [
                     "ReadWriteMany"
                 ],  # accessModes is restricted to ReadWriteMany because it's the most suitable mode for our system. See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more reference
-                "persistentVolumeReclaimPolicy": "Delete",  # persistentVolumeReclaimPolicy is restricted to Delete so that pv is automatically deleted after namespace and the pvc that bounds to it are deleted.
+                "persistentVolumeReclaimPolicy": "Retain",  # persistentVolumeReclaimPolicy is restricted to Retain for Static provisioning. See https://juicefs.com/docs/csi/guide/resource-optimization/#reclaim-policy for more references.
                 "csi": {
                     "driver": "csi.juicefs.com",
                     "volumeHandle": "juicefs-pv",
