@@ -63,6 +63,9 @@ class PersistentVolumeConfig(KubeConfig):
                     "storage": "200M"
                 },  # For now, JuiceFS CSI Driver doesn't support setting storage capacity. Fill in any valid string is fine. ( Reference: https://juicefs.com/docs/csi/guide/pv/ )
                 "volumeMode": "Filesystem",
+                "mountOptions": [
+                    "subdir=/data/{ns}".format(ns=self._namespace)
+                ],  # Mount in sub directory to achieve data isolation. See https://juicefs.com/docs/csi/guide/pv/#create-storage-class for more references.
                 "accessModes": [
                     "ReadWriteMany"
                 ],  # accessModes is restricted to ReadWriteMany because it's the most suitable mode for our system. See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more reference
