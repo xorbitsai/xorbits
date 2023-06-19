@@ -504,8 +504,10 @@ class DataFrameReadSQL(
                 for i in range(len(dtypes)):
                     dtype = dtypes.iloc[i]
                     if isinstance(dtype, ArrowStringDtype):
-                        df.isetitem(i, df.iloc[:, i].astype(dtype))
-
+                        if pd.__version__ >= "1.5.0":
+                            df.isetitem(i, df.iloc[:, i].astype(dtype))
+                        else:
+                            df.iloc[:, i] = df.iloc[:, i].astype(dtype)
             if out.ndim == 2:
                 ctx[out.key] = df
             else:
