@@ -8,8 +8,23 @@ Xorbits is able to utilize `JuiceFS <https://juicefs.com/en/>`_ as one of the st
 
 Prerequisites
 -------------
+Xorbits
+~~~~~~~~~~~~~~
 Install Xorbits on the machine where you plan to deploy Kubernetes with JuiceFS.
 Refer to :ref:`installation document <installation>`.
+
+Metadata Storage
+~~~~~~~~~~~~~~
+JuiceFS decouples data and metadata. Many databases are supported. See `How to Set Up Metadata Engine <https://juicefs.com/docs/community/databases_for_metadata>`_ and choose an appropriate metadata storage.
+In our example here, we select ``Redis`` as our metadata storage. Follow `Configuring Redis using a ConfigMap <https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/>`_ and create a pod inside default namespace.
+You should set its maxmemory as 50mb since 2mb in the example is too small.
+
+.. code-block:: bash
+
+    $ kubectl get po redis
+    NAME    READY   STATUS    RESTARTS    AGE
+    redis   1/1     Running   0           6d6h
+
 
 Kubernetes
 ----------
@@ -27,8 +42,7 @@ Then, deploy Xorbits cluster, for example:
 
 Currently, only juicefs is supported as one of our storage backend. When you want to switch from shared memory to JuiceFS, You must specify ``external_storage='juicefs'`` explicitly when you initialize a new cluster.
 
-JuiceFS decouples data and metadata. Many databases are supported. See `How to Set Up Metadata Engine <https://juicefs.com/docs/community/databases_for_metadata>`_ and choose an appropriate metadata storage.
-You must explicitly specify connection URL ``metadata_url``.
+You must explicitly specify connection URL ``metadata_url``, in our case ``redis://10.244.0.45:6379/1``.
 
 Specify bucket URL with ``bucket`` or use its default value ``/var`` if you do not want to change the directory for bucket. See `Set Up Object Storage <https://juicefs.com/docs/community/how_to_setup_object_storage/>`_ to set up different object storage.
 
@@ -47,9 +61,9 @@ If the cluster is working, the output should be 10.
 
 Verify the storage
 ----------
-Currently, we mount JuiceFS storage data in ``/data``.
+Currently, we mount JuiceFS storage data in ``/juicefs-data``.
 
-Execute an interactive shell (bash) inside a pod which belongs to the Xorbits namespace to check if data is stored in ``/data``.
+Execute an interactive shell (bash) inside a pod which belongs to the Xorbits namespace to check if data is stored in ``/juicefs-data``.
 
 You should see a similar hex string like 9c3e069a-70d9-4874-bad6-d608979746a0, meaning that data inside JuiceFS is successfully mounted!
 
