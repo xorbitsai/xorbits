@@ -601,7 +601,9 @@ class ReplicationConfig(KubeConfig):
         )
         volume_mounts_additional = []
         if self._external_storage == "juicefs":
-            volume_mounts_additional += [{"mountPath": "/juicefs-data", "name": "data"}]
+            volume_mounts_additional.append(
+                {"mountPath": "/juicefs-data", "name": "data"}
+            )
         return _remove_nones(
             {
                 "command": ["/bin/sh", "-c"],
@@ -635,7 +637,7 @@ class ReplicationConfig(KubeConfig):
             external_volumes = [
                 {"name": "data", "persistentVolumeClaim": {"claimName": "juicefs-pvc"}}
             ]
-            result["volumes"] = result["volumes"] + external_volumes
+            result["volumes"].extend(external_volumes)
 
         return dict((k, v) for k, v in result.items() if v)
 

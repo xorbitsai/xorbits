@@ -66,7 +66,7 @@ class PersistentVolumeConfig(KubeConfig):
                 "volumeMode": "Filesystem",
                 "mountOptions": [
                     "subdir=/data/{ns}/{id}".format(
-                        ns=self._namespace, id=uuid.uuid1().hex
+                        ns=self._namespace, id=uuid.uuid4().hex
                     )
                 ],  # Mount in sub directory to achieve data isolation. See https://juicefs.com/docs/csi/guide/pv/#create-storage-class for more references.
                 "accessModes": [
