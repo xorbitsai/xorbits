@@ -100,21 +100,19 @@ from .core import ndarray
 
 
 def __dir__():
-    import numpy
-
     from .mars_adapters import MARS_TENSOR_CALLABLES, MARS_TENSOR_OBJECTS
-    from .numpy_adapters import collect_numpy_module_members
+    from .numpy_adapters.core import NUMPY_MEMBERS
 
     return (
         list(MARS_TENSOR_CALLABLES.keys())
         + list((MARS_TENSOR_OBJECTS.keys()))
-        + list(collect_numpy_module_members(numpy).keys())
+        + list(NUMPY_MEMBERS.keys())
     )
 
 
 def __getattr__(name: str):
     from .mars_adapters import MARS_TENSOR_CALLABLES, MARS_TENSOR_OBJECTS
-    from .numpy_adapters import collect_numpy_module_members
+    from .numpy_adapters.core import NUMPY_MEMBERS
 
     if name in MARS_TENSOR_CALLABLES:
         return MARS_TENSOR_CALLABLES[name]
@@ -125,8 +123,8 @@ def __getattr__(name: str):
 
         if not hasattr(numpy, name):
             raise AttributeError(name)
-        elif name in collect_numpy_module_members(numpy):
-            return collect_numpy_module_members(numpy)[name]
+        elif name in NUMPY_MEMBERS:
+            return NUMPY_MEMBERS[name]
         else:  # pragma: no cover
             if inspect.ismethod(getattr(numpy, name)):
                 return unimplemented_func
