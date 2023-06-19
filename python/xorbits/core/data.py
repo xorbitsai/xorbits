@@ -263,6 +263,8 @@ class DataRef(metaclass=DataRefMeta):
                     raise TypeError(
                         f"object with shape {self.data._mars_entity.shape} has no len()"
                     )
+        # elif self.data.data_type == DataType or self.data.data_type == DataType.series_groupby:
+
         else:
             raise TypeError(f"object of type '{self.data.data_type}' has no len()")
 

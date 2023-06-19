@@ -35,6 +35,8 @@ def run_docstring(
 
     results: List[TestResults] = []
     for test in finder.find(f, name, globs=globs):
+        print(test)
+        print(runner.run(test, compileflags=compileflags))
         results.append(runner.run(test, compileflags=compileflags))
 
     return results
@@ -81,3 +83,4 @@ def test_docstrings(setup, doctest_namespace, obj, name):
             pytest.fail(f"{result.failed} out of {result.attempted} example(s) failed.")
         else:
             print(f"{result.attempted} example(s) passed.")
+            print(f"{result} + is passed don't worry")

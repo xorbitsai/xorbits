@@ -70,7 +70,7 @@ class StringAccessor:
                 method=method,
                 method_args=args,
                 method_kwargs=kwargs,
-                output_type=output_type,
+                output_types=output_type,
             )
             return op(self._entity)
 
