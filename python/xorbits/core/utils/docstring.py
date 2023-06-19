@@ -320,7 +320,7 @@ def attach_cls_member_docstring(
             data_type, (None, None)
         )
     doc = gen_member_docstring(docstring_src_cls, member_name)
-    # doc = skip_doctest(doc)
+    doc = skip_doctest(doc)
     doc = add_version_disclaimer(doc, docstring_src_module)
     docstring_src = getattr(docstring_src_cls, member_name, None)
     doc = add_arg_disclaimer(docstring_src, member, doc)
