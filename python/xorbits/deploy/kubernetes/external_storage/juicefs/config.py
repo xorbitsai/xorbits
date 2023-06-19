@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 
 from xorbits.deploy.kubernetes.config import KubeConfig
@@ -64,7 +65,9 @@ class PersistentVolumeConfig(KubeConfig):
                 },  # For now, JuiceFS CSI Driver doesn't support setting storage capacity. Fill in any valid string is fine. ( Reference: https://juicefs.com/docs/csi/guide/pv/ )
                 "volumeMode": "Filesystem",
                 "mountOptions": [
-                    "subdir=/data/{ns}".format(ns=self._namespace)
+                    "subdir=/data/{ns}/{id}".format(
+                        ns=self._namespace, id=uuid.uuid1().hex
+                    )
                 ],  # Mount in sub directory to achieve data isolation. See https://juicefs.com/docs/csi/guide/pv/#create-storage-class for more references.
                 "accessModes": [
                     "ReadWriteMany"
