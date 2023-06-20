@@ -599,11 +599,9 @@ class ReplicationConfig(KubeConfig):
                 else None,
             }
         )
-        volume_mounts_additional = []
+        volume_juicefs = []
         if self._external_storage == "juicefs":
-            volume_mounts_additional.append(
-                {"mountPath": "/juicefs-data", "name": "data"}
-            )
+            volume_juicefs.append({"mountPath": "/juicefs-data", "name": "data"})
         return _remove_nones(
             {
                 "command": ["/bin/sh", "-c"],
@@ -615,7 +613,7 @@ class ReplicationConfig(KubeConfig):
                 or None,
                 "ports": [p.build() for p in self._ports] or None,
                 "volumeMounts": [vol.build_mount() for vol in self._volumes]
-                + volume_mounts_additional,
+                + volume_juicefs,
                 "livenessProbe": self._liveness_probe.build()
                 if self._liveness_probe
                 else None,
