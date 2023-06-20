@@ -274,3 +274,20 @@ def test_range_indexed_df_rolling_corr_execution(
             closed=closed,
         ).corr(pairwise=pairwise)
         pd.testing.assert_frame_equal(pr, mr.fetch())
+
+
+def test_mycode(setup):
+    data = {
+        "A": np.random.randint(10, size=10000),
+        "B": np.random.randint(10, size=10000),
+        "C": np.random.randint(10, size=10000),
+        "D": np.random.randint(10, size=10000),
+    }
+    df_xorbits = md.DataFrame(data, chunk_size=1000)
+    df_pandas = pd.DataFrame(data)
+
+    corr_df = df_xorbits.rolling(window=30).corr()
+    df_run = corr_df.execute().fetch()
+
+    df_raw = df_pandas.rolling(window=30).corr()
+    pd.testing.assert_frame_equal(df_run, df_raw)
