@@ -17,6 +17,10 @@ import inspect
 from ..core.utils.fallback import unimplemented_func
 
 
+def _install():
+    """Nothing required for installing xgboost."""
+
+
 def __dir__():
     from .mars_adapters import MARS_XGBOOST_CALLABLES
 

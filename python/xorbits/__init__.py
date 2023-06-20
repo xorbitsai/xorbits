@@ -23,11 +23,14 @@ def _install():
     from .numpy import _install as _install_numpy
     from .pandas import _install as _install_pandas
     from .web import _install as _install_web
+    from .xgboost import _install as _install_xgboost
 
     _install_pandas()
     _install_numpy()
     _install_web()
     _install_lightgbm()
+    _install_xgboost()
+
 
 
 _install()
