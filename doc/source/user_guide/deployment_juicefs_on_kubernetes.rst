@@ -31,6 +31,9 @@ Make sure redis pod is running:
     NAME    READY   STATUS    RESTARTS    AGE
     redis   1/1     Running   0           6d6h
 
+..
+
+
 Check redis pod's IP address, cpu limits and requests. In this example, IP for redis is 172.17.0.8.
 
 .. code-block:: bash
@@ -104,6 +107,8 @@ Check redis pod's IP address, cpu limits and requests. In this example, IP for r
                                  node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
     Events:                      <none>
 
+..
+
 
 Kubernetes
 ----------
@@ -117,6 +122,9 @@ Install ``kubectl``, a command-line tool for interacting with Kubernetes cluster
     WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
     Client Version: version.Info{Major:"1", Minor:"25", GitVersion:"v1.25.4", GitCommit:"872a965c6c6526caa949f0c6ac028ef7aff3fb78", GitTreeState:"clean", BuildDate:"2022-11-09T13:36:36Z", GoVersion:"go1.19.3", Compiler:"gc", Platform:"linux/amd64"}
     Kustomize Version: v4.5.7
+
+..
+
 
 JuiceFS Installation
 ----------
@@ -294,6 +302,8 @@ Write the following into the yaml file:
         matchLabels:
           juicefs-name: ten-pb-fs
 
+..
+
 3. Apply Secret, PV, and PVC to your namespace and verify:
 
 Create your namespace (or Xorbits namespace) and run the following:
@@ -376,6 +386,9 @@ Deploy Xorbits cluster, for example:
 
     cluster = new_cluster(config.new_client_from_config(), worker_num=1, worker_cpu=1, worker_mem='1g', supervisor_cpu=1, supervisor_mem='1g',external_storage='juicefs', metadata_url='redis://10.244.0.45:6379/1', bucket='/var')
 
+..
+
+
 Currently, only juicefs is supported as one of our storage backend. When you want to switch from shared memory to JuiceFS, You must specify ``external_storage='juicefs'`` explicitly when you initialize a new cluster.
 
 You must explicitly specify connection URL ``metadata_url``, in our case ``redis://172.17.0.8:6379/1``. 172.17.0.8 is the IP address of the Redis server, and 6379 is the default port number on which the Redis server is listening. 1 represents the Redis database number.
@@ -392,6 +405,9 @@ Verify the cluster by running a simple task.
     xorbits.init('http://<ingress_service_ip>:80')
     import xorbits.pandas as pd
     pd.DataFrame({'a': [1,2,3,4]}).sum()
+
+..
+
 
 If the cluster is working, the output should be 10.
 
