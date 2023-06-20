@@ -20,8 +20,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ... import numpy as mt
-from ... import pandas as md
+from ... import numpy as xnp
+from ... import pandas as xpd
 
 try:
     import lightgbm
@@ -32,22 +32,22 @@ from ... import lightgbm as lgb
 n_rows = 1000
 n_columns = 10
 chunk_size = 200
-rs = mt.random.RandomState(0)
+rs = xnp.random.RandomState(0)
 X_raw = rs.rand(n_rows, n_columns, chunk_size=chunk_size)
 y_raw = rs.rand(n_rows, chunk_size=chunk_size)
 filter = rs.rand(n_rows, chunk_size=chunk_size) < 0.8
 X = X_raw[filter]
 y = y_raw[filter]
 
-X_df = md.DataFrame(X)
+X_df = xpd.DataFrame(X)
 x_sparse = np.random.rand(n_rows, n_columns)
 x_sparse[np.arange(n_rows), np.random.randint(n_columns, size=n_rows)] = np.nan
-X_sparse = mt.array(x_sparse, chunk_size=chunk_size).tosparse(missing=np.nan)[filter]
+X_sparse = xnp.array(x_sparse, chunk_size=chunk_size).tosparse(missing=np.nan)[filter]
 
 
 @pytest.mark.skipif(lightgbm is None, reason="LightGBM not installed")
 def test_local_classifier(setup):
-    y_data = (y * 10).astype(mt.int64)
+    y_data = (y * 10).astype(xnp.int64)
     classifier = lgb.LGBMClassifier(n_estimators=2)
     classifier.fit(X, y_data, eval_set=[(X, y_data)], verbose=True)
     prediction = classifier.predict(X)
@@ -55,7 +55,7 @@ def test_local_classifier(setup):
     assert prediction.ndim == 1
     assert prediction.shape[0] == len(X)
 
-    assert isinstance(prediction, mt.ndarray)
+    assert isinstance(prediction, xnp.ndarray)
 
     # test sparse tensor
     X_sparse_data = X_sparse
@@ -68,12 +68,12 @@ def test_local_classifier(setup):
     assert prediction.ndim == 1
     assert prediction.shape[0] == len(X)
 
-    assert isinstance(prediction, mt.ndarray)
+    assert isinstance(prediction, xnp.ndarray)
 
     prob = classifier.predict_proba(X)
     assert prob.shape == X.shape
 
-    prediction_empty = classifier.predict(mt.array([]).reshape((0, X.shape[1])))
+    prediction_empty = classifier.predict(xnp.array([]).reshape((0, X.shape[1])))
     assert prediction_empty.shape == (0,)
 
     # test dataframe
@@ -91,8 +91,8 @@ def test_local_classifier(setup):
     assert prob.shape == (len(X), 10)
 
     # test weight
-    weights = [mt.random.rand(X.shape[0]), md.Series(mt.random.rand(X.shape[0]))]
-    y_df = md.DataFrame(y_data)
+    weights = [xnp.random.rand(X.shape[0]), xpd.Series(xnp.random.rand(X.shape[0]))]
+    y_df = xpd.DataFrame(y_data)
     for weight in weights:
         classifier = lgb.LGBMClassifier(n_estimators=2)
         classifier.fit(X, y_df, sample_weight=weight, verbose=True)
@@ -104,11 +104,11 @@ def test_local_classifier(setup):
     # should raise error if weight.ndim > 1
     with pytest.raises(ValueError):
         lgb.LGBMClassifier(n_estimators=2).fit(
-            X, y_df, sample_weight=mt.random.rand(1, 1), verbose=True
+            X, y_df, sample_weight=xnp.random.rand(1, 1), verbose=True
         )
 
     # test binary classifier
-    new_y = (y_data > 0.5).astype(mt.int64)
+    new_y = (y_data > 0.5).astype(xnp.int64)
     classifier = lgb.LGBMClassifier(n_estimators=2)
     classifier.fit(X, new_y, verbose=True)
 
@@ -158,15 +158,15 @@ def test_local_classifier_from_to_parquet(setup):
         df.iloc[:500].to_parquet(os.path.join(d, "data", "data1.parquet"))
         df.iloc[500:].to_parquet(os.path.join(d, "data", "data2.parquet"))
 
-        df = md.read_parquet(data_dir)
+        df = xpd.read_parquet(data_dir)
         model = lgb.LGBMClassifier()
         model.load_model(classifier)
         result = model.predict(df, run=False)
-        r = md.DataFrame(result).to_parquet(result_dir)
+        r = xpd.DataFrame(result).to_parquet(result_dir)
 
         r.execute()
 
-        ret = md.read_parquet(result_dir).to_pandas().iloc[:, 0].to_numpy()
+        ret = xpd.read_parquet(result_dir).to_pandas().iloc[:, 0].to_numpy()
         expected = classifier.predict(X)
         expected = np.stack([1 - expected, expected]).argmax(axis=0)
         np.testing.assert_array_equal(ret, expected)

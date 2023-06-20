@@ -16,7 +16,7 @@
 import pandas as pd
 import pytest
 
-from ... import numpy as mt
+from ... import numpy as xnp
 
 try:
     import lightgbm
@@ -28,7 +28,7 @@ from ... import lightgbm as lgb
 n_rows = 1000
 n_columns = 10
 chunk_size = 200
-rs = mt.random.RandomState(0)
+rs = xnp.random.RandomState(0)
 X = rs.rand(n_rows, n_columns, chunk_size=chunk_size)
 y = rs.randint(0, 10, n_rows, chunk_size=chunk_size)
 
@@ -42,12 +42,12 @@ def test_local_regressor(setup):
     assert prediction.ndim == 1
     assert prediction.shape[0] == len(X)
 
-    assert isinstance(prediction, mt.ndarray)
+    assert isinstance(prediction, xnp.ndarray)
     result = prediction.fetch()
     assert prediction.dtype == result.dtype
 
     # test weight
-    weight = mt.random.rand(X.shape[0])
+    weight = xnp.random.rand(X.shape[0])
     regressor = lgb.LGBMRegressor(verbosity=1, n_estimators=2)
     regressor.fit(X, y, sample_weight=weight)
     prediction = regressor.predict(X)

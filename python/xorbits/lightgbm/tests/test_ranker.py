@@ -15,7 +15,7 @@
 
 import pytest
 
-from ... import numpy as mt
+from ... import numpy as xnp
 
 try:
     import lightgbm
@@ -27,14 +27,14 @@ from ... import lightgbm as lgb
 n_rows = 1000
 n_columns = 10
 chunk_size = 200
-rs = mt.random.RandomState(0)
+rs = xnp.random.RandomState(0)
 X_raw = rs.rand(n_rows, n_columns, chunk_size=chunk_size)
 y_raw = rs.rand(n_rows, chunk_size=chunk_size)
 
 
 @pytest.mark.skipif(lightgbm is None, reason="LightGBM not installed")
 def test_local_ranker(setup):
-    y = (y_raw * 10).astype(mt.int32)
+    y = (y_raw * 10).astype(xnp.int32)
     ranker = lgb.LGBMRanker(n_estimators=2)
     ranker.fit(X_raw, y, group=[X_raw.shape[0]], verbose=True)
     prediction = ranker.predict(X_raw)
@@ -42,12 +42,12 @@ def test_local_ranker(setup):
     assert prediction.ndim == 1
     assert prediction.shape[0] == len(X_raw)
 
-    assert isinstance(prediction, mt.ndarray)
+    assert isinstance(prediction, xnp.ndarray)
     result = prediction.fetch()
     assert prediction.dtype == result.dtype
 
     # test weight
-    weight = mt.random.rand(X_raw.shape[0])
+    weight = xnp.random.rand(X_raw.shape[0])
     ranker = lgb.LGBMRanker(verbosity=1, n_estimators=2)
     ranker.fit(X_raw, y, group=[X_raw.shape[0]], sample_weight=weight)
     prediction = ranker.predict(X_raw)
