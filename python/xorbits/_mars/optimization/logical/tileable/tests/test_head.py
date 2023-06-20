@@ -182,20 +182,20 @@ def test_value_counts_head(prepare_data, setup, chunk_size):
     df = md.DataFrame(pdf, chunk_size=chunk_size)
 
     df1 = df["a"].value_counts(method="tree")
-    df2 = df1.head(3)
+    df2 = df1.head(2)
     graph = TileableGraph([df2.data])
     next(TileableGraphBuilder(graph).build())
     records = optimize(graph)
     assert records.get_optimization_result(df1.data) is None
     opt_df2 = records.get_optimization_result(df2.data)
-    assert opt_df2.op.nrows == 3
+    assert opt_df2.op.nrows == 2
     assert len(graph) == 3
     assert opt_df2 in graph.results
 
     result = df2.execute(
         extra_config={"operand_executors": _iloc_operand_executors}
     ).fetch()
-    expected = pdf["a"].value_counts().head(3)
+    expected = pdf["a"].value_counts().head(2)
     pd.testing.assert_series_equal(result, expected)
 
 
