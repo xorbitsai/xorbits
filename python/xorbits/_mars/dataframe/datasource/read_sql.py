@@ -506,7 +506,7 @@ class DataFrameReadSQL(
                     if isinstance(dtype, ArrowStringDtype):
                         if pd.__version__ >= "1.5.0":
                             df.isetitem(i, df.iloc[:, i].astype(dtype))
-                        else:
+                        else:  # pragma: no cover
                             df.iloc[:, i] = df.iloc[:, i].astype(dtype)
             if out.ndim == 2:
                 ctx[out.key] = df
