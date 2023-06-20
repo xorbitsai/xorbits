@@ -45,7 +45,7 @@ Constructor
    XGBClassifier
 
 Attributes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. autosummary::
    :toctree: generated/
