@@ -33,6 +33,7 @@ from .._mars import stop_server as mars_stop_server
 from .._mars import tensor as mars_tensor
 from .._mars.core import Entity as MarsEntity
 from .._mars.core import OutputType as MarsOutputType
+from .._mars.core.entity.executable import ExecutableTuple
 from .._mars.core.entity.objects import OBJECT_TYPE as MARS_OBJECT_TYPE
 from .._mars.dataframe import DataFrame as MarsDataFrame
 from .._mars.dataframe import Index as MarsIndex
@@ -397,7 +398,11 @@ def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
         # converters.
         return getattr(inp, "_mars_obj")
     elif isinstance(inp, tuple):
-        return tuple(to_mars(i) for i in inp)
+        if type(inp) is tuple or isinstance(inp, ExecutableTuple):
+            return tuple(to_mars(i) for i in inp)
+        else:
+            # named tuple
+            return type(inp)(*map(to_mars, inp))
     elif isinstance(inp, list):
         # in-place modification of list
         # preserve weak references to list, avoiding access issues
@@ -430,7 +435,11 @@ def from_mars(inp: Union[MarsEntity, Tuple, List, Dict, None]):
     elif type(inp) in _MARS_CLS_TO_CONVERTER:
         return _MARS_CLS_TO_CONVERTER[type(inp)](inp)
     elif isinstance(inp, tuple):
-        return tuple(from_mars(i) for i in inp)
+        if type(inp) is tuple or isinstance(inp, ExecutableTuple):
+            return tuple(from_mars(i) for i in inp)
+        else:
+            # named tuple
+            return type(inp)(*map(from_mars, inp))
     elif isinstance(inp, list):
         # in-place modification of list
         # preserve weak references to list, avoiding access issues
