@@ -85,6 +85,7 @@ jobs:
           - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
           - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
           - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
+          - { os: ubuntu-latest, module: learn, python-version: 3.9 }
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
           - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
@@ -184,6 +185,9 @@ jobs:
           pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
             statsmodels tsfresh dask[complete] mimesis\<9.0.0
         fi
+        if [[ "$MODULE" == "learn" ]]; then
+          pip install xgboost
+        fi
         if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
           pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
         fi
@@ -218,7 +222,8 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ --timeout=1500 \
+          pytest --ignore xorbits/_mars/ --ignore xorbits/xgboost \
+            --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
@@ -261,6 +266,11 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/$MODULE xorbits/_mars/contrib/dask/tests/test_dask.py
+        elif [[ "$MODULE" == "learn" ]]; then
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+            xorbits/xgboost
         elif [ "$MODULE" == "ray-deploy" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --log-level=DEBUG --timeout=200 xorbits/_mars --ignore=xorbits/_mars/deploy/oscar/ -m ray
