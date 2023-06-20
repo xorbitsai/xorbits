@@ -12,26 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import inspect
-from typing import Any, Callable, Dict, Optional
 
 from ...core.utils.fallback import unimplemented_func
 
 
 def __dir__():
     from ..mars_adapters import MARS_TENSOR_RANDOM_CALLABLES
-    from ..numpy_adapters import collect_numpy_module_members
+    from ..numpy_adapters.core import NUMPY_RANDOM_MEMBERS
 
-    global NUMPY_RANDOM_METHODS
-    import numpy
-
-    return list(MARS_TENSOR_RANDOM_CALLABLES.keys()) + list(
-        collect_numpy_module_members(numpy.random).keys()
-    )
+    return list(MARS_TENSOR_RANDOM_CALLABLES.keys()) + list(NUMPY_RANDOM_MEMBERS.keys())
 
 
 def __getattr__(name: str):
     from ..mars_adapters import MARS_TENSOR_RANDOM_CALLABLES
-    from ..numpy_adapters import collect_numpy_module_members
+    from ..numpy_adapters.core import NUMPY_RANDOM_MEMBERS
 
     if name in MARS_TENSOR_RANDOM_CALLABLES:
         return MARS_TENSOR_RANDOM_CALLABLES[name]
@@ -40,8 +34,8 @@ def __getattr__(name: str):
 
         if not hasattr(numpy.random, name):
             raise AttributeError(name)
-        elif name in collect_numpy_module_members(numpy.random):
-            return collect_numpy_module_members(numpy.random)[name]
+        elif name in NUMPY_RANDOM_MEMBERS:
+            return NUMPY_RANDOM_MEMBERS[name]
         else:  # pragma: no cover
             if inspect.ismethod(getattr(numpy.random, name)):
                 return unimplemented_func

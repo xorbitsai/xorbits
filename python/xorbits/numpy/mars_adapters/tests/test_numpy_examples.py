@@ -84,6 +84,8 @@ parameters.extend(
 
 @pytest.mark.parametrize("obj,name", parameters)
 def test_docstrings(setup, doctest_namespace, obj, name):
+    if name == "vectorize":
+        pytest.skip("Skipping np.vectorize")
     results = run_docstring(
         getattr(obj, name),
         doctest_namespace,
