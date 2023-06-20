@@ -13,25 +13,20 @@
 # limitations under the License.
 
 import inspect
-from typing import Any, Callable, Dict, Optional
 
 from ...core.utils.fallback import unimplemented_func
 
 
 def __dir__():
-    import numpy
-
     from ..mars_adapters import MARS_TENSOR_LINALG_CALLABLES
-    from ..numpy_adapters import collect_numpy_module_members
+    from ..numpy_adapters.core import NUMPY_LINALG_MEMBERS
 
-    return list(MARS_TENSOR_LINALG_CALLABLES.keys()) + list(
-        collect_numpy_module_members(numpy.linalg).keys()
-    )
+    return list(MARS_TENSOR_LINALG_CALLABLES.keys()) + list(NUMPY_LINALG_MEMBERS.keys())
 
 
 def __getattr__(name: str):
     from ..mars_adapters import MARS_TENSOR_LINALG_CALLABLES
-    from ..numpy_adapters import collect_numpy_module_members
+    from ..numpy_adapters.core import NUMPY_LINALG_MEMBERS
 
     if name in MARS_TENSOR_LINALG_CALLABLES:
         return MARS_TENSOR_LINALG_CALLABLES[name]
@@ -40,8 +35,8 @@ def __getattr__(name: str):
 
         if not hasattr(numpy.linalg, name):
             raise AttributeError(name)
-        elif name in collect_numpy_module_members(numpy.linalg):
-            return collect_numpy_module_members(numpy.linalg)[name]
+        elif name in NUMPY_LINALG_MEMBERS:
+            return NUMPY_LINALG_MEMBERS[name]
         else:  # pragma: no cover
             if inspect.ismethod(getattr(numpy.linalg, name)):
                 return unimplemented_func
