@@ -32,7 +32,6 @@ def _install():
     _install_xgboost()
 
 
-
 _install()
 del _install
 
