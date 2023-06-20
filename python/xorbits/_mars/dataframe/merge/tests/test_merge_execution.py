@@ -387,8 +387,12 @@ def test_merge_one_chunk(setup_gpu, gpu):
     result = jdf.execute().fetch()
 
     pd.testing.assert_frame_equal(
-        expected.sort_values(by=expected.columns[1]).reset_index(drop=True),
-        result.sort_values(by=result.columns[1]).reset_index(drop=True),
+        expected.sort_values(by=[expected.columns[1], expected.columns[3]]).reset_index(
+            drop=True
+        ),
+        result.sort_values(by=[result.columns[1], result.columns[3]]).reset_index(
+            drop=True
+        ),
     )
 
     # left have one chunk
@@ -400,8 +404,12 @@ def test_merge_one_chunk(setup_gpu, gpu):
     result = jdf.execute().fetch()
 
     pd.testing.assert_frame_equal(
-        expected.sort_values(by=expected.columns[1]).reset_index(drop=True),
-        result.sort_values(by=result.columns[1]).reset_index(drop=True),
+        expected.sort_values(by=[expected.columns[1], expected.columns[3]]).reset_index(
+            drop=True
+        ),
+        result.sort_values(by=[result.columns[1], result.columns[3]]).reset_index(
+            drop=True
+        ),
     )
 
     # right have one chunk
