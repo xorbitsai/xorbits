@@ -15,7 +15,7 @@ from typing import Any
 
 import lightgbm
 
-MARS_LIGHGBM_CALLABLES = {}
+MARS_LIGHTGBM_CALLABLES = {}
 
 
 import inspect
@@ -88,4 +88,4 @@ attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifi
 attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
 attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)
 
-MARS_LIGHGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
+MARS_LIGHTGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])

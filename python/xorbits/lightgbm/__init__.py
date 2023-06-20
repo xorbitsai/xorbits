@@ -22,9 +22,9 @@ def __dir__():
         import lightgbm
     except ImportError:  # pragma: no cover
         raise AttributeError("lightgbm is required but not installed.")
-    from .mars_adapters import MARS_LIGHGBM_CALLABLES
+    from .mars_adapters import MARS_LIGHTGBM_CALLABLES
 
-    return list(MARS_LIGHGBM_CALLABLES.keys())
+    return list(MARS_LIGHTGBM_CALLABLES.keys())
 
 
 def __getattr__(name: str):
@@ -34,10 +34,10 @@ def __getattr__(name: str):
         import lightgbm
     except ImportError:  # pragma: no cover
         raise AttributeError("lightgbm is required but not installed.")
-    from .mars_adapters import MARS_LIGHGBM_CALLABLES
+    from .mars_adapters import MARS_LIGHTGBM_CALLABLES
 
-    if name in MARS_LIGHGBM_CALLABLES:
-        return MARS_LIGHGBM_CALLABLES[name]
+    if name in MARS_LIGHTGBM_CALLABLES:
+        return MARS_LIGHTGBM_CALLABLES[name]
     else:
         if not hasattr(lightgbm, name):
             raise AttributeError(name)

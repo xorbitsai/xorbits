@@ -16,7 +16,7 @@
 import pandas as pd
 import pytest
 
-import xorbits.numpy as mt
+from ... import numpy as mt
 
 try:
     import lightgbm

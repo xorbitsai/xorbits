@@ -20,8 +20,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import xorbits.numpy as mt
-import xorbits.pandas as md
+from ... import numpy as mt
+from ... import pandas as md
 
 try:
     import lightgbm
