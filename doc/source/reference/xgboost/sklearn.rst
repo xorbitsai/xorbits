@@ -16,7 +16,7 @@ Constructor
    XGBRegressor
 
 Attributes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. autosummary::
    :toctree: generated/
