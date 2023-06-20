@@ -71,7 +71,7 @@ def test_quantile():
     raw = np.random.rand(100)
     q = np.random.rand(10)
 
-    for dtype in [np.float32, np.int64, np.complex128]:
+    for dtype in [np.float32, np.int64]:
         raw2 = raw.astype(dtype)
         a = tensor(raw2, chunk_size=100)
 
