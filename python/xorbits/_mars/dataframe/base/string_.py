@@ -96,37 +96,45 @@ class StringMethod(DataFrameOperand, DataFrameOperandMixin):
         return _string_method_to_handlers[op.method].execute(ctx, op)
 
 
+def call_index(op, inp):
+    empty_data = build_empty_index(inp.dtype)
+
+    dtype = getattr(empty_data.str, op.method)(
+        *op.method_args, **op.method_kwargs
+    ).dtype
+
+    return op.new_index(  # need an new Index class
+        [inp],
+        shape=inp.shape,
+        dtype=dtype,
+        index_value=inp.index_value,
+        name=inp.name,
+    )
+
+
+def call_series(op, inp):
+    empty_data = build_empty_series(inp.dtype)
+
+    dtype = getattr(empty_data.str, op.method)(
+        *op.method_args, **op.method_kwargs
+    ).dtype
+
+    return op.new_series(
+        [inp],
+        shape=inp.shape,
+        dtype=dtype,
+        index_value=inp.index_value,
+        name=inp.name,
+    )
+
+
 class StringMethodBaseHandler:
     @classmethod
     def call(cls, op, inp):
-        empty_data = None
-        type_d = None
         if isinstance(inp, INDEX_TYPE):
-            empty_data = build_empty_index(inp.dtype)
-            type_d = INDEX_TYPE
+            return call_index(op, inp)
         else:
-            empty_data = build_empty_series(inp.dtype)
-            type_d = SERIES_TYPE
-
-        dtype = getattr(empty_data.str, op.method)(
-            *op.method_args, **op.method_kwargs
-        ).dtype
-
-        if type_d == INDEX_TYPE:
-            return op.new_index(  # need an new Index class
-                [inp],
-                shape=inp.shape,
-                dtype=dtype,
-                index_value=inp.index_value,
-                name=inp.name,
-            )
-        return op.new_series(
-            [inp],
-            shape=inp.shape,
-            dtype=dtype,
-            index_value=inp.index_value,
-            name=inp.name,
-        )
+            return call_series(op, inp)
 
     @classmethod
     def tile(cls, op):
