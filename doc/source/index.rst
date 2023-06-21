@@ -152,6 +152,11 @@ Deployment                                Description
 :ref:`SLURM <deployment_slurm>`           Deploy Xorbits to SLURM
 ========================================= ============================================================
 
+Architecture
+-----------------
+
+.. image:: _static/architecture.svg
+
 Getting involved
 ----------------
 
