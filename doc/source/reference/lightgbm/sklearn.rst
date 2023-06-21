@@ -57,7 +57,7 @@ Attributes
     LGBMRegressor.to_local
 
 LGBMRanker
-==============
+==========
 .. currentmodule:: xorbits.lightgbm
 
 Constructor
