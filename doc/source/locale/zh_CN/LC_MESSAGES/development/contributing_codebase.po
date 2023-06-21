@@ -62,7 +62,7 @@ msgstr ""
 
 #: ../../source/development/contributing_codebase.rst:30
 msgid "Pre-commit"
-msgid "Pre-commit"
+msgstr "Pre-commit"
 
 #: ../../source/development/contributing_codebase.rst:32
 msgid ""
