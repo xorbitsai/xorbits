@@ -19,7 +19,6 @@ from ... import numpy as xnp
 
 try:
     import lightgbm
-
 except ImportError:
     lightgbm = None
 from ... import lightgbm as lgb
