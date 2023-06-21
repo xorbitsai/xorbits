@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Xorbits \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-06 14:18+0800\n"
+"POT-Creation-Date: 2023-06-21 21:24+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../source/index.rst:11
 msgid "Xorbits: scalable Python data science, familiar & fast."
@@ -293,65 +293,69 @@ msgid "Deploy Xorbits to SLURM"
 msgstr "把 Xorbits 部署到 SLURM"
 
 #: ../../source/index.rst:156
+msgid "Architecture"
+msgstr "架构"
+
+#: ../../source/index.rst:161
 msgid "Getting involved"
 msgstr "参与项目"
 
-#: ../../source/index.rst:161 ../../source/index.rst:177
+#: ../../source/index.rst:166 ../../source/index.rst:182
 msgid "**Platform**"
 msgstr "**平台**"
 
-#: ../../source/index.rst:161 ../../source/index.rst:177
+#: ../../source/index.rst:166 ../../source/index.rst:182
 msgid "**Purpose**"
 msgstr "**目的**"
 
-#: ../../source/index.rst:163
+#: ../../source/index.rst:168
 msgid "`Discourse Forum <https://discuss.xorbits.io/>`_"
 msgstr "`Discourse 论坛 <https://discuss.xorbits.io/>`_"
 
-#: ../../source/index.rst:163
+#: ../../source/index.rst:168
 msgid "Asking usage questions and discussing development."
 msgstr "询问使用的问题，参与开发的讨论"
 
-#: ../../source/index.rst:165 ../../source/index.rst:179
+#: ../../source/index.rst:170 ../../source/index.rst:184
 msgid "`Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_"
 msgstr ""
 
-#: ../../source/index.rst:165 ../../source/index.rst:179
-#: ../../source/index.rst:181
+#: ../../source/index.rst:170 ../../source/index.rst:184
+#: ../../source/index.rst:186
 msgid "Reporting bugs and filing feature requests."
 msgstr "报告 bug 或者发起新特性请求"
 
-#: ../../source/index.rst:167
+#: ../../source/index.rst:172
 msgid ""
 "`Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-"
 "RbfhbPVpx7prOVdM1CAuxg>`_"
 msgstr ""
 
-#: ../../source/index.rst:167
+#: ../../source/index.rst:172
 msgid "Collaborating with other Xorbits users."
 msgstr "与其他 Xorbits 用户一起讨论"
 
-#: ../../source/index.rst:169
+#: ../../source/index.rst:174
 msgid "`StackOverflow <https://stackoverflow.com/questions/tagged/xorbits>`_"
 msgstr ""
 
-#: ../../source/index.rst:169
+#: ../../source/index.rst:174
 msgid "Asking questions about how to use Xorbits."
 msgstr "询问 Xorbits 使用问题"
 
-#: ../../source/index.rst:171
+#: ../../source/index.rst:176
 msgid "`Twitter <https://twitter.com/xorbitsio>`_"
 msgstr ""
 
-#: ../../source/index.rst:171
+#: ../../source/index.rst:176
 msgid "Staying up-to-date on new features."
 msgstr "获取最新特性的更新"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:186
 msgid "`Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_"
 msgstr ""
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:189
 msgid ""
 "Visit `Xorbits community <https://xorbits.cn/community>`_ to join us on "
 "Wechat, Zhihu and so on."
