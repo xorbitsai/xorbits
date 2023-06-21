@@ -38,8 +38,8 @@ msgid ""
 "Xorbits."
 msgstr ""
 "写好代码不仅仅是关于你写的内容，也与你如何写有关。"
-"在 :ref:`Continuous Integration <contributing.ci>` 测试期间，我们将运行几个工具来检查你的代码样式错误。"
-"好的代码风格是提交代码给Xorbits的要求。"
+"在 :ref:`持续集成 <contributing.ci>` 测试期间，我们将运行几个工具来检查你的代码样式错误。"
+"好的代码风格是提交代码给 Xorbits 的要求。"
 
 #: ../../source/development/contributing_codebase.rst:18
 msgid ""
@@ -48,9 +48,9 @@ msgid ""
 "result, that is, we need it to be as *backwards compatible* as possible "
 "to avoid mass breakages."
 msgstr ""
-"此外，重要的是，我们不要对代码进行突然更改"
-"这可能会导致大量用户代码中断"
-"也就是说,我们需要它尽可能向后兼容，以避免大规模中断。"
+"此外，重要的是，我们不要对代码进行突然的不兼容更改"
+"这可能会导致大量用户代码发生错误"
+"也就是说，我们需要它尽可能向后兼容，以避免大规模兼容性问题。"
 
 #: ../../source/development/contributing_codebase.rst:23
 msgid ""
@@ -74,14 +74,14 @@ msgid ""
 "yourself before submitting code. This can be done by installing ``pre-"
 "commit``::"
 msgstr ""
-"另外， :ref:`Continuous Integration <contributing.ci>` 将使用 `pre-commit hooks "
-"<https://pre-commit.com/>`_ 运行代码格式检查，例如 ``black``, ``flake8``, ``isort`` 等等 "
-"这些检查中的任何警告都将导致 :ref:`Continuous Integration <contributing.ci>` 失败。"
+"另外， :ref:`持续集成 <contributing.ci>` 将使用 `pre-commit hooks "
+"<https://pre-commit.com/>`_ 运行代码格式检查，例如 ``black``, ``flake8``, ``isort`` 等等。"
+"这些检查中的任何警告都将导致 :ref:`持续集成 <contributing.ci>` 失败。"
 "因此，在提交代码之前自己运行检查很有帮助。可以通过安装 ``pre-commit`` 来完成： "
 
 #: ../../source/development/contributing_codebase.rst:40
 msgid "and then running::"
-msgstr "然后运行："
+msgstr "然后运行::"
 
 #: ../../source/development/contributing_codebase.rst:44
 msgid ""
@@ -92,7 +92,7 @@ msgid ""
 msgstr ""
 "从Xorbits存储库的根目录运行此命令。"
 "这样，每次提交更改时都会自动运行所有样式检查，无需手动运行每个检查。"
-"此外，使用 ``pre-commit`` 还可以更轻松地保持与我们的代码检查的最新状态。"
+"此外，使用 ``pre-commit`` 还可以帮助你更新代码检查规则。"
 
 #: ../../source/development/contributing_codebase.rst:49
 msgid ""
@@ -108,7 +108,7 @@ msgid ""
 " still use it to run its checks with::"
 msgstr ""
 "如果你不想将 ``pre-commit`` 作为工作流程的一部分使用，你"
-"仍然可以使用以下命令运行检查："
+"仍然可以使用以下命令运行检查::"
 
 #: ../../source/development/contributing_codebase.rst:56
 #: ../../source/development/contributing_codebase.rst:62
@@ -121,7 +121,7 @@ msgid ""
 "upstream/main you can use::"
 msgstr ""
 "如果要在upstream/main上运行所有最近提交的文件的检查"
-"可以使用以下命令："
+"可以使用以下命令::"
 
 #: ../../source/development/contributing_codebase.rst:66
 msgid ""
@@ -136,7 +136,7 @@ msgid ""
 "If you have conflicting installations of ``virtualenv``, then you may get"
 " an error - see `here <https://github.com/pypa/virtualenv/issues/1875>`_."
 msgstr ""
-"如果你安装了冲突的版本 ``virtualenv``，可能会出现"
+"如果你的 ``virtualenv`` 版本冲突，可能会出现"
 "错误 - 可以查看 `这里 <https://github.com/pypa/virtualenv/issues/1875>`_ 的解决方案。"
 
 #: ../../source/development/contributing_codebase.rst:74
@@ -146,7 +146,7 @@ msgid ""
 "issues if you're using conda. To solve this, you can downgrade "
 "``virtualenv`` to version ``20.0.33``."
 msgstr ""
-"此外，由于 `virtualenv存在bug <https://github.com/pypa/virtualenv/issues/1986>`_ "
+"此外，由于 virtualenv 的一个 `bug <https://github.com/pypa/virtualenv/issues/1986>`_ "
 "如果你使用conda，可能会遇到问题。"
 "要解决此问题，你可以将 ``virtualenv`` 降级到版本 ``20.0.33`` 。"
 
@@ -381,7 +381,7 @@ msgid ""
 "best location to put your test, take your best guess, but note that "
 "reviewers may request that you move the test to a different location."
 msgstr ""
-"一般而言，可以使用集成开发环境 (IDE) 中的搜索功能或在终端中使用 git grep 命令来查找调用该方法的测试文件。"
+"一般而言，可以使用编译器中的搜索功能或在终端中使用 git grep 命令来查找调用该方法的测试文件。"
 "如果你不确定最佳位置来放置你的测试，请尽力猜测，"
 "但请注意，审阅人可能会要求你将测试移动到其他位置。"
 
@@ -411,7 +411,7 @@ msgid ""
 "where a test should be located."
 msgstr ""
 "理想情况下，一个测试应该有一个且只有一个明显的位置。"
-"在我们达到这个理想状态之前，这里有一些关于测试放置位置的经验法则。"
+"在那之前，这里有一些关于测试放置位置的经验法则。"
 
 #: ../../source/development/contributing_codebase.rst:241
 msgid "Using ``pytest``"
@@ -441,8 +441,8 @@ msgid ""
 "Functional tests named ``def test_*`` and *only* take arguments that are "
 "either fixtures or parameters."
 msgstr ""
-"测试函数使用 ``def test_*`` 命名，只接受"
-"fixture 或 parameter 参数作为输入。"
+"测试函数使用 ``def test_*`` 命名， *只* 接受"
+" fixture 或 parameter 参数作为输入。"
 
 #: ../../source/development/contributing_codebase.rst:258
 msgid "Use a bare ``assert`` for testing scalars and truth-testing"
