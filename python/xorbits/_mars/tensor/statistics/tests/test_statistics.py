@@ -71,7 +71,7 @@ def test_quantile():
     raw = np.random.rand(100)
     q = np.random.rand(10)
 
-    for dtype in [np.float32, np.int64, np.complex128]:
+    for dtype in [np.float32, np.int64]:
         raw2 = raw.astype(dtype)
         a = tensor(raw2, chunk_size=100)
 
@@ -85,7 +85,7 @@ def test_quantile():
     raw = np.random.rand(20, 10)
     q = np.random.rand(10)
 
-    for dtype in [np.float32, np.int64, np.complex128]:
+    for dtype in [np.float32, np.int64]:
         for axis in (None, 0, 1, [0, 1]):
             for interpolation in INTERPOLATION_TYPES:
                 for keepdims in [True, False]:

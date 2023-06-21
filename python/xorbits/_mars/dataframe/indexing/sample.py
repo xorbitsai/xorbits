@@ -407,6 +407,7 @@ class DataFrameSample(DataFrameOperand, DataFrameOperandMixin):
 
         if op.size is None:
             op._size = int(op.frac * in_df.shape[op.axis])
+            op._frac = None
 
         weights = op.weights
         if isinstance(weights, ENTITY_TYPE):

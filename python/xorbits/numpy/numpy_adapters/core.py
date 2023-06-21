@@ -139,3 +139,9 @@ def collect_numpy_module_members(np_mod: ModuleType) -> Dict[str, Any]:
                 )
 
     return module_methods
+
+
+NUMPY_MEMBERS = collect_numpy_module_members(np)
+NUMPY_LINALG_MEMBERS = collect_numpy_module_members(np.linalg)
+NUMPY_FFT_MEMBERS = collect_numpy_module_members(np.fft)
+NUMPY_RANDOM_MEMBERS = collect_numpy_module_members(np.random)

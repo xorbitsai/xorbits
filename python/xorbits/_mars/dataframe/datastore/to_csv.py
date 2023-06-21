@@ -372,6 +372,7 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
             kwargs["lineterminator"] = op.lineterminator
         else:
             kwargs["line_terminator"] = op.lineterminator
+            kwargs.pop("lineterminator")
 
         df.to_csv(path, **kwargs)
 
