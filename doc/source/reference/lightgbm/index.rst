@@ -7,3 +7,4 @@ LightGBM API
    :maxdepth: 2
 
    sklearn
+   learning

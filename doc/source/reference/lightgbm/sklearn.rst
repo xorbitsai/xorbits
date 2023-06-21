@@ -82,12 +82,4 @@ Attributes
     LGBMRanker.set_params
     LGBMRanker.to_local
 
-Scikit-Learn Functions
-==============
-.. currentmodule:: xorbits.lightgbm
 
-.. autosummary::
-    :toctree: _generate/
-    
-    predict
-    predict_proba
