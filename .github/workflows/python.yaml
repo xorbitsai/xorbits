@@ -126,9 +126,6 @@ jobs:
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
         fi
-        if [[ "$MODULE" == "_mars/dataframe" ]]; then
-          pip install sqlalchemy\<2
-        fi
         if [[ "$MODULE" == "mars-core" ]]; then
           pip install oss2
         fi
