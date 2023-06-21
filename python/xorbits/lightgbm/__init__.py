@@ -15,7 +15,7 @@ from ..core.utils.fallback import unimplemented_func
 
 
 def _install():
-    """Nothing required for installing xgboost."""
+    """Nothing required for installing lightgbm."""
 
 
 def __dir__():
