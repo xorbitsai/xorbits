@@ -94,7 +94,7 @@ jobs:
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
-          - { os: self-hosted, module: kubernetes-juicefs, python-version: 3.9 }
+          - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
     steps:
     - name: Check out code
       uses: actions/checkout@v3
