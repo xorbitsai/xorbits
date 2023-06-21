@@ -18,12 +18,13 @@ from typing import Callable, Dict, List, Optional
 
 import lightgbm
 
+from ..._mars.learn.contrib import lightgbm as mars_lightgbm
 from ..._mars.learn.contrib.lightgbm.classifier import (
     LGBMClassifier as MarsLGBMClassifier,
 )
 from ..._mars.learn.contrib.lightgbm.ranker import LGBMRanker as MarsLGBMRanker
 from ..._mars.learn.contrib.lightgbm.regressor import LGBMRegressor as MarsLGBMRegressor
-from ...core.adapter import mars_lightgbm, to_mars, wrap_mars_callable
+from ...core.adapter import to_mars, wrap_mars_callable
 from ...core.utils.docstring import attach_module_callable_docstring
 
 MARS_LIGHTGBM_CALLABLES = {}
