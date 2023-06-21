@@ -27,7 +27,7 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
             map_op._output_types = output_type
             chunk_inputs = [chunk]
 
-            map_chunks.append(map_op.new_chunk(chunk_inputs))
+            map_chunks.append(map_op.new_chunk(chunk_inputs, index=chunk.index))
 
         proxy_chunk = DataFrameShuffleProxy(output_types=[output_type]).new_chunk(
             map_chunks, shape=()
@@ -38,7 +38,8 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
         reduce_op = op.copy().reset_key()
         reduce_op._output_types = [OutputType.scalar]
         reduce_op.stage = OperandStage.reduce
-        reduce_chunks.append(reduce_op.new_chunk([proxy_chunk]))
+        reduce_op.n_reducers = 1
+        reduce_chunks.append(reduce_op.new_chunk([proxy_chunk], index=1))
 
         # generate the result chunk:
         out_chunks = []
