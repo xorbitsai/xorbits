@@ -11,16 +11,12 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
     _op_type_ = opcodes.GROUPBY_LEN
 
     def __call__(self, groupby):
-        _in_groupby = (
-            groupby  # the input shall be wrapped-groupby return by the groupby method.
-        )
-
-        return self.new_scalar(self, _in_groupby)
+        return self.new_scalar([groupby])
 
     @classmethod
     def tile(cls, op: "GroupByLen"):
         in_groupby = op.inputs[0]
-        output_type = OutputType.series
+        output_type = op.output_types
 
         # generate map chunks
         map_chunks = []
@@ -28,7 +24,7 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
             map_op = op.copy().reset_key()
             map_op.stage = OperandStage.map
             map_op._shuffle_size = in_groupby.chunk_shape[0]
-            map_op._output_types = OutputType.series
+            map_op._output_types = output_type
             chunk_inputs = [chunk]
 
             map_chunks.append(map_op.new_chunk(chunk_inputs))
@@ -40,7 +36,7 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
         # generate reduce chunks, we only need one reducer here.
         reduce_chunks = []
         reduce_op = op.copy().reset_key()
-        reduce_op._output_types = OutputType.scalar
+        reduce_op._output_types = [OutputType.scalar]
         reduce_op.stage = OperandStage.reduce
         reduce_chunks.append(reduce_op.new_chunk([proxy_chunk]))
 
@@ -55,7 +51,7 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
         params = op.outputs[0].params.copy()
         params["nsplits"] = ((np.nan,) * len(out_chunks),)
         params["chunks"] = out_chunks
-        return new_op.new_tileables(in_groupby, **params)
+        return new_op.new_tileables([in_groupby], **params)
 
     @classmethod
     def execute_map(cls, ctx, op):
@@ -71,8 +67,7 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
             res.append(index)
 
         # use series to convey every index store in this level
-        reduce_index = 1
-        ctx[chunk.key, reduce_index] = pd.Series(res)
+        ctx[chunk.key, 1] = pd.Series(res)
 
     @classmethod
     def execute_reduce(cls, ctx, op: "GroupByLen"):
@@ -100,4 +95,4 @@ class GroupByLen(DataFrameOperandMixin, MapReduceOperand):
 
 def groupby_len(groupby):
     op = GroupByLen()
-    return op(groupby)
+    return op(groupby).execute().fetch()
