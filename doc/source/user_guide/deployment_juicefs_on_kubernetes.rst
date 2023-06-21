@@ -34,81 +34,24 @@ Make sure redis pod is running:
 ..
 
 
-Check redis pod's IP address, cpu limits and requests. In this example, IP for redis is 172.17.0.8.
+Check redis pod's IP address. In this example, IP for redis is 172.17.0.8.
 
 .. code-block:: bash
 
-    $ kubectl describe po redis
-    Name:             redis
-    Namespace:        default
-    Priority:         0
-    Service Account:  default
-    Node:             minikube/192.168.76.2
-    Start Time:       Tue, 13 Jun 2023 07:01:41 +0000
-    Labels:           <none>
-    Annotations:      <none>
-    Status:           Running
-    IP:               172.17.0.8
-    IPs:
-      IP:  172.17.0.8
-    Containers:
-      redis:
-        Container ID:  docker://6691524e755a62c51c5e862114b27d57d4ffc3935695953443ec9a7f669e8943
-        Image:         redis:5.0.4
-        Image ID:      docker-pullable://redis@sha256:2dfa6432744659268d001d16c39f7be52ee73ef7e1001ff80643f0f7bdee117e
-        Port:          6379/TCP
-        Host Port:     0/TCP
-        Command:
-          redis-server
-          /redis-master/redis.conf
-        State:          Running
-          Started:      Mon, 19 Jun 2023 09:58:20 +0000
-        Last State:     Terminated
-          Reason:       Error
-          Exit Code:    255
-          Started:      Mon, 19 Jun 2023 07:36:10 +0000
-          Finished:     Mon, 19 Jun 2023 09:58:01 +0000
-        Ready:          True
-        Restart Count:  5
-        Limits:
-          cpu:  100m
-        Requests:
-          cpu:  100m
-        Environment:
-          MASTER:  true
-        Mounts:
-          /redis-master from config (rw)
-          /redis-master-data from data (rw)
-          /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-s2tpw (ro)
-    Conditions:
-      Type              Status
-      Initialized       True
-      Ready             True
-      ContainersReady   True
-      PodScheduled      True
-    Volumes:
-      data:
-        Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
-        Medium:
-        SizeLimit:  <unset>
-      config:
-        Type:      ConfigMap (a volume populated by a ConfigMap)
-        Name:      example-redis-config
-        Optional:  false
-      kube-api-access-s2tpw:
-        Type:                    Projected (a volume that contains injected data from multiple sources)
-        TokenExpirationSeconds:  3607
-        ConfigMapName:           kube-root-ca.crt
-        ConfigMapOptional:       <nil>
-        DownwardAPI:             true
-    QoS Class:                   Burstable
-    Node-Selectors:              <none>
-    Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
-                                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
-    Events:                      <none>
+    $ kubectl get po redis -o custom-columns=IP:.status.podIP --no-headers
+    172.17.0.8
 
 ..
 
+You can also check how much CPU and memory resources redis pod gets by running
+
+.. code-block:: bash
+
+    $ kubectl get po redis
+
+..
+
+and check the corresponding fields.
 
 Kubernetes
 ----------
@@ -129,15 +72,11 @@ Install ``kubectl``, a command-line tool for interacting with Kubernetes cluster
 JuiceFS Installation
 ----------
 
-You can skip this installation part and jump directly to ``Deploy Cluster`` section.
+We will still walk you through the process of installing JuiceFS on a Kubernetes cluster, enabling you to leverage its features and benefits.
 
-With the ``new_cluster`` function we provide in the next ``Deploy Cluster`` section, you can use JuiceFS directly without any installation.
+There are three ways to use JuiceFS on K8S  `Use JuiceFS on Kubernetes <https://juicefs.com/docs/zh/community/how_to_use_on_kubernetes>`_.
 
-But here we will still walk you through the process of installing JuiceFS on a Kubernetes cluster, enabling you to leverage its features and benefits.
-
-You can choose one of the three ways on `Use JuiceFS on Kubernetes <https://juicefs.com/docs/zh/community/how_to_use_on_kubernetes>`_.
-
-Here we use CSI driver as an example.
+But our implementation in k8s must rely on CSI since CSI provides better portability, enhanced isolation, and more advanced features.
 
 Reference Page: `JuiceFS CSI Driver <https://juicefs.com/docs/csi/getting_started/>`_
 
@@ -207,6 +146,10 @@ You should be careful with limits and requests of cpu and memory. Change accordi
 
 Create and use PV
 ++++++++++++++++++++++++++
+
+You can skip this ``Create and use PV`` section because in Xorbits, the ``new_cluster`` function would create secret, pv, and pvc for you.
+
+You can still walk through this section as it would give you a better understanding of each parameter in the configurations.
 
 JuiceFS leverages persistent volumes to store data.
 
