@@ -83,7 +83,7 @@ def _install():
         ("cumsum", cumsum, cumsum),
         ("agg", aggregate, aggregate),
         ("aggregate", aggregate, aggregate),
-        ("nunique", nunique_series, nunique_dataframe),
+        # ("nunique", nunique_series, nunique_dataframe),
         ("sem", sem_series, sem_dataframe),
         ("skew", skew_series, skew_dataframe),
         ("kurt", kurt_series, kurt_dataframe),

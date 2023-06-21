@@ -2857,3 +2857,39 @@ def test_index_str_method(setup):
     pd.testing.assert_index_equal(
         xorbits_index.str.capitalize().execute().fetch(), index.str.capitalize()
     )
+
+
+def test_nunique(setup):
+    # df = pd.DataFrame({'A': [4, 5, 6], 'B': [4, 1, 1]})
+    # series = pd.Series([1, 3, 5, 7, 7])
+    #
+    # mdf = from_pandas_df(df, chunk_size=2)
+    # pd.testing.assert_series_equal(df.nunique(), mdf.nunique(axis=0).execute().fetch())
+    # pd.testing.assert_series_equal(df.nunique(axis=1), mdf.nunique(axis=1).execute().fetch())
+    #
+    # mdf = from_pandas_df(df)
+    # pd.testing.assert_series_equal(df.nunique(), mdf.nunique(axis=0).execute().fetch())
+    # pd.testing.assert_series_equal(df.nunique(axis=1), mdf.nunique(axis=1).execute().fetch())
+    #
+    # df = pd.DataFrame()
+    # mdf = from_pandas_df(df)
+    # pd.testing.assert_series_equal(df.nunique(), mdf.nunique(axis=0).execute().fetch())
+    # pd.testing.assert_series_equal(df.nunique(axis=1), mdf.nunique(axis=1).execute().fetch())
+    #
+    # m_series = from_pandas_series(series)
+    # assert series.nunique() == m_series.nunique().execute().fetch()
+    #
+    # m_series = from_pandas_series(series, chunk_size=2)
+    # assert series.nunique() == m_series.nunique().execute().fetch()
+    #
+    # series = pd.Series()
+    # m_series = from_pandas_series(series)
+    # assert series.nunique() == m_series.nunique().execute().fetch()
+
+    rs = np.random.RandomState(0)
+    raw1 = pd.DataFrame(
+        {"col1": rs.randint(0, 100, size=(100,)), "col2": rs.random(100)}
+    )
+    mdf = from_pandas_df(raw1)
+    pd.testing.assert_series_equal(raw1.nunique(), mdf.nunique().execute().fetch())
+
