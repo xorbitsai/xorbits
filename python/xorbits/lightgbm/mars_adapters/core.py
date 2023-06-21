@@ -1,4 +1,5 @@
 # Copyright 2022-2023 XProbe Inc.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -30,22 +31,22 @@ MARS_LIGHTGBM_CALLABLES = {}
 
 class LGBMBase:
     def __init__(self, *args, **kwargs):
-        self.mars_instance = self.marscls(*to_mars(args), **to_mars(kwargs))
+        self.mars_instance = self._marscls(*to_mars(args), **to_mars(kwargs))
 
 
 class LGBMRegressor(LGBMBase):
-    marscls = MarsLGBMRegressor
+    _marscls = MarsLGBMRegressor
 
 
 class LGBMClassifier(LGBMBase):
-    marscls = MarsLGBMClassifier
+    _marscls = MarsLGBMClassifier
 
 
 class LGBMRanker(LGBMBase):
-    marscls = MarsLGBMRanker
+    _marscls = MarsLGBMRanker
 
 
-LGBM_cls_map = {
+LGBM_CLS_MAP = {
     LGBMClassifier: MarsLGBMClassifier,
     LGBMRegressor: MarsLGBMRegressor,
     LGBMRanker: MarsLGBMRanker,
@@ -86,11 +87,11 @@ def _collect_module_callables(
 
 
 def _install_cls_members(module_callables: Dict[str, Callable]):
-    for xCls, marsCls in LGBM_cls_map.items():
-        module_callables[xCls.__name__] = xCls
-        for name, _ in inspect.getmembers(marsCls, inspect.isfunction):
+    for x_cls, mars_cls in LGBM_CLS_MAP.items():
+        module_callables[x_cls.__name__] = x_cls
+        for name, _ in inspect.getmembers(mars_cls, inspect.isfunction):
             if not name.startswith("_"):
-                setattr(xCls, name, wrap_cls_func(marsCls, name))
+                setattr(x_cls, name, wrap_cls_func(mars_cls, name))
 
 
 MARS_LIGHTGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
