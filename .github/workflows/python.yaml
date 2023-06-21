@@ -183,7 +183,7 @@ jobs:
             statsmodels tsfresh dask[complete] mimesis\<9.0.0
         fi
         if [[ "$MODULE" == "learn" ]]; then
-          pip install xgboost
+          pip install xgboost lightgbm
         fi
         if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
           pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
@@ -219,7 +219,7 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ --ignore xorbits/xgboost \
+          pytest --ignore xorbits/_mars/ --ignore xorbits/xgboost --ignore xorbits/lightgbm \
             --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
@@ -267,7 +267,7 @@ jobs:
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/xgboost
+            xorbits/xgboost xorbits/lightgbm
         elif [ "$MODULE" == "ray-deploy" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
             --log-level=DEBUG --timeout=200 xorbits/_mars --ignore=xorbits/_mars/deploy/oscar/ -m ray
