@@ -16,7 +16,10 @@ import functools
 import inspect
 from typing import Callable, Dict, List, Optional
 
-import lightgbm
+try:
+    import lightgbm
+except ImportError:
+    lightgbm = None
 
 from ..._mars.learn.contrib.lightgbm.classifier import (
     LGBMClassifier as MarsLGBMClassifier,
