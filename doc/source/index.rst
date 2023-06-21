@@ -62,7 +62,7 @@ API                                     Implemented version or plan
 ======================================= =========================================================
 :ref:`xorbits.pandas <pandas_api>`      v0.1.0
 :ref:`xorbits.numpy <numpy_api>`        v0.1.0
-``xorbits.sklearn``                     Planned in the near future
+``xorbits.sklearn``                     v0.4.0
 ``xorbits.xgboost``                     Planned in the near future
 ``xorbits.lightgbm``                    Planned in the near future
 ``xorbits.xarray``                      Planned in the future
