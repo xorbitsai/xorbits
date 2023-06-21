@@ -1886,3 +1886,16 @@ def test_series_groupby_rolling_agg(setup, window, min_periods, center, closed, 
     mresult = mresult.execute().fetch()
 
     pd.testing.assert_series_equal(presult, mresult.sort_index())
+
+
+def test_grouby_len(setup):
+    df = md.DataFrame(
+        {
+            "a": ["a", "b", "a", "c"],
+            "b": [0.1, 0.2, 0.3, 0.4],
+            "c": ["aa", "bb", "cc", "aa"],
+        }
+    )
+    grouped = df.groupby("b")
+
+    print(len(grouped))
