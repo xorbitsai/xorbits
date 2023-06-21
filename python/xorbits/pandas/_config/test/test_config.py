@@ -56,19 +56,27 @@ def test_options_execute(setup):
     xpd.set_eng_float_format(accuracy=3)
     assert df_raw.__str__() == df.__str__()
 
-    # test errors
+    # test error value
     with pytest.raises(ValueError):
-        # test invalid value
         xpd.set_option("display.max_rows", "100")
 
-        # test invalid option
+    with pytest.raises(ValueError):
         xpd.set_option("non-exist", None)
+
+    with pytest.raises(ValueError):
         xpd.get_option("non-exist")
+
+    with pytest.raises(ValueError):
         xpd.reset_option("non-exist")
+
+    with pytest.raises(ValueError):
         xpd.option_context("non-exist", 100)
+
+    with pytest.raises(ValueError):
         xpd.set_eng_float_format(accuracy="3")
 
-        # test invalid type
+    # test invalid type
+    with pytest.raises(ValueError):
         xpd.option_context({"display.max_rows": 100})
 
 
