@@ -17,7 +17,7 @@ Constructor
 
 
 Attributes
-~~~~~~~~~~~
+~~~~~~~~~~
 .. autosummary::
     :toctree: _generate/
 
@@ -31,7 +31,7 @@ Attributes
     LGBMClassifier.to_local
 
 LGBMRegressor
-==============
+=============
 .. currentmodule:: xorbits.lightgbm
 
 Constructor
@@ -43,7 +43,7 @@ Constructor
 
 
 Attributes
-~~~~~~~~~~~
+~~~~~~~~~~
 .. autosummary::
     :toctree: _generate/
 
@@ -69,7 +69,7 @@ Constructor
 
 
 Attributes
-~~~~~~~~~~~
+~~~~~~~~~~
 .. autosummary::
     :toctree: _generate/
 
