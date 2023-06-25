@@ -22,11 +22,14 @@ from ..._mars.config import options
 from ...core.utils.docstring import attach_module_callable_docstring
 
 
-# import pdb; pdb.set_trace()
 def set_option(pat: Any, value: Any) -> None:
     try:
         attr_list = pat.split(".")
-        setattr(reduce(getattr, attr_list[:-1], options), attr_list[-1], value)
+        if len(attr_list) == 1:
+            getattr(options, attr_list[0])
+            setattr(options, attr_list[0], value)
+        else:
+            setattr(reduce(getattr, attr_list[:-1], options), attr_list[-1], value)
     except:
         pd.set_option(pat, value)
 
@@ -78,6 +81,9 @@ class option_context:
 
 
 def set_eng_float_format(accuracy: int = 3, use_eng_prefix: bool = False) -> None:
+    import pdb
+
+    pdb.set_trace()
     pd.set_eng_float_format(accuracy, use_eng_prefix)
 
 
