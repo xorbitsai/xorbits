@@ -263,6 +263,7 @@ class DataRef(metaclass=DataRefMeta):
                     raise TypeError(
                         f"object with shape {self.data._mars_entity.shape} has no len()"
                     )
+
         else:
             raise TypeError(f"object of type '{self.data.data_type}' has no len()")
 

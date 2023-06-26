@@ -81,3 +81,4 @@ def test_docstrings(setup, doctest_namespace, obj, name):
             pytest.fail(f"{result.failed} out of {result.attempted} example(s) failed.")
         else:
             print(f"{result.attempted} example(s) passed.")
+            print(f"{result} + is passed don't worry")
