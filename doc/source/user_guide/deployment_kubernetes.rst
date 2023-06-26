@@ -240,7 +240,7 @@ Here we give you the minimal configuration.
 ..
 
 Create and use PV
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 **If you want to directly use JuiceFS on K8S, you can skip this Create and use PV section because in Xorbits, new_cluster function would create secret, pv, and pvc for you.**
 
@@ -498,7 +498,7 @@ You should see a similar hex string like 9c3e069a-70d9-4874-bad6-d608979746a0, m
 You should see the serialized output of the simple task which may not be human-readable. It should contain ``pandas``, meaning that it matches our simple task!
 
 Manage the Xorbits cluster & Debug
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can get Xorbits namespace, check the status of Xorbits pods, and check Xorbits UI by following `Detailed tutorial: Deploying and Running Xorbits on Amazon EKS. <https://zhuanlan.zhihu.com/p/610955102>`_.
 If everything works fine, now you can easily scale up and down the storage resources by adding or deleting pods inside the namespace.

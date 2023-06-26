@@ -50,7 +50,7 @@ To verify the cluster:
 
 
 External Storage
-----------
+----------------
 
 Great news! Xorbits starts to support separation of storage and compute. Start to enjoy better scalability, flexibility, and performance it brings.
 Check out the last section ``JuiceFS on Kubernetes`` on the page :ref:`Kubernetes Deployment <deployment_kubernetes>`.
