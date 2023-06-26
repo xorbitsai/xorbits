@@ -858,7 +858,7 @@ class _BatchedFetcher:
 
 
 class IndexData(HasShapeTileableData, _ToPandasMixin):
-    __slots__ = ()
+    __slots__ = "_cache", "_accessors"
     type_name = "Index"
 
     # optional field
@@ -898,6 +898,7 @@ class IndexData(HasShapeTileableData, _ToPandasMixin):
             _chunks=chunks,
             **kw,
         )
+        self._accessors = dict()
 
     @property
     def params(self) -> Dict[str, Any]:

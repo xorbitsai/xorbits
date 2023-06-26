@@ -682,6 +682,13 @@ def build_df(df_obj, fill_value=1, size=1, ensure_string=False):
     return ret_df
 
 
+# by build a new series class, we can directly use pd.Index(Series) to turn it to Index Object.
+def build_empty_index(dtype, index=None, name=None, gpu: Optional[bool] = False):
+    xpd = cudf if gpu is True else pd
+    series_of_index = build_empty_series(dtype, index, name, gpu)
+    return xpd.Index(series_of_index)
+
+
 def build_empty_series(dtype, index=None, name=None, gpu: Optional[bool] = False):
     xpd = cudf if gpu is True else pd
     length = len(index) if index is not None else 0
