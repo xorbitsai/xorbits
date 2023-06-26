@@ -242,7 +242,7 @@ Here we give you the minimal configuration.
 Create and use PV
 ^^^^^^^^^^^^^^^^^^^^^^
 
-** If you want to directly use JuiceFS on K8S, you can skip this ``Create and use PV`` section because in Xorbits, the ``new_cluster`` function would create secret, pv, and pvc for you. **
+**If you want to directly use JuiceFS on K8S, you can skip this Create and use PV section because in Xorbits, new_cluster function would create secret, pv, and pvc for you.**
 
 If you want to understand how the mounting works and the meaning of each parameter in the configurations, you can walk through this section.
 
