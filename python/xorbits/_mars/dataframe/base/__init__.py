@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from .apply import df_apply, series_apply
 from .applymap import df_applymap
 from .astype import astype, index_astype
@@ -152,6 +151,9 @@ def _install():
     for series in SERIES_TYPE:
         series.str = CachedAccessor("str", StringAccessor)
         series.dt = CachedAccessor("dt", DatetimeAccessor)
+
+    for indexes in INDEX_TYPE:
+        indexes.str = CachedAccessor("str", StringAccessor)
 
 
 _install()
