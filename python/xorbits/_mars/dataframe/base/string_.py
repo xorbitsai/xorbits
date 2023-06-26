@@ -25,13 +25,18 @@ from ...tensor import tensor as astensor
 from ...tensor.core import TENSOR_TYPE
 from ...utils import has_unknown_shape
 from ..align import align_series_series
-from ..core import SERIES_TYPE
+from ..core import INDEX_TYPE, SERIES_TYPE
 from ..initializer import Series as asseries
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_empty_series, infer_index_value, parse_index
+from ..utils import (
+    build_empty_index,
+    build_empty_series,
+    infer_index_value,
+    parse_index,
+)
 
 
-class SeriesStringMethod(DataFrameOperand, DataFrameOperandMixin):
+class StringMethod(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = OperandDef.STRING_METHOD
 
     _input = KeyField("input")
@@ -91,20 +96,45 @@ class SeriesStringMethod(DataFrameOperand, DataFrameOperandMixin):
         return _string_method_to_handlers[op.method].execute(ctx, op)
 
 
-class SeriesStringMethodBaseHandler:
+def call_index(op, inp):
+    empty_data = build_empty_index(inp.dtype)
+
+    dtype = getattr(empty_data.str, op.method)(
+        *op.method_args, **op.method_kwargs
+    ).dtype
+
+    return op.new_index(  # need an new Index class
+        [inp],
+        shape=inp.shape,
+        dtype=dtype,
+        index_value=inp.index_value,
+        name=inp.name,
+    )
+
+
+def call_series(op, inp):
+    empty_data = build_empty_series(inp.dtype)
+
+    dtype = getattr(empty_data.str, op.method)(
+        *op.method_args, **op.method_kwargs
+    ).dtype
+
+    return op.new_series(
+        [inp],
+        shape=inp.shape,
+        dtype=dtype,
+        index_value=inp.index_value,
+        name=inp.name,
+    )
+
+
+class StringMethodBaseHandler:
     @classmethod
     def call(cls, op, inp):
-        empty_series = build_empty_series(inp.dtype)
-        dtype = getattr(empty_series.str, op.method)(
-            *op.method_args, **op.method_kwargs
-        ).dtype
-        return op.new_series(
-            [inp],
-            shape=inp.shape,
-            dtype=dtype,
-            index_value=inp.index_value,
-            name=inp.name,
-        )
+        if isinstance(inp, INDEX_TYPE):
+            return call_index(op, inp)
+        else:
+            return call_series(op, inp)
 
     @classmethod
     def tile(cls, op):
@@ -136,7 +166,7 @@ class SeriesStringMethodBaseHandler:
         )
 
 
-class SeriesStringSplitHandler(SeriesStringMethodBaseHandler):
+class SeriesStringSplitHandler(StringMethodBaseHandler):
     @classmethod
     def call(cls, op, inp):
         method_kwargs = op.method_kwargs
@@ -163,7 +193,10 @@ class SeriesStringSplitHandler(SeriesStringMethodBaseHandler):
     def tile(cls, op):
         out = op.outputs[0]
 
-        if out.op.output_types[0] == OutputType.series:
+        if (
+            out.op.output_types[0] == OutputType.series
+            or out.op.output_types[0] == OutputType.index
+        ):
             return super().tile(op)
 
         out_chunks = []
@@ -197,7 +230,7 @@ class SeriesStringSplitHandler(SeriesStringMethodBaseHandler):
         ctx[op.outputs[0].key] = result
 
 
-class SeriesStringCatHandler(SeriesStringMethodBaseHandler):
+class SeriesStringCatHandler(StringMethodBaseHandler):
     CAT_TYPE_ERROR = (
         "others must be Series, Index, DataFrame, "
         "Tensor, np.ndarrary or list-like "
@@ -319,7 +352,7 @@ class SeriesStringCatHandler(SeriesStringMethodBaseHandler):
         ctx[op.outputs[0].key] = inputs[0].str.cat(**method_kwargs)
 
 
-class SeriesStringExtractHandler(SeriesStringMethodBaseHandler):
+class SeriesStringExtractHandler(StringMethodBaseHandler):
     @classmethod
     def call(cls, op, inp):
         empty_series = build_empty_series(
@@ -399,6 +432,7 @@ class SeriesStringExtractHandler(SeriesStringMethodBaseHandler):
         return new_op.new_tileables([op.input], kws=[params])
 
 
+# -------------------------------All handlers method for series.str: -------------------------------------#
 _string_method_to_handlers = {}
 _not_implements = ["get_dummies"]
 # start to register handlers for string methods
@@ -416,4 +450,4 @@ for method in dir(pd.Series.str):
         continue
     if method in _string_method_to_handlers:
         continue
-    _string_method_to_handlers[method] = SeriesStringMethodBaseHandler
+    _string_method_to_handlers[method] = StringMethodBaseHandler
