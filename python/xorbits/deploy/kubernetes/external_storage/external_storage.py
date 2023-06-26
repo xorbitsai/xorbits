@@ -37,14 +37,14 @@ class JuicefsK8SStorage(ExternalStorage):
         self,
         namespace: Optional[str],
         api_client: ApiClient,
-        metadata_url: Optional[str] = None,
-        bucket: Optional[str] = "/var",
+        **kwargs,
     ):
         self._namespace = namespace
         self._api_client = api_client
         self._core_api = kube_client.CoreV1Api(self._api_client)
-        self._metadata_url = metadata_url
-        self._bucket = bucket
+        self._metadata_url = kwargs.pop("metadata_url")
+        self._bucket = kwargs.pop("bucket", "/var")
+        self._mountPath = kwargs.pop("mountPath", "/juicefs-data")
 
     def build(self):
         """

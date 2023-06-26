@@ -141,7 +141,10 @@ async def test_external_storage_invalid_option():
             worker_mem="1G",
             external_storage="Ceph",
             use_local_image=True,
-            metadata_url="fake://127.0.0.1:6379/1",
-            bucket="/var",
+            external_storage_config={
+                "metadata_url": "fakedb://fakeip",
+                "bucket": "/var",
+                "mountPath": "/juicefs-data",
+            },
         ):
             simple_job()
