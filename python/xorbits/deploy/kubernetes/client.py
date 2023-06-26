@@ -360,7 +360,7 @@ class KubernetesCluster:
             pip=self._pip,
             conda=self._conda,
             external_storage=self._external_storage,
-            **self._external_storage_config,
+            external_storage_config=self._external_storage_config,
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
@@ -387,7 +387,7 @@ class KubernetesCluster:
             conda=self._conda,
             readiness_service_name=self._readiness_service_name,
             external_storage=self._external_storage,
-            **self._external_storage_config,
+            external_storage_config=self._external_storage_config,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)
