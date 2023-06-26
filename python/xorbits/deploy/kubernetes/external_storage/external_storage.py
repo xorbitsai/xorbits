@@ -38,7 +38,7 @@ class JuicefsK8SStorage(ExternalStorage):
         namespace: Optional[str],
         api_client: ApiClient,
         metadata_url: Optional[str] = None,
-        bucket: Optional[str] = None,
+        bucket: Optional[str] = "/var",
     ):
         self._namespace = namespace
         self._api_client = api_client

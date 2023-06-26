@@ -146,7 +146,6 @@ class KubernetesCluster:
         self._ingress_name = "xorbits-ingress"
         self._use_local_image = kwargs.pop("use_local_image", False)
         self._external_storage = external_storage
-        self._mountPath = None
 
         if self._external_storage and self._external_storage not in ["juicefs"]:
             raise ValueError(
@@ -161,17 +160,6 @@ class KubernetesCluster:
                 raise ValueError(
                     "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example metadata_url='redis://172.17.0.5:6379/1'."
                 )
-            self._metadata_url = self._external_storage_config["metadata_url"]
-            self._bucket = (
-                self._external_storage_config["bucket"]
-                if "bucket" in self._external_storage_config
-                else "/var"
-            )
-            self._mountPath = (
-                self._external_storage_config["mountPath"]
-                if "mountPath" in self._external_storage_config
-                else "/juicefs-data"
-            )
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -372,7 +360,7 @@ class KubernetesCluster:
             pip=self._pip,
             conda=self._conda,
             external_storage=self._external_storage,
-            mountPath=self._mountPath,
+            **self._external_storage_config,
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
@@ -399,7 +387,7 @@ class KubernetesCluster:
             conda=self._conda,
             readiness_service_name=self._readiness_service_name,
             external_storage=self._external_storage,
-            mountPath=self._mountPath,
+            **self._external_storage_config,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)
@@ -500,8 +488,7 @@ class KubernetesCluster:
             juicefs_k8s_storage = JuicefsK8SStorage(
                 namespace=self.namespace,
                 api_client=self._api_client,
-                metadata_url=self._metadata_url,
-                bucket=self._bucket,
+                **self._external_storage_config,
             )
             juicefs_k8s_storage.build()
 
