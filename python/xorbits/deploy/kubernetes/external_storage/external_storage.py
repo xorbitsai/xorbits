@@ -39,9 +39,7 @@ class JuicefsK8SStorage(ExternalStorage):
         api_client: ApiClient,
         **kwargs,
     ):
-        self._namespace = namespace
-        self._api_client = api_client
-        self._core_api = kube_client.CoreV1Api(self._api_client)
+        super().__init__(namespace=namespace, api_client=api_client)
         self._metadata_url = kwargs.pop("metadata_url")
         self._bucket = kwargs.pop("bucket", "/var")
         self._mountPath = kwargs.pop("mountPath", "/juicefs-data")
