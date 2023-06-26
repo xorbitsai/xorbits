@@ -1292,7 +1292,6 @@ def create_sa_connection(con, **kwargs):
             raise NotImplementedError(
                 "The connection provided is not supported by xorbits. Please convert the connection to SQLAlchemy's engine type using the 'sqlalchemy.create_engine' function. Refer to the documentation for more details:https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls"
             )
-
     try:
         yield con
     finally:
