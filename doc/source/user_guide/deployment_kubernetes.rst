@@ -205,6 +205,7 @@ Reference Page: `JuiceFS Installation with Helm <https://juicefs.com/docs/csi/ge
 ..
 
 You should be careful with limits and requests of cpu and memory. Change according to your system settings.
+Here we give you the minimal configuration.
 
 .. code-block:: bash
 
@@ -223,8 +224,6 @@ You should be careful with limits and requests of cpu and memory. Change accordi
 
 .. code-block:: bash
 
-    $ helm repo add juicefs https://juicedata.github.io/charts/
-    $ helm repo update
     $ helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f ./values.yaml`
 
 ..
@@ -243,15 +242,15 @@ You should be careful with limits and requests of cpu and memory. Change accordi
 Create and use PV
 ^^^^^^^^^^^^^^^^^^^^^^
 
-You can skip this ``Create and use PV`` section because in Xorbits, the ``new_cluster`` function would create secret, pv, and pvc for you.
+** If you want to directly use JuiceFS on K8S, you can skip this ``Create and use PV`` section because in Xorbits, the ``new_cluster`` function would create secret, pv, and pvc for you. **
 
-You can still walk through this section as it would give you a better understanding of each parameter in the configurations.
+If you want to understand how the mounting works and the meaning of each parameter in the configurations, you can walk through this section.
 
 JuiceFS leverages persistent volumes to store data.
 
-Reference Page: `Create and use pv <https://juicefs.com/docs/csi/guide/pv>`_
+Reference Page: `Create and use PV <https://juicefs.com/docs/csi/guide/pv>`_
 
-We would create several YAML files. Validate their formats on `YAML validator <https://www.yamllint.com/>` before usage.
+We would create several YAML files. Validate their formats on `YAML validator <https://www.yamllint.com/>`_ before usage.
 
 1. Create Kubernetes Secret:
 
@@ -419,16 +418,20 @@ Deploy Xorbits cluster, for example:
     from xorbits.deploy.kubernetes
     import new_cluster
 
-    cluster = new_cluster(config.new_client_from_config(), worker_num=1, worker_cpu=1, worker_mem='1g', supervisor_cpu=1, supervisor_mem='1g',external_storage='juicefs', metadata_url='redis://10.244.0.45:6379/1', bucket='/var')
+    cluster = new_cluster(config.new_client_from_config(), worker_num=1, worker_cpu=1, worker_mem='1g', supervisor_cpu=1, supervisor_mem='1g',external_storage='juicefs',external_storage_config={"metadata_url": "redis://172.17.0.8:6379/1","bucket": "/var", "mountPath": "/juicefs-data"},)
 
 ..
 
 
 Currently, only juicefs is supported as one of our storage backend. When you want to switch from shared memory to JuiceFS, You must specify ``external_storage='juicefs'`` explicitly when you initialize a new cluster.
 
+JuiceFS has corresponding parameters which you should specify in a dictionary named ``external_storage_config``.
+
 You must explicitly specify connection URL ``metadata_url``, in our case ``redis://172.17.0.8:6379/1``. 172.17.0.8 is the IP address of the Redis server, and 6379 is the default port number on which the Redis server is listening. 1 represents the Redis database number.
 
 Specify bucket URL with ``bucket`` or use its default value ``/var`` if you do not want to change the directory for bucket. See `Set Up Object Storage <https://juicefs.com/docs/community/how_to_setup_object_storage/>`_ to set up different object storage.
+
+Specify mount path with ``mountPath`` or use its default value ``/juicefs-data``.
 
 After several minutes, you would see ``Xorbits endpoint http://<ingress_service_ip>:80`` is ready!
 
@@ -449,7 +452,7 @@ If the cluster is working, the output should be 10.
 Verify the storage
 ~~~~~~~~~~~~~~~~~~
 
-Currently, we mount JuiceFS storage data in ``/juicefs-data``.
+In our example, we mount JuiceFS storage data in ``/juicefs-data``, which is also the default path.
 
 Firstly, get the namespace that starts with ``xorbits`` and get its pods.
 
@@ -465,8 +468,8 @@ Firstly, get the namespace that starts with ``xorbits`` and get its pods.
 
     $ kubectl get po -n xorbits-ns-cc53e351744f4394b20180a0dafd8b91
     NAME                                 READY   STATUS             RESTARTS   AGE
-    xorbitssupervisor-84754bf5f4-dcstd   0/1     Running            0          80s
-    xorbitsworker-5b9b976767-sfpkk       0/1     Running            0          80s
+    xorbitssupervisor-84754bf5f4-dcstd   1/1     Running            0          80s
+    xorbitsworker-5b9b976767-sfpkk       1/1     Running            0          80s
 
 ..
 
