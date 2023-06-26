@@ -1288,7 +1288,7 @@ def create_sa_connection(con, **kwargs):
             con = engine.connect()
             close = True
             dispose = True
-        except:
+        except:  # pragma: no cover
             raise NotImplementedError(
                 "The connection provided is not supported by xorbits. Please convert the connection to SQLAlchemy's engine type using the 'sqlalchemy.create_engine' function. Refer to the documentation for more details:https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls"
             )
