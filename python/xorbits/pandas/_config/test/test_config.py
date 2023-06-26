@@ -52,9 +52,9 @@ def test_options_execute(setup):
         assert xpd.get_option("chunk_store_limit") == 100000
 
     # test set_eng_float_format
-    # pd.set_eng_float_format(accuracy=3)
-    # xpd.set_eng_float_format(accuracy=3)
-    # assert df_raw.__str__() == df.__str__()
+    pd.set_eng_float_format(accuracy=3)
+    xpd.set_eng_float_format(accuracy=3)
+    assert df_raw.__str__() == df.__str__()
 
     # test error value
     with pytest.raises(ValueError):

@@ -81,9 +81,6 @@ class option_context:
 
 
 def set_eng_float_format(accuracy: int = 3, use_eng_prefix: bool = False) -> None:
-    import pdb
-
-    pdb.set_trace()
     pd.set_eng_float_format(accuracy, use_eng_prefix)
 
 
