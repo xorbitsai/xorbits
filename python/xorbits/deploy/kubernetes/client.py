@@ -151,12 +151,25 @@ class KubernetesCluster:
                 "Currently, only juicefs is supported as one of our storage backend."
             )
         if self._external_storage == "juicefs":
-            self._metadata_url = kwargs.pop("metadata_url", None)
-            if not self._metadata_url:
+            self._external_storage_config = kwargs.pop("external_storage_config", None)
+            if (
+                not self._external_storage_config
+                or "metadata_url" not in self._external_storage_config
+            ):
                 raise ValueError(
                     "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example metadata_url='redis://172.17.0.5:6379/1'."
                 )
-            self._bucket = kwargs.pop("bucket", "/var")
+            self._metadata_url = self._external_storage_config["metadata_url"]
+            self._bucket = (
+                self._external_storage_config["bucket"]
+                if "bucket" in self._external_storage_config
+                else "/var"
+            )
+            self._mountPath = (
+                self._external_storage_config["mountPath"]
+                if "mountPath" in self._external_storage_config
+                else "/juicefs-data"
+            )
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -357,6 +370,7 @@ class KubernetesCluster:
             pip=self._pip,
             conda=self._conda,
             external_storage=self._external_storage,
+            mountPath=self._mountPath,
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
@@ -383,6 +397,7 @@ class KubernetesCluster:
             conda=self._conda,
             readiness_service_name=self._readiness_service_name,
             external_storage=self._external_storage,
+            mountPath=self._mountPath,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)

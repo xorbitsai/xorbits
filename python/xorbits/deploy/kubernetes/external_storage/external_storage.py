@@ -20,14 +20,10 @@ class ExternalStorage(ABC):
         self,
         namespace: Optional[str],
         api_client: ApiClient,
-        metadata_url: Optional[str] = None,
-        bucket: Optional[str] = None,
     ):
         self._namespace = namespace
         self._api_client = api_client
         self._core_api = kube_client.CoreV1Api(self._api_client)
-        self._metadata_url = metadata_url
-        self._bucket = bucket
 
     @abstractmethod
     def build(self):
@@ -37,6 +33,19 @@ class ExternalStorage(ABC):
 
 
 class JuicefsK8SStorage(ExternalStorage):
+    def __init__(
+        self,
+        namespace: Optional[str],
+        api_client: ApiClient,
+        metadata_url: Optional[str] = None,
+        bucket: Optional[str] = None,
+    ):
+        self._namespace = namespace
+        self._api_client = api_client
+        self._core_api = kube_client.CoreV1Api(self._api_client)
+        self._metadata_url = metadata_url
+        self._bucket = bucket
+
     def build(self):
         """
         Create pv, secret, and pvc

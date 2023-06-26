@@ -507,6 +507,7 @@ class ReplicationConfig(KubeConfig):
         self._use_local_image = kwargs.pop("use_local_image", False)
         self._pip: Optional[Union[str, List[str]]] = kwargs.pop("pip", None)
         self._conda: Optional[Union[str, List[str]]] = kwargs.pop("conda", None)
+        self._mountPath: Optional[str] = kwargs.pop("mountPath", None)
 
     @property
     def api_version(self):
@@ -601,7 +602,7 @@ class ReplicationConfig(KubeConfig):
         )
         volume_juicefs = []
         if self._external_storage == "juicefs":
-            volume_juicefs.append({"mountPath": "/juicefs-data", "name": "data"})
+            volume_juicefs.append({"mountPath": self._mountPath, "name": "data"})
         return _remove_nones(
             {
                 "command": ["/bin/sh", "-c"],
@@ -701,6 +702,8 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         self._service_name = service_name
         self._service_port = service_port
         self._external_storage = external_storage
+        self._mountPath = kwargs.pop("mountPath", None)
+
         super().__init__(
             self.rc_name,
             image or self.get_default_image(),
@@ -710,6 +713,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             liveness_probe=self.config_liveness_probe(),
             startup_probe=self.config_startup_probe(),
             external_storage=self._external_storage,
+            mountPath=self._mountPath,
             **kwargs,
         )
         if service_port:
@@ -751,7 +755,8 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
 
         if self._external_storage == "juicefs":
-            self.add_env("MARS_EXTERNAL_STORAGE", "juicefs")
+            self.add_env("XORBITS_EXTERNAL_STORAGE", "juicefs")
+            self.add_env("JUICEFS_MOUNT_PATH", self._mountPath)
 
     def config_liveness_probe(self):
         """

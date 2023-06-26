@@ -68,9 +68,12 @@ async def test_external_storage_juicefs():
         worker_cpu=0.1,
         worker_mem="1G",
         external_storage="juicefs",
-        metadata_url="redis://" + redis_ip + ":6379/1",
+        external_storage_config={
+            "metadata_url": "redis://" + redis_ip + ":6379/1",
+            "bucket": "/var",
+            "mountPath": "/juicefs-data",
+        },
         use_local_image=True,
-        bucket="/var",
     ) as cluster_client:
         import xorbits.pandas as pd
 

@@ -30,13 +30,15 @@ class K8SWorkerCommandRunner(K8SServiceMixin, WorkerCommandRunner):
         from ..._mars.services.cluster import ClusterAPI
 
         if (
-            "MARS_EXTERNAL_STORAGE" in os.environ
-            and os.environ["MARS_EXTERNAL_STORAGE"] == "juicefs"
+            "XORBITS_EXTERNAL_STORAGE" in os.environ
+            and os.environ["XORBITS_EXTERNAL_STORAGE"] == "juicefs"
         ):  # pragma: no cover
             self.config["storage"]["backends"] = ["juicefs"]
             self.config["storage"]["juicefs"] = dict()
-            self.config["storage"]["juicefs"]["root_dirs"] = ["/juicefs-data"]
-            self.config["storage"]["juicefs"]["is_k8s"] = True
+            self.config["storage"]["juicefs"]["root_dirs"] = [
+                os.environ["JUICEFS_MOUNT_PATH"]
+            ]
+            self.config["storage"]["juicefs"]["in_k8s"] = True
         await start_worker(
             self.pool.external_address,
             self.args.supervisors,
