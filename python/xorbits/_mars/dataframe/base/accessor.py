@@ -61,7 +61,6 @@ class StringAccessor:
         def _inner(self, *args, **kwargs):
             from ..core import INDEX_TYPE, OutputType
 
-            output_type = None
             if isinstance(self._entity, INDEX_TYPE):
                 output_type = OutputType.index
             else:

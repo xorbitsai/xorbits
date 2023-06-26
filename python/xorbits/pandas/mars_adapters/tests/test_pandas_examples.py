@@ -35,8 +35,6 @@ def run_docstring(
 
     results: List[TestResults] = []
     for test in finder.find(f, name, globs=globs):
-        print(test)
-        print(runner.run(test, compileflags=compileflags))
         results.append(runner.run(test, compileflags=compileflags))
 
     return results
