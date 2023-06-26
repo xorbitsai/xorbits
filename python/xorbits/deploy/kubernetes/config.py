@@ -505,9 +505,9 @@ class ReplicationConfig(KubeConfig):
         self._pre_stop_command = pre_stop_command
         self._external_storage = external_storage
         self._use_local_image = kwargs.pop("use_local_image", False)
+        self._external_storage_config = kwargs.pop("external_storage_config", dict())
         self._pip: Optional[Union[str, List[str]]] = kwargs.pop("pip", None)
         self._conda: Optional[Union[str, List[str]]] = kwargs.pop("conda", None)
-        self._mountPath: Optional[str] = kwargs.pop("mountPath", None)
 
     @property
     def api_version(self):
@@ -602,7 +602,12 @@ class ReplicationConfig(KubeConfig):
         )
         volume_juicefs = []
         if self._external_storage == "juicefs":
-            volume_juicefs.append({"mountPath": self._mountPath, "name": "data"})
+            volume_juicefs.append(
+                {
+                    "mountPath": self._external_storage_config["mountPath"],
+                    "name": "data",
+                }
+            )
         return _remove_nones(
             {
                 "command": ["/bin/sh", "-c"],
@@ -702,7 +707,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         self._service_name = service_name
         self._service_port = service_port
         self._external_storage = external_storage
-        self._mountPath = kwargs.pop("mountPath", None)
+        self._external_storage_config = kwargs.pop("external_storage_config", dict())
 
         super().__init__(
             self.rc_name,
@@ -713,7 +718,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             liveness_probe=self.config_liveness_probe(),
             startup_probe=self.config_startup_probe(),
             external_storage=self._external_storage,
-            mountPath=self._mountPath,
+            external_storage_config=self._external_storage_config,
             **kwargs,
         )
         if service_port:
@@ -756,7 +761,9 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
 
         if self._external_storage == "juicefs":
             self.add_env("XORBITS_EXTERNAL_STORAGE", "juicefs")
-            self.add_env("JUICEFS_MOUNT_PATH", self._mountPath)
+            self.add_env(
+                "JUICEFS_MOUNT_PATH", self._external_storage_config["mountPath"]
+            )
 
     def config_liveness_probe(self):
         """
