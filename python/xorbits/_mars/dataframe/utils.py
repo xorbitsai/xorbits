@@ -1283,10 +1283,15 @@ def create_sa_connection(con, **kwargs):
         close = True
         dispose = False
     else:
-        engine = sa.create_engine(con, **kwargs)
-        con = engine.connect()
-        close = True
-        dispose = True
+        try:
+            engine = sa.create_engine(con, **kwargs)
+            con = engine.connect()
+            close = True
+            dispose = True
+        except:
+            raise NotImplementedError(
+                "The connection provided is not supported by xorbits. Please convert the connection to SQLAlchemy's engine type using the 'sqlalchemy.create_engine' function."
+            )
 
     try:
         yield con
