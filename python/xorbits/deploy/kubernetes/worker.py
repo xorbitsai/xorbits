@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import logging
+import os
 
 from ..._mars.deploy.oscar.worker import WorkerCommandRunner
 from .core import K8SServiceMixin
@@ -28,6 +29,16 @@ class K8SWorkerCommandRunner(K8SServiceMixin, WorkerCommandRunner):
         from ..._mars.deploy.oscar.worker import start_worker
         from ..._mars.services.cluster import ClusterAPI
 
+        if (
+            "XORBITS_EXTERNAL_STORAGE" in os.environ
+            and os.environ["XORBITS_EXTERNAL_STORAGE"] == "juicefs"
+        ):  # pragma: no cover
+            self.config["storage"]["backends"] = ["juicefs"]
+            self.config["storage"]["juicefs"] = dict()
+            self.config["storage"]["juicefs"]["root_dirs"] = [
+                os.environ["JUICEFS_MOUNT_PATH"]
+            ]
+            self.config["storage"]["juicefs"]["in_k8s"] = True
         await start_worker(
             self.pool.external_address,
             self.args.supervisors,
