@@ -94,6 +94,7 @@ jobs:
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: self-hosted, module: gpu, python-version: 3.9}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
+          - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
     steps:
     - name: Check out code
       uses: actions/checkout@v3
@@ -103,7 +104,7 @@ jobs:
 
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
-      if: ${{ matrix.module != 'gpu' }}
+      if: ${{ matrix.module != 'gpu' && matrix.module != 'kubernetes-juicefs' }}
       with:
         python-version: ${{ matrix.python-version }}
         activate-environment: ${{ env.CONDA_ENV }}
@@ -131,6 +132,29 @@ jobs:
         fi
         if [[ "$MODULE" == "kubernetes" ]]; then
           pip install kubernetes
+        fi
+        if [[ "$MODULE" == "kubernetes-juicefs" ]]; then
+          pip install kubernetes
+          if helm version --short >/dev/null 2>&1; then
+            echo "Helm installed. Skipping installation."
+          else
+            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          fi
+          if helm repo list | grep "juicefs" >/dev/null 2>&1; then
+            echo "Repo juicefs existed. Skipping adding to helm repos."
+          else
+            helm repo add juicefs https://juicedata.github.io/charts/
+            helm repo update
+            helm fetch --untar juicefs/juicefs-csi-driver
+          fi
+          if kubectl get pods -n kube-system | grep "juicefs-csi" >/dev/null 2>&1; then
+            echo "Juicefs-csi-driver installed. Skipping installation."
+          else
+            helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
+          fi
+          sleep 60
+          kubectl apply -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/example-redis-config.yaml
+          sleep 60
         fi
         if [[ "$MODULE" == "hadoop" ]]; then
           ../CI/install-hadoop.sh
@@ -200,7 +224,7 @@ jobs:
       working-directory: ./python
 
     - name: Install on GPU
-      if: ${{ matrix.module == 'gpu' }}
+      if: ${{ matrix.module == 'gpu' || matrix.module == 'kubernetes-juicefs' }}
       run: |
         pip install -U xoscar
         python setup.py build_ext -i
@@ -233,6 +257,10 @@ jobs:
           pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
+        elif [[ "$MODULE" == "kubernetes-juicefs" ]]; then
+          pytest --ignore xorbits/_mars/ --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes/external_storage/juicefs
         elif [[ "$MODULE" == "hadoop" ]]; then
           export WITH_HADOOP="1"
           export HADOOP_HOME="/usr/local/hadoop"
