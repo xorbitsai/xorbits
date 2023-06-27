@@ -26,7 +26,7 @@ from pandas.api.types import (
 
 from ...utils import adapt_mars_docstring
 from .datetimes import SeriesDatetimeMethod, _datetime_method_to_handlers
-from .string_ import SeriesStringMethod, _string_method_to_handlers
+from .string_ import StringMethod, _string_method_to_handlers
 
 
 class StringAccessor:
@@ -50,17 +50,28 @@ class StringAccessor:
     dtype: object
     """
 
-    def __init__(self, series):
-        self._series = series
+    _entity = None
+
+    def __init__(self, entity):
+        self._entity = entity
 
     @classmethod
     def _gen_func(cls, method):
         @wraps(getattr(pd.Series.str, method))
         def _inner(self, *args, **kwargs):
-            op = SeriesStringMethod(
-                method=method, method_args=args, method_kwargs=kwargs
+            from ..core import INDEX_TYPE, OutputType
+
+            if isinstance(self._entity, INDEX_TYPE):
+                output_type = OutputType.index
+            else:
+                output_type = OutputType.series
+            op = StringMethod(
+                method=method,
+                method_args=args,
+                method_kwargs=kwargs,
+                output_types=output_type,
             )
-            return op(self._series)
+            return op(self._entity)
 
         _inner.__doc__ = adapt_mars_docstring(getattr(pd.Series.str, method).__doc__)
         return _inner
