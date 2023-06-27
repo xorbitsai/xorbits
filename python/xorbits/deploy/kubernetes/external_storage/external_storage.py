@@ -1,3 +1,18 @@
+# Copyright 2022-2023 XProbe Inc.
+# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -37,19 +52,18 @@ class JuicefsK8SStorage(ExternalStorage):
         self,
         namespace: Optional[str],
         api_client: ApiClient,
-        **kwargs,
+        external_storage_config: Optional[dict],
     ):
         super().__init__(namespace=namespace, api_client=api_client)
-        self._metadata_url = kwargs.pop("metadata_url")
-        self._bucket = kwargs.pop("bucket", "/var")
-        self._mountPath = kwargs.pop("mountPath", "/juicefs-data")
+        self._external_storage_config = external_storage_config
 
     def build(self):
         """
         Create pv, secret, and pvc
         """
         secret_config = SecretConfig(
-            metadata_url=self._metadata_url, bucket=self._bucket
+            metadata_url=self._external_storage_config["metadata_url"],
+            bucket=self._external_storage_config["bucket"],
         )
 
         persistent_volume_config = PersistentVolumeConfig(namespace=self._namespace)

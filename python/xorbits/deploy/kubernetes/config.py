@@ -483,6 +483,7 @@ class ReplicationConfig(KubeConfig):
         pre_stop_command: Optional[List[str]] = None,
         kind: Optional[str] = None,
         external_storage: Optional[str] = None,
+        external_storage_config: Optional[dict] = None,
         **kwargs,
     ):
         self._name = name
@@ -504,8 +505,8 @@ class ReplicationConfig(KubeConfig):
 
         self._pre_stop_command = pre_stop_command
         self._external_storage = external_storage
+        self._external_storage_config = external_storage_config
         self._use_local_image = kwargs.pop("use_local_image", False)
-        self._external_storage_config = kwargs.pop("external_storage_config", dict())
         self._pip: Optional[Union[str, List[str]]] = kwargs.pop("pip", None)
         self._conda: Optional[Union[str, List[str]]] = kwargs.pop("conda", None)
 
@@ -684,6 +685,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         service_name: Optional[str] = None,
         service_port: Optional[int] = None,
         external_storage: Optional[str] = None,
+        external_storage_config: Optional[dict] = None,
         **kwargs,
     ):
         self._cpu = cpu
@@ -707,7 +709,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
         self._service_name = service_name
         self._service_port = service_port
         self._external_storage = external_storage
-        self._external_storage_config = kwargs.pop("external_storage_config", dict())
+        self._external_storage_config = external_storage_config
 
         super().__init__(
             self.rc_name,

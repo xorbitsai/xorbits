@@ -109,6 +109,7 @@ class KubernetesCluster:
         timeout: Optional[int] = None,
         cluster_type: str = "auto",
         external_storage: Optional[str] = None,
+        external_storage_config: Optional[dict] = None,
         **kwargs,
     ):
         from kubernetes import client as kube_client
@@ -146,7 +147,7 @@ class KubernetesCluster:
         self._ingress_name = "xorbits-ingress"
         self._use_local_image = kwargs.pop("use_local_image", False)
         self._external_storage = external_storage
-        self._external_storage_config = kwargs.pop("external_storage_config", dict())
+        self._external_storage_config = external_storage_config
 
         if self._external_storage and self._external_storage not in ["juicefs"]:
             raise ValueError(
@@ -158,7 +159,7 @@ class KubernetesCluster:
                 or "metadata_url" not in self._external_storage_config
             ):
                 raise ValueError(
-                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example metadata_url='redis://172.17.0.5:6379/1'."
+                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage in external storage config, for example external_storage_config={'metadata_url': 'redis://172.17.0.5:6379/1',}."
                 )
 
         extra_modules = kwargs.pop("extra_modules", None) or []
@@ -488,7 +489,7 @@ class KubernetesCluster:
             juicefs_k8s_storage = JuicefsK8SStorage(
                 namespace=self.namespace,
                 api_client=self._api_client,
-                **self._external_storage_config,
+                external_storage_config=self._external_storage_config,
             )
             juicefs_k8s_storage.build()
 
