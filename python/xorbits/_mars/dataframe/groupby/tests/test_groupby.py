@@ -528,15 +528,23 @@ def test_groupby_fill():
 
 
 def test_groupby_len(setup):
-    df = md.DataFrame(
-        {
-            "a": ["a", "b", "a", "c"],
-            "b": [0.1, 0.2, 0.3, 0.4],
-            "c": ["aa", "bb", "cc", "aa"],
+    np.random.seed(42)
+    num_dataframes = 10
+    for i in range(num_dataframes):
+        # Generate random data
+        data = {
+            "Category": np.random.choice(["A", "B", "C"], size=100),
+            "Value": np.random.randint(1, 100, size=100),
         }
-    )
 
-    grouped = df.groupby("b")
+        # Create DataFrame
+        df = md.DataFrame(data)
+        df_test = pd.DataFrame(data)
 
-    num_groups = len(grouped)
-    print(num_groups)
+        grouped = df.groupby("Category")
+        grouped_test = df_test.groupby("Category")
+
+        grouped2 = df.groupby("Value")
+        grouped_test2 = df_test.groupby("Value")
+        assert len(grouped) == len(grouped_test)
+        assert len(grouped2) == len(grouped_test2)
