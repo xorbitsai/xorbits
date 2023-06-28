@@ -217,3 +217,398 @@ msgstr ""
 "<https://docs.conda.io/projects/conda/en/latest/user-"
 "guide/concepts/channels.html>`_。"
 
+#: ../../source/user_guide/deployment_kubernetes.rst:104
+msgid ""
+"Xorbits is now able to integrate `JuiceFS <https://juicefs.com/en/>`_, a distributed POSIX file system that can be easily integrated with Kubernetes to provide persistent storage, as one of the storage backend."
+msgstr ""
+"Xorbits现在集成了 `JuiceFS <https://juicefs.com/zh-cn/>`_  ，一个可以与Kubernetes轻松集成来提供持久化存储的分布式POSIX文件系统。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:111
+msgid ""
+"Install Xorbits on the machine where you plan to deploy Kubernetes with JuiceFS. Refer to :ref:`installation document <installation>`."
+msgstr ""
+"在计划使用JuiceFS的机器上安装Xorbits。请参考 :ref:`安装文档 <installation>` 进行操作。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:114
+msgid ""
+"Metadata Storage"
+msgstr ""
+"元数据存储"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:116
+msgid ""
+"JuiceFS decouples data and metadata. Many databases are supported. See `How to Set Up Metadata Engine <https://juicefs.com/docs/community/databases_for_metadata>`_ and choose an appropriate metadata storage."
+msgstr ""
+"JuiceFS将数据和元数据进行解耦。支持多种数据库。请查看 `如何设置元数据引擎 <https://juicefs.com/docs/community/databases_for_metadata>`_ ，选择适合的元数据存储方式。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:118
+msgid ""
+"In our example here, we select ``Redis`` as our metadata storage."
+msgstr ""
+"在我们的例子中，我们选择使用Redis作为我们的元数据存储。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:120
+msgid ""
+"Follow `Configuring Redis using a ConfigMap <https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/>`_ and create a pod inside default namespace."
+msgstr ""
+"请按照 `使用ConfigMap配置Redis的教程 <https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/>`_ 进行操作，在默认命名空间内创建一个Pod。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:122
+msgid ""
+"You should set its maxmemory as 50mb since 2mb in the example is too small."
+msgstr ""
+"您应该将maxmemory设置为50mb，因为示例中的2mb太小了。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:124
+msgid ""
+"Make sure redis pod is running:"
+msgstr ""
+"确保redis的pod正在运行："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:135
+msgid ""
+"Check redis pod's IP address. In this example, IP for redis is 172.17.0.8."
+msgstr ""
+"检查Redis Pod的IP地址。在这个例子中，Redis的IP地址是172.17.0.8。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:144
+msgid ""
+"You can also check how much CPU and memory resources redis pod gets by running"
+msgstr ""
+"您可以通过运行以下命令来查看Redis Pod获得了多少CPU和内存资源："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:152
+msgid ""
+"and check the corresponding fields."
+msgstr ""
+"检查相应的字段。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:163
+msgid ""
+"Follow previous Kubernetes section to initialize a K8s cluster on your machine."
+msgstr ""
+"请按照先前提供的Kubernetes部分的步骤，在您的机器上初始化一个Kubernetes集群。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:165
+msgid ""
+"Install ``kubectl``, a command-line tool for interacting with Kubernetes clusters and verify its installation."
+msgstr ""
+"安装kubectl，它是一个用于与Kubernetes集群进行交互的命令行工具，并验证其安装。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:176
+msgid ""
+"JuiceFS Installation"
+msgstr ""
+"JuiceFS 安装"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:179
+msgid ""
+"We will walk you through the process of installing JuiceFS on a Kubernetes cluster, enabling you to leverage its features and benefits. There are three ways to use JuiceFS on K8S  `Use JuiceFS on Kubernetes <https://juicefs.com/docs/zh/community/how_to_use_on_kubernetes>`_."
+msgstr ""
+"我们将带您逐步完成在Kubernetes集群上安装JuiceFS的过程，使您能够充分利用其功能和优势。在Kubernetes上使用JuiceFS有三种方式，可以参考在Kubernetes上使用 `JuiceFS <https://juicefs.com/docs/zh/community/how_to_use_on_kubernetes>`_ 文档进行操作。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:182
+msgid ""
+"But our implementation in k8s must rely on CSI since CSI provides better portability, enhanced isolation, and more advanced features."
+msgstr ""
+"但是我们在Kubernetes中的JuiceFS的实现必须依赖CSI，因为CSI提供更好的可移植性、增强的隔离性和更高级的功能。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:184
+msgid ""
+"Reference Page: `JuiceFS CSI Driver <https://juicefs.com/docs/csi/getting_started/>`_"
+msgstr ""
+"参考页面：`JuiceFS CSI驱动程序 <https://juicefs.com/docs/csi/getting_started/>`_"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:187
+msgid ""
+"JuiceFS CSI Driver"
+msgstr ""
+"JuiceFS CSI 驱动"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:190
+msgid ""
+"Installation with Helm"
+msgstr ""
+"使用Helm安装"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:192
+msgid ""
+"Reference Page: `JuiceFS Installation with Helm <https://juicefs.com/docs/csi/getting_started#helm-1>`_"
+msgstr ""
+"参考页面：`用Helm安装JuiceFS <https://juicefs.com/docs/csi/getting_started#helm-1>`_"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:194
+msgid ""
+"Firstly, `Install Helm <https://helm.sh/docs/intro/install/>`_"
+msgstr ""
+"首先，`安装Helm <https://helm.sh/docs/intro/install/>`_"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:196
+msgid ""
+"Secondly, download the Helm chart for JuiceFS CSI Driver"
+msgstr ""
+"其次，下载JuiceFS CSI驱动程序的Helm Chart。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:214
+msgid ""
+"You should be careful with limits and requests of cpu and memory. Change according to your system settings. Here we give you the minimal configuration."
+msgstr ""
+"在设置CPU和内存的限制和请求时，您应该根据您的系统设置进行谨慎操作。请根据实际情况进行相应的更改。这里我们为您提供最小配置。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:230
+msgid ""
+"Thirdly, execute below commands to deploy JuiceFS CSI Driver:"
+msgstr ""
+"然后，执行以下命令以部署JuiceFS CSI驱动程序："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:238
+msgid ""
+"Fourthly, verify installation"
+msgstr ""
+"接着，验证安装"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:249
+msgid ""
+"If you want to delete JuiceFS CSI Driver in the future, you can run:"
+msgstr ""
+"如果您将来想要删除JuiceFS CSI驱动程序，可以运行以下命令："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:262
+msgid ""
+"Create and use PV"
+msgstr ""
+"创建并使用PV"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:265
+msgid ""
+"**If you want to directly use JuiceFS on K8S, you can skip this Create and use PV section because in Xorbits, new_cluster function would create secret, pv, and pvc for you.**"
+msgstr ""
+"如果您想直接在Kubernetes上使用JuiceFS，则可以跳过此创建和使用PV部分，因为在Xorbits中，new_cluster函数将为您创建密钥(Secret)、持久卷（PV）和持久卷声明（PVC）。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:267
+msgid ""
+"If you want to understand how the mounting works and the meaning of each parameter in the configurations, you can walk through this section."
+msgstr ""
+"如果您想了解挂载是如何工作的以及配置中每个参数的含义，您可以浏览这一部分内容。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:269
+msgid ""
+"JuiceFS leverages persistent volumes to store data."
+msgstr ""
+"JuiceFS利用持久卷（Persistent Volumes）来存储数据。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:271
+msgid ""
+"Reference Page: `Create and use PV <https://juicefs.com/docs/csi/guide/pv>`_"
+msgstr ""
+"参考页面：`创建和使用PV <https://juicefs.com/docs/csi/guide/pv>`_"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:273
+msgid ""
+"We would create several YAML files. Validate their formats on `YAML validator <https://www.yamllint.com/>`_ before usage."
+msgstr ""
+"我们将创建几个YAML文件。在使用之前，请在 `YAML验证器 <https://www.yamllint.com/>`_ 上验证其格式。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:275
+msgid ""
+"First, create Kubernetes Secret:"
+msgstr ""
+"首先，创建kubernetes密钥："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:283
+msgid ""
+"Write the following into the yaml file:"
+msgstr ""
+"请将以下内容写入YAML文件中："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:300
+msgid ""
+"In our case, we do not need access-key and secret-key. Add if you need object storage credentials."
+msgstr ""
+"在我们的例子中，我们不需要访问密钥（access-key）和秘密密钥（secret-key）。如果您需要对象存储凭据，请添加相应内容。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:302
+msgid ""
+"Secondly, create Persistent Volume and Persistent Volume Claim with static provisioning"
+msgstr ""
+"其次，使用静态配置创建持久卷（Persistent Volume）和持久卷声明（Persistent Volume Claim）。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:304
+msgid ""
+"Read `Usage <https://juicefs.com/docs/csi/introduction#usage>`_ to learn the difference between static and dynamic provisioning."
+msgstr ""
+"阅读 `使用方法 <https://juicefs.com/docs/csi/introduction#usage>`_，了解静态配置和动态配置之间的区别。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:312
+msgid ""
+"Write the following into the yaml file:"
+msgstr ""
+"请将以下内容写入YAML文件中："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:365
+msgid ""
+"Thirdly, apply Secret, PV, and PVC to your namespace and verify:"
+msgstr ""
+"接着，在您的命名空间中应用密钥（Secret）、持久卷（PV）和持久卷声明（PVC），并进行验证："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:367
+msgid ""
+"Create your namespace (or Xorbits namespace) and run the following:"
+msgstr ""
+"创建您的命名空间（或Xorbits命名空间），然后运行以下命令："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:388
+msgid ""
+"Fourthly, create a pod"
+msgstr ""
+"然后，创建一个pod"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:396
+msgid ""
+"Write the following into the yaml file:"
+msgstr ""
+"请将以下内容写入YAML文件中："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:427
+msgid ""
+"After pod is up and running, you'll see out.txt being created by the container inside the JuiceFS mount point ``/juicefs-data``."
+msgstr ""
+"在Pod启动并运行后，您将在JuiceFS挂载点/juicefs-data内看到容器创建的out.txt文件。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:429
+msgid ""
+"Congratulations! You have successfully set up JuiceFS on Kubernetes by yourself."
+msgstr ""
+"恭喜！您已成功在Kubernetes上设置了JuiceFS。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:431
+msgid ""
+"Deploy Cluster"
+msgstr ""
+"部署集群"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:434
+msgid ""
+"Before you deploy, go to our `DockerHub <https://hub.docker.com/r/xprobe/xorbits>`_ and get the latest docker image."
+msgstr ""
+"在部署之前，请前往我们的 `DockerHub <https://hub.docker.com/r/xprobe/xorbits>`_ 获取最新的Docker镜像。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:436
+msgid ""
+"Check the image by running:"
+msgstr ""
+"通过运行以下命令来检查镜像："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:446
+msgid ""
+"Deploy Xorbits cluster, for example:"
+msgstr ""
+"部署Xorbits集群，例如："
+
+#: ../../source/user_guide/deployment_kubernetes.rst:459
+msgid ""
+"Currently, only juicefs is supported as one of our storage backend. When you want to switch from shared memory to JuiceFS, You must specify ``external_storage='juicefs'`` explicitly when you initialize a new cluster."
+msgstr ""
+"目前，我们仅支持将JuiceFS作为存储后端之一。当您希望从Shared Memory切换到JuiceFS时，您必须在初始化新集群时明确指定 ``external_storage='juicefs'``。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:461
+msgid ""
+"JuiceFS has corresponding parameters which you should specify in a dictionary named ``external_storage_config``."
+msgstr ""
+"JuiceFS有相应的参数，您应该在名为external_storage_config的字典中指定这些参数。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:463
+msgid ""
+"You must explicitly specify connection URL ``metadata_url``, in our case ``redis://172.17.0.8:6379/1``. 172.17.0.8 is the IP address of the Redis server, and 6379 is the default port number on which the Redis server is listening. 1 represents the Redis database number."
+msgstr ""
+"您必须明确指定连接URL ``metadata_url`` ，在我们的例子中为 ``redis://172.17.0.8:6379/1`` 。172.17.0.8是Redis服务器的IP地址，6379是Redis服务器监听的默认端口号，1表示Redis数据库编号。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:465
+msgid ""
+"Specify bucket URL with ``bucket`` or use its default value ``/var`` if you do not want to change the directory for bucket. See `Set Up Object Storage <https://juicefs.com/docs/community/how_to_setup_object_storage/>`_ to set up different object storage."
+msgstr ""
+"使用 ``bucket`` 指定存储桶URL，如果您不想更改存储桶的目录，则可以使用默认值 ``/var`` 。参考 `设置对象存储 <https://juicefs.com/docs/community/how_to_setup_object_storage/>`_ 以设置不同的对象存储。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:467
+msgid ""
+"Specify mount path with ``mountPath`` or use its default value ``/juicefs-data``."
+msgstr ""
+"使用 ``mountPath`` 指定挂载路径，或者使用默认值 ``/juicefs-data`` 。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:469
+msgid ""
+"After several minutes, you would see ``Xorbits endpoint http://<ingress_service_ip>:80`` is ready!"
+msgstr ""
+"几分钟后，您将看到 ``Xorbits endpoint http://<ingress_service_ip>:80`` 已准备就绪！"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:471
+msgid ""
+"Verify the cluster by running a simple task."
+msgstr ""
+"通过运行一个简单的任务来验证集群。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:483
+msgid ""
+"If the cluster is working, the output should be 10."
+msgstr ""
+"如果集群正常工作，输出应该是10。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:485
+msgid ""
+"Verify the storage"
+msgstr ""
+"验证存储"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:488
+msgid ""
+"In our example, we mount JuiceFS storage data in ``/juicefs-data``, which is also the default path."
+msgstr ""
+"在我们的示例中，我们将JuiceFS存储数据挂载在 ``/juicefs-data`` 目录下，这也是默认路径。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:490
+msgid ""
+"Firstly, get the namespace that starts with ``xorbits`` and get its pods."
+msgstr ""
+"首先，获取以 ``xorbits`` 开头的命名空间，并获取其Pods。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:509
+msgid ""
+"Then, execute an interactive shell (bash) inside a pod which belongs to the Xorbits namespace. You can verify either supervisor pod or worker pod, or both."
+msgstr ""
+"然后，在属于Xorbits命名空间的Pod中执行一个交互式的shell（bash）。您可以验证主管（supervisor）Pod或工作（worker）Pod，或者验证它们两个。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:517
+msgid ""
+"Check if data is stored in ``/juicefs-data``."
+msgstr ""
+"检查数据是否存储在 ``/juicefs-data`` 目录中。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:519
+msgid ""
+"You should see a similar hex string like 9c3e069a-70d9-4874-bad6-d608979746a0, meaning that data inside JuiceFS is successfully mounted!"
+msgstr ""
+"您应该会看到一个类似于9c3e069a-70d9-4874-bad6-d608979746a0的十六进制字符串，这表示JuiceFS内的数据已成功挂载！"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:531
+msgid ""
+"You should see the serialized output of the simple task which may not be human-readable. It should contain ``pandas``, meaning that it matches our simple task!"
+msgstr ""
+"您应该会看到简单任务的序列化输出，该输出可能不易读。它应该包含 ``pandas`` ，这表示它与我们执行的简单任务的结果匹配上了！"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:533
+msgid ""
+"Manage the Xorbits cluster & Debug"
+msgstr ""
+"管理Xorbits集群和调试"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:536
+msgid ""
+"You can get Xorbits namespace, check the status of Xorbits pods, and check Xorbits UI by following `Detailed tutorial: Deploying and Running Xorbits on Amazon EKS. <https://zhuanlan.zhihu.com/p/610955102>`_."
+msgstr ""
+"您可以按照 `详细教程：在Amazon EKS上部署和运行Xorbits <https://zhuanlan.zhihu.com/p/610955102>`_，获取Xorbits命名空间、检查Xorbits Pod的状态，并检查Xorbits UI。"
+
+#: ../../source/user_guide/deployment_kubernetes.rst:538
+msgid ""
+"If everything works fine, now you can easily scale up and down the storage resources by adding or deleting pods inside the namespace."
+msgstr ""
+"如果一切正常，现在您可以通过在命名空间中添加或删除Pod来轻松扩展和缩减存储资源。"
