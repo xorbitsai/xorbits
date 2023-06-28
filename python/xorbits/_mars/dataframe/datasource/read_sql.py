@@ -198,7 +198,7 @@ class DataFrameReadSQL(
         from sqlalchemy.sql import elements
 
         with create_sa_connection(self.con, **(self.engine_kwargs or dict())) as con:
-            self.con = str(con.engine.url)
+            self.con = con.engine.url.render_as_string(hide_password=False)
             selectable = self._get_selectable(con)
 
             # process index_col
