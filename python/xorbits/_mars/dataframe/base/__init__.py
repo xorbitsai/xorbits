@@ -23,6 +23,7 @@ from .check_monotonic import (
     is_monotonic_increasing,
 )
 from .cut import cut
+from .dedup import df_dedup
 from .describe import describe
 from .diff import df_diff, series_diff
 from .drop import df_drop, df_pop, index_drop, series_drop
@@ -75,6 +76,7 @@ def _install():
         setattr(t, "tshift", tshift)
         setattr(t, "diff", df_diff)
         setattr(t, "astype", astype)
+        setattr(t, "dedup", df_dedup)
         setattr(t, "drop", df_drop)
         setattr(t, "pop", df_pop)
         setattr(t, "pivot", df_pivot)
