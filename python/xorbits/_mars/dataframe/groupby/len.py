@@ -64,11 +64,11 @@ class GroupByLen(DataFrameOperandMixin, Operand):
     @classmethod
     def execute_reduce(cls, ctx, op: "GroupByLen"):
         chunk = op.outputs[0]
-        key = op.inputs[0].key
-
         res = set()
-        input_series = ctx[key]
-        res.update(input_series)
+        for input in op.inputs:
+            key = input.key
+            input_series = ctx[key]
+            res.update(input_series)
 
         res_len = len(res)
         ctx[chunk.key] = res_len
@@ -83,4 +83,4 @@ class GroupByLen(DataFrameOperandMixin, Operand):
 
 def groupby_len(groupby):
     op = GroupByLen()
-    return op(groupby).execute().fetch()
+    return op(groupby)

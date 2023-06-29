@@ -527,13 +527,39 @@ def test_groupby_fill():
     assert r.chunks[0].shape == (np.nan,)
 
 
-# def test_groupby_len_behavior(setup):
-#     np.random.seed(42)
-#
-#     num_rows = 10
-#     num_columns = 4
-#
-#     data = np.random.randint(1, 100, size=(num_rows, num_columns))
-#     columns = ["Column1", "Column2", "Column3", "Column4"]
-#
-#     df = pd.DataFrame(data, columns=columns)
+def test_groupby_len_behavior(setup):
+    df = pd.DataFrame(
+        [
+            [2, 11, 10],
+            [3, 1, 89],
+            [6, 1, 51],
+            [6, 2, 10],
+            [6, 2, 20],
+            [3, 2, 35],
+            [7, 3, 102],
+            [2, 3, 88],
+        ],
+        columns=["one", "two", "three"],
+    )
+    mdf = md.DataFrame(df, chunk_size=3)
+
+    r = tile(mdf.groupby(["two"]).__len__())
+    assert r.op.output_types[0] == OutputType.scalar
+    assert r.shape == ()
+    assert len(r.chunks) == 1
+    assert r.chunks[0].shape == ()
+
+    r = tile(mdf.groupby(["one", "two"]).__len__())
+    assert r.op.output_types[0] == OutputType.scalar
+    assert r.shape == ()
+    assert len(r.chunks) == 1
+    assert r.chunks[0].shape == ()
+
+    s1 = pd.Series([4, 3, 9, np.nan, np.nan, 7, 10, 8, 1, 6])
+    ms1 = md.Series(s1, chunk_size=3)
+
+    r = tile(ms1.groupby(lambda x: x % 2).__len__())
+    assert r.op.output_types[0] == OutputType.scalar
+    assert r.shape == ()
+    assert len(r.chunks) == 1
+    assert r.chunks[0].shape == ()
