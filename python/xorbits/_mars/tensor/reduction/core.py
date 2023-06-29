@@ -331,7 +331,7 @@ class TensorReductionMixin(TensorOperandMixin):
             if input_chunk.size == 0 and op.keepdims:
                 # input chunk is empty, when keepdims is True, return itself
                 ret = input_chunk
-            elif "dtype" in inspect.getfullargspec(reduce_func).args:
+            elif "dtype" in inspect.signature(reduce_func).parameters:
                 ret = reduce_func(
                     input_chunk, axis=axis, dtype=op.dtype, keepdims=bool(op.keepdims)
                 )

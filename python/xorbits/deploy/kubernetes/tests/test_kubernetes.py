@@ -12,8 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import glob
 import logging
+
+import pytest
+
+from ...._mars.services.cluster import WebClusterAPI
+
+logger = logging.getLogger(__name__)
+
+import glob
 import os
 import shutil
 import subprocess
@@ -23,23 +30,19 @@ from contextlib import contextmanager
 from distutils.spawn import find_executable
 
 import numpy as np
-import pytest
 
 from .... import numpy as xnp
-from ...._mars.services.cluster import WebClusterAPI
 from ...._mars.utils import lazy_import
 from ....utils import get_local_py_version
 from .. import new_cluster
-
-k8s = lazy_import("kubernetes")
-
-logger = logging.getLogger(__name__)
 
 XORBITS_ROOT = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.dirname(xnp.__file__)))
 )
 TEST_ROOT = os.path.dirname(os.path.abspath(__file__))
 DOCKER_ROOT = os.path.join((os.path.dirname(os.path.dirname(TEST_ROOT))), "docker")
+
+k8s = lazy_import("kubernetes")
 
 kube_available = (
     find_executable("kubectl") is not None
@@ -137,7 +140,6 @@ def _start_kube_cluster(**kwargs):
     py_version = get_local_py_version()
     _load_docker_env()
     image_name = _build_docker_images(py_version)
-
     temp_spill_dir = tempfile.mkdtemp(prefix="test-xorbits-k8s-")
     api_client = k8s.config.new_client_from_config()
     kube_api = k8s.client.CoreV1Api(api_client)
@@ -173,9 +175,7 @@ def _start_kube_cluster(**kwargs):
                     ]
                 )
             )
-
         yield cluster_client
-
         [p.terminate() for p in log_processes]
     finally:
         shutil.rmtree(temp_spill_dir)

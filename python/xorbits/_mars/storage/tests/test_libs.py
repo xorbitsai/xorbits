@@ -86,13 +86,21 @@ async def storage_context(request):
     elif request.param == "juicefs":
         tempdir = tempfile.mkdtemp()
         params, teardown_params = await JuiceFSStorage.setup(
-            root_dir=tempdir, local_environ=True
+            root_dirs=[tempdir],
+            local_environ=True,
+            metadata_url="redis://127.0.0.1:6379/1",
         )
         storage = JuiceFSStorage(**params)
         assert storage.level == StorageLevel.MEMORY
 
         yield storage
         await storage.teardown(**teardown_params)
+
+        with pytest.raises(
+            ValueError,
+            match="For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'.",
+        ):
+            await JuiceFSStorage.setup(root_dirs=[tempdir], local_environ=True)
     elif request.param == "plasma":
         plasma_storage_size = 10 * 1024 * 1024
         if sys.platform == "darwin":

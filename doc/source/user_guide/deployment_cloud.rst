@@ -47,3 +47,10 @@ To verify the cluster:
     b = np.ones((100, 100), chunk_size=20) * 2 * 1 + 1
     c = (a * b * 2 + 1).sum()
     print(c)
+
+
+External Storage
+----------------
+
+Great news! Xorbits starts to support separation of storage and compute. Start to enjoy better scalability, flexibility, and performance it brings.
+Check out the last section ``JuiceFS on Kubernetes`` on the page :ref:`Kubernetes Deployment <deployment_kubernetes>`.

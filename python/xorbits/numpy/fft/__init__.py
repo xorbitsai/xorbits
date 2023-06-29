@@ -21,19 +21,17 @@ from ...core.utils.fallback import unimplemented_func
 
 def __dir__():
     from ..mars_adapters import MARS_TENSOR_FFT_CALLABLES
-    from ..numpy_adapters import collect_numpy_module_members
+    from ..numpy_adapters.core import NUMPY_FFT_MEMBERS
 
     global NUMPY_FFT_METHODS
     import numpy
 
-    return list(MARS_TENSOR_FFT_CALLABLES.keys()) + list(
-        collect_numpy_module_members(numpy.fft).keys()
-    )
+    return list(MARS_TENSOR_FFT_CALLABLES.keys()) + list(NUMPY_FFT_MEMBERS.keys())
 
 
 def __getattr__(name: str):
     from ..mars_adapters import MARS_TENSOR_FFT_CALLABLES
-    from ..numpy_adapters import collect_numpy_module_members
+    from ..numpy_adapters.core import NUMPY_FFT_MEMBERS
 
     if name in MARS_TENSOR_FFT_CALLABLES:
         return MARS_TENSOR_FFT_CALLABLES[name]
@@ -42,8 +40,8 @@ def __getattr__(name: str):
 
         if not hasattr(numpy.fft, name):
             raise AttributeError(name)
-        elif name in collect_numpy_module_members(numpy.fft):
-            return collect_numpy_module_members(numpy.fft)[name]
+        elif name in NUMPY_FFT_MEMBERS:
+            return NUMPY_FFT_MEMBERS[name]
         else:
             if inspect.ismethod(getattr(numpy.fft, name)):
                 return unimplemented_func

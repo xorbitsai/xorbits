@@ -10,3 +10,5 @@ API Reference
    xorbits/index
    pandas/index
    numpy/index
+   xgboost/index
+   lightgbm/index
