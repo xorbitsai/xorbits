@@ -221,7 +221,7 @@ msgstr ""
 msgid ""
 "Xorbits is now able to integrate `JuiceFS <https://juicefs.com/en/>`_, a distributed POSIX file system that can be easily integrated with Kubernetes to provide persistent storage, as one of the storage backend."
 msgstr ""
-"Xorbits现在集成了 `JuiceFS <https://juicefs.com/zh-cn/>`_  ，一个可以与Kubernetes轻松集成来提供持久化存储的分布式POSIX文件系统。"
+"Xorbits 现在集成了 `JuiceFS <https://juicefs.com/zh-cn/>`_  ，一个可以与 Kubernetes 轻松集成来提供持久化存储的分布式 POSIX 文件系统。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:111
 msgid ""
@@ -281,7 +281,7 @@ msgstr ""
 msgid ""
 "and check the corresponding fields."
 msgstr ""
-"检查相应的字段。"
+"并检查相应的字段。"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:163
 msgid ""

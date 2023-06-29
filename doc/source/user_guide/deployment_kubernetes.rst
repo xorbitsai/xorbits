@@ -448,8 +448,8 @@ Deploy Xorbits cluster, for example:
 .. code-block:: python
 
     from kubernetes import config
-    from xorbits.deploy.kubernetes
-    import new_cluster
+    from xorbits.deploy.kubernetes import new_cluster
+
 
     cluster = new_cluster(config.new_client_from_config(), worker_num=1, worker_cpu=1, worker_mem='1g', supervisor_cpu=1, supervisor_mem='1g', image='xprobe/xorbits:v0.4.0-py3.10', external_storage='juicefs',external_storage_config={"metadata_url": "redis://172.17.0.8:6379/1","bucket": "/var", "mountPath": "/juicefs-data"},)
 
