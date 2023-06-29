@@ -421,10 +421,13 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         new_op = op.copy()
         kw = out_df.params.copy()
         kw.update(dict(chunks=dedup_chunks, nsplits=new_nsplits))
+
         return new_op.new_tileables(op.inputs, **kw)
 
     def __call__(self, df: pd.DataFrame):
-        params = {"shape": (np.nan, df.shape[1])}
+        params = df.params.copy()
+        params["shape"] = (np.nan, df.shape[1])
+        params["index_value"] = parse_index(pd.RangeIndex(-1))
         return self.new_dataframe([df], **params)
 
 
