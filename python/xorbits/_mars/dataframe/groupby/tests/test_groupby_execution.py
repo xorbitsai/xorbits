@@ -1888,14 +1888,55 @@ def test_series_groupby_rolling_agg(setup, window, min_periods, center, closed, 
     pd.testing.assert_series_equal(presult, mresult.sort_index())
 
 
-def test_grouby_len(setup):
-    df = md.DataFrame(
-        {
-            "a": ["a", "b", "a", "c"],
-            "b": [0.1, 0.2, 0.3, 0.4],
-            "c": ["aa", "bb", "cc", "aa"],
+def test_groupby_len(setup):
+    np.random.seed(42)
+    num_dataframes = 10
+    for i in range(num_dataframes):
+        # dataframe
+        data = {
+            "Category": np.random.choice(["A", "B", "C"], size=100),
+            "Value": np.random.randint(1, 100, size=100),
         }
-    )
-    grouped = df.groupby("b")
 
+        # DataFrame test
+        df_test = pd.DataFrame(data)
+        df = md.DataFrame(df_test)
+        df_splitted = md.DataFrame(df_test, chunk_size=3)
+
+        grouped = df.groupby("Category")
+        grouped_test = df_test.groupby(
+            "Category"
+        )  # this is the original pandas version.
+        grouped_splitted = df_splitted.groupby("Category")
+
+        grouped2 = df.groupby("Value")
+        grouped_test2 = df_test.groupby("Value")
+        grouped_splitted2 = df_splitted.groupby("Value")
+        assert len(grouped) == len(grouped_test)
+        assert len(grouped_splitted) == len(grouped_test)
+        assert len(grouped2) == len(grouped_test2)
+        assert len(grouped_splitted2) == len(grouped_test2)
+
+        # Series Groupby test:
+        data2 = np.random.choice(["A", "B", "C"], size=100)
+
+        series = md.Series(data2)
+        series_test = pd.Series(data2)
+
+        grouped_s = series.groupby(series)
+        grouped_s_test = series_test.groupby(series_test)
+
+        assert len(grouped_s) == len(grouped_s_test)
+
+
+def test_temp(setup):
+    data = {
+        "Category": np.random.choice(["A", "B", "C"], size=100),
+        "Value": np.random.randint(1, 100, size=100),
+    }
+
+    # DataFrame test
+    df_test = pd.DataFrame(data)
+    df = md.DataFrame(df_test, chunk_size=3)
+    grouped = df.groupby("Category")
     print(len(grouped))

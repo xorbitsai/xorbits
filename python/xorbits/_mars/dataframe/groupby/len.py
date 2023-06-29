@@ -31,7 +31,7 @@ class GroupByLen(DataFrameOperandMixin, Operand):
         reduce_op = op.copy().reset_key()
         reduce_op.output_types = [OutputType.scalar]
         reduce_op.stage = OperandStage.reduce
-        params = dict(dtype=int)
+
         out_chunks.append(
             reduce_op.new_chunk(map_chunks, shape=(), index=(0,), dtype=int)
         )
@@ -59,7 +59,7 @@ class GroupByLen(DataFrameOperandMixin, Operand):
             res.append(index)
 
         # use series to convey every index store in this level
-        ctx[chunk.key, 1] = pd.Series(res)
+        ctx[chunk.key] = pd.Series(res)
 
     @classmethod
     def execute_reduce(cls, ctx, op: "GroupByLen"):
@@ -67,7 +67,7 @@ class GroupByLen(DataFrameOperandMixin, Operand):
         key = op.inputs[0].key
 
         res = set()
-        input_series = ctx[key, 1]
+        input_series = ctx[key]
         res.update(input_series)
 
         res_len = len(res)
