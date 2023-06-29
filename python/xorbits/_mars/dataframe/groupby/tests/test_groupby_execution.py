@@ -1900,43 +1900,25 @@ def test_groupby_len(setup):
 
         # DataFrame test
         df_test = pd.DataFrame(data)
-        df = md.DataFrame(df_test)
-        df_splitted = md.DataFrame(df_test, chunk_size=3)
+        df_splitted = md.DataFrame(df_test, chunk_size=35)
 
-        grouped = df.groupby("Category")
         grouped_test = df_test.groupby(
             "Category"
         )  # this is the original pandas version.
         grouped_splitted = df_splitted.groupby("Category")
-
-        grouped2 = df.groupby("Value")
         grouped_test2 = df_test.groupby("Value")
         grouped_splitted2 = df_splitted.groupby("Value")
-        assert len(grouped) == len(grouped_test)
-        assert len(grouped_splitted) == len(grouped_test)
-        assert len(grouped2) == len(grouped_test2)
-        assert len(grouped_splitted2) == len(grouped_test2)
+
+        assert grouped_splitted.__len__().execute().fetch() == len(grouped_test)
+        assert grouped_splitted2.__len__().execute().fetch() == len(grouped_test2)
 
         # Series Groupby test:
         data2 = np.random.choice(["A", "B", "C"], size=100)
 
-        series = md.Series(data2)
+        series = md.Series(data2, chunk_size=35)
         series_test = pd.Series(data2)
 
         grouped_s = series.groupby(series)
         grouped_s_test = series_test.groupby(series_test)
 
-        assert len(grouped_s) == len(grouped_s_test)
-
-
-def test_temp(setup):
-    data = {
-        "Category": np.random.choice(["A", "B", "C"], size=100),
-        "Value": np.random.randint(1, 100, size=100),
-    }
-
-    # DataFrame test
-    df_test = pd.DataFrame(data)
-    df = md.DataFrame(df_test, chunk_size=3)
-    grouped = df.groupby("Category")
-    print(len(grouped))
+        assert grouped_s.__len__().execute().fetch() == len(grouped_s_test)
