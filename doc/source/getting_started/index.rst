@@ -4,10 +4,16 @@
 Getting Started
 ===============
 
+
+Use Xorbits to scale ML/DS workloads on your laptop or your own cluster.
+
+* Load and process datasets: :ref:`10min_pandas`
+* Scale machine learning workloads: coming soon
+* Deploy your own model: coming soon
+
 .. toctree::
    :maxdepth: 2
 
    installation
    deployment
-   numpy
-   pandas
+   why_xorbits/index
