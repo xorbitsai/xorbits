@@ -24,24 +24,25 @@ if xgboost is not None:
     import inspect
     from typing import Callable, Dict, List, Optional
 
+    from ..._mars.learn.contrib import xgboost as mars_xgboost
     from ..._mars.learn.contrib.xgboost.classifier import (
         XGBClassifier as MarsXGBClassifier,
     )
     from ..._mars.learn.contrib.xgboost.regressor import (
         XGBRegressor as MarsXGBRegressor,
     )
-    from ...core.adapter import mars_xgboost, to_mars, wrap_mars_callable
+    from ...core.adapter import to_mars, wrap_mars_callable
     from ...core.utils.docstring import attach_module_callable_docstring
 
     class BaseXGB:
         def __init__(self, *args, **kwargs):
-            self.mars_instance = self.mars_cls(*to_mars(args), **to_mars(kwargs))
+            self.mars_instance = self._mars_cls(*to_mars(args), **to_mars(kwargs))
 
     class XGBClassifier(BaseXGB):
-        mars_cls = MarsXGBClassifier
+        _mars_cls = MarsXGBClassifier
 
     class XGBRegressor(BaseXGB):
-        mars_cls = MarsXGBRegressor
+        _mars_cls = MarsXGBRegressor
 
     xgboost_class_mappings: Dict = {
         XGBClassifier: MarsXGBClassifier,

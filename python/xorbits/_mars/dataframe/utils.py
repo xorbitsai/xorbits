@@ -682,6 +682,13 @@ def build_df(df_obj, fill_value=1, size=1, ensure_string=False):
     return ret_df
 
 
+# by build a new series class, we can directly use pd.Index(Series) to turn it to Index Object.
+def build_empty_index(dtype, index=None, name=None, gpu: Optional[bool] = False):
+    xpd = cudf if gpu is True else pd
+    series_of_index = build_empty_series(dtype, index, name, gpu)
+    return xpd.Index(series_of_index)
+
+
 def build_empty_series(dtype, index=None, name=None, gpu: Optional[bool] = False):
     xpd = cudf if gpu is True else pd
     length = len(index) if index is not None else 0
@@ -1283,11 +1290,15 @@ def create_sa_connection(con, **kwargs):
         close = True
         dispose = False
     else:
-        engine = sa.create_engine(con, **kwargs)
-        con = engine.connect()
-        close = True
-        dispose = True
-
+        try:
+            engine = sa.create_engine(con, **kwargs)
+            con = engine.connect()
+            close = True
+            dispose = True
+        except AttributeError:  # pragma: no cover
+            raise NotImplementedError(
+                "The connection provided is not supported by xorbits. Please convert the connection to SQLAlchemy's engine type using the 'sqlalchemy.create_engine' function. Refer to the documentation for more details:https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls"
+            )
     try:
         yield con
     finally:

@@ -353,6 +353,9 @@ def test_join_on(setup_gpu, gpu):
     )
     result4 = jdf4.execute().fetch()
 
+    expected4.sort_values(by=[expected4.columns[0], expected4.columns[3]], inplace=True)
+    result4.sort_values(by=[result4.columns[0], result4.columns[3]], inplace=True)
+
     expected4.set_index("a2", inplace=True)
     result4.set_index("a2", inplace=True)
 
@@ -384,8 +387,12 @@ def test_merge_one_chunk(setup_gpu, gpu):
     result = jdf.execute().fetch()
 
     pd.testing.assert_frame_equal(
-        expected.sort_values(by=expected.columns[1]).reset_index(drop=True),
-        result.sort_values(by=result.columns[1]).reset_index(drop=True),
+        expected.sort_values(by=[expected.columns[1], expected.columns[3]]).reset_index(
+            drop=True
+        ),
+        result.sort_values(by=[result.columns[1], result.columns[3]]).reset_index(
+            drop=True
+        ),
     )
 
     # left have one chunk
@@ -397,8 +404,12 @@ def test_merge_one_chunk(setup_gpu, gpu):
     result = jdf.execute().fetch()
 
     pd.testing.assert_frame_equal(
-        expected.sort_values(by=expected.columns[1]).reset_index(drop=True),
-        result.sort_values(by=result.columns[1]).reset_index(drop=True),
+        expected.sort_values(by=[expected.columns[1], expected.columns[3]]).reset_index(
+            drop=True
+        ),
+        result.sort_values(by=[result.columns[1], result.columns[3]]).reset_index(
+            drop=True
+        ),
     )
 
     # right have one chunk
@@ -410,8 +421,12 @@ def test_merge_one_chunk(setup_gpu, gpu):
     result = jdf.execute().fetch()
 
     pd.testing.assert_frame_equal(
-        expected.sort_values(by=expected.columns[1]).reset_index(drop=True),
-        result.sort_values(by=result.columns[1]).reset_index(drop=True),
+        expected.sort_values(by=[expected.columns[1], expected.columns[3]]).reset_index(
+            drop=True
+        ),
+        result.sort_values(by=[result.columns[1], result.columns[3]]).reset_index(
+            drop=True
+        ),
     )
 
     # left have one chunk and how="left", then one chunk tile

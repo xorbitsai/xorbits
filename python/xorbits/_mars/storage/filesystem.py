@@ -158,7 +158,7 @@ class AlluxioStorage(FileSystemStorage):
     def __init__(
         self,
         root_dir: str,
-        local_environ: bool,
+        local_environ: bool,  # local_environ means standalone mode
         level: StorageLevel = None,
         size: int = None,
     ):
@@ -207,44 +207,56 @@ class JuiceFSStorage(FileSystemStorage):
 
     def __init__(
         self,
-        root_dir: str,
-        local_environ: bool,
+        root_dirs: List[str],
+        in_k8s: bool = False,
+        local_environ: bool = False,  # local_environ means standalone mode
         level: StorageLevel = None,
         size: int = None,
     ):
-        self._fs = AioFilesystem(LocalFileSystem())
-        self._root_dirs = [root_dir]
-        self._level = level
-        self._size = size
-        self._local_environ = local_environ
+        self._root_dirs = root_dirs
+        self._in_k8s = in_k8s
+        if not self._in_k8s:
+            self._fs = AioFilesystem(LocalFileSystem())
+            self._level = level
+            self._size = size
+            self._local_environ = local_environ
 
     @classmethod
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
-        root_dir = kwargs.get("root_dir")
-        local_environ = kwargs.get("local_environ")
-        if local_environ:
-            proc = await asyncio.create_subprocess_shell(
-                f"""juicefs format redis://127.0.0.1:6379/1 myjfs
-                juicefs mount redis://127.0.0.1:6379/1 {root_dir} -d
-                """
-            )
-            await proc.wait()
+        in_k8s = kwargs.get("in_k8s")
+        root_dirs = kwargs.get("root_dirs")
         params = dict(
-            root_dir=root_dir,
+            root_dirs=root_dirs,
             level=StorageLevel.MEMORY,
             size=None,
-            local_environ=local_environ,
         )
-        return params, dict(root_dir=root_dir)
+        if not in_k8s:
+            local_environ = kwargs.get("local_environ")
+            metadata_url = kwargs.get("metadata_url", None)
+            if metadata_url is None:
+                raise ValueError(
+                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage, for example 'redis://172.17.0.5:6379/1'."
+                )
+            if local_environ:
+                proc = await asyncio.create_subprocess_shell(
+                    f"""juicefs format {metadata_url} jfs
+                    juicefs mount {metadata_url} {root_dirs[0]} -d
+                    """
+                )
+                await proc.wait()
+            params["local_environ"] = local_environ
+        return params, dict(root_dirs=root_dirs)
 
     @staticmethod
     @implements(StorageBackend.teardown)
     async def teardown(**kwargs):
-        root_dir = kwargs.get("root_dir")
-        proc = await asyncio.create_subprocess_shell(
-            f"""juicefs umount {root_dir}
-            """
-        )
-        await proc.wait()
+        in_k8s = kwargs.get("in_k8s")
+        if not in_k8s:
+            root_dirs = kwargs.get("root_dirs")
+            proc = await asyncio.create_subprocess_shell(
+                f"""juicefs umount {root_dirs[0]}
+                """
+            )
+            await proc.wait()
