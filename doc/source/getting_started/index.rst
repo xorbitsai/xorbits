@@ -15,5 +15,5 @@ Use Xorbits to scale ML/DS workloads on your laptop or your own cluster.
    :maxdepth: 2
 
    installation
+   why_xorbits/index   
    deployment
-   why_xorbits/index

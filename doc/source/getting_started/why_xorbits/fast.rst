@@ -60,7 +60,7 @@ and `NumExpr <https://github.com/pydata/numexpr>`__, or JIT optimization techniq
 .. image:: /_static/graph_fusion.png
    :alt: Graph fusion optimization
    :align: center
-   :scale: 45%
+   :scale: 35%
 
 **Adaptive execution planning:** Xorbits features a planner capable of adaptively generating execution 
 plans. For example, in a :code:`groupby()` and :code:`agg()` calculation, the planner will check the
