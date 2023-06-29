@@ -36,6 +36,7 @@ from .config import (
     XorbitsSupervisorsConfig,
     XorbitsWorkersConfig,
 )
+from .external_storage.external_storage import JuicefsK8SStorage
 
 try:
     from kubernetes.client import ApiClient
@@ -107,6 +108,8 @@ class KubernetesCluster:
         conda: Optional[Union[str, List[str]]] = None,
         timeout: Optional[int] = None,
         cluster_type: str = "auto",
+        external_storage: Optional[str] = None,
+        external_storage_config: Optional[dict] = None,
         **kwargs,
     ):
         from kubernetes import client as kube_client
@@ -143,6 +146,21 @@ class KubernetesCluster:
         self._cluster_type = self._get_cluster_type(cluster_type)
         self._ingress_name = "xorbits-ingress"
         self._use_local_image = kwargs.pop("use_local_image", False)
+        self._external_storage = external_storage
+        self._external_storage_config = external_storage_config
+
+        if self._external_storage and self._external_storage not in ["juicefs"]:
+            raise ValueError(
+                "Currently, only juicefs is supported as one of our storage backend."
+            )
+        if self._external_storage == "juicefs":
+            if (
+                not self._external_storage_config
+                or "metadata_url" not in self._external_storage_config
+            ):
+                raise ValueError(
+                    "For external storage JuiceFS, you must specify the metadata url for its metadata storage in external storage config, for example external_storage_config={'metadata_url': 'redis://172.17.0.5:6379/1',}."
+                )
 
         extra_modules = kwargs.pop("extra_modules", None) or []
         extra_modules = (
@@ -342,6 +360,8 @@ class KubernetesCluster:
             use_local_image=self._use_local_image,
             pip=self._pip,
             conda=self._conda,
+            external_storage=self._external_storage,
+            external_storage_config=self._external_storage_config,
         )
         supervisors_config.add_simple_envs(self._supervisor_extra_env)
         supervisors_config.add_labels(self._supervisor_extra_labels)
@@ -367,6 +387,8 @@ class KubernetesCluster:
             pip=self._pip,
             conda=self._conda,
             readiness_service_name=self._readiness_service_name,
+            external_storage=self._external_storage,
+            external_storage_config=self._external_storage_config,
         )
         workers_config.add_simple_envs(self._worker_extra_env)
         workers_config.add_labels(self._worker_extra_labels)
@@ -462,10 +484,22 @@ class KubernetesCluster:
             )
         return log_dict
 
+    def _create_external_storage(self, storage_name: str):
+        if storage_name == "juicefs":
+            juicefs_k8s_storage = JuicefsK8SStorage(
+                namespace=self.namespace,
+                api_client=self._api_client,
+                external_storage_config=self._external_storage_config,
+            )
+            juicefs_k8s_storage.build()
+
     def start(self):
         try:
             self._create_namespace()
             self._create_roles_and_bindings()
+
+            if self._external_storage:
+                self._create_external_storage(storage_name=self._external_storage)
 
             self._create_services()
             self._create_kube_service()
@@ -495,6 +529,8 @@ class KubernetesCluster:
 
         api = CoreV1Api(self._api_client)
         api.delete_namespace(self._namespace)
+        if self._external_storage == "juicefs":
+            api.delete_persistent_volume("juicefs-pv")
         if wait:
             start_time = time.time()
             while True:
@@ -528,6 +564,7 @@ def new_cluster(
     conda: Optional[Union[str, List[str]]] = None,
     timeout: Optional[int] = None,
     cluster_type: str = "auto",
+    external_storage: Optional[str] = None,
     **kwargs,
 ) -> "KubernetesClusterClient":
     """
@@ -584,6 +621,8 @@ def new_cluster(
         K8s cluster type, ``auto``, ``kubernetes`` or ``eks`` supported, ``auto`` by default.
         ``auto`` means that it will automatically detect whether the kubectl context is ``eks``.
         You can also manually specify ``kubernetes`` or ``eks`` in some special cases.
+    external_storage:
+        You can specify an external storage. Currently, only juicefs is supported as one of our storage backend.
     kwargs :
         Extra kwargs
 
@@ -593,6 +632,7 @@ def new_cluster(
         a KubernetesClusterClient instance
     """
     cluster_cls = kwargs.pop("cluster_cls", KubernetesCluster)
+
     cluster = cluster_cls(
         kube_api_client,
         worker_cpu,
@@ -609,6 +649,7 @@ def new_cluster(
         conda=conda,
         timeout=timeout,
         cluster_type=cluster_type,
+        external_storage=external_storage,
         **kwargs,
     )
     client = KubernetesClusterClient(cluster)
