@@ -276,18 +276,22 @@ def test_range_indexed_df_rolling_corr_execution(
         pd.testing.assert_frame_equal(pr, mr.fetch())
 
 
-def test_mycode(setup):
-    data = {
-        "A": np.random.randint(10, size=10000),
-        "B": np.random.randint(10, size=10000),
-        "C": np.random.randint(10, size=10000),
-        "D": np.random.randint(10, size=10000),
-    }
-    df_xorbits = md.DataFrame(data, chunk_size=1000)
-    df_pandas = pd.DataFrame(data)
+def test_rolling_corr_performance(setup):
+    data_path = "/Users/dywang/PycharmProjects/test_csv/return.csv"
+    df_xorbits = md.read_csv(data_path)
+    # df_xorbits = md.DataFrame(data, chunk_size=1000)
+    df_pandas = pd.read_csv(data_path)
 
+    import time
+
+    start_time = time.time()
     corr_df = df_xorbits.rolling(window=30).corr()
     df_run = corr_df.execute().fetch()
+    end_time = time.time()
+    print("Xorbits Rolling Corr Execution time: ", end_time - start_time)
 
+    start_time = time.time()
     df_raw = df_pandas.rolling(window=30).corr()
+    end_time = time.time()
+    print("Pandas Rolling Corr Execution time: ", end_time - start_time)
     pd.testing.assert_frame_equal(df_run, df_raw)

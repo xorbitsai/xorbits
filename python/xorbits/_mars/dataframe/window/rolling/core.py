@@ -163,7 +163,7 @@ class Rolling(Window):
                 func=func, func_args=args, func_kwargs=kwargs, **params
             )
             df = op(self)
-            # TODO
+            # TODO columns
             return df.sort_index(level=0, sort_remaining=False)
         else:
             op = DataFrameRollingAgg(

@@ -35,7 +35,7 @@ from ...operands import DataFrameOperand, DataFrameOperandMixin
 from ...utils import build_empty_df, build_empty_series, parse_index
 
 cudf = lazy_import("cudf")
-N = 2
+N = 5
 
 
 class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
@@ -166,19 +166,22 @@ class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
                 params["win_type"] = None
             if self._func != "count":
                 empty_df = empty_df._get_numeric_data()
-            test_df = empty_df.rolling(**params).agg(self._func)
             if self._axis == 0:
                 index_value = inp.index_value
             else:
-                index_value = parse_index(
-                    test_df.index, rolling.params, inp, store_data=False
-                )
+                # index_value = parse_index(
+                #     test_df.index, rolling.params, inp, store_data=False
+                # )
+                raise NotImplementedError
+            dtypes = pd.Series(
+                index=inp.dtypes.index, data=[np.dtype(np.float64)] * inp.shape[1]
+            )
             return self.new_dataframe(
                 [inp],
-                shape=(inp.shape[0], test_df.shape[1]),
-                dtypes=test_df.dtypes,
+                shape=(inp.shape[0] * inp.shape[1], inp.shape[1]),
+                dtypes=dtypes,
                 index_value=index_value,
-                columns_value=parse_index(test_df.columns, store_data=True),
+                columns_value=parse_index(empty_df.columns, store_data=True),
             )
         else:
             pd_index = inp.index_value.to_pandas()
@@ -242,9 +245,11 @@ class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
         axis = op.axis
         # input_ndim = inp.ndim
         output_ndim = out.ndim
+        # check if can be tiled
+        # inp = yield from cls._check_can_be_tiled(op, is_window_int)
 
         out_chunks = []
-        for j in range(degree_parallel):
+        for j in range(N):
             chunk_op = op.copy().reset_key()
 
             out_chunk_index = [None] * output_ndim
@@ -256,13 +261,13 @@ class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
             chunk_params = {"index": out_chunk_index}
             # consider the last chunk
             out_shape = list(out.shape)
-            if j == degree_parallel - 1:
-                column_indices = (j * N, inp.shape[1])
-                out_shape[0] = out_shape[0] * (inp.shape[1] - j * N)
+            if j == N - 1:
+                column_indices = (j * degree_parallel, inp.shape[1])
+                out_shape[0] = out_shape[0] * (inp.shape[1] - j * degree_parallel)
 
             else:
-                column_indices = (j * N, (j + 1) * N)
-                out_shape[0] = out_shape[0] * N
+                column_indices = (j * degree_parallel, (j + 1) * degree_parallel)
+                out_shape[0] = out_shape[0] * degree_parallel
             chunk_params["shape"] = tuple(out_shape)
             chunk_params["column_indices"] = column_indices
             # set other chunk_op parameters
@@ -270,9 +275,12 @@ class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
             column_names = inp.columns_value.value._data[
                 start_column_index:end_column_index
             ]
-            index = pd.MultiIndex.from_product(
-                [range(inp.shape[0]), column_names.tolist()]
-            )
+            if np.isnan(inp.shape[0]):
+                index = None
+            else:
+                index = pd.MultiIndex.from_product(
+                    [range(inp.shape[0]), column_names.tolist()]
+                )
             index_value = parse_index(index, inp, store_data=False)
             chunk_params["index_value"] = index_value if axis == 0 else out.index_value
             chunk_params["dtypes"] = out.dtypes if axis == 0 else inp.dtypes
@@ -280,7 +288,7 @@ class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
                 out.columns_value if axis == 0 else inp.columns_value
             )
             chunk_op._column_indices = column_indices
-            out_chunk = chunk_op.new_chunk([inp], kws=[chunk_params])
+            out_chunk = chunk_op.new_chunk(inp.chunks, kws=[chunk_params])
             out_chunks.append(out_chunk)
 
         params = out.params
@@ -306,24 +314,20 @@ class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
         if win_type == "freq":
             win_type = None
             window = pd.Timedelta(window)
-
-        from ..rolling.core import _PAIRWISE_AGG
-
-        is_pairwise_agg = op.func in _PAIRWISE_AGG and op.func_kwargs.get(
-            "pairwise", True
-        )
-
-        preds = [ctx[pred.key] for pred in op.preds]
-        pred_size = sum(pred.shape[axis] for pred in preds)
-        succs = [ctx[succ.key] for succ in op.succs]
-        succ_size = sum(succ.shape[axis] for succ in succs)
-
-        xdf = pd if isinstance(inp, (pd.DataFrame, pd.Series)) else cudf
-
-        if pred_size > 0 or succ_size > 0:
-            data = xdf.concat(preds + [inp] + succs, axis=axis)
+        # op.inputs cat
+        if len(inp.shape) == 2:
+            max_raw = 0
+            max_column = 0
+            for op_inp in op.inputs:
+                max_raw = max(max_raw, op_inp.index[0])
+                max_column = max(max_column, op_inp.index[1])
+            df_matrix = [[None] * (max_column + 1) for _ in range(max_raw + 1)]
+            for op_inp in op.inputs:
+                df_matrix[op_inp.index[0]][op_inp.index[1]] = ctx[op_inp.key]
+            data = pd.concat([pd.concat(row, axis=1) for row in df_matrix], axis=0)
         else:
-            data = inp
+            data = pd.concat([ctx[row.key] for row in op.inputs], axis=0)
+
         start_column_index, end_column_index = op._column_indices
         column_names = data.columns[start_column_index:end_column_index].tolist()
 
@@ -347,16 +351,6 @@ class DataFrameRollingCorr(DataFrameOperand, DataFrameOperandMixin):
             data_value.append(_value)
         data_value = np.concatenate(data_value, axis=0)
         result = pd.DataFrame(data_value, index=index, columns=data.columns)
-        result = result.swaplevel(1, 0).sort_index()
-        if pred_size > 0 or succ_size > 0:
-            slc = [slice(None)] * result.ndim
-            if is_pairwise_agg:
-                slc[axis] = slice(
-                    pred_size * len(inp.dtypes),
-                    result.shape[axis] - succ_size * len(inp.dtypes),
-                )
-            else:
-                slc[axis] = slice(pred_size, result.shape[axis] - succ_size)
-            result = result.iloc[tuple(slc)]
+        result = result.swaplevel(1, 0)
 
         ctx[op.outputs[0].key] = result
