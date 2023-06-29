@@ -2859,43 +2859,91 @@ def test_index_str_method(setup):
     )
 
 
-def test_nunique(setup):
+@pytest.mark.parametrize("chunked,axis", [(True, 0), (True, 1), (False, 0), (False, 1)])
+def test_nunique(setup, chunked, axis):
+    chunk_size = 2 if chunked else None
+    # test axis option string
+    if chunked is False:
+        axis = "index" if axis == 0 else "columns"
+
+    # test simple df and series
     df = pd.DataFrame({"A": [4, 5, 6], "B": [4, 1, 1]})
     series = pd.Series([1, 3, 5, 7, 7])
 
-    mdf = from_pandas_df(df, chunk_size=2)
-    pd.testing.assert_series_equal(df.nunique(), mdf.nunique(axis=0).execute().fetch())
+    # test axis option error
+    with pytest.raises(ValueError):
+        from_pandas_df(df).nunique(axis="axis")
+
+    mdf = from_pandas_df(df, chunk_size=chunk_size)
     pd.testing.assert_series_equal(
-        df.nunique(axis=1), mdf.nunique(axis=1).execute().fetch()
+        df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
     )
 
-    mdf = from_pandas_df(df)
-    pd.testing.assert_series_equal(df.nunique(), mdf.nunique(axis=0).execute().fetch())
-    pd.testing.assert_series_equal(
-        df.nunique(axis=1), mdf.nunique(axis=1).execute().fetch()
-    )
+    m_series = from_pandas_series(series, chunk_size=chunk_size)
+    assert series.nunique() == m_series.nunique().execute().fetch()
 
+    # test empty df and series
     df = pd.DataFrame()
     mdf = from_pandas_df(df)
-    pd.testing.assert_series_equal(df.nunique(), mdf.nunique(axis=0).execute().fetch())
     pd.testing.assert_series_equal(
-        df.nunique(axis=1), mdf.nunique(axis=1).execute().fetch()
+        df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
     )
-
-    m_series = from_pandas_series(series)
-    assert series.nunique() == m_series.nunique().execute().fetch()
-
-    m_series = from_pandas_series(series, chunk_size=2)
-    assert series.nunique() == m_series.nunique().execute().fetch()
 
     series = pd.Series()
     m_series = from_pandas_series(series)
     assert series.nunique() == m_series.nunique().execute().fetch()
 
+    # test bigger df and series
     rs = np.random.RandomState(0)
     raw1 = pd.DataFrame(
         {"col1": rs.randint(0, 100, size=(100,)), "col2": rs.random(100)}
     )
-    mdf = from_pandas_df(raw1)
-    pd.testing.assert_series_equal(raw1.nunique(), mdf.nunique().execute().fetch())
+    mdf = from_pandas_df(raw1, chunk_size=chunk_size)
+    pd.testing.assert_series_equal(
+        raw1.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+    )
 
+    raw2 = pd.Series(rs.random(100))
+    m_series = from_pandas_series(raw2, chunk_size=chunk_size)
+    assert raw2.nunique() == m_series.nunique().execute().fetch()
+
+    # test dropna option
+    df = pd.DataFrame({"A": [4, 5, pd.NA], "B": [4, 1, 1]})
+    series = pd.Series([1, 3, pd.NA, 5, 7, 7])
+
+    for dropna in (True, False):
+        mdf = from_pandas_df(df, chunk_size=chunk_size)
+        pd.testing.assert_series_equal(
+            df.nunique(axis=axis, dropna=dropna),
+            mdf.nunique(axis=axis, dropna=dropna).execute().fetch(),
+        )
+
+        m_series = from_pandas_series(series, chunk_size=chunk_size)
+        assert (
+            series.nunique(dropna=dropna)
+            == m_series.nunique(dropna=dropna).execute().fetch()
+        )
+
+    # test multi index
+    arrays = [
+        np.array(["bar", "bar", "baz", "baz", "foo", "foo", "qux", "qux"]),
+        np.array(["one", "two", "one", "two", "one", "two", "one", "two"]),
+    ]
+    raw_series = pd.Series(np.random.randn(8), index=arrays)
+    m_series = from_pandas_series(raw_series, chunk_size=chunk_size)
+    assert raw_series.nunique() == m_series.nunique().execute().fetch()
+
+    raw_df = pd.DataFrame(np.random.randn(8, 4), index=arrays)
+    mdf = from_pandas_df(raw_df)
+    pd.testing.assert_series_equal(
+        raw_df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+    )
+
+    # test multi level columns
+    tuples = list(zip(*arrays))
+    index = pd.MultiIndex.from_tuples(tuples, names=["first", "second"])
+    raw_df = pd.DataFrame(np.random.randn(3, 8), index=["A", "B", "C"], columns=index)
+    mdf = from_pandas_df(raw_df)
+    pd.testing.assert_series_equal(
+        raw_df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+    )

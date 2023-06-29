@@ -261,10 +261,7 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                     for index_idx, index_filter in enumerate(filters):
                         reducer_index = (index_idx, chunk.index[1])
                         part_data = drop_duplicates_data.iloc[index_filter]
-                        if len(part_data) > 0:
-                            reducer_index_to_series_list[reducer_index].append(
-                                part_data
-                            )
+                        reducer_index_to_series_list[reducer_index].append(part_data)
                 for reducer_index, data in reducer_index_to_series_list.items():
                     ctx[chunk.key, reducer_index] = (
                         ctx.get_current_chunk().index,
@@ -310,26 +307,36 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
             ctx[chunk.key] = data
         else:
             column_to_series = {}
-            column_to_na_values = {}
             for row_idx in row_idxes:
                 series_list = input_idx_to_df.get(row_idx, None)
                 if series_list is not None:
                     for series in series_list:
                         series_data = series.reset_index(drop=True)
-                        if series.name not in column_to_series:
+                        if len(series_data) == 0:
+                            continue
+                        if series.name not in column_to_series and len(series_data) > 0:
                             column_to_series[series.name] = [series_data]
-                            column_to_na_values[series.name] = series_data[0]
                         else:
                             column_to_series[series.name].append(series_data)
 
-            for name in column_to_series.keys():
-                column_to_series[name] = pd.concat(
-                    column_to_series[name], axis=0
-                ).drop_duplicates()
-            df = pd.concat(column_to_series.values(), axis=1).fillna(
-                value=column_to_na_values
-            )
-            ctx[chunk.key] = df
+            if column_to_series:
+                column_to_na_values = {}
+                for name in column_to_series.keys():
+                    col_value = (
+                        pd.concat(column_to_series[name], axis=0)
+                        .reset_index(drop=True)
+                        .drop_duplicates()
+                    )
+                    col_value_has_na: bool = col_value.isnull().any()
+                    if not col_value_has_na:
+                        column_to_na_values[name] = col_value[0]
+                    column_to_series[name] = col_value
+                df = pd.concat(column_to_series.values(), axis=1).fillna(
+                    value=column_to_na_values
+                )
+                ctx[chunk.key] = df
+            else:
+                ctx[chunk.key] = pd.DataFrame()
 
     @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
@@ -349,10 +356,89 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
 
 
 def nunique_dataframe(df, axis=0, dropna=True):
+    """
+    Count distinct observations over requested axis.
+
+    Return Series with number of distinct observations. Can ignore NaN
+    values.
+
+    Parameters
+    ----------
+    axis : {0 or 'index', 1 or 'columns'}, default 0
+        The axis to use. 0 or 'index' for row-wise, 1 or 'columns' for
+        column-wise.
+    dropna : bool, default True
+        Don't include NaN in the counts.
+
+    Returns
+    -------
+    Series
+
+    See Also
+    --------
+    Series.nunique: Method nunique for Series.
+    DataFrame.count: Count non-NA cells for each column or row.
+
+    Examples
+    --------
+    >>> import mars.dataframe as md
+    >>> df = md.DataFrame({'A': [1, 2, 3], 'B': [1, 1, 1]})
+    >>> df.nunique().execute()
+    A    3
+    B    1
+    dtype: int64
+
+    >>> df.nunique(axis=1).execute()
+    0    1
+    1    2
+    2    2
+    dtype: int64
+    """
+    if not (axis in (0, "index", 1, "columns")):
+        raise ValueError(f"No axis named {axis} for object type DataFrame")
+    if axis == "index":
+        axis = 0
+    elif axis == "columns":
+        axis = 1
+
     op = DataFrameNunique(axis=axis, dropna=dropna)
     return op(df)
 
 
 def nunique_series(series, dropna=True):
+    """
+    Return number of unique elements in the object.
+
+    Excludes NA values by default.
+
+    Parameters
+    ----------
+    dropna : bool, default True
+        Don't include NaN in the count.
+
+    Returns
+    -------
+    int
+
+    See Also
+    --------
+    DataFrame.nunique: Method nunique for DataFrame.
+    Series.count: Count non-NA/null observations in the Series.
+
+    Examples
+    --------
+    >>> import mars.dataframe as md
+    >>> s = md.Series([1, 3, 5, 7, 7])
+    >>> s.execute()
+    0    1
+    1    3
+    2    5
+    3    7
+    4    7
+    dtype: int64
+
+    >>> s.nunique().execute()
+    4
+    """
     op = DataFrameNunique(axis=None, dropna=dropna)
     return op(series)
