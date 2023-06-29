@@ -248,6 +248,70 @@ def test_series_map_execution(setup):
     pd.testing.assert_index_equal(result, expected)
 
 
+def test_dedup_execute(setup):
+    words = list("abcdefghijklmnopqrstuvwxyz")
+    df_raw = pd.DataFrame(
+        {
+            "id": np.arange(20),
+            "text": [
+                " ".join(["".join(np.random.choice(words, 5)) for i in range(50)])
+                for _ in np.arange(10)
+            ]
+            * 2,
+        }
+    )
+
+    # test one chunk
+    df = from_pandas_df(df_raw, chunk_size=20)
+    result = (
+        df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
+    )
+    assert result.shape[0] == 10
+
+    # test multi chunks
+    df = from_pandas_df(df_raw, chunk_size=1)
+    result = (
+        df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
+    )
+    assert result.shape[0] == 10
+
+    # test error threshold
+    with pytest.raises(ValueError):
+        df.dedup(threshold="0.7").execute().fetch()
+
+    with pytest.raises(ValueError):
+        df.dedup(threshold=2).execute().fetch()
+
+    # test error num_perm
+    with pytest.raises(ValueError):
+        df.dedup(num_perm=1.5).execute().fetch()
+
+    # test error min_length
+    with pytest.raises(ValueError):
+        df.dedup(min_length=1.5).execute().fetch()
+
+    # test error ngram
+    with pytest.raises(ValueError):
+        df.dedup(ngram=1.5).execute().fetch()
+
+    # test error seed
+    with pytest.raises(ValueError):
+        df.dedup(seed=1.5).execute().fetch()
+
+    # test error text column
+    with pytest.raises(ValueError):
+        df.dedup(text="non-exist").execute().fetch()
+
+    # test non-exist id column
+    df_raw.rename(columns={"id": "non-exist"}, inplace=True)
+    df = from_pandas_df(df_raw, chunk_size=1)
+    result = (
+        df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
+    )
+    assert "id" in result.dtypes.index
+    assert result.shape[0] == 10
+
+
 def test_describe_execution(setup):
     s_raw = pd.Series(np.random.rand(10))
 
