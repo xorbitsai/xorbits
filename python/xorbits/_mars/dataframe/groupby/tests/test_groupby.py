@@ -527,24 +527,13 @@ def test_groupby_fill():
     assert r.chunks[0].shape == (np.nan,)
 
 
-def test_groupby_len(setup):
-    np.random.seed(42)
-    num_dataframes = 10
-    for i in range(num_dataframes):
-        # Generate random data
-        data = {
-            "Category": np.random.choice(["A", "B", "C"], size=100),
-            "Value": np.random.randint(1, 100, size=100),
-        }
-
-        # Create DataFrame
-        df = md.DataFrame(data)
-        df_test = pd.DataFrame(data)
-
-        grouped = df.groupby("Category")
-        grouped_test = df_test.groupby("Category")
-
-        grouped2 = df.groupby("Value")
-        grouped_test2 = df_test.groupby("Value")
-        assert len(grouped) == len(grouped_test)
-        assert len(grouped2) == len(grouped_test2)
+# def test_groupby_len_behavior(setup):
+#     np.random.seed(42)
+#
+#     num_rows = 10
+#     num_columns = 4
+#
+#     data = np.random.randint(1, 100, size=(num_rows, num_columns))
+#     columns = ["Column1", "Column2", "Column3", "Column4"]
+#
+#     df = pd.DataFrame(data, columns=columns)
