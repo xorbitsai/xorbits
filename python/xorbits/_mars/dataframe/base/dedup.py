@@ -77,18 +77,15 @@ class UnionFind:
         py = self.find(y)
         self.parent[px] = self.parent[py] = min(px, py)
 
-    def get_self(self):
-        return self
-
-    def set_parent(self, parent):
-        self.parent = parent
-
     def union_uf(self, uf: "UnionFind"):
         for x in uf.parent:
-            if x not in self.parent:
+            if x not in self.parent:  # pragma: no cover
                 self.parent[x] = uf.parent[x]
-            else:
+            else:  # pragma: no cover
                 self.union(self.find(x), uf.find(x))
+
+    def get_self(self):
+        return self
 
 
 def ngrams(sequence: List[Text], n: int, min_length: int = 5):
