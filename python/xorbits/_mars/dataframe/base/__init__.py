@@ -39,12 +39,8 @@ from .map import index_map, series_map
 from .map_chunk import map_chunk
 from .melt import melt
 from .memory_usage import df_memory_usage, index_memory_usage, series_memory_usage
-from .nlargest import (
-    dataframe_nlargest,
-    dataframe_nsmallest,
-    series_nlargest,
-    series_nsmallest,
-)
+from .nlargest import dataframe_nlargest, series_nlargest
+from .nsmallest import dataframe_nsmallest, series_nsmallest
 from .pct_change import pct_change
 from .pivot import df_pivot
 from .pivot_table import df_pivot_table
