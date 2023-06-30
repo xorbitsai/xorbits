@@ -33,7 +33,9 @@ def test_sk_learn_svc_train(setup):
         "class_weight": [None, "balanced"],
     }
     model = SVC(kernel="rbf")
-    search = RandomizedSearchCV(model, param_space, cv=5, n_iter=5, verbose=10)
+    search = RandomizedSearchCV(
+        model, param_space, cv=5, n_iter=5, verbose=10, n_jobs=-1
+    )
 
     with joblib.parallel_backend("mars", n_parallel=16):
         search.fit(digits.data, digits.target)
