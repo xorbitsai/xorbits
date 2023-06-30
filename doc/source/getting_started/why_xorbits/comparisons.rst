@@ -93,6 +93,7 @@ Deferred execution bridges the gap between lazy and eager evaluation. More speci
 users often only examine the first or last few rows/columns of the result and then compute this as part of the critical
 portion (e.g., the operations will influence the results that users inspect) and defer the rest to the non-critical portion.
 Xorbits will defer the execution of the non-critical portions so it can perform more holistic query planning and optimization.
+See our `blogpost <https://xorbits.io/blogs/interactive-analysis-opt>`__ for more details.
 
 
 Partitioning Schemes

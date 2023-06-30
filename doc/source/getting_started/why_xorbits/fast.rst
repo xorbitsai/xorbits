@@ -45,32 +45,40 @@ Optimization Techniques
 What sets Xorbits apart is our dedication to meticulous attention to detail and the application 
 of numerous optimization techniques.
 
-**Graph-based plan optimizations:** Xorbits incorporates the concept of a computational graph as
-an abstraction. Leveraging this computational graph, Xorbits can perform many optimizations on
-the execution plan before actual computation. A series of optimization rules such as Column Pruning,
-Predicate Pushdown and Operator Fusion can make the computation faster and use less memory. 
+Graph-based Plan Optimizations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**Graph fusion optimization:** Xorbits proposes a graph fusion algorithm based on graph coloring. 
-The coloring algorithm will determine the initial number of colors according to the computational 
-resources. According to the topological structure of the graph, it finds computational nodes that 
-can be merged into a subgraph as the smallest unit of execution. It can simplify the computational 
-graph and optimize execution at runtime stage using libraries, e.g. `JAX <https://github.com/google/jax>`__
-and `NumExpr <https://github.com/pydata/numexpr>`__, or JIT optimization techniques. 
+Xorbits incorporates the concept of a computational graph as an abstraction. Leveraging the computational
+graph, Xorbits can perform many optimizations on the execution plan before actual computation. A series
+of optimization rules such as **Column Pruning**, **Predicate Pushdown** and **Operator Fusion** can make
+the computation faster and use less memory. 
+
+Graph Fusion Optimization
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Xorbits proposes a graph fusion algorithm based on graph coloring. The coloring algorithm will determine
+the initial number of colors according to the computational resources. According to the topological
+structure of the graph, it finds computational nodes that can be merged into a subgraph as the smallest
+unit of execution. It can simplify the computational graph and optimize execution at runtime stage using
+libraries, e.g. `JAX <https://github.com/google/jax>`__ and `NumExpr <https://github.com/pydata/numexpr>`__,
+or JIT optimization techniques. 
 
 .. image:: /_static/graph_fusion.png
    :alt: Graph fusion optimization
    :align: center
    :scale: 35%
 
-**Adaptive execution planning:** Xorbits features a planner capable of adaptively generating execution 
-plans. For example, in a :code:`groupby()` and :code:`agg()` calculation, the planner will check the
-compression ratio of the result data after processing some data. If a high degree of duplicate values
-results in high data compression, a tree-structured computational graph is employed. However, if the
-compression ratio is low, potentially leading to Out-of-Memory issues with the tree-structured method,
-the planner automatically opts for a shuffle approach to perform the calculation. This adaptive strategy
-is applied to numerous operators, enhances the efficiency of our computations. 
+Adaptive Execution Planning
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The following figure shows how we parallelize :code:`groupby()` and :code:`agg()`:
+Xorbits features a planner capable of adaptively generating execution plans. For example, in a
+:code:`groupby.agg` calculation, the planner will check the compression ratio of the result data after
+processing some data. If a high degree of duplicate values results in high data compression, a tree-structured
+computational graph is employed. However, if the compression ratio is low, potentially leading to Out-of-Memory
+issues with the tree-structured method, the planner automatically opts for a shuffle approach to perform the
+calculation. This adaptive strategy is applied to numerous operators, enhances the efficiency of our computations. 
+
+The following figure shows how we parallelize :code:`groupby.agg()`:
 
 .. image:: /_static/adaptive_plan.png
    :alt: Adaptive execution planning
