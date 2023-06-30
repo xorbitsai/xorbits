@@ -101,15 +101,14 @@ Please make sure your K8s cluster can access the corresponding `channel of conda
 
 JuiceFS on Kubernetes
 ---------------------
-Xorbits is now able to utilize `JuiceFS <https://juicefs.com/en/>`_, a distributed POSIX file system that can be easily integrated with Kubernetes to provide persistent storage, as one of the storage backend.
+Xorbits is now able to integrate `JuiceFS <https://juicefs.com/en/>`_, a distributed POSIX file system that can be easily integrated with Kubernetes to provide persistent storage, as one of the storage backend.
 
 Prerequisites
 ~~~~~~~~~~~~~
 
 Xorbits
 +++++++
-Install Xorbits on the machine where you plan to deploy Kubernetes with JuiceFS.
-Refer to :ref:`installation document <installation>`.
+Install Xorbits on the machine where you plan to deploy Kubernetes with JuiceFS. Refer to :ref:`installation document <installation>`.
 
 Metadata Storage
 ++++++++++++++++
@@ -153,6 +152,13 @@ and check the corresponding fields.
 
 Kubernetes
 ~~~~~~~~~~
+
+.. code-block:: bash
+
+    $ pip install kubernetes
+
+..
+
 Follow previous Kubernetes section to initialize a K8s cluster on your machine.
 
 Install ``kubectl``, a command-line tool for interacting with Kubernetes clusters and verify its installation.
@@ -169,9 +175,10 @@ Install ``kubectl``, a command-line tool for interacting with Kubernetes cluster
 JuiceFS Installation
 ~~~~~~~~~~~~~~~~~~~~
 
-We will still walk you through the process of installing JuiceFS on a Kubernetes cluster, enabling you to leverage its features and benefits.
 
-There are three ways to use JuiceFS on K8S  `Use JuiceFS on Kubernetes <https://juicefs.com/docs/zh/community/how_to_use_on_kubernetes>`_.
+We will walk you through the process of installing JuiceFS on a Kubernetes cluster, enabling you to leverage its features and benefits. There are three ways to use JuiceFS on K8S  `Use JuiceFS on Kubernetes <https://juicefs.com/docs/zh/community/how_to_use_on_kubernetes>`_.
+
+
 But our implementation in k8s must rely on CSI since CSI provides better portability, enhanced isolation, and more advanced features.
 
 Reference Page: `JuiceFS CSI Driver <https://juicefs.com/docs/csi/getting_started/>`_
@@ -184,9 +191,9 @@ Installation with Helm
 ^^^^^^^^^^^^^^^^^^^^^^
 Reference Page: `JuiceFS Installation with Helm <https://juicefs.com/docs/csi/getting_started#helm-1>`_
 
-1. `Install Helm <https://helm.sh/docs/intro/install/>`_
+Firstly, `Install Helm <https://helm.sh/docs/intro/install/>`_
 
-2. Download the Helm chart for JuiceFS CSI Driver
+Secondly, download the Helm chart for JuiceFS CSI Driver
 
 .. code-block:: bash
 
@@ -204,8 +211,8 @@ Reference Page: `JuiceFS Installation with Helm <https://juicefs.com/docs/csi/ge
 
 ..
 
-You should be careful with limits and requests of cpu and memory. Change according to your system settings.
-Here we give you the minimal configuration.
+You should be careful with limits and requests of cpu and memory. Change according to your system settings. Here we give you the minimal configuration.
+
 
 .. code-block:: bash
 
@@ -220,7 +227,7 @@ Here we give you the minimal configuration.
 ..
 
 
-3. Execute below commands to deploy JuiceFS CSI Driver:
+Thirdly, execute below commands to deploy JuiceFS CSI Driver:
 
 .. code-block:: bash
 
@@ -228,7 +235,7 @@ Here we give you the minimal configuration.
 
 ..
 
-4. Verify installation
+Fourthly, verify installation
 
 .. code-block:: bash
 
@@ -238,6 +245,19 @@ Here we give you the minimal configuration.
     juicefs-csi-node-v9tzb     3/3     Running   0          14m
 
 ..
+
+If you want to delete JuiceFS CSI Driver in the future, you can run:
+
+.. code-block:: bash
+
+    $ helm list -n kube-system
+    NAME              	NAMESPACE  	REVISION	UPDATED                                	STATUS  	CHART                    	APP VERSION
+    juicefs-csi-driver	kube-system	1       	2023-05-31 03:12:16.717087425 +0000 UTC	deployed	juicefs-csi-driver-0.15.1	0.19.0
+
+    $ helm uninstall juicefs-csi-driver -n kube-system
+
+..
+
 
 Create and use PV
 ^^^^^^^^^^^^^^^^^
@@ -252,7 +272,7 @@ Reference Page: `Create and use PV <https://juicefs.com/docs/csi/guide/pv>`_
 
 We would create several YAML files. Validate their formats on `YAML validator <https://www.yamllint.com/>`_ before usage.
 
-1. Create Kubernetes Secret:
+First, create Kubernetes Secret:
 
 .. code-block:: bash
 
@@ -279,7 +299,7 @@ Write the following into the yaml file:
 
 In our case, we do not need access-key and secret-key. Add if you need object storage credentials.
 
-2. Create Persistent Volume and Persistent Volume Claim with static provisioning
+Secondly, create Persistent Volume and Persistent Volume Claim with static provisioning
 
 Read `Usage <https://juicefs.com/docs/csi/introduction#usage>`_ to learn the difference between static and dynamic provisioning.
 
@@ -298,13 +318,13 @@ Write the following into the yaml file:
     metadata:
       name: juicefs-pv
       labels:
-        juicefs-name: ten-pb-fs # Works as a match-label for selector
+        juicefs-name: juicefs-fs # Works as a match-label for selector
     spec:
       # For now, JuiceFS CSI Driver doesn't support setting storage capacity for static PV. Fill in any valid string is fine.
       capacity:
         storage: 10Pi
       volumeMode: Filesystem
-      mountOptions: ["subdir=/data/subdir"],  # Mount in sub directory to achieve data isolation. See https://juicefs.com/docs/csi/guide/pv/#create-storage-class for more references.
+      mountOptions: ["subdir=/data/subdir"]  # Mount in sub directory to achieve data isolation. See https://juicefs.com/docs/csi/guide/pv/#create-storage-class for more references.
       accessModes:
         - ReadWriteMany # accessModes is restricted to ReadWriteMany because it's the most suitable mode for our system. See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more reference.
       persistentVolumeReclaimPolicy: Retain # persistentVolumeReclaimPolicy is restricted to Retain for Static provisioning. See https://juicefs.com/docs/csi/guide/resource-optimization/#reclaim-policy for more references.
@@ -338,11 +358,11 @@ Write the following into the yaml file:
           storage: 10Pi
       selector:
         matchLabels:
-          juicefs-name: ten-pb-fs
+          juicefs-name: juicefs-fs
 
 ..
 
-3. Apply Secret, PV, and PVC to your namespace and verify:
+Thirdly, apply Secret, PV, and PVC to your namespace and verify:
 
 Create your namespace (or Xorbits namespace) and run the following:
 
@@ -365,7 +385,7 @@ Create your namespace (or Xorbits namespace) and run the following:
 
 ..
 
-4. Create a pod
+Fourthly, create a pod
 
 .. code-block:: bash
 
@@ -410,15 +430,28 @@ Congratulations! You have successfully set up JuiceFS on Kubernetes by yourself.
 
 Deploy Cluster
 ~~~~~~~~~~~~~~
+
+Before you deploy, go to our `DockerHub <https://hub.docker.com/r/xprobe/xorbits>`_ and get the latest docker image.
+
+Check the image by running:
+
+.. code-block:: bash
+
+    $ docker image ls
+    REPOSITORY                              TAG                                      IMAGE ID       CREATED         SIZE
+    xprobe/xorbits                          v0.4.0-py3.10                            4166e1b0676d   5 days ago      3.38GB
+
+..
+
 Deploy Xorbits cluster, for example:
 
 .. code-block:: python
 
     from kubernetes import config
-    from xorbits.deploy.kubernetes
-    import new_cluster
+    from xorbits.deploy.kubernetes import new_cluster
 
-    cluster = new_cluster(config.new_client_from_config(), worker_num=1, worker_cpu=1, worker_mem='1g', supervisor_cpu=1, supervisor_mem='1g',external_storage='juicefs',external_storage_config={"metadata_url": "redis://172.17.0.8:6379/1","bucket": "/var", "mountPath": "/juicefs-data"},)
+
+    cluster = new_cluster(config.new_client_from_config(), worker_num=1, worker_cpu=1, worker_mem='1g', supervisor_cpu=1, supervisor_mem='1g', image='xprobe/xorbits:v0.4.0-py3.10', external_storage='juicefs',external_storage_config={"metadata_url": "redis://172.17.0.8:6379/1","bucket": "/var", "mountPath": "/juicefs-data"},)
 
 ..
 
@@ -501,4 +534,5 @@ Manage the Xorbits cluster & Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can get Xorbits namespace, check the status of Xorbits pods, and check Xorbits UI by following `Detailed tutorial: Deploying and Running Xorbits on Amazon EKS. <https://zhuanlan.zhihu.com/p/610955102>`_.
+
 If everything works fine, now you can easily scale up and down the storage resources by adding or deleting pods inside the namespace.
