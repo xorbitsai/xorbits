@@ -228,7 +228,7 @@ class ThreadedServiceContext(Context):
 
     @implements(Context.create_remote_object)
     def create_remote_object(
-        self, name: str, object_cls, remote_addr: str = None, *args, **kwargs
+        self, name: str, object_cls, *args, remote_addr: str = None, **kwargs
     ):
         ref = self._call(
             self._session_api.create_remote_object(

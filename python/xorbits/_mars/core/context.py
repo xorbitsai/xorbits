@@ -188,7 +188,7 @@ class Context(ABC):
 
     @abstractmethod
     def create_remote_object(
-        self, name: str, object_cls, remote_addr: str = None, *args, **kwargs
+        self, name: str, object_cls, *args, remote_addr: str = None, **kwargs
     ):
         """
         Create remote object.
