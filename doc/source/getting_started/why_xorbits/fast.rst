@@ -3,8 +3,8 @@
 Why is Xorbits so fast?
 ===============================
 
-Xorbits is the fastest compared to other popular frameworks according to our benchmark tests. See our performance comparison 
-with other frameworks :ref:`here <xorbits_performance_comparison_index>`.
+Xorbits is the fastest compared to other popular frameworks according to our benchmark tests. See our
+performance comparison with other frameworks :ref:`here <xorbits_performance_comparison_index>`.
 
 
 
@@ -35,7 +35,7 @@ single query. Not only on a single server but all CPU cores and disks of a clust
 **Indexes:** Memory resident Xorbits data structures allow the reading of only the necessary 
 columns required for computations, and only the necessary row ranges of those columns.
 
-**Hardware-accelerated data transmission:** In situations where multiple workers are communicating, 
+**Hardware-accelerated:** In situations where multiple workers are communicating, 
 Xorbits takes advantage of the best available hardware to speed up data transmission, such as 
 InfiniBand, NVLink, and so on.
 

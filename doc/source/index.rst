@@ -9,21 +9,24 @@
 Welcome to Xorbits!
 """""""""""""""""""""""""""""""""""""""""
 
-Xorbits is an open-source computing framework that makes it easy to scale ML and DS workloads —
+Xorbits is an open-source computing framework that makes it easy to scale data science and machine learning workloads —
 from data preprocessing, to tuning, training, and model serving. Xorbits can leverage multi cores or GPUs to accelerate
 computation on a single machine, or scale out up to thousands of machines to support processing terabytes of data.
 
-Xorbits provides a suite of best-in-class libraries for data scientists and machine learning practitioners. Xorbits provides the capability to scale tasks
-without the necessity for extensive knowledge of infrastructure.
+Xorbits provides a suite of best-in-class libraries for data scientists and machine learning practitioners. Xorbits provides
+the capability to scale tasks without the necessity for extensive knowledge of infrastructure.
 
 - :ref:`Xorbits Datasets <xorbits_datasets_index>`: Load and process datasets, from small to large, using the tools you love💜, such as pandas and Numpy.
 
-- :ref:`Xorbits Train <xorbits_train_index>`: Pretrain or finetune your own state-of-the-art models for ML and DL frameworks such as PyTorch, XGBoost, etc.
+- :ref:`Xorbits Train <xorbits_train_index>`: Pretrain your own state-of-the-art models for ML and DL frameworks such as PyTorch, XGBoost, etc.
+
+- :ref:`Xorbits Tune <xorbits_tune_index>`: Finetune your models by running state of the art algorithms such as PEFT.
 
 - :ref:`Xorbits Serve <xorbits_serve_index>`: Scalable serving to deploy state-of-the-art models. Integrate with the most popular deep learning libraries, like PyTorch, ggml, etc.
 
-Xorbits features a familiar Python API that supports a variety of libraries, including pandas, NumPy, scikit-learn, PyTorch, XGBoost, Xarray, etc.
-With a simple modification of just one line of code, your pandas workflow can be seamlessly scaled using Xorbits:
+Xorbits features a familiar Python API that supports a variety of libraries, including pandas, NumPy, scikit-learn, PyTorch,
+XGBoost, Xarray, etc. With a simple modification of just one line of code, your pandas workflow can be seamlessly scaled using
+Xorbits:
 
 .. image:: _static/pandas_vs_xorbits.gif
    :alt: pandas on Xorbits

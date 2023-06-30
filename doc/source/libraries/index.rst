@@ -7,6 +7,7 @@ Libraries
     
     xorbits_datasets/index
     xorbits_train/index
+    xorbits_tune/index
     xorbits_serve/index
 
 
