@@ -19,7 +19,6 @@ from functools import partial
 from itertools import tee
 from typing import Any, List, Set, Text, Tuple, Union
 
-import cloudpickle
 import numpy as np
 import pandas as pd
 from scipy.integrate import quad as integrate
@@ -310,12 +309,6 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
     func = AnyField("func")
     union_find_name = StringField("union_find_name")
 
-    def _load_func(self):
-        if isinstance(self.func, bytes):
-            return cloudpickle.loads(self.func)
-        else:
-            return self.func
-
     @classmethod
     def execute_uf(cls, ctx: Union[dict, Context], op: "DataFrameDedup"):
         uf = UnionFind()
@@ -354,7 +347,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         ctx.create_remote_object(union_find_name, UnionFind)
 
         embedded = in_df.apply(
-            op._load_func(),
+            op.func,
             axis=1,
             output_type="dataframe",
             dtypes=pd.Series(["object", "int"], index=["__signatures__", "__id__"]),

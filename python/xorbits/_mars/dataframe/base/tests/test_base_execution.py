@@ -255,9 +255,13 @@ def test_dedup_execute(setup):
             "id": np.arange(20),
             "text": [
                 " ".join(["".join(np.random.choice(words, 5)) for i in range(50)])
-                for _ in np.arange(10)
+                for _ in np.arange(9)
             ]
-            * 2,
+            * 2
+            + [
+                " ".join(["".join(np.random.choice(words, 4)) for i in range(50)])
+                for _ in np.arange(2)
+            ],
         }
     )
 
@@ -266,14 +270,14 @@ def test_dedup_execute(setup):
     result = (
         df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
     )
-    assert result.shape[0] == 10
+    assert result.shape[0] == 11
 
     # test multi chunks
     df = from_pandas_df(df_raw, chunk_size=1)
     result = (
         df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
     )
-    assert result.shape[0] == 10
+    assert result.shape[0] == 11
 
     # test error threshold
     with pytest.raises(ValueError):
@@ -309,7 +313,7 @@ def test_dedup_execute(setup):
         df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
     )
     assert "id" in result.dtypes.index
-    assert result.shape[0] == 10
+    assert result.shape[0] == 11
 
 
 def test_describe_execution(setup):
