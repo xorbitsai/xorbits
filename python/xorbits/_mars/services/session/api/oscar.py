@@ -97,18 +97,30 @@ class SessionAPI(AbstractSessionAPI):
         return await self._session_manager_ref.get_session_ref(session_id)
 
     async def create_remote_object(
-        self, session_id: str, name: str, object_cls, *args, **kwargs
+        self,
+        session_id: str,
+        name: str,
+        object_cls,
+        remote_addr: str = None,
+        *args,
+        **kwargs,
     ):
         session = await self._get_session_ref(session_id)
-        return await session.create_remote_object(name, object_cls, *args, **kwargs)
+        return await session.create_remote_object(
+            name, object_cls, remote_addr, *args, **kwargs
+        )
 
-    async def get_remote_object(self, session_id: str, name: str):
+    async def get_remote_object(
+        self, session_id: str, name: str, remote_addr: str = None
+    ):
         session = await self._get_session_ref(session_id)
-        return await session.get_remote_object(name)
+        return await session.get_remote_object(name, remote_addr)
 
-    async def destroy_remote_object(self, session_id: str, name: str):
+    async def destroy_remote_object(
+        self, session_id: str, name: str, remote_addr: str = None
+    ):
         session = await self._get_session_ref(session_id)
-        return await session.destroy_remote_object(name)
+        return await session.destroy_remote_object(name, remote_addr)
 
     @alru_cache(cache_exceptions=False)
     async def _get_custom_log_meta_ref(

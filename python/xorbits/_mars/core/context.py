@@ -187,7 +187,9 @@ class Context(ABC):
         """
 
     @abstractmethod
-    def create_remote_object(self, name: str, object_cls, *args, **kwargs):
+    def create_remote_object(
+        self, name: str, object_cls, remote_addr: str = None, *args, **kwargs
+    ):
         """
         Create remote object.
 
@@ -206,7 +208,7 @@ class Context(ABC):
         """
 
     @abstractmethod
-    def get_remote_object(self, name: str):
+    def get_remote_object(self, name: str, remote_addr: str = None):
         """
         Get remote object
 
@@ -221,7 +223,7 @@ class Context(ABC):
         """
 
     @abstractmethod
-    def destroy_remote_object(self, name: str):
+    def destroy_remote_object(self, name: str, remote_addr: str = None):
         """
         Destroy remote object.
 

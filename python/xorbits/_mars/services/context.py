@@ -227,23 +227,27 @@ class ThreadedServiceContext(Context):
         return self._call(self._get_backend_info(address, level))
 
     @implements(Context.create_remote_object)
-    def create_remote_object(self, name: str, object_cls, *args, **kwargs):
+    def create_remote_object(
+        self, name: str, object_cls, remote_addr: str = None, *args, **kwargs
+    ):
         ref = self._call(
             self._session_api.create_remote_object(
-                self.session_id, name, object_cls, *args, **kwargs
+                self.session_id, name, object_cls, remote_addr, *args, **kwargs
             )
         )
         return _RemoteObjectWrapper(ref, self._loop)
 
     @implements(Context.get_remote_object)
-    def get_remote_object(self, name: str):
-        ref = self._call(self._session_api.get_remote_object(self.session_id, name))
+    def get_remote_object(self, name: str, remote_addr: str = None):
+        ref = self._call(
+            self._session_api.get_remote_object(self.session_id, name, remote_addr)
+        )
         return _RemoteObjectWrapper(ref, self._loop)
 
     @implements(Context.destroy_remote_object)
-    def destroy_remote_object(self, name: str):
+    def destroy_remote_object(self, name: str, remote_addr: str = None):
         return self._call(
-            self._session_api.destroy_remote_object(self.session_id, name)
+            self._session_api.destroy_remote_object(self.session_id, name, remote_addr)
         )
 
     @implements(Context.register_custom_log_path)

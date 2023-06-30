@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import hashlib
+import random
 import re
 import uuid
 from functools import partial
@@ -308,13 +309,14 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
 
     func = AnyField("func")
     union_find_name = StringField("union_find_name")
+    worker_addr = StringField("worker_addr")
 
     @classmethod
     def execute_uf(cls, ctx: Union[dict, Context], op: "DataFrameDedup"):
         uf = UnionFind()
         clusters = ctx[op.inputs[0].key]
         out = op.outputs[0]
-        union_find = ctx.get_remote_object(op.union_find_name)
+        union_find = ctx.get_remote_object(op.union_find_name, op.worker_addr)
 
         for cluster in clusters:
             if len(cluster) <= 1:
@@ -333,7 +335,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         else:
             input_data = ctx[op.inputs[0].key]
             out = op.outputs[0]
-            union_find = ctx.get_remote_object(op.union_find_name)
+            union_find = ctx.get_remote_object(op.union_find_name, op.worker_addr)
             uf = union_find.get_self()
             ctx[out.key] = input_data[input_data["id"].map(lambda x: uf.find(x) == x)]
 
@@ -343,8 +345,9 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         out_df = op.outputs[0]
 
         ctx = get_context()
+        op.worker_addr = random.choice(ctx.get_worker_addresses())
         union_find_name = str(uuid.uuid4())
-        ctx.create_remote_object(union_find_name, UnionFind)
+        ctx.create_remote_object(union_find_name, UnionFind, remote_addr=op.worker_addr)
 
         embedded = in_df.apply(
             op.func,
@@ -402,7 +405,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             )
 
         yield dedup_chunks
-        ctx.destroy_remote_object(union_find_name)
+        ctx.destroy_remote_object(union_find_name, op.worker_addr)
 
         new_nsplits = tuple(chunk.shape[0] for chunk in dedup_chunks), (
             dedup_chunks[0].shape[1],

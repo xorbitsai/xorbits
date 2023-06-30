@@ -218,21 +218,27 @@ class SessionActor(mo.Actor):
             return None
         return await self._task_api.get_last_idle_time()
 
-    async def create_remote_object(self, name: str, object_cls, *args, **kwargs):
+    async def create_remote_object(
+        self, name: str, object_cls, remote_addr: str = None, *args, **kwargs
+    ):
         return await mo.create_actor(
             RemoteObjectActor,
             object_cls,
             args,
             kwargs,
-            address=self.address,
+            address=remote_addr or self.address,
             uid=to_binary(name),
         )
 
-    async def get_remote_object(self, name: str):
-        return await mo.actor_ref(mo.ActorRef(self.address, to_binary(name)))
+    async def get_remote_object(self, name: str, remote_addr: str = None):
+        return await mo.actor_ref(
+            mo.ActorRef(remote_addr or self.address, to_binary(name))
+        )
 
-    async def destroy_remote_object(self, name: str):
-        return await mo.destroy_actor(mo.ActorRef(self.address, to_binary(name)))
+    async def destroy_remote_object(self, name: str, remote_addr: str = None):
+        return await mo.destroy_actor(
+            mo.ActorRef(remote_addr or self.address, to_binary(name))
+        )
 
 
 class RemoteObjectActor(mo.Actor):
