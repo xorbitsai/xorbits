@@ -25,6 +25,14 @@ except ImportError:  # pragma: no cover
 
 from ..core.utils.fallback import unimplemented_func
 from . import accessors, core, groupby, plotting, window
+from ._config import (
+    describe_option,
+    get_option,
+    option_context,
+    reset_option,
+    set_eng_float_format,
+    set_option,
+)
 from .core import DataFrame, Index, Series
 
 
