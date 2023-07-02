@@ -37,7 +37,7 @@ msgid ""
 "for stylistic errors. Good style is a requirement for submitting code to "
 "Xorbits."
 msgstr ""
-"写好代码不仅仅是关于你写的内容，也与你如何写有关。"
+"写好代码不仅仅是关于你写的内容，也与你 *如何* 写有关。"
 "在 :ref:`持续集成 <contributing.ci>` 测试期间，我们将运行几个工具来检查你的代码样式错误。"
 "好的代码风格是提交代码给 Xorbits 的要求。"
 
@@ -160,7 +160,7 @@ msgid ""
 "that an ``ImportError`` is raised when the optional dependency is not "
 "found. This test should be skipped if the library is present."
 msgstr ""
-"所有使用可选依赖关系的方法都应包含一个断言测试，"
+"所有使用可选依赖关系的方法都应包含一个声明测试，"
 "如果未找到可选依赖关系则应引发 ``ImportError`` 错误。"
 "如果已安装该库，则应跳过此测试。"
 
@@ -202,7 +202,7 @@ msgstr ""
 
 #: ../../source/development/contributing_codebase.rst:99
 msgid "Update all of Xorbits existing tests and code to use the new argument"
-msgstr "更新Xorbit现有的所有测试和代码，使用新参数"
+msgstr "使用新方法更新Xorbit现有的所有测试和代码"
 
 #: ../../source/development/contributing_codebase.rst:104
 msgid "Type hints"
@@ -214,8 +214,8 @@ msgid ""
 "development should contain type hints and pull requests to annotate "
 "existing code are accepted as well!"
 msgstr ""
-"Xorbits非常鼓励使用:pep:`484` 格式的类型提示。新的"
-"开发应该包含类型提示，同时我们也接受请求来为现有代码添加注释！"
+"Xorbits非常鼓励使用 :pep:`484` 格式的类型提示。新的"
+"开发应该包含类型提示，同时我们也接受来为现有代码添加注释的请求！"
 
 #: ../../source/development/contributing_codebase.rst:109
 msgid "Style guidelines"
@@ -429,12 +429,12 @@ msgid ""
 "instead of writing test classes, we will write test functions like this:"
 msgstr ""
 "我们更喜欢使用 `pytest <https://docs.pytest.org/en/latest/>`__ 框架，"
-"它提供了更丰富的测试框架，将有助于测试和开发，采用更 *functional* 式的风格。因此，"
+"它提供了更丰富的测试框架，将有助于测试和开发，采用更 *函数式* 式的风格。因此，"
 "我们将编写测试函数，而不是编写测试类，例如下面的代码："
 
 #: ../../source/development/contributing_codebase.rst:255
 msgid "Preferred ``pytest`` idioms"
-msgstr "首选的 ``pytest`` 编码风格"
+msgstr "首选 ``pytest`` 编码风格"
 
 #: ../../source/development/contributing_codebase.rst:257
 msgid ""
@@ -446,7 +446,7 @@ msgstr ""
 
 #: ../../source/development/contributing_codebase.rst:258
 msgid "Use a bare ``assert`` for testing scalars and truth-testing"
-msgstr "对标量和真值测试使用裸露的 ``assert`` "
+msgstr "对标量和真值测试仅需要使用 ``assert`` "
 
 #: ../../source/development/contributing_codebase.rst:259
 msgid ""
@@ -480,7 +480,7 @@ msgid ""
 "<https://docs.pytest.org/en/latest/reference/reference.html?#pytest.mark.skip>`__"
 " when a test case is never expected to pass."
 msgstr ""
-"当测试用例预计永远无法通过时，"
+"当测试用例预计无法通过时，"
 "使用 `pytest.mark.skip <https://docs.pytest.org/en/latest/reference/reference.html?#pytest.mark.skip>`__ "
 
 #: ../../source/development/contributing_codebase.rst:263
@@ -520,7 +520,7 @@ msgid ""
 " the failing test has flaky behavior, use the argument ``strict=False``. "
 "This will make it so pytest does not fail if the test happens to pass."
 msgstr ""
-"如果已知某个测试会失败，但是它失败的方式无意被捕捉，可以使用 "
+"如果已知某个测试会失败，但是它失败的原因并不符合预期，可以使用 "
 " ``pytest.mark.xfail`` 。通常,这种方法用于测试显示出错误行为或未实现的特"
 "性。如果失败的测试有不稳定的行为，请使用参数 ``strict=False``。这将使 "
 "pytest不会在测试恰好通过时失败。"
@@ -534,7 +534,7 @@ msgid ""
 "these, it is only possible to xfail during the testing phase. To do so, "
 "use the ``request`` fixture:"
 msgstr ""
-"为了在pytest的收集阶段中适当地标记测试，请喜欢使用装饰器 "
+"为了在pytest的收集阶段中适当地标记测试，推荐使用装饰器 "
 " ``@pytest.mark.xfail`` 和参数 ``pytest.param`` ，而不是在测试中使用它们。对"
 "于涉及多个参数， fixture或这些组合的测试，只有在测试阶段才可能失败。为"
 "此，请使用 ``request``  fixture："
@@ -546,7 +546,7 @@ msgid ""
 "and error message is being raised, using ``pytest.raises`` instead."
 msgstr ""
 "xfail不适用于涉及因无效用户参数而导致失败的测试。对于这些测试，我们需"
-"要使用 ``pytest.raises`` 来验证正确的异常类型和错误消息是否被引发。"
+"要使用 ``pytest.raises`` 来验证正确的异常类型和错误消息是否被触发。"
 
 
 #: ../../source/development/contributing_codebase.rst:296
@@ -558,7 +558,7 @@ msgid ""
 "Use ``tm.assert_produces_warning`` as a context manager to check that a "
 "block of code raises a warning."
 msgstr ""
-"使用 ``tm.assert_produces_warning`` 作为上下文管理器，检查代码块是否引"
+"使用 ``tm.assert_produces_warning`` 作为上下文管理器，检查代码块是否触"
 "发了警告信息。"
 
 #: ../../source/development/contributing_codebase.rst:305
@@ -566,7 +566,7 @@ msgid ""
 "If a warning should specifically not happen in a block of code, pass "
 "``False`` into the context manager."
 msgstr ""
-"如果代码块中特别不应该出现警告信息，请将 "
+"如果代码块中出现不应该出现警告信息，请将 "
 "``False`` 传递到上下文管理器。"
 
 #: ../../source/development/contributing_codebase.rst:312
@@ -616,7 +616,7 @@ msgid ""
 msgstr ""
 " ``tm.ensure_clean`` 上下文管理器创建一个临时文件用于"
 "测试，带有自动生成的文件名(如果提供了文件名，则使用提供的文件名)。当"
-"离开上下文时，临时文件被自动删除。"
+"离开上下文时，临时文件会被自动删除。"
 
 #: ../../source/development/contributing_codebase.rst:357
 msgid "Testing involving network connectivity"
@@ -630,7 +630,7 @@ msgid ""
 "required, use the ``tm.network`` decorator."
 msgstr ""
 "强烈不建议添加连接到互联网的测试，因为网络连接的不稳定性和连"
-"接的服务器的所有权问题。如果绝对需要网络连接，请使用 ``tm.network`` 装饰器。"
+"接的服务器的所有权问题。如果一定需要网络连接，请使用 ``tm.network`` 装饰器。"
 
 #: ../../source/development/contributing_codebase.rst:369
 msgid ""
@@ -649,7 +649,7 @@ msgid ""
 "The tests can then be run directly inside your Git clone (without having "
 "to install Xorbits) by typing::"
 msgstr ""
-"你可以在你的Git clone仓库内直接运行测试（而无需"
+"你可以在你的本地 git 仓库内直接运行测试（而无需"
 "安装Xorbits），只需输入以下命令："
 
 #: ../../source/development/contributing_codebase.rst:390
@@ -764,7 +764,7 @@ msgid ""
 "Further, to let users know when this feature was added, the "
 "``versionadded`` directive is used. The sphinx syntax for that is:"
 msgstr ""
-"如果你的代码是增强功能，则很可能需要"
+"如果你的代码是功能优化，则很可能需要"
 "向现有文档添加使用示例。可以按照"
 " :ref:`documentation <contributing_documentation>` 部分进行操作。"
 "另外，为了让用户知道何时添加了此功能，可以使用"
