@@ -27,8 +27,8 @@ Scalability                   ~10TB          ~10GB           ~100GB             
 Introduction
 ------------
 
-`Dask DataFrame`_ is a large parallel dataframe composed of many smaller pandas dataframes. DaskDF is lazy, and
-operations are not immediately executed. Users build a task graph of dataframes and then initiate computation
+`Dask DataFrame`_ is a large parallel dataframe composed of many smaller pandas dataframes. DaskDF is lazily evaluated,
+and operations are not immediately executed. Users build a task graph of dataframes and then initiate computation
 by explicitly invoking the :code:`.compute()` function. 
 
 `Modin`_ is another library that claims to scale Pandas by changing a single line of code. It aims to support 
