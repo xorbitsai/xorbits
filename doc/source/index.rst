@@ -7,7 +7,7 @@
 ====
 
 Welcome to Xorbits!
-"""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""
 
 Xorbits is an open-source computing framework that makes it easy to scale data science and machine learning workloads —
 from data loading to preprocessing, tuning, training, and model serving. Xorbits can leverage multi cores or GPUs to accelerate
