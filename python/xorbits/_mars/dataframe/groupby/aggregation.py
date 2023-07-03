@@ -207,7 +207,12 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             try:
                 as_index_agg_df = groupby.op.build_mock_groupby(
                     as_index=True
-                ).aggregate(self.raw_func, **self.raw_func_kw)
+                ).aggregate(
+                    "nunique"
+                    if self.raw_func == "reduction_nunique"
+                    else self.raw_func,
+                    **self.raw_func_kw,
+                )
             except:  # noqa: E722  # nosec  # pylint: disable=bare-except
                 # handling cases like mdf.groupby("b", as_index=False).b.agg({"c": "count"})
                 if isinstance(self.groupby_params["by"], list):
