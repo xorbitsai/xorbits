@@ -15,18 +15,14 @@ Summary
 ============================= ============== =============== ===================== ============================
 Dimension                     Xorbits        Modin           DaskDF                Koalas
 ============================= ============== =============== ===================== ============================
-API Coverage                  95%            90%             55%                   57%
 Evaluation Semantics          Deferred       Eager           Lazy                  Lazy
-Partitioning Scheme           Row and column Row and column  Row-only              Row-only
-Multi-index                   Yes            Yes             No                    Yes
-Ordering Reserved             Yes            Yes             No                    No
-GPU                           Yes            None            third-party           None
+API Compatibility             High           High            Medium                Medium
+Ordering Semantics            Yes            Yes             No                    No
+Ecosystem Compatibility       High           Low             High                  Low
 Local Development             Easy           Easy            Easy                  Install Java/Scala/Spark
-Ecosystem Compatibility       Strong         Medium          Strong                Small
+GPU                           Yes            None            Third-party           None
 Scalability                   ~10TB          ~10GB           ~100GB                ~10TB
 ============================= ============== =============== ===================== ============================
-
-
 
 Introduction
 ------------
@@ -42,7 +38,6 @@ independent of specific computation frameworks does offer flexibility, it can co
 performance. For example, complex tasks (e.g. join) generally require the adaptation of execution frameworks
 for scheduling and resource management. Framework-agnostic approach may be difficult to achieve the best performance. 
 
-
 `Pandas API on Spark`_ (Koalas) delivers the pandas API on Spark. 
 Similar to DaskDF, Koalas also utilizes lazy computation, only commencing computation when the user demands
 the results. Since Koalas is based on Spark, a mature distributed computing system, it is able to deal with
@@ -50,32 +45,11 @@ large datasets. In the "Performance Comparison" section, we evaluate the perform
 large datasets (100GB~1TB). Xorbits demonstrates comparable scalability to Koalas while additionally offering
 a higher API coverage.
 
-Xorbits DataFrame's goal is not to be a pandas-like API but to become a drop-in replacement for pandas. 
-For example, Xorbits offers extensive support (95%) for the pandas API while preserving essential semantics
-such as execution and ordering. In the following sections, we will carefully compare the differences in terms of
-semantics and user experience with DaskDF, Koalas, and Modin.
-
-
-API Coverage
-------------
-
-Since Xorbits aims to be a drop-in replacement for pandas, it supports all of the above pandas API functions,
-as well as others, **covering more than 95% of the pandas API**. But if one API is not yet supported, it still
-functions by falling back to running vanilla pandas. In other words, scripts and notebooks written in pandas
-can be switched to Xorbits by merely changing the import statement. Similar to Xorbits, Modin aims to serve
-as a replacement for pandas, achieving an API coverage level that matches that of Xorbits.
-
-**DaskDF and Koalas only implement about 55% of the pandas API.** They avoid certain APIs that would stray from
-the row-wise partitioning approach or that would be inefficient with the row-wise parallelization. For instance,
-DaskDF does not implement :code:`iloc`, :code:`MultiIndex`, :code:`apply(axis=0)`, :code:`quantile` (only 
-approximate quantile is available), :code:`median`, among others. Similarly, Koalas does not implement
-:code:`apply(axis=0)` (it only applies the function per row partition, yielding a different result),
-:code:`quantile`, :code:`median` (only approximate quantile/median is available), :code:`MultiIndex`, 
-:code:`combine`, :code:`compare`, and more.
-
+In the following sections, we will carefully compare the differences in terms of semantics and user experience
+with DaskDF, Koalas, and Modin.
 
 Evaluation Semantics
--------------------
+--------------------
 
 **DaskDF and Koalas employ lazy evaluation**, which delays the computation until users explicitly request the results.
 Particularly, DaskDF's API requires users to explicitly invoke .compute() to materialize the computation result.
@@ -96,23 +70,33 @@ Xorbits will defer the execution of the non-critical portions so it can perform 
 See our `blogpost <https://xorbits.io/blogs/interactive-analysis-opt>`__ for more details.
 
 
-Partitioning Schemes
---------------------
+API Compatibility
+-----------------
 
 All those libraries mentioned above achieve parallelism by dividing a large dataframe into smaller partitions that
-can be processed simultaneously. Consequently, the partitioning scheme chosen by the system determines the pandas functions
+can be processed simultaneously. Consequently, the partitioning scheme chosen by the system determines the pandas API functions
 that can or cannot be supported.
 
 **DaskDF and Koalas only support row-oriented partitioning and parallelism.** This method is similar to relational databases.
 Conceptually, the dataframe is divided into horizontal partitions along rows, and each partition is processed independently
 if possible. When DaskDF or Koalas need to perform column-parallel operations that are to be done independently on columns
 (e.g., dropping columns with null values via :code:`dropna` on the column axis), they either perform very poorly with no
-parallelism or do not support that operation.
+parallelism or do not support that operation. For instance, DaskDF does not implement :code:`iloc`, :code:`MultiIndex`,
+:code:`apply(axis=0)`, :code:`quantile` (only approximate quantile is available), :code:`median`, among others.
+Similarly, Koalas does not implement :code:`apply(axis=0)` (it only applies the function per row partition,
+yielding a different result), :code:`quantile`, :code:`median` (only approximate quantile/median is available),
+:code:`MultiIndex`, :code:`combine`, :code:`compare`, and more.
 
 On the other hand, **Xorbits supports both row and column-oriented partitioning and parallelism**. In other words, the dataframe
 can be conceptually divided into groups of rows or groups of columns. Then Xorbits can transparently reshape the partitioning
 as required for the corresponding operation, depending on whether the operation is row-parallel or column-parallel. This allows
-Xorbits to support more of the pandas API (e.g., :code:`transpose`, :code:`median`, :code:`quantile`) and do so efficiently.
+Xorbits to support more of the pandas API (e.g., :code:`transpose`, :code:`median`, :code:`quantile`) and do so efficiently. 
+**Modin use the same partitioning scheme as Xorbits, and hence**, it also supports as many API functions as Xorbits.
+
+Additionally, Xorbits and Modin both serve as a drop-in replacement for pandas. This means if one API is not yet
+supported in Xorbits or Modin, it still functions by falling back to running vanilla pandas. If a user decides to go back
+to use pandas directly, they are not locked in using. In other words, scripts and notebooks written in pandas can be switched
+to Xorbits or Modin by merely changing the import statement.
 
 Ordering Semantics
 ------------------
@@ -134,8 +118,8 @@ Ecosystem Compatibility
 **Xorbits's DataFrame and DaskDF align with a larger ecosystem.** In addition to pandas, Xorbits also provides
 Numpy and Scikit-Learn compatible Python libraries, among others. This allows users to scale from their
 single-machine pandas workflow to a large cluster without significantly changing their code. Similarly,
-`Dask ML`_ and `Dask Array`_ align well with the Scikit-Learn and Numpy API, respectively. However, to the best of our
-knowledge, both Modin and Koalas are lack of Numpy compatible libraries.
+`Dask ML`_ and `Dask Array`_ align well with the Scikit-Learn and Numpy API, respectively. However, to the best
+of our knowledge, both Modin and Koalas are lack of Numpy compatible libraries.
 
 
 Local Development
