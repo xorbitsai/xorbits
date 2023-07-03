@@ -6,8 +6,6 @@ Why is Xorbits so fast?
 Xorbits is the fastest compared to other popular frameworks according to our benchmark tests. See our
 performance comparison with other frameworks :ref:`here <xorbits_performance_comparison_index>`.
 
-
-
 Architectural Decisions
 -----------------------
 

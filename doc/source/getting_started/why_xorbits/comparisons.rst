@@ -121,7 +121,6 @@ single-machine pandas workflow to a large cluster without significantly changing
 `Dask ML`_ and `Dask Array`_ align well with the Scikit-Learn and Numpy API, respectively. However, to the best
 of our knowledge, both Modin and Koalas are lack of Numpy compatible libraries.
 
-
 Local Development
 -----------------
 
@@ -131,7 +130,6 @@ execution.** Project dependencies can be effortlessly managed with an environmen
 
 The goal of Xorbits is to bridge the gap between development and production. It empowers you to scale data science and machine
 learning workloads from your local machine to the cloud without changing a single line of code.
-
 
 GPU Support
 -----------
@@ -143,9 +141,7 @@ in parallel across multiple GPU cards.
 Dask supports GPUs through third-party libraries: The `RAPIDS`_ provide a GPU-accelerated pandas-like library,
 `cuDF`_, which interoperates well and is tested against DaskDF. Additionally, Modin and Koalas do not support GPU.
 
-
 .. _xorbits_performance_comparison_index:
-
 
 Performance Comparison
 ----------------------
@@ -187,8 +183,6 @@ TPC-H SF100: Xorbits vs Modin
 .. only:: zh_cn
 
     .. image:: https://xorbits.cn/assets/images/benchmark_modin.png
-
-
 
 .. _Pandas API on Spark: https://koalas.readthedocs.io/en/latest/
 .. _Dask DataFrame: https://docs.dask.org/en/stable/dataframe.html

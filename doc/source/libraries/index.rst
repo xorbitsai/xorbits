@@ -1,7 +1,6 @@
 Libraries
 ===================================
 
-
 .. toctree::
     :maxdepth: 2
     
@@ -9,5 +8,3 @@ Libraries
     xorbits_train/index
     xorbits_tune/index
     xorbits_inference/index
-
-

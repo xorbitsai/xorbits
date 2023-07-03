@@ -1,9 +1,7 @@
 .. _xorbits_vs_pandas:
 
-
 Why choose Xorbits Pandas over pandas?
-=========================================
-
+======================================
 
 Boosting performance and scalability with Xorbits 
 -------------------------------------------------
@@ -41,7 +39,6 @@ Overcoming memory limitations in large datasets with Xorbits
 
 Pandas uses in-memory data structures to store and manipulate data. This means that
 a dataset too large for memory will trigger an error in pandas.
-
 
 This problem is effectively addressed by Xorbits, which utilizes disk space as an 
 extension for memory, enabling you to handle datasets that are too large to be accommodated
