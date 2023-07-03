@@ -20,6 +20,7 @@ import os
 import threading
 import warnings
 from copy import deepcopy
+from functools import reduce
 from typing import Dict, Union
 
 _DEFAULT_REDIRECT_WARN = (
@@ -180,6 +181,14 @@ class Config:
             object.__setattr__(self, key, value)
             return
         setattr(self._config, key, value)
+
+    def reset_option(self, key):
+        attr_list = key.split(".")
+        setattr(
+            reduce(getattr, attr_list[:-1], self._config),
+            attr_list[-1],
+            reduce(getattr, attr_list, _default_options),
+        )
 
     def register_option(self, option, value, validator=None, serialize=False):
         splits = option.split(".")
@@ -415,6 +424,7 @@ default_options.register_option(
 
 _options_local = threading.local()
 _options_local.default_options = default_options
+_default_options = default_options.copy()
 
 
 def get_global_option():
