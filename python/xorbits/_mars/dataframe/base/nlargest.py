@@ -7,7 +7,7 @@ from ...serialization.serializables import Int64Field, ListField, StringField
 from ..core import IndexValue
 from ..merge.concat import DataFrameConcat
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import parse_index
+from ..utils import build_concatenated_rows_frame, parse_index
 
 
 class DataFrameNLargest(DataFrameOperand, DataFrameOperandMixin):
@@ -24,49 +24,8 @@ class DataFrameNLargest(DataFrameOperand, DataFrameOperandMixin):
     @classmethod
     def _tile_dataframe(cls, op: "DataFrameNLargest"):
         df = op.inputs[0]
+        df = build_concatenated_rows_frame(df)
         input_chunks = df.chunks
-        if len(df.chunks) >= 2 and df.chunks[0].index[0] == df.chunks[1].index[0]:
-            pre = 0
-            input_chunks = []
-            chunks_concat_col = []
-            for chunk in df.chunks:
-                if chunk.index[0] == pre:
-                    chunks_concat_col.append(chunk)
-                else:
-                    pre += 1
-                    op_concat = DataFrameConcat(
-                        axis=1,
-                        output_types=[OutputType.dataframe],
-                    )
-                    chunk_params = op.outputs[0].params
-                    chunk_params["index_value"] = (
-                        chunks_concat_col[0].shape[0],
-                        sum(c.shape[1] for c in chunks_concat_col),
-                    )
-                    chunk_params["index_value"] = parse_index(
-                        df.chunks[0].index_value.to_pandas()[:]
-                    )
-                    chunk_params["index"] = chunks_concat_col[0].index
-                    chunk_concat = op_concat.new_chunk(
-                        chunks_concat_col, kws=[chunk_params]
-                    )
-                    input_chunks.append(chunk_concat)
-                    chunks_concat_col = [chunk]
-            op_concat = DataFrameConcat(
-                axis=1,
-                output_types=[OutputType.dataframe],
-            )
-            chunk_params = op.outputs[0].params
-            chunk_params["index_value"] = (
-                chunks_concat_col[0].shape[0],
-                sum(c.shape[1] for c in chunks_concat_col),
-            )
-            chunk_params["index_value"] = parse_index(
-                df.chunks[0].index_value.to_pandas()[:]
-            )
-            chunk_params["index"] = chunks_concat_col[0].index
-            chunk_concat = op_concat.new_chunk(chunks_concat_col, kws=[chunk_params])
-            input_chunks.append(chunk_concat)
 
         if op.n >= input_chunks[0].shape[0]:
             out_chunks = input_chunks
