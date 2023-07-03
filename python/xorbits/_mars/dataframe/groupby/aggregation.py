@@ -103,7 +103,7 @@ _agg_functions = {
     "skew": lambda x, bias=False: x.skew(bias=bias),
     "kurt": lambda x, bias=False: x.kurt(bias=bias),
     "kurtosis": lambda x, bias=False: x.kurtosis(bias=bias),
-    "nunique": lambda x: x.nunique(),
+    "reduction_nunique": lambda x: x.reduction_nunique(),
 }
 _series_col_name = "col_name"
 
@@ -143,7 +143,9 @@ def build_mock_agg_result(
     **raw_func_kw,
 ):
     try:
-        agg_result = groupby.op.build_mock_groupby().aggregate(raw_func, **raw_func_kw)
+        agg_result = groupby.op.build_mock_groupby().aggregate(
+            "nunique" if raw_func == "reduction_nunique" else raw_func, **raw_func_kw
+        )
     except ValueError:
         if (
             groupby_params.get("as_index") or _support_get_group_without_as_index

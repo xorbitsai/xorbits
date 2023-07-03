@@ -24,7 +24,7 @@ from .custom_aggregation import (
 )
 
 
-@register_custom_groupby_agg_func("nunique")
+@register_custom_groupby_agg_func("reduction_nunique")
 class DataFrameCustomGroupByNuniqueMixin(DataFrameCustomGroupByAggMixin):
     @classmethod
     def _get_level_indexes(
