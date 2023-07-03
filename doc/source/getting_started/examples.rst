@@ -10,7 +10,7 @@ Usage Examples
 --------------
 
 - Scalable data science: `Exploratory analysis over NYC taxi dataset <https://xorbits.io/blogs/nyc-taxi-analysis>`__
-- Data and loading and preprocessing: `Preparing embedding vectors for searching similar text <https://xorbits.io/blogs/vector-search-pinecone>`__
+- Data loading and preprocessing: `Preparing embedding vectors for searching similar text <https://xorbits.io/blogs/vector-search-pinecone>`__
 
 
 Tutorials
