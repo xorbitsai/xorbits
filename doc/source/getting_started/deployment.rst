@@ -4,10 +4,9 @@
 Deploying Xorbits Clusters
 ==========================
 
-
-Xorbits enables seamless scaling of workloads from a laptop to a large cluster. Although Xorbits operates seamlessly on single
-machines simply by invoking `xorbits.init`, deploying a Xorbits cluster is a prerequisite to run Xorbits on multiple nodes. 
-See below for what you need.
+Xorbits enables seamless scaling of workloads from a laptop to a large cluster. To run Xorbits on a single machine, 
+you can simply invoke `xorbits.init`. However, if you want to run Xorbits on multiple nodes, deploying a Xorbits 
+cluster is a prerequisite. See below for what you need.
 
 ========================================= ============================================================
 Deployment                                Description
