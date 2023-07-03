@@ -318,10 +318,7 @@ def test_groupby_agg_nunique(setup, gen_data1):
         .fetch()
     )
     expected = df.groupby(["b", "c"], as_index=False, sort=False).agg("nunique")
-    pd.testing.assert_frame_equal(
-        r,
-        expected,
-    )
+    pd.testing.assert_frame_equal(r, expected)
 
     is_sort = [True, False]
     methods = ["auto", "shuffle", "tree"]
