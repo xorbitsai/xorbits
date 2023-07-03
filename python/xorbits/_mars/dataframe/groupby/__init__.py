@@ -64,7 +64,7 @@ def _install():
         setattr(
             cls,
             "nunique",
-            lambda groupby, **kw: agg(groupby, "reduction_nunique", **kw),
+            lambda groupby, **kw: agg(groupby, "nunique", **kw),
         )
 
         setattr(cls, "apply", groupby_apply)
