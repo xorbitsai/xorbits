@@ -1,7 +1,7 @@
-.. _xorbits_serve_index:
+.. _xorbits_inference_index:
 
 =============
-Xorbits Serve
+Xorbits Inference
 =============
 
 .. toctree::

@@ -5,9 +5,9 @@ Libraries
 .. toctree::
     :maxdepth: 2
     
-    xorbits_datasets/index
+    xorbits_data/index
     xorbits_train/index
     xorbits_tune/index
-    xorbits_serve/index
+    xorbits_inference/index
 
 

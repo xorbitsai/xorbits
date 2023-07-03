@@ -1,14 +1,17 @@
-.. _xorbits_datasets_index:
+.. _xorbits_data_index:
 
 
-================
-Xorbits Datasets
-================
+============
+Xorbits Data
+============
 
 
-Xorbits Datasets is a scalable data processing library for ML and DS workloads.
+Xorbits Data is a scalable data processing library for ML and DS workloads.
 
-All APIs in Xorbits Datasets library implemented or planned include:
+Xorbits Data  can leverage multi cores or GPUs to accelerate computation on a single machine,
+or scale out up to thousands of machines to support processing terabytes of data.
+
+All APIs in Xorbits Data library implemented or planned include:
 
 ======================================= =========================================================
 API                                     Implemented version or plan
@@ -17,6 +20,8 @@ API                                     Implemented version or plan
 :ref:`xorbits.numpy <numpy_api>`        v0.1.0
 :ref:`xorbits.xarray`                   Planned in the future
 ======================================= =========================================================
+
+
 
 .. toctree::
     :maxdepth: 2
