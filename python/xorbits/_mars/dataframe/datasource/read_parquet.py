@@ -306,6 +306,7 @@ class DataFrameReadParquet(
     is_partitioned = BoolField("is_partitioned")
     merge_small_files = BoolField("merge_small_files")
     merge_small_file_options = DictField("merge_small_file_options")
+    is_http_url = BoolField("is_http_url", None)
     # for chunk
     partitions = DictField("partitions", default=None)
     partition_keys = DictField("partition_keys", default=None)
@@ -464,8 +465,32 @@ class DataFrameReadParquet(
         )
 
     @classmethod
+    def _tile_http_url(cls, op: "DataFrameReadParquet"):
+        out_chunks = []
+        out_df = op.outputs[0]
+        for i, url in enumerate(op.path):
+            chunk_op = op.copy().reset_key()
+            chunk_op.path = url
+            out_chunks.append(
+                chunk_op.new_chunk(None, index=(i, 0), shape=(np.nan, np.nan))
+            )
+        new_op = op.copy()
+        nsplits = ((np.nan,) * len(out_chunks), (np.nan,))
+        return new_op.new_dataframes(
+            None,
+            out_df.shape,
+            dtypes=out_df.dtypes,
+            index_value=out_df.index_value,
+            columns_value=out_df.columns_value,
+            chunks=out_chunks,
+            nsplits=nsplits,
+        )
+
+    @classmethod
     def _tile(cls, op: "DataFrameReadParquet"):
-        if op.is_partitioned:
+        if op.is_http_url:
+            tiled = cls._tile_http_url(op)
+        elif op.is_partitioned:
             tiled = cls._tile_partitioned(op)
         else:
             tiled = cls._tile_no_partitioned(op)
@@ -495,6 +520,14 @@ class DataFrameReadParquet(
         out = op.outputs[0]
         path = op.path
 
+        if op.is_http_url:
+            ctx[out.key] = pd.read_parquet(
+                op.path,
+                columns=op.columns,
+                engine=op.engine,
+                **op.read_kwargs or dict(),
+            )
+            return
         if op.partitions is not None:
             return cls._execute_partitioned(ctx, op)
 
@@ -573,6 +606,8 @@ class DataFrameReadParquet(
 
     @classmethod
     def estimate_size(cls, ctx, op: "DataFrameReadParquet"):
+        if op.is_http_url:
+            return super().estimate_size(ctx, op)
         first_chunk_row_num = op.first_chunk_row_num
         first_chunk_raw_bytes = op.first_chunk_raw_bytes
         raw_bytes = file_size(op.path, storage_options=op.storage_options)
@@ -612,7 +647,10 @@ class DataFrameReadParquet(
 
     def __call__(self, index_value=None, columns_value=None, dtypes=None):
         self._output_types = [OutputType.dataframe]
-        shape = (np.nan, len(dtypes))
+        if dtypes is not None:
+            shape = (np.nan, len(dtypes))
+        else:
+            shape = (np.nan, np.nan)
         return self.new_dataframe(
             None,
             shape,
@@ -686,8 +724,29 @@ def read_parquet(
     engine = get_engine(engine_type)
 
     single_path = path[0] if isinstance(path, list) else path
-    fs = get_fs(single_path, storage_options)
     is_partitioned = False
+    if isinstance(single_path, str) and (
+        single_path.startswith("http://") or single_path.startswith("https://")
+    ):
+        urls = path if isinstance(path, (list, tuple)) else [path]
+        op = DataFrameReadParquet(
+            path=urls,
+            engine=engine_type,
+            columns=columns,
+            groups_as_chunks=groups_as_chunks,
+            use_arrow_dtype=use_arrow_dtype,
+            read_kwargs=kwargs,
+            incremental_index=incremental_index,
+            storage_options=storage_options,
+            memory_scale=memory_scale,
+            merge_small_files=merge_small_files,
+            merge_small_file_options=merge_small_file_options,
+            is_http_url=True,
+            gpu=gpu,
+        )
+        return op()
+
+    fs = get_fs(single_path, storage_options)
     if use_arrow_dtype is None:
         use_arrow_dtype = options.dataframe.use_arrow_dtype
     if use_arrow_dtype and engine_type != "pyarrow":
