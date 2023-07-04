@@ -2859,8 +2859,15 @@ def test_index_str_method(setup):
     )
 
 
-@pytest.mark.parametrize("chunked,axis", [(True, 0), (True, 1), (False, 0), (False, 1)])
-def test_nunique(setup, chunked, axis):
+def _generate_params_for_nunique():
+    for method in ("tree", "shuffle"):
+        for chunked in (True, False):
+            for axis in (0, 1):
+                yield method, chunked, axis
+
+
+@pytest.mark.parametrize("method,chunked,axis", _generate_params_for_nunique())
+def test_nunique(setup, method, chunked, axis):
     chunk_size = 2 if chunked else None
     # test axis option string
     if chunked is False:
@@ -2876,22 +2883,22 @@ def test_nunique(setup, chunked, axis):
 
     mdf = from_pandas_df(df, chunk_size=chunk_size)
     pd.testing.assert_series_equal(
-        df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+        df.nunique(axis=axis), mdf.nunique(axis=axis, method=method).execute().fetch()
     )
 
     m_series = from_pandas_series(series, chunk_size=chunk_size)
-    assert series.nunique() == m_series.nunique().execute().fetch()
+    assert series.nunique() == m_series.nunique(method=method).execute().fetch()
 
     # test empty df and series
     df = pd.DataFrame()
     mdf = from_pandas_df(df)
     pd.testing.assert_series_equal(
-        df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+        df.nunique(axis=axis), mdf.nunique(axis=axis, method=method).execute().fetch()
     )
 
     series = pd.Series()
     m_series = from_pandas_series(series)
-    assert series.nunique() == m_series.nunique().execute().fetch()
+    assert series.nunique() == m_series.nunique(method=method).execute().fetch()
 
     # test bigger df and series
     rs = np.random.RandomState(0)
@@ -2900,12 +2907,12 @@ def test_nunique(setup, chunked, axis):
     )
     mdf = from_pandas_df(raw1, chunk_size=chunk_size)
     pd.testing.assert_series_equal(
-        raw1.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+        raw1.nunique(axis=axis), mdf.nunique(axis=axis, method=method).execute().fetch()
     )
 
     raw2 = pd.Series(rs.random(100))
     m_series = from_pandas_series(raw2, chunk_size=chunk_size)
-    assert raw2.nunique() == m_series.nunique().execute().fetch()
+    assert raw2.nunique() == m_series.nunique(method=method).execute().fetch()
 
     # test dropna option
     df = pd.DataFrame({"A": [4, 5, pd.NA], "B": [4, 1, 1]})
@@ -2915,13 +2922,13 @@ def test_nunique(setup, chunked, axis):
         mdf = from_pandas_df(df, chunk_size=chunk_size)
         pd.testing.assert_series_equal(
             df.nunique(axis=axis, dropna=dropna),
-            mdf.nunique(axis=axis, dropna=dropna).execute().fetch(),
+            mdf.nunique(axis=axis, dropna=dropna, method=method).execute().fetch(),
         )
 
         m_series = from_pandas_series(series, chunk_size=chunk_size)
         assert (
             series.nunique(dropna=dropna)
-            == m_series.nunique(dropna=dropna).execute().fetch()
+            == m_series.nunique(dropna=dropna, method=method).execute().fetch()
         )
 
     # test multi index
@@ -2931,12 +2938,13 @@ def test_nunique(setup, chunked, axis):
     ]
     raw_series = pd.Series(np.random.randn(8), index=arrays)
     m_series = from_pandas_series(raw_series, chunk_size=chunk_size)
-    assert raw_series.nunique() == m_series.nunique().execute().fetch()
+    assert raw_series.nunique() == m_series.nunique(method=method).execute().fetch()
 
     raw_df = pd.DataFrame(np.random.randn(8, 4), index=arrays)
     mdf = from_pandas_df(raw_df)
     pd.testing.assert_series_equal(
-        raw_df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+        raw_df.nunique(axis=axis),
+        mdf.nunique(axis=axis, method=method).execute().fetch(),
     )
 
     # test multi level columns
@@ -2945,5 +2953,6 @@ def test_nunique(setup, chunked, axis):
     raw_df = pd.DataFrame(np.random.randn(3, 8), index=["A", "B", "C"], columns=index)
     mdf = from_pandas_df(raw_df)
     pd.testing.assert_series_equal(
-        raw_df.nunique(axis=axis), mdf.nunique(axis=axis).execute().fetch()
+        raw_df.nunique(axis=axis),
+        mdf.nunique(axis=axis, method=method).execute().fetch(),
     )

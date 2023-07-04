@@ -14,16 +14,22 @@
 # limitations under the License.
 
 from collections import defaultdict
-from typing import Union
+from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
 
-from ... import opcodes
+from ... import opcodes, options
 from ...core import OutputType
 from ...core.context import Context
 from ...core.operand import MapReduceOperand, OperandStage
-from ...serialization.serializables import BoolField, Int8Field, Int32Field
+from ...serialization.serializables import (
+    BoolField,
+    Int8Field,
+    Int32Field,
+    Int64Field,
+    StringField,
+)
 from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
 from ..utils import hash_dataframe_on, parse_index
 
@@ -34,6 +40,9 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
     axis = Int8Field("axis")
     dropna = BoolField("dropna")
     shuffle_size = Int32Field("shuffle_size")
+    combine_size = Int64Field("combine_size")
+    method = StringField("method")
+    execution_stage = StringField("execution_stage", default=None)
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -62,6 +71,80 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
             )
         else:
             return self.new_scalar([df], dtype=np.dtype(np.int64))
+
+    @classmethod
+    def _tile_tree(cls, op: "DataFrameNunique"):
+        in_df = op.inputs[0]
+        output_type = OutputType.dataframe if in_df.ndim == 2 else OutputType.series
+        shape = (np.nan, np.nan) if in_df.ndim == 2 else (np.nan,)
+        index = (0, 0) if in_df.ndim == 2 else (0,)
+
+        chunks = []
+        for c in in_df.chunks:
+            _new_op = op.copy().reset_key()
+            _new_op.execution_stage = "pre"
+            _new_op.output_types = [output_type]
+            chunks.append(
+                _new_op.new_chunk(
+                    inputs=[c],
+                    shape=shape,
+                    index=c.index,
+                )
+            )
+
+        combine_size = op.combine_size
+        while len(chunks) > combine_size:
+            new_chunks = []
+            for i in range(0, len(chunks), combine_size):
+                chks = chunks[i : i + combine_size]
+                if len(chks) == 1:
+                    chk = chks[0]
+                else:
+                    union_op = op.copy().reset_key()
+                    union_op.output_types = [output_type]
+                    union_op.execution_stage = "agg"
+                    for j, c in enumerate(chks):
+                        c._index = (j, 0)
+                    chk = union_op.new_chunk(chks, shape=shape, index=index)
+                new_chunks.append(chk)
+            chunks = new_chunks
+
+        if len(chunks) > 1:
+            union_op = op.copy().reset_key()
+            union_op.output_types = [output_type]
+            union_op.execution_stage = "agg"
+            agg_chunk = union_op.new_chunk(chunks, shape=shape, index=index)
+        else:
+            agg_chunk = chunks[0]
+
+        result_chunks = []
+        new_op = op.copy().reset_key()
+        new_op.execution_stage = "post"
+        if in_df.ndim == 2:
+            shape = (np.nan,)
+            index_value = (
+                parse_index(in_df.columns) if op.axis == 0 else parse_index(in_df.index)
+            )
+            params = dict(
+                shape=shape,
+                index=(0,),
+                dtype=np.dtype(np.int64),
+                index_value=index_value,
+            )
+            result_chunks.append(new_op.new_chunk([agg_chunk], **params))
+
+            _new_op = op.copy()
+            params = op.outputs[0].params.copy()
+            params["nsplits"] = ((np.nan,) * len(result_chunks),)
+            params["chunks"] = result_chunks
+            return _new_op.new_seriess(op.inputs, **params)
+        else:
+            dtype = np.dtype(np.int64)
+            params = dict(index=(0,), dtype=dtype, shape=())
+            result_chunks.append(new_op.new_chunk([agg_chunk], **params))
+
+            _new_op = op.copy()
+            return _new_op.new_scalars(op.inputs, chunks=result_chunks, dtype=dtype)
 
     @classmethod
     def _tile_one_chunk_df(cls, op: "DataFrameNunique"):
@@ -229,6 +312,8 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
         in_df = op.inputs[0]
         if len(in_df.chunks) == 1:
             return cls.tile_one_chunk(op)
+        if op.method == "tree":
+            return cls._tile_tree(op)
         if in_df.ndim == 1:
             return cls._tile_series_shuffle(op)
         else:
@@ -339,23 +424,131 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                 ctx[chunk.key] = pd.DataFrame()
 
     @classmethod
-    def execute(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
-        if op.stage == OperandStage.map:
-            cls.execute_map(ctx, op)
-        elif op.stage == OperandStage.reduce:
-            cls.execute_reduce(ctx, op)
-        elif op.stage == OperandStage.combine:
-            cls.execute_combine(ctx, op)
+    def _drop_duplicates_by_column(cls, df: "pd.DataFrame") -> "pd.DataFrame":
+        data = []
+        for col, col_data in df.items():
+            data.append(col_data.drop_duplicates().tolist())
+        res = pd.DataFrame([data])
+        res.columns = df.columns
+        return res
+
+    @classmethod
+    def _drop_duplicates_by_row(cls, df: "pd.DataFrame") -> "pd.DataFrame":
+        empty = pd.DataFrame(columns=[0])
+        for i, row in df.iterrows():
+            data = row.drop_duplicates().tolist()
+            empty.loc[i] = [data]
+        return empty
+
+    @classmethod
+    def _concat_dfs_by_columns(cls, inputs: List["pd.DataFrame"]) -> "pd.DataFrame":
+        col_to_series = {}
+        for df in inputs:
+            for col, col_data in df.items():
+                if col not in col_to_series:
+                    col_to_series[col] = col_data
+                else:
+                    col_to_series[col] = col_to_series[col] + col_data
+        return pd.DataFrame(col_to_series)
+
+    @classmethod
+    def _concat_dfs_by_rows(cls, inputs: List["pd.DataFrame"]) -> "pd.DataFrame":
+        index_to_series = {}
+        for df in inputs:
+            for i, row in df.iterrows():
+                if i not in index_to_series:
+                    index_to_series[i] = row
+                else:
+                    index_to_series[i] = index_to_series[i] + row
+        return pd.DataFrame(index_to_series).T
+
+    @classmethod
+    def execute_pre(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
+        input = ctx[op.inputs[0].key]
+        chunk = op.outputs[0]
+        if input.ndim == 1:
+            ctx[chunk.key] = input.drop_duplicates()
         else:
-            chunk = op.outputs[0]
-            df = ctx[op.inputs[0].key]
-            if df.ndim == 2:
-                ctx[chunk.key] = df.nunique(axis=op.axis, dropna=op.dropna)
+            if op.axis == 0:
+                ctx[chunk.key] = cls._drop_duplicates_by_column(input)
             else:
-                ctx[chunk.key] = df.nunique(dropna=op.dropna)
+                ctx[chunk.key] = cls._drop_duplicates_by_row(input)
+
+    @classmethod
+    def execute_agg(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
+        inputs = [ctx[inp.key] for inp in op.inputs]
+        if op.axis is None:
+            data = pd.concat(inputs, axis=0)
+            ctx[op.outputs[0].key] = data.drop_duplicates()
+        else:
+            if op.axis == 0:
+                data = cls._concat_dfs_by_columns(inputs)
+                res = []
+                for col, col_data in data.items():
+                    res.append(col_data.explode().drop_duplicates().tolist())
+                res_df = pd.DataFrame([res])
+                res_df.columns = data.columns
+                ctx[op.outputs[0].key] = res_df
+            else:
+                data = cls._concat_dfs_by_rows(inputs)
+                empty = pd.DataFrame(columns=[0])
+                for i, row in data.iterrows():
+                    empty.loc[i] = [row.explode().drop_duplicates().tolist()]
+                ctx[op.outputs[0].key] = empty
+
+    @classmethod
+    def execute_post(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
+        input = ctx[op.inputs[0].key]
+        if input.ndim == 1:
+            ctx[op.outputs[0].key] = input.nunique(dropna=op.dropna)
+        else:
+            if op.axis == 0:
+                res = []
+                for col, col_data in input.items():
+                    res.append(col_data.explode().nunique(dropna=op.dropna))
+                res = pd.Series(res)
+                res.index = input.columns
+                ctx[op.outputs[0].key] = res
+            else:
+                res = []
+                for i, row in input.iterrows():
+                    res.append(row.explode().nunique(dropna=op.dropna))
+                res = pd.Series(res)
+                res.index = input.index
+                ctx[op.outputs[0].key] = res
+
+    @classmethod
+    def execute(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
+        if op.execution_stage is not None:
+            if op.execution_stage == "pre":
+                cls.execute_pre(ctx, op)
+            elif op.execution_stage == "agg":
+                cls.execute_agg(ctx, op)
+            else:
+                cls.execute_post(ctx, op)
+        else:
+            if op.stage == OperandStage.map:
+                cls.execute_map(ctx, op)
+            elif op.stage == OperandStage.reduce:
+                cls.execute_reduce(ctx, op)
+            elif op.stage == OperandStage.combine:
+                cls.execute_combine(ctx, op)
+            else:
+                chunk = op.outputs[0]
+                df = ctx[op.inputs[0].key]
+                if df.ndim == 2:
+                    ctx[chunk.key] = df.nunique(axis=op.axis, dropna=op.dropna)
+                else:
+                    ctx[chunk.key] = df.nunique(dropna=op.dropna)
 
 
-def nunique_dataframe(df, axis=0, dropna=True):
+def nunique_dataframe(
+    df,
+    axis: Union[int, str] = 0,
+    dropna: bool = True,
+    method: str = "shuffle",
+    combine_size: Optional[int] = None,
+):
     """
     Count distinct observations over requested axis.
 
@@ -369,6 +562,10 @@ def nunique_dataframe(df, axis=0, dropna=True):
         column-wise.
     dropna : bool, default True
         Don't include NaN in the counts.
+    method : str, default 'shuffle'
+        execute via tree or shuffle way.
+    combine_size : int, default None
+        combine chunk sizes when executing via tree way.
 
     Returns
     -------
@@ -396,16 +593,28 @@ def nunique_dataframe(df, axis=0, dropna=True):
     """
     if not (axis in (0, "index", 1, "columns")):
         raise ValueError(f"No axis named {axis} for object type DataFrame")
+    if method not in ("tree", "shuffle"):
+        raise ValueError(f"the method input `{method}` is not allowed.")
     if axis == "index":
         axis = 0
     elif axis == "columns":
         axis = 1
 
-    op = DataFrameNunique(axis=axis, dropna=dropna)
+    if combine_size is None:
+        combine_size = options.combine_size
+
+    op = DataFrameNunique(
+        axis=axis, dropna=dropna, method=method, combine_size=combine_size
+    )
     return op(df)
 
 
-def nunique_series(series, dropna=True):
+def nunique_series(
+    series,
+    dropna: bool = True,
+    method: str = "shuffle",
+    combine_size: Optional[int] = None,
+):
     """
     Return number of unique elements in the object.
 
@@ -415,6 +624,10 @@ def nunique_series(series, dropna=True):
     ----------
     dropna : bool, default True
         Don't include NaN in the count.
+    method : str, default 'shuffle'
+        execute via tree or shuffle way.
+    combine_size : int, default None
+        combine chunk sizes when executing via tree way.
 
     Returns
     -------
@@ -440,5 +653,13 @@ def nunique_series(series, dropna=True):
     >>> s.nunique().execute()
     4
     """
-    op = DataFrameNunique(axis=None, dropna=dropna)
+    if method not in ("tree", "shuffle"):
+        raise ValueError(f"the method input `{method}` is not allowed.")
+
+    if combine_size is None:
+        combine_size = options.combine_size
+
+    op = DataFrameNunique(
+        axis=None, dropna=dropna, method=method, combine_size=combine_size
+    )
     return op(series)
