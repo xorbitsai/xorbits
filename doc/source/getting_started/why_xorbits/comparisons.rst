@@ -5,7 +5,7 @@ Xorbits Pandas vs. DaskDF vs. Modin vs. Koalas
 
 Libraries such as `Dask DataFrame`_ (short for DaskDF), `Pandas API on Spark`_ (short for Koalas), 
 and `Modin`_ aim to support the pandas API on top of distributed computing frameworks. Externally,
-these libraries mimic the pandas API. But the aims of these libraries are fundamentally different. 
+these libraries are pandas-like API, but they appear quite differently in terms of design and implementation.
 In this article, we will compare Xorbits DataFrame (:code:`xorbits.pandas`) with these libraries
 to help you decide which one is right for your needs.
 
