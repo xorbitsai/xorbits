@@ -66,9 +66,8 @@ pip install xorbits
 ```
 
 ## Other resources
-
 * [Documentation](https://doc.xorbits.io)
-* [Examples and Tutorials](https://doc.xorbits.io/en/latest/examples.html)
+* [Examples and Tutorials](https://doc.xorbits.io/en/latest/getting_started/examples.html)
 * [Performance Benchmarks](https://xorbits.io/benchmark)
 * [Development Guide](https://doc.xorbits.io/en/latest/development/index.html)
 
