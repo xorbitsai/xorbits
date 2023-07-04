@@ -39,6 +39,11 @@ def doctest_namespace():
 
 
 @pytest.fixture
+def empty_df():
+    return pd.DataFrame()
+
+
+@pytest.fixture
 def dummy_df():
     return pd.DataFrame({"foo": (0, 1, 2), "bar": ("a", "b", "c")})
 
