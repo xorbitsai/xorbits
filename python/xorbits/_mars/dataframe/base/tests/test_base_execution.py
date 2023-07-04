@@ -2880,6 +2880,8 @@ def test_nunique(setup, method, chunked, axis):
     # test axis option error
     with pytest.raises(ValueError):
         from_pandas_df(df).nunique(axis="axis")
+        from_pandas_df(df).nunique(method="method")
+        from_pandas_series(series).nunique(method="method")
 
     mdf = from_pandas_df(df, chunk_size=chunk_size)
     pd.testing.assert_series_equal(
