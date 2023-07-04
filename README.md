@@ -39,15 +39,16 @@ To use Xorbits, you do not need to specify how to distribute the data or even kn
 You can keep using your existing notebooks and still enjoy a significant speed boost from Xorbits, even on your laptop.
 
 ### Process large datasets that pandas can't
-Xorbits can [leverage all of your computational cores](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/pandas.html). It is especially beneficial for handling [larger datasets](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/pandas.html), where pandas may slow down or run out of memory.
 
+Xorbits can [leverage all of your computational cores](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/pandas.html#boosting-performance-and-scalability-with-xorbits). 
+It is especially beneficial for handling [larger datasets](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/pandas.html#overcoming-memory-limitations-in-large-datasets-with-xorbits),
+where pandas may slow down or run out of memory.
 
 ### Lightning-fast speed
 
 According to our benchmark tests, Xorbits surpasses other popular pandas API frameworks in speed and scalability. 
-See our [performance comparison](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/index.html) and
-[explanation](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/fast.html).
-
+See our [performance comparison](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/comparisons.html#performance-comparison)
+and [explanation](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/fast.html).
 
 ### Leverage the Python ecosystem with native integrations
 
