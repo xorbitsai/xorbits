@@ -221,7 +221,7 @@ def test_len(setup, dummy_df, dummy_int_series, dummy_int_2d_array):
     assert need_to_execute(obj)
 
 
-def test_shape(setup, dummy_df, dummy_int_series, empty_df, dummy_int_2d_array):
+def test_shape(setup, dummy_df, dummy_int_series, empty_df):
     assert need_to_execute(dummy_df)
     assert need_to_execute(dummy_int_series)
     assert need_to_execute(empty_df)
