@@ -14,7 +14,7 @@
 
 Xorbits is an open-source computing framework that makes it easy to scale data science and machine learning workloads —
 from data preprocessing to tuning, training, and model serving. Xorbits can leverage multi-cores or GPUs to accelerate
-computation on a single machine or scale out up to thousands of machines to support processing terabytes of data.
+computation on a single machine or scale out up to thousands of machines to support processing terabytes of data and training or serving large models.
 
 Xorbits provides a suite of best-in-class [libraries](https://doc.xorbits.io/en/latest/libraries/index.html) for data
 scientists and machine learning practitioners. Xorbits provides the capability to scale tasks without the necessity for
