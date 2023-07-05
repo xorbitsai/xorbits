@@ -2,8 +2,8 @@
   "name": "xorbits-ui",
   "varsion": "0.1.0",
   "description": "Xorbits frontend UI",
-  "author": "Xprobe-inc",
-  "repository": "https://github.com/xprobe-inc/xorbits",
+  "author": "xorbitsai",
+  "repository": "https://github.com/xorbitsai/xorbits",
   "license": "Apache-2.0",
   "babel": {
     "presets": [

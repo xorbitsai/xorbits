@@ -10,7 +10,7 @@ you don't have to be an expert on Xorbits to do so! In fact,
 there are sections of the docs that are worse off after being written by
 experts. If something in the docs doesn't make sense to you, updating the
 relevant section after you figure it out is a great way to ensure it will help
-the next person. Please visit the `issues page <https://github.com/xprobe-inc/xorbits/issues?page=1&q=is%3Aopen+sort%3Aupdated-desc+label%3Adocumentation>`__
+the next person. Please visit the `issues page <https://github.com/xorbitsai/xorbits/issues?page=1&q=is%3Aopen+sort%3Aupdated-desc+label%3Adocumentation>`__
 for a full list of issues that are currently open regarding the
 Xorbits documentation.
 

@@ -38,7 +38,7 @@ msgstr ""
 "并不需要对 Xorbits 有特别深入的理解。事实上，某些文档不适合由资深开发者"
 "进行撰写。因此，我们鼓励所有人参与 Xorbits 的文档开发！如果文档中有什么不"
 "清楚的地方，弄清楚并更新相关内容将会帮助到下一个人。请访问 `issues 页面 <"
-"https://github.com/xprobe-inc/xorbits/issues?page=1&q=is%3Aopen+sort%"
+"https://github.com/xorbitsai/xorbits/issues?page=1&q=is%3Aopen+sort%"
 "3Aupdated-desc+label%3Adocumentation>`__ ，查看 Xorbits 文档相关 issue。"
 
 #: ../../source/development/contributing_documentation.rst:21
