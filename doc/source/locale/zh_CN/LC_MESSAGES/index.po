@@ -67,20 +67,20 @@ msgstr "如何获取？"
 #: ../../source/index.rst:36
 msgid ""
 "The source code is currently hosted on GitHub at: https://github.com"
-"/xprobe-inc/xorbits"
-msgstr "源码托管在 Github：https://github.com/xprobe-inc/xorbits"
+"/xorbitsai/xorbits"
+msgstr "源码托管在 Github：https://github.com/xorbitsai/xorbits"
 
 #: ../../source/index.rst:40
 msgid "The source code is currently hosted on:"
 msgstr "源码托管在:"
 
 #: ../../source/index.rst:42
-msgid "Github: https://github.com/xprobe-inc/xorbits"
-msgstr "Github：https://github.com/xprobe-inc/xorbits"
+msgid "Github: https://github.com/xorbitsai/xorbits"
+msgstr "Github：https://github.com/xorbitsai/xorbits"
 
 #: ../../source/index.rst:43
-msgid "Gitee: https://gitee.com/xprobe-inc/xorbits"
-msgstr "Gitee：https://gitee.com/xprobe-inc/xorbits"
+msgid "Gitee: https://gitee.com/xorbitsai/xorbits"
+msgstr "Gitee：https://gitee.com/xorbitsai/xorbits"
 
 #: ../../source/index.rst:45
 msgid ""
@@ -313,7 +313,7 @@ msgid "Asking usage questions and discussing development."
 msgstr "询问使用的问题，参与开发的讨论"
 
 #: ../../source/index.rst:165 ../../source/index.rst:179
-msgid "`Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_"
+msgid "`Github Issues <https://github.com/xorbitsai/xorbits/issues>`_"
 msgstr ""
 
 #: ../../source/index.rst:165 ../../source/index.rst:179
@@ -348,7 +348,7 @@ msgid "Staying up-to-date on new features."
 msgstr "获取最新特性的更新"
 
 #: ../../source/index.rst:181
-msgid "`Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_"
+msgid "`Gitee Issues <https://gitee.com/xorbitsai/xorbits/issues>`_"
 msgstr ""
 
 #: ../../source/index.rst:184

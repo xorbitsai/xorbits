@@ -46,7 +46,7 @@ jobs:
           unset CI
           cd asv
           asv check -E existing
-          git remote add upstream https://github.com/xprobe-inc/xorbits.git
+          git remote add upstream https://github.com/xorbitsai/xorbits.git
           git fetch upstream
           asv machine --yes
           asv continuous -f 1.1 --strict --show-stderr upstream/main HEAD

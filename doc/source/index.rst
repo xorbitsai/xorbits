@@ -46,7 +46,7 @@ Getting involved
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | `Discourse Forum <https://discuss.xorbits.io/>`_                                                 | Asking usage questions and discussing development. |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-    | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
+    | `Github Issues <https://github.com/xorbitsai/xorbits/issues>`_                                   | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | `Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg>`_  | Collaborating with other Xorbits users.            |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
@@ -60,9 +60,9 @@ Getting involved
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | **Platform**                                                                                     | **Purpose**                                        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-    | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
+    | `Github Issues <https://github.com/xorbitsai/xorbits/issues>`_                                   | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-    | `Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_                                    | Reporting bugs and filing feature requests.        |
+    | `Gitee Issues <https://gitee.com/xorbitsai/xorbits/issues>`_                                     | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 
     Visit `Xorbits community <https://xorbits.cn/community>`_ to join us on Wechat, Zhihu and so on.
