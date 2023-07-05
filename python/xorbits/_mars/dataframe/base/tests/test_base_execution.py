@@ -266,40 +266,40 @@ def test_dedup_execute(setup):
 
     # test one chunk
     df = from_pandas_df(df_raw, chunk_size=20)
-    result = df.dedup().execute().fetch()
+    result = df.dedup(col="text").execute().fetch()
     assert result.shape[0] == 11
 
     # test multi chunks
     df = from_pandas_df(df_raw, chunk_size=1)
-    result = df.dedup().execute().fetch()
+    result = df.dedup(col="text").execute().fetch()
     assert result.shape[0] == 11
 
     # test error threshold
     with pytest.raises(ValueError):
-        df.dedup(threshold="0.7").execute().fetch()
+        df.dedup(col="text", threshold="0.7").execute().fetch()
 
     with pytest.raises(ValueError):
-        df.dedup(threshold=2).execute().fetch()
+        df.dedup(col="text", threshold=2).execute().fetch()
 
     # test error num_perm
     with pytest.raises(ValueError):
-        df.dedup(num_perm=1.5).execute().fetch()
+        df.dedup(col="text", num_perm=1.5).execute().fetch()
 
     # test error min_length
     with pytest.raises(ValueError):
-        df.dedup(min_length=1.5).execute().fetch()
+        df.dedup(col="text", min_length=1.5).execute().fetch()
 
     # test error ngram
     with pytest.raises(ValueError):
-        df.dedup(ngram=1.5).execute().fetch()
+        df.dedup(col="text", ngram=1.5).execute().fetch()
 
     # test error seed
     with pytest.raises(ValueError):
-        df.dedup(seed=1.5).execute().fetch()
+        df.dedup(col="text", seed=1.5).execute().fetch()
 
     # test error text column
     with pytest.raises(ValueError):
-        df.dedup(text="non-exist").execute().fetch()
+        df.dedup(col="non-exist").execute().fetch()
 
 
 def test_describe_execution(setup):

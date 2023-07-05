@@ -16,7 +16,7 @@ import hashlib
 import re
 from functools import partial
 from itertools import tee
-from typing import Any, List, Set, Text, Tuple, Union
+from typing import List, Set, Text, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -27,9 +27,9 @@ from ...core import recursive_tile
 from ...core.context import Context
 from ...core.entity import OutputType
 from ...core.operand import ObjectOperand, ObjectOperandMixin, OperandStage
-from ...serialization.serializables import AnyField, Int32Field, StringField
+from ...serialization.serializables import AnyField, StringField
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_concatenated_rows_frame, parse_index
+from ..utils import build_concatenated_rows_frame
 
 NON_ALPHA = re.compile("[^A-Za-z_0-9]")
 MAX_HASH = np.uint64((1 << 32) - 1)
@@ -82,9 +82,6 @@ class UnionFind:
                 self.parent[x] = uf.parent[x]
             else:  # pragma: no cover
                 self.union(self.find(x), uf.find(x))
-
-    def get_self(self):
-        return self
 
 
 def ngrams(sequence: List[Text], n: int, min_length: int = 5):
@@ -170,10 +167,10 @@ def embed_func(
 
     Parameters
     ----------
-    content : str
-        The content to be embedded.
-    idx : int
-        The index of the content.
+    row : pd.Series
+        The row content to be embedded.
+    text : str
+        The text column of the columns.
     num_perm : int
         The number of permutations.
     ngram_size : int
@@ -305,7 +302,6 @@ def optimal_param(
 class DataFrameUnionFind(ObjectOperand, ObjectOperandMixin):
     _output_type_ = OutputType.object
     union_find = AnyField("union_find", default=None)
-    union_find_num = Int32Field("union_find_num", default=0)
 
     @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "DataFrameUnionFind"):
@@ -325,7 +321,7 @@ class DataFrameUnionFind(ObjectOperand, ObjectOperandMixin):
         elif op.stage == OperandStage.reduce:
             out = op.outputs[0]
 
-            for i in range(op.union_find_num):
+            for i in range(len(op.inputs)):
                 op.union_find.union_uf(ctx[op.inputs[i].key])
             ctx[out.key] = op.union_find
 
@@ -354,8 +350,8 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         def gen_id_column(df):
             from xoscar._utils import new_random_id
 
-            df["__dedup_id"] = [new_random_id(2) for _ in range(len(df))]
-            # df["__dedup_id"]  = range(len(df))
+            df["__dedup_id"] = [new_random_id(32) for _ in range(len(df))]
+
             return df
 
         new_dtypes = in_df.dtypes.copy()
@@ -363,6 +359,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         in_df_with_id = in_df.map_chunk(
             gen_id_column, output_type="dataframe", dtypes=new_dtypes
         )
+
         in_df_with_id = yield from recursive_tile(in_df_with_id)
         yield in_df_with_id.chunks
 
@@ -381,11 +378,11 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         tiled_clusters = yield from recursive_tile(clusters)
 
         # union find stage
-        uf_chunks = []
+        chunks = []
         for c in tiled_clusters.chunks:
             new_op = DataFrameUnionFind(union_find=UnionFind())
             new_op.stage = OperandStage.map
-            uf_chunks.append(
+            chunks.append(
                 new_op.new_chunk(
                     [c],
                     index=c.index,
@@ -393,9 +390,9 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             )
 
         new_op = DataFrameUnionFind(union_find=UnionFind())
-        new_op.union_find_num = len(uf_chunks)
+        new_op.union_find_num = len(chunks)
         new_op.stage = OperandStage.reduce
-        union_chunk = new_op.new_chunk(uf_chunks, index=(0,))
+        union_chunk = new_op.new_chunk(chunks, index=(0,))
 
         # dedup stage
         dedup_chunks = []
@@ -426,15 +423,12 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         return new_op.new_tileables(op.inputs, **kw)
 
     def __call__(self, df: pd.DataFrame):
-        params = df.params.copy()
-        params["shape"] = (np.nan, df.shape[1])
-        params["index_value"] = parse_index(pd.RangeIndex(-1))
-        return self.new_dataframe([df], **params)
+        return self.new_dataframe([df])
 
 
 def df_dedup(
     df: pd.DataFrame,
-    text: Any = "text",
+    col: str,
     threshold: float = 0.7,
     num_perm: int = 256,
     min_length: int = 5,
@@ -452,7 +446,7 @@ def df_dedup(
 
     Parameters
     ----------
-    text : str, default 'text'
+    col : str
         The column of the DataFrame on which to calculate hash values.
 
     threshold : float, default 0.7
@@ -499,7 +493,7 @@ def df_dedup(
     ...         * 2,
     ...     }
     ... )
-    >>> res = df.dedup()
+    >>> res = df.dedup(col="text")
     >>> res.execute()
 
     """
@@ -523,8 +517,8 @@ def df_dedup(
             )
 
     # Check if the DataFrame contains the text column
-    if text not in df.dtypes.index:
-        raise ValueError(f"{text} column not found in the DataFrame")
+    if col not in df.dtypes.index:
+        raise ValueError(f"{col} column not found in the DataFrame")
 
     B, R = optimal_param(threshold, num_perm)
 
@@ -545,7 +539,7 @@ def df_dedup(
 
     func = partial(
         embed_func,
-        text=text,
+        text=col,
         num_perm=num_perm,
         hashranges=HASH_RANGES,
         ngram_size=ngram,
