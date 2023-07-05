@@ -275,7 +275,7 @@ class DataRef(metaclass=DataRefMeta):
         from .execution import run
 
         if isinstance(self.data._mars_entity, HasShapeTileable):
-            if np.nan in self.data._mars_entity.shape:
+            if np.isnan(self.data._mars_entity.shape).any():
                 run(self)
             return self.data._mars_entity.shape
         else:
