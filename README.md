@@ -3,9 +3,9 @@
 </div>
 
 [![PyPI Latest Release](https://img.shields.io/pypi/v/xorbits.svg?style=for-the-badge)](https://pypi.org/project/xorbits/)
-[![License](https://img.shields.io/pypi/l/xorbits.svg?style=for-the-badge)](https://github.com/xprobe-inc/xorbits/blob/main/LICENSE)
-[![Coverage](https://img.shields.io/codecov/c/github/xprobe-inc/xorbits?style=for-the-badge)](https://codecov.io/gh/xprobe-inc/xorbits)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/xprobe-inc/xorbits/python.yaml?branch=main&style=for-the-badge&label=GITHUB%20ACTIONS&logo=github)](https://actions-badge.atrox.dev/xprobe-inc/xorbits/goto?ref=main)
+[![License](https://img.shields.io/pypi/l/xorbits.svg?style=for-the-badge)](https://github.com/xorbitsai/xorbits/blob/main/LICENSE)
+[![Coverage](https://img.shields.io/codecov/c/github/xorbitsai/xorbits?style=for-the-badge)](https://codecov.io/gh/xorbitsai/xorbits)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/xorbitsai/xorbits/python.yaml?branch=main&style=for-the-badge&label=GITHUB%20ACTIONS&logo=github)](https://actions-badge.atrox.dev/xorbitsai/xorbits/goto?ref=main)
 [![Doc](https://readthedocs.org/projects/xorbits/badge/?version=latest&style=for-the-badge)](https://doc.xorbits.io)
 [![Slack](https://img.shields.io/badge/join_Slack-781FF5.svg?logo=slack&style=for-the-badge)](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg)
 [![Twitter](https://img.shields.io/twitter/follow/xorbitsio?logo=twitter&style=for-the-badge)](https://twitter.com/xorbitsio)
@@ -25,7 +25,7 @@ XGBoost, etc. With a simple modification of just one line of code, your pandas w
 using Xorbits:
 
 <div align="center">
-  <img width="70%" alt="" src="https://raw.githubusercontent.com/xprobe-inc/xorbits/main/doc/source/_static/pandas_vs_xorbits.gif"><br>
+  <img width="70%" alt="" src="https://raw.githubusercontent.com/xorbitsai/xorbits/main/doc/source/_static/pandas_vs_xorbits.gif"><br>
 </div>
 
 ## Why Xorbits?
@@ -55,7 +55,7 @@ and [explanation](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/f
 Xorbits aims to take full advantage of the entire ML ecosystem, offering native integration with pandas and other libraries.
 
 ## Where to get it?
-The source code is currently hosted on GitHub at: https://github.com/xprobe-inc/xorbits
+The source code is currently hosted on GitHub at: https://github.com/xorbitsai/xorbits
 
 Binary installers for the latest released version are available at the [Python
 Package Index (PyPI)](https://pypi.org/project/xorbits).
@@ -94,10 +94,10 @@ with other upcoming ones we will propose. Stay tuned!
 
 ## Getting involved
 
-| Platform                                                                                       | Purpose                                            |
-|------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| [Discourse Forum](https://discuss.xorbits.io)                                                  | Asking usage questions and discussing development. |
-| [Github Issues](https://github.com/xprobe-inc/xorbits/issues)                                  | Reporting bugs and filing feature requests.        |
-| [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg)  | Collaborating with other Xorbits users.            |
-| [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits)                            | Asking questions about how to use Xorbits.         |
-| [Twitter](https://twitter.com/xorbitsio)                                                       | Staying up-to-date on new features.                |
+| Platform                                                                                      | Purpose                                            |
+|-----------------------------------------------------------------------------------------------|----------------------------------------------------|
+| [Discourse Forum](https://discuss.xorbits.io)                                                 | Asking usage questions and discussing development. |
+| [Github Issues](https://github.com/xorbitsai/xorbits/issues)                                  | Reporting bugs and filing feature requests.        |
+| [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg) | Collaborating with other Xorbits users.            |
+| [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits)                           | Asking questions about how to use Xorbits.         |
+| [Twitter](https://twitter.com/xorbitsio)                                                      | Staying up-to-date on new features.                |

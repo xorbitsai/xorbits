@@ -5,8 +5,8 @@
 
 # -- Project information -----------------------------------------------------
 project = "Xorbits"
-copyright = "2022-2023, Xprobe Inc."
-author = "Xprobe-inc"
+copyright = "2022-2023, Xorbits Inc."
+author = "xorbitsai"
 
 from xorbits import __version__
 
@@ -56,7 +56,7 @@ if "zh_cn" not in tags.tags.keys():
     html_theme_options["icon_links"] = [
         {
             "name": "GitHub",
-            "url": "https://github.com/xprobe-inc/xorbits",
+            "url": "https://github.com/xorbitsai/xorbits",
             "icon": "fa-brands fa-github",
             "type": "fontawesome",
         },
@@ -81,13 +81,13 @@ else:
     html_theme_options["icon_links"] = [
         {
             "name": "GitHub",
-            "url": "https://github.com/xprobe-inc/xorbits",
+            "url": "https://github.com/xorbitsai/xorbits",
             "icon": "fa-brands fa-github",
             "type": "fontawesome",
         },
         {
             "name": "Gitee",
-            "url": "https://gitee.com/xprobe-inc/xorbits",
+            "url": "https://gitee.com/xorbitsai/xorbits",
             "icon": "https://gitee.com/static/images/logo-en.svg",
             "type": "url",
         },
