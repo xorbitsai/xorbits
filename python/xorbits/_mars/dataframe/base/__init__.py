@@ -40,6 +40,8 @@ from .map import index_map, series_map
 from .map_chunk import map_chunk
 from .melt import melt
 from .memory_usage import df_memory_usage, index_memory_usage, series_memory_usage
+from .nlargest import dataframe_nlargest, series_nlargest
+from .nsmallest import dataframe_nsmallest, series_nsmallest
 from .pct_change import pct_change
 from .pivot import df_pivot
 from .pivot_table import df_pivot_table
@@ -98,6 +100,8 @@ def _install():
         setattr(t, "query", df_query)
         setattr(t, "pct_change", pct_change)
         setattr(t, "transpose", transpose)
+        setattr(t, "nlargest", dataframe_nlargest)
+        setattr(t, "nsmallest", dataframe_nsmallest)
 
     for t in SERIES_TYPE:
         setattr(t, "to_gpu", to_gpu)
@@ -126,6 +130,8 @@ def _install():
         setattr(t, "is_monotonic_increasing", property(fget=is_monotonic_increasing))
         setattr(t, "is_monotonic_decreasing", property(fget=is_monotonic_decreasing))
         setattr(t, "pct_change", pct_change)
+        setattr(t, "nlargest", series_nlargest)
+        setattr(t, "nsmallest", series_nsmallest)
 
     for t in INDEX_TYPE:
         setattr(t, "map", index_map)
