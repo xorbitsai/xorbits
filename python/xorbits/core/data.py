@@ -24,6 +24,8 @@ from ..utils import safe_repr_str
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
 
+import numpy as np
+
 
 class DataType(Enum):
     object_ = 1
@@ -266,6 +268,18 @@ class DataRef(metaclass=DataRefMeta):
 
         else:
             raise TypeError(f"object of type '{self.data.data_type}' has no len()")
+
+    @property
+    def shape(self):
+        from .._mars.core import HasShapeTileable
+        from .execution import run
+
+        if isinstance(self.data._mars_entity, HasShapeTileable):
+            if np.isnan(self.data._mars_entity.shape).any():
+                run(self)
+            return self.data._mars_entity.shape
+        else:
+            raise TypeError(f"object of type '{self.data.data_type}' has no shape")
 
     @safe_repr_str
     def __str__(self):
