@@ -425,6 +425,9 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
 
             else:
                 unique_input = cls._drop_duplicates_by_row(input)
+                # df that contains list element cannot be hashed,
+                # so here we just mock a ``filters`` object,
+                # since how to split is not important in ``axis=1`` case.
                 mock_hash_series = pd.Series(range(len(unique_input)))
                 mock_hash_series.index = unique_input.index
                 idx_to_grouped = pd.RangeIndex(0, len(unique_input)).groupby(
@@ -564,6 +567,17 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                 ctx[op.outputs[0].key] = res
 
     @classmethod
+    def _gen_post_result(
+        cls, input: "pd.DataFrame", op: "DataFrameNunique"
+    ) -> "pd.Series":
+        res = []
+        for i, row in input.iterrows():
+            res.append(row.explode().nunique(dropna=op.dropna))
+        res = pd.Series(res)
+        res.index = input.index
+        return res
+
+    @classmethod
     def execute_post(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
         input = ctx[op.inputs[0].key]
         if input.ndim == 1:
@@ -577,11 +591,7 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                 res.index = input.columns
                 ctx[op.outputs[0].key] = res
             else:
-                res = []
-                for i, row in input.iterrows():
-                    res.append(row.explode().nunique(dropna=op.dropna))
-                res = pd.Series(res)
-                res.index = input.index
+                res = cls._gen_post_result(input, op)
                 ctx[op.outputs[0].key] = res
 
     @classmethod
@@ -607,11 +617,7 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                     if op.axis == 0:
                         ctx[chunk.key] = df.nunique(axis=op.axis, dropna=op.dropna)
                     else:
-                        res = []
-                        for i, row in df.iterrows():
-                            res.append(row.explode().nunique(dropna=op.dropna))
-                        res = pd.Series(res)
-                        res.index = df.index
+                        res = cls._gen_post_result(df, op)
                         ctx[chunk.key] = res
                 else:
                     ctx[chunk.key] = df.nunique(dropna=op.dropna)
