@@ -252,7 +252,6 @@ def test_dedup_execute(setup):
     words = list("abcdefghijklmnopqrstuvwxyz")
     df_raw = pd.DataFrame(
         {
-            "id": np.arange(20),
             "text": [
                 " ".join(["".join(np.random.choice(words, 5)) for i in range(50)])
                 for _ in np.arange(9)

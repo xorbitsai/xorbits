@@ -13,9 +13,7 @@
 # limitations under the License.
 
 import hashlib
-import random
 import re
-import uuid
 from functools import partial
 from itertools import tee
 from typing import Any, List, Set, Text, Tuple, Union
@@ -26,9 +24,10 @@ from scipy.integrate import quad as integrate
 
 from ... import opcodes
 from ...core import recursive_tile
-from ...core.context import Context, get_context
-from ...core.operand import OperandStage
-from ...serialization.serializables import AnyField, StringField
+from ...core.context import Context
+from ...core.entity import OutputType
+from ...core.operand import ObjectOperand, ObjectOperandMixin, OperandStage
+from ...serialization.serializables import AnyField, Int32Field, StringField
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_concatenated_rows_frame, parse_index
 
@@ -160,7 +159,6 @@ def embed_func(
     row: pd.Series,
     *,
     text: str,
-    id: str,
     num_perm: int,
     ngram_size: int,
     min_length: int,
@@ -215,7 +213,7 @@ def embed_func(
     >>> res["__id__"]
     0
     """
-    content, idx = row[text], row[id]
+    content, idx = row[text], row["__dedup_id"]
     a, b = permutations
     masks: np.ndarray = np.full(shape=num_perm, dtype=np.uint64, fill_value=MAX_HASH)
     tokens: Set[str] = {
@@ -304,6 +302,34 @@ def optimal_param(
     return opt
 
 
+class DataFrameUnionFind(ObjectOperand, ObjectOperandMixin):
+    _output_type_ = OutputType.object
+    union_find = AnyField("union_find", default=None)
+    union_find_num = Int32Field("union_find_num", default=0)
+
+    @classmethod
+    def execute(cls, ctx: Union[dict, Context], op: "DataFrameUnionFind"):
+        if op.stage == OperandStage.map:
+            clusters = ctx[op.inputs[0].key]
+            out = op.outputs[0]
+
+            for cluster in clusters:
+                if len(cluster) <= 1:
+                    continue
+
+                idx = min(cluster)
+                for x in cluster:
+                    op.union_find.union(x, idx)
+
+            ctx[out.key] = op.union_find
+        elif op.stage == OperandStage.reduce:
+            out = op.outputs[0]
+
+            for i in range(op.union_find_num):
+                op.union_find.union_uf(ctx[op.inputs[i].key])
+            ctx[out.key] = op.union_find
+
+
 class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
     _op_type = opcodes.DEDUP
 
@@ -312,48 +338,38 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
     worker_addr = StringField("worker_addr")
 
     @classmethod
-    def execute_uf(cls, ctx: Union[dict, Context], op: "DataFrameDedup"):
-        uf = UnionFind()
-        clusters = ctx[op.inputs[0].key]
-        out = op.outputs[0]
-        union_find = ctx.get_remote_object(op.union_find_name, op.worker_addr)
-
-        for cluster in clusters:
-            if len(cluster) <= 1:
-                continue
-            idx = min(cluster)
-            for x in cluster:
-                uf.union(x, idx)
-
-        union_find.union_uf(uf)
-        ctx[out.key] = pd.DataFrame()
-
-    @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "DataFrameDedup"):
-        if op.stage == OperandStage.map:
-            cls.execute_uf(ctx, op)
-        else:
-            input_data = ctx[op.inputs[0].key]
-            out = op.outputs[0]
-            union_find = ctx.get_remote_object(op.union_find_name, op.worker_addr)
-            uf = union_find.get_self()
-            ctx[out.key] = input_data[input_data["id"].map(lambda x: uf.find(x) == x)]
+        input_data = ctx[op.inputs[0].key]
+        uf = ctx[op.inputs[1].key]
+        out = op.outputs[0]
+        ctx[out.key] = input_data[
+            input_data["__dedup_id"].map(lambda x: uf.find(x) == x)
+        ].drop(columns="__dedup_id")
 
     @classmethod
     def tile(cls, op: "DataFrameDedup"):
         in_df = build_concatenated_rows_frame(op.inputs[0])
         out_df = op.outputs[0]
 
-        ctx = get_context()
-        op.worker_addr = random.choice(ctx.get_worker_addresses())
-        union_find_name = str(uuid.uuid4())
-        ctx.create_remote_object(union_find_name, UnionFind, remote_addr=op.worker_addr)
+        def gen_id_column(df):
+            from xoscar._utils import new_random_id
 
-        embedded = in_df.apply(
+            df["__dedup_id"] = [new_random_id(2) for _ in range(len(df))]
+            # df["__dedup_id"]  = range(len(df))
+            return df
+
+        new_dtypes = in_df.dtypes.copy()
+        new_dtypes["__dedup_id"] = "str"
+        in_df_with_id = in_df.map_chunk(
+            gen_id_column, output_type="dataframe", dtypes=new_dtypes
+        )
+        in_df_with_id = yield from recursive_tile(in_df_with_id)
+
+        embedded = in_df_with_id.apply(
             op.func,
             axis=1,
             output_type="dataframe",
-            dtypes=pd.Series(["object", "int"], index=["__signatures__", "__id__"]),
+            dtypes=pd.Series(["object", "bytes"], index=["__signatures__", "__id__"]),
         )
 
         clusters = (
@@ -361,28 +377,28 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             .groupby("__signatures__", sort=False)["__id__"]
             .apply(set)
         )
-
         tiled_clusters = yield from recursive_tile(clusters)
 
         # union find stage
-        chunks = []
+        uf_chunks = []
         for c in tiled_clusters.chunks:
-            new_op = op.copy().reset_key()
-            new_op.union_find_name = union_find_name
+            new_op = DataFrameUnionFind(union_find=UnionFind())
             new_op.stage = OperandStage.map
-            chunks.append(
+            uf_chunks.append(
                 new_op.new_chunk(
                     [c],
-                    index_value=parse_index(pd.RangeIndex(-1)),
-                    columns_value=parse_index(pd.RangeIndex(-1)),
-                    dtypes=object,
                     index=c.index,
                 )
             )
 
+        new_op = DataFrameUnionFind(union_find=UnionFind())
+        new_op.union_find_num = len(uf_chunks)
+        new_op.stage = OperandStage.reduce
+        union_chunk = new_op.new_chunk(uf_chunks, index=(0,))
+
         # dedup stage
         dedup_chunks = []
-        for c in in_df.chunks:
+        for c in in_df_with_id.chunks:
             new_shape = c.shape
 
             new_index_value, new_columns_value = c.index_value, c.columns_value
@@ -390,22 +406,17 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             new_dtypes = out_df.dtypes
 
             new_op = op.copy().reset_key()
-            new_op.union_find_name = union_find_name
-            pure_depends = [False] + [True] * len(chunks)
-            new_op._pure_depends = pure_depends
+
             dedup_chunks.append(
                 new_op.new_chunk(
-                    [c] + chunks,
-                    shape=tuple((np.nan, new_shape[1])),
+                    [c, union_chunk],
+                    shape=tuple((np.nan, new_shape[1] - 1)),
                     index=c.index,
                     dtypes=new_dtypes,
                     index_value=new_index_value,
                     columns_value=new_columns_value,
                 )
             )
-
-        yield dedup_chunks
-        ctx.destroy_remote_object(union_find_name, op.worker_addr)
 
         new_nsplits = tuple(chunk.shape[0] for chunk in dedup_chunks), (
             dedup_chunks[0].shape[1],
@@ -427,7 +438,6 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
 def df_dedup(
     df: pd.DataFrame,
     text: Any = "text",
-    id: Any = "id",
     threshold: float = 0.7,
     num_perm: int = 256,
     min_length: int = 5,
@@ -447,9 +457,6 @@ def df_dedup(
     ----------
     text : str, default 'text'
         The column of the DataFrame on which to calculate hash values.
-
-    id : str, default 'id'
-        The column to store the index. If df has no such column, it will be generated.
 
     threshold : float, default 0.7
         The Jaccard similarity threshold to use in the MinHashLSH.
@@ -488,7 +495,6 @@ def df_dedup(
     >>> words = list("abcdefghijklmnopqrstuvwxyz")
     >>> df = pd.DataFrame(
     ...     {
-    ...         "id": np.arange(20),
     ...         "text": [
     ...             " ".join(["".join(np.random.choice(words, 5)) for i in range(50)])
     ...             for _ in np.arange(10)
@@ -523,9 +529,6 @@ def df_dedup(
     if text not in df.dtypes.index:
         raise ValueError(f"{text} column not found in the DataFrame")
 
-    if id not in df.dtypes.index:
-        df[id] = range(0, len(df))
-
     B, R = optimal_param(threshold, num_perm)
 
     HASH_RANGES = [(i * R, (i + 1) * R) for i in range(B)]
@@ -546,7 +549,6 @@ def df_dedup(
     func = partial(
         embed_func,
         text=text,
-        id=id,
         num_perm=num_perm,
         hashranges=HASH_RANGES,
         ngram_size=ngram,
