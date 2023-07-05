@@ -23,6 +23,7 @@ from .check_monotonic import (
     is_monotonic_increasing,
 )
 from .cut import cut
+from .dedup import df_dedup
 from .describe import describe
 from .diff import df_diff, series_diff
 from .drop import df_drop, df_pop, index_drop, series_drop
@@ -84,6 +85,7 @@ def _install():
         setattr(
             t, "__delitem__", lambda df, items: df_drop(df, items, axis=1, inplace=True)
         )
+        setattr(t, "dedup", df_dedup)
         setattr(t, "drop_duplicates", df_drop_duplicates)
         setattr(t, "duplicated", df_duplicated)
         setattr(t, "melt", melt)
