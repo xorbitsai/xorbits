@@ -364,6 +364,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             gen_id_column, output_type="dataframe", dtypes=new_dtypes
         )
         in_df_with_id = yield from recursive_tile(in_df_with_id)
+        yield in_df_with_id.chunks
 
         embedded = in_df_with_id.apply(
             op.func,
@@ -401,10 +402,6 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         for c in in_df_with_id.chunks:
             new_shape = c.shape
 
-            new_index_value, new_columns_value = c.index_value, c.columns_value
-
-            new_dtypes = out_df.dtypes
-
             new_op = op.copy().reset_key()
 
             dedup_chunks.append(
@@ -412,9 +409,9 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
                     [c, union_chunk],
                     shape=tuple((np.nan, new_shape[1] - 1)),
                     index=c.index,
-                    dtypes=new_dtypes,
-                    index_value=new_index_value,
-                    columns_value=new_columns_value,
+                    dtypes=out_df.dtypes,
+                    index_value=c.index_value,
+                    columns_value=out_df.columns_value,
                 )
             )
 

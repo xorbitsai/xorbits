@@ -266,16 +266,12 @@ def test_dedup_execute(setup):
 
     # test one chunk
     df = from_pandas_df(df_raw, chunk_size=20)
-    result = (
-        df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
-    )
+    result = df.dedup().execute().fetch()
     assert result.shape[0] == 11
 
     # test multi chunks
     df = from_pandas_df(df_raw, chunk_size=1)
-    result = (
-        df.dedup().execute(extra_config={"check_duplicated_submission": False}).fetch()
-    )
+    result = df.dedup().execute().fetch()
     assert result.shape[0] == 11
 
     # test error threshold
