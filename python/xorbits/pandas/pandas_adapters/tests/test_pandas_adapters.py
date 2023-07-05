@@ -62,8 +62,6 @@ def test_pandas_dataframe_methods(setup):
     mad
     median
     mode
-    nlargest
-    nsmallest
     pipe
     pivot_table
     rank
@@ -205,8 +203,6 @@ def test_pandas_series_methods(setup):
     last_valid_index
     mad
     mode
-    nlargest
-    nsmallest
     pipe
     pop
     rank
