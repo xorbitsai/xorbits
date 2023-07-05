@@ -24,7 +24,7 @@ from ..utils import safe_repr_str
 if TYPE_CHECKING:  # pragma: no cover
     from ..core.adapter import MarsEntity
 
-from numpy import nan
+import numpy as np
 
 
 class DataType(Enum):
@@ -275,7 +275,7 @@ class DataRef(metaclass=DataRefMeta):
         from .execution import run
 
         if isinstance(self.data._mars_entity, HasShapeTileable):
-            if nan in self.data._mars_entity.shape:
+            if np.nan in self.data._mars_entity.shape:
                 run(self)
             return self.data._mars_entity.shape
         else:
