@@ -3056,7 +3056,6 @@ def test_nunique(setup, method, chunked, axis):
     # test axis option string
     if chunked is False:
         axis = "index" if axis == 0 else "columns"
-    extra_config = {"check_duplicated_submission": False} if method == "auto" else {}
 
     # test simple df and series
     df = pd.DataFrame({"A": [4, 5, 6], "B": [4, 1, 1]})
@@ -3071,33 +3070,23 @@ def test_nunique(setup, method, chunked, axis):
     mdf = from_pandas_df(df, chunk_size=chunk_size)
     pd.testing.assert_series_equal(
         df.nunique(axis=axis),
-        mdf.nunique(axis=axis, method=method)
-        .execute(extra_config=extra_config)
-        .fetch(),
+        mdf.nunique(axis=axis, method=method).execute().fetch(),
     )
 
     m_series = from_pandas_series(series, chunk_size=chunk_size)
-    assert (
-        series.nunique()
-        == m_series.nunique(method=method).execute(extra_config=extra_config).fetch()
-    )
+    assert series.nunique() == m_series.nunique(method=method).execute().fetch()
 
     # test empty df and series
     df = pd.DataFrame()
     mdf = from_pandas_df(df)
     pd.testing.assert_series_equal(
         df.nunique(axis=axis),
-        mdf.nunique(axis=axis, method=method)
-        .execute(extra_config=extra_config)
-        .fetch(),
+        mdf.nunique(axis=axis, method=method).execute().fetch(),
     )
 
     series = pd.Series()
     m_series = from_pandas_series(series)
-    assert (
-        series.nunique()
-        == m_series.nunique(method=method).execute(extra_config=extra_config).fetch()
-    )
+    assert series.nunique() == m_series.nunique(method=method).execute().fetch()
 
     # test bigger df and series
     rs = np.random.RandomState(0)
@@ -3107,16 +3096,41 @@ def test_nunique(setup, method, chunked, axis):
     mdf = from_pandas_df(raw1, chunk_size=chunk_size)
     pd.testing.assert_series_equal(
         raw1.nunique(axis=axis),
-        mdf.nunique(axis=axis, method=method)
-        .execute(extra_config=extra_config)
-        .fetch(),
+        mdf.nunique(axis=axis, method=method).execute().fetch(),
     )
 
     raw2 = pd.Series(rs.random(100))
     m_series = from_pandas_series(raw2, chunk_size=chunk_size)
-    assert (
-        raw2.nunique()
-        == m_series.nunique(method=method).execute(extra_config=extra_config).fetch()
+    assert raw2.nunique() == m_series.nunique(method=method).execute().fetch()
+
+    # test very redundant data
+    if chunked and method == "auto":
+        chk_size = 200
+        raw1 = pd.DataFrame(
+            {
+                "foo": np.tile(rs.random(1)[0], 1000),
+                "bar": np.tile(rs.random(1)[0], 1000),
+            }
+        )
+        mdf = from_pandas_df(raw1, chunk_size=chk_size)
+        pd.testing.assert_series_equal(
+            raw1.nunique(axis=axis),
+            mdf.nunique(axis=axis, method=method).execute().fetch(),
+        )
+
+        raw2 = pd.Series(np.tile(rs.random(1)[0], 1000))
+        m_series = from_pandas_series(raw2, chunk_size=chk_size)
+        assert raw2.nunique() == m_series.nunique(method=method).execute().fetch()
+
+    # test col length > row length
+    raw1 = pd.DataFrame({f"col{i}": rs.random(3) for i in range(20)})
+    mdf = from_pandas_df(raw1, chunk_size=chunk_size)
+    mdf_res = mdf.nunique(axis=axis, method=method).execute().fetch()
+    if axis == 0:
+        mdf_res = mdf_res.reindex(list(raw1.columns))
+    pd.testing.assert_series_equal(
+        raw1.nunique(axis=axis),
+        mdf_res,
     )
 
     # test dropna option
@@ -3127,17 +3141,13 @@ def test_nunique(setup, method, chunked, axis):
         mdf = from_pandas_df(df, chunk_size=chunk_size)
         pd.testing.assert_series_equal(
             df.nunique(axis=axis, dropna=dropna),
-            mdf.nunique(axis=axis, dropna=dropna, method=method)
-            .execute(extra_config=extra_config)
-            .fetch(),
+            mdf.nunique(axis=axis, dropna=dropna, method=method).execute().fetch(),
         )
 
         m_series = from_pandas_series(series, chunk_size=chunk_size)
         assert (
             series.nunique(dropna=dropna)
-            == m_series.nunique(dropna=dropna, method=method)
-            .execute(extra_config=extra_config)
-            .fetch()
+            == m_series.nunique(dropna=dropna, method=method).execute().fetch()
         )
 
     # test multi index
@@ -3147,18 +3157,13 @@ def test_nunique(setup, method, chunked, axis):
     ]
     raw_series = pd.Series(np.random.randn(8), index=arrays)
     m_series = from_pandas_series(raw_series, chunk_size=chunk_size)
-    assert (
-        raw_series.nunique()
-        == m_series.nunique(method=method).execute(extra_config=extra_config).fetch()
-    )
+    assert raw_series.nunique() == m_series.nunique(method=method).execute().fetch()
 
     raw_df = pd.DataFrame(np.random.randn(8, 4), index=arrays)
     mdf = from_pandas_df(raw_df)
     pd.testing.assert_series_equal(
         raw_df.nunique(axis=axis),
-        mdf.nunique(axis=axis, method=method)
-        .execute(extra_config=extra_config)
-        .fetch(),
+        mdf.nunique(axis=axis, method=method).execute().fetch(),
     )
 
     # test multi level columns
@@ -3168,18 +3173,5 @@ def test_nunique(setup, method, chunked, axis):
     mdf = from_pandas_df(raw_df)
     pd.testing.assert_series_equal(
         raw_df.nunique(axis=axis),
-        mdf.nunique(axis=axis, method=method)
-        .execute(extra_config=extra_config)
-        .fetch(),
-    )
-
-
-def test_nunique_auto(setup):
-    rs = np.random.RandomState(0)
-    raw2 = pd.Series(rs.random(100))
-    m_series = from_pandas_series(raw2, chunk_size=2)
-    print(
-        m_series.nunique(method="auto")
-        .execute(extra_config={"check_duplicated_submission": False})
-        .fetch()
+        mdf.nunique(axis=axis, method=method).execute().fetch(),
     )

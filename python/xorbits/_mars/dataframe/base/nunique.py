@@ -14,7 +14,7 @@
 # limitations under the License.
 import uuid
 from collections import defaultdict
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -33,7 +33,7 @@ from ...serialization.serializables import (
 from ...utils import estimate_pandas_size
 from ..groupby.aggregation import SizeRecorder
 from ..operands import DataFrameOperandMixin, DataFrameShuffleProxy
-from ..utils import hash_dataframe_on, parse_index
+from ..utils import build_concatenated_rows_frame, hash_dataframe_on, parse_index
 
 
 class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
@@ -76,12 +76,20 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
             return self.new_scalar([df], dtype=np.dtype(np.int64))
 
     @classmethod
-    def _gen_tree_agg_chunks(cls, input_chunks: List, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
+    def _gen_chunk_params(cls, in_df: Union["pd.DataFrame", "pd.Series"]):
         output_type = OutputType.dataframe if in_df.ndim == 2 else OutputType.series
         shape = (np.nan, np.nan) if in_df.ndim == 2 else (np.nan,)
         index = (0, 0) if in_df.ndim == 2 else (0,)
+        return output_type, shape, index
 
+    @classmethod
+    def _gen_tree_pre_chunks(
+        cls,
+        input_chunks: List,
+        output_type: OutputType,
+        shape: Tuple,
+        op: "DataFrameNunique",
+    ):
         chunks = []
         for c in input_chunks:
             _new_op = op.copy().reset_key()
@@ -94,7 +102,17 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                     index=c.index,
                 )
             )
+        return chunks
 
+    @classmethod
+    def _gen_tree_agg_chunks(
+        cls,
+        chunks: List,
+        output_type: OutputType,
+        shape: Tuple,
+        index: Tuple,
+        op: "DataFrameNunique",
+    ):
         combine_size = op.combine_size
         while len(chunks) > combine_size:
             new_chunks = []
@@ -122,9 +140,12 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
         return agg_chunk
 
     @classmethod
-    def _tile_tree(cls, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
-        agg_chunk = cls._gen_tree_agg_chunks(in_df.chunks, op)
+    def _tile_tree(
+        cls, in_df: Union["pd.DataFrame", "pd.Series"], op: "DataFrameNunique"
+    ):
+        output_type, shape, index = cls._gen_chunk_params(in_df)
+        pre_chunks = cls._gen_tree_pre_chunks(in_df.chunks, output_type, shape, op)
+        agg_chunk = cls._gen_tree_agg_chunks(pre_chunks, output_type, shape, index, op)
 
         result_chunks = []
         new_op = op.copy().reset_key()
@@ -156,8 +177,7 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
             return _new_op.new_scalars(op.inputs, chunks=result_chunks, dtype=dtype)
 
     @classmethod
-    def _tile_one_chunk_df(cls, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
+    def _tile_one_chunk_df(cls, in_df: "pd.DataFrame", op: "DataFrameNunique"):
         result_chunks = []
         new_op = op.copy().reset_key()
         shape = (np.nan,)
@@ -176,30 +196,27 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
         return _new_op.new_seriess(op.inputs, **params)
 
     @classmethod
-    def _tile_one_chunk_series(cls, op: "DataFrameNunique"):
-        series = op.inputs[0]
+    def _tile_one_chunk_series(cls, in_df: "pd.Series", op: "DataFrameNunique"):
         result_chunks = []
         new_op = op.copy().reset_key()
         dtype = np.dtype(np.int64)
         params = dict(index=(0,), dtype=dtype, shape=())
-        result_chunks.append(new_op.new_chunk(series.chunks, **params))
+        result_chunks.append(new_op.new_chunk(in_df.chunks, **params))
 
         _new_op = op.copy()
         return _new_op.new_scalars(op.inputs, chunks=result_chunks, dtype=dtype)
 
     @classmethod
-    def tile_one_chunk(cls, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
-
+    def tile_one_chunk(
+        cls, in_df: Union["pd.DataFrame", "pd.Series"], op: "DataFrameNunique"
+    ):
         if in_df.ndim == 2:
-            return cls._tile_one_chunk_df(op)
+            return cls._tile_one_chunk_df(in_df, op)
         else:
-            return cls._tile_one_chunk_series(op)
+            return cls._tile_one_chunk_series(in_df, op)
 
     @classmethod
-    def _tile_series_shuffle(cls, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
-
+    def _tile_series_shuffle(cls, in_df: "pd.Series", op: "DataFrameNunique"):
         # generate map chunks
         map_chunks = []
         for chunk in in_df.chunks:
@@ -247,8 +264,7 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
         )
 
     @classmethod
-    def _tile_df_shuffle(cls, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
+    def _tile_df_shuffle(cls, in_df: "pd.DataFrame", op: "DataFrameNunique"):
         map_output_types = (
             [OutputType.series] if op.axis == 0 else [OutputType.dataframe]
         )
@@ -317,50 +333,61 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
         return new_op.new_seriess(op.inputs, **params)
 
     @classmethod
-    def _tile_shuffle(cls, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
+    def _tile_shuffle(
+        cls, in_df: Union["pd.DataFrame", "pd.Series"], op: "DataFrameNunique"
+    ):
         if in_df.ndim == 1:
-            return cls._tile_series_shuffle(op)
+            return cls._tile_series_shuffle(in_df, op)
         else:
-            return cls._tile_df_shuffle(op)
+            return cls._tile_df_shuffle(in_df, op)
 
     @classmethod
-    def _tile_auto(cls, op: "DataFrameNunique"):
-        in_df = op.inputs[0]
+    def _tile_auto(
+        cls, in_df: Union["pd.DataFrame", "pd.Series"], op: "DataFrameNunique"
+    ):
+        output_type, shape, _ = cls._gen_chunk_params(in_df)
+
         ctx = get_context()
         combine_size = op.combine_size
         size_recorder_name = str(uuid.uuid4())
         size_recorder = ctx.create_remote_object(size_recorder_name, SizeRecorder)
 
-        # collect the first agg chunk, run it get the size before and after agg
-        agg_chunk = cls._gen_tree_agg_chunks(in_df.chunks[:combine_size], op)
-        agg_chunk.op.size_recorder_name = size_recorder_name
+        # collect the first pre chunk, run it get the size before and after pre stage
+        pre_chunks = cls._gen_tree_pre_chunks(
+            in_df.chunks[:combine_size], output_type, shape, op
+        )
+        for c in pre_chunks:
+            c.op.size_recorder_name = size_recorder_name
 
-        yield [agg_chunk]
+        # yield chunks with source chunks to avoid submitting chunks repeatedly issue
+        yield in_df.chunks[:combine_size] + pre_chunks
 
         raw_size, agg_size = size_recorder.get()
         # destroy size recorder
         ctx.destroy_remote_object(size_recorder_name)
 
+        # here's a simple rule for deciding tree or shuffle, may improve it later
         if sum(agg_size) / sum(raw_size) > 0.1:
-            return cls._tile_shuffle(op)
+            return cls._tile_shuffle(in_df, op)
         else:
-            return cls._tile_tree(op)
+            return cls._tile_tree(in_df, op)
 
     @classmethod
     def tile(cls, op: "DataFrameNunique"):
         in_df = op.inputs[0]
+        if in_df.ndim == 2:
+            in_df = build_concatenated_rows_frame(in_df)
         if len(in_df.chunks) == 1:
-            return cls.tile_one_chunk(op)
+            return cls.tile_one_chunk(in_df, op)
         if op.method == "auto":
             if len(in_df.chunks) <= op.combine_size:
-                return cls._tile_tree(op)
+                return cls._tile_tree(in_df, op)
             else:
-                return (yield from cls._tile_auto(op))
+                return (yield from cls._tile_auto(in_df, op))
         elif op.method == "tree":
-            return cls._tile_tree(op)
+            return cls._tile_tree(in_df, op)
         else:
-            return cls._tile_shuffle(op)
+            return cls._tile_shuffle(in_df, op)
 
     @classmethod
     def execute_map(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
@@ -397,12 +424,20 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                     )
 
             else:
-                filters = hash_dataframe_on(input, input.columns, op.shuffle_size)
+                unique_input = cls._drop_duplicates_by_row(input)
+                mock_hash_series = pd.Series(range(len(unique_input)))
+                mock_hash_series.index = unique_input.index
+                idx_to_grouped = pd.RangeIndex(0, len(unique_input)).groupby(
+                    mock_hash_series % op.shuffle_size
+                )
+                filters = [
+                    idx_to_grouped.get(i, pd.Index([])) for i in range(op.shuffle_size)
+                ]
                 for index_idx, index_filter in enumerate(filters):
                     reducer_index = (index_idx, chunk.index[1])
                     ctx[chunk.key, reducer_index] = (
                         ctx.get_current_chunk().index,
-                        input.iloc[index_filter],
+                        unique_input.iloc[index_filter],
                     )
 
     @classmethod
@@ -431,8 +466,9 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                 row = input_idx_to_df.get(row_idx, None)
                 if row is not None:
                     res.append(row)
-            data = pd.concat(res, axis=0).drop_duplicates()
-            ctx[chunk.key] = data
+
+            data = pd.concat(res, axis=0)
+            ctx[chunk.key] = data.drop_duplicates() if op.axis is None else data
         else:
             column_to_series = {}
             for row_idx in row_idxes:
@@ -477,56 +513,44 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
 
     @classmethod
     def _drop_duplicates_by_row(cls, df: "pd.DataFrame") -> "pd.DataFrame":
-        empty = pd.DataFrame(columns=[0])
+        res = pd.DataFrame(columns=[0])
         for i, row in df.iterrows():
             data = row.drop_duplicates().tolist()
-            empty.loc[i] = [data]
-        return empty
-
-    @classmethod
-    def _concat_dfs_by_columns(cls, inputs: List["pd.DataFrame"]) -> "pd.DataFrame":
-        col_to_series = {}
-        for df in inputs:
-            for col, col_data in df.items():
-                if col not in col_to_series:
-                    col_to_series[col] = col_data
-                else:
-                    col_to_series[col] = col_to_series[col] + col_data
-        return pd.DataFrame(col_to_series)
-
-    @classmethod
-    def _concat_dfs_by_rows(cls, inputs: List["pd.DataFrame"]) -> "pd.DataFrame":
-        index_to_series = {}
-        for df in inputs:
-            for i, row in df.iterrows():
-                if i not in index_to_series:
-                    index_to_series[i] = row
-                else:
-                    index_to_series[i] = index_to_series[i] + row
-        return pd.DataFrame(index_to_series).T
+            res.loc[i] = [data]
+        return res
 
     @classmethod
     def execute_pre(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
         input = ctx[op.inputs[0].key]
         chunk = op.outputs[0]
         if input.ndim == 1:
-            ctx[chunk.key] = input.drop_duplicates()
+            res = input.drop_duplicates()
+            ctx[chunk.key] = res
         else:
             if op.axis == 0:
-                ctx[chunk.key] = cls._drop_duplicates_by_column(input)
+                res = cls._drop_duplicates_by_column(input)
+                ctx[chunk.key] = res
             else:
-                ctx[chunk.key] = cls._drop_duplicates_by_row(input)
+                res = cls._drop_duplicates_by_row(input)
+                ctx[chunk.key] = res
+
+        if getattr(op, "size_recorder_name", None) is not None:
+            # record_size
+            raw_size = estimate_pandas_size(input)
+            # when agg by a list of methods, agg_size should be sum
+            agg_size = estimate_pandas_size(res)
+            size_recorder = ctx.get_remote_object(op.size_recorder_name)
+            size_recorder.record(raw_size, agg_size)
 
     @classmethod
     def execute_agg(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
         inputs = [ctx[inp.key] for inp in op.inputs]
+        data = pd.concat(inputs, axis=0)
         if op.axis is None:
-            data = pd.concat(inputs, axis=0)
             res = data.drop_duplicates()
             ctx[op.outputs[0].key] = res
         else:
             if op.axis == 0:
-                data = cls._concat_dfs_by_columns(inputs)
                 res = []
                 for col, col_data in data.items():
                     res.append(col_data.explode().drop_duplicates().tolist())
@@ -534,19 +558,10 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                 res.columns = data.columns
                 ctx[op.outputs[0].key] = res
             else:
-                data = cls._concat_dfs_by_rows(inputs)
                 res = pd.DataFrame(columns=[0])
                 for i, row in data.iterrows():
                     res.loc[i] = [row.explode().drop_duplicates().tolist()]
                 ctx[op.outputs[0].key] = res
-
-        if getattr(op, "size_recorder_name", None) is not None:
-            # record_size
-            raw_size = sum([estimate_pandas_size(item) for item in inputs])
-            # when agg by a list of methods, agg_size should be sum
-            agg_size = estimate_pandas_size(res)
-            size_recorder = ctx.get_remote_object(op.size_recorder_name)
-            size_recorder.record(raw_size, agg_size)
 
     @classmethod
     def execute_post(cls, ctx: Union[dict, Context], op: "DataFrameNunique"):
@@ -589,7 +604,15 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                 chunk = op.outputs[0]
                 df = ctx[op.inputs[0].key]
                 if df.ndim == 2:
-                    ctx[chunk.key] = df.nunique(axis=op.axis, dropna=op.dropna)
+                    if op.axis == 0:
+                        ctx[chunk.key] = df.nunique(axis=op.axis, dropna=op.dropna)
+                    else:
+                        res = []
+                        for i, row in df.iterrows():
+                            res.append(row.explode().nunique(dropna=op.dropna))
+                        res = pd.Series(res)
+                        res.index = df.index
+                        ctx[chunk.key] = res
                 else:
                     ctx[chunk.key] = df.nunique(dropna=op.dropna)
 
