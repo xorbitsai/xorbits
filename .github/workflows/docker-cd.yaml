@@ -33,7 +33,7 @@ jobs:
 
       - name: Build and push Docker image
         shell: bash
-        if: ${{ github.repository == 'xprobe-inc/xorbits' }}
+        if: ${{ github.repository == 'xorbitsai/xorbits' }}
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
           PY_VERSION: ${{ matrix.python-version }}

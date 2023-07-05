@@ -79,7 +79,7 @@ is used in the kubernetes deployment. Each released version of Xorbits has its i
    The image tagged by ``xprobe/xorbits:<xorbits version>`` is built on python ``3.10``.
 
 
-If you need to build an image from source, the related Dockerfiles exists at `this position <https://github.com/xprobe-inc/xorbits/tree/main/python/xorbits/deploy/docker>`_ for reference.
+If you need to build an image from source, the related Dockerfiles exists at `this position <https://github.com/xorbitsai/xorbits/tree/main/python/xorbits/deploy/docker>`_ for reference.
 You can follow the `Docker document <https://docs.docker.com/engine/reference/commandline/build/>`_ to build your own Xorbits image.
 
 After you build your own image, push it to a image repository accessible by your K8s cluster, e.g. your own DockerHub namespace.
@@ -91,7 +91,7 @@ Finally, specify your own image during the deployment process through the ``imag
 
 Install Python Packages
 -----------------------
-Refer `DockerFile <https://github.com/xprobe-inc/xorbits/blob/main/python/xorbits/deploy/docker/Dockerfile.base>`_ for the python packages included in the Xorbits image.
+Refer `DockerFile <https://github.com/xorbitsai/xorbits/blob/main/python/xorbits/deploy/docker/Dockerfile.base>`_ for the python packages included in the Xorbits image.
 If you want to install additional python packages in your Xorbits K8s cluster, use ``pip`` and ``conda`` options of the :meth:`xorbits.deploy.kubernetes.client.new_cluster` api.
 
 Please make sure your K8s cluster can access the corresponding `channel of conda <https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/channels.html>`_ or `PyPi <https://pypi.org/>`_, when using ``pip`` and ``conda`` options.
