@@ -260,6 +260,7 @@ async def create_worker_actor_pool(
     gpu_config = oscar_config.get("gpu", dict())
     gpu_external_address_scheme = gpu_config.get("external_addr_scheme")
     gpu_enable_internal_address = gpu_config.get("enable_internal_addr")
+    # get io process config
     io_config = oscar_config.get("io", dict())
     io_external_address_scheme = io_config.get("external_addr_scheme")
     io_enable_internal_address = io_config.get("enable_internal_addr")
@@ -303,15 +304,7 @@ async def create_worker_actor_pool(
         if envs:  # pragma: no cover
             envs.append({"CUDA_VISIBLE_DEVICES": "-1"})
         labels.append("io")
-        # if external_address_schemes:
-        #     # just use main process' scheme for IO process
-        #     external_address_schemes.append(external_address_schemes[0])
-        # if enable_internal_addresses:
-        #     # just use main process' setting for IO process
-        #     enable_internal_addresses.append(enable_internal_addresses[0])
-        # if external_address_schemes:
         external_address_schemes.append(io_external_address_scheme)
-        # if enable_internal_addresses:
         enable_internal_addresses.append(io_enable_internal_address)
 
     return await create_actor_pool(
