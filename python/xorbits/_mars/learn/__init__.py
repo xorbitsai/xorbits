@@ -12,16 +12,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from . import cluster, ensemble, neighbors, preprocessing, proxima, utils
-
-# register operands
-# import torch first, or some issue emerges,
-# see https://github.com/pytorch/pytorch/issues/2575
-from .contrib import lightgbm, pytorch, statsmodels, tensorflow, xgboost
-from .metrics import pairwise
-
-for _mod in [xgboost, tensorflow, pytorch, lightgbm, proxima, neighbors, statsmodels]:
-    _mod.register_op()
-
-del _mod, pairwise, preprocessing, utils
