@@ -501,6 +501,20 @@ def test_read_csv_execution(setup):
         mdf = md.read_csv(file_path, index_col=0, nrows=1).execute().fetch()
         pd.testing.assert_frame_equal(df[:1], mdf)
 
+    # test read csv with \n in line
+    with tempfile.TemporaryDirectory() as tempdir:
+        file_path = os.path.join(tempdir, "test.csv")
+        data = [
+            ["Name", "Age", "City"],
+            ["Alice", "25", "New York"],
+            ["Bob", "30", "Los Angeles"],
+            ["Charlie\nBrown", "35", "San Francisco"],
+            ["David", "40", "Seattle"],
+        ]
+
+        df = pd.DataFrame(data[1:], columns=data[0])
+        df.to_csv(file_path, index=False)
+        mdf = md.read_csv(file_path, head_bytes=62)
     # test names and usecols
     with tempfile.TemporaryDirectory() as tempdir:
         file_path = os.path.join(tempdir, "test.csv")
@@ -1034,7 +1048,7 @@ def test_read_sql_execution(setup):
             result = r.execute().fetch()
             pd.testing.assert_frame_equal(result, expected)
 
-            table = sa.Table(table_name, m, autoload_replace=True, autoload_with=engine)
+            table = sa.Table(table_name, m, autoload=True, autoload_with=engine)
             r = md.read_sql_table(
                 table,
                 engine,
