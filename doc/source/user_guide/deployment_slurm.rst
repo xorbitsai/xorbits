@@ -15,7 +15,7 @@ HPC clusters have shared storage among all compute nodes. You can use ``module``
 Walkthrough using Xorbits with SLURM
 ------------------------------------
 
-On a SLURM cluster, you are required to interact with the compute resources via ``sbatch`` command and a SLURM script file declaring specific compute resources.
+On a SLURM cluster, you are required to interact with the compute resources via ``sbatch`` command and a SLURM script file declaring specific compute resources. You can get a list of hostnames after the compute resources are allocated.
 
 In the SLURM script file, you will want to start a Xorbits cluster with multiple ``srun`` commands (tasks), and then execute your python script that connects to the Xorbits cluster. You need to first start a supervisor and then start the workers.
 
@@ -25,7 +25,7 @@ The below walkthrough will do the following:
 
 2. Load the proper environment/modules.
 
-3. Fetch a list of available compute nodes and their IP addresses.
+3. Fetch a list of available compute nodes and their hostnames.
 
 4. Launch a supervisor process on one of the nodes (called the head node).
 
@@ -71,7 +71,7 @@ In this case, we install Xorbits in a conda environment called ``df``.
 Obtain the nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Next, we'll want to obtain the head node and the IP address.
+Next, we'll want to obtain all the allocated compute nodes.
 
 .. code-block:: bash
 
@@ -79,36 +79,21 @@ Next, we'll want to obtain the head node and the IP address.
     nodes=$(scontrol show hostnames "$SLURM_JOB_NODELIST")
     nodes_array=($nodes)
 
-Now the ``nodes_array`` is the list of all the nodes allocated for this job.
-
-Choose the first node of the ``nodes_array`` as the head node. 
-The ``hostname --ip-address`` command will return the IP address of the specific node. 
-Get the IP address of the head node:
-
-.. code-block:: bash
-
-    head_node=${nodes_array[0]}
-    head_node_ip=$(srun --nodes=1 --ntasks=1 -w "$head_node" hostname --ip-address)
-
-    # if we detect a space character in the head node IP, we'll
-    # convert it to an ipv4 address. This step is optional.
-    if [[ "$head_node_ip" == *" "* ]]; then
-        IFS=' ' read -ra ADDR <<<"$head_node_ip"
-        if [[ ${#ADDR[0]} -gt 16 ]]; then
-            head_node_ip=${ADDR[1]}
-        else
-            head_node_ip=${ADDR[0]}
-        fi
-        echo "IPV6 address detected. We split the IPV4 address as $head_node_ip"
-    fi
+Now the ``nodes_array`` is the hostname list of all the nodes allocated for this job.
 
 Start the supervisor
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-After detecting the head node hostname and IP address, we'll want to run the supervisor on the head node. 
+Choose the first node of the ``nodes_array`` as the head node. The head node is for supervisor and other nodes are for workers. 
+
+.. code-block:: bash
+
+    head_node=${nodes_array[0]}
+
+After getting the head node hostname, we'll want to run the supervisor on the head node. 
 We'll do this by using ``srun`` to start the supervisor on the head node. 
 ``xorbits-supervisor`` is the command line tool to start the supervisor.
-You should specify the IP, port, the web port.
+You should specify the hostname, port, and the web port.
 Note that you should sleep a few seconds as the supervisor need some time to start. Otherwise, worker nodes may not be able to connect to the supervisor.
 
 .. code-block:: bash
@@ -116,9 +101,9 @@ Note that you should sleep a few seconds as the supervisor need some time to sta
     port=16380
     web_port=16379
 
-    echo "Starting HEAD at $head_node"
-    srun --nodes=1 --ntasks=1 -w "$head_node" \
-        xorbits-supervisor -H "$head_node_ip" -p "$port" -w "$web_port" &
+    echo "Starting SUPERVISOR at ${head_node}"
+    srun --nodes=1 --ntasks=1 -w "${head_node}" \
+        xorbits-supervisor -H "${head_node}" -p "${port}" -w "${web_port}" &
     sleep 10
 
 Start Workers
@@ -134,9 +119,9 @@ The rest of the machines can be started as workers via command:
         node_i=${nodes_array[$i]}
         port_i=$((port + i))
         
-        echo "Starting WORKER $i at $node_i"
-        srun --nodes=1 --ntasks=1 -w "$node_i" \
-            xorbits-worker -H "$node_i"  -p "$port_i" -s "$head_node_ip":"$port" &
+        echo "Starting WORKER $i at ${node_i}"
+        srun --nodes=1 --ntasks=1 -w "${node_i}" \
+            xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}" &
     done
     sleep 5
 
@@ -148,9 +133,9 @@ You can connect to the supervisor and submit your Xorbits job.
 
 .. code-block:: bash
 
-    address=http://"$head_node_ip":"$web_port"
+    address=http://"${head_node}":"${web_port}"
 
-    python -u test.py --endpoint "$address"
+    python -u test.py --endpoint "${address}"
 
 The ``test.py`` is like the following: 
 
@@ -209,26 +194,12 @@ The SLURM script looks like this:
     nodes_array=($nodes)
 
     head_node=${nodes_array[0]}
-    head_node_ip=$(srun --nodes=1 --ntasks=1 -w "$head_node" hostname --ip-address)
-
-    # if we detect a space character in the head node IP, we'll
-    # convert it to an ipv4 address. This step is optional.
-    if [[ "$head_node_ip" == *" "* ]]; then
-        IFS=' ' read -ra ADDR <<<"$head_node_ip"
-        if [[ ${#ADDR[0]} -gt 16 ]]; then
-            head_node_ip=${ADDR[1]}
-        else
-            head_node_ip=${ADDR[0]}
-        fi
-        echo "IPV6 address detected. We split the IPV4 address as $head_node_ip"
-    fi
-
     port=16380
     web_port=16379
 
-    echo "Starting HEAD at $head_node"
-    srun --nodes=1 --ntasks=1 -w "$head_node" \
-        xorbits-supervisor -H "$head_node_ip" -p "$port" -w "$web_port" &
+    echo "Starting SUPERVISOR at ${head_node}"
+    srun --nodes=1 --ntasks=1 -w "${head_node}" \
+        xorbits-supervisor -H "${head_node}" -p "${port}" -w "${web_port}" &
     sleep 10
 
     # number of nodes other than the head node
@@ -238,13 +209,13 @@ The SLURM script looks like this:
         node_i=${nodes_array[$i]}
         port_i=$((port + i))
         
-        echo "Starting WORKER $i at $node_i"
-        srun --nodes=1 --ntasks=1 -w "$node_i" \
-            xorbits-worker -H "$node_i"  -p "$port_i" -s "$head_node_ip":"$port" &
+        echo "Starting WORKER $i at ${node_i}"
+        srun --nodes=1 --ntasks=1 -w "${node_i}" \
+            xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}" &
     done
     sleep 5
 
-    address=http://"$head_node_ip":"$web_port"
+    address=http://"${head_node}":"${web_port}"
 
-    python -u test.py --endpoint "$address"
+    python -u test.py --endpoint "${address}"
 
