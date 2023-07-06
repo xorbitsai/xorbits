@@ -84,12 +84,26 @@ def _find_chunk_start_end(f: Any, offset: int, size: int, is_first: bool):
     if is_first:
         start = offset
     else:
-        f.readline()
+        _read_csv_to_line_end(f)
         start = f.tell()
     f.seek(offset + size)
-    f.readline()
+    _read_csv_to_line_end(f)
     end = f.tell()
     return start, end
+
+
+def _read_csv_to_line_end(f: Any) -> None:
+    f.readline()
+    file_ptr = f.tell()
+    f.seek(0)
+    while (f.read(file_ptr)).count(b'"') % 2 == 1:
+        f.seek(file_ptr)
+        temp = f.readline()
+        file_ptr = f.tell()
+        if temp == b"":
+            break
+        f.seek(0)
+    f.seek(file_ptr)
 
 
 class DataFrameReadCSV(
