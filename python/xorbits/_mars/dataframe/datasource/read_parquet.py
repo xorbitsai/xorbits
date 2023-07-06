@@ -49,7 +49,7 @@ from ...serialization.serializables import (
 from ...utils import is_object_dtype, lazy_import
 from ..arrays import ArrowListDtype, ArrowStringDtype
 from ..operands import OutputType
-from ..utils import contain_arrow_dtype, parse_index, to_arrow_dtypes
+from ..utils import contain_arrow_dtype, parse_index, to_arrow_dtypes, is_pandas_2
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -180,7 +180,7 @@ def _arrow_dtype_mapper(
         return ArrowStringDtype()
     elif isinstance(tp, pa.ListType):
         return ArrowListDtype(tp.value_type)
-    else:
+    elif is_pandas_2():
         return pd.ArrowDtype(tp)
 
 
