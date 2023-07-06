@@ -75,7 +75,8 @@ class WrappedStorageFileObject(AioFileObject):
         self._sub_key_infos = dict()
 
     def __getattr__(self, item):
-        return getattr(self._file, item)
+        if hasattr(self._file, item):
+            return getattr(self._file, item)
 
     def set_file_header(self, header: Any):
         if hasattr(self._file, "header"):

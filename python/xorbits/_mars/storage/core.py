@@ -39,7 +39,8 @@ class StorageFileObject(AioFileObject):
 
     @property
     def buffer(self):
-        return self._file.buffer
+        if hasattr(self._file, "buffer"):
+            return self._file.buffer
 
     @property
     def header(self):

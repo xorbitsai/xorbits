@@ -70,8 +70,9 @@ class SenderManagerActor(mo.StatelessActor):
         remote_buffers: List[BufferRef],
         session_id: str,
         data_keys: List[str],
+        block_size: int,
     ):
-        await mo.copy_to(local_buffers, remote_buffers)
+        await mo.copy_to(local_buffers, remote_buffers, block_size=block_size)
         await receiver_ref.handle_transmission_done(session_id, data_keys)
 
     @staticmethod
@@ -85,31 +86,8 @@ class SenderManagerActor(mo.StatelessActor):
         receiver_ref: mo.ActorRefType["ReceiverManagerActor"],
         session_id: str,
         data_keys: List[str],
+        block_size: int,
     ):
-        # class BufferedSender:
-        #     def __init__(self):
-        #         self._buffers = []
-        #         self._send_keys = []
-        #         self._eof_marks = []
-        #
-        #     async def flush(self):
-        #         if self._buffers:
-        #             await receiver_ref.receive_part_data(
-        #                 self._buffers, session_id, self._send_keys, self._eof_marks
-        #             )
-        #
-        #         self._buffers = []
-        #         self._send_keys = []
-        #         self._eof_marks = []
-        #
-        #     async def send(self, buffer, eof_mark, key):
-        #         self._eof_marks.append(eof_mark)
-        #         self._buffers.append(buffer)
-        #         self._send_keys.append(key)
-        #         if sum(len(b) for b in self._buffers) >= block_size:
-        #             await self.flush()
-
-        # sender = BufferedSender()
         open_reader_tasks = []
         for data_key in data_keys:
             open_reader_tasks.append(
@@ -121,24 +99,37 @@ class SenderManagerActor(mo.StatelessActor):
         data_sizes = []
         headers = []
         for reader in readers:
-            reader_buffer = reader.buffer
-            if isinstance(reader_buffer, list):  # cuda case
-                data_sizes.append([self._get_buffer_size(rb) for rb in reader_buffer])
-                local_buffers.extend(reader_buffer)
-                headers.append(reader.header)
-            else:
-                data_sizes.append(getattr(reader_buffer, "size", len(reader_buffer)))
-                local_buffers.append(reader_buffer)
+            if reader.buffer is not None:
+                reader_buffer = reader.buffer
+                if isinstance(reader_buffer, list):  # cuda case
+                    data_sizes.append(
+                        [self._get_buffer_size(rb) for rb in reader_buffer]
+                    )
+                    local_buffers.extend(reader_buffer)
+                    headers.append(reader.header)
+                else:
+                    data_sizes.append(
+                        getattr(reader_buffer, "size", len(reader_buffer))
+                    )
+                    local_buffers.append(reader_buffer)
+                    headers.append(None)
+            else:  # file system
+                data_sizes.append(None)
+                local_buffers.append(reader)
                 headers.append(None)
 
-        # local_buffers = [r.buffer for r in readers]
         remote_buffers = await receiver_ref.get_buffers(
             session_id, data_keys, data_sizes, headers
         )
 
         write_task = asyncio.create_task(
             self._copy_to_receiver(
-                receiver_ref, local_buffers, remote_buffers, session_id, data_keys
+                receiver_ref,
+                local_buffers,
+                remote_buffers,
+                session_id,
+                data_keys,
+                block_size,
             )
         )
 
@@ -146,29 +137,7 @@ class SenderManagerActor(mo.StatelessActor):
             await asyncio.shield(write_task)
         except asyncio.CancelledError:
             await receiver_ref.handle_transmission_cancellation(session_id, data_keys)
-            # write_task.cancel()
-            # await write_task
             raise
-        # else:
-        #     await receiver_ref.handle_transmission_done(session_id, data_keys)
-        # await mo.copy_to(local_buffers, remote_buffers)
-
-        # for data_key, reader in zip(data_keys, readers):
-        #     while True:
-        #         part_data = await reader.read(block_size)
-        #         # Notes on [How to decide whether the reader reaches EOF?]
-        #         #
-        #         # In some storage backend, e.g., the reported memory usage (i.e., the
-        #         # `store_size`) may not same with the byte size that need to be transferred
-        #         # when moving to a remote worker. Thus, we think the reader reaches EOF
-        #         # when a `read` request returns nothing, rather than comparing the `sent_size`
-        #         # and the `store_size`.
-        #         #
-        #         is_eof = not part_data  # can be non-empty bytes, empty bytes and None
-        #         await sender.send(part_data, is_eof, data_key)
-        #         if is_eof:
-        #             break
-        # await sender.flush()
 
     @mo.extensible
     async def send_batch_data(
@@ -197,7 +166,7 @@ class SenderManagerActor(mo.StatelessActor):
             ]
         )
 
-        # block_size = block_size or self._transfer_block_size
+        block_size = block_size or self._transfer_block_size
         receiver_ref: mo.ActorRefType[
             ReceiverManagerActor
         ] = await self.get_receiver_ref(address, band_name)
@@ -241,7 +210,7 @@ class SenderManagerActor(mo.StatelessActor):
                 to_send_keys.append(data_key)
 
         if to_send_keys:
-            await self._send_data(receiver_ref, session_id, to_send_keys)
+            await self._send_data(receiver_ref, session_id, to_send_keys, block_size)
         if to_wait_keys:
             await receiver_ref.wait_transfer_done(session_id, to_wait_keys)
         unpin_tasks = []
@@ -304,12 +273,14 @@ class ReceiverManagerActor(mo.StatelessActor):
                 writer.set_file_header(header)
 
             writer_buf = writer.buffer
-            if isinstance(writer_buf, list):  # cuda case
-                res.extend([mo.buffer_ref(self.address, buf) for buf in writer_buf])
-            else:
-                res.append(mo.buffer_ref(self.address, writer_buf))
+            if writer_buf is not None:
+                if isinstance(writer_buf, list):  # cuda case
+                    res.extend([mo.buffer_ref(self.address, buf) for buf in writer_buf])
+                else:
+                    res.append(mo.buffer_ref(self.address, writer_buf))
+            else:  # file system
+                res.append(mo.file_object_ref(self.address, writer))
         return res
-        # return [mo.buffer_ref(self.address, self._writing_infos[(session_id, dk)].writer.buffer) for dk in data_keys]
 
     async def handle_transmission_done(self, session_id: str, data_keys: List):
         close_tasks = [
@@ -409,51 +380,6 @@ class ReceiverManagerActor(mo.StatelessActor):
                 await self._quota_refs[level].release_quota(sum(data_sizes))
                 future.cancel()
                 raise
-
-    # async def do_write(
-    #     self, data: list, session_id: str, data_keys: List[str], eof_marks: List[bool]
-    # ):
-    #     # close may be a high-cost operation, use create_task
-    #     close_tasks = []
-    #     finished_keys = []
-    #     for data, data_key, is_eof in zip(data, data_keys, eof_marks):
-    #         writer = self._writing_infos[(session_id, data_key)].writer
-    #         if data:
-    #             await writer.write(data)
-    #         if is_eof:
-    #             close_tasks.append(writer.close())
-    #             finished_keys.append(data_key)
-    #     await asyncio.gather(*close_tasks)
-    #     async with self._lock:
-    #         for data_key in finished_keys:
-    #             event = self._writing_infos[(session_id, data_key)].event
-    #             event.set()
-    #             self._decref_writing_key(session_id, data_key)
-
-    # async def receive_part_data(
-    #     self, data: list, session_id: str, data_keys: List[str], eof_marks: List[bool]
-    # ):
-    #     write_task = asyncio.create_task(
-    #         self.do_write(data, session_id, data_keys, eof_marks)
-    #     )
-    #     try:
-    #         await asyncio.shield(write_task)
-    #     except asyncio.CancelledError:
-    #         async with self._lock:
-    #             for data_key in data_keys:
-    #                 if (session_id, data_key) in self._writing_infos:
-    #                     if self._writing_infos[(session_id, data_key)].ref_counts == 1:
-    #                         info = self._writing_infos[(session_id, data_key)]
-    #                         await self._quota_refs[info.level].release_quota(info.size)
-    #                         await self._storage_handler.delete(
-    #                             session_id, data_key, error="ignore"
-    #                         )
-    #                         await info.writer.clean_up()
-    #                         info.event.set()
-    #                         self._decref_writing_key(session_id, data_key)
-    #                         write_task.cancel()
-    #                         await write_task
-    #         raise
 
     async def wait_transfer_done(self, session_id, data_keys):
         await asyncio.gather(
