@@ -49,7 +49,7 @@ from ...serialization.serializables import (
 from ...utils import is_object_dtype, lazy_import
 from ..arrays import ArrowListDtype, ArrowStringDtype
 from ..operands import OutputType
-from ..utils import contain_arrow_dtype, parse_index, to_arrow_dtypes, is_pandas_2
+from ..utils import contain_arrow_dtype, is_pandas_2, parse_index, to_arrow_dtypes
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,

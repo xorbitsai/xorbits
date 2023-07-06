@@ -42,9 +42,9 @@ from ..arrays import ArrowStringDtype
 from ..utils import (
     build_empty_df,
     contain_arrow_dtype,
+    is_pandas_2,
     parse_index,
     to_arrow_dtypes,
-    is_pandas_2,
 )
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
