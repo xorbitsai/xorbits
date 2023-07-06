@@ -96,12 +96,12 @@ def _read_csv_to_line_end(f: Any) -> None:
     f.readline()
     file_ptr = f.tell()
     f.seek(0)
-    while (f.read(file_ptr)).count(b'"') % 2 == 1:
+    while (f.read(file_ptr)).count(b'"') % 2 == 1:  # pragma: no cover
         f.seek(file_ptr)
         temp = f.readline()
         file_ptr = f.tell()
         if temp == b"":
-            break
+            break  # pragma: no cover
         f.seek(0)
     f.seek(file_ptr)
 
