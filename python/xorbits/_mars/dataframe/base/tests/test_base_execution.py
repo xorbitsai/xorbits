@@ -2804,6 +2804,190 @@ def test_bloom_filter(setup):
     )
 
 
+def test_nsmallest_execution(setup):
+    ns = np.random.RandomState(0)
+    df = pd.DataFrame(ns.rand(100, 10), columns=["a" + str(i) for i in range(10)])
+
+    # test one chunk
+    mdf = from_pandas_df(df)
+    result = mdf.nsmallest(3, "a0").execute().fetch()
+    expected = df.nsmallest(3, "a0")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test multi chunk
+    mdf = from_pandas_df(df, chunk_size=10)
+    result = mdf.nsmallest(3, "a0").execute().fetch()
+    pd.testing.assert_frame_equal(result, expected)
+
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nsmallest(3, "a0").execute().fetch()
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test list columns
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nsmallest(5, ["a0", "a1"]).execute().fetch()
+    expected = df.nsmallest(5, ["a0", "a1"])
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test k>df.shape[0]
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nsmallest(102, ["a0", "a1"]).execute().fetch()
+    expected = df.nsmallest(102, ["a0", "a1"])
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test keep=last
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nsmallest(5, ["a0", "a1"], "last").execute().fetch()
+    expected = df.nsmallest(5, ["a0", "a1"], "last")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test keep=all
+    df.iloc[77, 0] = df.iloc[80, 0]
+    df.iloc[77, 1] = df.iloc[80, 1]
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nsmallest(5, ["a0", "a1"], "all").execute().fetch()
+    expected = df.nsmallest(5, ["a0", "a1"], "all")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test invalid column
+    with pytest.raises(KeyError):
+        mdf.nsmallest(5, "a100", "all").execute().fetch()
+
+    # test invalid keep
+    with pytest.raises(ValueError):
+        mdf.nsmallest(5, "a1", "abcd").execute().fetch()
+
+    # test series
+    raw = pd.Series(ns.rand(100))
+
+    # test one chunk
+    series = from_pandas_series(raw)
+    result = series.nsmallest(3).execute().fetch()
+    expected = raw.nsmallest(3)
+    pd.testing.assert_series_equal(result, expected)
+
+    # test multi chunk
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nsmallest(3).execute().fetch()
+    expected = raw.nsmallest(3)
+    pd.testing.assert_series_equal(result, expected)
+
+    # test keep=last
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nsmallest(3, "last").execute().fetch()
+    expected = raw.nsmallest(3, "last")
+    pd.testing.assert_series_equal(result, expected)
+
+    # test keep=all
+    raw[99] = raw[1]
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nsmallest(3, "all").execute().fetch()
+    expected = raw.nsmallest(3, "all")
+    pd.testing.assert_series_equal(result, expected)
+
+    # test k>df.shape[0]
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nsmallest(110, "first").execute().fetch()
+    expected = raw.nsmallest(110, "first")
+    pd.testing.assert_series_equal(result, expected)
+
+    # test invalid keep
+    with pytest.raises(ValueError):
+        series.nsmallest(5, "abcd").execute().fetch()
+
+
+def test_nlargest_execution(setup):
+    ns = np.random.RandomState(0)
+    df = pd.DataFrame(ns.rand(100, 10), columns=["a" + str(i) for i in range(10)])
+
+    # test one chunk
+    mdf = from_pandas_df(df)
+    result = mdf.nlargest(3, "a0").execute().fetch()
+    expected = df.nlargest(3, "a0")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test multi chunk
+    mdf = from_pandas_df(df, chunk_size=10)
+    result = mdf.nlargest(3, "a0").execute().fetch()
+    pd.testing.assert_frame_equal(result, expected)
+
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nlargest(3, "a0").execute().fetch()
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test list columns
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nlargest(5, ["a0", "a1"]).execute().fetch()
+    expected = df.nlargest(5, ["a0", "a1"])
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test k>df.shape[0]
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nlargest(102, ["a0", "a1"]).execute().fetch()
+    expected = df.nlargest(102, ["a0", "a1"])
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test keep=last
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nlargest(5, ["a0", "a1"], "last").execute().fetch()
+    expected = df.nlargest(5, ["a0", "a1"], "last")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test keep=all
+    df.iloc[99, 0] = df.iloc[42, 0]
+    df.iloc[99, 1] = df.iloc[42, 1]
+    mdf = from_pandas_df(df, chunk_size=3)
+    result = mdf.nlargest(5, ["a0", "a1"], "all").execute().fetch()
+    expected = df.nlargest(5, ["a0", "a1"], "all")
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test invalid column
+    with pytest.raises(KeyError):
+        mdf.nlargest(5, "a100", "all").execute().fetch()
+
+    # test invalid keep
+    with pytest.raises(ValueError):
+        mdf.nlargest(5, "a1", "abcd").execute().fetch()
+
+    # test series
+    raw = pd.Series(ns.rand(100))
+
+    # test one chunk
+    series = from_pandas_series(raw)
+    result = series.nlargest(3).execute().fetch()
+    expected = raw.nlargest(3)
+    pd.testing.assert_series_equal(result, expected)
+
+    # test multi chunk
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nlargest(3).execute().fetch()
+    expected = raw.nlargest(3)
+    pd.testing.assert_series_equal(result, expected)
+
+    # test keep=last
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nlargest(3, "last").execute().fetch()
+    expected = raw.nlargest(3, "last")
+    pd.testing.assert_series_equal(result, expected)
+
+    # test keep=all
+    raw[99] = raw[49]
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nlargest(3, "all").execute().fetch()
+    expected = raw.nlargest(3, "all")
+    pd.testing.assert_series_equal(result, expected)
+
+    # test k>df.shape[0]
+    series = from_pandas_series(raw, chunk_size=10)
+    result = series.nlargest(110, "last").execute().fetch()
+    expected = raw.nlargest(110, "last")
+    pd.testing.assert_series_equal(result, expected)
+
+    # test invalid keep
+    with pytest.raises(ValueError):
+        series.nlargest(5, "abcd").execute().fetch()
+
+
 def test_index_str_method(setup):
     def generate_random_string(length):
         characters = (

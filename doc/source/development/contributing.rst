@@ -14,11 +14,11 @@ All contributions, bug reports, bug fixes, documentation improvements,
 enhancements, and ideas are welcome.
 
 If you are brand new to Xorbits or open-source development, we recommend going
-through the `GitHub "issues" tab <https://github.com/xprobe-inc/xorbits/issues>`_
+through the `GitHub "issues" tab <https://github.com/xorbitsai/xorbits/issues>`_
 to find issues that interest you. There are a number of issues listed under `Docs
-<https://github.com/xprobe-inc/xorbits/issues?labels=documentation&sort=updated&state=open>`_
+<https://github.com/xorbitsai/xorbits/issues?labels=documentation&sort=updated&state=open>`_
 and `good first issue
-<https://github.com/xprobe-inc/xorbits/issues?labels=good+first+issue&sort=updated&state=open>`_
+<https://github.com/xorbitsai/xorbits/issues?labels=good+first+issue&sort=updated&state=open>`_
 where you could start out. Once you've found an interesting issue, you can
 return here to get your development environment setup.
 
@@ -34,7 +34,7 @@ text ``take``. When you do it, a GitHub action will automatically assign you the
 By doing this, it's possible to filter the list of issues and find only the unassigned ones.
 
 So, a good way to find an issue to start contributing to Xorbits is to check the list of
-`unassigned good first issues <https://github.com/xprobe-inc/xorbits/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+no%3Aassignee>`_
+`unassigned good first issues <https://github.com/xorbitsai/xorbits/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+no%3Aassignee>`_
 and assign yourself one you like by writing a comment with the exact text ``take``.
 
 If for whatever reason you are not able to continue working with the issue, please try to
@@ -102,7 +102,7 @@ It can very quickly become overwhelming, but sticking to the guidelines below wi
 straightforward and mostly trouble free.  As always, if you are having difficulties please
 feel free to ask for help.
 
-The code is hosted on `GitHub <https://www.github.com/xprobe-inc/xorbits>`_. To
+The code is hosted on `GitHub <https://www.github.com/xorbitsai/xorbits>`_. To
 contribute you will need to sign up for a `free GitHub account
 <https://github.com/signup/free>`_. We use `Git <https://git-scm.com/>`_ for
 version control to allow many people to work together on the project.
@@ -126,12 +126,12 @@ Forking
 -------
 
 You will need your own fork to work on the code. Go to the `Xorbits project
-page <https://github.com/xprobe-inc/xorbits>`_ and hit the ``Fork`` button. You will
+page <https://github.com/xorbitsai/xorbits>`_ and hit the ``Fork`` button. You will
 want to clone your fork to your machine::
 
     git clone --recursive https://github.com/your-user-name/xorbits.git xorbits-yourname
     cd xorbits-yourname
-    git remote add upstream https://github.com/xprobe-inc/xorbits.git
+    git remote add upstream https://github.com/xorbitsai/xorbits.git
 
 This creates the directory ``xorbits-yourname`` and connects your repository to
 the upstream (main project) *Xorbits* repository.
@@ -241,8 +241,8 @@ like::
 
     origin  git@github.com:yourname/xorbits.git (fetch)
     origin  git@github.com:yourname/xorbits.git (push)
-    upstream        git://github.com/xprobe-inc/xorbits.git (fetch)
-    upstream        git://github.com/xprobe-inc/xorbits.git (push)
+    upstream        git://github.com/xorbitsai/xorbits.git (fetch)
+    upstream        git://github.com/xorbitsai/xorbits.git (push)
 
 Now your code is on GitHub, but it is not yet a part of the Xorbits project. For that to
 happen, a pull request needs to be submitted on GitHub.

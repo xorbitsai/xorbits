@@ -91,9 +91,7 @@ class NodeInfoUploaderActor(mo.Actor):
             except asyncio.CancelledError:  # pragma: no cover
                 break
             except RuntimeError as ex:  # pragma: no cover
-                if "cannot schedule new futures after interpreter shutdown" not in str(
-                    ex
-                ):
+                if "cannot schedule new futures" not in str(ex):
                     # when atexit is triggered, the default pool might be shutdown
                     # and to_thread will fail
                     break

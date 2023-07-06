@@ -6,151 +6,35 @@
 
 ====
 
+Welcome to Xorbits!
+"""""""""""""""""""
 
-Xorbits: scalable Python data science, familiar & fast.
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Xorbits is an open-source computing framework that makes it easy to scale data science and machine learning workloads —
+from data loading to preprocessing, tuning, training, and model serving. Xorbits can leverage multi cores or GPUs to accelerate
+computation on a single machine, or scale out up to thousands of machines to support processing terabytes of data.
 
-Xorbits is a scalable Python data science framework that aims to **scale the whole Python data science world,
-including numpy, pandas, scikit-learn and many other libraries**. It can leverage multi cores or GPUs to
-accelerate computation on a single machine, or scale out up to thousands of machines to support processing
-terabytes of data. In our benchmark test, **Xorbits is the fastest framework among
-the most popular distributed data science frameworks**.
+Xorbits provides a suite of best-in-class libraries for data scientists and machine learning practitioners. Xorbits provides
+the capability to scale tasks without the necessity for extensive knowledge of infrastructure.
+
+- :ref:`Xorbits Data <xorbits_data_index>`: Load and process datasets, from small to large, using the tools you love💜, such as pandas and Numpy.
+
+- :ref:`Xorbits Train <xorbits_train_index>`: Train your own state-of-the-art models for ML and DL frameworks such as PyTorch, XGBoost, etc.
+
+- :ref:`Xorbits Tune <xorbits_tune_index>`: Finetune your models by running state of the art algorithms such as PEFT.
+
+- :ref:`Xorbits Inference <xorbits_inference_index>`: Scalable serving to deploy state-of-the-art models. Integrate with the most popular deep learning libraries, like PyTorch, ggml, etc.
+
+Xorbits features a familiar Python API that supports a variety of libraries, including pandas, NumPy, scikit-learn, PyTorch,
+XGBoost, Xarray, etc. With a simple modification of just one line of code, your pandas workflow can be seamlessly scaled using
+Xorbits:
+
+.. image:: _static/pandas_vs_xorbits.gif
+   :alt: pandas on Xorbits
+   :align: center
+   :scale: 70%
 
 As for the name of ``xorbits``, it has many meanings, you can treat it as ``X-or-bits`` or ``X-orbits`` or ``xor-bits``,
 just have fun to comprehend it in your own way.
-
-At a glance
------------
-
-.. image:: _static/pandas_vs_xorbits.gif
-
-Codes are almost identical except for the import,
-replace ``import pandas`` with ``import xorbits.pandas`` will just work,
-so does numpy and so forth.
-
-Where to get it?
-----------------
-
-.. only:: not zh_cn
-
-    The source code is currently hosted on GitHub at: https://github.com/xprobe-inc/xorbits
-
-.. only:: zh_cn
-
-    The source code is currently hosted on:
-
-    1. Github: https://github.com/xprobe-inc/xorbits
-    2. Gitee: https://gitee.com/xprobe-inc/xorbits
-
-Binary installers for the latest released version are available at the
-`Python Package Index (PyPI) <https://pypi.org/project/xorbits>`_
-
-.. code-block:: shell
-
-   # PyPI
-   pip install xorbits
-
-API compatibility
------------------
-
-As long as you know how to use numpy, pandas and so forth, you would probably know how to use Xorbits.
-
-All Xorbits APIs implemented or planned include:
-
-======================================= =========================================================
-API                                     Implemented version or plan
-======================================= =========================================================
-:ref:`xorbits.pandas <pandas_api>`      v0.1.0
-:ref:`xorbits.numpy <numpy_api>`        v0.1.0
-:ref:`xorbits.xgboost <xgboost_api>`    v0.4.0
-:ref:`xorbits.lightgbm <lightgbm_api>`  v0.4.0
-``xorbits.sklearn``                     Planned in the near future
-``xorbits.xarray``                      Planned in the future
-``xorbits.scipy``                       Planned in the future
-``xorbits.statsmodels``                 Planned in the future
-======================================= =========================================================
-
-Lightning fast speed
---------------------
-
-Xorbits is the fastest compared to other popular frameworks according to our benchmark tests.
-
-We did benchmarks for TPC-H at scale factor 100 (~100 GB datasets) and 1000 (~1 TB datasets).
-The performances are shown as below.
-
-TPC-H SF100: Xorbits vs Dask
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. only:: not zh_cn
-
-    .. image:: https://xorbits.io/res/benchmark_dask.png
-
-.. only:: zh_cn
-
-    .. image:: https://xorbits.cn/assets/images/benchmark_dask.png
-
-Q21 was excluded since Dask ran out of memory. Across all queries, Xorbits was found to be 7.3x faster than Dask.
-
-TPC-H SF100: Xorbits vs Pandas API on Spark
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. only:: not zh_cn
-
-    .. image:: https://xorbits.io/res/benchmark_spark.png
-
-.. only:: zh_cn
-
-    .. image:: https://xorbits.cn/assets/images/benchmark_spark.png
-
-Across all queries, the two systems have roughly similar performance, but Xorbits provided much better API compatibility.
-Pandas API on Spark failed on Q1, Q4, Q7, Q21, and ran out of memory on Q20.
-
-TPC-H SF100: Xorbits vs Modin
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. only:: not zh_cn
-
-    .. image:: https://xorbits.io/res/benchmark_modin.png
-
-.. only:: zh_cn
-
-    .. image:: https://xorbits.cn/assets/images/benchmark_modin.png
-
-Although Modin ran out of memory for most of the queries that involve heavy data shuffles,
-making the performance difference less obvious, Xorbits was still found to be 3.2x faster than Modin.
-
-TPC-H SF1000: Xorbits
-~~~~~~~~~~~~~~~~~~~~~
-
-.. only:: not zh_cn
-
-    .. image:: https://xorbits.io/res/xorbits_1t.png
-
-.. only:: zh_cn
-
-    .. image:: https://xorbits.cn/assets/images/xorbits_1t.png
-
-Although Xorbits is able to pass all the queries in a row,
-Dask, Pandas API on Spark and Modin failed on most of the queries.
-Thus, we are not able to compare the performance difference now, and we plan to try again later.
-
-For more information, see `performance benchmarks <https://xorbits.io/benchmark>`_.
-
-Deployment
-----------
-
-Xorbits can be deployed on your local machine, largely deployed to a cluster via command lines,
-or deploy via Kubernetes and clouds.
-
-========================================= ============================================================
-Deployment                                Description
-========================================= ============================================================
-:ref:`Local <deployment_local>`           Run Xorbits on a local machine, e.g. your laptop
-:ref:`Cluster <deployment_cluster>`       Deploy Xorbits to existing cluster via command lines
-:ref:`Kubernetes <deployment_kubernetes>` Deploy Xorbits to existing k8s cluster via python code
-:ref:`Cloud <deployment_cloud>`           Deploy Xorbits to various cloud platforms via python code
-:ref:`SLURM <deployment_slurm>`           Deploy Xorbits to SLURM
-========================================= ============================================================
 
 Getting involved
 ----------------
@@ -162,7 +46,7 @@ Getting involved
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | `Discourse Forum <https://discuss.xorbits.io/>`_                                                 | Asking usage questions and discussing development. |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-    | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
+    | `Github Issues <https://github.com/xorbitsai/xorbits/issues>`_                                   | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | `Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg>`_  | Collaborating with other Xorbits users.            |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
@@ -176,9 +60,9 @@ Getting involved
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | **Platform**                                                                                     | **Purpose**                                        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-    | `Github Issues <https://github.com/xprobe-inc/xorbits/issues>`_                                  | Reporting bugs and filing feature requests.        |
+    | `Github Issues <https://github.com/xorbitsai/xorbits/issues>`_                                   | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-    | `Gitee Issues <https://gitee.com/xprobe-inc/xorbits/issues>`_                                    | Reporting bugs and filing feature requests.        |
+    | `Gitee Issues <https://gitee.com/xorbitsai/xorbits/issues>`_                                     | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
 
     Visit `Xorbits community <https://xorbits.cn/community>`_ to join us on Wechat, Zhihu and so on.
@@ -189,6 +73,7 @@ Getting involved
    :hidden:
 
    getting_started/index
+   libraries/index
    user_guide/index
    deployment/index
    reference/index

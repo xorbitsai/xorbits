@@ -105,7 +105,7 @@ on our `Dockerhub <https://hub.docker.com/repository/docker/xprobe/xorbits/gener
 It includes the complete environment required to run Xorbits.
 
 The images available on Dockerhub include versions for all supported Python versions, with the suffix ``py<python_version>``.
-For the image tag prefixes, ``nightly-main`` represents the latest code from `Xorbits GitHub repository <https://github.com/xprobe-inc/xorbits>`_ on a daily basis,
+For the image tag prefixes, ``nightly-main`` represents the latest code from `Xorbits GitHub repository <https://github.com/xorbitsai/xorbits>`_ on a daily basis,
 while ``v<release_version>`` represents version numbers for each release.
 You can choose to pull the image based on your specific requirements.
 

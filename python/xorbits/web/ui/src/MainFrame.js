@@ -55,7 +55,7 @@ export default function MainFrame() {
             <GithubIcon fontSize="large" />
             <Link
               align="center"
-              href="https://github.com/xprobe-inc/xorbits"
+              href="https://github.com/xorbitsai/xorbits"
               underline="none"
               color="inherit"
               fontSize="large"
