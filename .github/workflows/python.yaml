@@ -227,8 +227,15 @@ jobs:
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
+    - name: Install on JuiceFsCI
+      if: ${{ matrix.module == 'kubernetes-juicefs' }}
+      run: |
+        pip install -U xoscar
+        python setup.py build_ext -i
+      working-directory: ./python
+
     - name: Install on GPU
-      if: ${{ matrix.module == 'gpu' || matrix.module == 'kubernetes-juicefs' }}
+      if: ${{ matrix.module == 'gpu' }}
       run: |
         pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
         python setup.py build_ext -i
