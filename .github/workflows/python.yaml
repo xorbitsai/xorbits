@@ -117,6 +117,11 @@ jobs:
         driver: none
         kubernetes-version: v1.23.12
 
+    - name: Install ucx dependencies
+      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.python-version != '3.11') }}
+      run: |
+        conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
+
     - name: Install dependencies
       env:
         MODULE: ${{ matrix.module }}
