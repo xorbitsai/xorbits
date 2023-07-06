@@ -39,7 +39,13 @@ from ...serialization.serializables import (
 )
 from ...utils import FixedSizeFileObject, lazy_import, parse_readable_size
 from ..arrays import ArrowStringDtype
-from ..utils import build_empty_df, contain_arrow_dtype, parse_index, to_arrow_dtypes
+from ..utils import (
+    build_empty_df,
+    contain_arrow_dtype,
+    parse_index,
+    to_arrow_dtypes,
+    is_pandas_2,
+)
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -159,15 +165,7 @@ class DataFrameReadCSV(
         df = op.outputs[0]
         chunk_bytes = df.extra_params.chunk_bytes
         chunk_bytes = int(parse_readable_size(chunk_bytes)[0])
-
         dtypes = df.dtypes
-        if (
-            op.use_arrow_dtype is None
-            and not op.gpu
-            and options.dataframe.use_arrow_dtype
-        ):  # pragma: no cover
-            # check if use_arrow_dtype set on the server side
-            dtypes = to_arrow_dtypes(df.dtypes)
 
         path_prefix = ""
         if isinstance(op.path, (tuple, list)):
@@ -269,6 +267,8 @@ class DataFrameReadCSV(
                 # which will cause failure when converting to arrow string array
                 csv_kwargs["keep_default_na"] = False
                 csv_kwargs["dtype"] = cls._select_arrow_dtype(dtypes)
+            if op.use_arrow_dtype and is_pandas_2():
+                csv_kwargs["dtype_backend"] = "pyarrow"
             df = pd.read_csv(
                 b,
                 sep=op.sep,
@@ -343,6 +343,8 @@ class DataFrameReadCSV(
                     # which will cause failure when converting to arrow string array
                     csv_kwargs["keep_default_na"] = False
                     csv_kwargs["dtype"] = cls._select_arrow_dtype(dtypes)
+                if xdf is pd and op.use_arrow_dtype and is_pandas_2():
+                    csv_kwargs["dtype_backend"] = "pyarrow"
                 df = xdf.read_csv(
                     f,
                     sep=op.sep,
@@ -689,6 +691,8 @@ def read_csv(
     >>> # read from S3
     >>> md.read_csv('s3://bucket/file.txt')
     """
+    if use_arrow_dtype is None:
+        use_arrow_dtype = options.dataframe.use_arrow_dtype
     # infer dtypes and columns
     if isinstance(path, (list, tuple)):
         file_path = path[0]
@@ -711,6 +715,11 @@ def read_csv(
             head_start, head_end = _find_chunk_start_end(f, 0, head_bytes, True)
             f.seek(head_start)
             b = f.read(head_end - head_start)
+        csv_kwargs = (
+            {"dtype_backend": "pyarrow"}
+            if not gpu and use_arrow_dtype and is_pandas_2()
+            else {}
+        )
         mini_df = pd.read_csv(
             BytesIO(b),
             sep=sep,
@@ -719,6 +728,7 @@ def read_csv(
             names=names,
             header=header,
             skiprows=skiprows,
+            **csv_kwargs,
         )
         if header == "infer" and names is not None:
             # ignore header as we always specify names
@@ -764,8 +774,6 @@ def read_csv(
     )
     chunk_bytes = chunk_bytes or options.chunk_store_limit
     dtypes = mini_df.dtypes
-    if use_arrow_dtype is None:
-        use_arrow_dtype = options.dataframe.use_arrow_dtype
     if not gpu and use_arrow_dtype:
         dtypes = to_arrow_dtypes(dtypes, test_df=mini_df)
     ret = op(

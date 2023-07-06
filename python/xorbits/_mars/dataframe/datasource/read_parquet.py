@@ -94,6 +94,9 @@ def get_engine(engine):
 
 
 class ParquetEngine:
+    """Read parquet by arrow / fastparquet instead of pandas is to read the
+    parquet file by group, please refer to `groups_as_chunks`."""
+
     def get_row_num(self, f):
         raise NotImplementedError
 
@@ -172,13 +175,13 @@ def _parse_prefix(path):
 
 def _arrow_dtype_mapper(
     tp: Union[np.dtype, arrow_dtype]
-) -> Optional[Union[ArrowListDtype, ArrowStringDtype]]:
+) -> Optional[Union[ArrowListDtype, ArrowStringDtype, pd.ArrowDtype]]:
     if tp == pa.string():
         return ArrowStringDtype()
     elif isinstance(tp, pa.ListType):
         return ArrowListDtype(tp.value_type)
     else:
-        return
+        return pd.ArrowDtype(tp)
 
 
 class ArrowEngine(ParquetEngine):

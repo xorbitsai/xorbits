@@ -819,7 +819,12 @@ def test_read_csv_use_arrow_dtype(setup):
         result = mdf.execute().fetch()
         assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
         assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
+        assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert result.to_dict() == pdf.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf, check_like=True)
 
     with tempfile.TemporaryDirectory() as tempdir:
         with option_context({"dataframe.use_arrow_dtype": True}):
@@ -831,7 +836,12 @@ def test_read_csv_use_arrow_dtype(setup):
             result = mdf.execute().fetch()
             assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
             assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-            pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
+            assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+            assert result.to_dict() == pdf.to_dict()
+            # There still exists Float64 != float64 dtype check error even if we use
+            # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+            # back to numpy.
+            # pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
 
     # test compression
     with tempfile.TemporaryDirectory() as tempdir:
@@ -843,7 +853,12 @@ def test_read_csv_use_arrow_dtype(setup):
         result = mdf.execute().fetch()
         assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
         assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
+        assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert result.to_dict() == pdf.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
 
 
 @require_cudf
@@ -1271,7 +1286,12 @@ def test_read_parquet_arrow(setup, engine):
             result = df.execute().fetch()
             assert isinstance(df.dtypes.iloc[1], md.ArrowStringDtype)
             assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-            pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
+            assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+            assert result.to_dict() == test_df.to_dict()
+            # There still exists Float64 != float64 dtype check error even if we use
+            # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+            # back to numpy.
+            # pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
 
     # test wildcards in path
     for merge_small_file_option in [{"n_sample_file": 1}, None]:
@@ -1363,7 +1383,12 @@ def test_read_parquet_arrow_dtype(setup):
         result = df.execute().fetch()
         assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
         assert isinstance(result.dtypes.iloc[3], md.ArrowListDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
+        assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert result.to_dict() == test_df.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
 
 
 @pytest.mark.skipif(fastparquet is None, reason="fastparquet not installed")
