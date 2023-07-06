@@ -41,7 +41,9 @@ RUN /opt/conda/bin/conda install \
     jax \
     jaxlib \
     uvloop \
+    libnuma \
   && pip install -U \
+    xoscar \
     cloudpickle \
     adlfs \
     fsspec>=2022.7.1,!=2022.8.0 \
@@ -64,8 +66,5 @@ RUN apt-get -y update \
   && nvm use default \
   && apt-get -yq clean \
   && rm -rf /var/lib/apt/lists/*
-
-RUN pip install -e "git+https://github.com/ChengjieLi28/xoscar.git@enh/ucx#subdirectory=python&egg=xoscar"
-RUN conda install -c conda-forge libnuma
 
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
