@@ -39,7 +39,7 @@ from ...serialization.serializables import (
 from ...tensor.utils import normalize_chunk_sizes
 from ...typing import OperandType, TileableType
 from ..arrays import ArrowStringDtype
-from ..utils import create_sa_connection, parse_index, to_arrow_dtypes
+from ..utils import create_sa_connection, is_pandas_2, parse_index, to_arrow_dtypes
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -152,7 +152,9 @@ class DataFrameReadSQL(
                     self.selectable = selectable
         return selectable
 
-    def _collect_info(self, engine_or_conn, selectable, columns, test_rows):
+    def _collect_info(
+        self, engine_or_conn, selectable, columns, test_rows, use_arrow_dtype
+    ):
         from sqlalchemy import sql
 
         # fetch test DataFrame
@@ -166,12 +168,16 @@ class DataFrameReadSQL(
             query = (
                 sql.select(selectable.columns).select_from(selectable).limit(test_rows)
             )
+        sql_kwargs = (
+            {"dtype_backend": "pyarrow"} if use_arrow_dtype and is_pandas_2() else {}
+        )
         test_df = pd.read_sql(
             query,
             engine_or_conn,
             index_col=self.index_col,
             coerce_float=self.coerce_float,
             parse_dates=self.parse_dates,
+            **sql_kwargs,
         )
         if len(test_df) == 0:
             self.row_memory_usage = None
@@ -230,8 +236,13 @@ class DataFrameReadSQL(
                 collect_cols = self.columns + (self.index_col or [])
             else:
                 collect_cols = []
+
+            use_arrow_dtype = self.use_arrow_dtype
+            if use_arrow_dtype is None:
+                use_arrow_dtype = options.dataframe.use_arrow_dtype
+
             test_df, shape = self._collect_info(
-                con, selectable, collect_cols, test_rows
+                con, selectable, collect_cols, test_rows, use_arrow_dtype
             )
 
             # reconstruct selectable using known column names
@@ -270,9 +281,6 @@ class DataFrameReadSQL(
             columns_value = parse_index(test_df.columns, store_data=True)
 
             dtypes = test_df.dtypes
-            use_arrow_dtype = self.use_arrow_dtype
-            if use_arrow_dtype is None:
-                use_arrow_dtype = options.dataframe.use_arrow_dtype
             if use_arrow_dtype:
                 dtypes = to_arrow_dtypes(dtypes, test_df=test_df)
 
@@ -483,12 +491,22 @@ class DataFrameReadSQL(
             if op.nrows is not None:
                 query = query.limit(op.nrows)
 
+            use_arrow_dtype = op.use_arrow_dtype
+            if use_arrow_dtype is None:
+                use_arrow_dtype = options.dataframe.use_arrow_dtype
+
+            sql_kwargs = (
+                {"dtype_backend": "pyarrow"}
+                if use_arrow_dtype and is_pandas_2()
+                else {}
+            )
             df = pd.read_sql(
                 query,
                 engine,
                 index_col=op.index_col,
                 coerce_float=op.coerce_float,
                 parse_dates=op.parse_dates,
+                **sql_kwargs,
             )
             if op.method == "offset" and op.index_col is None and op.offset > 0:
                 index = pd.RangeIndex(op.offset, op.offset + out.shape[0])
@@ -496,9 +514,6 @@ class DataFrameReadSQL(
                     index = index[: op.nrows]
                 df.index = index
 
-            use_arrow_dtype = op.use_arrow_dtype
-            if use_arrow_dtype is None:
-                use_arrow_dtype = options.dataframe.use_arrow_dtype
             if use_arrow_dtype:
                 dtypes = to_arrow_dtypes(df.dtypes, test_df=df)
                 for i in range(len(dtypes)):

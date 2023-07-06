@@ -1109,7 +1109,12 @@ def test_read_sql_use_arrow_dtype(setup):
         result = r.execute().fetch()
         assert isinstance(r.dtypes.iloc[1], md.ArrowStringDtype)
         assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
+        assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert result.to_dict() == test_df.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
 
         # test read with sql string and offset method
         r = md.read_sql_query(
@@ -1122,10 +1127,18 @@ def test_read_sql_use_arrow_dtype(setup):
         result = r.execute().fetch()
         assert isinstance(r.dtypes.iloc[1], md.ArrowStringDtype)
         assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(
-            arrow_array_to_objects(result),
-            test_df[test_df.c > 0.5].reset_index(drop=True),
+        assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert (
+            result.to_dict()
+            == test_df[test_df.c > 0.5].reset_index(drop=True).to_dict()
         )
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(
+        #     arrow_array_to_objects(result),
+        #     test_df[test_df.c > 0.5].reset_index(drop=True),
+        # )
 
 
 @pytest.mark.pd_compat
