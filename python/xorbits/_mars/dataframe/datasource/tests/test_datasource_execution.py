@@ -46,7 +46,7 @@ from .... import dataframe as md
 from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_cupy
-from ....utils import arrow_array_to_objects, pd_release_version
+from ....utils import pd_release_version
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records
 from ..from_tensor import dataframe_from_1d_tileables, dataframe_from_tensor
