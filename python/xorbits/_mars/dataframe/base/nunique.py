@@ -617,8 +617,11 @@ class DataFrameNunique(MapReduceOperand, DataFrameOperandMixin):
                     if op.axis == 0:
                         ctx[chunk.key] = df.nunique(axis=op.axis, dropna=op.dropna)
                     else:
-                        res = cls._gen_post_result(df, op)
-                        ctx[chunk.key] = res
+                        ctx[chunk.key] = (
+                            df.nunique(axis=op.axis, dropna=op.dropna)
+                            if len(df) == 0
+                            else cls._gen_post_result(df, op)
+                        )
                 else:
                     ctx[chunk.key] = df.nunique(dropna=op.dropna)
 
