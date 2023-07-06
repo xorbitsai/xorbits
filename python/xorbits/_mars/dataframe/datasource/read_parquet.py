@@ -521,12 +521,15 @@ class DataFrameReadParquet(
         path = op.path
 
         if op.is_http_url:
-            ctx[out.key] = pd.read_parquet(
+            r = pd.read_parquet(
                 op.path,
                 columns=op.columns,
                 engine=op.engine,
                 **op.read_kwargs or dict(),
             )
+            if op.use_arrow_dtype:
+                r = r.astype(to_arrow_dtypes(r.dtypes).to_dict())
+            ctx[out.key] = r
             return
         if op.partitions is not None:
             return cls._execute_partitioned(ctx, op)

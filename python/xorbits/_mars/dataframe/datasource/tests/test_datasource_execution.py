@@ -1449,6 +1449,10 @@ def test_read_parquet_with_http_url(setup, start_http_server):
     mdf = md.read_parquet(urls).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
 
+    mdf = md.read_parquet(urls, use_arrow_dtype=True).execute().fetch()
+    pd.testing.assert_frame_equal(df, arrow_array_to_objects(mdf))
+    assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+
     mdf1 = md.read_parquet(urls[:1]).execute().fetch()
     pd.testing.assert_frame_equal(df.iloc[:50], mdf1)
 
