@@ -316,7 +316,7 @@ def _compare_objs(obj1: Any, obj2: Any):
 @require_cupy
 @require_cudf
 @pytest.mark.asyncio
-async def test_cuda_backend(data):
+async def test_cuda_backend():
     import datetime
 
     import cudf
