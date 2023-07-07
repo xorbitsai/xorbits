@@ -41,6 +41,7 @@ from .melt import melt
 from .memory_usage import df_memory_usage, index_memory_usage, series_memory_usage
 from .nlargest import dataframe_nlargest, series_nlargest
 from .nsmallest import dataframe_nsmallest, series_nsmallest
+from .nunique import nunique_dataframe, nunique_series
 from .pct_change import pct_change
 from .pivot import df_pivot
 from .pivot_table import df_pivot_table
@@ -100,6 +101,7 @@ def _install():
         setattr(t, "transpose", transpose)
         setattr(t, "nlargest", dataframe_nlargest)
         setattr(t, "nsmallest", dataframe_nsmallest)
+        setattr(t, "nunique", nunique_dataframe)
 
     for t in SERIES_TYPE:
         setattr(t, "to_gpu", to_gpu)
@@ -130,6 +132,7 @@ def _install():
         setattr(t, "pct_change", pct_change)
         setattr(t, "nlargest", series_nlargest)
         setattr(t, "nsmallest", series_nsmallest)
+        setattr(t, "nunique", nunique_series)
 
     for t in INDEX_TYPE:
         setattr(t, "map", index_map)
