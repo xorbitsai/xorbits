@@ -84,7 +84,7 @@ _agg_functions = {
     "skew": lambda x, skipna=True, bias=False: x.skew(skipna=skipna, bias=bias),
     "kurt": lambda x, skipna=True, bias=False: x.kurt(skipna=skipna, bias=bias),
     "kurtosis": lambda x, skipna=True, bias=False: x.kurtosis(skipna=skipna, bias=bias),
-    "nunique": lambda x: x.nunique(),
+    "nunique": lambda x: x.reduction_nunique(),
 }
 
 
