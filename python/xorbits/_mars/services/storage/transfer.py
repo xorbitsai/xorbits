@@ -16,6 +16,7 @@
 import asyncio
 import logging
 from dataclasses import dataclass
+from io import UnsupportedOperation
 from typing import Any, Dict, List, Union
 
 import xoscar as mo
@@ -99,8 +100,15 @@ class SenderManagerActor(mo.StatelessActor):
         data_sizes = []
         headers = []
         for reader in readers:
-            if reader.buffer is not None:
+            try:
                 reader_buffer = reader.buffer
+            except UnsupportedOperation:  # vineyard
+                logger.warning(
+                    "Transfer via buffer not work for vineyard. Use file object instead."
+                )
+                reader_buffer = None
+
+            if reader_buffer is not None:
                 if isinstance(reader_buffer, list):  # cuda case
                     data_sizes.append(
                         [self._get_buffer_size(rb) for rb in reader_buffer]
@@ -272,7 +280,10 @@ class ReceiverManagerActor(mo.StatelessActor):
             if header:
                 writer.set_file_header(header)
 
-            writer_buf = writer.buffer
+            try:
+                writer_buf = writer.buffer
+            except UnsupportedOperation:
+                writer_buf = None
             if writer_buf is not None:
                 if isinstance(writer_buf, list):  # cuda case
                     res.extend([mo.buffer_ref(self.address, buf) for buf in writer_buf])
