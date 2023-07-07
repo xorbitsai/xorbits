@@ -1153,6 +1153,9 @@ oscar:
   numa:
     external_addr_scheme: {scheme}
     enable_internal_addr: {enable_inaddr}
+  io:
+    external_addr_scheme: {scheme}
+    enable_internal_addr: {enable_inaddr}
 """
 
 
@@ -1189,6 +1192,8 @@ def test_oscar_configs(scheme, enable_inaddr, manner):
             cuda_devices=None,
             numa_external_addr_scheme=scheme,
             numa_enable_internal_addr=enable_inaddr,
+            io_external_addr_scheme=scheme,
+            io_enable_internal_addr=enable_inaddr,
             oscar_extra_conf={"ucx": {"tcp": True}},
         )
         test(session)
