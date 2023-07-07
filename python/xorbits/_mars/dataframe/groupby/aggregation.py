@@ -103,7 +103,7 @@ _agg_functions = {
     "skew": lambda x, bias=False: x.skew(bias=bias),
     "kurt": lambda x, bias=False: x.kurt(bias=bias),
     "kurtosis": lambda x, bias=False: x.kurtosis(bias=bias),
-    "nunique": lambda x: x.nunique(),
+    "nunique": lambda x: x.reduction_nunique(),
 }
 _series_col_name = "col_name"
 

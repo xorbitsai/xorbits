@@ -25,7 +25,6 @@ except ImportError:  # pragma: no cover
     pa = None
 
 from .... import dataframe as md
-from ....config import option_context
 from ....deploy.oscar.session import get_default_session
 from ....tests.core import require_cudf, require_cupy
 from ....utils import lazy_import, pd_release_version
@@ -613,101 +612,6 @@ def test_dataframe_count(setup, check_ref_counts):
     result = df3.count(axis="columns", numeric_only=True).execute().fetch()
     expected = data.count(axis="columns", numeric_only=True)
     pd.testing.assert_series_equal(result, expected)
-
-
-def test_nunique(setup, check_ref_counts):
-    data1 = pd.Series(np.random.randint(0, 5, size=(20,)))
-
-    series = md.Series(data1)
-    result = series.nunique().execute().fetch()
-    expected = data1.nunique()
-    assert result == expected
-
-    series = md.Series(data1, chunk_size=6)
-    result = series.nunique().execute().fetch()
-    expected = data1.nunique()
-    assert result == expected
-
-    # test dropna
-    data2 = data1.copy()
-    data2[[2, 9, 18]] = np.nan
-
-    series = md.Series(data2)
-    result = series.nunique().execute().fetch()
-    expected = data2.nunique()
-    assert result == expected
-
-    series = md.Series(data2, chunk_size=3)
-    result = series.nunique(dropna=False).execute().fetch()
-    expected = data2.nunique(dropna=False)
-    assert result == expected
-
-    # test dataframe
-    data1 = pd.DataFrame(
-        np.random.randint(0, 6, size=(20, 20)),
-        columns=["c" + str(i) for i in range(20)],
-    )
-    df = md.DataFrame(data1)
-    result = df.nunique().execute().fetch()
-    expected = data1.nunique()
-    pd.testing.assert_series_equal(result, expected)
-
-    df = md.DataFrame(data1, chunk_size=6)
-    result = df.nunique().execute().fetch()
-    expected = data1.nunique()
-    pd.testing.assert_series_equal(result, expected)
-
-    df = md.DataFrame(data1)
-    result = df.nunique(axis=1).execute().fetch()
-    expected = data1.nunique(axis=1)
-    pd.testing.assert_series_equal(result, expected)
-
-    df = md.DataFrame(data1, chunk_size=3)
-    result = df.nunique(axis=1).execute().fetch()
-    expected = data1.nunique(axis=1)
-    pd.testing.assert_series_equal(result, expected)
-
-    # test dropna
-    data2 = data1.copy()
-    data2.iloc[[2, 9, 18], [2, 9, 18]] = np.nan
-
-    df = md.DataFrame(data2)
-    result = df.nunique().execute().fetch()
-    expected = data2.nunique()
-    pd.testing.assert_series_equal(result, expected)
-
-    df = md.DataFrame(data2, chunk_size=3)
-    result = df.nunique(dropna=False).execute().fetch()
-    expected = data2.nunique(dropna=False)
-    pd.testing.assert_series_equal(result, expected)
-
-    df = md.DataFrame(data1, chunk_size=3)
-    result = df.nunique(axis=1).execute().fetch()
-    expected = data1.nunique(axis=1)
-    pd.testing.assert_series_equal(result, expected)
-
-
-@pytest.mark.skipif(pa is None, reason="pyarrow not installed")
-def test_use_arrow_dtype_nunique(setup, check_ref_counts):
-    with option_context({"dataframe.use_arrow_dtype": True, "combine_size": 2}):
-        rs = np.random.RandomState(0)
-        data1 = pd.DataFrame(
-            {"a": rs.random(10), "b": [f"s{i}" for i in rs.randint(100, size=10)]}
-        )
-        data1["c"] = data1["b"].copy()
-        data1["d"] = data1["b"].copy()
-        data1["e"] = data1["b"].copy()
-
-        df = md.DataFrame(data1, chunk_size=(3, 2))
-        r = df.nunique(axis=0)
-        result = r.execute().fetch()
-        expected = data1.nunique(axis=0)
-        pd.testing.assert_series_equal(result, expected)
-
-        r = df.nunique(axis=1)
-        result = r.execute().fetch()
-        expected = data1.nunique(axis=1)
-        pd.testing.assert_series_equal(result, expected)
 
 
 def test_unique(setup, check_ref_counts):
