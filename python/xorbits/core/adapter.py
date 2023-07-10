@@ -376,8 +376,7 @@ class MarsGetAttrProxy:
             return from_mars(attr)
 
     def __getitem__(self, item):
-        mars_obj = object.__getattribute__(self, "_mars_obj")
-        return mars_obj.__getitem__(item)
+        return from_mars(self._mars_obj[to_mars(item)])
 
 
 def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
