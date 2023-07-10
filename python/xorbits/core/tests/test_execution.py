@@ -328,6 +328,7 @@ def test_interactive_execution(setup, ip):
 
 def test_getitem(setup):
     import pandas as pd
+
     from ... import pandas as xpd
 
     data = {"a": ["abc", "def"]}
