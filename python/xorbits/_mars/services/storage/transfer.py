@@ -102,7 +102,7 @@ class SenderManagerActor(mo.StatelessActor):
         for reader in readers:
             try:
                 reader_buffer = reader.buffer
-            except UnsupportedOperation:  # vineyard
+            except UnsupportedOperation:  # vineyard  # pragma: no cover
                 logger.warning(
                     "Transfer via buffer not work for vineyard. Use file object instead."
                 )
@@ -282,7 +282,7 @@ class ReceiverManagerActor(mo.StatelessActor):
 
             try:
                 writer_buf = writer.buffer
-            except UnsupportedOperation:
+            except UnsupportedOperation:  # pragma: no cover
                 writer_buf = None
             if writer_buf is not None:
                 if isinstance(writer_buf, list):  # cuda case
