@@ -375,6 +375,9 @@ class MarsGetAttrProxy:
             # class variable
             return from_mars(attr)
 
+    def __getitem__(self, item):
+        return from_mars(self._mars_obj[to_mars(item)])
+
 
 def to_mars(inp: Union[DataRef, Tuple, List, Dict]):
     """
