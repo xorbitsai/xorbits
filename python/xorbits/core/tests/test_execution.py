@@ -324,3 +324,16 @@ def test_interactive_execution(setup, ip):
     ip.run_cell(raw_cell="df + 3")
     r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(_)")
     assert r.result
+
+
+def test_getitem(setup):
+    import pandas as pd
+
+    from ... import pandas as xpd
+
+    data = {"a": ["abc", "def"]}
+    df = pd.DataFrame(data)
+    xdf = xpd.DataFrame(data)
+    result = xdf[xdf["a"].str[0] == "a"]
+    expected = df[df["a"].str[0] == "a"]
+    pd.testing.assert_frame_equal(result.to_pandas(), expected)
