@@ -35,7 +35,7 @@ class FsSpecAdapter(FileSystem):
     def ls(self, path: path_type) -> List[path_type]:
         entries = []
         for entry in self._fs.ls(self._normalize_path(path), detail=False):
-            if entry.strip("/") == path.strip("/"):
+            if entry.strip("/") in path.strip("/"):
                 continue
             if isinstance(entry, Dict):
                 entries.append(entry.get("name"))
