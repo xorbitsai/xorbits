@@ -13,9 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..operand import DataOperand, DataOperandMixin
-from ..._mars.typing import OperandType
-from ..._mars.serialization.serializables import Int32Field
+from xorbits.data.operand import DataOperand, DataOperandMixin
+from xorbits._mars.core.entity import OutputType
+from xorbits._mars.typing import OperandType
+from xorbits._mars.serialization.serializables import Int32Field
 
 
 class HuggingfaceRepartition(DataOperand, DataOperandMixin):
@@ -50,3 +51,8 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
         out_key = op.outputs[0].key
         print(f"shard({op.num_blocks, op.block_index})")
         ctx[out_key] = inp.shard(op.num_blocks, op.block_index)
+
+
+def repartition(dataset, num_blocks: int, **kwargs):
+    op = HuggingfaceRepartition(num_blocks=num_blocks)
+    return op(dataset)

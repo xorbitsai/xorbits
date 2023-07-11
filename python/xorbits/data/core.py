@@ -1,6 +1,6 @@
 from .block import Block, BlockData
 from .dataset import Dataset, DatasetData
-from .backends.huggingface import HuggingfaceDataset, HuggingfaceDatasetData
+from .backends.huggingface.core import HuggingfaceDataset, HuggingfaceDatasetData
 from .._mars.core.entity.output_types import OutputType, register_output_types
 
 

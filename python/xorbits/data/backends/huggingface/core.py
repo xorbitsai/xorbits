@@ -25,14 +25,14 @@ from typing import (
     Union,
 )
 
-from .repartition import HuggingfaceRepartition
-from ..dataset import DatasetData, Dataset
-from ..block import Block
-from ..operand import DataOperand, DataOperandMixin
-from ..._mars.core.entity import OutputType
-from ..._mars.remote import spawn
-from ..._mars.typing import OperandType
-from ..._mars.serialization.serializables import Int32Field
+from .repartition import repartition
+from xorbits.data.dataset import DatasetData, Dataset
+from xorbits.data.block import Block
+from xorbits.data.operand import DataOperand, DataOperandMixin
+from xorbits._mars.core.entity import OutputType
+from xorbits._mars.remote import spawn
+from xorbits._mars.typing import OperandType
+from xorbits._mars.serialization.serializables import Int32Field
 
 
 class HuggingfaceDatasetData(DatasetData):
@@ -43,8 +43,7 @@ class HuggingfaceDatasetData(DatasetData):
         return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
 
     def repartition(self, num_blocks: int, **kwargs):
-        op = HuggingfaceRepartition(num_blocks=num_blocks)
-        return op(self)
+        return repartition(self, num_blocks)
 
     def map(self, fn, **kwargs):
         pass
