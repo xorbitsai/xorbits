@@ -36,6 +36,7 @@ from ..._mars.serialization.serializables import Int32Field
 
 class HuggingfaceRepartition(DataOperand, DataOperandMixin):
     num_blocks: int = Int32Field("num_blocks")
+    block_index: int = Int32Field("block_index")
 
     def __call__(self, inp):
         self.output_types = inp.op.output_types
@@ -51,13 +52,19 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
         assert len(input_chunks) == 1
 
         chunks = []
-        for _ in range(op.num_blocks):
+        for index in range(op.num_blocks):
             chunk_op = op.copy().reset_key()
-            chunk_op.new_chunk(inputs=input_chunks)
-            chunks.append()
+            chunk_op.block_index = index
+            c = chunk_op.new_chunk(inputs=input_chunks, index=index)
+            chunks.append(c)
 
+        return op.copy().new_tileable(op.inputs, chunks=chunks)
+
+    @classmethod
     def execute(cls, ctx, op: OperandType):
-        pass
+        inp = ctx[op.inputs[0].key]
+        out_key = op.outputs[0].key
+        ctx[out_key] = inp.shard(op.num_blocks, op.block_index)
 
 
 class HuggingfaceDatasetData(DatasetData):
@@ -70,6 +77,9 @@ class HuggingfaceDatasetData(DatasetData):
     def repartition(self, num_blocks: int, **kwargs):
         op = HuggingfaceRepartition(num_blocks=num_blocks)
         return op(self)
+
+    def map(self, fn, **kwargs):
+        pass
 
 
 class HuggingfaceDataset(Dataset):
