@@ -14,9 +14,26 @@
 # limitations under the License.
 
 from .._mars.core.entity.objects import Object, ObjectData
+from .block import Block
+
+from .._mars.serialization.serializables import FieldTypes, ListField
 
 
 class DatasetData(ObjectData):
+    __slots__ = ()
+    type_name = "Dataset"
+
+    # optional fields
+    _chunks = ListField(
+        "chunks",
+        FieldTypes.reference(Block),
+        on_serialize=lambda x: [it.data for it in x] if x is not None else x,
+        on_deserialize=lambda x: [Block(it) for it in x] if x is not None else x,
+    )
+
+    def __repr__(self):
+        return f"Dataset <op={type(self.op).__name__}, key={self.key}>"
+
     def repartition(self, num_blocks: int, **kwargs):
         raise NotImplementedError
 
@@ -25,6 +42,10 @@ class DatasetData(ObjectData):
 
 
 class Dataset(Object):
+    __slots__ = ()
+    _allow_data_type_ = (DatasetData,)
+    type_name = "Dataset"
+
     def repartition(self, num_blocks: int, **kwargs):
         return self.data.repartition(num_blocks, **kwargs)
 

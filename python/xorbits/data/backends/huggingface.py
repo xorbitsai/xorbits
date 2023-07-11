@@ -27,20 +27,37 @@ from typing import (
 
 from ..dataset import DatasetData, Dataset
 from ..block import Block
-from ..._mars.core.operand import Operand
+from ..operand import DataOperand, DataOperandMixin
+from ..._mars.core.entity import OutputType
+from ..._mars.remote import spawn
 
 
-# class
+class HuggingfaceRepartitionOperand(DataOperand, DataOperandMixin):
+    pass
 
 
 class HuggingfaceDatasetData(DatasetData):
+    __slots__ = ()
+    type_name = "Huggingface Dataset"
+
+    def __repr__(self):
+        return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
+
     def repartition(self, num_blocks: int, **kwargs):
+        print("repartition")
         pass
 
 
-def from_huggingface(
-    dataset: "datasets.Dataset",
-) -> Union[Dataset, Dict[str, Dataset]]:
+class HuggingfaceDataset(Dataset):
+    __slots__ = ()
+    _allow_data_type_ = (HuggingfaceDatasetData,)
+    type_name = "Huggingface Dataset"
+
+    def to_dataset(self):
+        return Dataset(self.data)
+
+
+def from_huggingface(path: str, **kwargs) -> Union[Dataset, Dict[str, Dataset]]:
     """Create a dataset from a Hugging Face Datasets Dataset.
 
     This function is not parallelized, and is intended to be used
@@ -86,21 +103,10 @@ def from_huggingface(
         Dataset holding Arrow records from the Hugging Face Dataset, or a dict of
             datasets in case dataset is a DatasetDict.
     """
-    import datasets
 
-    def convert(ds: "datasets.Dataset") -> Dataset:
-        # To get the resulting Arrow table from a Hugging Face Dataset after
-        # applying transformations (e.g. train_test_split(), shard(), select()),
-        # we create a copy of the Arrow table, which applies the indices
-        # mapping from the transformations.
-        hf_ds_arrow = ds.with_format("arrow")
-        ray_ds = from_arrow(hf_ds_arrow[:])
-        return ray_ds
+    def _load_dataset():
+        import datasets
 
-    if isinstance(dataset, datasets.Dataset):
-        return convert(dataset)
-    else:
-        raise TypeError(
-            "`dataset` must be a `datasets.Dataset` or `datasets.DatasetDict`."
-            f"got {type(dataset)}"
-        )
+        return datasets.load_dataset(path, **kwargs)
+
+    return spawn(_load_dataset, output_types=[OutputType.huggingface_data]).to_dataset()
