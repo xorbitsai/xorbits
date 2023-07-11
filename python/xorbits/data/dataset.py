@@ -21,7 +21,7 @@ from .._mars.serialization.serializables import FieldTypes, ListField
 
 class DatasetData(ObjectData):
     __slots__ = ()
-    type_name = "Dataset"
+    type_name = "DatasetData"
 
     # optional fields
     _chunks = ListField(

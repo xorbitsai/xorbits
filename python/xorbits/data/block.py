@@ -13,7 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .._mars.core.entity.objects import ObjectChunk
+from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
+
+
+class BlockData(ObjectChunkData):
+    __slots__ = ()
+    type_name = "BlockData"
+
 
 class Block(ObjectChunk):
-    pass
+    __slots__ = ()
+    _allow_data_type_ = (BlockData,)
+    type_name = "Block"

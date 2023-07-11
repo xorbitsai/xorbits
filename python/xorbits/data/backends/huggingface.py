@@ -30,10 +30,34 @@ from ..block import Block
 from ..operand import DataOperand, DataOperandMixin
 from ..._mars.core.entity import OutputType
 from ..._mars.remote import spawn
+from ..._mars.typing import OperandType
+from ..._mars.serialization.serializables import Int32Field
 
 
-class HuggingfaceRepartitionOperand(DataOperand, DataOperandMixin):
-    pass
+class HuggingfaceRepartition(DataOperand, DataOperandMixin):
+    num_blocks: int = Int32Field("num_blocks")
+
+    def __call__(self, inp):
+        self.output_types = inp.op.output_types
+        return self.new_tileable([inp])
+
+    @classmethod
+    def tile(cls, op: OperandType):
+        input_chunks = []
+        for inp in op.inputs:
+            input_chunks.extend(inp.chunks)
+
+        # TODO(codingl2k1): support repartition multi partitions.
+        assert len(input_chunks) == 1
+
+        chunks = []
+        for _ in range(op.num_blocks):
+            chunk_op = op.copy().reset_key()
+            chunk_op.new_chunk(inputs=input_chunks)
+            chunks.append()
+
+    def execute(cls, ctx, op: OperandType):
+        pass
 
 
 class HuggingfaceDatasetData(DatasetData):
@@ -44,8 +68,8 @@ class HuggingfaceDatasetData(DatasetData):
         return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
 
     def repartition(self, num_blocks: int, **kwargs):
-        print("repartition")
-        pass
+        op = HuggingfaceRepartition(num_blocks=num_blocks)
+        return op(self)
 
 
 class HuggingfaceDataset(Dataset):
