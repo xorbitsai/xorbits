@@ -26,6 +26,7 @@ from typing import (
 )
 
 from .repartition import repartition
+from .map import map
 from xorbits.data.dataset import DatasetData, Dataset
 from xorbits.data.block import Block
 from xorbits.data.operand import DataOperand, DataOperandMixin
@@ -46,7 +47,7 @@ class HuggingfaceDatasetData(DatasetData):
         return repartition(self, num_blocks)
 
     def map(self, fn, **kwargs):
-        pass
+        return map(self, fn)
 
 
 class HuggingfaceDataset(Dataset):

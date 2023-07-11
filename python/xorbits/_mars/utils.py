@@ -58,6 +58,7 @@ from typing import (
 from urllib.parse import urlparse
 
 import cloudpickle as pickle
+import datasets
 import numpy as np
 import pandas as pd
 from xoscar._utils import (
@@ -764,6 +765,9 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         if len(result) == 1:
             return result[0]
         return result
+    elif isinstance(v, datasets.Dataset):
+        result = [r[1] for r in chunk_results]
+        return datasets.concatenate_datasets(result)
     else:
         result = None
         for cr in chunk_results:
