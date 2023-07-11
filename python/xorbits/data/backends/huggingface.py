@@ -25,6 +25,7 @@ from typing import (
     Union,
 )
 
+from .repartition import HuggingfaceRepartition
 from ..dataset import DatasetData, Dataset
 from ..block import Block
 from ..operand import DataOperand, DataOperandMixin
@@ -32,39 +33,6 @@ from ..._mars.core.entity import OutputType
 from ..._mars.remote import spawn
 from ..._mars.typing import OperandType
 from ..._mars.serialization.serializables import Int32Field
-
-
-class HuggingfaceRepartition(DataOperand, DataOperandMixin):
-    num_blocks: int = Int32Field("num_blocks")
-    block_index: int = Int32Field("block_index")
-
-    def __call__(self, inp):
-        self.output_types = inp.op.output_types
-        return self.new_tileable([inp])
-
-    @classmethod
-    def tile(cls, op: OperandType):
-        input_chunks = []
-        for inp in op.inputs:
-            input_chunks.extend(inp.chunks)
-
-        # TODO(codingl2k1): support repartition multi partitions.
-        assert len(input_chunks) == 1
-
-        chunks = []
-        for index in range(op.num_blocks):
-            chunk_op = op.copy().reset_key()
-            chunk_op.block_index = index
-            c = chunk_op.new_chunk(inputs=input_chunks, index=index)
-            chunks.append(c)
-
-        return op.copy().new_tileable(op.inputs, chunks=chunks)
-
-    @classmethod
-    def execute(cls, ctx, op: OperandType):
-        inp = ctx[op.inputs[0].key]
-        out_key = op.outputs[0].key
-        ctx[out_key] = inp.shard(op.num_blocks, op.block_index)
 
 
 class HuggingfaceDatasetData(DatasetData):
