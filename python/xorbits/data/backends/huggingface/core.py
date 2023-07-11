@@ -16,8 +16,9 @@
 from typing import Dict, Union
 from .map import map
 from .repartition import repartition
-from ...dataset import DatasetData, Dataset
-from ...._mars.core.entity import OutputType
+from ...block import Block, BlockData
+from ...dataset import Dataset, DatasetData
+from ...._mars.core.entity import OutputType, register_output_types
 from ...._mars.remote import spawn
 
 
@@ -65,3 +66,10 @@ def from_huggingface(path: str, **kwargs) -> Union[Dataset, Dict[str, Dataset]]:
         return datasets.load_dataset(path, **kwargs)
 
     return spawn(_load_dataset, output_types=[OutputType.huggingface_data]).to_dataset()
+
+
+register_output_types(
+    OutputType.huggingface_data,
+    (HuggingfaceDataset, HuggingfaceDatasetData),
+    (Block, BlockData),
+)

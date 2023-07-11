@@ -13,9 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .._mars.core.entity.objects import Object, ObjectData
 from .block import Block
-
+from .._mars.core.entity.objects import Object, ObjectData
 from .._mars.serialization.serializables import FieldTypes, ListField
 
 
