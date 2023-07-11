@@ -13,15 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from xorbits.data.operand import DataOperand, DataOperandMixin
-from xorbits._mars.core.entity import OutputType
-from xorbits._mars.typing import OperandType
-from xorbits._mars.serialization.serializables import Int32Field
+from ...operand import DataOperand, DataOperandMixin
+from ...._mars.serialization.serializables import Int32Field, DictField
+from ...._mars.typing import OperandType
 
 
 class HuggingfaceRepartition(DataOperand, DataOperandMixin):
     num_blocks: int = Int32Field("num_blocks")
     block_index: int = Int32Field("block_index")
+    kwargs = DictField("kwargs")
 
     def __call__(self, inp):
         self.output_types = inp.op.output_types
@@ -49,10 +49,10 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: OperandType):
         inp = ctx[op.inputs[0].key]
         out_key = op.outputs[0].key
-        print(f"shard({op.num_blocks, op.block_index})")
-        ctx[out_key] = inp.shard(op.num_blocks, op.block_index)
+        print(f"shard({op.num_blocks, op.block_index, op.kwargs})")
+        ctx[out_key] = inp.shard(op.num_blocks, op.block_index, **op.kwargs)
 
 
 def repartition(dataset, num_blocks: int, **kwargs):
-    op = HuggingfaceRepartition(num_blocks=num_blocks)
+    op = HuggingfaceRepartition(num_blocks=num_blocks, kwargs=kwargs)
     return op(dataset)

@@ -15,27 +15,14 @@
 
 import cloudpickle
 
-from xorbits.data.operand import DataOperand, DataOperandMixin
-from xorbits._mars.core.entity import OutputType
-from xorbits._mars.typing import OperandType
-from xorbits._mars.serialization.serializables import Int32Field
-from xorbits._mars.serialization.serializables import (
-    AnyField,
-    BoolField,
-    DictField,
-    KeyField,
-    StringField,
-    TupleField,
-)
+from ...operand import DataOperand, DataOperandMixin
+from ...._mars.core.entity import OutputType
+from ...._mars.serialization.serializables import AnyField, DictField
 
 
 class HuggingfaceMap(DataOperand, DataOperandMixin):
-    input = KeyField("input")
     func = AnyField("func")
-    args = TupleField("args")
     kwargs = DictField("kwargs")
-    with_chunk_index = BoolField("with_chunk_index")
-    logic_key = StringField("logic_key")
 
     def __init__(self, output_types=None, **kw):
         super().__init__(_output_types=output_types, **kw)
@@ -62,9 +49,11 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
         func = cloudpickle.loads(op.func)
         inp = ctx[op.inputs[0].key]
         out = op.outputs[0]
-        ctx[out.key] = inp.map(func)
+        ctx[out.key] = inp.map(func, **op.kwargs)
 
 
 def map(dataset, fn, **kwargs):
-    op = HuggingfaceMap(output_types=[OutputType.huggingface_data], func=fn)
+    op = HuggingfaceMap(
+        output_types=[OutputType.huggingface_data], func=fn, kwargs=kwargs
+    )
     return op(dataset)
