@@ -41,6 +41,7 @@ RUN /opt/conda/bin/conda install \
     jax \
     jaxlib \
     uvloop \
+    libnuma \
   && pip install -U \
     xoscar \
     cloudpickle \
@@ -49,6 +50,8 @@ RUN /opt/conda/bin/conda install \
     s3fs \
     pyopenssl>=23.0.0 \
   && /opt/conda/bin/conda clean --all -f -y
+
+RUN /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 14.21.1

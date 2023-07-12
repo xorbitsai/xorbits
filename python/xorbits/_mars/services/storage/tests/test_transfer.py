@@ -16,6 +16,8 @@
 import asyncio
 import os
 import sys
+import tempfile
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -64,7 +66,8 @@ async def actor_pools():
 async def create_actors(actor_pools):
     worker_pool_1, worker_pool_2 = actor_pools
 
-    storage_configs = {"shared_memory": {}}
+    tmp_dir = tempfile.mkdtemp()
+    storage_configs = {"shared_memory": {}, "disk": {"root_dirs": f"{tmp_dir}"}}
 
     manager_ref1 = await mo.create_actor(
         StorageManagerActor,
@@ -80,15 +83,18 @@ async def create_actors(actor_pools):
         address=worker_pool_2.external_address,
     )
     yield worker_pool_1.external_address, worker_pool_2.external_address
-    await mo.destroy_actor(manager_ref1)
-    await mo.destroy_actor(manager_ref2)
+    try:
+        await mo.destroy_actor(manager_ref1)
+        await mo.destroy_actor(manager_ref2)
+    except FileNotFoundError:
+        pass
+    assert not os.path.exists(tmp_dir)
 
 
 @pytest.mark.asyncio
 async def test_simple_transfer(create_actors):
     worker_address_1, worker_address_2 = create_actors
 
-    session_id = "mock_session"
     data1 = np.random.rand(100, 100)
     data2 = pd.DataFrame(np.random.randint(0, 100, (500, 10)))
 
@@ -99,53 +105,53 @@ async def test_simple_transfer(create_actors):
         uid=StorageHandlerActor.gen_uid("numa-0"), address=worker_address_2
     )
 
-    await storage_handler1.put(session_id, "data_key1", data1, StorageLevel.MEMORY)
-    await storage_handler1.put(session_id, "data_key2", data2, StorageLevel.MEMORY)
-    await storage_handler2.put(session_id, "data_key3", data2, StorageLevel.MEMORY)
+    for level in (StorageLevel.MEMORY, StorageLevel.DISK):
+        session_id = f"mock_session_{level}"
+        await storage_handler1.put(session_id, "data_key1", data1, level)
+        await storage_handler1.put(session_id, "data_key2", data2, level)
+        await storage_handler2.put(session_id, "data_key3", data2, level)
 
-    sender_actor = await mo.actor_ref(
-        address=worker_address_1, uid=SenderManagerActor.gen_uid("numa-0")
-    )
+        sender_actor = await mo.actor_ref(
+            address=worker_address_1, uid=SenderManagerActor.gen_uid("numa-0")
+        )
 
-    # send data to worker2 from worker1
-    await sender_actor.send_batch_data(
-        session_id,
-        ["data_key1"],
-        worker_address_2,
-        StorageLevel.MEMORY,
-        block_size=1000,
-    )
+        # send data to worker2 from worker1
+        await sender_actor.send_batch_data(
+            session_id,
+            ["data_key1"],
+            worker_address_2,
+            level,
+            block_size=1000,
+        )
 
-    await sender_actor.send_batch_data(
-        session_id,
-        ["data_key2"],
-        worker_address_2,
-        StorageLevel.MEMORY,
-        block_size=1000,
-    )
+        await sender_actor.send_batch_data(
+            session_id,
+            ["data_key2"],
+            worker_address_2,
+            level,
+            block_size=1000,
+        )
 
-    get_data1 = await storage_handler2.get(session_id, "data_key1")
-    np.testing.assert_array_equal(data1, get_data1)
+        get_data1 = await storage_handler2.get(session_id, "data_key1")
+        np.testing.assert_array_equal(data1, get_data1)
 
-    get_data2 = await storage_handler2.get(session_id, "data_key2")
-    pd.testing.assert_frame_equal(data2, get_data2)
+        get_data2 = await storage_handler2.get(session_id, "data_key2")
+        pd.testing.assert_frame_equal(data2, get_data2)
 
-    # send data to worker1 from worker2
-    sender_actor = await mo.actor_ref(
-        address=worker_address_2, uid=SenderManagerActor.gen_uid("numa-0")
-    )
-    await sender_actor.send_batch_data(
-        session_id, ["data_key3"], worker_address_1, StorageLevel.MEMORY
-    )
-    get_data3 = await storage_handler1.get(session_id, "data_key3")
-    pd.testing.assert_frame_equal(data2, get_data3)
+        # send data to worker1 from worker2
+        sender_actor = await mo.actor_ref(
+            address=worker_address_2, uid=SenderManagerActor.gen_uid("numa-0")
+        )
+        await sender_actor.send_batch_data(
+            session_id, ["data_key3"], worker_address_1, level
+        )
+        get_data3 = await storage_handler1.get(session_id, "data_key3")
+        pd.testing.assert_frame_equal(data2, get_data3)
 
 
 # test for cancelling happens when writing
 class MockReceiverManagerActor(ReceiverManagerActor):
-    async def do_write(self, *args, **kw):
-        await asyncio.sleep(3)
-        await super().do_write(*args, **kw)
+    pass
 
 
 class MockSenderManagerActor(SenderManagerActor):
@@ -155,13 +161,34 @@ class MockSenderManagerActor(SenderManagerActor):
             address=address, uid=MockReceiverManagerActor.default_uid()
         )
 
+    async def _copy_to_receiver(
+        self,
+        receiver_ref: mo.ActorRefType["ReceiverManagerActor"],
+        local_buffers: List,
+        remote_buffers: List,
+        session_id: str,
+        data_keys: List[str],
+        block_size: int,
+    ):
+        await asyncio.sleep(3)
+        await super()._copy_to_receiver(
+            receiver_ref,
+            local_buffers,
+            remote_buffers,
+            session_id,
+            data_keys,
+            block_size,
+        )
+
 
 # test for cancelling happens when creating writer
 class MockReceiverManagerActor2(ReceiverManagerActor):
-    async def create_writers(self, session_id, data_keys, data_sizes, level, sub_infos):
+    async def create_writers(
+        self, session_id, data_keys, data_sizes, level, sub_infos, band_name
+    ):
         await asyncio.sleep(3)
         return await super().create_writers(
-            session_id, data_keys, data_sizes, level, sub_infos
+            session_id, data_keys, data_sizes, level, sub_infos, band_name
         )
 
 
