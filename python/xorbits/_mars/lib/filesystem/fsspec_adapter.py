@@ -33,8 +33,10 @@ class FsSpecAdapter(FileSystem):
 
     @implements(FileSystem.ls)
     def ls(self, path: path_type) -> List[path_type]:
+        if self.isfile(path):
+            return self._append_scheme(self._fs.ls(self._normalize_path(path)))
         entries = []
-        for entry in self._fs.ls(self._normalize_path(path), detail=False):
+        for entry in self._fs.ls(self._normalize_path(path)):
             if entry.strip("/") in path.strip("/"):
                 continue
             if isinstance(entry, Dict):
