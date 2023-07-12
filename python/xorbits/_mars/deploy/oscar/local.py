@@ -17,7 +17,7 @@ import asyncio
 import logging
 import os
 import sys
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 import xoscar as mo
@@ -67,6 +67,8 @@ async def new_cluster_in_isolation(
     numa_enable_internal_addr: bool = None,
     gpu_external_addr_scheme: str = None,
     gpu_enable_internal_addr: bool = None,
+    io_external_addr_scheme: Optional[str] = None,
+    io_enable_internal_addr: Optional[bool] = None,
     external_addr_scheme: str = None,
     enable_internal_addr: bool = None,
     oscar_extra_conf: dict = None,
@@ -87,6 +89,8 @@ async def new_cluster_in_isolation(
         numa_enable_internal_addr=numa_enable_internal_addr,
         gpu_external_addr_scheme=gpu_external_addr_scheme,
         gpu_enable_internal_addr=gpu_enable_internal_addr,
+        io_external_addr_scheme=io_external_addr_scheme,
+        io_enable_internal_addr=io_enable_internal_addr,
         external_addr_scheme=external_addr_scheme,
         enable_internal_addr=enable_internal_addr,
         oscar_extra_conf=oscar_extra_conf,
@@ -113,6 +117,8 @@ async def new_cluster(
     numa_enable_internal_addr: bool = None,
     gpu_external_addr_scheme: str = None,
     gpu_enable_internal_addr: bool = None,
+    io_external_addr_scheme: Optional[str] = None,
+    io_enable_internal_addr: Optional[bool] = None,
     external_addr_scheme: str = None,
     enable_internal_addr: bool = None,
     oscar_extra_conf: dict = None,
@@ -132,6 +138,8 @@ async def new_cluster(
         numa_enable_internal_addr=numa_enable_internal_addr,
         gpu_external_addr_scheme=gpu_external_addr_scheme,
         gpu_enable_internal_addr=gpu_enable_internal_addr,
+        io_external_addr_scheme=io_external_addr_scheme,
+        io_enable_internal_addr=io_enable_internal_addr,
         external_addr_scheme=external_addr_scheme,
         enable_internal_addr=enable_internal_addr,
         oscar_extra_conf=oscar_extra_conf,
@@ -167,6 +175,8 @@ class LocalCluster:
         numa_enable_internal_addr: bool = None,
         gpu_external_addr_scheme: str = None,
         gpu_enable_internal_addr: bool = None,
+        io_external_addr_scheme: Optional[str] = None,
+        io_enable_internal_addr: Optional[bool] = None,
         external_addr_scheme: str = None,
         enable_internal_addr: str = None,
         oscar_extra_conf: dict = None,
@@ -212,6 +222,8 @@ class LocalCluster:
             numa_enable_internal_addr=numa_enable_internal_addr,
             gpu_external_addr_scheme=gpu_external_addr_scheme,
             gpu_enable_internal_addr=gpu_enable_internal_addr,
+            io_external_addr_scheme=io_external_addr_scheme,
+            io_enable_internal_addr=io_enable_internal_addr,
             external_addr_scheme=external_addr_scheme,
             enable_internal_addr=enable_internal_addr,
             oscar_extra_conf=oscar_extra_conf,
@@ -235,6 +247,8 @@ class LocalCluster:
         numa_enable_internal_addr: bool = None,
         gpu_external_addr_scheme: str = None,
         gpu_enable_internal_addr: bool = None,
+        io_external_addr_scheme: Optional[str] = None,
+        io_enable_internal_addr: Optional[bool] = None,
         external_addr_scheme: str = None,
         enable_internal_addr: str = None,
         oscar_extra_conf: dict = None,
@@ -272,6 +286,23 @@ class LocalCluster:
         )
         if gpu_enable_internal_addr is not None:
             gpu_config["enable_internal_addr"] = gpu_enable_internal_addr
+
+        io_config = oscar_config["io"]
+        io_external_addr_scheme = (
+            io_external_addr_scheme
+            if io_external_addr_scheme is not None
+            else external_addr_scheme
+        )
+        if io_external_addr_scheme is not None:
+            io_config["external_addr_scheme"] = io_external_addr_scheme
+        io_enable_internal_addr = (
+            io_enable_internal_addr
+            if io_enable_internal_addr is not None
+            else enable_internal_addr
+        )
+        if io_enable_internal_addr is not None:
+            io_config["enable_internal_addr"] = io_enable_internal_addr
+
         if oscar_extra_conf is not None:
             oscar_config["extra_conf"] = oscar_extra_conf
 

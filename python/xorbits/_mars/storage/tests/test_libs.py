@@ -18,6 +18,7 @@ import pkgutil
 import subprocess as sp
 import sys
 import tempfile
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -288,10 +289,36 @@ async def test_reader_and_writer_vineyard(storage_context):
     np.testing.assert_array_equal(t, t2)
 
 
+def _compare_single_obj(obj1: Any, obj2: Any):
+    import cudf
+    import cupy
+
+    if isinstance(obj1, cudf.DataFrame):
+        cudf.testing.assert_frame_equal(obj1, obj2)
+    elif isinstance(obj1, cupy.ndarray):
+        cupy.testing.assert_array_equal(obj1, obj2)
+    elif isinstance(obj1, pd.DataFrame):
+        pd.testing.assert_frame_equal(obj1, obj2)
+    elif isinstance(obj1, np.ndarray):
+        np.testing.assert_array_equal(obj1, obj2)
+    else:
+        assert obj1 == obj2
+
+
+def _compare_objs(obj1: Any, obj2: Any):
+    if isinstance(obj1, (list, tuple)):
+        for o1, o2 in zip(obj1, obj2):
+            _compare_single_obj(o1, o2)
+    else:
+        _compare_single_obj(obj1, obj2)
+
+
 @require_cupy
 @require_cudf
 @pytest.mark.asyncio
 async def test_cuda_backend():
+    import datetime
+
     import cudf
     import cupy
 
@@ -299,50 +326,59 @@ async def test_cuda_backend():
     storage = CudaStorage(**params)
     assert storage.level == StorageLevel.GPU
 
-    data1 = cupy.asarray(np.random.rand(10, 10))
-    put_info1 = await storage.put(data1)
-    get_data1 = await storage.get(put_info1.object_id)
-    cupy.testing.assert_array_equal(data1, get_data1)
+    for data in [
+        # cupy array
+        cupy.asarray(np.random.rand(10, 10)),
+        # cudf df
+        cudf.DataFrame(
+            pd.DataFrame(
+                {
+                    "col1": np.arange(10),
+                    "col2": [f"str{i}" for i in range(10)],
+                    "col3": np.random.rand(10),
+                },
+            )
+        ),
+        # empty df
+        cudf.DataFrame(),
+        # just a ``None`` obj
+        None,
+        # python object
+        [
+            datetime.datetime.now(),
+            "Los Angeles Lakers",
+            6,
+            pd.DataFrame(np.random.rand(20, 10)),
+            np.ones((5, 5)),
+        ],
+        # both python obj and cupy/cudf obj
+        (
+            ("xxx-yyy", "data"),
+            cudf.DataFrame(np.arange(50)),
+            cupy.ones((8, 8)) + 1,
+            pd.DataFrame(),
+        ),
+    ]:
+        put_info = await storage.put(data)
+        get_data = await storage.get(put_info.object_id)
+        _compare_objs(data, get_data)
 
-    with pytest.raises(NotImplementedError):
-        await storage.get(put_info1.object_id, conditions=[])
+        with pytest.raises(NotImplementedError):
+            await storage.get(put_info.object_id, conditions=[])
 
-    info1 = await storage.object_info(put_info1.object_id)
-    assert info1.size == put_info1.size
+        info1 = await storage.object_info(put_info.object_id)
+        assert info1.size == put_info.size
 
-    data2 = cudf.DataFrame(
-        pd.DataFrame(
-            {
-                "col1": np.arange(10),
-                "col2": [f"str{i}" for i in range(10)],
-                "col3": np.random.rand(10),
-            },
-        )
-    )
-    put_info2 = await storage.put(data2)
-    get_data2 = await storage.get(put_info2.object_id)
-    cudf.testing.assert_frame_equal(data2, get_data2)
-
-    with pytest.raises(NotImplementedError):
-        await storage.get(put_info2.object_id, conditions=[])
-
-    info2 = await storage.object_info(put_info2.object_id)
-    assert info2.size == put_info2.size
-
-    await CudaStorage.teardown(**teardown_params)
-
-    # test writer and reader
-    read_chunk = 100
-    writer = await storage.open_writer(put_info1.size)
-    async with await storage.open_reader(put_info1.object_id) as reader:
-        while True:
-            content = await reader.read(read_chunk)
-            if content:
-                await writer.write(content)
-            else:
-                break
-    writer._file._write_close()
-    write_data = await storage.get(writer._file._object_id)
-    cupy.testing.assert_array_equal(write_data, get_data1)
-
-    await storage.delete(put_info1.object_id)
+        read_chunk = 100
+        writer = await storage.open_writer(put_info.size)
+        async with await storage.open_reader(put_info.object_id) as reader:
+            while True:
+                content = await reader.read(read_chunk)
+                if not (isinstance(content, str) and content == ""):
+                    await writer.write(content)
+                else:
+                    break
+        writer._file._write_close()
+        write_data = await storage.get(writer._file._object_id)
+        _compare_objs(write_data, get_data)
+        await storage.delete(put_info.object_id)
