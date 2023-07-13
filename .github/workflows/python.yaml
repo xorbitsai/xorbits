@@ -117,12 +117,18 @@ jobs:
         driver: none
         kubernetes-version: v1.23.12
 
+    - name: Install ucx dependencies
+      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.python-version != '3.11') }}
+      run: |
+        conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
+
     - name: Install dependencies
       env:
         MODULE: ${{ matrix.module }}
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
+        pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
         pip install numpy scipy cython coverage flaky
 
         if [[ "$MODULE" == "xorbits" ]]; then
@@ -226,10 +232,17 @@ jobs:
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
-    - name: Install on GPU
-      if: ${{ matrix.module == 'gpu' || matrix.module == 'kubernetes-juicefs' }}
+    - name: Install on JuiceFsCI
+      if: ${{ matrix.module == 'kubernetes-juicefs' }}
       run: |
         pip install -U xoscar
+        python setup.py build_ext -i
+      working-directory: ./python
+
+    - name: Install on GPU
+      if: ${{ matrix.module == 'gpu' }}
+      run: |
+        pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
         python setup.py build_ext -i
       working-directory: ./python
 
@@ -274,7 +287,7 @@ jobs:
           export YARN_HOME=$HADOOP_HOME
           export HADOOP_COMMON_LIB_NATIVE_DIR="$HADOOP_HOME/lib/native"
           export PATH="$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin"
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning -m hadoop
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning xorbits/_mars -m hadoop
         elif [[ "$MODULE" == "vineyard" ]]; then
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
