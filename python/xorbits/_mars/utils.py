@@ -69,6 +69,7 @@ from xoscar._utils import (
 )
 
 from ._utils import (  # noqa: F401 # pylint: disable=unused-import
+    CUnionFind,
     NamedType,
     Timer,
     ceildiv,

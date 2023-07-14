@@ -28,60 +28,13 @@ from ...core.context import Context
 from ...core.entity import OutputType
 from ...core.operand import ObjectOperand, ObjectOperandMixin, OperandStage
 from ...serialization.serializables import AnyField
+from ...utils import CUnionFind as UnionFind
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_concatenated_rows_frame
 
 NON_ALPHA = re.compile("\\W", re.UNICODE)
 MAX_HASH = np.uint64((1 << 32) - 1)
 MERSENNE_PRIME = np.uint64((1 << 61) - 1)
-
-
-class UnionFind:
-    """
-    A data structure for maintaining disjoint sets. This helps build connected components for given duplicate pairs.
-
-    Examples
-    --------
-    >>> uf = UnionFind()
-    >>> uf.union(1, 2)
-    >>> uf.union(2, 3)
-    >>> uf.union(4, 5)
-    >>> uf.find(1)
-    1
-    >>> uf.find(2)
-    1
-    >>> uf.find(3)
-    1
-    >>> uf.find(4)
-    4
-    >>> uf.find(5)
-    4
-    """
-
-    def __init__(self):
-        self.parent = {}
-
-    def find(self, x):
-        if x not in self.parent:
-            self.parent[x] = x
-            return x
-
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-
-        return self.parent[x]
-
-    def union(self, x, y):
-        px = self.find(x)
-        py = self.find(y)
-        self.parent[px] = self.parent[py] = min(px, py)
-
-    def union_uf(self, uf: "UnionFind"):
-        for x in uf.parent:
-            if x not in self.parent:  # pragma: no cover
-                self.parent[x] = uf.parent[x]
-            else:  # pragma: no cover
-                self.union(self.find(x), uf.find(x))
 
 
 def ngrams(sequence: List[Text], n: int, min_length: int = 5):
@@ -315,7 +268,7 @@ class DataFrameUnionFind(ObjectOperand, ObjectOperandMixin):
 
                 idx = min(cluster)
                 for x in cluster:
-                    op.union_find.union(x, idx)
+                    op.union_find.union_(x, idx)
 
             ctx[out.key] = op.union_find
         elif op.stage == OperandStage.reduce:
@@ -387,6 +340,22 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
                     index=c.index,
                 )
             )
+
+        combine_size = 4
+        while len(chunks) > combine_size:
+            new_chunks = []
+            for i in range(0, len(chunks), combine_size):
+                chks = chunks[i : i + combine_size]
+                if len(chks) == 1:
+                    chk = chks[0]
+                else:
+                    union_op = DataFrameUnionFind(union_find=UnionFind())
+                    union_op.stage = OperandStage.reduce
+                    for j, c in enumerate(chks):
+                        c._index = (j, 0)
+                    chk = union_op.new_chunk(chks)
+                new_chunks.append(chk)
+            chunks = new_chunks
 
         new_op = DataFrameUnionFind(union_find=UnionFind())
         new_op.union_find_num = len(chunks)

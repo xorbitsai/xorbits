@@ -358,5 +358,40 @@ cdef class Timer:
         self.duration = time.time() - self.start
 
 
+cdef class CUnionFind:
+    cdef dict parent
+    def __init__(self):
+        self.parent = {}
+
+    cpdef find(self, bytes x):
+        cdef bytes px
+        if x not in self.parent:
+            return x
+
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+
+        return self.parent[x]
+
+    cpdef union_(self, bytes x, bytes y):
+        cdef bytes px, py
+        px = self.find(x)
+        py = self.find(y)
+        min_val = min(px, py)
+        self.parent[px] = self.parent[py] = min(px, py)
+        return min_val
+
+    cpdef union_uf(self, CUnionFind uf):
+        cdef bytes x
+        for x in uf.parent:
+            if x not in self.parent:
+                self.parent[x] = uf.parent[x]
+            else:
+                self.parent[x] = self.union_(self.find(x), uf.find(x))
+    cpdef get_self(self):
+        return self
+
+
+
 __all__ = ['to_str', 'to_binary', 'to_text', 'tokenize', 'tokenize_int',
-           'register_tokenizer', 'ceildiv', 'Timer', ]
+           'register_tokenizer', 'ceildiv', 'Timer', 'CUnionFind']
