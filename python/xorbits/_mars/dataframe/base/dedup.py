@@ -361,6 +361,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         new_op.union_find_num = len(chunks)
         new_op.stage = OperandStage.reduce
         union_chunk = new_op.new_chunk(chunks, index=(0,))
+        union_chunk.is_broadcaster = True
 
         # dedup stage
         dedup_chunks = []
