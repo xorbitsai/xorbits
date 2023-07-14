@@ -388,8 +388,6 @@ cdef class CUnionFind:
                 self.parent[x] = uf.parent[x]
             else:
                 self.parent[x] = self.union_(self.find(x), uf.find(x))
-    cpdef get_self(self):
-        return self
 
 
 

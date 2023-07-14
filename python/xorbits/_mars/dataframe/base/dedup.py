@@ -302,7 +302,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         def gen_id_column(df):
             from xoscar._utils import new_random_id
 
-            df["__dedup_id"] = [new_random_id(32) for _ in range(len(df))]
+            df["__dedup_id"] = [new_random_id(64) for _ in range(len(df))]
 
             return df
 
