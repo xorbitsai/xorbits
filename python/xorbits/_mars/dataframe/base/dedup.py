@@ -27,11 +27,11 @@ from ...core import recursive_tile
 from ...core.context import Context
 from ...core.entity import OutputType
 from ...core.operand import ObjectOperand, ObjectOperandMixin, OperandStage
-from ...serialization.serializables import AnyField, StringField
+from ...serialization.serializables import AnyField
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_concatenated_rows_frame
 
-NON_ALPHA = re.compile("[^A-Za-z_0-9]")
+NON_ALPHA = re.compile("\\W", re.UNICODE)
 MAX_HASH = np.uint64((1 << 32) - 1)
 MERSENNE_PRIME = np.uint64((1 << 61) - 1)
 
@@ -330,14 +330,13 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
     _op_type = opcodes.DEDUP
 
     func = AnyField("func")
-    union_find_name = StringField("union_find_name")
-    worker_addr = StringField("worker_addr")
 
     @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "DataFrameDedup"):
         input_data = ctx[op.inputs[0].key]
         uf = ctx[op.inputs[1].key]
         out = op.outputs[0]
+
         ctx[out.key] = input_data[
             input_data["__dedup_id"].map(lambda x: uf.find(x) == x)
         ].drop(columns="__dedup_id")
