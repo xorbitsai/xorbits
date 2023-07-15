@@ -32,7 +32,7 @@ class GraphVisualizer:
         if graph_type == "SubtaskGraph":
             graph_str = cls._export_subtask_graph(graph)
         elif graph_type == "ChunkGraph":
-            graph_str = graph.to_dot
+            graph_str = graph.to_dot()
         sio.write(graph_str)
         return sio.getvalue()
 
