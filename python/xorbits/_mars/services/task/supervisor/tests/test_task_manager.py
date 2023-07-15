@@ -772,7 +772,7 @@ async def test_dump_chunk_graph(actor_pool):
     file_path = os.path.join(tempfile.gettempdir(), f"ChunkGraph-{task_id}.dot")
     with open(file_path) as f:
         text = f.read()
-        assert 'Chunk' in text
+        assert "Chunk" in text
         for c in result_tileable.chunks:
             assert c.key[:5] in text
     os.remove(file_path)
@@ -780,6 +780,7 @@ async def test_dump_chunk_graph(actor_pool):
     pdf_path = os.path.join(tempfile.gettempdir(), f"ChunkGraph-{task_id}.pdf")
     if os.path.exists(pdf_path):
         os.remove(pdf_path)
+
 
 @pytest.mark.asyncio
 async def test_collect_task_info(actor_pool, task_info_root_path):
