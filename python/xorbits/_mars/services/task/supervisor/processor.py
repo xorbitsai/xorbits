@@ -463,7 +463,7 @@ class TaskProcessor:
             graph_type = type(graph[0]).__name__
         else:
             graph_type = type(graph).__name__
-    
+
         dot = GraphVisualizer.to_dot(graph, graph_type)
         directory = os.environ.get("MARS_DUMP_GRAPH_DIR")
         if directory is None:

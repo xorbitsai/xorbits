@@ -18,11 +18,12 @@ import logging
 from io import StringIO
 from typing import Dict, List, Union
 
+from ....core import ChunkGraph
 from ....core.operand import Fetch, FetchShuffle
 from ...subtask import Subtask, SubtaskGraph
-from ....core import ChunkGraph
 
 logger = logging.getLogger(__name__)
+
 
 class GraphVisualizer:
     @classmethod
@@ -34,7 +35,7 @@ class GraphVisualizer:
             graph_str = graph.to_dot
         sio.write(graph_str)
         return sio.getvalue()
-    
+
     @classmethod
     def _export_subtask_graph(cls, subtask_graphs):
         sio = StringIO()
