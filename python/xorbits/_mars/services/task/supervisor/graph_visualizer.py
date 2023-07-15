@@ -14,16 +14,29 @@
 # limitations under the License.
 
 import itertools
+import logging
 from io import StringIO
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from ....core.operand import Fetch, FetchShuffle
 from ...subtask import Subtask, SubtaskGraph
+from ....core import ChunkGraph
 
+logger = logging.getLogger(__name__)
 
 class GraphVisualizer:
     @classmethod
-    def to_dot(cls, subtask_graphs: List[SubtaskGraph]):
+    def to_dot(cls, graph: Union[List[SubtaskGraph], ChunkGraph], graph_type: str):
+        sio = StringIO()
+        if graph_type == "SubtaskGraph":
+            graph_str = cls._export_subtask_graph(graph)
+        elif graph_type == "ChunkGraph":
+            graph_str = graph.to_dot
+        sio.write(graph_str)
+        return sio.getvalue()
+    
+    @classmethod
+    def _export_subtask_graph(cls, subtask_graphs):
         sio = StringIO()
         sio.write("digraph {\n")
         sio.write("splines=curved\n")

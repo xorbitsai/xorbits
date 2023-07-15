@@ -38,6 +38,7 @@ from .preprocessor import TaskPreprocessor
 logger = logging.getLogger(__name__)
 
 MARS_ENABLE_DUMPING_SUBTASK_GRAPH = int(os.environ.get("MARS_DUMP_SUBTASK_GRAPH", 0))
+MARS_ENABLE_DUMPING_CHUNK_GRAPH = int(os.environ.get("MARS_DUMP_CHUNK_GRAPH", 0))
 
 
 class TaskProcessor:
@@ -72,6 +73,11 @@ class TaskProcessor:
             task.extra_config and task.extra_config.get("dump_subtask_graph")
         ):
             self._dump_subtask_graph = True
+        self._dump_chunk_graph = False
+        if MARS_ENABLE_DUMPING_CHUNK_GRAPH or (
+            task.extra_config and task.extra_config.get("dump_chunk_graph")
+        ):
+            self._dump_chunk_graph = True
         self._collect_task_info = task.extra_config and task.extra_config.get(
             "collect_task_info", None
         )
@@ -274,6 +280,10 @@ class TaskProcessor:
             ]
         else:
             optimization_records = None
+
+        if self._dump_chunk_graph:
+            self.dump_graph(chunk_graph)
+
         self._update_stage_meta(chunk_to_result, tile_context, optimization_records)
 
     def _get_stage_tile_context(self, result_chunks: Set[Chunk]) -> TileContext:
@@ -439,7 +449,7 @@ class TaskProcessor:
     def get_map_reduce_info(self, map_reduce_id: int) -> MapReduceInfo:
         return self._preprocessor.get_map_reduce_info(map_reduce_id)
 
-    def dump_subtask_graph(self):
+    def dump_graph(self, graph):
         from .graph_visualizer import GraphVisualizer
 
         try:  # pragma: no cover
@@ -447,14 +457,22 @@ class TaskProcessor:
         except ImportError:
             graphviz = None
 
-        dot = GraphVisualizer.to_dot(self._subtask_graphs)
-        directory = os.environ.get("MARS_DUMP_SUBTASK_GRAPH_DIR")
+        graph_type = "ChunkGraph"
+        if isinstance(graph, list) and len(graph) > 0:
+            # subtask graph is a list
+            graph_type = type(graph[0]).__name__
+        else:
+            graph_type = type(graph).__name__
+    
+        dot = GraphVisualizer.to_dot(graph, graph_type)
+        directory = os.environ.get("MARS_DUMP_GRAPH_DIR")
         if directory is None:
             directory = tempfile.gettempdir()
         os.makedirs(directory, exist_ok=True)
-        file_name = f"mars-{self.task_id}"
+        file_name = f"{graph_type}-{self.task_id}.dot"
         logger.info(
-            "Subtask graph of task %s is stored in %s",
+            "%s of task %s is stored in %s",
+            graph_type,
             self._task.task_id,
             os.path.join(directory, file_name),
         )
@@ -473,7 +491,7 @@ class TaskProcessor:
         self._executor.destroy()
         self.done.set()
         if self._dump_subtask_graph:
-            self.dump_subtask_graph()
+            self.dump_graph(self._subtask_graphs)
         if XOSCAR_ENABLE_PROFILING or (
             self._task.extra_config and self._task.extra_config.get("enable_profiling")
         ):
