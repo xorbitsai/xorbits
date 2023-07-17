@@ -448,9 +448,10 @@ class GraphAnalyzer:
                 # ensure no shuffle mapper chunks fused into same subtask.
                 initial_same_color_num = 1
             else:
-                initial_same_color_num = getattr(
-                    self._config, "initial_same_color_num", None
-                )
+                # initial_same_color_num = getattr(
+                #     self._config, "initial_same_color_num", None
+                # )
+                initial_same_color_num = 1
             coloring = Coloring(
                 self._chunk_graph,
                 list(self._band_resource),

@@ -12,14 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import inspect
 from typing import Dict, Union
+
+from .loader import load_dataset_from_huggingface
 from .map import map
 from .repartition import repartition
 from ...block import Block, BlockData
 from ...dataset import Dataset, DatasetData
 from ...._mars.core.entity import OutputType, register_output_types
-from ...._mars.remote import spawn
 
 
 class HuggingfaceDatasetData(DatasetData):
@@ -59,13 +60,18 @@ def from_huggingface(path: str, **kwargs) -> Union[Dataset, Dict[str, Dataset]]:
         Dataset holding Arrow records from the Hugging Face Dataset, or a dict of
             datasets in case dataset is a DatasetDict.
     """
+    import datasets
 
-    def _load_dataset():
-        import datasets
+    sig_loader = inspect.signature(datasets.load_dataset)
+    load_dataset_param_keys = sig_loader.parameters.keys()
+    assert "path" in load_dataset_param_keys
+    unexpected_kwargs = kwargs.keys() - sig_loader.parameters.keys()
+    if unexpected_kwargs:
+        raise TypeError(
+            f"from_huggingface() got unexpected keyword arguments {unexpected_kwargs}"
+        )
 
-        return datasets.load_dataset(path, **kwargs)
-
-    return spawn(_load_dataset, output_types=[OutputType.huggingface_data]).to_dataset()
+    return load_dataset_from_huggingface(path, **kwargs).to_dataset()
 
 
 register_output_types(
