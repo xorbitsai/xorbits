@@ -170,7 +170,7 @@ jobs:
           conda install --quiet --yes -c conda-forge skein libffi conda-pack
         fi
         if [[ "$MODULE" == "vineyard" ]]; then
-          pip install "vineyard>=0.11.1" -i https://pypi.org/simple
+          pip install "vineyard<0.16.1" -i https://pypi.org/simple
           mkdir -p /tmp/etcd-download-test
           export ETCD_VER=v3.4.13
           export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
