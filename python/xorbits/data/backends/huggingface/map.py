@@ -15,9 +15,9 @@
 
 import cloudpickle
 
-from ...operand import DataOperand, DataOperandMixin
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import AnyField, DictField
+from ...operand import DataOperand, DataOperandMixin
 
 
 class HuggingfaceMap(DataOperand, DataOperandMixin):

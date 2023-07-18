@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .block import Block
 from .._mars.core.entity.objects import Object, ObjectData
 from .._mars.serialization.serializables import FieldTypes, ListField
+from .block import Block
 
 
 class DatasetData(ObjectData):

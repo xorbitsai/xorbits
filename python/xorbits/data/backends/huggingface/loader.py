@@ -16,7 +16,6 @@
 import inspect
 import os.path
 
-from ...operand import DataOperand, DataOperandMixin
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
     Int32Field,
@@ -24,6 +23,7 @@ from ...._mars.serialization.serializables import (
     StringField,
 )
 from ...._mars.typing import OperandType
+from ...operand import DataOperand, DataOperandMixin
 
 
 class HuggingfaceLoader(DataOperand, DataOperandMixin):
@@ -54,7 +54,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         builder_kwargs = cls._get_kwargs(datasets.load_dataset_builder, op.kwargs)
         builder = datasets.load_dataset_builder(op.path, **builder_kwargs)
         data_files = builder.config.data_files
-        # TODO(codingl2k1): check data_files can be supported
+        # TODO(codingl2k1): check data_files if can be supported
         split = op.kwargs.get("split")
         # TODO(codingl2k1): support multiple splits
 

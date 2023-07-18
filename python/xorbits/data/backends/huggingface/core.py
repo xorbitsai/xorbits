@@ -15,12 +15,12 @@
 import inspect
 from typing import Dict, Union
 
+from ...._mars.core.entity import OutputType, register_output_types
+from ...block import Block, BlockData
+from ...dataset import Dataset, DatasetData
 from .loader import load_dataset_from_huggingface
 from .map import map
 from .repartition import repartition
-from ...block import Block, BlockData
-from ...dataset import Dataset, DatasetData
-from ...._mars.core.entity import OutputType, register_output_types
 
 
 class HuggingfaceDatasetData(DatasetData):
