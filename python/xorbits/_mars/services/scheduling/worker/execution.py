@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 import xoscar as mo
-from xoscar.errors import XoscarError
+from xoscar.errors import ServerClosed, XoscarError
 from xoscar.metrics import Metrics
 
 from ...._utils import Timer
@@ -478,6 +478,12 @@ class SubtaskExecutionActor(mo.StatelessActor):
                     # may encounter subprocess memory error
                     sub_pool_address = await slot_manager_ref.get_slot_address(slot_id)
                     await mo.wait_actor_pool_recovered(sub_pool_address, self.address)
+
+                if isinstance(ex, ServerClosed):
+                    # view the exception as a potential OOM problem temporarily
+                    ex = ServerClosed(
+                        f"unexpectedly terminated process ({ex}) and highly suspected to be caused by an Out-of-Memory (OOM) problem"
+                    )
                 raise ex
             finally:
                 # make sure allocated slots are traced

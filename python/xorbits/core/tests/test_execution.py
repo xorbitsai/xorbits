@@ -337,3 +337,22 @@ def test_getitem(setup):
     result = xdf[xdf["a"].str[0] == "a"]
     expected = df[df["a"].str[0] == "a"]
     pd.testing.assert_frame_equal(result.to_pandas(), expected)
+
+
+def test_execution_with_process_exit_message(mocker):
+    import numpy as np
+    import xorbits.remote as xr
+    from xoscar.errors import ServerClosed
+
+    import xorbits
+
+    mocker.patch(
+        "xorbits._mars.services.subtask.api.SubtaskAPI.run_subtask_in_slot",
+        side_effect=ServerClosed,
+    )
+
+    with pytest.raises(
+        ServerClosed,
+        match=r"unexpectedly terminated process \(.*?\) and highly suspected to be caused by an Out-of-Memory \(OOM\) problem",
+    ):
+        xorbits.run(xr.spawn(lambda *_: np.random.rand(10**4, 10**4)))
