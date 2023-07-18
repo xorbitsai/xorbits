@@ -41,7 +41,7 @@ def ngrams(sequence: List[Text], n: int, min_length: int = 5):
     """
     Return the ngrams generated from a sequence of items, as an iterator.
 
-    This is a modified version of nltk.util.ngrams.
+    This is copied from https://github.com/ChenghaoMou/text-dedup.
 
     Parameters
     ----------
@@ -66,9 +66,9 @@ def ngrams(sequence: List[Text], n: int, min_length: int = 5):
     >>> list(ngrams(["a", "b"], 3, min_length=1))
     [('a', 'b')]
     """
-    if len(sequence) < min_length:
+    if len(sequence) < min_length:  # pragma: no cover
         return []
-    if len(sequence) < n:
+    if len(sequence) < n:  # pragma: no cover
         return [tuple(sequence)]
     iterables = tee(iter(sequence), n)
     for i, sub_iterable in enumerate(iterables):
@@ -80,6 +80,8 @@ def ngrams(sequence: List[Text], n: int, min_length: int = 5):
 def sha1_hash(data: bytes, d: int = 32) -> int:
     """
     Generate a d-bit hash value from the given data.
+
+    This is copied from https://github.com/ChenghaoMou/text-dedup.
 
     Parameters
     ----------
@@ -118,6 +120,8 @@ def embed_func(
     """
     Calculate hash values for the content.
 
+    This is a modified version of https://github.com/ChenghaoMou/text-dedup.
+
     Parameters
     ----------
     row : pd.Series
@@ -142,8 +146,8 @@ def embed_func(
 
     Examples
     --------
-    >>> content = "hello world"
-    >>> idx = 0
+    >>> row = pd.Series({"text": "hello world"})
+    >>> text = "text"
     >>> num_perm = 250
     >>> ngram_size = 1
     >>> hashranges = [(i, i + 25) for i in range(0, 250, 25)]
@@ -160,8 +164,6 @@ def embed_func(
     >>> res = embed_func(content, idx, num_perm=num_perm, ngram_size=ngram_size, min_length=0, hashranges=hashranges, permutations=PERMUTATIONS)
     >>> len(res["__signatures__"])
     10
-    >>> res["__id__"]
-    0
     """
     content, idx = row[text], row["__dedup_id"]
     a, b = permutations
@@ -195,6 +197,7 @@ def optimal_param(
     of probabilities of false positive and false negative, taken from datasketch.
 
     You can also refer to the interactive demo at https://huggingface.co/spaces/bigcode/near-deduplication.
+    This is copied from https://github.com/ChenghaoMou/text-dedup.
 
     Parameters
     ----------
@@ -308,6 +311,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
 
         new_dtypes = in_df.dtypes.copy()
         new_dtypes["__dedup_id"] = "str"
+
         in_df_with_id = in_df.map_chunk(
             gen_id_column, output_type="dataframe", dtypes=new_dtypes
         )
@@ -358,7 +362,6 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             chunks = new_chunks
 
         new_op = DataFrameUnionFind(union_find=UnionFind())
-        new_op.union_find_num = len(chunks)
         new_op.stage = OperandStage.reduce
         union_chunk = new_op.new_chunk(chunks, index=(0,))
         union_chunk.is_broadcaster = True
@@ -373,7 +376,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             dedup_chunks.append(
                 new_op.new_chunk(
                     [c, union_chunk],
-                    shape=tuple((np.nan, new_shape[1] - 1)),
+                    shape=(np.nan, new_shape[1] - 1),
                     index=c.index,
                     dtypes=out_df.dtypes,
                     index_value=c.index_value,
