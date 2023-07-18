@@ -14,8 +14,10 @@
 # limitations under the License.
 
 import inspect
+import itertools
 import os.path
 
+from ...._mars.core.context import get_context
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
     DictField,
@@ -59,15 +61,21 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         # TODO(codingl2k1): support multiple splits
 
         chunks = []
-        if data_files and split:
+        if data_files and split and len(data_files[split]) > 1:
+            ctx = get_context()
+            # TODO(codingl2k1): make expect worker binding stable for cache reuse.
+            all_bands = [b for b in ctx.get_worker_bands() if b[1].startswith("numa-")]
             data_files = data_files[split]
-            for index, f in enumerate(data_files):
+            for index, (f, band) in enumerate(
+                zip(data_files, itertools.cycle(all_bands))
+            ):
                 chunk_op = op.copy().reset_key()
                 assert f, "Invalid data file from DatasetBuilder."
                 chunk_op.single_data_file = f
                 chunk_op.num_blocks = len(data_files)
                 chunk_op.block_index = index
                 chunk_op.cache_dir = builder.cache_dir
+                chunk_op.expect_band = band
                 c = chunk_op.new_chunk(inputs=[], index=index)
                 chunks.append(c)
             builder.config.data_files.clear()
