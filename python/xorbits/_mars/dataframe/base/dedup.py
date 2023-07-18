@@ -107,85 +107,6 @@ def sha1_hash(data: bytes, d: int = 32) -> int:
     return int.from_bytes(hashlib.sha1(data).digest()[: d // 8], byteorder="little")
 
 
-def embed_func(
-    row: pd.Series,
-    *,
-    text: str,
-    num_perm: int,
-    ngram_size: int,
-    min_length: int,
-    hashranges: List[Tuple[int, int]],
-    permutations: np.ndarray,
-) -> pd.Series:
-    """
-    Calculate hash values for the content.
-
-    This is a modified version of https://github.com/ChenghaoMou/text-dedup.
-
-    Parameters
-    ----------
-    row : pd.Series
-        The row content to be embedded.
-    text : str
-        The text column of the columns.
-    num_perm : int
-        The number of permutations.
-    ngram_size : int
-        The size of n-grams.
-    min_length : int
-        The minimum length of the document in terms of tokens.
-    hashranges : List[Tuple[int, int]]
-        The ranges of hash values.
-    permutations : np.ndarray
-        The permutations for the minhash.
-
-    Returns
-    -------
-    Dict[str, Any]
-        The hash values in each range and the index.
-
-    Examples
-    --------
-    >>> row = pd.Series({"text": "hello world"})
-    >>> text = "text"
-    >>> num_perm = 250
-    >>> ngram_size = 1
-    >>> hashranges = [(i, i + 25) for i in range(0, 250, 25)]
-    >>> PERMUTATIONS = np.array(
-    ...     [
-    ...         (
-    ...             RNG.randint(1, MERSENNE_PRIME, dtype=np.uint64),
-    ...             RNG.randint(0, MERSENNE_PRIME, dtype=np.uint64),
-    ...         )
-    ...         for _ in range(num_perm)
-    ...     ],
-    ...     dtype=np.uint64,
-    ... ).T
-    >>> res = embed_func(content, idx, num_perm=num_perm, ngram_size=ngram_size, min_length=0, hashranges=hashranges, permutations=PERMUTATIONS)
-    >>> len(res["__signatures__"])
-    10
-    """
-    content, idx = row[text], row["__dedup_id"]
-    a, b = permutations
-    masks: np.ndarray = np.full(shape=num_perm, dtype=np.uint64, fill_value=MAX_HASH)
-    tokens: Set[str] = {
-        " ".join(t) for t in ngrams(NON_ALPHA.split(content), ngram_size, min_length)
-    }
-    hashvalues: np.ndarray = np.array(
-        [sha1_hash(token.lower().encode("utf-8")) for token in tokens], dtype=np.uint64
-    )
-    permuted_hashvalues = np.bitwise_and(
-        ((hashvalues * np.tile(a, (len(hashvalues), 1)).T).T + b) % MERSENNE_PRIME,
-        MAX_HASH,
-    )
-    hashvalues = np.vstack([permuted_hashvalues, masks]).min(axis=0)
-    Hs = [
-        (i, bytes(hashvalues[start:end].byteswap().data))
-        for i, (start, end) in enumerate(hashranges)
-    ]
-    return pd.Series({"__signatures__": Hs, "__id__": idx})
-
-
 def optimal_param(
     threshold: float,
     num_perm: int,
@@ -253,6 +174,85 @@ def optimal_param(
                 min_error = error
                 opt = (b, r)
     return opt
+
+
+def embed_func(
+    row: pd.Series,
+    *,
+    text: str,
+    num_perm: int,
+    ngram_size: int,
+    min_length: int,
+    hashranges: List[Tuple[int, int]],
+    permutations: np.ndarray,
+) -> pd.Series:
+    """
+    Calculate hash values for the content.
+
+    This is a modified version of https://github.com/ChenghaoMou/text-dedup.
+
+    Parameters
+    ----------
+    row : pd.Series
+        The row content to be embedded.
+    text : str
+        The text column of the columns.
+    num_perm : int
+        The number of permutations.
+    ngram_size : int
+        The size of n-grams.
+    min_length : int
+        The minimum length of the document in terms of tokens.
+    hashranges : List[Tuple[int, int]]
+        The ranges of hash values.
+    permutations : np.ndarray
+        The permutations for the minhash.
+
+    Returns
+    -------
+    Dict[str, Any]
+        The hash values in each range and the index.
+
+    Examples
+    --------
+    >>> row = pd.Series({"text": "hello world", "__dedup_id": 0})
+    >>> text = "text"
+    >>> num_perm = 250
+    >>> ngram_size = 1
+    >>> hashranges = [(i, i + 25) for i in range(0, 250, 25)]
+    >>> PERMUTATIONS = np.array(
+    ...     [
+    ...         (
+    ...             RNG.randint(1, MERSENNE_PRIME, dtype=np.uint64),
+    ...             RNG.randint(0, MERSENNE_PRIME, dtype=np.uint64),
+    ...         )
+    ...         for _ in range(num_perm)
+    ...     ],
+    ...     dtype=np.uint64,
+    ... ).T
+    >>> res = embed_func(content, idx, num_perm=num_perm, ngram_size=ngram_size, min_length=0, hashranges=hashranges, permutations=PERMUTATIONS)
+    >>> len(res["__signatures__"])
+    10
+    """
+    content, idx = row[text], row["__dedup_id"]
+    a, b = permutations
+    masks: np.ndarray = np.full(shape=num_perm, dtype=np.uint64, fill_value=MAX_HASH)
+    tokens: Set[str] = {
+        " ".join(t) for t in ngrams(NON_ALPHA.split(content), ngram_size, min_length)
+    }
+    hashvalues: np.ndarray = np.array(
+        [sha1_hash(token.lower().encode("utf-8")) for token in tokens], dtype=np.uint64
+    )
+    permuted_hashvalues = np.bitwise_and(
+        ((hashvalues * np.tile(a, (len(hashvalues), 1)).T).T + b) % MERSENNE_PRIME,
+        MAX_HASH,
+    )
+    hashvalues = np.vstack([permuted_hashvalues, masks]).min(axis=0)
+    Hs = [
+        (i, bytes(hashvalues[start:end].byteswap().data))
+        for i, (start, end) in enumerate(hashranges)
+    ]
+    return pd.Series({"__signatures__": Hs, "__id__": idx})
 
 
 class DataFrameUnionFind(ObjectOperand, ObjectOperandMixin):
