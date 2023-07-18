@@ -16,7 +16,7 @@ import hashlib
 import re
 from functools import partial
 from itertools import tee
-from typing import List, Set, Text, Tuple, Union
+from typing import Iterator, List, Set, Text, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -37,7 +37,9 @@ MAX_HASH = np.uint64((1 << 32) - 1)
 MERSENNE_PRIME = np.uint64((1 << 61) - 1)
 
 
-def ngrams(sequence: List[Text], n: int, min_length: int = 5):
+def ngrams(
+    sequence: List[Text], n: int, min_length: int = 5
+) -> Iterator[Tuple[str, str]]:
     """
     Return the ngrams generated from a sequence of items, as an iterator.
 
@@ -112,7 +114,7 @@ def optimal_param(
     num_perm: int,
     false_positive_weight: float = 0.5,
     false_negative_weight: float = 0.5,
-):
+) -> Tuple[int, int]:
     """
     Compute the optimal `MinHashLSH` parameter that minimizes the weighted sum
     of probabilities of false positive and false negative, taken from datasketch.
@@ -231,28 +233,33 @@ def embed_func(
     ...     dtype=np.uint64,
     ... ).T
     >>> res = embed_func(content, idx, num_perm=num_perm, ngram_size=ngram_size, min_length=0, hashranges=hashranges, permutations=PERMUTATIONS)
-    >>> len(res["__signatures__"])
+    >>> len(res["__signatures"])
     10
     """
     content, idx = row[text], row["__dedup_id"]
+
     a, b = permutations
+
     masks: np.ndarray = np.full(shape=num_perm, dtype=np.uint64, fill_value=MAX_HASH)
     tokens: Set[str] = {
         " ".join(t) for t in ngrams(NON_ALPHA.split(content), ngram_size, min_length)
     }
+
     hashvalues: np.ndarray = np.array(
         [sha1_hash(token.lower().encode("utf-8")) for token in tokens], dtype=np.uint64
     )
+
     permuted_hashvalues = np.bitwise_and(
         ((hashvalues * np.tile(a, (len(hashvalues), 1)).T).T + b) % MERSENNE_PRIME,
         MAX_HASH,
     )
     hashvalues = np.vstack([permuted_hashvalues, masks]).min(axis=0)
+
     Hs = [
         (i, bytes(hashvalues[start:end].byteswap().data))
         for i, (start, end) in enumerate(hashranges)
     ]
-    return pd.Series({"__signatures__": Hs, "__id__": idx})
+    return pd.Series({"__signatures": Hs, "__id": idx})
 
 
 class DataFrameUnionFind(ObjectOperand, ObjectOperandMixin):
@@ -323,12 +330,12 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             op.func,
             axis=1,
             output_type="dataframe",
-            dtypes=pd.Series(["object", "bytes"], index=["__signatures__", "__id__"]),
+            dtypes=pd.Series(["object", "bytes"], index=["__signatures", "__id"]),
         )
 
         clusters = (
-            embedded.explode("__signatures__")
-            .groupby("__signatures__", sort=False)["__id__"]
+            embedded.explode("__signatures")
+            .groupby("__signatures", sort=False)["__id"]
             .apply(set)
         )
         tiled_clusters = yield from recursive_tile(clusters)
@@ -346,7 +353,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
             )
 
         combine_size = 4
-        while len(chunks) > combine_size:
+        while len(chunks) > combine_size:  # pragma: no cover
             new_chunks = []
             for i in range(0, len(chunks), combine_size):
                 chks = chunks[i : i + combine_size]
@@ -402,7 +409,7 @@ def df_dedup(
     df: pd.DataFrame,
     col: str,
     threshold: float = 0.7,
-    num_perm: int = 256,
+    num_perm: int = 128,
     min_length: int = 5,
     ngram: int = 5,
     seed: int = 42,
@@ -424,7 +431,7 @@ def df_dedup(
     threshold : float, default 0.7
         The Jaccard similarity threshold to use in the MinHashLSH.
 
-    num_perm : int, default 256
+    num_perm : int, default 128
         The number of permutations to use in the MinHash.
 
     min_length : int, default 5
