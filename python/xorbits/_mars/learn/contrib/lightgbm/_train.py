@@ -392,7 +392,7 @@ class LGBMTrain(MergeDictOperand):
             )
             import lightgbm
 
-            if lightgbm.__version__ < "4.0.0":
+            if lightgbm.__version__ < "4.0.0":  # pragma: no cover
                 if (
                     op.model_type == LGBMModelType.RANKER
                     or op.model_type == LGBMModelType.REGRESSOR
