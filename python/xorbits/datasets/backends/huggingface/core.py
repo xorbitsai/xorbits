@@ -75,7 +75,7 @@ def from_huggingface(path: str, **kwargs) -> Union[Dataset, Dict[str, Dataset]]:
 
 
 register_output_types(
-    OutputType.huggingface_data,
+    OutputType.huggingface_dataset,
     (HuggingfaceDataset, HuggingfaceDatasetData),
     (Block, BlockData),
 )

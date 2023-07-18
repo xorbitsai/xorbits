@@ -35,7 +35,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     cache_dir: str = StringField("cache_dir")
 
     def __call__(self):
-        self.output_types = [OutputType.huggingface_data]
+        self.output_types = [OutputType.huggingface_dataset]
         return self.new_tileable([])
 
     @classmethod
@@ -124,6 +124,6 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
 
 def load_dataset_from_huggingface(path: str, **kwargs):
     op = HuggingfaceLoader(
-        output_types=[OutputType.huggingface_data], path=path, kwargs=kwargs
+        output_types=[OutputType.huggingface_dataset], path=path, kwargs=kwargs
     )
     return op()

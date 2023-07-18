@@ -54,6 +54,6 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
 
 def map(dataset, fn, **kwargs):
     op = HuggingfaceMap(
-        output_types=[OutputType.huggingface_data], func=fn, kwargs=kwargs
+        output_types=[OutputType.huggingface_dataset], func=fn, kwargs=kwargs
     )
     return op(dataset)
