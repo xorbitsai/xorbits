@@ -18,8 +18,8 @@ import os.path
 
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
-    Int32Field,
     DictField,
+    Int32Field,
     StringField,
 )
 from ...._mars.typing import OperandType

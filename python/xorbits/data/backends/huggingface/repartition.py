@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ...._mars.serialization.serializables import Int32Field, DictField
+from ...._mars.serialization.serializables import DictField, Int32Field
 from ...._mars.typing import OperandType
 from ...operand import DataOperand, DataOperandMixin
 
