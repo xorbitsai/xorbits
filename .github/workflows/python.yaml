@@ -170,7 +170,7 @@ jobs:
           conda install --quiet --yes -c conda-forge skein libffi conda-pack
         fi
         if [[ "$MODULE" == "vineyard" ]]; then
-          pip install "vineyard>=0.11.1" -i https://pypi.org/simple
+          pip install "vineyard<0.16.1" -i https://pypi.org/simple
           mkdir -p /tmp/etcd-download-test
           export ETCD_VER=v3.4.13
           export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
@@ -212,11 +212,11 @@ jobs:
         if [[ "$MODULE" == "_mars/learn" ]]; then
           # remove when compatible with scikit-learn 1.3.0 
           pip install scikit-learn\<1.3.0
-          pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
+          pip install xgboost lightgbm\<4.0.0 keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
             statsmodels tsfresh dask[complete] mimesis\<9.0.0
         fi
         if [[ "$MODULE" == "learn" ]]; then
-          pip install xgboost lightgbm
+          pip install xgboost lightgbm\<4.0.0
         fi
         if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
           pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
