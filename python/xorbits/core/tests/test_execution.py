@@ -341,10 +341,10 @@ def test_getitem(setup):
 
 def test_execution_with_process_exit_message(mocker):
     import numpy as np
-    import xorbits.remote as xr
     from xoscar.errors import ServerClosed
 
     import xorbits
+    import xorbits.remote as xr
 
     mocker.patch(
         "xorbits._mars.services.subtask.api.SubtaskAPI.run_subtask_in_slot",
