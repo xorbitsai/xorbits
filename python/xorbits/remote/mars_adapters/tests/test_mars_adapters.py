@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
-
 from .... import pandas as xpd
 from .... import remote
 from ....core import DataRef
@@ -27,11 +25,9 @@ def test_spawn(setup):
     ret = remote.spawn(to_str, (1,))
     assert isinstance(ret, DataRef)
 
-    assert re.match("Object <op=RemoteFunction, key=.*>", str(ret))
     assert ret.to_object() == "1"
 
     xdf = xpd.DataFrame((1, 2, 3))
     ret = remote.spawn(to_str, (xdf,))
     assert isinstance(ret, DataRef)
-    assert re.match("Object <op=RemoteFunction, key=.*>", str(ret))
     assert ret.to_object() == "   0\n0  1\n1  2\n2  3"

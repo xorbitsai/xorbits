@@ -51,7 +51,7 @@ X_sparse = mt.tensor(x_sparse, chunk_size=chunk_size).tosparse(missing=np.nan)[f
 def test_local_classifier(setup):
     y_data = (y * 10).astype(mt.int64)
     classifier = LGBMClassifier(n_estimators=2)
-    classifier.fit(X, y_data, eval_set=[(X, y_data)], verbose=True)
+    classifier.fit(X, y_data, eval_set=[(X, y_data)])
     prediction = classifier.predict(X)
 
     assert prediction.ndim == 1
@@ -62,9 +62,7 @@ def test_local_classifier(setup):
     # test sparse tensor
     X_sparse_data = X_sparse
     classifier = LGBMClassifier(n_estimators=2)
-    classifier.fit(
-        X_sparse_data, y_data, eval_set=[(X_sparse_data, y_data)], verbose=True
-    )
+    classifier.fit(X_sparse_data, y_data, eval_set=[(X_sparse_data, y_data)])
     prediction = classifier.predict(X_sparse_data)
 
     assert prediction.ndim == 1
@@ -81,7 +79,7 @@ def test_local_classifier(setup):
     # test dataframe
     X_df_data = X_df
     classifier = LGBMClassifier(n_estimators=2)
-    classifier.fit(X_df_data, y_data, verbose=True)
+    classifier.fit(X_df_data, y_data)
     prediction = classifier.predict(X_df_data)
 
     assert prediction.ndim == 1
@@ -97,7 +95,7 @@ def test_local_classifier(setup):
     y_df = md.DataFrame(y_data)
     for weight in weights:
         classifier = LGBMClassifier(n_estimators=2)
-        classifier.fit(X, y_df, sample_weight=weight, verbose=True)
+        classifier.fit(X, y_df, sample_weight=weight)
         prediction = classifier.predict(X)
 
         assert prediction.ndim == 1
@@ -105,14 +103,12 @@ def test_local_classifier(setup):
 
     # should raise error if weight.ndim > 1
     with pytest.raises(ValueError):
-        LGBMClassifier(n_estimators=2).fit(
-            X, y_df, sample_weight=mt.random.rand(1, 1), verbose=True
-        )
+        LGBMClassifier(n_estimators=2).fit(X, y_df, sample_weight=mt.random.rand(1, 1))
 
     # test binary classifier
     new_y = (y_data > 0.5).astype(mt.int64)
     classifier = LGBMClassifier(n_estimators=2)
-    classifier.fit(X, new_y, verbose=True)
+    classifier.fit(X, new_y)
 
     prediction = classifier.predict(X)
     assert prediction.ndim == 1
@@ -126,7 +122,7 @@ def test_local_classifier(setup):
     X_np = X.execute().fetch()
     new_y_np = new_y.execute().fetch()
     raw_classifier = lightgbm.LGBMClassifier(n_estimators=2)
-    raw_classifier.fit(X_np, new_y_np, verbose=True)
+    raw_classifier.fit(X_np, new_y_np)
 
     classifier = LGBMClassifier(raw_classifier)
     label_result = classifier.predict(X_df)
@@ -149,7 +145,7 @@ def test_local_classifier_from_to_parquet(setup):
 
     # test with existing model
     classifier = lightgbm.LGBMClassifier(n_estimators=2)
-    classifier.fit(X, y, verbose=True)
+    classifier.fit(X, y)
 
     with tempfile.TemporaryDirectory() as d:
         result_dir = os.path.join(d, "result")
