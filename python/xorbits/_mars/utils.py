@@ -69,6 +69,7 @@ from xoscar._utils import (
 )
 
 from ._utils import (  # noqa: F401 # pylint: disable=unused-import
+    CUnionFind,
     NamedType,
     Timer,
     ceildiv,
@@ -1664,7 +1665,7 @@ def get_func_token(func):
 
 
 def _get_func_token_values(func):
-    if hasattr(func, "__code__"):
+    if hasattr(func, "__code__") and len(func.__code__.co_code) > 0:
         tokens = [func.__code__.co_code]
         if func.__closure__ is not None:
             cvars = tuple([x.cell_contents for x in func.__closure__])
@@ -1676,7 +1677,12 @@ def _get_func_token_values(func):
             tokens.extend([func.args, func.keywords])
             func = func.func
         if hasattr(func, "__code__"):
-            tokens.extend(_get_func_token_values(func))
+            if len(func.__code__.co_code) > 0:
+                tokens.extend(_get_func_token_values(func))
+            else:
+                # for new python version, cython function has __code__,
+                # but it's an empty string.
+                tokens.extend([func.__module__, func.__name__])
         elif isinstance(func, types.BuiltinFunctionType):
             tokens.extend([func.__module__, func.__name__])
         else:
