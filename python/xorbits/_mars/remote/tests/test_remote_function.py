@@ -81,7 +81,9 @@ def test_remote_function(setup):
         assert get_default_session().session_id == session_id
         return mt.ones((2, 3)).sum().to_numpy()
 
-    assert spawn(f).execute().fetch() == 6
+    r = spawn(f)
+    assert r.execute().fetch() == 6
+    assert str(r) == str(f())
 
 
 def test_specific_output_types(setup):
