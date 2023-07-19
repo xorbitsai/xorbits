@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import importlib
+import inspect
 import os
 import sys
 import traceback
@@ -61,3 +62,15 @@ def get_default_logging_config_file_path() -> Path:
         Path(__file__).parent.absolute(), "deploy", "oscar", "file-logging.conf"
     )
     return Path(p)
+
+
+def get_non_default_kwargs(kwargs, func):
+    sig = inspect.signature(func)
+    defaults = {k: v.default for k, v in sig.parameters.items() if v.default != v.empty}
+    dummy = object()
+    kwargs = {k: v for k, v in kwargs.items() if v is not defaults.get(k, dummy)}
+    for k, v in sig.parameters.items():
+        if v.kind == v.VAR_KEYWORD:
+            kwargs.update(kwargs.pop(k))
+            break
+    return kwargs
