@@ -125,7 +125,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         ctx[op.outputs[0].key] = ds
 
 
-def load_dataset_from_huggingface(path: str, **kwargs):
+def load_huggingface_dataset(path: str, **kwargs):
     op = HuggingfaceLoader(
         output_types=[OutputType.huggingface_dataset], path=path, kwargs=kwargs
     )

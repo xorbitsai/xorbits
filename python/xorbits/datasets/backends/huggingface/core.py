@@ -18,9 +18,10 @@ from typing import Dict, Union
 from ...._mars.core.entity import OutputType, register_output_types
 from ...block import Block, BlockData
 from ...dataset import Dataset, DatasetData
-from .loader import load_dataset_from_huggingface
+from .loader import load_huggingface_dataset
 from .map import map
 from .repartition import repartition
+from .to_dataframe import to_dataframe
 
 
 class HuggingfaceDatasetData(DatasetData):
@@ -35,6 +36,9 @@ class HuggingfaceDatasetData(DatasetData):
 
     def map(self, fn, **kwargs):
         return map(self, fn, **kwargs)
+
+    def to_dataframe(self):
+        return to_dataframe(self)
 
 
 class HuggingfaceDataset(Dataset):
@@ -71,7 +75,7 @@ def from_huggingface(path: str, **kwargs) -> Union[Dataset, Dict[str, Dataset]]:
             f"from_huggingface() got unexpected keyword arguments {unexpected_kwargs}"
         )
 
-    return load_dataset_from_huggingface(path, **kwargs).to_dataset()
+    return load_huggingface_dataset(path, **kwargs).to_dataset()
 
 
 register_output_types(

@@ -39,6 +39,9 @@ class DatasetData(ObjectData):
     def map(self, fn, **kwargs):
         raise NotImplementedError
 
+    def to_dataframe(self):
+        raise NotImplementedError
+
 
 class Dataset(Object):
     __slots__ = ()
