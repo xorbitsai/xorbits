@@ -19,8 +19,8 @@ from ...operand import DataOperand, DataOperandMixin
 
 
 class HuggingfaceRepartition(DataOperand, DataOperandMixin):
-    num_blocks: int = Int32Field("num_blocks")
-    block_index: int = Int32Field("block_index")
+    num_chunks: int = Int32Field("num_chunks")
+    chunk_index: int = Int32Field("chunk_index")
     kwargs = DictField("kwargs")
 
     def __call__(self, inp):
@@ -37,9 +37,9 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
         assert len(input_chunks) == 1
 
         chunks = []
-        for index in range(op.num_blocks):
+        for index in range(op.num_chunks):
             chunk_op = op.copy().reset_key()
-            chunk_op.block_index = index
+            chunk_op.chunk_index = index
             c = chunk_op.new_chunk(inputs=input_chunks, index=index)
             chunks.append(c)
 
@@ -49,9 +49,9 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: OperandType):
         inp = ctx[op.inputs[0].key]
         out_key = op.outputs[0].key
-        ctx[out_key] = inp.shard(op.num_blocks, op.block_index, **op.kwargs)
+        ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **op.kwargs)
 
 
-def repartition(dataset, num_blocks: int, **kwargs):
-    op = HuggingfaceRepartition(num_blocks=num_blocks, kwargs=kwargs)
+def repartition(dataset, num_chunks: int, **kwargs):
+    op = HuggingfaceRepartition(num_chunks=num_chunks, kwargs=kwargs)
     return op(dataset)

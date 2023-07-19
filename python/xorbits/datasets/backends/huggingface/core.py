@@ -16,8 +16,7 @@ import inspect
 from typing import Dict, Union
 
 from ...._mars.core.entity import OutputType, register_output_types
-from ...block import Block, BlockData
-from ...dataset import Dataset, DatasetData
+from ...dataset import Dataset, DatasetData, DatasetChunk, DatasetChunkData
 from .loader import load_huggingface_dataset
 from .map import map
 from .repartition import repartition
@@ -31,8 +30,8 @@ class HuggingfaceDatasetData(DatasetData):
     def __repr__(self):
         return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
 
-    def repartition(self, num_blocks: int, **kwargs):
-        return repartition(self, num_blocks, **kwargs)
+    def repartition(self, num_chunks: int, **kwargs):
+        return repartition(self, num_chunks, **kwargs)
 
     def map(self, fn, **kwargs):
         return map(self, fn, **kwargs)
@@ -81,5 +80,5 @@ def from_huggingface(path: str, **kwargs) -> Union[Dataset, Dict[str, Dataset]]:
 register_output_types(
     OutputType.huggingface_dataset,
     (HuggingfaceDataset, HuggingfaceDatasetData),
-    (Block, BlockData),
+    (DatasetChunk, DatasetChunkData),
 )

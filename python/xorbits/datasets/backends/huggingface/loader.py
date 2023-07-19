@@ -32,8 +32,8 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     path = StringField("path")
     kwargs = DictField("kwargs")
     single_data_file = StringField("single_data_file")
-    num_blocks: int = Int32Field("num_blocks")
-    block_index: int = Int32Field("block_index")
+    num_chunks: int = Int32Field("num_chunks")
+    chunk_index: int = Int32Field("chunk_index")
 
     def __call__(self):
         self.output_types = [OutputType.huggingface_dataset]
@@ -71,8 +71,8 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
                 chunk_op = op.copy().reset_key()
                 assert f, "Invalid data file from DatasetBuilder."
                 chunk_op.single_data_file = f
-                chunk_op.num_blocks = len(data_files)
-                chunk_op.block_index = index
+                chunk_op.num_chunks = len(data_files)
+                chunk_op.chunk_index = index
                 chunk_op.expect_band = band
                 c = chunk_op.new_chunk(inputs=[], index=index)
                 chunks.append(c)
@@ -92,7 +92,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         # TODO(codingl2k1): not sure if it's OK to share one cache dir among workers.
         # if op.single_data_file:
         #     # TODO(codingl2k1): use xorbits cache dir
-        #     new_cache_dir = os.path.join(op.cache_dir, f"part_{op.block_index}_{op.num_blocks}")
+        #     new_cache_dir = os.path.join(op.cache_dir, f"part_{op.chunk_index}_{op.num_chunks}")
         #     builder_kwargs["cache_dir"] = new_cache_dir
 
         # load_dataset_builder from every worker may be slow, but it's error to
@@ -109,7 +109,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             output_dir = builder._output_dir
             output_dir = output_dir if output_dir is not None else builder.cache_dir
             output_dir = os.path.join(
-                output_dir, f"part_{op.block_index}_{op.num_blocks}"
+                output_dir, f"part_{op.chunk_index}_{op.num_chunks}"
             )
             download_and_prepare_kwargs["output_dir"] = output_dir
             download_and_prepare_kwargs[
