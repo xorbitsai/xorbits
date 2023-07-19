@@ -63,3 +63,6 @@ class Dataset(Object):
 
     def map(self, fn, **kwargs):
         return self.data.map(fn, **kwargs)
+
+    def to_dataframe(self):
+        return self.data.to_dataframe()

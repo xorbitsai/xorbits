@@ -14,4 +14,6 @@
 # limitations under the License.
 
 
-from .backends.huggingface.core import from_huggingface
+from .adapter import _install, MARS_DATASET_CALLABLES, MARS_DATASET_TYPE
+
+globals().update(MARS_DATASET_CALLABLES)
