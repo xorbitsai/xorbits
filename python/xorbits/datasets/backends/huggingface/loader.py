@@ -34,7 +34,6 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     single_data_file = StringField("single_data_file")
     num_blocks: int = Int32Field("num_blocks")
     block_index: int = Int32Field("block_index")
-    cache_dir: str = StringField("cache_dir")
 
     def __call__(self):
         self.output_types = [OutputType.huggingface_dataset]
@@ -51,10 +50,10 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     def tile(cls, op: OperandType):
         assert len(op.inputs) == 0
 
-        import datasets
+        from datasets import load_dataset_builder
 
-        builder_kwargs = cls._get_kwargs(datasets.load_dataset_builder, op.kwargs)
-        builder = datasets.load_dataset_builder(op.path, **builder_kwargs)
+        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.kwargs)
+        builder = load_dataset_builder(op.path, **builder_kwargs)
         data_files = builder.config.data_files
         # TODO(codingl2k1): check data_files if can be supported
         split = op.kwargs.get("split")
@@ -62,10 +61,10 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
 
         chunks = []
         if data_files and split and len(data_files[split]) > 1:
+            data_files = data_files[split]
             ctx = get_context()
             # TODO(codingl2k1): make expect worker binding stable for cache reuse.
             all_bands = [b for b in ctx.get_worker_bands() if b[1].startswith("numa-")]
-            data_files = data_files[split]
             for index, (f, band) in enumerate(
                 zip(data_files, itertools.cycle(all_bands))
             ):
@@ -74,11 +73,9 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
                 chunk_op.single_data_file = f
                 chunk_op.num_blocks = len(data_files)
                 chunk_op.block_index = index
-                chunk_op.cache_dir = builder.cache_dir
                 chunk_op.expect_band = band
                 c = chunk_op.new_chunk(inputs=[], index=index)
                 chunks.append(c)
-            builder.config.data_files.clear()
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
@@ -88,9 +85,9 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
 
     @classmethod
     def execute(cls, ctx, op: OperandType):
-        import datasets
+        from datasets import load_dataset_builder, DatasetBuilder, VerificationMode
 
-        builder_kwargs = cls._get_kwargs(datasets.load_dataset_builder, op.kwargs)
+        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.kwargs)
 
         # TODO(codingl2k1): not sure if it's OK to share one cache dir among workers.
         # if op.single_data_file:
@@ -103,9 +100,9 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         # ModuleNotFoundError: No module named 'datasets_modules'.
         #
         # Please refer to issue: https://github.com/huggingface/transformers/issues/11565
-        builder = datasets.load_dataset_builder(op.path, **builder_kwargs)
+        builder = load_dataset_builder(op.path, **builder_kwargs)
         download_and_prepare_kwargs = cls._get_kwargs(
-            datasets.DatasetBuilder.download_and_prepare, op.kwargs
+            DatasetBuilder.download_and_prepare, op.kwargs
         )
 
         if op.single_data_file is not None:
@@ -117,15 +114,13 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             download_and_prepare_kwargs["output_dir"] = output_dir
             download_and_prepare_kwargs[
                 "verification_mode"
-            ] = datasets.VerificationMode.NO_CHECKS
+            ] = VerificationMode.NO_CHECKS
             split = op.kwargs["split"]
             split_data_files = builder.config.data_files[split]
             split_data_files[:] = [op.single_data_file]
 
         builder.download_and_prepare(**download_and_prepare_kwargs)
-        as_dataset_kwargs = cls._get_kwargs(
-            datasets.DatasetBuilder.as_dataset, op.kwargs
-        )
+        as_dataset_kwargs = cls._get_kwargs(DatasetBuilder.as_dataset, op.kwargs)
         ds = builder.as_dataset(**as_dataset_kwargs)
         ctx[op.outputs[0].key] = ds
 
