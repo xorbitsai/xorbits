@@ -161,7 +161,7 @@ def test_pandas_dataframe_methods(setup):
     # assert if r is executed
     assert len(getattr(r.data._mars_entity, "_executed_sessions")) == 1
     expected = raw.to_json()
-    assert str(r.to_object()) == str(expected)
+    assert str(r) == str(expected)
     assert isinstance(r, DataRef)
 
 
