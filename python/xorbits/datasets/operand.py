@@ -17,7 +17,8 @@ from .._mars.core.operand.objects import ObjectOperand, ObjectOperandMixin
 
 
 class DataOperand(ObjectOperand):
-    pass
+    def __init__(self, output_types=None, *args, **kwargs):
+        super().__init__(_output_types=output_types, *args, **kwargs)
 
 
 class DataOperandMixin(ObjectOperandMixin):

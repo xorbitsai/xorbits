@@ -31,17 +31,16 @@ from ...operand import DataOperand, DataOperandMixin
 
 class HuggingfaceLoader(DataOperand, DataOperandMixin):
     path = StringField("path")
-    kwargs = DictField("kwargs")
+    hf_kwargs = DictField("kwargs")
     single_data_file = StringField("single_data_file")
     num_chunks: int = Int32Field("num_chunks")
     chunk_index: int = Int32Field("chunk_index")
     data_files = ListField("data_files")
 
     def __call__(self):
-        self.output_types = [OutputType.huggingface_dataset]
         from datasets import load_dataset_builder
 
-        builder_kwargs = self._get_kwargs(load_dataset_builder, self.kwargs)
+        builder_kwargs = self._get_kwargs(load_dataset_builder, self.hf_kwargs)
         builder = load_dataset_builder(self.path, **builder_kwargs)
         data_files = builder.config.data_files
         # TODO(codingl2k1): not pass dtypes if no to_dataframe() called.
@@ -51,7 +50,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             dtypes = None
         if dtypes is not None and builder.info.splits:
             shape = (
-                builder.info.splits[self.kwargs["split"]].num_examples,
+                builder.info.splits[self.hf_kwargs["split"]].num_examples,
                 len(dtypes),
             )
         else:
@@ -73,7 +72,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         data_files = op.data_files
         op.data_files = None
         # TODO(codingl2k1): check data_files if can be supported
-        split = op.kwargs.get("split")
+        split = op.hf_kwargs.get("split")
         # TODO(codingl2k1): support multiple splits
 
         chunks = []
@@ -105,7 +104,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: "HuggingfaceLoader"):
         from datasets import load_dataset_builder, DatasetBuilder, VerificationMode
 
-        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.kwargs)
+        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
 
         # TODO(codingl2k1): not sure if it's OK to share one cache dir among workers.
         # if op.single_data_file:
@@ -120,7 +119,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         # Please refer to issue: https://github.com/huggingface/transformers/issues/11565
         builder = load_dataset_builder(op.path, **builder_kwargs)
         download_and_prepare_kwargs = cls._get_kwargs(
-            DatasetBuilder.download_and_prepare, op.kwargs
+            DatasetBuilder.download_and_prepare, op.hf_kwargs
         )
 
         if op.single_data_file is not None:
@@ -133,18 +132,18 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             download_and_prepare_kwargs[
                 "verification_mode"
             ] = VerificationMode.NO_CHECKS
-            split = op.kwargs["split"]
+            split = op.hf_kwargs["split"]
             split_data_files = builder.config.data_files[split]
             split_data_files[:] = [op.single_data_file]
 
         builder.download_and_prepare(**download_and_prepare_kwargs)
-        as_dataset_kwargs = cls._get_kwargs(DatasetBuilder.as_dataset, op.kwargs)
+        as_dataset_kwargs = cls._get_kwargs(DatasetBuilder.as_dataset, op.hf_kwargs)
         ds = builder.as_dataset(**as_dataset_kwargs)
         ctx[op.outputs[0].key] = ds
 
 
-def load_huggingface_dataset(path: str, **kwargs):
+def load_huggingface_dataset(path: str, **hf_kwargs):
     op = HuggingfaceLoader(
-        output_types=[OutputType.huggingface_dataset], path=path, kwargs=kwargs
+        output_types=[OutputType.huggingface_dataset], path=path, hf_kwargs=hf_kwargs
     )
     return op()

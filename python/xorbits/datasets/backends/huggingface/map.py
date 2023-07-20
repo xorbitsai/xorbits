@@ -24,9 +24,6 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
     func = AnyField("func")
     kwargs = DictField("kwargs")
 
-    def __init__(self, output_types=None, **kw):
-        super().__init__(_output_types=output_types, **kw)
-
     def __call__(self, dataset):
         self.output_types = dataset.op.output_types
         # serialize in advance to reduce overhead

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import DictField, Int32Field
 from ...operand import DataOperand, DataOperandMixin
 
@@ -23,7 +24,6 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
     kwargs = DictField("kwargs")
 
     def __call__(self, inp):
-        self.output_types = inp.op.output_types
         return self.new_tileable([inp], **inp.params)
 
     @classmethod
@@ -53,5 +53,9 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
 
 
 def repartition(dataset, num_chunks: int, **kwargs):
-    op = HuggingfaceRepartition(num_chunks=num_chunks, kwargs=kwargs)
+    op = HuggingfaceRepartition(
+        output_types=[OutputType.huggingface_dataset],
+        num_chunks=num_chunks,
+        kwargs=kwargs,
+    )
     return op(dataset)

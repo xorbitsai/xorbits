@@ -24,7 +24,6 @@ from ...operand import DataOperand, DataOperandMixin
 
 class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
     def __call__(self, inp):
-        self.output_types = [OutputType.dataframe]
         params = inp.params.copy()
         # dtypes is None trigger auto execution.
         if inp.dtypes is not None:
@@ -64,4 +63,4 @@ class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
 
 
 def to_dataframe(dataset):
-    return HuggingfaceToDataframe()(dataset)
+    return HuggingfaceToDataframe(output_types=[OutputType.dataframe])(dataset)
