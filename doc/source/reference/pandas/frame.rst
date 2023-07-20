@@ -181,6 +181,7 @@ Reindexing / selection / label manipulation
    DataFrame.between_time
    DataFrame.drop
    DataFrame.drop_duplicates
+   DataFrame.dedup
    DataFrame.duplicated
    DataFrame.equals
    DataFrame.filter
