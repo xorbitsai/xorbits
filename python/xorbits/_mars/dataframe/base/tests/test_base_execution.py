@@ -248,6 +248,89 @@ def test_series_map_execution(setup):
     pd.testing.assert_index_equal(result, expected)
 
 
+def test_describe_execution(setup):
+    s_raw = pd.Series(np.random.rand(10))
+
+    # test one chunk
+    series = from_pandas_series(s_raw, chunk_size=10)
+
+    r = series.describe()
+    result = r.execute().fetch()
+    expected = s_raw.describe()
+    pd.testing.assert_series_equal(result, expected)
+
+    r = series.describe(percentiles=[])
+    result = r.execute().fetch()
+    expected = s_raw.describe(percentiles=[])
+    pd.testing.assert_series_equal(result, expected)
+
+    # test multi chunks
+    series = from_pandas_series(s_raw, chunk_size=3)
+
+    r = series.describe()
+    result = r.execute().fetch()
+    expected = s_raw.describe()
+    pd.testing.assert_series_equal(result, expected)
+
+    r = series.describe(percentiles=[])
+    result = r.execute().fetch()
+    expected = s_raw.describe(percentiles=[])
+    pd.testing.assert_series_equal(result, expected)
+
+    rs = np.random.RandomState(5)
+    df_raw = pd.DataFrame(rs.rand(10, 4), columns=list("abcd"))
+    df_raw["e"] = rs.randint(100, size=10)
+
+    # test one chunk
+    df = from_pandas_df(df_raw, chunk_size=10)
+
+    r = df.describe()
+    result = r.execute().fetch()
+    expected = df_raw.describe()
+    pd.testing.assert_frame_equal(result, expected)
+
+    r = series.describe(percentiles=[], include=np.float64)
+    result = r.execute().fetch()
+    expected = s_raw.describe(percentiles=[], include=np.float64)
+    pd.testing.assert_series_equal(result, expected)
+
+    # test multi chunks
+    df = from_pandas_df(df_raw, chunk_size=3)
+
+    r = df.describe()
+    result = r.execute().fetch()
+    expected = df_raw.describe()
+    pd.testing.assert_frame_equal(result, expected)
+
+    r = df.describe(percentiles=[], include=np.float64)
+    result = r.execute().fetch()
+    expected = df_raw.describe(percentiles=[], include=np.float64)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # test skip percentiles
+    r = df.describe(percentiles=False, include=np.float64)
+    result = r.execute().fetch()
+    expected = df_raw.describe(percentiles=[], include=np.float64)
+    expected.drop(["50%"], axis=0, inplace=True)
+    pd.testing.assert_frame_equal(result, expected)
+
+    with pytest.raises(ValueError):
+        df.describe(percentiles=[1.1])
+
+    with pytest.raises(ValueError):
+        # duplicated values
+        df.describe(percentiles=[0.3, 0.5, 0.3])
+
+    # test input dataframe which has unknown shape
+    df = from_pandas_df(df_raw, chunk_size=3)
+    df2 = df[df["a"] < 0.5]
+    r = df2.describe()
+
+    result = r.execute().fetch()
+    expected = df_raw[df_raw["a"] < 0.5].describe()
+    pd.testing.assert_frame_equal(result, expected)
+
+
 def test_data_frame_apply_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]
     df_raw = pd.DataFrame(dict((c, [i**2 for i in range(20)]) for c in cols))
