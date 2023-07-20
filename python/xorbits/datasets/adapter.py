@@ -21,8 +21,8 @@ from ..core.adapter import (
     wrap_mars_callable,
 )
 from ..core.data import DataType
-from .dataset import Dataset
 from .backends.huggingface.core import from_huggingface
+from .dataset import Dataset
 
 MARS_DATASET_TYPE = (Dataset,)
 

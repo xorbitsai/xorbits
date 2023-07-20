@@ -29,9 +29,14 @@ try:
 except ImportError:
     pass
 
-from ...._mars.core.entity import OutputType, register_output_types
+from ...._mars.core.entity import (
+    OutputType,
+    register_fetch_class,
+    register_output_types,
+)
+from ...._mars.core.operand.objects import ObjectFetch
 from ....utils import get_non_default_kwargs
-from ...dataset import Dataset, DatasetData, DatasetChunk, DatasetChunkData
+from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
 from .loader import load_huggingface_dataset
 from .map import map
 from .rechunk import rechunk
@@ -62,6 +67,20 @@ class HuggingfaceDataset(Dataset):
 
     def to_dataset(self):
         return Dataset(self.data)
+
+
+register_output_types(
+    OutputType.huggingface_dataset,
+    (HuggingfaceDataset, HuggingfaceDatasetData),
+    (DatasetChunk, DatasetChunkData),
+)
+
+
+class HuggingfaceDatasetFetch(ObjectFetch):
+    _output_type_ = OutputType.huggingface_dataset
+
+
+register_fetch_class(OutputType.huggingface_dataset, HuggingfaceDatasetFetch, None)
 
 
 def from_huggingface(
@@ -196,10 +215,3 @@ def from_huggingface(
         )
 
     return load_huggingface_dataset(**kwargs).to_dataset()
-
-
-register_output_types(
-    OutputType.huggingface_dataset,
-    (HuggingfaceDataset, HuggingfaceDatasetData),
-    (DatasetChunk, DatasetChunkData),
-)

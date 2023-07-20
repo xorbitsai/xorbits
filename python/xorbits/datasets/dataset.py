@@ -13,18 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .._mars.core.entity import OutputType, register_fetch_class
 from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
 from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
-from .._mars.core.operand.objects import ObjectFetch
 from .._mars.serialization.serializables import FieldTypes, ListField, SeriesField
-
-
-class DatasetFetch(ObjectFetch):
-    _output_type_ = OutputType.huggingface_dataset
-
-
-register_fetch_class(OutputType.huggingface_dataset, DatasetFetch, None)
 
 
 class DatasetChunkData(ObjectChunkData):

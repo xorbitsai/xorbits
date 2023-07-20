@@ -15,15 +15,16 @@
 
 import inspect
 import itertools
-import numpy as np
 import os.path
+
+import numpy as np
 
 from ...._mars.core.context import get_context
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
     DictField,
-    ListField,
     Int32Field,
+    ListField,
     StringField,
 )
 from ...operand import DataOperand, DataOperandMixin
@@ -102,7 +103,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
 
     @classmethod
     def execute(cls, ctx, op: "HuggingfaceLoader"):
-        from datasets import load_dataset_builder, DatasetBuilder, VerificationMode
+        from datasets import DatasetBuilder, VerificationMode, load_dataset_builder
 
         builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
 

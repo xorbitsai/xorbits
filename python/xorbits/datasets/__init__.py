@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .adapter import MARS_DATASET_CALLABLES, MARS_DATASET_TYPE, _install
 from .backends.huggingface.core import from_huggingface
-from .adapter import _install, MARS_DATASET_CALLABLES, MARS_DATASET_TYPE
 
 globals().update(MARS_DATASET_CALLABLES)
