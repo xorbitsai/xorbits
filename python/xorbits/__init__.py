@@ -19,6 +19,7 @@ from .deploy import init, shutdown
 
 
 def _install():
+    from .experimental import _install as _install_experimental
     from .lightgbm import _install as _install_lightgbm
     from .numpy import _install as _install_numpy
     from .pandas import _install as _install_pandas
@@ -30,6 +31,7 @@ def _install():
     _install_web()
     _install_lightgbm()
     _install_xgboost()
+    _install_experimental()
 
 
 _install()

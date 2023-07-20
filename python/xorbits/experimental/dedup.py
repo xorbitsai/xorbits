@@ -16,30 +16,29 @@ import hashlib
 import re
 from functools import partial
 from itertools import tee
-from typing import Iterator, List, Set, Text, Tuple, Union
+from typing import List, Set, Text, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from scipy.integrate import quad as integrate
 
-from ... import opcodes
-from ...core import recursive_tile
-from ...core.context import Context
-from ...core.entity import OutputType
-from ...core.operand import ObjectOperand, ObjectOperandMixin, OperandStage
-from ...serialization.serializables import AnyField
-from ...utils import CUnionFind as UnionFind
-from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import build_concatenated_rows_frame
+from .._mars import opcodes
+from .._mars.core import recursive_tile
+from .._mars.core.context import Context
+from .._mars.core.entity import OutputType
+from .._mars.core.operand import ObjectOperand, ObjectOperandMixin, OperandStage
+from .._mars.dataframe.operands import DataFrameOperand, DataFrameOperandMixin
+from .._mars.dataframe.utils import build_concatenated_rows_frame
+from .._mars.serialization.serializables import AnyField
+from .._mars.utils import CUnionFind as UnionFind
+from ..core.adapter import from_mars, to_mars
 
 NON_ALPHA = re.compile("\\W", re.UNICODE)
 MAX_HASH = np.uint64((1 << 32) - 1)
 MERSENNE_PRIME = np.uint64((1 << 61) - 1)
 
 
-def ngrams(
-    sequence: List[Text], n: int, min_length: int = 5
-) -> Iterator[Tuple[str, str]]:
+def ngrams(sequence: List[Text], n: int, min_length: int = 5):
     """
     Return the ngrams generated from a sequence of items, as an iterator.
 
@@ -405,7 +404,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
         return self.new_dataframe([df])
 
 
-def df_dedup(
+def dedup(
     df: pd.DataFrame,
     col: str,
     threshold: float = 0.7,
@@ -425,6 +424,9 @@ def df_dedup(
 
     Parameters
     ----------
+    df: pd.DataFrame,
+        The DataFrame to deduplicate.
+
     col : str
         The column of the DataFrame on which to calculate hash values.
 
@@ -462,6 +464,7 @@ def df_dedup(
 
     Examples
     --------
+    >>> from xorbits.experimental import dedup
     >>> words = list("abcdefghijklmnopqrstuvwxyz")
     >>> df = pd.DataFrame(
     ...     {
@@ -472,9 +475,7 @@ def df_dedup(
     ...         * 2,
     ...     }
     ... )
-    >>> res = df.dedup(col="text")
-    >>> res.execute()
-
+    >>> res = dedup(df, col="text")
     """
 
     # Check the threshold type and range
@@ -528,4 +529,4 @@ def df_dedup(
 
     op = DataFrameDedup(func=func)
 
-    return op(df)
+    return from_mars(op(to_mars(df)))
