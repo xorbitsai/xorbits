@@ -118,11 +118,11 @@ class Coloring:
         # decrease initial_same_color_num until the number of initial color exceeds slots.
         slots_num = sum((r.num_cpus + r.num_gpus) for r in self.band_resource.values())
         while self.initial_same_color_num > 0:
+            self.reset_color()
             op_to_colors = self._color_init_nodes()
             if len(set(op_to_colors.values())) >= slots_num:
                 break
             else:
-                self.reset_color()
                 self.initial_same_color_num -= 1
 
         # step2: Propagate color in the topological order,
