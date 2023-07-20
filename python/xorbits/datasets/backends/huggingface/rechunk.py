@@ -34,16 +34,16 @@ class HuggingfaceRechunk(DataOperand, DataOperandMixin):
         out = op.outputs[0]
 
         # TODO(codingl2k1): support rechunk multi chunks.
-        assert len(input_chunks) == 1
-
-        chunks = []
-        for index in range(op.num_chunks):
-            chunk_op = op.copy().reset_key()
-            chunk_op.chunk_index = index
-            c = chunk_op.new_chunk(inputs=input_chunks, index=index)
-            chunks.append(c)
-
-        return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
+        if len(input_chunks) == 1 and op.num_chunks != 1:
+            chunks = []
+            for index in range(op.num_chunks):
+                chunk_op = op.copy().reset_key()
+                chunk_op.chunk_index = index
+                c = chunk_op.new_chunk(inputs=input_chunks, index=index)
+                chunks.append(c)
+            return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
+        else:
+            return op.copy().new_tileable(op.inputs, chunks=input_chunks, **out.params)
 
     @classmethod
     def execute(cls, ctx, op: "HuggingfaceRechunk"):
