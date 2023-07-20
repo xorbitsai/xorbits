@@ -186,10 +186,10 @@ def from_huggingface(
     kwargs = get_non_default_kwargs(locals(), from_huggingface)
     import datasets
 
-    sig_loader = inspect.signature(datasets.load_dataset)
-    load_dataset_param_keys = sig_loader.parameters.keys()
+    sig_load_dataset = inspect.signature(datasets.load_dataset)
+    load_dataset_param_keys = sig_load_dataset.parameters.keys()
     assert "path" in load_dataset_param_keys
-    unexpected_kwargs = kwargs.keys() - sig_loader.parameters.keys()
+    unexpected_kwargs = kwargs.keys() - sig_load_dataset.parameters.keys()
     if unexpected_kwargs:
         raise TypeError(
             f"from_huggingface() got unexpected keyword arguments {unexpected_kwargs}"

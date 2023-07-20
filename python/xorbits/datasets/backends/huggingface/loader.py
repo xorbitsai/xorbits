@@ -15,12 +15,14 @@
 
 import inspect
 import itertools
+import numpy as np
 import os.path
 
 from ...._mars.core.context import get_context
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
     DictField,
+    ListField,
     Int32Field,
     StringField,
 )
@@ -34,10 +36,29 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     single_data_file = StringField("single_data_file")
     num_chunks: int = Int32Field("num_chunks")
     chunk_index: int = Int32Field("chunk_index")
+    data_files = ListField("data_files")
 
     def __call__(self):
         self.output_types = [OutputType.huggingface_dataset]
-        return self.new_tileable([])
+        from datasets import load_dataset_builder
+
+        builder_kwargs = self._get_kwargs(load_dataset_builder, self.kwargs)
+        builder = load_dataset_builder(self.path, **builder_kwargs)
+        data_files = builder.config.data_files
+        # TODO(codingl2k1): not pass dtypes if no to_dataframe() called.
+        if builder.info.features:
+            dtypes = builder.info.features.arrow_schema.empty_table().to_pandas().dtypes
+        else:
+            dtypes = None
+        if dtypes is not None and builder.info.splits:
+            shape = (
+                builder.info.splits[self.kwargs["split"]].num_examples,
+                len(dtypes),
+            )
+        else:
+            shape = (np.nan, np.nan)
+        self.data_files = data_files
+        return self.new_tileable([], dtypes=dtypes, shape=shape)
 
     @classmethod
     def _get_kwargs(cls, obj, kwargs):
@@ -50,11 +71,8 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     def tile(cls, op: OperandType):
         assert len(op.inputs) == 0
 
-        from datasets import load_dataset_builder
-
-        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.kwargs)
-        builder = load_dataset_builder(op.path, **builder_kwargs)
-        data_files = builder.config.data_files
+        data_files = op.data_files
+        op.data_files = None
         # TODO(codingl2k1): check data_files if can be supported
         split = op.kwargs.get("split")
         # TODO(codingl2k1): support multiple splits
@@ -81,7 +99,8 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             chunk_op.single_data_file = None
             chunks.append(chunk_op.new_chunk(inputs=[]))
 
-        return op.copy().new_tileable(op.inputs, chunks=chunks)
+        out = op.outputs[0]
+        return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
 
     @classmethod
     def execute(cls, ctx, op: OperandType):

@@ -15,30 +15,53 @@
 
 import itertools
 import numpy as np
+import pandas as pd
 
 from ...._mars.core.entity import OutputType
 from ...._mars.typing import OperandType
+from ...._mars.dataframe.utils import parse_index
 from ...operand import DataOperand, DataOperandMixin
 
 
 class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
     def __call__(self, inp):
         self.output_types = [OutputType.dataframe]
-        return self.new_tileable([inp])
+        # dtypes is None trigger auto execution.
+        if inp.dtypes is None:
+            index_value = None
+            columns_value = None
+        else:
+            index_value = parse_index(pd.RangeIndex(-1))
+            columns_value = parse_index(inp.dtypes.index, store_data=True)
+        return self.new_tileable(
+            [inp],
+            dtypes=inp.dtypes,
+            shape=inp.shape,
+            index_value=index_value,
+            columns_value=columns_value,
+        )
 
     @classmethod
     def tile(cls, op: OperandType):
         all_chunks = itertools.chain(*(inp.chunks for inp in op.inputs))
         chunks = []
+        out = op.outputs[0]
         for index, c in enumerate(all_chunks):
             chunk_op = op.copy().reset_key()
-            new_c = chunk_op.new_chunk([c], index=(index, 0), shape=(np.nan, np.nan))
+            new_c = chunk_op.new_chunk(
+                [c],
+                index=(index, 0),
+                shape=(np.nan, np.nan),
+                columns_value=out.columns_value,
+                index_value=parse_index(pd.RangeIndex(-1)),
+                dtypes=out.dtypes,
+            )
             chunks.append(new_c)
         return op.copy().new_tileable(
             op.inputs,
             chunks=chunks,
-            shape=(np.nan, np.nan),
             nsplits=((np.nan,) * len(chunks), (np.nan,)),
+            **out.params
         )
 
     @classmethod

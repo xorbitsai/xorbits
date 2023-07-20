@@ -14,7 +14,8 @@
 # limitations under the License.
 
 from .._mars.core.entity.objects import Object, ObjectData, ObjectChunk, ObjectChunkData
-from .._mars.serialization.serializables import FieldTypes, ListField
+from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
+from .._mars.serialization.serializables import FieldTypes, ListField, SeriesField
 
 
 class DatasetChunkData(ObjectChunkData):
@@ -28,11 +29,12 @@ class DatasetChunk(ObjectChunk):
     type_name = "DatasetChunk"
 
 
-class DatasetData(ObjectData):
+class DatasetData(HasShapeTileableData):
     __slots__ = ()
     type_name = "DatasetData"
 
     # optional fields
+    dtypes = SeriesField("dtypes")
     _chunks = ListField(
         "chunks",
         FieldTypes.reference(DatasetChunk),
@@ -40,8 +42,17 @@ class DatasetData(ObjectData):
         on_deserialize=lambda x: [DatasetChunk(it) for it in x] if x is not None else x,
     )
 
+    def __init__(self, op=None, nsplits=None, chunks=None, shape=None, **kw):
+        super().__init__(_op=op, _nsplits=nsplits, _chunks=chunks, _shape=shape, **kw)
+
     def __repr__(self):
         return f"Dataset <op={type(self.op).__name__}, key={self.key}>"
+
+    @property
+    def params(self):
+        d = super().params
+        d.update({"dtypes": self.dtypes})
+        return d
 
     def repartition(self, num_chunks: int, **kwargs):
         raise NotImplementedError
@@ -53,7 +64,7 @@ class DatasetData(ObjectData):
         raise NotImplementedError
 
 
-class Dataset(Object):
+class Dataset(HasShapeTileable):
     __slots__ = ()
     _allow_data_type_ = (DatasetData,)
     type_name = "Dataset"
