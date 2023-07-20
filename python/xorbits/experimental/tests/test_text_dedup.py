@@ -13,36 +13,34 @@
 # limitations under the License.
 
 import numpy as np
-import pandas as pd
 import pytest
 
-from ..._mars.dataframe.datasource.dataframe import from_pandas as from_pandas_df
+from ... import pandas as pd
 from ...experimental import dedup
 
 
 def test_dedup_execute(setup):
     words = list("abcdefghijklmnopqrstuvwxyz")
-    df_raw = pd.DataFrame(
+    df = pd.DataFrame(
         {
             "text": [
-                " ".join(["".join(np.random.choice(words, 5)) for i in range(50)])
+                " ".join(["".join(np.random.choice(words, 5)) for _ in range(50)])
                 for _ in np.arange(9)
             ]
             * 2
             + [
-                " ".join(["".join(np.random.choice(words, 4)) for i in range(50)])
+                " ".join(["".join(np.random.choice(words, 4)) for _ in range(50)])
                 for _ in np.arange(2)
             ],
         }
     )
 
     # test one chunk
-    df = from_pandas_df(df_raw, chunk_size=20)
     result = dedup(df, col="text").execute().fetch()
     assert result.shape[0] == 11
 
     # test multi chunks
-    df = from_pandas_df(df_raw, chunk_size=1)
+    df = df.rechunk(1)
     result = dedup(df, col="text").execute().fetch()
     assert result.shape[0] == 11
 
