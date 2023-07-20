@@ -26,7 +26,6 @@ from ...._mars.serialization.serializables import (
     Int32Field,
     StringField,
 )
-from ...._mars.typing import OperandType
 from ...operand import DataOperand, DataOperandMixin
 
 
@@ -68,7 +67,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         }
 
     @classmethod
-    def tile(cls, op: OperandType):
+    def tile(cls, op: "HuggingfaceLoader"):
         assert len(op.inputs) == 0
 
         data_files = op.data_files
@@ -103,7 +102,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
 
     @classmethod
-    def execute(cls, ctx, op: OperandType):
+    def execute(cls, ctx, op: "HuggingfaceLoader"):
         from datasets import load_dataset_builder, DatasetBuilder, VerificationMode
 
         builder_kwargs = cls._get_kwargs(load_dataset_builder, op.kwargs)

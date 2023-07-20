@@ -18,7 +18,6 @@ import numpy as np
 import pandas as pd
 
 from ...._mars.core.entity import OutputType
-from ...._mars.typing import OperandType
 from ...._mars.dataframe.utils import parse_index
 from ...operand import DataOperand, DataOperandMixin
 
@@ -26,23 +25,15 @@ from ...operand import DataOperand, DataOperandMixin
 class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
     def __call__(self, inp):
         self.output_types = [OutputType.dataframe]
+        params = inp.params.copy()
         # dtypes is None trigger auto execution.
-        if inp.dtypes is None:
-            index_value = None
-            columns_value = None
-        else:
-            index_value = parse_index(pd.RangeIndex(-1))
-            columns_value = parse_index(inp.dtypes.index, store_data=True)
-        return self.new_tileable(
-            [inp],
-            dtypes=inp.dtypes,
-            shape=inp.shape,
-            index_value=index_value,
-            columns_value=columns_value,
-        )
+        if inp.dtypes is not None:
+            params["index_value"] = parse_index(pd.RangeIndex(-1))
+            params["columns_value"] = parse_index(inp.dtypes.index, store_data=True)
+        return self.new_tileable([inp], **params)
 
     @classmethod
-    def tile(cls, op: OperandType):
+    def tile(cls, op: "HuggingfaceToDataframe"):
         all_chunks = itertools.chain(*(inp.chunks for inp in op.inputs))
         chunks = []
         out = op.outputs[0]
@@ -65,7 +56,7 @@ class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
         )
 
     @classmethod
-    def execute(cls, ctx, op: OperandType):
+    def execute(cls, ctx, op: "HuggingfaceToDataframe"):
         ds = ctx[op.inputs[0].key]
         out = op.outputs[0]
         df = ds.to_pandas()

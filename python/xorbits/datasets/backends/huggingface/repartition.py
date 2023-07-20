@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from ...._mars.serialization.serializables import DictField, Int32Field
-from ...._mars.typing import OperandType
 from ...operand import DataOperand, DataOperandMixin
 
 
@@ -25,13 +24,14 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
 
     def __call__(self, inp):
         self.output_types = inp.op.output_types
-        return self.new_tileable([inp])
+        return self.new_tileable([inp], **inp.params)
 
     @classmethod
-    def tile(cls, op: OperandType):
+    def tile(cls, op: "HuggingfaceRepartition"):
         input_chunks = []
         for inp in op.inputs:
             input_chunks.extend(inp.chunks)
+        out = op.outputs[0]
 
         # TODO(codingl2k1): support repartition multi partitions.
         assert len(input_chunks) == 1
@@ -43,10 +43,10 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
             c = chunk_op.new_chunk(inputs=input_chunks, index=index)
             chunks.append(c)
 
-        return op.copy().new_tileable(op.inputs, chunks=chunks)
+        return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
 
     @classmethod
-    def execute(cls, ctx, op: OperandType):
+    def execute(cls, ctx, op: "HuggingfaceRepartition"):
         inp = ctx[op.inputs[0].key]
         out_key = op.outputs[0].key
         ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **op.kwargs)
