@@ -235,3 +235,24 @@ def test_coloring_broadcaster():
         )
         == 3
     )
+
+
+def test_embarassing_parallel():
+    chunks = [
+        TensorTreeAdd(args=[], _key=str(n)).new_chunk(None, None).data for n in range(4)
+    ]
+    graph = ChunkGraph()
+    for c in chunks:
+        graph.add_node(c)
+    chunks[1].op._inputs = [chunks[0]]
+    graph.add_edge(chunks[0], chunks[1])
+    chunks[3].op._inputs = [chunks[2]]
+    graph.add_edge(chunks[2], chunks[3])
+    all_bands = [("127.0.0.1", "0"), ("127.0.0.1", "1")]
+    chunk_to_bands = {
+        chunks[0]: all_bands[0],
+        chunks[2]: all_bands[0],
+    }
+    coloring = Coloring(graph, all_bands, chunk_to_bands)
+    chunk_to_colors = coloring.color()
+    assert len(set(chunk_to_colors.values())) == 2

@@ -57,6 +57,9 @@ class Coloring:
     def next_color(self) -> int:
         return next(self._coloring_iter)
 
+    def reset_color(self):
+        self._coloring_iter = itertools.count()
+
     @classmethod
     def _can_color_same(cls, chunk: ChunkType, predecessors: List[ChunkType]) -> bool:
         if (
@@ -110,7 +113,15 @@ class Coloring:
         chunk_to_colors = dict()
 
         # step 1: Coloring the initial nodes according to the bands that assigned by assigner
-        op_to_colors = self._color_init_nodes()
+        # if the number of initial color is less than the number of bands,
+        # decrease initial_same_color_num until the number of initial color exceeds bands.
+        while self.initial_same_color_num > 0:
+            op_to_colors = self._color_init_nodes()
+            if len(set(op_to_colors.values())) >= len(self.all_bands):
+                break
+            else:
+                self.reset_color()
+                self.initial_same_color_num -= 1
 
         # step2: Propagate color in the topological order,
         # if the input nodes have same color, color it with the same color;
