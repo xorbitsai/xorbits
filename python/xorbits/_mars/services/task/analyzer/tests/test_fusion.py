@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from .....core import ChunkGraph
+from .....resource import Resource
 from .....tensor.arithmetic import TensorTreeAdd
 from ..fusion import Coloring
 
@@ -37,6 +38,7 @@ def test_simple_coloring():
     chunks[7].op._inputs = [chunks[6]]
     graph.add_edge(chunks[6], chunks[7])
 
+    band_resource = {("127.0.0.1", "0"): Resource(1), ("127.0.0.1", "1"): Resource(1)}
     all_bands = [("127.0.0.1", "0"), ("127.0.0.1", "1")]
     chunk_to_bands = {
         chunks[0]: all_bands[0],
@@ -46,7 +48,7 @@ def test_simple_coloring():
     }
 
     # allocate node 0, 1 with band 0, node 4, 5 with band 1
-    coloring = Coloring(graph, all_bands, chunk_to_bands)
+    coloring = Coloring(graph, band_resource, chunk_to_bands)
     chunk_to_colors = coloring.color()
     assert len(set(chunk_to_colors.values())) == 2
     assert (
@@ -63,7 +65,7 @@ def test_simple_coloring():
     )
 
     # initial nodes all have different colors
-    coloring = Coloring(graph, all_bands, chunk_to_bands, initial_same_color_num=1)
+    coloring = Coloring(graph, band_resource, chunk_to_bands, initial_same_color_num=1)
     chunk_to_colors = coloring.color()
     assert len(set(chunk_to_colors.values())) == 6
     assert (
@@ -104,13 +106,17 @@ def test_coloring_with_gpu_attr():
     chunks[7].op._inputs = [chunks[6]]
     graph.add_edge(chunks[6], chunks[7])
 
+    band_resource = {
+        ("127.0.0.1", "0"): Resource(1, 1),
+        ("127.0.0.1", "1"): Resource(1, 1),
+    }
     all_bands = [("127.0.0.1", "0"), ("127.0.0.1", "1")]
     chunk_to_bands = {
         chunks[0]: all_bands[0],
         chunks[4]: all_bands[1],
     }
 
-    coloring = Coloring(graph, all_bands, chunk_to_bands)
+    coloring = Coloring(graph, band_resource, chunk_to_bands)
     chunk_to_colors = coloring.color()
     assert len(set(chunk_to_colors.values())) == 3
     assert chunk_to_colors[chunks[0]] == chunk_to_colors[chunks[1]]
@@ -156,6 +162,7 @@ def test_complex_coloring():
     graph.add_edge(chunks[6], chunks[12])
     graph.add_edge(chunks[11], chunks[12])
 
+    band_resource = {("127.0.0.1", "0"): Resource(1), ("127.0.0.1", "1"): Resource(1)}
     all_bands = [("127.0.0.1", "0"), ("127.0.0.1", "1")]
     chunk_to_bands = {
         chunks[0]: all_bands[0],
@@ -164,7 +171,7 @@ def test_complex_coloring():
         chunks[9]: all_bands[1],
     }
     # allocate node 0, 1 with band 0, node 8, 9 with band 1
-    coloring = Coloring(graph, all_bands, chunk_to_bands)
+    coloring = Coloring(graph, band_resource, chunk_to_bands)
     chunk_to_colors = coloring.color()
     assert len(set(chunk_to_colors.values())) == 7
     assert (
@@ -207,12 +214,13 @@ def test_coloring_broadcaster():
     chunks[2].op._inputs = [chunks[0]]
     graph.add_edge(chunks[0], chunks[2])
 
+    band_resource = {("127.0.0.1", "0"): Resource(1), ("127.0.0.1", "1"): Resource(1)}
     all_bands = [("127.0.0.1", "0"), ("127.0.0.1", "1")]
     chunk_to_bands = {
         chunks[0]: all_bands[0],
     }
 
-    coloring = Coloring(graph, all_bands, chunk_to_bands)
+    coloring = Coloring(graph, band_resource, chunk_to_bands)
     chunk_to_colors = coloring.color()
     assert len(set(chunk_to_colors.values())) == 1
     assert (
@@ -221,7 +229,7 @@ def test_coloring_broadcaster():
         == chunk_to_colors[chunks[2]]
     )
     coloring = Coloring(
-        graph, all_bands, chunk_to_bands, as_broadcaster_successor_num=1
+        graph, band_resource, chunk_to_bands, as_broadcaster_successor_num=1
     )
     chunk_to_colors = coloring.color()
     assert len(set(chunk_to_colors.values())) == 3
@@ -248,11 +256,12 @@ def test_embarassing_parallel():
     graph.add_edge(chunks[0], chunks[1])
     chunks[3].op._inputs = [chunks[2]]
     graph.add_edge(chunks[2], chunks[3])
+    band_resource = {("127.0.0.1", "0"): Resource(1), ("127.0.0.1", "1"): Resource(1)}
     all_bands = [("127.0.0.1", "0"), ("127.0.0.1", "1")]
     chunk_to_bands = {
         chunks[0]: all_bands[0],
         chunks[2]: all_bands[0],
     }
-    coloring = Coloring(graph, all_bands, chunk_to_bands)
+    coloring = Coloring(graph, band_resource, chunk_to_bands)
     chunk_to_colors = coloring.color()
     assert len(set(chunk_to_colors.values())) == 2
