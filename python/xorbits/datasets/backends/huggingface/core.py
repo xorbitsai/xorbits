@@ -34,7 +34,7 @@ from ....utils import get_non_default_kwargs
 from ...dataset import Dataset, DatasetData, DatasetChunk, DatasetChunkData
 from .loader import load_huggingface_dataset
 from .map import map
-from .repartition import repartition
+from .rechunk import rechunk
 from .to_dataframe import to_dataframe
 
 
@@ -45,8 +45,8 @@ class HuggingfaceDatasetData(DatasetData):
     def __repr__(self):
         return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
 
-    def repartition(self, num_chunks: int, **kwargs):
-        return repartition(self, num_chunks, **kwargs)
+    def rechunk(self, num_chunks: int, **kwargs):
+        return rechunk(self, num_chunks, **kwargs)
 
     def map(self, fn, **kwargs):
         return map(self, fn, **kwargs)

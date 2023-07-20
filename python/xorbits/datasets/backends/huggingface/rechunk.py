@@ -18,22 +18,22 @@ from ...._mars.serialization.serializables import DictField, Int32Field
 from ...operand import DataOperand, DataOperandMixin
 
 
-class HuggingfaceRepartition(DataOperand, DataOperandMixin):
+class HuggingfaceRechunk(DataOperand, DataOperandMixin):
     num_chunks: int = Int32Field("num_chunks")
     chunk_index: int = Int32Field("chunk_index")
-    kwargs = DictField("kwargs")
+    hf_kwargs = DictField("hf_kwargs")
 
-    def __call__(self, inp):
-        return self.new_tileable([inp], **inp.params)
+    def __call__(self, dataset):
+        return self.new_tileable([dataset], **dataset.params)
 
     @classmethod
-    def tile(cls, op: "HuggingfaceRepartition"):
+    def tile(cls, op: "HuggingfaceRechunk"):
         input_chunks = []
         for inp in op.inputs:
             input_chunks.extend(inp.chunks)
         out = op.outputs[0]
 
-        # TODO(codingl2k1): support repartition multi partitions.
+        # TODO(codingl2k1): support rechunk multi chunks.
         assert len(input_chunks) == 1
 
         chunks = []
@@ -46,16 +46,16 @@ class HuggingfaceRepartition(DataOperand, DataOperandMixin):
         return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
 
     @classmethod
-    def execute(cls, ctx, op: "HuggingfaceRepartition"):
+    def execute(cls, ctx, op: "HuggingfaceRechunk"):
         inp = ctx[op.inputs[0].key]
         out_key = op.outputs[0].key
-        ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **op.kwargs)
+        ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **op.hf_kwargs)
 
 
-def repartition(dataset, num_chunks: int, **kwargs):
-    op = HuggingfaceRepartition(
+def rechunk(dataset, num_chunks: int, **hf_kwargs):
+    op = HuggingfaceRechunk(
         output_types=[OutputType.huggingface_dataset],
         num_chunks=num_chunks,
-        kwargs=kwargs,
+        hf_kwargs=hf_kwargs,
     )
     return op(dataset)

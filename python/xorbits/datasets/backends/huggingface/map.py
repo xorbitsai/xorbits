@@ -25,10 +25,9 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
     kwargs = DictField("kwargs")
 
     def __call__(self, dataset):
-        self.output_types = dataset.op.output_types
         # serialize in advance to reduce overhead
         self.func = cloudpickle.dumps(self.func)
-        return self.new_tileable([dataset])
+        return self.new_tileable([dataset], **dataset.params)
 
     @classmethod
     def tile(cls, op: "HuggingfaceMap"):

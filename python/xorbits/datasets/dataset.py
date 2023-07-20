@@ -13,9 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .._mars.core.entity.objects import Object, ObjectData, ObjectChunk, ObjectChunkData
+from .._mars.core.entity import OutputType, register_fetch_class
+from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
 from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
+from .._mars.core.operand.objects import ObjectFetch
 from .._mars.serialization.serializables import FieldTypes, ListField, SeriesField
+
+
+class DatasetFetch(ObjectFetch):
+    _output_type_ = OutputType.huggingface_dataset
+
+
+register_fetch_class(OutputType.huggingface_dataset, DatasetFetch, None)
 
 
 class DatasetChunkData(ObjectChunkData):
@@ -54,7 +63,17 @@ class DatasetData(HasShapeTileableData):
         d.update({"dtypes": self.dtypes})
         return d
 
-    def repartition(self, num_chunks: int, **kwargs):
+    @params.setter
+    def params(self, params):
+        self._shape = params.pop("shape", None)
+        self.dtypes = params.pop("dtypes", None)
+
+    def refresh_params(self):
+        # refresh params when chunks updated
+        # nothing needs to do for Object
+        pass
+
+    def rechunk(self, num_chunks: int, **kwargs):
         raise NotImplementedError
 
     def map(self, fn, **kwargs):
@@ -69,8 +88,8 @@ class Dataset(HasShapeTileable):
     _allow_data_type_ = (DatasetData,)
     type_name = "Dataset"
 
-    def repartition(self, num_chunks: int, **kwargs):
-        return self.data.repartition(num_chunks, **kwargs)
+    def rechunk(self, num_chunks: int, **kwargs):
+        return self.data.rechunk(num_chunks, **kwargs)
 
     def map(self, fn, **kwargs):
         return self.data.map(fn, **kwargs)

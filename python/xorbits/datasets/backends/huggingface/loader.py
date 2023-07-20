@@ -31,7 +31,7 @@ from ...operand import DataOperand, DataOperandMixin
 
 class HuggingfaceLoader(DataOperand, DataOperandMixin):
     path = StringField("path")
-    hf_kwargs = DictField("kwargs")
+    hf_kwargs = DictField("hf_kwargs")
     single_data_file = StringField("single_data_file")
     num_chunks: int = Int32Field("num_chunks")
     chunk_index: int = Int32Field("chunk_index")

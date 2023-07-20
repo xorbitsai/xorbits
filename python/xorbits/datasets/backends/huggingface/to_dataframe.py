@@ -23,13 +23,13 @@ from ...operand import DataOperand, DataOperandMixin
 
 
 class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
-    def __call__(self, inp):
-        params = inp.params.copy()
+    def __call__(self, dataset):
+        params = dataset.params.copy()
         # dtypes is None trigger auto execution.
-        if inp.dtypes is not None:
+        if dataset.dtypes is not None:
             params["index_value"] = parse_index(pd.RangeIndex(-1))
-            params["columns_value"] = parse_index(inp.dtypes.index, store_data=True)
-        return self.new_tileable([inp], **params)
+            params["columns_value"] = parse_index(dataset.dtypes.index, store_data=True)
+        return self.new_tileable([dataset], **params)
 
     @classmethod
     def tile(cls, op: "HuggingfaceToDataframe"):
