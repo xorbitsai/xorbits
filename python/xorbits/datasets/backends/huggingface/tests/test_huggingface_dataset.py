@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import datasets
 import pandas as pd
 import pytest
 
@@ -41,3 +42,23 @@ def test_to_dataframe_execute(setup, path):
     df = mdf.fetch()
     assert isinstance(df, pd.DataFrame)
     assert len(df["text"]) > 0
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        SAMPLE_DATASET_IDENTIFIER,
+        SAMPLE_DATASET_IDENTIFIER2,
+    ],
+)
+def test_map_execute(setup, path):
+    def add_prefix(x):
+        x["text"] = "xorbits: " + x["text"]
+        return x
+
+    xds = from_huggingface(path, split="train")
+    xds = xds.map(add_prefix)
+    xds.execute()
+    ds = xds.fetch()
+    assert isinstance(ds, datasets.Dataset)
+    assert ds[0]["text"].startswith("xorbits:")

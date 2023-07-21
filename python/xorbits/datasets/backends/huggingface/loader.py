@@ -44,6 +44,8 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         builder_kwargs = self._get_kwargs(load_dataset_builder, self.hf_kwargs)
         builder = load_dataset_builder(self.path, **builder_kwargs)
         data_files = builder.config.data_files
+        # TODO(codingl2k1): support multiple splits
+        split = self.hf_kwargs["split"]
         # TODO(codingl2k1): not pass dtypes if no to_dataframe() called.
         if builder.info.features:
             dtypes = builder.info.features.arrow_schema.empty_table().to_pandas().dtypes
@@ -51,11 +53,16 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             dtypes = None
         if dtypes is not None and builder.info.splits:
             shape = (
-                builder.info.splits[self.hf_kwargs["split"]].num_examples,
+                builder.info.splits[split].num_examples,
                 len(dtypes),
             )
         else:
             shape = (np.nan, np.nan)
+        # TODO(codingl2k1): check data_files if can be supported
+        if data_files and len(data_files[split]) > 1:
+            data_files = list(data_files[split])
+        else:
+            data_files = None
         self.data_files = data_files
         return self.new_tileable([], dtypes=dtypes, shape=shape)
 
@@ -71,14 +78,11 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         assert len(op.inputs) == 0
 
         data_files = op.data_files
+        # Set op.data_files to None, we don't want every chunk op copy this field.
         op.data_files = None
-        # TODO(codingl2k1): check data_files if can be supported
-        split = op.hf_kwargs.get("split")
-        # TODO(codingl2k1): support multiple splits
 
         chunks = []
-        if data_files and split and len(data_files[split]) > 1:
-            data_files = data_files[split]
+        if data_files is not None:
             ctx = get_context()
             # TODO(codingl2k1): make expect worker binding stable for cache reuse.
             all_bands = [b for b in ctx.get_worker_bands() if b[1].startswith("numa-")]

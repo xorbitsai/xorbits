@@ -22,7 +22,9 @@ from ...operand import DataOperand, DataOperandMixin
 
 class HuggingfaceMap(DataOperand, DataOperandMixin):
     func = AnyField("func")
-    kwargs = DictField("kwargs")
+    # The arguments are passing to huggingface dataset map:
+    # https://huggingface.co/docs/datasets/v2.13.1/en/package_reference/main_classes#datasets.Dataset.map
+    hf_kwargs = DictField("hf_kwargs")
 
     def __call__(self, dataset):
         # serialize in advance to reduce overhead
@@ -45,11 +47,11 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
         func = cloudpickle.loads(op.func)
         inp = ctx[op.inputs[0].key]
         out = op.outputs[0]
-        ctx[out.key] = inp.map(func, **op.kwargs)
+        ctx[out.key] = inp.map(func, **op.hf_kwargs)
 
 
-def map(dataset, fn, **kwargs):
+def map(dataset, fn, **hf_kwargs):
     op = HuggingfaceMap(
-        output_types=[OutputType.huggingface_dataset], func=fn, kwargs=kwargs
+        output_types=[OutputType.huggingface_dataset], func=fn, hf_kwargs=hf_kwargs
     )
     return op(dataset)
