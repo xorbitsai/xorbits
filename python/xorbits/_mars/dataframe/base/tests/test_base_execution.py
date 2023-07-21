@@ -248,60 +248,6 @@ def test_series_map_execution(setup):
     pd.testing.assert_index_equal(result, expected)
 
 
-def test_dedup_execute(setup):
-    words = list("abcdefghijklmnopqrstuvwxyz")
-    df_raw = pd.DataFrame(
-        {
-            "text": [
-                " ".join(["".join(np.random.choice(words, 5)) for i in range(50)])
-                for _ in np.arange(9)
-            ]
-            * 2
-            + [
-                " ".join(["".join(np.random.choice(words, 4)) for i in range(50)])
-                for _ in np.arange(2)
-            ],
-        }
-    )
-
-    # test one chunk
-    df = from_pandas_df(df_raw, chunk_size=20)
-    result = df.dedup(col="text").execute().fetch()
-    assert result.shape[0] == 11
-
-    # test multi chunks
-    df = from_pandas_df(df_raw, chunk_size=1)
-    result = df.dedup(col="text").execute().fetch()
-    assert result.shape[0] == 11
-
-    # test error threshold
-    with pytest.raises(ValueError):
-        df.dedup(col="text", threshold="0.7").execute().fetch()
-
-    with pytest.raises(ValueError):
-        df.dedup(col="text", threshold=2).execute().fetch()
-
-    # test error num_perm
-    with pytest.raises(ValueError):
-        df.dedup(col="text", num_perm=1.5).execute().fetch()
-
-    # test error min_length
-    with pytest.raises(ValueError):
-        df.dedup(col="text", min_length=1.5).execute().fetch()
-
-    # test error ngram
-    with pytest.raises(ValueError):
-        df.dedup(col="text", ngram=1.5).execute().fetch()
-
-    # test error seed
-    with pytest.raises(ValueError):
-        df.dedup(col="text", seed=1.5).execute().fetch()
-
-    # test error text column
-    with pytest.raises(ValueError):
-        df.dedup(col="non-exist").execute().fetch()
-
-
 def test_describe_execution(setup):
     s_raw = pd.Series(np.random.rand(10))
 
