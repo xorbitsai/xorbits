@@ -40,6 +40,9 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
 
     def __call__(self):
         from datasets import load_dataset_builder
+        from datasets.packaged_modules.folder_based_builder.folder_based_builder import (
+            FolderBasedBuilder,
+        )
 
         builder_kwargs = self._get_kwargs(load_dataset_builder, self.hf_kwargs)
         builder = load_dataset_builder(self.path, **builder_kwargs)
@@ -59,8 +62,13 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         else:
             shape = (np.nan, np.nan)
         # TODO(codingl2k1): check data_files if can be supported
-        if data_files and len(data_files[split]) > 1:
-            data_files = list(data_files[split])
+        # e.g. the datasets mariosasko/test_imagefolder_with_metadata has multiple
+        # data files, but some of them are meta, so we can't parallel load it.
+        if not isinstance(builder, FolderBasedBuilder):
+            if data_files and len(data_files[split]) > 1:
+                data_files = list(data_files[split])
+            else:
+                data_files = None
         else:
             data_files = None
         self.data_files = data_files

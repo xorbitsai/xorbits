@@ -21,11 +21,32 @@ from ..core import from_huggingface
 
 SAMPLE_DATASET_IDENTIFIER = "lhoestq/test"  # has dataset script
 SAMPLE_DATASET_IDENTIFIER2 = "lhoestq/test2"  # only has data files
+SAMPLE_DATASET_IDENTIFIER3 = (
+    "mariosasko/test_multi_dir_dataset"  # has multiple data directories
+)
+SAMPLE_DATASET_IDENTIFIER4 = "mariosasko/test_imagefolder_with_metadata"  # imagefolder with a metadata file outside of the train/test directories
 
 
 def test_split_arg_required():
     with pytest.raises(Exception, match="split"):
         from_huggingface(SAMPLE_DATASET_IDENTIFIER)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        SAMPLE_DATASET_IDENTIFIER,
+        SAMPLE_DATASET_IDENTIFIER2,
+        SAMPLE_DATASET_IDENTIFIER3,
+        SAMPLE_DATASET_IDENTIFIER4,
+    ],
+)
+def test_from_huggingface_execute(setup, path):
+    xds = from_huggingface(path, split="train")
+    xds.execute()
+    ds = xds.fetch()
+    ds_expected = datasets.load_dataset(path, split="train")
+    assert ds.to_dict() == ds_expected.to_dict()
 
 
 @pytest.mark.parametrize(
@@ -62,3 +83,19 @@ def test_map_execute(setup, path):
     ds = xds.fetch()
     assert isinstance(ds, datasets.Dataset)
     assert ds[0]["text"].startswith("xorbits:")
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        SAMPLE_DATASET_IDENTIFIER,
+        SAMPLE_DATASET_IDENTIFIER2,
+    ],
+)
+def test_rechunk_execute(setup, path):
+    xds = from_huggingface(path, split="train")
+    xds = xds.rechunk(2)
+    xds.execute()
+    ds = xds.fetch()
+    assert isinstance(ds, datasets.Dataset)
+    assert len(ds.data.blocks) == 2

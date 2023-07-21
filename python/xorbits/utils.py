@@ -74,3 +74,11 @@ def get_non_default_kwargs(kwargs, func):
             kwargs.update(kwargs.pop(k))
             break
     return kwargs
+
+
+def check_signature_compatible(func1, func2, message):
+    sig1 = inspect.signature(func1)
+    sig2 = inspect.signature(func2)
+    match_param_keys = sig1.parameters.keys() & sig2.parameters.keys()
+    for k in match_param_keys:
+        assert sig1.parameters[k] == sig2.parameters[k], message

@@ -42,7 +42,7 @@ from ...._mars.core.entity import (
     register_output_types,
 )
 from ...._mars.core.operand.objects import ObjectFetch
-from ....utils import get_non_default_kwargs
+from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
 from .loader import load_huggingface_dataset
 from .map import map
@@ -204,21 +204,17 @@ def from_huggingface(
     if split is None:
         raise Exception("Arg `split` is required for `from_huggingface`.")
 
+    import datasets
+
+    check_signature_compatible(
+        from_huggingface,
+        datasets.load_dataset,
+        "Please use a compatible version of datasets.",
+    )
     # For compatible different versions of API. e.g.
     # new API: from_huggingface(path, token=None)
     # old API: from_huggingface(path, use_auth_token=None)
     # then, from_huggingface("abc") can be forward from new API to old API
     # because non-compatible params are defaults values.
     kwargs = get_non_default_kwargs(locals(), from_huggingface)
-    import datasets
-
-    sig_load_dataset = inspect.signature(datasets.load_dataset)
-    load_dataset_param_keys = sig_load_dataset.parameters.keys()
-    assert "path" in load_dataset_param_keys
-    unexpected_kwargs = kwargs.keys() - sig_load_dataset.parameters.keys()
-    if unexpected_kwargs:
-        raise TypeError(
-            f"from_huggingface() got unexpected keyword arguments {unexpected_kwargs}"
-        )
-
     return load_huggingface_dataset(**kwargs).to_dataset()
