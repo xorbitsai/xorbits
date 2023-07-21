@@ -157,6 +157,8 @@ class FileSystemGlob:
     def _iterdir(self, dirname, dironly):
         if not dirname:  # pragma: no cover
             dirname = ""
+        if self._fs.isfile(dirname):
+            return iter([])
         try:
             for entry in self._fs.ls(dirname):
                 if not dironly or self._fs.isdir(entry):

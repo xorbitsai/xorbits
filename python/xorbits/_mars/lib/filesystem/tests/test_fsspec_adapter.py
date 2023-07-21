@@ -132,6 +132,7 @@ def test_fsspec_adapter():
         "memory:test.txt",
     ]
     expected.sort()
+
     actual = adapter.glob("**", recursive=True)
     actual.sort()
     assert actual == expected
