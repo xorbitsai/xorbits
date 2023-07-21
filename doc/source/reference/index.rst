@@ -12,3 +12,4 @@ API Reference
    numpy/index
    xgboost/index
    lightgbm/index
+   experimental/index

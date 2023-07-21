@@ -12,22 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .... import pandas as xpd
-from .... import remote
-from ....core import DataRef
+
+def _install():
+    """Nothing required for installing experimental."""
 
 
-def test_spawn(setup):
-    def to_str(df):
-        return str(df)
-
-    # scaler arguments
-    ret = remote.spawn(to_str, (1,))
-    assert isinstance(ret, DataRef)
-
-    assert ret.to_object() == "1"
-
-    xdf = xpd.DataFrame((1, 2, 3))
-    ret = remote.spawn(to_str, (xdf,))
-    assert isinstance(ret, DataRef)
-    assert ret.to_object() == "   0\n0  1\n1  2\n2  3"
+from .dedup import dedup
