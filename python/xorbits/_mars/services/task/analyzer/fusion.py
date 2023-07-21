@@ -20,6 +20,7 @@ from typing import Dict, List
 from ....config import options
 from ....core import ChunkGraph
 from ....core.operand import VirtualOperand
+from ....resource import Resource
 from ....typing import BandType, ChunkType, OperandType
 
 
@@ -32,13 +33,13 @@ class Coloring:
     def __init__(
         self,
         chunk_graph: ChunkGraph,
-        all_bands: List[BandType],
+        band_resource: Dict[BandType, Resource],
         chunk_to_bands: Dict[ChunkType, BandType],
         initial_same_color_num: int = None,
         as_broadcaster_successor_num: int = None,
     ):
         self.chunk_graph = chunk_graph
-        self.all_bands = all_bands
+        self.band_resource = band_resource
         self.chunk_to_bands = chunk_to_bands
         if initial_same_color_num is None:
             has_gpu = any(c.op.gpu for c in chunk_graph)
@@ -56,6 +57,9 @@ class Coloring:
 
     def next_color(self) -> int:
         return next(self._coloring_iter)
+
+    def reset_color(self):
+        self._coloring_iter = itertools.count()
 
     @classmethod
     def _can_color_same(cls, chunk: ChunkType, predecessors: List[ChunkType]) -> bool:
@@ -109,8 +113,17 @@ class Coloring:
     def color(self) -> Dict[ChunkType, int]:
         chunk_to_colors = dict()
 
-        # step 1: Coloring the initial nodes according to the bands that assigned by assigner
-        op_to_colors = self._color_init_nodes()
+        # step 1: Coloring the initial nodes according to the slots that assigned by assigner
+        # if the number of initial color is less than the number of slots,
+        # decrease initial_same_color_num until the number of initial color exceeds slots.
+        slots_num = sum((r.num_cpus + r.num_gpus) for r in self.band_resource.values())
+        while self.initial_same_color_num > 0:
+            self.reset_color()
+            op_to_colors = self._color_init_nodes()
+            if len(set(op_to_colors.values())) >= slots_num:
+                break
+            else:
+                self.initial_same_color_num -= 1
 
         # step2: Propagate color in the topological order,
         # if the input nodes have same color, color it with the same color;
