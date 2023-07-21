@@ -27,7 +27,14 @@ try:
         Version,
     )
 except ImportError:
-    pass
+    from typing import Any
+
+    DownloadConfig = Any
+    DownloadMode = Any
+    Features = Any
+    Split = Any
+    VerificationMode = Any
+    Version = Any
 
 from ...._mars.core.entity import (
     OutputType,
