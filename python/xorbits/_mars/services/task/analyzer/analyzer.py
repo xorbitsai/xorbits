@@ -453,7 +453,7 @@ class GraphAnalyzer:
                 )
             coloring = Coloring(
                 self._chunk_graph,
-                list(self._band_resource),
+                self._band_resource,
                 init_chunk_to_bands,
                 initial_same_color_num=initial_same_color_num,
                 as_broadcaster_successor_num=getattr(
