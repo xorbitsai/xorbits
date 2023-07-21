@@ -159,7 +159,7 @@ class FileSystemGlob:
             dirname = ""
         if self._fs.isfile(dirname):
             return iter([])
-        try:
+        try:  # pragma: no cover
             for entry in self._fs.ls(dirname):
                 if not dironly or self._fs.isdir(entry):
                     yield self._fs.path_split(entry)[-1]
