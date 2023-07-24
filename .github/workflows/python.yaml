@@ -231,7 +231,7 @@ jobs:
           pip install "jax>=0.4.0" "jaxlib>=0.4.0"
         fi
         if [[ "$MODULE" == "datasets" ]]; then
-          # test jax
+          # test huggingface datasets
           pip install datasets
         fi
         pip install -e ".[dev,extra,aws]"
