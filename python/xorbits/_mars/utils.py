@@ -693,6 +693,8 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
     from .lib.groupby_wrapper import GroupByWrapper
     from .tensor.array_utils import get_array_module, is_array
 
+    hf_datasets = lazy_import("datasets")
+
     chunk_results = sorted(chunk_results, key=operator.itemgetter(0))
     v = chunk_results[0][1]
     if len(chunk_results) == 1 and not (chunk_results[0][0]):
@@ -765,6 +767,9 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         if len(result) == 1:
             return result[0]
         return result
+    elif hf_datasets is not None and isinstance(v, hf_datasets.Dataset):
+        result = [r[1] for r in chunk_results]
+        return hf_datasets.concatenate_datasets(result)
     else:
         result = None
         for cr in chunk_results:
