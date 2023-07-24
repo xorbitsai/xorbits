@@ -353,6 +353,6 @@ def test_execution_with_process_exit_message(mocker):
 
     with pytest.raises(
         ServerClosed,
-        match=r"unexpectedly terminated process \(.*?\) and highly suspected to be caused by an Out-of-Memory \(OOM\) problem",
+        match=r".*?\(.*?\) with address .*? Out-of-Memory \(OOM\) problem",
     ):
         xorbits.run(xr.spawn(lambda *_: np.random.rand(10**4, 10**4)))
