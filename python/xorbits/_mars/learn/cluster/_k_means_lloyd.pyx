@@ -7,14 +7,13 @@
 # provided by the user). This is fixed in cython > 0.3.
 
 import numpy as np
+
 cimport numpy as np
 from cython cimport floating
-from libc.stdlib cimport malloc, free
 from libc.float cimport DBL_MAX, FLT_MAX
+from libc.stdlib cimport free, malloc
 
-from ..utils._cython_blas cimport _gemm
-from ..utils._cython_blas cimport RowMajor, Trans, NoTrans
-
+from ..utils._cython_blas cimport NoTrans, RowMajor, Trans, _gemm
 
 np.import_array()
 
