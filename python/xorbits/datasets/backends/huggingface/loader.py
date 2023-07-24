@@ -35,7 +35,6 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     hf_kwargs = DictField("hf_kwargs")
     single_data_file = StringField("single_data_file")
     num_chunks: int = Int32Field("num_chunks")
-    chunk_index: int = Int32Field("chunk_index")
     data_files = ListField("data_files")
 
     def __call__(self):
@@ -101,14 +100,13 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
                 assert f, "Invalid data file from DatasetBuilder."
                 chunk_op.single_data_file = f
                 chunk_op.num_chunks = len(data_files)
-                chunk_op.chunk_index = index
                 chunk_op.expect_band = band
-                c = chunk_op.new_chunk(inputs=[], index=index)
+                c = chunk_op.new_chunk(inputs=[], index=(index,))
                 chunks.append(c)
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
-            chunks.append(chunk_op.new_chunk(inputs=[]))
+            chunks.append(chunk_op.new_chunk(inputs=[], index=(0,)))
 
         out = op.outputs[0]
         return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
@@ -120,11 +118,6 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
 
         # TODO(codingl2k1): not sure if it's OK to share one cache dir among workers.
-        # if op.single_data_file:
-        #     # TODO(codingl2k1): use xorbits cache dir
-        #     new_cache_dir = os.path.join(op.cache_dir, f"part_{op.chunk_index}_{op.num_chunks}")
-        #     builder_kwargs["cache_dir"] = new_cache_dir
-
         # load_dataset_builder from every worker may be slow, but it's error to
         # deserialized a builder instance in a clean process / node, e.g. raise
         # ModuleNotFoundError: No module named 'datasets_modules'.
@@ -136,11 +129,11 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         )
 
         if op.single_data_file is not None:
+            chunk = op.outputs[0]
+            chunk_index = chunk.index[0]
             output_dir = builder._output_dir
             output_dir = output_dir if output_dir is not None else builder.cache_dir
-            output_dir = os.path.join(
-                output_dir, f"part_{op.chunk_index}_{op.num_chunks}"
-            )
+            output_dir = os.path.join(output_dir, f"part_{chunk_index}_{op.num_chunks}")
             download_and_prepare_kwargs["output_dir"] = output_dir
             download_and_prepare_kwargs[
                 "verification_mode"
