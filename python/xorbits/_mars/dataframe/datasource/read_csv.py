@@ -259,6 +259,7 @@ class DataFrameReadCSV(
                 # The first chunk contains header
                 # As we specify names and dtype, we need to skip header rows
                 csv_kwargs["header"] = op.header
+                csv_kwargs["dtype"] = dtypes.to_dict()
             if op.usecols:
                 usecols = op.usecols if isinstance(op.usecols, list) else [op.usecols]
             else:
@@ -719,6 +720,7 @@ def read_csv(
             names=names,
             header=header,
             skiprows=skiprows,
+            **kwargs,
         )
         if header == "infer" and names is not None:
             # ignore header as we always specify names
