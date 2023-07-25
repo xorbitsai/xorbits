@@ -49,11 +49,11 @@ All these can be local files or remote storage.
 Store as multiple files
 ^^^^^^^^^^^^^^^^^^^^^^^^
 When the data is large, for best performance, it is best for users to store using multiple Parquet files.
-Xorbits will utilize multiprocessing to read different files in parallel to accelerate reading.
+Xorbits will utilize multiprocessing or distributed workers to read different files in parallel to accelerate reading.
 Each file will become a Xorbits chunk, and more chunks allow higher concurrency. Generally recommending each
-Parquet file to be 16M ~ 128M in size, so there are not too many files but concurrency can be guaranteed.
+Parquet file to be 16MiB ~ 128MiB in size, so there are not too many files but concurrency can be guaranteed.
 
-For example with 200M of data, single file:
+For example with 200MiB of data, single file:
 
 .. code-block:: python
 
@@ -76,7 +76,7 @@ For example with 200M of data, single file:
     CPU times: user 402 ms, sys: 165 ms, total: 567 ms
     Wall time: 1.81 s
 
-Stored in a folder with 10 Parquet files, reading the folder:
+Stored the same data in a folder with 10 Parquet files, reading the folder:
 
 .. code-block:: python
 
@@ -142,7 +142,7 @@ If unable to modify the data source, having just a single file will cause data s
 computations. In this case, call `df.rebalance` after reading Parquet to evenly distribute the data to each worker
 and process.
 
-Reading a single Parquet file and calling apply function then, this does not take advantage of multi-core parallelism:
+Reading a single Parquet file and calling apply function then, this does not leverage multi-core parallelism:
 
 .. code-block:: python
 
