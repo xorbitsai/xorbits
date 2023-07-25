@@ -35,13 +35,20 @@ def test_dedup_execute(setup):
         }
     )
 
-    # test one chunk
-    result = dedup(df, col="text").execute().fetch()
+    # test exact one chunk
+    result = dedup(df, col="text", method="exact").execute().fetch()
     assert result.shape[0] == 11
 
-    # test multi chunks
-    df = df.rechunk(1)
-    result = dedup(df, col="text").execute().fetch()
+    # test exact multi chunks
+    result = dedup(df.rechunk(1), col="text", method="exact").execute().fetch()
+    assert result.shape[0] == 11
+
+    # test minhash one chunk
+    result = dedup(df, col="text", method="minhash").execute().fetch()
+    assert result.shape[0] == 11
+
+    # test minhash multi chunks
+    result = dedup(df.rechunk(1), col="text", method="minhash").execute().fetch()
     assert result.shape[0] == 11
 
     # test error threshold

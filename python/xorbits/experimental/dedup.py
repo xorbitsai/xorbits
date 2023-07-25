@@ -407,6 +407,7 @@ class DataFrameDedup(DataFrameOperand, DataFrameOperandMixin):
 def dedup(
     df: pd.DataFrame,
     col: str,
+    method: str = "minhash",
     threshold: float = 0.7,
     num_perm: int = 128,
     min_length: int = 5,
@@ -499,6 +500,19 @@ def dedup(
     # Check if the DataFrame contains the text column
     if col not in df.dtypes.index:
         raise ValueError(f"{col} column not found in the DataFrame")
+
+    if method == "exact":
+        df = to_mars(df)
+
+        df["__exact"] = df[col].apply(
+            lambda x: hashlib.md5(x.encode("utf-8")).hexdigest()
+        )
+
+        df.drop_duplicates(subset=["__exact"], inplace=True).drop(
+            columns=["__exact"], inplace=True
+        )
+
+        return from_mars(df)
 
     B, R = optimal_param(threshold, num_perm)
 
