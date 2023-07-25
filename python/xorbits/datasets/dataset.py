@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Callable
+
 from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
 from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
 from .._mars.serialization.serializables import FieldTypes, ListField, SeriesField
@@ -80,10 +82,62 @@ class Dataset(HasShapeTileable):
     type_name = "Dataset"
 
     def rechunk(self, num_chunks: int, **kwargs):
+        """Split the internal data into chunks.
+
+        Currently, rechunk is not fully supported.
+
+        Parameters
+        ----------
+        num_chunks: int
+            The number of chunks.
+        kwargs
+            Preserved.
+
+        Returns
+        -------
+            Dataset
+        """
         return self.data.rechunk(num_chunks, **kwargs)
 
-    def map(self, fn, **kwargs):
+    def map(self, fn: Callable, **kwargs):
+        """Apply fn to each row of the dataset.
+
+        Parameters
+        ----------
+        fn: Callable
+            The callable object, the signature is `function(example: Dict[str, Any]) -> Dict[str, Any]`.
+        kwargs:
+            The kwargs are passed to the underlying engine, e.g. the **kwargs
+            will be passed to `datasets.Dataset.map` if the Dataset is constructed
+            from_huggingface, please refer to:
+            `datasets.Dataset.map <https://huggingface.co/docs/datasets/main/en/package_reference/main_classes#datasets.Dataset.map>`_.
+
+        Returns
+        -------
+            Dataset
+        Examples
+        --------
+        >>> import xorbits.datasets as xdatasets
+        >>> ds = xdatasets.from_huggingface("rotten_tomatoes", split="validation")
+        >>> def add_prefix(example):
+        ...     example["text"] = "Review: " + example["text"]
+        ...     return example
+        >>> ds = ds.map(add_prefix)
+        """
         return self.data.map(fn, **kwargs)
 
     def to_dataframe(self):
+        """Convert the dataset to xorbits dataframe.
+
+        The conversion will be chunk to chunk.
+
+        Returns
+        -------
+            DataFrame
+        Examples
+        --------
+        >>> import xorbits.datasets as xdatasets
+        >>> ds = xdatasets.from_huggingface("rotten_tomatoes", split="train")
+        >>> df = ds.to_dataframe()
+        """
         return self.data.to_dataframe()

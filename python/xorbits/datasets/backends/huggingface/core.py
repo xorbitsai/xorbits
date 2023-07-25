@@ -202,7 +202,7 @@ def from_huggingface(
             and used in the [`DatasetBuilder`].
 
     Returns:
-        Dataset.
+        Dataset
     """
     if split is None:
         raise Exception("Arg `split` is required for `from_huggingface`.")

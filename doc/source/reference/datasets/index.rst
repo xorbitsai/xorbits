@@ -1,5 +1,3 @@
-.. _datasets_api:
-
 ==========
 Datasets API
 ==========
@@ -8,3 +6,4 @@ Datasets API
    :maxdepth: 2
 
    io
+   dataset
