@@ -4,9 +4,13 @@
 Loading data
 ==============
 
+Recommended data formats
+-------------------------
+
 Xorbits supports reading data from various data sources, including csv, parquet, sql, xml and other data formats,
 but not every data format supports parallel reading. We recommend using formats that support parallel reading,
 including:
+
 - :func:`xorbits.pandas.read_parquet`
 - :func:`xorbits.pandas.read_csv`
 - :func:`xorbits.pandas.read_sql_table`
