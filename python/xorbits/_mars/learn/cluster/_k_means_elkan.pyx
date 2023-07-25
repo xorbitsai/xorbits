@@ -9,14 +9,14 @@
 # provided by the user). This is fixed in cython > 0.3.
 
 import numpy as np
-
-cimport cython
 cimport numpy as np
+cimport cython
 from cython cimport floating
-
 from sklearn.utils.extmath import row_norms
 
-from ._k_means_fast cimport _euclidean_dense_dense, _euclidean_sparse_dense
+from ._k_means_fast cimport _euclidean_dense_dense
+from ._k_means_fast cimport _euclidean_sparse_dense
+
 
 np.import_array()
 

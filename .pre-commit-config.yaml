@@ -31,9 +31,10 @@ repos:
     hooks:
       - id: prettier
         types_or: [html, javascript]
+        args: [--ignore-path, python/xorbits/_mars]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
     hooks:
       - id: codespell
         exclude: _mars/lib
-        args: [--config, python/setup.cfg]
+        args: [ --config, python/setup.cfg]
