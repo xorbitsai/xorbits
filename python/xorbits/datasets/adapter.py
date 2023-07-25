@@ -34,8 +34,10 @@ def _collect_module_callables() -> Dict[str, Callable]:
     for func in [from_huggingface]:
         module_callables[func.__name__] = wrap_mars_callable(
             func,
-            attach_docstring=False,
+            attach_docstring=True,
             is_cls_member=False,
+            docstring_src_module=getattr(func, "__doc_source_module__", None),
+            docstring_src=func,
         )
     return module_callables
 
