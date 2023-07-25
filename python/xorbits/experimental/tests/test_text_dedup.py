@@ -66,9 +66,9 @@ def test_dedup_execute(setup):
     with pytest.raises(ValueError):
         dedup(df, col="text", min_length=1.5).execute().fetch()
 
-    # test error ngram
+    # test error ngrams
     with pytest.raises(ValueError):
-        dedup(df, col="text", ngram=1.5).execute().fetch()
+        dedup(df, col="text", ngrams=1.5).execute().fetch()
 
     # test error seed
     with pytest.raises(ValueError):
@@ -77,3 +77,11 @@ def test_dedup_execute(setup):
     # test error text column
     with pytest.raises(ValueError):
         dedup(df, col="non-exist").execute().fetch()
+
+    # test error method
+    with pytest.raises(ValueError):
+        dedup(df, col="text", method="non-exist").execute().fetch()
+
+    # test simhash not implemented
+    with pytest.raises(NotImplementedError):
+        dedup(df, col="text", method="simhash").execute().fetch()
