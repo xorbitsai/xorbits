@@ -55,7 +55,10 @@ class HuggingfaceDatasetData(DatasetData):
     type_name = "Huggingface Dataset"
 
     def __repr__(self):
-        return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
+        try:
+            return f"Dataset({{\n    features: {self.dtypes.index.values.tolist()},\n    num_rows: {self.shape[0]}\n}})"
+        except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
+            return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
 
     def rechunk(self, num_chunks: int, **kwargs):
         return rechunk(self, num_chunks, **kwargs)
