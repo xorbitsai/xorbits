@@ -275,7 +275,7 @@ def dedup(
         threshold = kws.pop("threshold", 0.7)
         num_perm = kws.pop("num_perm", 128)
         min_length = kws.pop("min_length", 5)
-        ngram = kws.pop("ngram", 5)
+        ngrams = kws.pop("ngrams", 5)
         seed = kws.pop("seed", 42)
 
         # Check the threshold type and range
@@ -288,7 +288,7 @@ def dedup(
         for var, var_name in [
             (num_perm, "num_perm"),
             (min_length, "min_length"),
-            (ngram, "ngram"),
+            (ngrams, "ngrams"),
             (seed, "seed"),
         ]:
             if not isinstance(var, int) or var <= 0:
@@ -318,7 +318,7 @@ def dedup(
             text=col,
             num_perm=num_perm,
             hashranges=HASH_RANGES,
-            ngram_size=ngram,
+            ngram_size=ngrams,
             min_length=min_length,
             permutations=PERMUTATIONS,
         )
@@ -326,3 +326,6 @@ def dedup(
         op = DataFrameDedup(func=func)
 
         return from_mars(op(to_mars(df)))
+
+    if method == "simhash":
+        raise NotImplementedError("simhash is not implemented yet")
