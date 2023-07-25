@@ -482,11 +482,7 @@ class SubtaskExecutionActor(mo.StatelessActor):
                 if isinstance(ex, ServerClosed):
                     # view the exception as a potential OOM problem temporarily
                     ex = ServerClosed(
-                        "unexpectedly terminated process ({ex}) with address {address}, which is "
-                        "highly suspected to be caused by an Out-of-Memory (OOM) problem".format(
-                            ex=ex,
-                            address=self.address,
-                        )
+                        f"unexpectedly terminated process ({ex}) and highly suspected to be caused by an Out-of-Memory (OOM) problem"
                     )
                 raise ex
             finally:
