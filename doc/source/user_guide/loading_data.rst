@@ -1,15 +1,27 @@
-.. _read_parquet:
+.. _loading_data:
 
 ==============
-Parquet files
+Loading data
 ==============
+
+Xorbits supports reading data from various data sources, including csv, parquet, sql, xml and other data formats,
+but not every data format supports parallel reading. We recommend using formats that support parallel reading,
+including:
+- :func:`xorbits.pandas.read_parquet`
+- :func:`xorbits.pandas.read_csv`
+- :func:`xorbits.pandas.read_sql_table`
+- :func:`xorbits.pandas.read_sql_query`
+- :func:`xorbits.pandas.read_sql`
+
+For reading Parquet files, followings are some best practices.
+
+Parquet files
+--------------
 
 Parquet is a very popular columnar storage file format. Xorbits Pandas supports parallel
 reading and writing of Parquet files. Here we will introduce how to use these functions and
 some best practice recommendations.
 
-Reading
---------
 :func:`xorbits.pandas.read_parquet` accepts the following input forms:
 
 - Single Parquet file
@@ -175,29 +187,3 @@ some additional time, the more subsequent computations, the higher the gain.
 
 After repartitioning data, the computational acceleration of apply saved 20% of the computing time for
 the whole calculation.
-
-Writing
---------
-:func:`xorbits.pandas.to_parquet` currently requires specifying a folder, each partition's data will be written to a file
-where the filename is the chunk partition index.
-
-Local directory:
-
-.. code-block:: python
-
-    df.to_parquet("local/path")
-
-If `df` has 10 partitions, it will be written to 10 files:
-
-.. code-block:: bash
-
-    0.parquet        10.parquet        2.parquet        4.parquet        6.parquet        8.parquet
-    1.parquet        11.parquet        3.parquet        5.parquet        7.parquet        9.parquet
-
-Writing to remote storage:
-
-.. code-block:: python
-
-    df.to_parquet("s3://bucket-name/path/",
-                  storage_options={"key": "", "secret": ""})
-

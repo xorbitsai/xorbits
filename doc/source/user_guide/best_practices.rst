@@ -11,4 +11,4 @@ practices, and helps users solve some common problems.
 .. toctree::
    :maxdepth: 2
 
-   read_parquet
+   loading_data
