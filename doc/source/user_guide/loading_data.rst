@@ -108,13 +108,13 @@ From the running time we can see reading multiple files takes only 1/6 the time 
 Single Parquet file with multiple row groups
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If storing as a single file, splitting into multiple row groups can also allow parallel reading. First use the
-`row_group_size` parameter to store into multiple row groups.
+``row_group_size`` parameter to store into multiple row groups.
 
 .. code-block:: python
 
     In [3]: df.to_parquet("all.parquet", row_group_size=20_0000)
 
-When reading, specify `groups_as_chunks=True`:
+When reading, specify ``groups_as_chunks=True``:
 
 .. code-block:: python
 
@@ -140,10 +140,10 @@ When reading, specify `groups_as_chunks=True`:
 Acceleration can also be achieved.
 
 
-Use `rebalance` to redistribute data
+Use ``rebalance`` to redistribute data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If unable to modify the data source, having just a single file will cause data skew problems in following
-computations. In this case, call `df.rebalance` after reading Parquet to evenly distribute the data to each worker
+computations. In this case, call ``df.rebalance`` after reading Parquet to evenly distribute the data to each worker
 and process.
 
 Reading a single Parquet file and calling apply function then, this does not leverage multi-core parallelism:
@@ -167,7 +167,7 @@ Reading a single Parquet file and calling apply function then, this does not lev
     CPU times: user 39.9 ms, sys: 11.5 ms, total: 51.4 ms
     Wall time: 6.22 s
 
-Upon calling rebalance, the computation will make use of multiple cores, although `rebalance` will consume
+Upon calling rebalance, the computation will make use of multiple cores, although ``rebalance`` will consume
 some additional time, the more subsequent computations, the higher the gain.
 
 .. code-block:: python
