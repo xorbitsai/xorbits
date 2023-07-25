@@ -81,7 +81,3 @@ def test_dedup_execute(setup):
     # test error method
     with pytest.raises(ValueError):
         dedup(df, col="text", method="non-exist").execute().fetch()
-
-    # test simhash not implemented
-    with pytest.raises(NotImplementedError):
-        dedup(df, col="text", method="simhash").execute().fetch()

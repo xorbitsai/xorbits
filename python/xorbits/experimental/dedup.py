@@ -251,8 +251,8 @@ def dedup(
     >>> res = dedup(df, col="text")
     """
 
-    if method not in ["exact", "minhash", "simhash"]:
-        raise ValueError("method must be one of 'exact', 'minhash', or 'simhash'")
+    if method not in ["exact", "minhash"]:
+        raise ValueError("method must be one of 'exact' or 'minhash'")
 
     # Check if the DataFrame contains the text column
     if col not in df.dtypes.index:
@@ -326,6 +326,3 @@ def dedup(
         op = DataFrameDedup(func=func)
 
         return from_mars(op(to_mars(df)))
-
-    if method == "simhash":
-        raise NotImplementedError("simhash is not implemented yet")
