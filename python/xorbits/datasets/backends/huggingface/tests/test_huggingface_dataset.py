@@ -109,3 +109,6 @@ def test_getitem_execute(setup):
     a = xds["text"]
     a.execute()
     assert a.fetch() == ["foo"] * 10
+    a = xds[5]
+    a.execute()
+    assert a.fetch() == {"text": "foo"}
