@@ -282,7 +282,6 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
         if has_unknown_shape(*op.inputs):
             yield
 
-        op.index = pd.RangeIndex(0, op.inputs[0].shape[0])
         out_df = op.outputs[0]
         in_tensors = op.inputs
         in_tensors = yield from unify_chunks(*in_tensors)
