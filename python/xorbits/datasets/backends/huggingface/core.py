@@ -41,7 +41,6 @@ from ...._mars.core.entity import (
     register_output_types,
 )
 from ...._mars.core.operand.objects import ObjectFetch
-from ...._mars.utils import lazy_import
 from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
 from .loader import load_huggingface_dataset
@@ -221,6 +220,3 @@ def from_huggingface(
     # because non-compatible params are defaults values.
     kwargs = get_non_default_kwargs(locals(), from_huggingface)
     return load_huggingface_dataset(**kwargs).to_dataset()
-
-
-from_huggingface.__doc_source_module__ = lazy_import("datasets")

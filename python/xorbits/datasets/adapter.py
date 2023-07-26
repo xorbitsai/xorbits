@@ -15,6 +15,7 @@
 
 from typing import Callable, Dict
 
+from .._mars.utils import lazy_import
 from ..core.adapter import (
     collect_cls_members,
     register_data_members,
@@ -29,6 +30,8 @@ MARS_DATASET_TYPE = (Dataset,)
 
 def _collect_module_callables() -> Dict[str, Callable]:
     module_callables = {}
+    # TODO(fyrestone): Remove this hard code module
+    hf_datasets = lazy_import("datasets")
 
     # install module functions
     for func in [from_huggingface]:
@@ -36,7 +39,7 @@ def _collect_module_callables() -> Dict[str, Callable]:
             func,
             attach_docstring=True,
             is_cls_member=False,
-            docstring_src_module=getattr(func, "__doc_source_module__", None),
+            docstring_src_module=hf_datasets,
             docstring_src=func,
         )
     return module_callables
