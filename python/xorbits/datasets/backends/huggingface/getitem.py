@@ -50,6 +50,8 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
 
 
 def getitem(dataset, key: Union[int, slice, str, Iterable[int]]):
+    if not isinstance(key, str):
+        raise NotImplementedError(f"Not support getitem with key type: {type(key)}")
     op = HuggingfaceGetItem(
         output_types=[OutputType.huggingface_dataset], hf_getitem_key=key
     )

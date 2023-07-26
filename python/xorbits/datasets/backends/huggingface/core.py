@@ -35,6 +35,7 @@ except ImportError:
     VerificationMode = Any
     Version = Any
 
+from ...._mars.core import is_build_mode
 from ...._mars.core.entity import (
     OutputType,
     register_fetch_class,
@@ -55,10 +56,16 @@ class HuggingfaceDatasetData(DatasetData):
     type_name = "Huggingface Dataset"
 
     def __repr__(self):
-        try:
-            return f"Dataset({{\n    features: {self.dtypes.index.values.tolist()},\n    num_rows: {self.shape[0]}\n}})"
-        except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
+        if is_build_mode() or len(self._executed_sessions) == 0:
+            # in build mode, or not executed, just return representation
             return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
+        else:
+            try:
+                return f"Dataset({{\n    features: {self.dtypes.index.values.tolist()},\n    num_rows: {self.shape[0]}\n}})"
+            except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
+                return (
+                    f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
+                )
 
     def rechunk(self, num_chunks: int, **kwargs):
         return rechunk(self, num_chunks, **kwargs)
