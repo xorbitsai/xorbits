@@ -180,11 +180,6 @@ def dedup(
     col: str,
     method: str = "minhash",
     **kws,
-    # threshold: float = 0.7,
-    # num_perm: int = 128,
-    # min_length: int = 5,
-    # ngram: int = 5,
-    # seed: int = 42,
 ) -> pd.DataFrame:
     """
     Applies MinHash-based deduplication on a DataFrame.
