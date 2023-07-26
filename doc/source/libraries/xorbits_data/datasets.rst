@@ -11,58 +11,76 @@ This is a short introduction to :code:`xorbits.datasets`.
 Datasets Creation
 -----------------
 
-You can create a dataset from Hugging Face datasets, just like the `datasets.load_dataset`. But, 
-xorbits.datasets will load the dataset in parallel*. *(Currently, not all the datasets are loaded
-in parallel.)*
+You can create a dataset from Hugging Face datasets, just like the `datasets.load_dataset`.
+xorbits.datasets will load the dataset in parallel among multiple machines, while Hugging Face
+datasets can only load the dataset in parallel on one machine. Currently, only the dataset with
+multiple data files can be loaded in parallel, one data file will be one chunk.
 
 ::
 
     >>> import xorbits.datasets as xdatasets
-    >>> dataset = xdatasets.from_huggingface("rotten_tomatoes", split="train")
+    >>> dataset = xdatasets.from_huggingface(
+    >>>     "mariosasko/test_multi_dir_dataset", split="train")
     Dataset({
-        features: ['text', 'label'],
-        num_rows: 8530
+        features: ['text'],
+        num_rows: 2
     })
 
 Datasets Processing
 -------------------
 
 You can apply a function to the dataset, xorbits.datasets will parallel the apply operations.
-Dataset can process data in parallel at the granularity of chunks if the xorbits cluster has
-enough resources.
+xorbits.datasets can process data in parallel at the granularity of chunks if the xorbits cluster
+has enough resources. If your dataset has too few chunks, then you can use the `rechunk()` to 
+improve concurrency.
 
 ::
 
+    >>> import xorbits.datasets as xdatasets
+    >>> # The `rotten_tomatoes` dataset contains empty data files, so only one
+    >>> # chunk will be in the dataset.   
+    >>> dataset = xdatasets.from_huggingface("rotten_tomatoes", split="train")
+    >>> # Use rechunk() to improve the concurrency.
+    >>> dataset = dataset.rechunk(10)
     >>> def add_prefix(example):
     >>>     example["text"] = "Xorbits: " + example["text"]
     >>>     return example
+    >>> # 10 processes applying `add_prefix` concurrently.
     >>> dataset = dataset.map(add_prefix)
     >>> # Currently, you have to execute() and fetch() to get all the dataset.
     >>> dataset.execute()
     >>> dataset.fetch()
+    Dataset({
+        features: ['text', 'label'],
+        num_rows: 8530
+    })
 
 Datasets Outputs
 ---------------
 
 Xorbits dataset can be easily converted into xorbits dataframe, then you can continue to process
-data by xorbits.pandas.
+data by xorbits.pandas, of course in parallel.
 
 
 ::
 
     >>> df = dataset.to_dataframe()
+    >>> # You may want to reset the index.
+    >>> df.reset_index(drop=True, inplace=True)
+    >>> df
                                                     text  label
-    0     the rock is destined to be the 21st century's ...      1
-    1     the gorgeously elaborate continuation of " the...      1
-    2                        effective but too-tepid biopic      1
-    3     if you sometimes like to go to the movies to h...      1
-    4     emerges as something rare , an issue movie tha...      1
+    0     Xorbits: the rock is destined to be the 21st c...      1
+    1     Xorbits: this is a film well worth seeing , ta...      1
+    2     Xorbits: a thoughtful , provocative , insisten...      1
+    3     Xorbits: guaranteed to move anyone who ever sh...      1
+    4     Xorbits: newton draws our attention like a mag...      1
                                                     ...    ...
-    8525  any enjoyment will be hinge from a personal th...      0
-    8526  if legendary shlockmeister ed wood had ever ma...      0
-    8527  hardly a nuanced portrait of a young woman's b...      0
-    8528    interminably bleak , to say nothing of boring .      0
-    8529  things really get weird , though not particula...      0
+    8525  Xorbits: a laughable -- or rather , unlaughabl...      0
+    8526  Xorbits: plays like an unbalanced mixture of g...      0
+    8527  Xorbits: i wish it would have just gone more o...      0
+    8528  Xorbits: like its title character , esther kah...      0
+    8529  Xorbits: things really get weird , though not ...      0
     [8530 rows x 2 columns]
+    >>> # The xorbits.pandas operations are executed in parallel among the cluster.
     >>> df["label"].sum()
     4265
