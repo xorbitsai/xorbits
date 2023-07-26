@@ -101,12 +101,12 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
                 chunk_op.single_data_file = f
                 chunk_op.num_chunks = len(data_files)
                 chunk_op.expect_band = band
-                c = chunk_op.new_chunk(inputs=[], index=(index,))
+                c = chunk_op.new_chunk(inputs=[], index=(index, 0))
                 chunks.append(c)
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
-            chunks.append(chunk_op.new_chunk(inputs=[], index=(0,)))
+            chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
 
         out = op.outputs[0]
         return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)

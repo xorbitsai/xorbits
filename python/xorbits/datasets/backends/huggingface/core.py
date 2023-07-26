@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Mapping, Optional, Sequence, Union
+from typing import Dict, Iterable, Mapping, Optional, Sequence, Union
 
 try:
     # For type hint.
@@ -43,6 +43,7 @@ from ...._mars.core.entity import (
 from ...._mars.core.operand.objects import ObjectFetch
 from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
+from .getitem import getitem
 from .loader import load_huggingface_dataset
 from .map import map
 from .rechunk import rechunk
@@ -67,6 +68,9 @@ class HuggingfaceDatasetData(DatasetData):
 
     def to_dataframe(self):
         return to_dataframe(self)
+
+    def __getitem__(self, item: Union[int, slice, str, Iterable[int]]):
+        return getitem(self, item)
 
 
 class HuggingfaceDataset(Dataset):

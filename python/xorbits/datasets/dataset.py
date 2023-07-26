@@ -75,6 +75,9 @@ class DatasetData(HasShapeTileableData):
     def to_dataframe(self):
         raise NotImplementedError
 
+    def __getitem__(self, item):
+        raise NotImplementedError
+
 
 class Dataset(HasShapeTileable):
     __slots__ = ()
@@ -141,3 +144,6 @@ class Dataset(HasShapeTileable):
         >>> df = ds.to_dataframe()
         """
         return self.data.to_dataframe()
+
+    def __getitem__(self, item):
+        return self.data.__getitem__(item)

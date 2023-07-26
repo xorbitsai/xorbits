@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import cloudpickle
+import numpy as np
 
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import AnyField, DictField
@@ -40,7 +41,11 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
             chunk_op = op.copy().reset_key()
             out_chunk = chunk_op.new_chunk([chunk], index=chunk.index)
             out_chunks.append(out_chunk)
-        return op.copy().new_tileable(op.inputs, chunks=out_chunks)
+        return op.copy().new_tileable(
+            op.inputs,
+            chunks=out_chunks,
+            nsplits=((np.nan,) * len(out_chunks), (np.nan,)),
+        )
 
     @classmethod
     def execute(cls, ctx, op: "HuggingfaceMap"):

@@ -103,20 +103,23 @@ class CheckedTaskPreprocessor(ObjectCheckMixin, TaskPreprocessor):
                     % (c.op, c.index, tiled.nsplits)
                 )
         for cid, shape in enumerate(itertools.product(*tiled.nsplits)):
+            tiled_chunk = tiled.chunks[cid]
+            if not hasattr(tiled_chunk, "shape"):
+                continue
             chunk_shape = (
-                self._raw_chunk_shapes.get(tiled.chunks[cid].key)
-                or tiled.chunks[cid].shape
+                self._raw_chunk_shapes.get(tiled_chunk.key)
+                or tiled_chunk.shape
             )
             if len(shape) != len(chunk_shape):
                 raise AssertionError(
                     "Operand %r: Shape in nsplits %r does not meet shape in chunk %r"
-                    % (tiled.chunks[cid].op, shape, chunk_shape)
+                    % (tiled_chunk.op, shape, chunk_shape)
                 )
             for s1, s2 in zip(shape, chunk_shape):
                 if (not (np.isnan(s1) and np.isnan(s2))) and s1 != s2:
                     raise AssertionError(
                         "Operand %r: Shape in nsplits %r does not meet shape in chunk %r"
-                        % (tiled.chunks[cid].op, shape, chunk_shape)
+                        % (tiled_chunk.op, shape, chunk_shape)
                     )
 
     def post_chunk_graph_execution(self):

@@ -47,6 +47,8 @@ def test_from_huggingface_execute(setup, path):
     ds = xds.fetch()
     ds_expected = datasets.load_dataset(path, split="train")
     assert ds.to_dict() == ds_expected.to_dict()
+    # Trigger datasets issue: https://github.com/huggingface/datasets/issues/6066
+    # assert str(ds) == str(ds_expected)
 
 
 @pytest.mark.parametrize(
@@ -99,3 +101,11 @@ def test_rechunk_execute(setup, path):
     ds = xds.fetch()
     assert isinstance(ds, datasets.Dataset)
     assert len(ds.data.blocks) == 2
+
+
+def test_getitem_execute(setup):
+    xds = from_huggingface(SAMPLE_DATASET_IDENTIFIER2, split="train")
+    xds = xds.rechunk(2)
+    a = xds["text"]
+    a.execute()
+    assert a.fetch() == ["foo"] * 10

@@ -767,6 +767,11 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         if len(result) == 1:
             return result[0]
         return result
+    elif type(v) is list:
+        result = []
+        for r in chunk_results:
+            result.extend(r[1])
+        return result
     elif hf_datasets is not None and isinstance(v, hf_datasets.Dataset):
         result = [r[1] for r in chunk_results]
         return hf_datasets.concatenate_datasets(result)
