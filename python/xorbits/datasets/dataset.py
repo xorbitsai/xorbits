@@ -15,6 +15,8 @@
 
 from typing import Callable
 
+import numpy as np
+
 from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
 from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
 from .._mars.serialization.serializables import (
@@ -39,7 +41,9 @@ class DatasetChunkData(ObjectChunkData):
     )
 
     def __init__(self, shape=None, **kwargs):
-        super().__init__(shape=shape, **kwargs)
+        # CheckedTaskPreprocessor._check_nsplits may check shape,
+        # so the shape can't be None.
+        super().__init__(shape=shape or (np.nan, np.nan), **kwargs)
 
     @property
     def params(self):

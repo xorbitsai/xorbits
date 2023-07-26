@@ -56,7 +56,11 @@ class HuggingfaceDatasetChunkData(DatasetChunkData):
 
     @classmethod
     def get_params_from_data(cls, data) -> Dict[str, Any]:
-        return {"shape": data.shape}
+        try:
+            return {"shape": data.shape}
+        except AttributeError:
+            # AttributeError: 'list' object has no attribute 'shape'
+            return {}
 
 
 class HuggingfaceDatasetChunk(DatasetChunk):
