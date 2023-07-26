@@ -29,7 +29,7 @@ multiple data files can be loaded in parallel, one data file will be one chunk.
 Datasets Processing
 -------------------
 
-You can apply a function to the dataset, xorbits.datasets will parallel the apply operations.
+You can apply a function to the dataset, xorbits.datasets will parallelize the apply operations.
 xorbits.datasets can process data in parallel at the granularity of chunks if the xorbits cluster
 has enough resources. If your dataset has too few chunks, then you can use the `rechunk()` to 
 improve concurrency.
