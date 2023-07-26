@@ -58,8 +58,6 @@ def add_docstring_disclaimer(
 ) -> Optional[str]:
     if doc is None:
         return None
-    if docstring_src_module is None or docstring_src_cls is None:
-        return doc
 
     base_indentation = get_base_indentation(doc)
     if base_indentation is None:  # pragma: no cover
