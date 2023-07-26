@@ -15,14 +15,42 @@
 
 from typing import Callable
 
+from .._mars.utils import on_serialize_shape, on_deserialize_shape
 from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
 from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
-from .._mars.serialization.serializables import FieldTypes, ListField, SeriesField
+from .._mars.serialization.serializables import (
+    FieldTypes,
+    ListField,
+    SeriesField,
+    TupleField,
+)
 
 
 class DatasetChunkData(ObjectChunkData):
     __slots__ = ()
     type_name = "DatasetChunkData"
+
+    # required for get shape of chunk, e.g. getitem.
+    shape = TupleField(
+        "shape",
+        FieldTypes.int64,
+        on_serialize=on_serialize_shape,
+        on_deserialize=on_deserialize_shape,
+    )
+
+    def __init__(self, shape=None, **kwargs):
+        super().__init__(shape=shape, **kwargs)
+
+    @property
+    def params(self):
+        d = super().params
+        d.update({"shape": self.shape})
+        return d
+
+    @params.setter
+    def params(self, params):
+        params.pop("index", None) # index not needed to update
+        self.shape = params.pop("shape", None)
 
 
 class DatasetChunk(ObjectChunk):
@@ -35,7 +63,7 @@ class DatasetData(HasShapeTileableData):
     __slots__ = ()
     type_name = "DatasetData"
 
-    # optional fields
+    # required for to_dataframe.
     dtypes = SeriesField("dtypes")
     _chunks = ListField(
         "chunks",

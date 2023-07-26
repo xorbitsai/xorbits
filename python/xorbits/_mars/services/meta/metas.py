@@ -40,6 +40,7 @@ from ...dataframe.core import (
 from ...tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, TensorOrder
 from ...utils import dataslots
 from .core import PandasDtypeType, _ChunkMeta, _TileableMeta, register_meta_type
+from ....datasets.backends.huggingface.core import HuggingfaceDatasetChunk, HuggingfaceDatasetChunkData
 
 """
 Create a separate module for metas to avoid direct
@@ -189,6 +190,13 @@ class CategoricalChunkMeta(_ChunkMeta):
 @dataclass
 class ObjectChunkMeta(_ChunkMeta):
     pass
+
+
+@register_meta_type((HuggingfaceDatasetChunk, HuggingfaceDatasetChunkData))
+@dataslots
+@dataclass
+class DatasetChunkMeta(_ChunkMeta):
+    shape: Tuple[int] = None
 
 
 @register_meta_type(DATAFRAME_OR_SERIES_TYPE)

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Iterable, Mapping, Optional, Sequence, Union
+from typing import Dict, Iterable, Mapping, Optional, Sequence, Union, Any
 
 try:
     # For type hint.
@@ -26,8 +26,6 @@ try:
         Version,
     )
 except ImportError:
-    from typing import Any
-
     DownloadConfig = Any
     DownloadMode = Any
     Features = Any
@@ -42,6 +40,7 @@ from ...._mars.core.entity import (
     register_output_types,
 )
 from ...._mars.core.operand.objects import ObjectFetch
+from ...._mars.serialization.serializables import ListField, FieldTypes
 from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
 from .getitem import getitem
@@ -51,9 +50,33 @@ from .rechunk import rechunk
 from .to_dataframe import to_dataframe
 
 
+class HuggingfaceDatasetChunkData(DatasetChunkData):
+    __slots__ = ()
+    type_name = "HuggingfaceDatasetChunkData"
+
+    @classmethod
+    def get_params_from_data(cls, data) -> Dict[str, Any]:
+        return {"shape": data.shape}
+
+
+class HuggingfaceDatasetChunk(DatasetChunk):
+    __slots__ = ()
+    _allow_data_type_ = (HuggingfaceDatasetChunkData,)
+    type_name = "HuggingfaceDatasetChunk"
+
+
 class HuggingfaceDatasetData(DatasetData):
     __slots__ = ()
     type_name = "Huggingface Dataset"
+
+    _chunks = ListField(
+        "chunks",
+        FieldTypes.reference(HuggingfaceDatasetChunk),
+        on_serialize=lambda x: [it.data for it in x] if x is not None else x,
+        on_deserialize=lambda x: [HuggingfaceDatasetChunk(it) for it in x]
+        if x is not None
+        else x,
+    )
 
     def __repr__(self):
         if is_build_mode() or len(self._executed_sessions) == 0:
@@ -92,7 +115,7 @@ class HuggingfaceDataset(Dataset):
 register_output_types(
     OutputType.huggingface_dataset,
     (HuggingfaceDataset, HuggingfaceDatasetData),
-    (DatasetChunk, DatasetChunkData),
+    (HuggingfaceDatasetChunk, HuggingfaceDatasetChunkData),
 )
 
 
