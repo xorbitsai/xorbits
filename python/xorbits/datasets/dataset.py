@@ -15,7 +15,6 @@
 
 from typing import Callable
 
-from .._mars.utils import on_serialize_shape, on_deserialize_shape
 from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
 from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
 from .._mars.serialization.serializables import (
@@ -24,6 +23,7 @@ from .._mars.serialization.serializables import (
     SeriesField,
     TupleField,
 )
+from .._mars.utils import on_deserialize_shape, on_serialize_shape
 
 
 class DatasetChunkData(ObjectChunkData):
@@ -49,7 +49,7 @@ class DatasetChunkData(ObjectChunkData):
 
     @params.setter
     def params(self, params):
-        params.pop("index", None) # index not needed to update
+        params.pop("index", None)  # index not needed to update
         self.shape = params.pop("shape", None)
 
 

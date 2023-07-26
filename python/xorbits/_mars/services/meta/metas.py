@@ -18,6 +18,10 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
+from ....datasets.backends.huggingface.core import (
+    HuggingfaceDatasetChunk,
+    HuggingfaceDatasetChunkData,
+)
 from ...core import OBJECT_CHUNK_TYPE, OBJECT_TYPE
 from ...dataframe.core import (
     CATEGORICAL_CHUNK_TYPE,
@@ -40,7 +44,6 @@ from ...dataframe.core import (
 from ...tensor.core import TENSOR_CHUNK_TYPE, TENSOR_TYPE, TensorOrder
 from ...utils import dataslots
 from .core import PandasDtypeType, _ChunkMeta, _TileableMeta, register_meta_type
-from ....datasets.backends.huggingface.core import HuggingfaceDatasetChunk, HuggingfaceDatasetChunkData
 
 """
 Create a separate module for metas to avoid direct
