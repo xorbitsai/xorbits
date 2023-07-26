@@ -75,7 +75,7 @@ class NumExprExecutionSuite:
         self.session.stop_server()
 
     def time_numexpr_execution(self):
-        for _ in range(100):
+        for _ in range(50):
             a = mt.arange(1e6)
             b = mt.arange(1e6) * 0.1
             c = mt.sin(a) + mt.arcsinh(a / b)
