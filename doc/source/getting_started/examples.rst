@@ -18,3 +18,7 @@ Tutorials
 
 - `Deploy and Run Xorbits on Amazon EKS <https://xorbits.io/blogs/xorbits-on-eks>`__
 
+
+Best Practices
+--------------
+- :ref:`loading_data`
