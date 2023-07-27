@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Iterable, Union
+from typing import Union
 
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import AnyField
@@ -125,7 +125,7 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
         ctx[out.key] = inp.__getitem__(op.hf_getitem_key)
 
 
-def getitem(dataset, key: Union[int, slice, str, Iterable[int]]):
+def getitem(dataset, key: Union[int, slice, str]):
     if not isinstance(key, (str, int, slice)):
         raise NotImplementedError(f"Not support getitem with key type: {type(key)}")
     if isinstance(key, slice) and key.step is not None:

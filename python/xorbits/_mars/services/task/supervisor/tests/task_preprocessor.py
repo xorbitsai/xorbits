@@ -107,8 +107,7 @@ class CheckedTaskPreprocessor(ObjectCheckMixin, TaskPreprocessor):
             if not hasattr(tiled_chunk, "shape"):
                 continue
             chunk_shape = (
-                self._raw_chunk_shapes.get(tiled_chunk.key)
-                or tiled_chunk.shape
+                self._raw_chunk_shapes.get(tiled_chunk.key) or tiled_chunk.shape
             )
             if len(shape) != len(chunk_shape):
                 raise AssertionError(

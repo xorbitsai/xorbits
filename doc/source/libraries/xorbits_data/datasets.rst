@@ -52,6 +52,10 @@ improve concurrency.
         features: ['text', 'label'],
         num_rows: 8530
     })
+    >>> dataset[1:3]["text"]
+    ['Xorbits: the gorgeously elaborate continuation of " the lord of the rings " trilogy is so huge that a column of words cannot adequately describe co-writer/director peter jackson\'s expanded vision of j . r . r . tolkien\'s middle-earth .',
+     'Xorbits: effective but too-tepid biopic']
+
 
 Datasets Outputs
 ----------------

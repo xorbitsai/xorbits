@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Callable
+from typing import Callable, Union
 
 import numpy as np
 
@@ -177,5 +177,24 @@ class Dataset(HasShapeTileable):
         """
         return self.data.to_dataframe()
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: Union[int, slice, str]):
+        """Get rows or columns from dataset.
+
+        The result will be formatted dict or list.
+
+        Parameters
+        ----------
+        item: Union[int, slice, str]
+            The item index. slice does not support steps, e.g. ds[1:3:2] is not supported.
+
+        Returns
+        -------
+            List of column values if item is str.
+            Dict[column name, List[values of selected rows]] if item is int or slice.
+        Examples
+        --------
+        >>> import xorbits.datasets as xdatasets
+        >>> ds = xdatasets.from_huggingface("rotten_tomatoes", split="train")
+        >>> ds[1:3]["text"]
+        """
         return self.data.__getitem__(item)
