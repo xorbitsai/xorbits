@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 from typing import Iterable, Union
 
 from ...._mars.core.entity import OutputType
@@ -38,6 +37,18 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
         return op.copy().new_tileable(op.inputs, chunks=out_chunks)
 
     @classmethod
+    def _find_chunk_index_by_key(cls, chunks, key):
+        for idx, chunk in enumerate(chunks):
+            if key < 0:  # pragma: no cover
+                raise IndexError(f"Input key {key} is out of bound.")
+            if key >= chunk.shape[0]:
+                key -= chunk.shape[0]
+            else:
+                return idx, key
+        # pragma: no cover
+        raise IndexError(f"Input key {key} is out of bound.")
+
+    @classmethod
     def tile(cls, op: "HuggingfaceGetItem"):
         assert len(op.inputs) == 1
         inp = op.inputs[0]
@@ -47,21 +58,12 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
         elif isinstance(op.hf_getitem_key, int):
             if has_unknown_shape(*op.inputs):
                 yield
-            key = op.hf_getitem_key
-            for chunk in inp.chunks:
-                if key < 0:
-                    raise IndexError(f"Input key {op.hf_getitem_key} is out of bound.")
-                if key >= chunk.shape[0]:
-                    key -= chunk.shape[0]
-                else:
-                    chunk_op = op.copy().reset_key()
-                    chunk_op.hf_getitem_key = key
-                    out_chunk = chunk_op.new_chunk([chunk], index=chunk.index)
-                    return op.copy().new_tileable(
-                        op.inputs,
-                        chunks=[out_chunk],
-                    )
-            raise IndexError(f"Input key {op.hf_getitem_key} is out of bound.")
+            index, key = cls._find_chunk_index_by_key(inp.chunks, op.hf_getitem_key)
+            chunk = inp.chunks[index]
+            chunk_op = op.copy().reset_key()
+            chunk_op.hf_getitem_key = key
+            out_chunk = chunk_op.new_chunk([chunk], index=chunk.index)
+            return op.copy().new_tileable(op.inputs, chunks=[out_chunk])
         elif isinstance(op.hf_getitem_key, slice):
             if is_full_slice(op.hf_getitem_key):
                 return cls._gen_copy_output(inp, op)
@@ -69,21 +71,41 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
                 start = op.hf_getitem_key.start
                 stop = op.hf_getitem_key.stop
                 assert op.hf_getitem_key.step is None
-                if start <= stop:
+                if start >= stop:
                     first_chunk = inp.chunks[0]
                     chunk_op = op.copy().reset_key()
                     chunk_op.hf_getitem_key = slice(0, 0)
                     out_chunk = chunk_op.new_chunk(
                         [first_chunk], index=first_chunk.index
                     )
-                    return op.copy().new_tileable(
-                        op.inputs,
-                        chunks=[out_chunk],
-                    )
+                    return op.copy().new_tileable(op.inputs, chunks=[out_chunk])
                 else:
                     if has_unknown_shape(*op.inputs):
                         yield
-                    raise Exception("xxx")
+                    start_index, start_key = cls._find_chunk_index_by_key(
+                        inp.chunks, start
+                    )
+                    stop_index, stop_key = cls._find_chunk_index_by_key(
+                        inp.chunks, stop
+                    )
+                    chunks = []
+                    for index, chunk in enumerate(inp.chunks):
+                        if start_index <= index <= stop_index:
+                            chunk_op = op.copy().reset_key()
+                            slice_start = start_key if index == start_index else None
+                            slice_stop = stop_key if index == stop_index else None
+                            chunk_op.hf_getitem_key = slice(
+                                slice_start, slice_stop, None
+                            )
+                            out_chunk = chunk_op.new_chunk([chunk], index=chunk.index)
+                            chunks.append(out_chunk)
+                        elif index > stop_index:
+                            break
+                    return op.copy().new_tileable(op.inputs, chunks=chunks)
+        else:  # pragma: no cover
+            raise NotImplementedError(
+                f"Not support getitem with key type: {type(op.hf_getitem_key)}"
+            )
 
     @classmethod
     def execute(cls, ctx, op: "HuggingfaceGetItem"):
