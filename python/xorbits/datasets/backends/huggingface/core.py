@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Iterable, Mapping, Optional, Sequence, Union
+from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 try:
     # For type hint.
@@ -105,7 +105,7 @@ class HuggingfaceDatasetData(DatasetData):
     def to_dataframe(self):
         return to_dataframe(self)
 
-    def __getitem__(self, item: Union[int, slice, str, Iterable[int]]):
+    def __getitem__(self, item: Union[int, slice, str]):
         return getitem(self, item)
 
 
