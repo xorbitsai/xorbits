@@ -182,13 +182,14 @@ def dedup(
     **kws,
 ) -> pd.DataFrame:
     """
-    Applies MinHash-based deduplication on a DataFrame.
+    Applies deduplication on a DataFrame based on the chosen method.
 
-    This function utilizes MinHash and MinHashLSH for identifying and removing
-    duplicates based on Jaccard similarity. It operates by generating hash
-    values for a specified column of the DataFrame, computing similarity
-    between these hash values, and then removing the rows that are determined
-    to be duplicates according to a provided Jaccard similarity threshold.
+    This function provides two methods for deduplication: exact matching and MinHash-based.
+    The exact matching uses md5 hashing for deduplication, while the MinHash-based method
+    utilizes MinHash and MinHashLSH for identifying and removing duplicates based on Jaccard similarity.
+    For the MinHash-based method, it operates by generating hash values for a specified column
+    of the DataFrame, computing similarity between these hash values, and then removing the rows
+    that are determined to be duplicates according to a provided Jaccard similarity threshold.
 
     Parameters
     ----------
@@ -198,6 +199,11 @@ def dedup(
     col : str
         The column of the DataFrame on which to calculate hash values.
 
+    method : str, default "minhash"
+        The method for deduplication. Options include 'exact' and 'minhash'.
+
+    Additional Parameters for MinHash method
+    ----------------------------------------
     threshold : float, default 0.7
         The Jaccard similarity threshold to use in the MinHashLSH.
 
@@ -208,7 +214,7 @@ def dedup(
         The minimum number of tokens to use in the MinHash. Texts shorter than
         this value will be filtered out.
 
-    ngram : int, default None
+    ngrams : int, default 5
         The size of ngram to use in the MinHash.
 
     seed : int, default 42
@@ -217,14 +223,16 @@ def dedup(
     Returns
     -------
     DataFrame
-        The DataFrame after applying MinHash-based deduplication.
+        The DataFrame after applying the chosen deduplication method.
 
     Notes
     -----
-    The deduplication process uses a combination of MinHash and MinHashLSH for
-    efficient calculation of Jaccard similarity and identification of duplicates.
-    This process involves hashing text to a finite set of integers (hash values),
-    and then comparing these hash values to find duplicates.
+    The 'exact' method performs deduplication by hashing each entry in the specified column with md5
+    and removing duplicates.
+
+    The 'minhash' method uses a combination of MinHash and MinHashLSH for efficient calculation of
+    Jaccard similarity and identification of duplicates. This process involves hashing text to a
+    finite set of integers (hash values), and then comparing these hash values to find duplicates.
 
     The optimal parameters for the number of bands `B` and rows `R` per band
     are automatically calculated based on the provided similarity threshold and
@@ -243,7 +251,8 @@ def dedup(
     ...         * 2,
     ...     }
     ... )
-    >>> res = dedup(df, col="text")
+    >>> res = dedup(df, col="text", method="exact") # for 'exact' method
+    >>> res = dedup(df, col="text", method="minhash", threshold=0.8, num_perm=128, min_length=5, ngrams=5, seed=42) # for 'minhash' method
     """
 
     if method not in ["exact", "minhash"]:
