@@ -37,6 +37,14 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
         return op.copy().new_tileable(op.inputs, chunks=out_chunks)
 
     @classmethod
+    def _gen_empty_output(cls, inp, op: "HuggingfaceGetItem"):
+        first_chunk = inp.chunks[0]
+        chunk_op = op.copy().reset_key()
+        chunk_op.hf_getitem_key = slice(0, 0)
+        out_chunk = chunk_op.new_chunk([first_chunk], index=first_chunk.index)
+        return op.copy().new_tileable(op.inputs, chunks=[out_chunk])
+
+    @classmethod
     def _find_chunk_index_by_key(cls, chunks, key):
         for idx, chunk in enumerate(chunks):
             if key < 0:  # pragma: no cover
@@ -72,22 +80,25 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
                 stop = op.hf_getitem_key.stop
                 assert op.hf_getitem_key.step is None
                 if start >= stop:
-                    first_chunk = inp.chunks[0]
-                    chunk_op = op.copy().reset_key()
-                    chunk_op.hf_getitem_key = slice(0, 0)
-                    out_chunk = chunk_op.new_chunk(
-                        [first_chunk], index=first_chunk.index
-                    )
-                    return op.copy().new_tileable(op.inputs, chunks=[out_chunk])
+                    # For empty slice, e.g. s[3:1], s[3:3], we translate the
+                    # execution to the first chunk[0:0].
+                    return cls._gen_empty_output(inp, op)
                 else:
                     if has_unknown_shape(*op.inputs):
                         yield
-                    start_index, start_key = cls._find_chunk_index_by_key(
-                        inp.chunks, start
-                    )
-                    stop_index, stop_key = cls._find_chunk_index_by_key(
-                        inp.chunks, stop
-                    )
+                    try:
+                        start_index, start_key = cls._find_chunk_index_by_key(
+                            inp.chunks, start
+                        )
+                    except IndexError:
+                        return cls._gen_empty_output(inp, op)
+                    try:
+                        stop_index, stop_key = cls._find_chunk_index_by_key(
+                            inp.chunks, stop
+                        )
+                    except IndexError:
+                        stop_index = len(inp.chunks) - 1
+                        stop_key = None
                     chunks = []
                     for index, chunk in enumerate(inp.chunks):
                         if start_index <= index <= stop_index:
@@ -111,7 +122,6 @@ class HuggingfaceGetItem(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: "HuggingfaceGetItem"):
         inp = ctx[op.inputs[0].key]
         out = op.outputs[0]
-        print("execute", op.hf_getitem_key)
         ctx[out.key] = inp.__getitem__(op.hf_getitem_key)
 
 
@@ -119,6 +129,6 @@ def getitem(dataset, key: Union[int, slice, str, Iterable[int]]):
     if not isinstance(key, (str, int, slice)):
         raise NotImplementedError(f"Not support getitem with key type: {type(key)}")
     if isinstance(key, slice) and key.step is not None:
-        raise NotImplementedError(f"Not support getitem with key type: {type(key)}")
+        raise NotImplementedError(f"Not support getitem with slice and step: {key}")
     op = HuggingfaceGetItem(output_types=[OutputType.object], hf_getitem_key=key)
     return op(dataset)

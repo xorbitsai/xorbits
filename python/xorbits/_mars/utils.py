@@ -774,6 +774,8 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         return result
     elif type(v) is dict:
         result = {}
+        if len(chunk_results) == 1:
+            return chunk_results[0][1]
         for r in chunk_results:
             d = r[1]
             if not result:
