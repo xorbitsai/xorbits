@@ -47,8 +47,7 @@ improve concurrency.
     >>>     return example
     >>> # 10 processes applying `add_prefix` concurrently.
     >>> dataset = dataset.map(add_prefix)
-    >>> # Currently, you have to fetch() to get the dataset info.
-    >>> dataset.fetch()
+    >>> dataset
     Dataset({
         features: ['text', 'label'],
         num_rows: 8530

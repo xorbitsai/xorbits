@@ -74,7 +74,9 @@ def _get_output_type_by_cls(cls):
         try:
             tileable_types = _OUTPUT_TYPE_TO_TILEABLE_TYPES[tp]
             chunk_types = _OUTPUT_TYPE_TO_CHUNK_TYPES[tp]
-            if issubclass(cls, (tileable_types, chunk_types)):
+            # cls may be the subclass of the Object type, so check
+            # in instead of issubclass.
+            if cls in tileable_types or cls in chunk_types:
                 return tp
         except KeyError:  # pragma: no cover
             continue

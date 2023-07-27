@@ -131,4 +131,4 @@ def getitem(dataset, key: Union[int, slice, str, Iterable[int]]):
     if isinstance(key, slice) and key.step is not None:
         raise NotImplementedError(f"Not support getitem with slice and step: {key}")
     op = HuggingfaceGetItem(output_types=[OutputType.object], hf_getitem_key=key)
-    return op(dataset)
+    return op(dataset).execute().fetch()
