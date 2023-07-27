@@ -13,8 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
+import inspect
+import itertools
+import os.path
 from typing import Any, Dict, Mapping, Optional, Sequence, Union
+
+import numpy as np
 
 try:
     # For type hint.
@@ -34,125 +38,147 @@ except ImportError:
     VerificationMode = Any
     Version = Any
 
-from ...._mars.core import is_build_mode
-from ...._mars.core.entity import (
-    OutputType,
-    register_fetch_class,
-    register_output_types,
+from ...._mars.core.context import get_context
+from ...._mars.core.entity import OutputType
+from ...._mars.serialization.serializables import (
+    DictField,
+    Int32Field,
+    ListField,
+    StringField,
 )
-from ...._mars.core.entity.utils import refresh_tileable_shape
-from ...._mars.core.operand.objects import ObjectFetch
-from ...._mars.serialization.serializables import FieldTypes, ListField
-from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
-from .export import export
-from .getitem import getitem
-from .map import map
-from .rechunk import rechunk
-from .to_dataframe import to_dataframe
+from ....utils import check_signature_compatible, get_non_default_kwargs
+from ...dataset import Dataset
+from ...operand import DataOperand, DataOperandMixin
 
 
-class HuggingfaceDatasetChunkData(DatasetChunkData):
-    __slots__ = ()
-    type_name = "HuggingfaceDatasetChunkData"
+class FromHuggingface(DataOperand, DataOperandMixin):
+    path = StringField("path")
+    hf_kwargs = DictField("hf_kwargs")
+    single_data_file = StringField("single_data_file")
+    num_chunks: int = Int32Field("num_chunks")
+    data_files = ListField("data_files")
 
-    @classmethod
-    def get_params_from_data(cls, data) -> Dict[str, Any]:
-        """For updating chunk shape from data."""
-        return {"shape": data.shape}
-
-
-class HuggingfaceDatasetChunk(DatasetChunk):
-    __slots__ = ()
-    _allow_data_type_ = (HuggingfaceDatasetChunkData,)
-    type_name = "HuggingfaceDatasetChunk"
-
-
-class HuggingfaceDatasetData(DatasetData):
-    __slots__ = ()
-    type_name = "Huggingface Dataset"
-
-    _chunks = ListField(
-        "chunks",
-        FieldTypes.reference(HuggingfaceDatasetChunk),
-        on_serialize=lambda x: [it.data for it in x] if x is not None else x,
-        on_deserialize=lambda x: [HuggingfaceDatasetChunk(it) for it in x]
-        if x is not None
-        else x,
-    )
-
-    def __repr__(self):
-        if is_build_mode() or len(self._executed_sessions) == 0:
-            # in build mode, or not executed, just return representation
-            return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
-        else:
-            try:
-                return f"Dataset({{\n    features: {self.dtypes.index.values.tolist()},\n    num_rows: {self.shape[0]}\n}})"
-            except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
-                return (
-                    f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
-                )
-
-    def refresh_params(self):
-        refresh_tileable_shape(self)
-        # TODO(codingl2k1): update dtypes.
-
-    def rechunk(self, num_chunks: int, **kwargs):
-        return rechunk(self, num_chunks, **kwargs)
-
-    def map(self, fn, **kwargs):
-        return map(self, fn, **kwargs)
-
-    def to_dataframe(self, types_mapper=None):
-        return to_dataframe(self, types_mapper)
-
-    def export(
-        self,
-        path: Union[str, os.PathLike],
-        storage_options: Optional[dict] = None,
-        create_if_not_exists: Optional[bool] = True,
-        max_chunk_rows: Optional[int] = None,
-        column_groups: Optional[dict] = None,
-        num_threads: Optional[int] = None,
-        version: Optional[str] = None,
-        overwrite: Optional[bool] = True,
-    ):
-        return export(
-            self,
-            path,
-            storage_options,
-            create_if_not_exists,
-            max_chunk_rows,
-            column_groups,
-            num_threads,
-            version,
-            overwrite,
+    def __call__(self):
+        from datasets import load_dataset_builder
+        from datasets.packaged_modules.folder_based_builder.folder_based_builder import (
+            FolderBasedBuilder,
         )
 
-    def __getitem__(self, item: Union[int, slice, str]):
-        return getitem(self, item)
+        builder_kwargs = self._get_kwargs(load_dataset_builder, self.hf_kwargs)
+        builder = load_dataset_builder(self.path, **builder_kwargs)
+        data_files = builder.config.data_files
+        # TODO(codingl2k1): support multiple splits
+        split = self.hf_kwargs["split"]
+        # TODO(codingl2k1): not pass dtypes if no to_dataframe() called.
+        if builder.info.features:
+            dtypes = builder.info.features.arrow_schema.empty_table().to_pandas().dtypes
+        else:
+            dtypes = None
+        if dtypes is not None and builder.info.splits:
+            shape = (
+                builder.info.splits[split].num_examples,
+                len(dtypes),
+            )
+        else:
+            shape = (np.nan, np.nan)
+        # TODO(codingl2k1): check data_files if can be supported
+        # e.g. the datasets mariosasko/test_imagefolder_with_metadata has multiple
+        # data files, but some of them are meta, so we can't parallel load it.
+        if not isinstance(builder, FolderBasedBuilder):
+            if data_files and len(data_files[split]) > 1:
+                data_files = list(data_files[split])
+            else:
+                data_files = None
+        else:
+            data_files = None
+        self.data_files = data_files
+        return self.new_tileable([], dtypes=dtypes, shape=shape)
+
+    @classmethod
+    def _get_kwargs(cls, obj, kwargs):
+        sig_builder = inspect.signature(obj)
+        return {
+            key: kwargs[key] for key in sig_builder.parameters.keys() if key in kwargs
+        }
+
+    @classmethod
+    def tile(cls, op: "FromHuggingface"):
+        assert len(op.inputs) == 0
+
+        data_files = op.data_files
+        # Set op.data_files to None, we don't want every chunk op copy this field.
+        op.data_files = None
+
+        chunks = []
+        if data_files is not None:
+            ctx = get_context()
+            # TODO(codingl2k1): make expect worker binding stable for cache reuse.
+            all_bands = [b for b in ctx.get_worker_bands() if b[1].startswith("numa-")]
+            for index, (f, band) in enumerate(
+                zip(data_files, itertools.cycle(all_bands))
+            ):
+                chunk_op = op.copy().reset_key()
+                assert f, "Invalid data file from DatasetBuilder."
+                chunk_op.single_data_file = f
+                chunk_op.num_chunks = len(data_files)
+                chunk_op.expect_band = band
+                c = chunk_op.new_chunk(inputs=[], index=(index, 0))
+                chunks.append(c)
+        else:
+            chunk_op = op.copy().reset_key()
+            chunk_op.single_data_file = None
+            chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
+
+        out = op.outputs[0]
+        return op.copy().new_tileable(
+            op.inputs,
+            chunks=chunks,
+            nsplits=((np.nan,) * len(chunks), (np.nan,)),
+            **out.params,
+        )
+
+    @classmethod
+    def execute(cls, ctx, op: "FromHuggingface"):
+        from datasets import DatasetBuilder, VerificationMode, load_dataset_builder
+
+        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
+
+        # TODO(codingl2k1): not sure if it's OK to share one cache dir among workers.
+        # load_dataset_builder from every worker may be slow, but it's error to
+        # deserialized a builder instance in a clean process / node, e.g. raise
+        # ModuleNotFoundError: No module named 'datasets_modules'.
+        #
+        # Please refer to issue: https://github.com/huggingface/transformers/issues/11565
+        builder = load_dataset_builder(op.path, **builder_kwargs)
+        download_and_prepare_kwargs = cls._get_kwargs(
+            DatasetBuilder.download_and_prepare, op.hf_kwargs
+        )
+
+        if op.single_data_file is not None:
+            chunk = op.outputs[0]
+            chunk_index = chunk.index[0]
+            output_dir = builder._output_dir
+            output_dir = output_dir if output_dir is not None else builder.cache_dir
+            output_dir = os.path.join(output_dir, f"part_{chunk_index}_{op.num_chunks}")
+            download_and_prepare_kwargs["output_dir"] = output_dir
+            download_and_prepare_kwargs[
+                "verification_mode"
+            ] = VerificationMode.NO_CHECKS
+            split = op.hf_kwargs["split"]
+            split_data_files = builder.config.data_files[split]
+            split_data_files[:] = [op.single_data_file]
+
+        builder.download_and_prepare(**download_and_prepare_kwargs)
+        as_dataset_kwargs = cls._get_kwargs(DatasetBuilder.as_dataset, op.hf_kwargs)
+        ds = builder.as_dataset(**as_dataset_kwargs)
+        ctx[op.outputs[0].key] = ds
 
 
-class HuggingfaceDataset(Dataset):
-    __slots__ = ()
-    _allow_data_type_ = (HuggingfaceDatasetData,)
-    type_name = "Huggingface Dataset"
-
-    def to_dataset(self):
-        return Dataset(self.data)
-
-
-register_output_types(
-    OutputType.huggingface_dataset,
-    (HuggingfaceDataset, HuggingfaceDatasetData),
-    (HuggingfaceDatasetChunk, HuggingfaceDatasetChunkData),
-)
-
-
-class HuggingfaceDatasetFetch(ObjectFetch):
-    _output_type_ = OutputType.huggingface_dataset
-
-
-register_fetch_class(OutputType.huggingface_dataset, HuggingfaceDatasetFetch, None)
+def load_huggingface_dataset(path: str, **hf_kwargs):
+    op = FromHuggingface(
+        output_types=[OutputType.huggingface_dataset], path=path, hf_kwargs=hf_kwargs
+    )
+    return op()
 
 
 def from_huggingface(
@@ -282,4 +308,8 @@ def from_huggingface(
     # then, from_huggingface("abc") can be forward from new API to old API
     # because non-compatible params are defaults values.
     kwargs = get_non_default_kwargs(locals(), from_huggingface)
-    return load_huggingface_dataset(**kwargs).to_dataset()
+    kwargs.pop("path")
+    op = FromHuggingface(
+        output_types=[OutputType.huggingface_dataset], path=path, hf_kwargs=kwargs
+    )
+    return op().to_dataset()
