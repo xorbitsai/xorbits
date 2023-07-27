@@ -54,7 +54,10 @@ class HuggingfaceDatasetData(DatasetData):
     type_name = "Huggingface Dataset"
 
     def __repr__(self):
-        return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
+        try:
+            return f"Dataset({{\n    features: {self.dtypes.index.values.tolist()},\n    num_rows: {self.shape[0]}\n}})"
+        except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
+            return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
 
     def rechunk(self, num_chunks: int, **kwargs):
         return rechunk(self, num_chunks, **kwargs)
@@ -113,7 +116,7 @@ def from_huggingface(
 ) -> Dataset:
     """Create a dataset from a Hugging Face Datasets Dataset.
 
-    This function is not parallelized, and is intended to be used
+    This function is parallelized, and is intended to be used
     with Hugging Face Datasets that are loaded into memory (as opposed
     to memory-mapped).
 
@@ -163,7 +166,7 @@ def from_huggingface(
         verification_mode ([`VerificationMode`] or `str`, defaults to `BASIC_CHECKS`):
             Verification mode determining the checks to run on the downloaded/processed dataset information (checksums/size/splits/...).
 
-            <Added version="2.9.1"/>
+            .. versionadded:: 2.9.1
         keep_in_memory (`bool`, defaults to `None`):
             Whether to copy the dataset in-memory. If `None`, the dataset
             will not be copied in-memory unless explicitly enabled by setting `datasets.config.IN_MEMORY_MAX_SIZE` to
@@ -188,17 +191,17 @@ def from_huggingface(
             Number of processes when downloading and generating the dataset locally.
             Multiprocessing is disabled by default.
 
-            <Added version="2.7.0"/>
+            .. versionadded:: 2.7.0
         storage_options (`dict`, *optional*, defaults to `None`):
             **Experimental**. Key/value pairs to be passed on to the dataset file-system backend, if any.
 
-            <Added version="2.11.0"/>
+            .. versionadded:: 2.11.0
         **config_kwargs (additional keyword arguments):
             Keyword arguments to be passed to the `BuilderConfig`
             and used in the [`DatasetBuilder`].
 
     Returns:
-        Dataset holding Arrow records from the Hugging Face Dataset.
+        Dataset
     """
     if split is None:
         raise Exception("Arg `split` is required for `from_huggingface`.")
