@@ -84,7 +84,7 @@ class Dataset(HasShapeTileable):
     def rechunk(self, num_chunks: int, **kwargs):
         """Split the internal data into chunks.
 
-        Currently, rechunk is not fully supported.
+        Currently, `rechunk()` only works for single chunk dataset.
 
         Parameters
         ----------
