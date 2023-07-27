@@ -15,5 +15,6 @@
 
 from .adapter import MARS_DATASET_CALLABLES, MARS_DATASET_TYPE, _install
 from .backends.huggingface.core import from_huggingface
+from .dataset import Dataset
 
 globals().update(MARS_DATASET_CALLABLES)
