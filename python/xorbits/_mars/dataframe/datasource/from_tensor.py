@@ -142,7 +142,10 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
                 )
             index_value = self._process_index(index, tileables)
         else:
-            self.index = index = pd.RangeIndex(0, tileables[0].shape[0])
+            if np.isnan(tileables[0].shape[0]):
+                self.index = index = pd.RangeIndex(-1)
+            else:
+                self.index = index = pd.RangeIndex(0, tileables[0].shape[0])
             index_value = parse_index(index)
 
         if columns is not None:
@@ -453,6 +456,8 @@ class DataFrameFromTensor(DataFrameOperand, DataFrameOperandMixin):
                     d[k] = ctx[v.key]
                 else:
                     d[k] = v
+                if type(d[k]) == pd.Series:
+                    op.index = d[k].index
             if op.index is not None and hasattr(op.index, "key"):
                 index_data = ctx[op.index.key]
             else:
