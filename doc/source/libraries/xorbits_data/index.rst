@@ -28,5 +28,5 @@ API                                     Implemented version or plan
     
     pandas
     numpy
-
+    datasets
 
