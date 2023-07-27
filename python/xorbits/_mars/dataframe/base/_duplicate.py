@@ -299,9 +299,6 @@ class DuplicateOperand(MapReduceOperand, DataFrameOperandMixin):
         if inp.ndim == 2 and inp.chunk_shape[1] > 1:
             if has_unknown_shape(inp):
                 yield
-            inp = yield from recursive_tile(inp.rechunk({1: inp.shape[1]}))
-        elif inp.ndim == 2 and inp.dtypes[op.subset].isnull().any():
-            yield
 
         default_tile = cls._tile_tree
 
@@ -311,6 +308,9 @@ class DuplicateOperand(MapReduceOperand, DataFrameOperandMixin):
                 # if any unknown shape exist,
                 # choose merge method
                 return default_tile(op, inp)
+
+            if inp.ndim == 2 and inp.dtypes[op.subset].isnull().any():
+                yield
 
             # check subset data to see if it's small enough
             subset_dtypes = inp.dtypes[op.subset]
