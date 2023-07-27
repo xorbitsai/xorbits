@@ -299,6 +299,7 @@ class DuplicateOperand(MapReduceOperand, DataFrameOperandMixin):
         if inp.ndim == 2 and inp.chunk_shape[1] > 1:
             if has_unknown_shape(inp):
                 yield
+            inp = yield from recursive_tile(inp.rechunk({1: inp.shape[1]}))
 
         default_tile = cls._tile_tree
 
