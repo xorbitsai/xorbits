@@ -39,6 +39,7 @@ from ...._mars.core.entity import (
     register_fetch_class,
     register_output_types,
 )
+from ...._mars.core.entity.utils import refresh_tileable_shape
 from ...._mars.core.operand.objects import ObjectFetch
 from ...._mars.serialization.serializables import FieldTypes, ListField
 from ....utils import check_signature_compatible, get_non_default_kwargs
@@ -56,6 +57,7 @@ class HuggingfaceDatasetChunkData(DatasetChunkData):
 
     @classmethod
     def get_params_from_data(cls, data) -> Dict[str, Any]:
+        """For updating chunk shape from data."""
         try:
             return {"shape": data.shape}
         except AttributeError:
@@ -93,6 +95,10 @@ class HuggingfaceDatasetData(DatasetData):
                 return (
                     f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
                 )
+
+    def refresh_params(self):
+        refresh_tileable_shape(self)
+        # TODO(codingl2k1): update dtypes.
 
     def rechunk(self, num_chunks: int, **kwargs):
         return rechunk(self, num_chunks, **kwargs)
