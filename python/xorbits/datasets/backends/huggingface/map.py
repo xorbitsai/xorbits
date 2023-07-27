@@ -36,6 +36,7 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
     def tile(cls, op: "HuggingfaceMap"):
         assert len(op.inputs) == 1
         inp = op.inputs[0]
+        out = op.outputs[0]
         out_chunks = []
         for chunk in inp.chunks:
             chunk_op = op.copy().reset_key()
@@ -45,6 +46,7 @@ class HuggingfaceMap(DataOperand, DataOperandMixin):
             op.inputs,
             chunks=out_chunks,
             nsplits=((np.nan,) * len(out_chunks), (np.nan,)),
+            **out.params,
         )
 
     @classmethod

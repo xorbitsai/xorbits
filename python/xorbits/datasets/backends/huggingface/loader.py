@@ -109,7 +109,12 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
 
         out = op.outputs[0]
-        return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
+        return op.copy().new_tileable(
+            op.inputs,
+            chunks=chunks,
+            nsplits=((np.nan,) * len(chunks), (np.nan,)),
+            **out.params,
+        )
 
     @classmethod
     def execute(cls, ctx, op: "HuggingfaceLoader"):

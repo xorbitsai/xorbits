@@ -61,7 +61,10 @@ class HuggingfaceRechunk(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: "HuggingfaceRechunk"):
         inp = ctx[op.inputs[0].key]
         out_key = op.outputs[0].key
-        ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **op.hf_kwargs)
+        # Default split dataset by contiguous == True.
+        hf_kwargs = {"contiguous": True}
+        hf_kwargs.update(op.hf_kwargs)
+        ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **hf_kwargs)
 
 
 def rechunk(dataset, num_chunks: int, **hf_kwargs):

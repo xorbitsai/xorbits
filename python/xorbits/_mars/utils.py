@@ -772,6 +772,25 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         for r in chunk_results:
             result.extend(r[1])
         return result
+    elif type(v) is dict:
+        result = {}
+        for r in chunk_results:
+            d = r[1]
+            if not result:
+                if not all(
+                    type(key) is str and type(value) is list for key, value in d.items()
+                ):
+                    raise TypeError(
+                        "only support merge dict with type Dict[str, List]."
+                    )
+                result.update(d)
+            else:
+                if d.keys() != result.keys():
+                    raise TypeError(f"unsupported merge dict with different keys.")
+                else:
+                    for key, value in d.items():
+                        result[key].extend(value)
+        return result
     elif hf_datasets is not None and isinstance(v, hf_datasets.Dataset):
         result = [r[1] for r in chunk_results]
         return hf_datasets.concatenate_datasets(result)
