@@ -13,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Callable, Union
+from typing import Any, Callable, Dict, Union
 
 import numpy as np
 
-from .._mars.core.entity.objects import ObjectChunk, ObjectChunkData
+from .._mars.core.entity.chunks import Chunk, ChunkData
 from .._mars.core.entity.tileables import HasShapeTileable, HasShapeTileableData
 from .._mars.serialization.serializables import (
     FieldTypes,
@@ -28,7 +28,10 @@ from .._mars.serialization.serializables import (
 from .._mars.utils import on_deserialize_shape, on_serialize_shape
 
 
-class DatasetChunkData(ObjectChunkData):
+# DatasetChunk and DatasetChunkData can't inherit ObjectChunk and ObjectChunkData,
+# because _get_output_type_by_cls() in xorbits/_mars/core/entity/output_types.py
+# will generate an incorrect object output type for the DatasetChunk and DatasetChunkData.
+class DatasetChunkData(ChunkData):
     __slots__ = ()
     type_name = "DatasetChunkData"
 
@@ -40,24 +43,31 @@ class DatasetChunkData(ObjectChunkData):
         on_deserialize=on_deserialize_shape,
     )
 
-    def __init__(self, shape=None, **kwargs):
+    def __init__(self, op=None, index=None, shape=None, **kwargs):
         # CheckedTaskPreprocessor._check_nsplits may check shape,
         # so the shape can't be None.
-        super().__init__(shape=shape or (np.nan, np.nan), **kwargs)
+        super().__init__(
+            _op=op, _index=index, shape=shape or (np.nan, np.nan), **kwargs
+        )
 
     @property
     def params(self):
-        d = super().params
-        d.update({"shape": self.shape})
-        return d
+        return {
+            "shape": self.shape,
+            "index": self.index,
+        }
 
     @params.setter
     def params(self, params):
         params.pop("index", None)  # index not needed to update
         self.shape = params.pop("shape", None)
 
+    @classmethod
+    def get_params_from_data(cls, data: Any) -> Dict[str, Any]:
+        return dict()
 
-class DatasetChunk(ObjectChunk):
+
+class DatasetChunk(Chunk):
     __slots__ = ()
     _allow_data_type_ = (DatasetChunkData,)
     type_name = "DatasetChunk"

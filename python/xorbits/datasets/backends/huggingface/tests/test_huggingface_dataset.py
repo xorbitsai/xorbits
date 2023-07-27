@@ -111,29 +111,20 @@ def test_getitem_execute(setup):
     with pytest.raises(NotImplementedError):
         _ = xds[1, 2]
     a = xds["text"]
-    a.execute()
-    assert a.fetch() == ["foo"] * 10
+    assert a == ["foo"] * 10
     a = xds[5]
-    a.execute()
-    assert a.fetch() == {"text": "foo"}
+    assert a == {"text": "foo"}
     a = xds[:]
-    a.execute()
-    v = a.fetch()
-    assert type(v) == dict
-    assert v["text"] == ["foo"] * 10
+    assert type(a) == dict
+    assert a["text"] == ["foo"] * 10
     a = xds[4:6]
-    a.execute()
-    assert len(a.fetch()["text"]) == 2
+    assert len(a["text"]) == 2
     a = xds[8:12]
-    a.execute()
-    assert len(a.fetch()["text"]) == 2
+    assert len(a["text"]) == 2
     # Check empty result.
     a = xds[10:12]
-    a.execute()
-    assert a.fetch() == {"text": []}
+    assert a == {"text": []}
     a = xds[5:5]
-    a.execute()
-    assert a.fetch() == {"text": []}
+    assert a == {"text": []}
     a = xds[5:4]
-    a.execute()
-    assert a.fetch() == {"text": []}
+    assert a == {"text": []}
