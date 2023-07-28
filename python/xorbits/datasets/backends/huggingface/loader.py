@@ -19,15 +19,18 @@ import os.path
 
 import numpy as np
 
+from ...._mars.core import recursive_tile
 from ...._mars.core.context import get_context
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
+    BoolField,
     DictField,
     Int32Field,
     ListField,
     StringField,
 )
 from ...operand import DataOperand, DataOperandMixin
+from .rechunk import rechunk
 
 
 class HuggingfaceLoader(DataOperand, DataOperandMixin):
@@ -36,6 +39,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     single_data_file = StringField("single_data_file")
     num_chunks: int = Int32Field("num_chunks")
     data_files = ListField("data_files")
+    auto_rechunk: bool = BoolField("auto_rechunk")
 
     def __call__(self):
         from datasets import load_dataset_builder
@@ -83,6 +87,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     @classmethod
     def tile(cls, op: "HuggingfaceLoader"):
         assert len(op.inputs) == 0
+        out = op.outputs[0]
 
         data_files = op.data_files
         # Set op.data_files to None, we don't want every chunk op copy this field.
@@ -101,15 +106,37 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
                 chunk_op.single_data_file = f
                 chunk_op.num_chunks = len(data_files)
                 chunk_op.expect_band = band
-                c = chunk_op.new_chunk(inputs=[], index=(index,))
+                c = chunk_op.new_chunk(inputs=[], index=(index, 0))
                 chunks.append(c)
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
-            chunks.append(chunk_op.new_chunk(inputs=[], index=(0,)))
+            chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
+            if op.auto_rechunk:
+                ctx = get_context()
+                cluster_cpu_count = int(ctx.get_total_n_cpu())
+                if (
+                    out.shape
+                    and not np.isnan(out.shape[0])
+                    and out.shape[0] >= cluster_cpu_count
+                ):
+                    inp = op.copy().new_tileable(
+                        op.inputs,
+                        chunks=chunks,
+                        nsplits=((np.nan,) * len(chunks), (np.nan,)),
+                        **out.params,
+                    )
+                    auto_rechunked = yield from recursive_tile(
+                        rechunk(inp, cluster_cpu_count)
+                    )
+                    return auto_rechunked
 
-        out = op.outputs[0]
-        return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
+        return op.copy().new_tileable(
+            op.inputs,
+            chunks=chunks,
+            nsplits=((np.nan,) * len(chunks), (np.nan,)),
+            **out.params,
+        )
 
     @classmethod
     def execute(cls, ctx, op: "HuggingfaceLoader"):
@@ -148,8 +175,11 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         ctx[op.outputs[0].key] = ds
 
 
-def load_huggingface_dataset(path: str, **hf_kwargs):
+def load_huggingface_dataset(path: str, auto_rechunk: bool = True, **hf_kwargs):
     op = HuggingfaceLoader(
-        output_types=[OutputType.huggingface_dataset], path=path, hf_kwargs=hf_kwargs
+        output_types=[OutputType.huggingface_dataset],
+        path=path,
+        auto_rechunk=auto_rechunk,
+        hf_kwargs=hf_kwargs,
     )
     return op()
