@@ -35,13 +35,20 @@ def test_dedup_execute(setup):
         }
     )
 
-    # test one chunk
-    result = dedup(df, col="text").execute().fetch()
+    # test exact one chunk
+    result = dedup(df, col="text", method="exact").execute().fetch()
     assert result.shape[0] == 11
 
-    # test multi chunks
-    df = df.rechunk(1)
-    result = dedup(df, col="text").execute().fetch()
+    # test exact multi chunks
+    result = dedup(df.rechunk(1), col="text", method="exact").execute().fetch()
+    assert result.shape[0] == 11
+
+    # test minhash one chunk
+    result = dedup(df, col="text", method="minhash").execute().fetch()
+    assert result.shape[0] == 11
+
+    # test minhash multi chunks
+    result = dedup(df.rechunk(1), col="text", method="minhash").execute().fetch()
     assert result.shape[0] == 11
 
     # test error threshold
@@ -59,9 +66,9 @@ def test_dedup_execute(setup):
     with pytest.raises(ValueError):
         dedup(df, col="text", min_length=1.5).execute().fetch()
 
-    # test error ngram
+    # test error ngrams
     with pytest.raises(ValueError):
-        dedup(df, col="text", ngram=1.5).execute().fetch()
+        dedup(df, col="text", ngrams=1.5).execute().fetch()
 
     # test error seed
     with pytest.raises(ValueError):
@@ -70,3 +77,7 @@ def test_dedup_execute(setup):
     # test error text column
     with pytest.raises(ValueError):
         dedup(df, col="non-exist").execute().fetch()
+
+    # test error method
+    with pytest.raises(ValueError):
+        dedup(df, col="text", method="non-exist").execute().fetch()
