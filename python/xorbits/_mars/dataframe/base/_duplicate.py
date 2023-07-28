@@ -310,6 +310,10 @@ class DuplicateOperand(MapReduceOperand, DataFrameOperandMixin):
                 # choose merge method
                 return default_tile(op, inp)
 
+            # check empty dtypes
+            if inp.ndim == 2 and inp.dtypes[op.subset].isnull().any():
+                yield
+
             # check subset data to see if it's small enough
             subset_dtypes = inp.dtypes[op.subset]
             memory_usage = 0.0

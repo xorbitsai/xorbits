@@ -2067,6 +2067,15 @@ def test_drop_duplicates(setup):
         expected = s.drop_duplicates()
         pd.testing.assert_series_equal(result, expected)
 
+        # test dataframe with unknown dtypes
+        raw = pd.DataFrame({"c1": range(100)})
+        df = from_pandas_df(raw, chunk_size=1)
+        df["c2"] = df["c1"].map(lambda x: x + 1.0, skip_infer=True)
+        result = df.drop_duplicates(subset="c2").execute().fetch()
+        raw["c2"] = raw["c1"].map(lambda x: x + 1.0)
+        expected = raw.drop_duplicates(subset="c2")
+        pd.testing.assert_frame_equal(result, expected)
+
 
 @pytest.mark.parametrize("method", ["tree", "shuffle"])
 def test_series_drop_duplicates(setup, method):
