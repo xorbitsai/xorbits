@@ -114,7 +114,7 @@ class DatasetData(HasShapeTileableData):
     def map(self, fn, **kwargs):
         raise NotImplementedError
 
-    def to_dataframe(self):
+    def to_dataframe(self, types_mapper=None):
         raise NotImplementedError
 
     def __getitem__(self, item):
@@ -171,10 +171,15 @@ class Dataset(HasShapeTileable):
         """
         return self.data.map(fn, **kwargs)
 
-    def to_dataframe(self):
+    def to_dataframe(self, types_mapper=None):
         """Convert the dataset to xorbits dataframe.
 
         The conversion will be chunk to chunk.
+
+        Parameters
+        ----------
+        types_mapper: Callable
+            The types mapper to pandas dataframe.
 
         Returns
         -------
@@ -185,7 +190,7 @@ class Dataset(HasShapeTileable):
         >>> ds = xdatasets.from_huggingface("rotten_tomatoes", split="train")
         >>> df = ds.to_dataframe()
         """
-        return self.data.to_dataframe()
+        return self.data.to_dataframe(types_mapper)
 
     def __getitem__(self, item: Union[int, slice, str]):
         """Get rows or columns from dataset.

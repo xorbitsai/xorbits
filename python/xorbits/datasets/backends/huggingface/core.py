@@ -102,8 +102,8 @@ class HuggingfaceDatasetData(DatasetData):
     def map(self, fn, **kwargs):
         return map(self, fn, **kwargs)
 
-    def to_dataframe(self):
-        return to_dataframe(self)
+    def to_dataframe(self, types_mapper=None):
+        return to_dataframe(self, types_mapper)
 
     def __getitem__(self, item: Union[int, slice, str]):
         return getitem(self, item)
