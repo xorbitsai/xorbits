@@ -773,7 +773,9 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
             result.extend(r[1])
         return result
     elif type(v) is dict:
+        # TODO(codingl2k1) : We should register a merge handler for each output type.
         result = {}
+        chunk_results = [(k, v) for k, v in chunk_results if v]
         if len(chunk_results) == 1:
             return chunk_results[0][1]
         for r in chunk_results:
