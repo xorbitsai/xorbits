@@ -17,6 +17,7 @@ import datasets
 import pandas as pd
 import pytest
 
+from ....._mars.tests.core import mock
 from ..core import from_huggingface
 
 SAMPLE_DATASET_IDENTIFIER = "lhoestq/test"  # has dataset script
@@ -49,6 +50,23 @@ def test_from_huggingface_execute(setup, path):
     assert ds.to_dict() == ds_expected.to_dict()
     # Trigger datasets issue: https://github.com/huggingface/datasets/issues/6066
     # assert str(ds) == str(ds_expected)
+
+
+def test_from_huggingface_file_lock(setup):
+    real_lock_init = datasets.utils.filelock.BaseFileLock.__init__
+
+    with mock.patch(
+        "datasets.utils.filelock.BaseFileLock.__init__",
+        autospec=True,
+        side_effect=real_lock_init,
+    ) as mock_lock:
+        xds = from_huggingface(SAMPLE_DATASET_IDENTIFIER3, split="train")
+        xds.execute()
+        xds.fetch()
+        assert mock_lock.call_count > 2
+        lock_files = [call_arg.args[1] for call_arg in mock_lock.call_args_list]
+        assert all(isinstance(f, str) for f in lock_files)
+        assert len(lock_files) == len(set(lock_files))
 
 
 @pytest.mark.parametrize(
