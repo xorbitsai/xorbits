@@ -94,7 +94,8 @@ class Base(Serializable):
         return self.copy()
 
     def copy(self):
-        return self.copy_to(type(self)(_key=self.key))
+        # return self.copy_to(type(self)(_key=self.key))
+        return self.copy_to(type(self)())
 
     def copy_to(self, target: "Base"):
         target_fields = target._FIELDS
