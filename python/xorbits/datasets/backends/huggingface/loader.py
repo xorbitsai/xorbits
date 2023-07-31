@@ -35,6 +35,7 @@ from .rechunk import rechunk
 class HuggingfaceLoader(DataOperand, DataOperandMixin):
     path = StringField("path")
     hf_kwargs = DictField("hf_kwargs")
+    cache_dir = StringField("cache_dir")
     single_data_file = StringField("single_data_file")
     data_files = ListField("data_files")
     auto_rechunk: bool = BoolField("auto_rechunk")
@@ -48,7 +49,7 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         builder_kwargs = self._get_kwargs(load_dataset_builder, self.hf_kwargs)
         builder = load_dataset_builder(self.path, **builder_kwargs)
         assert "cache_dir" in inspect.signature(load_dataset_builder).parameters
-        self.hf_kwargs["cache_dir"] = builder.cache_dir
+        self.cache_dir = builder.cache_dir
         data_files = builder.config.data_files
         # TODO(codingl2k1): support multiple splits
         split = self.hf_kwargs["split"]
@@ -98,7 +99,6 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
             ctx = get_context()
             # TODO(codingl2k1): make expect worker binding stable for cache reuse.
             all_bands = [b for b in ctx.get_worker_bands() if b[1].startswith("numa-")]
-            cache_dir = op.hf_kwargs["cache_dir"]
             for index, (f, band) in enumerate(
                 zip(data_files, itertools.cycle(all_bands))
             ):
@@ -111,16 +111,16 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
                 chunk_op.hf_kwargs = dict(
                     op.hf_kwargs,
                     cache_dir=os.path.join(
-                        cache_dir, f"part_{index}_{len(data_files)}"
+                        op.cache_dir, f"part_{index}_{len(data_files)}"
                     ),
                 )
+                chunk_op.cache_dir = None
                 c = chunk_op.new_chunk(inputs=[], index=(index, 0))
                 chunks.append(c)
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
-            # Use None chunk_dir if only one chunk.
-            chunk_op.hf_kwargs.pop("cache_dir")
+            chunk_op.cache_dir = None
             chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
             if op.auto_rechunk:
                 ctx = get_context()
