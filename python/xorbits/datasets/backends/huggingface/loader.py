@@ -119,6 +119,8 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
+            # Use None chunk_dir if only one chunk.
+            chunk_op.hf_kwargs.pop("cache_dir")
             chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
             if op.auto_rechunk:
                 ctx = get_context()
