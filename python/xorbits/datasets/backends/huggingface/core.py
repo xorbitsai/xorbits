@@ -44,6 +44,7 @@ from ...._mars.core.operand.objects import ObjectFetch
 from ...._mars.serialization.serializables import FieldTypes, ListField
 from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
+from .export import export
 from .getitem import getitem
 from .loader import load_huggingface_dataset
 from .map import map
@@ -104,6 +105,9 @@ class HuggingfaceDatasetData(DatasetData):
 
     def to_dataframe(self, types_mapper=None):
         return to_dataframe(self, types_mapper)
+
+    def export(self, path: str, storage_options: Optional[dict] = None):
+        return export(self, path, storage_options)
 
     def __getitem__(self, item: Union[int, slice, str]):
         return getitem(self, item)

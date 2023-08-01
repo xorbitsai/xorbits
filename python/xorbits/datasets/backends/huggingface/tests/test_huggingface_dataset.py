@@ -146,3 +146,9 @@ def test_getitem_execute(setup):
     assert a == {"text": []}
     a = xds[5:4]
     assert a == {"text": []}
+
+
+def test_export(setup):
+    db = from_huggingface("cifar10", split="train")
+    r = db.export("/Users/po/Work/xorbits/python/out")
+    print(r)

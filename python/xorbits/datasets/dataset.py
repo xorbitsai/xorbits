@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 import numpy as np
 
@@ -117,6 +117,9 @@ class DatasetData(HasShapeTileableData):
     def to_dataframe(self, types_mapper=None):
         raise NotImplementedError
 
+    def export(self, path: str, storage_options: Optional[dict] = None):
+        raise NotImplementedError
+
     def __getitem__(self, item):
         raise NotImplementedError
 
@@ -191,6 +194,9 @@ class Dataset(HasShapeTileable):
         >>> df = ds.to_dataframe()
         """
         return self.data.to_dataframe(types_mapper)
+
+    def export(self, path: str, storage_options: Optional[dict] = None):
+        return self.data.export(path, storage_options)
 
     def __getitem__(self, item: Union[int, slice, str]):
         """Get rows or columns from dataset.
