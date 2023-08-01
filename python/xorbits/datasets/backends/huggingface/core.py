@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, Mapping, Optional, Sequence, Union
+from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 try:
     # For type hint.
@@ -26,8 +26,6 @@ try:
         Version,
     )
 except ImportError:
-    from typing import Any
-
     DownloadConfig = Any
     DownloadMode = Any
     Features = Any
@@ -35,29 +33,68 @@ except ImportError:
     VerificationMode = Any
     Version = Any
 
+from ...._mars.core import is_build_mode
 from ...._mars.core.entity import (
     OutputType,
     register_fetch_class,
     register_output_types,
 )
+from ...._mars.core.entity.utils import refresh_tileable_shape
 from ...._mars.core.operand.objects import ObjectFetch
+from ...._mars.serialization.serializables import FieldTypes, ListField
 from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
+from .getitem import getitem
 from .loader import load_huggingface_dataset
 from .map import map
 from .rechunk import rechunk
 from .to_dataframe import to_dataframe
 
 
+class HuggingfaceDatasetChunkData(DatasetChunkData):
+    __slots__ = ()
+    type_name = "HuggingfaceDatasetChunkData"
+
+    @classmethod
+    def get_params_from_data(cls, data) -> Dict[str, Any]:
+        """For updating chunk shape from data."""
+        return {"shape": data.shape}
+
+
+class HuggingfaceDatasetChunk(DatasetChunk):
+    __slots__ = ()
+    _allow_data_type_ = (HuggingfaceDatasetChunkData,)
+    type_name = "HuggingfaceDatasetChunk"
+
+
 class HuggingfaceDatasetData(DatasetData):
     __slots__ = ()
     type_name = "Huggingface Dataset"
 
+    _chunks = ListField(
+        "chunks",
+        FieldTypes.reference(HuggingfaceDatasetChunk),
+        on_serialize=lambda x: [it.data for it in x] if x is not None else x,
+        on_deserialize=lambda x: [HuggingfaceDatasetChunk(it) for it in x]
+        if x is not None
+        else x,
+    )
+
     def __repr__(self):
-        try:
-            return f"Dataset({{\n    features: {self.dtypes.index.values.tolist()},\n    num_rows: {self.shape[0]}\n}})"
-        except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
+        if is_build_mode() or len(self._executed_sessions) == 0:
+            # in build mode, or not executed, just return representation
             return f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
+        else:
+            try:
+                return f"Dataset({{\n    features: {self.dtypes.index.values.tolist()},\n    num_rows: {self.shape[0]}\n}})"
+            except:  # noqa: E722  # nosec  # pylint: disable=bare-except  # pragma: no cover
+                return (
+                    f"Huggingface Dataset <op={type(self.op).__name__}, key={self.key}>"
+                )
+
+    def refresh_params(self):
+        refresh_tileable_shape(self)
+        # TODO(codingl2k1): update dtypes.
 
     def rechunk(self, num_chunks: int, **kwargs):
         return rechunk(self, num_chunks, **kwargs)
@@ -65,8 +102,11 @@ class HuggingfaceDatasetData(DatasetData):
     def map(self, fn, **kwargs):
         return map(self, fn, **kwargs)
 
-    def to_dataframe(self):
-        return to_dataframe(self)
+    def to_dataframe(self, types_mapper=None):
+        return to_dataframe(self, types_mapper)
+
+    def __getitem__(self, item: Union[int, slice, str]):
+        return getitem(self, item)
 
 
 class HuggingfaceDataset(Dataset):
@@ -81,7 +121,7 @@ class HuggingfaceDataset(Dataset):
 register_output_types(
     OutputType.huggingface_dataset,
     (HuggingfaceDataset, HuggingfaceDatasetData),
-    (DatasetChunk, DatasetChunkData),
+    (HuggingfaceDatasetChunk, HuggingfaceDatasetChunkData),
 )
 
 

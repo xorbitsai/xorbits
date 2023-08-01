@@ -13,17 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import itertools
-
 import numpy as np
 import pandas as pd
 
 from ...._mars.core.entity import OutputType
 from ...._mars.dataframe.utils import parse_index
+from ...._mars.serialization.serializables import AnyField
 from ...operand import DataOperand, DataOperandMixin
 
 
 class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
+    types_mapper = AnyField("types_mapper")
+
     def __call__(self, dataset):
         params = dataset.params.copy()
         # dtypes is None trigger auto execution.
@@ -34,10 +35,11 @@ class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
 
     @classmethod
     def tile(cls, op: "HuggingfaceToDataframe"):
-        all_chunks = itertools.chain(*(inp.chunks for inp in op.inputs))
-        chunks = []
+        assert len(op.inputs) == 1
+        inp = op.inputs[0]
         out = op.outputs[0]
-        for index, c in enumerate(all_chunks):
+        chunks = []
+        for index, c in enumerate(inp.chunks):
             chunk_op = op.copy().reset_key()
             new_c = chunk_op.new_chunk(
                 [c],
@@ -59,9 +61,30 @@ class HuggingfaceToDataframe(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: "HuggingfaceToDataframe"):
         ds = ctx[op.inputs[0].key]
         out = op.outputs[0]
-        df = ds.to_pandas()
+        if op.types_mapper is None:
+            df = ds.to_pandas()
+        else:
+            df = cls._to_pandas(ds, op.types_mapper)
         ctx[out.key] = df
 
+    @classmethod
+    def _to_pandas(cls, ds, types_mapper):
+        from datasets.features.features import pandas_types_mapper
+        from datasets.formatting import query_table
 
-def to_dataframe(dataset):
-    return HuggingfaceToDataframe(output_types=[OutputType.dataframe])(dataset)
+        def _types_mapper(_dtype):
+            mapped = pandas_types_mapper(_dtype)
+            if mapped is None:
+                return types_mapper(_dtype)
+
+        return query_table(
+            table=ds._data,
+            key=slice(0, len(ds)),
+            indices=ds._indices if ds._indices is not None else None,
+        ).to_pandas(types_mapper=_types_mapper)
+
+
+def to_dataframe(dataset, types_mapper=None):
+    return HuggingfaceToDataframe(
+        output_types=[OutputType.dataframe], types_mapper=types_mapper
+    )(dataset)
