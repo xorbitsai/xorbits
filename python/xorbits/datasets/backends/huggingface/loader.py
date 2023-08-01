@@ -25,7 +25,6 @@ from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
     BoolField,
     DictField,
-    Int32Field,
     ListField,
     StringField,
 )
@@ -36,8 +35,8 @@ from .rechunk import rechunk
 class HuggingfaceLoader(DataOperand, DataOperandMixin):
     path = StringField("path")
     hf_kwargs = DictField("hf_kwargs")
+    cache_dir = StringField("cache_dir")
     single_data_file = StringField("single_data_file")
-    num_chunks: int = Int32Field("num_chunks")
     data_files = ListField("data_files")
     auto_rechunk: bool = BoolField("auto_rechunk")
 
@@ -49,6 +48,8 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
 
         builder_kwargs = self._get_kwargs(load_dataset_builder, self.hf_kwargs)
         builder = load_dataset_builder(self.path, **builder_kwargs)
+        assert "cache_dir" in inspect.signature(load_dataset_builder).parameters
+        self.cache_dir = builder.cache_dir
         data_files = builder.config.data_files
         # TODO(codingl2k1): support multiple splits
         split = self.hf_kwargs["split"]
@@ -104,13 +105,22 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
                 chunk_op = op.copy().reset_key()
                 assert f, "Invalid data file from DatasetBuilder."
                 chunk_op.single_data_file = f
-                chunk_op.num_chunks = len(data_files)
                 chunk_op.expect_band = band
+                # The cache dir can't be shared, because there will be a file lock
+                # on the cache dir when initializing builder.
+                chunk_op.hf_kwargs = dict(
+                    op.hf_kwargs,
+                    cache_dir=os.path.join(
+                        op.cache_dir, f"part_{index}_{len(data_files)}"
+                    ),
+                )
+                chunk_op.cache_dir = None
                 c = chunk_op.new_chunk(inputs=[], index=(index, 0))
                 chunks.append(c)
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
+            chunk_op.cache_dir = None
             chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
             if op.auto_rechunk:
                 ctx = get_context()
@@ -142,26 +152,18 @@ class HuggingfaceLoader(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: "HuggingfaceLoader"):
         from datasets import DatasetBuilder, VerificationMode, load_dataset_builder
 
-        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
-
-        # TODO(codingl2k1): not sure if it's OK to share one cache dir among workers.
         # load_dataset_builder from every worker may be slow, but it's error to
         # deserialized a builder instance in a clean process / node, e.g. raise
         # ModuleNotFoundError: No module named 'datasets_modules'.
         #
         # Please refer to issue: https://github.com/huggingface/transformers/issues/11565
+        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
         builder = load_dataset_builder(op.path, **builder_kwargs)
         download_and_prepare_kwargs = cls._get_kwargs(
             DatasetBuilder.download_and_prepare, op.hf_kwargs
         )
 
         if op.single_data_file is not None:
-            chunk = op.outputs[0]
-            chunk_index = chunk.index[0]
-            output_dir = builder._output_dir
-            output_dir = output_dir if output_dir is not None else builder.cache_dir
-            output_dir = os.path.join(output_dir, f"part_{chunk_index}_{op.num_chunks}")
-            download_and_prepare_kwargs["output_dir"] = output_dir
             download_and_prepare_kwargs[
                 "verification_mode"
             ] = VerificationMode.NO_CHECKS
