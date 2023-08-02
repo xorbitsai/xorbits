@@ -26,3 +26,4 @@ Serialization / IO / conversion
    :toctree: generated/
 
    Dataset.to_dataframe
+   Dataset.export

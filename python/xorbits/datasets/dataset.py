@@ -213,27 +213,45 @@ class Dataset(HasShapeTileable):
         version: Optional[str] = None,
     ):
         """
-        Export the dataset to storage, e.g. local disk or S3, ...
+        Export the dataset to storage.
+
+        The storage can be local or remote, e.g. local disk or S3, ...
 
         Parameters
         ----------
         path: str
-            The export path, can be a local path or a remote url. Please refer to:
+            The export path, can be a local path or a remote url, lease refer to:
             `fsspec <https://filesystem-spec.readthedocs.io/en/latest/intro.html>`_
-        storage_options: (`dict`, *optional*)
+        storage_options: `dict`, *optional*
             Key/value pairs to be passed on to the caching file-system backend, if any.
         max_chunk_rows: int
-            Max rows per chunk file.
+            Max rows per chunk file, default is 100.
         column_groups: dict
             A dict of group name string to a list of column index or name.
         num_threads: int
             The thread concurrency on each chunk.
         version: str
-            The version string, default is 0.0.0
+            The version string, default is 0.0.0.
 
         Returns
         -------
             A dict of export info.
+        Examples
+        --------
+
+        Export to local disk.
+
+        >>> import xorbits.datasets as xdatasets
+        >>> ds = xdatasets.from_huggingface("cifar10", split="train")
+        >>> ds.export("./export_dir")
+
+        Export to remote storage.
+
+        >>> import xorbits.datasets as xdatasets
+        >>> storage_options = {"key": aws_access_key_id, "secret": aws_secret_access_key}
+        >>> ds = xdatasets.from_huggingface("cifar10", split="train")
+        >>> ds.export("./export_dir", storage_options=storage_options)
+
         """
         return self.data.export(
             path, storage_options, max_chunk_rows, column_groups, num_threads, version
