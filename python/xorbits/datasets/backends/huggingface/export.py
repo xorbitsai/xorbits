@@ -14,12 +14,14 @@
 # limitations under the License.
 
 import os
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Optional
 
 import fsspec
 import numpy as np
 import pyarrow as pa
+import pyarrow.compute as pc
 
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import DictField, Int32Field, StringField
@@ -166,7 +168,7 @@ class ArrowWriter:
         for name in column_groups.keys():
             self._fs.mkdirs(os.path.join(path, name), exist_ok=True)
 
-        num_files = num_bytes = num_rows = 0
+        info = defaultdict(list)
         futures = []
         with ThreadPoolExecutor(
             max_workers=max_threads, thread_name_prefix=ArrowWriter.__qualname__
@@ -177,7 +179,8 @@ class ArrowWriter:
                 )
             ):
                 pa_table = pa_table.combine_chunks()
-                num_rows += pa_table.num_rows
+                info["__index"].append(idx)
+                info["__chunk_index"].append(chunk_index)
                 for (name, columns), features in zip(
                     column_groups.items(), feature_groups
                 ):
@@ -187,8 +190,13 @@ class ArrowWriter:
                         prefix=name, chunk_index=chunk_index, index=idx
                     )
                     file = os.path.join(path, name, filename)
-                    num_files += 1
-                    num_bytes += pa_group_table.nbytes
+                    info[name].append(
+                        {
+                            "file": filename,
+                            "num_bytes": pa_group_table.nbytes,
+                            "num_rows": pa_table.num_rows,
+                        }
+                    )
                     futures.append(
                         executor.submit(
                             self._embed_and_write_table,
@@ -200,11 +208,9 @@ class ArrowWriter:
         # Raise exception if exists.
         for fut in as_completed(futures):
             fut.result()
-        return {
-            "num_files": [num_files],
-            "num_bytes": [num_bytes],
-            "num_rows": [num_rows],
-        }
+        # to_pandas() to walk-around issue: https://github.com/xorbitsai/xorbits/issues/638
+        meta = pa.Table.from_pydict(info).to_pandas()
+        return meta
 
 
 def export(
@@ -219,4 +225,16 @@ def export(
         storage_options=storage_options,
         max_chunk_rows=max_chunk_rows,
     )
-    return op(dataset).execute().fetch()
+    meta = op(dataset).execute().fetch()
+    meta = pa.Table.from_pandas(meta, preserve_index=False)
+    meta_flatten = meta.flatten()
+    # Generate info.
+    info = {}
+    for name in meta.column_names:
+        if not name.startswith("__"):
+            info[name] = {
+                "num_bytes": pc.sum(meta_flatten[f"{name}.num_bytes"]).as_py(),
+                "num_rows": pc.sum(meta_flatten[f"{name}.num_rows"]).as_py(),
+                "num_files": meta.num_rows,
+            }
+    return info
