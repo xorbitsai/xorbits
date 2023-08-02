@@ -103,7 +103,7 @@ class ArrowWriter:
             raise Exception(f"The path {path} should be a dir.")
         return cls(fs, path)
 
-    def _embed_and_write_table(self, file: str, pa_table: pa.Table, features):
+    def _embed_and_write_table(self, file: str, pa_table: pa.Table, features, info):
         """Write a Table to file.
 
         Args:
@@ -124,6 +124,8 @@ class ArrowWriter:
                     for name, feature in features.items()
                 ]
                 pa_table = pa.Table.from_arrays(arrays, schema=schema)
+                # Update embeded num_bytes
+                info["num_bytes"] = pa_table.nbytes
                 writer.write(pa_table)
 
     def _write_meta_by_table_column(
@@ -169,9 +171,7 @@ class ArrowWriter:
                 )
 
         # Raise exception if exists.
-
-        for fut in as_completed(futures):
-            fut.result()
+        return dict(zip(meta.column_names, (fut.result() for fut in futures)))
 
     def write(
         self,
@@ -203,8 +203,8 @@ class ArrowWriter:
             if data_columns:
                 column_groups[self._DATA_PREFIX] = data_columns
 
-        column_names = dataset.column_names
         feature_groups = []
+        column_names = dataset.column_names
         for name, columns in column_groups.items():
             features = {}
             for col in columns:
@@ -236,19 +236,19 @@ class ArrowWriter:
                         prefix=name, chunk_index=chunk_index, index=idx
                     )
                     file = os.path.join(path, name, filename)
-                    info[name].append(
-                        {
-                            "file": filename,
-                            "num_bytes": pa_group_table.nbytes,
-                            "num_rows": pa_table.num_rows,
-                        }
-                    )
+                    file_info = {
+                        "file": filename,
+                        "num_rows": pa_table.num_rows,
+                        "num_bytes": pa_group_table.nbytes,
+                    }
+                    info[name].append(file_info)
                     futures.append(
                         executor.submit(
                             self._embed_and_write_table,
                             file,
                             pa_group_table,
                             features,
+                            file_info,
                         )
                     )
         # Raise exception if exists.
@@ -273,14 +273,5 @@ def export(
     )
     meta = op(dataset).execute().fetch()
     meta = pa.Table.from_pandas(meta, preserve_index=False)
-    ArrowWriter.ensure_path(path, storage_options).write_meta(meta)
-    # Generate info.
-    meta_flatten = meta.flatten()
-    info = {}
-    for name in meta.column_names:
-        info[name] = {
-            "num_bytes": pc.sum(meta_flatten[f"{name}.num_bytes"]).as_py(),
-            "num_rows": pc.sum(meta_flatten[f"{name}.num_rows"]).as_py(),
-            "num_files": meta.num_rows,
-        }
+    info = ArrowWriter.ensure_path(path, storage_options).write_meta(meta)
     return info
