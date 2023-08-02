@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 import os
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -69,6 +69,7 @@ class ArrowWriter:
     _WRITER_CLASS = pa.RecordBatchStreamWriter
     _DEFAULT_VERSION = "0.0.0"
     _DEFAULT_MAX_CHUNK_ROWS = 100
+    _META_DIR = ".meta"
     _MULTIMEDIA_PREFIX = "mdata"
     _DATA_PREFIX = "data"
     _FILE_NAME_FORMATTER = "{prefix}_{chunk_index}_{index}.arrow"
@@ -125,31 +126,50 @@ class ArrowWriter:
                 pa_table = pa.Table.from_arrays(arrays, schema=schema)
                 writer.write(pa_table)
 
-    def _write_table_flatten_column(self, file: str, pa_table: pa.Table, column: str):
+    def _write_meta_by_table_column(
+        self, meta_path: str, pa_table: pa.Table, column: str
+    ):
+        self._fs.mkdirs(meta_path, exist_ok=True)
         pa_table = pa_table.select([column]).flatten()
-        with self._fs.open(file, "wb") as stream:
+        index_file = os.path.join(meta_path, "index.arrow")
+        with self._fs.open(index_file, "wb") as stream:
             with self._WRITER_CLASS(stream, pa_table.schema) as writer:
                 writer.write(pa_table)
+        info = {
+            "num_bytes": pc.sum(pa_table[f"{column}.num_bytes"]).as_py(),
+            "num_rows": pc.sum(pa_table[f"{column}.num_rows"]).as_py(),
+            "num_files": pa_table.num_rows,
+        }
+        info_file = os.path.join(meta_path, "info.json")
+        with self._fs.open(info_file, "w") as f:
+            json.dump(info, f)
+        return info
 
-    def write_index(
+    def write_meta(
         self,
         meta: pa.Table,
-        version: Optional[str] = None,
         num_threads: Optional[int] = None,
+        version: Optional[str] = None,
     ):
         path = os.path.join(self._path, version or self._DEFAULT_VERSION)
 
         futures = []
         with ThreadPoolExecutor(
-            max_workers=num_threads, thread_name_prefix=self.write_index.__qualname__
+            max_workers=num_threads, thread_name_prefix=self.write_meta.__qualname__
         ) as executor:
-            for col in meta.column_names:
-                file = os.path.join(path, col, "index.arrow")
+            for name in meta.column_names:
+                meta_path = os.path.join(path, name, self._META_DIR)
                 futures.append(
-                    executor.submit(self._write_table_flatten_column, file, meta, col)
+                    executor.submit(
+                        self._write_meta_by_table_column,
+                        meta_path,
+                        meta,
+                        name,
+                    )
                 )
 
         # Raise exception if exists.
+
         for fut in as_completed(futures):
             fut.result()
 
@@ -159,8 +179,8 @@ class ArrowWriter:
         chunk_index: int,
         max_chunk_rows: Optional[int] = None,
         column_groups: Optional[dict] = None,
-        version: Optional[str] = None,
         num_threads: Optional[int] = None,
+        version: Optional[str] = None,
     ):
         from datasets import Dataset
         from datasets.features.audio import Audio
@@ -253,7 +273,7 @@ def export(
     )
     meta = op(dataset).execute().fetch()
     meta = pa.Table.from_pandas(meta, preserve_index=False)
-    ArrowWriter.ensure_path(path, storage_options).write_index(meta)
+    ArrowWriter.ensure_path(path, storage_options).write_meta(meta)
     # Generate info.
     meta_flatten = meta.flatten()
     info = {}
