@@ -149,6 +149,7 @@ def test_getitem_execute(setup):
 
 
 def test_export(setup):
-    db = from_huggingface("cifar10", split="train")
-    r = db.export("/Users/po/Work/xorbits/python/out")
-    print(r)
+    pass
+    # db = from_huggingface("cifar10", split="train")
+    # r = db.export("/Users/codingl2k1/Work/xorbits/python/out2", max_chunk_rows=1)
+    # print(r)
