@@ -117,7 +117,15 @@ class DatasetData(HasShapeTileableData):
     def to_dataframe(self, types_mapper=None):
         raise NotImplementedError
 
-    def export(self, path: str, storage_options: Optional[dict] = None):
+    def export(
+        self,
+        path: str,
+        storage_options: Optional[dict] = None,
+        max_chunk_rows: Optional[int] = None,
+        column_groups: Optional[dict] = None,
+        num_threads: Optional[int] = None,
+        version: Optional[str] = None,
+    ):
         raise NotImplementedError
 
     def __getitem__(self, item):
@@ -195,8 +203,41 @@ class Dataset(HasShapeTileable):
         """
         return self.data.to_dataframe(types_mapper)
 
-    def export(self, path: str, storage_options: Optional[dict] = None):
-        return self.data.export(path, storage_options)
+    def export(
+        self,
+        path: str,
+        storage_options: Optional[dict] = None,
+        max_chunk_rows: Optional[int] = None,
+        column_groups: Optional[dict] = None,
+        num_threads: Optional[int] = None,
+        version: Optional[str] = None,
+    ):
+        """
+        Export the dataset to storage, e.g. local disk or S3, ...
+
+        Parameters
+        ----------
+        path: str
+            The export path, can be a local path or a remote url. Please refer to:
+            `fsspec <https://filesystem-spec.readthedocs.io/en/latest/intro.html>`_
+        storage_options: (`dict`, *optional*)
+            Key/value pairs to be passed on to the caching file-system backend, if any.
+        max_chunk_rows: int
+            Max rows per chunk file.
+        column_groups: dict
+            A dict of group name string to a list of column index or name.
+        num_threads: int
+            The thread concurrency on each chunk.
+        version: str
+            The version string, default is 0.0.0
+
+        Returns
+        -------
+            A dict of export info.
+        """
+        return self.data.export(
+            path, storage_options, max_chunk_rows, column_groups, num_threads, version
+        )
 
     def __getitem__(self, item: Union[int, slice, str]):
         """Get rows or columns from dataset.

@@ -12,12 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import dataclasses
 import json
 import os
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Optional
 
+import cloudpickle
 import fsspec
 import numpy as np
 import pyarrow as pa
@@ -31,8 +34,10 @@ from ...operand import DataOperand, DataOperandMixin
 class HuggingfaceExport(DataOperand, DataOperandMixin):
     path: str = StringField("path")
     storage_options: Dict = DictField("storage_options")
-    version: str = StringField("version")
     max_chunk_rows: int = Int32Field("max_chunk_rows")
+    column_groups: dict = DictField("column_groups")
+    num_threads: int = Int32Field("num_threads")
+    version: str = StringField("version")
 
     def __call__(self, dataset):
         ArrowWriter.ensure_path(self.path, self.storage_options)
@@ -60,9 +65,20 @@ class HuggingfaceExport(DataOperand, DataOperandMixin):
         inp = ctx[op.inputs[0].key]
         out = op.outputs[0]
         r = ArrowWriter.ensure_path(op.path, op.storage_options).write(
-            dataset=inp, max_chunk_rows=op.max_chunk_rows, chunk_index=out.index[0]
+            dataset=inp,
+            chunk_index=out.index[0],
+            max_chunk_rows=op.max_chunk_rows,
+            column_groups=op.column_groups,
+            num_threads=op.num_threads,
+            version=op.version,
         )
         ctx[out.key] = r
+
+
+@dataclasses.dataclass
+class SchemaInfo:
+    schema: pa.Schema
+    column_groups: Dict
 
 
 class ArrowWriter:
@@ -128,23 +144,30 @@ class ArrowWriter:
                 info["num_bytes"] = pa_table.nbytes
                 writer.write(pa_table)
 
-    def _write_meta_by_table_column(
-        self, meta_path: str, pa_table: pa.Table, column: str
+    def _write_group_meta(
+        self, meta_path: str, pa_table: pa.Table, name: str, schema_info: SchemaInfo
     ):
         self._fs.mkdirs(meta_path, exist_ok=True)
-        pa_table = pa_table.select([column]).flatten()
+        pa_table = pa_table.select([name]).flatten()
         index_file = os.path.join(meta_path, "index.arrow")
         with self._fs.open(index_file, "wb") as stream:
             with self._WRITER_CLASS(stream, pa_table.schema) as writer:
                 writer.write(pa_table)
         info = {
-            "num_bytes": pc.sum(pa_table[f"{column}.num_bytes"]).as_py(),
-            "num_rows": pc.sum(pa_table[f"{column}.num_rows"]).as_py(),
+            "num_bytes": pc.sum(pa_table[f"{name}.num_bytes"]).as_py(),
+            "num_rows": pc.sum(pa_table[f"{name}.num_rows"]).as_py(),
             "num_files": pa_table.num_rows,
         }
         info_file = os.path.join(meta_path, "info.json")
         with self._fs.open(info_file, "w") as f:
             json.dump(info, f)
+        schema_file = os.path.join(meta_path, "schema.arrow")
+        schema_table = schema_info.schema.empty_table().select(
+            schema_info.column_groups[name]
+        )
+        with self._fs.open(schema_file, "wb") as stream:
+            with self._WRITER_CLASS(stream, schema_table.schema) as writer:
+                writer.write(schema_table)
         return info
 
     def write_meta(
@@ -155,6 +178,9 @@ class ArrowWriter:
     ):
         path = os.path.join(self._path, version or self._DEFAULT_VERSION)
 
+        schema_info = cloudpickle.loads(meta["__schema_info"][0].as_py())
+        meta = meta.drop_columns("__schema_info")
+
         futures = []
         with ThreadPoolExecutor(
             max_workers=num_threads, thread_name_prefix=self.write_meta.__qualname__
@@ -163,12 +189,18 @@ class ArrowWriter:
                 meta_path = os.path.join(path, name, self._META_DIR)
                 futures.append(
                     executor.submit(
-                        self._write_meta_by_table_column,
+                        self._write_group_meta,
                         meta_path,
                         meta,
                         name,
+                        schema_info,
                     )
                 )
+
+        info = {"groups": meta.column_names}
+        info_file = os.path.join(path, "info.json")
+        with self._fs.open(info_file, "w") as f:
+            json.dump(info, f)
 
         # Raise exception if exists.
         return dict(zip(meta.column_names, (fut.result() for fut in futures)))
@@ -216,6 +248,7 @@ class ArrowWriter:
         for name in column_groups.keys():
             self._fs.mkdirs(os.path.join(path, name), exist_ok=True)
 
+        schema_info = None
         info = defaultdict(list)
         futures = []
         with ThreadPoolExecutor(
@@ -226,6 +259,8 @@ class ArrowWriter:
                     max_chunk_rows or self._DEFAULT_MAX_CHUNK_ROWS
                 )
             ):
+                if chunk_index == 0 and idx == 0:
+                    schema_info = SchemaInfo(pa_table.schema, column_groups)
                 pa_table = pa_table.combine_chunks()
                 for (name, columns), features in zip(
                     column_groups.items(), feature_groups
@@ -254,6 +289,10 @@ class ArrowWriter:
         # Raise exception if exists.
         for fut in as_completed(futures):
             fut.result()
+        # to_pandas() then from_pandas() will lose metadata, so we add a special column.
+        info["__schema_info"] = [None] * len(next(iter(info.values())))
+        if schema_info is not None:
+            info["__schema_info"][0] = cloudpickle.dumps(schema_info)
         # to_pandas() to walk-around issue: https://github.com/xorbitsai/xorbits/issues/638
         meta = pa.Table.from_pydict(info).to_pandas()
         return meta
@@ -264,12 +303,18 @@ def export(
     path: str,
     storage_options: Optional[dict] = None,
     max_chunk_rows: Optional[int] = None,
+    column_groups: Optional[dict] = None,
+    num_threads: Optional[int] = None,
+    version: Optional[str] = None,
 ):
     op = HuggingfaceExport(
         output_types=[OutputType.object],
         path=path,
         storage_options=storage_options,
         max_chunk_rows=max_chunk_rows,
+        column_groups=column_groups,
+        num_threads=num_threads,
+        version=version,
     )
     meta = op(dataset).execute().fetch()
     meta = pa.Table.from_pandas(meta, preserve_index=False)

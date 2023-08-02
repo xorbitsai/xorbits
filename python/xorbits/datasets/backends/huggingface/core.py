@@ -106,8 +106,24 @@ class HuggingfaceDatasetData(DatasetData):
     def to_dataframe(self, types_mapper=None):
         return to_dataframe(self, types_mapper)
 
-    def export(self, path: str, storage_options: Optional[dict] = None):
-        return export(self, path, storage_options)
+    def export(
+        self,
+        path: str,
+        storage_options: Optional[dict] = None,
+        max_chunk_rows: Optional[int] = None,
+        column_groups: Optional[dict] = None,
+        num_threads: Optional[int] = None,
+        version: Optional[str] = None,
+    ):
+        return export(
+            self,
+            path,
+            storage_options,
+            max_chunk_rows,
+            column_groups,
+            num_threads,
+            version,
+        )
 
     def __getitem__(self, item: Union[int, slice, str]):
         return getitem(self, item)
