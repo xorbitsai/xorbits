@@ -125,14 +125,42 @@ class ArrowWriter:
                 pa_table = pa.Table.from_arrays(arrays, schema=schema)
                 writer.write(pa_table)
 
+    def _write_table_flatten_column(self, file: str, pa_table: pa.Table, column: str):
+        pa_table = pa_table.select([column]).flatten()
+        with self._fs.open(file, "wb") as stream:
+            with self._WRITER_CLASS(stream, pa_table.schema) as writer:
+                writer.write(pa_table)
+
+    def write_index(
+        self,
+        meta: pa.Table,
+        version: Optional[str] = None,
+        num_threads: Optional[int] = None,
+    ):
+        path = os.path.join(self._path, version or self._DEFAULT_VERSION)
+
+        futures = []
+        with ThreadPoolExecutor(
+            max_workers=num_threads, thread_name_prefix=self.write_index.__qualname__
+        ) as executor:
+            for col in meta.column_names:
+                file = os.path.join(path, col, "index.arrow")
+                futures.append(
+                    executor.submit(self._write_table_flatten_column, file, meta, col)
+                )
+
+        # Raise exception if exists.
+        for fut in as_completed(futures):
+            fut.result()
+
     def write(
         self,
         dataset,
         chunk_index: int,
         max_chunk_rows: Optional[int] = None,
-        version: Optional[str] = None,
         column_groups: Optional[dict] = None,
-        max_threads: Optional[int] = None,
+        version: Optional[str] = None,
+        num_threads: Optional[int] = None,
     ):
         from datasets import Dataset
         from datasets.features.audio import Audio
@@ -171,7 +199,7 @@ class ArrowWriter:
         info = defaultdict(list)
         futures = []
         with ThreadPoolExecutor(
-            max_workers=max_threads, thread_name_prefix=ArrowWriter.__qualname__
+            max_workers=num_threads, thread_name_prefix=self.write.__qualname__
         ) as executor:
             for idx, pa_table in enumerate(
                 dataset.with_format("arrow").iter(
@@ -179,8 +207,6 @@ class ArrowWriter:
                 )
             ):
                 pa_table = pa_table.combine_chunks()
-                info["__index"].append(idx)
-                info["__chunk_index"].append(chunk_index)
                 for (name, columns), features in zip(
                     column_groups.items(), feature_groups
                 ):
@@ -227,14 +253,14 @@ def export(
     )
     meta = op(dataset).execute().fetch()
     meta = pa.Table.from_pandas(meta, preserve_index=False)
-    meta_flatten = meta.flatten()
+    ArrowWriter.ensure_path(path, storage_options).write_index(meta)
     # Generate info.
+    meta_flatten = meta.flatten()
     info = {}
     for name in meta.column_names:
-        if not name.startswith("__"):
-            info[name] = {
-                "num_bytes": pc.sum(meta_flatten[f"{name}.num_bytes"]).as_py(),
-                "num_rows": pc.sum(meta_flatten[f"{name}.num_rows"]).as_py(),
-                "num_files": meta.num_rows,
-            }
+        info[name] = {
+            "num_bytes": pc.sum(meta_flatten[f"{name}.num_bytes"]).as_py(),
+            "num_rows": pc.sum(meta_flatten[f"{name}.num_rows"]).as_py(),
+            "num_files": meta.num_rows,
+        }
     return info
