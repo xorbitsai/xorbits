@@ -58,7 +58,7 @@ class HuggingfaceExport(DataOperand, DataOperandMixin):
         inp = ctx[op.inputs[0].key]
         out = op.outputs[0]
         r = ArrowWriter.ensure_path(op.path, op.storage_options).write(
-            inp, op.max_chunk_rows
+            dataset=inp, max_chunk_rows=op.max_chunk_rows, chunk_index=out.index[0]
         )
         ctx[out.key] = r
 
@@ -69,7 +69,7 @@ class ArrowWriter:
     _DEFAULT_MAX_CHUNK_ROWS = 100
     _MULTIMEDIA_PREFIX = "mdata"
     _DATA_PREFIX = "data"
-    _FILE_NAME_FORMATTER = "{prefix}_{index}.arrow"
+    _FILE_NAME_FORMATTER = "{prefix}_{chunk_index}_{index}.arrow"
 
     def __init__(
         self,
@@ -110,6 +110,8 @@ class ArrowWriter:
         from datasets.table import embed_array_storage
 
         with self._fs.open(file, "wb") as stream:
+            # TODO(codingl2k1): embed uid to table to check the different parts
+            # of data are matched.
             schema = pa_table.schema.remove_metadata()
             with self._WRITER_CLASS(stream, schema) as writer:
                 arrays = [
@@ -124,6 +126,7 @@ class ArrowWriter:
     def write(
         self,
         dataset,
+        chunk_index: int,
         max_chunk_rows: Optional[int] = None,
         version: Optional[str] = None,
         column_groups: Optional[dict] = None,
@@ -159,8 +162,9 @@ class ArrowWriter:
                 features[col_name] = dataset.features[col_name]
             feature_groups.append(features)
 
-        data_path = os.path.join(self._path, version or self._DEFAULT_VERSION, "data")
-        self._fs.mkdirs(data_path, exist_ok=True)
+        path = os.path.join(self._path, version or self._DEFAULT_VERSION)
+        for name in column_groups.keys():
+            self._fs.mkdirs(os.path.join(path, name), exist_ok=True)
 
         num_files = num_bytes = num_rows = 0
         futures = []
@@ -179,8 +183,10 @@ class ArrowWriter:
                 ):
                     pa_group_table = pa_table.select(columns)
                     # The schema is not changed, don't need to table_cast.
-                    filename = self._FILE_NAME_FORMATTER.format(prefix=name, index=idx)
-                    file = os.path.join(data_path, filename)
+                    filename = self._FILE_NAME_FORMATTER.format(
+                        prefix=name, chunk_index=chunk_index, index=idx
+                    )
+                    file = os.path.join(path, name, filename)
                     num_files += 1
                     num_bytes += pa_group_table.nbytes
                     futures.append(
@@ -191,6 +197,7 @@ class ArrowWriter:
                             features,
                         )
                     )
+        # Raise exception if exists.
         for fut in as_completed(futures):
             fut.result()
         return {
