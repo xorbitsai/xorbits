@@ -16,6 +16,7 @@
 import dataclasses
 import json
 import os
+from queue import Queue
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Optional
@@ -145,22 +146,30 @@ class ArrowWriter:
                 writer.write(pa_table)
 
     def _write_group_meta(
-        self, meta_path: str, pa_table: pa.Table, name: str, schema_info: SchemaInfo
+        self,
+        q: Queue,
+        meta_path: str,
+        pa_table: pa.Table,
+        name: str,
+        schema_info: SchemaInfo,
     ):
         self._fs.mkdirs(meta_path, exist_ok=True)
         pa_table = pa_table.select([name]).flatten()
-        index_file = os.path.join(meta_path, "index.arrow")
-        with self._fs.open(index_file, "wb") as stream:
-            with self._WRITER_CLASS(stream, pa_table.schema) as writer:
-                writer.write(pa_table)
         info = {
             "num_bytes": pc.sum(pa_table[f"{name}.num_bytes"]).as_py(),
             "num_rows": pc.sum(pa_table[f"{name}.num_rows"]).as_py(),
             "num_files": pa_table.num_rows,
         }
+        q.put(info)
         info_file = os.path.join(meta_path, "info.json")
         with self._fs.open(info_file, "w") as f:
             json.dump(info, f)
+        # Write index arrow table.
+        index_file = os.path.join(meta_path, "index.arrow")
+        with self._fs.open(index_file, "wb") as stream:
+            with self._WRITER_CLASS(stream, pa_table.schema) as writer:
+                writer.write(pa_table)
+        # Write schema empty table.
         schema_file = os.path.join(meta_path, "schema.arrow")
         schema_table = schema_info.schema.empty_table().select(
             schema_info.column_groups[name]
@@ -185,11 +194,14 @@ class ArrowWriter:
         with ThreadPoolExecutor(
             max_workers=num_threads, thread_name_prefix=self.write_meta.__qualname__
         ) as executor:
+            q = Queue()
+
             for name in meta.column_names:
                 meta_path = os.path.join(path, name, self._META_DIR)
                 futures.append(
                     executor.submit(
                         self._write_group_meta,
+                        q,
                         meta_path,
                         meta,
                         name,
@@ -197,10 +209,11 @@ class ArrowWriter:
                     )
                 )
 
-        info = {"groups": meta.column_names}
-        info_file = os.path.join(path, "info.json")
-        with self._fs.open(info_file, "w") as f:
-            json.dump(info, f)
+            group_info = q.get()
+            info = {"groups": meta.column_names, "num_rows": group_info["num_rows"]}
+            info_file = os.path.join(path, "info.json")
+            with self._fs.open(info_file, "w") as f:
+                json.dump(info, f)
 
         # Raise exception if exists.
         return dict(zip(meta.column_names, (fut.result() for fut in futures)))
@@ -286,9 +299,9 @@ class ArrowWriter:
                             file_info,
                         )
                     )
-        # Raise exception if exists.
-        for fut in as_completed(futures):
-            fut.result()
+            # Raise exception if exists.
+            for fut in as_completed(futures):
+                fut.result()
         # to_pandas() then from_pandas() will lose metadata, so we add a special column.
         info["__schema_info"] = [None] * len(next(iter(info.values())))
         if schema_info is not None:
