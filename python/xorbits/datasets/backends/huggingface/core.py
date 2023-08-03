@@ -109,7 +109,7 @@ class HuggingfaceDatasetData(DatasetData):
 
     def export(
         self,
-        path: Union[str, bytes, os.PathLike],
+        path: Union[str, os.PathLike],
         storage_options: Optional[dict] = None,
         create_if_not_exists: Optional[bool] = True,
         max_chunk_rows: Optional[int] = None,

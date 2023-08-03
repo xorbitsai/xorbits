@@ -19,7 +19,7 @@ import os
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from queue import Queue
-from typing import Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import cloudpickle
 import fsspec
@@ -93,7 +93,7 @@ class ArrowWriter:
     def __init__(
         self,
         fs: fsspec.AbstractFileSystem,
-        path: str,
+        path: Union[str, os.PathLike],
     ):
         self._fs = fs
         self._path = path
@@ -101,7 +101,7 @@ class ArrowWriter:
     @classmethod
     def ensure_path(
         cls,
-        path: Union[str, bytes, os.PathLike],
+        path: Union[str, os.PathLike],
         storage_options: Optional[dict] = None,
         create_if_not_exists: Optional[bool] = True,
     ):
@@ -203,7 +203,7 @@ class ArrowWriter:
         with ThreadPoolExecutor(
             max_workers=num_threads, thread_name_prefix=self.write_meta.__qualname__
         ) as executor:
-            q = Queue()
+            q: Queue = Queue()
 
             for name in meta.column_names:
                 meta_path = os.path.join(version_path, name, self._META_DIR)
@@ -271,7 +271,7 @@ class ArrowWriter:
             self._fs.mkdirs(os.path.join(version_path, name), exist_ok=True)
 
         schema_info = None
-        info = defaultdict(list)
+        info: Dict[str, List[Any]] = defaultdict(list)
         futures = []
         with ThreadPoolExecutor(
             max_workers=num_threads, thread_name_prefix=self.write.__qualname__
@@ -322,7 +322,7 @@ class ArrowWriter:
 
 def export(
     dataset,
-    path: Union[str, bytes, os.PathLike],
+    path: Union[str, os.PathLike],
     storage_options: Optional[dict] = None,
     create_if_not_exists: Optional[bool] = True,
     max_chunk_rows: Optional[int] = None,
