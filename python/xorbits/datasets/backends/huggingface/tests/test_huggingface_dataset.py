@@ -180,6 +180,7 @@ def test_export(setup):
         with open(data_dir.joinpath(".meta", "info.json"), "r") as f:
             data_meta_info = json.load(f)
         data_arrow_files = glob.glob(data_dir.joinpath("*.arrow").as_posix())
+        assert len(data_arrow_files) == 50000 / 100
         assert len(data_arrow_files) == data_meta_info["num_files"]
         assert info["num_rows"] == data_meta_info["num_rows"]
     finally:

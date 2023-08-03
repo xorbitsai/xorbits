@@ -151,7 +151,7 @@ class ArrowWriter:
                     for name, feature in features.items()
                 ]
                 pa_table = pa.Table.from_arrays(arrays, schema=schema)
-                # Update embeded num_bytes
+                # Update embedded table nbytes to num_bytes
                 info["num_bytes"] = pa_table.nbytes
                 writer.write(pa_table)
 
@@ -244,6 +244,7 @@ class ArrowWriter:
 
         if column_groups is None:
             # Auto split columns to multimedia and data groups.
+            # TODO(codingl2k1): Should we always split dataset?
             multimedia_columns = []
             data_columns = []
             for idx, ft in enumerate(dataset.features.values()):
@@ -312,6 +313,8 @@ class ArrowWriter:
             for fut in as_completed(futures):
                 fut.result()
         # to_pandas() then from_pandas() will lose metadata, so we add a special column.
+        # TODO(codingl2k1) Move schema info to the metadata of mata table if xorbits
+        # supports put pyarrow table.
         info["__schema_info"] = [None] * len(next(iter(info.values())))
         if schema_info is not None:
             info["__schema_info"][0] = cloudpickle.dumps(schema_info)
