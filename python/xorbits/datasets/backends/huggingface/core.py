@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 try:
@@ -108,21 +109,25 @@ class HuggingfaceDatasetData(DatasetData):
 
     def export(
         self,
-        path: str,
+        path: Union[str, bytes, os.PathLike],
         storage_options: Optional[dict] = None,
+        create_if_not_exists: Optional[bool] = True,
         max_chunk_rows: Optional[int] = None,
         column_groups: Optional[dict] = None,
         num_threads: Optional[int] = None,
         version: Optional[str] = None,
+        overwrite: Optional[bool] = True,
     ):
         return export(
             self,
             path,
             storage_options,
+            create_if_not_exists,
             max_chunk_rows,
             column_groups,
             num_threads,
             version,
+            overwrite,
         )
 
     def __getitem__(self, item: Union[int, slice, str]):

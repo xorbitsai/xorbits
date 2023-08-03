@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from typing import Any, Callable, Dict, Optional, Union
 
 import numpy as np
@@ -119,12 +120,14 @@ class DatasetData(HasShapeTileableData):
 
     def export(
         self,
-        path: str,
+        path: Union[str, bytes, os.PathLike],
         storage_options: Optional[dict] = None,
+        create_if_not_exists: Optional[bool] = True,
         max_chunk_rows: Optional[int] = None,
         column_groups: Optional[dict] = None,
         num_threads: Optional[int] = None,
         version: Optional[str] = None,
+        overwrite: Optional[bool] = True,
     ):
         raise NotImplementedError
 
@@ -205,12 +208,14 @@ class Dataset(HasShapeTileable):
 
     def export(
         self,
-        path: str,
+        path: Union[str, bytes, os.PathLike],
         storage_options: Optional[dict] = None,
+        create_if_not_exists: Optional[bool] = True,
         max_chunk_rows: Optional[int] = None,
         column_groups: Optional[dict] = None,
         num_threads: Optional[int] = None,
         version: Optional[str] = None,
+        overwrite: Optional[bool] = True,
     ):
         """
         Export the dataset to storage.
@@ -224,6 +229,8 @@ class Dataset(HasShapeTileable):
             `fsspec <https://filesystem-spec.readthedocs.io/en/latest/intro.html>`_
         storage_options: `dict`, *optional*
             Key/value pairs to be passed on to the caching file-system backend, if any.
+        create_if_not_exists: bool
+            Whether to create the path if it does not exist.
         max_chunk_rows: int
             Max rows per chunk file, default is 100.
         column_groups: dict
@@ -232,6 +239,8 @@ class Dataset(HasShapeTileable):
             The thread concurrency on each chunk.
         version: str
             The version string, default is 0.0.0.
+        overwrite: bool
+            Whether overwrites the dataset version.
 
         Returns
         -------
@@ -254,7 +263,14 @@ class Dataset(HasShapeTileable):
 
         """
         return self.data.export(
-            path, storage_options, max_chunk_rows, column_groups, num_threads, version
+            path,
+            storage_options,
+            create_if_not_exists,
+            max_chunk_rows,
+            column_groups,
+            num_threads,
+            version,
+            overwrite,
         )
 
     def __getitem__(self, item: Union[int, slice, str]):

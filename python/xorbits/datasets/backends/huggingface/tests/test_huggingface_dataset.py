@@ -12,6 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import glob
+import json
+import os
+import shutil
+import tempfile
+from pathlib import Path
 
 import datasets
 import pandas as pd
@@ -149,7 +155,32 @@ def test_getitem_execute(setup):
 
 
 def test_export(setup):
-    pass
-    # db = from_huggingface("cifar10", split="train")
-    # r = db.export("/Users/codingl2k1/Work/xorbits/python/out2", max_chunk_rows=1)
-    # print(r)
+    tmp_dir = Path(tempfile.gettempdir())
+    export_dir = tmp_dir.joinpath("test_export")
+    shutil.rmtree(export_dir, ignore_errors=True)
+    db = from_huggingface("cifar10", split="train")
+    # Test invalid export dir
+    Path(export_dir).touch()
+    with pytest.raises(Exception, match="dir"):
+        db.export(export_dir)
+    os.remove(export_dir)
+    # Test check version
+    version_dir = export_dir.joinpath("0.0.0")
+    os.makedirs(version_dir, exist_ok=True)
+    with pytest.raises(Exception, match="exist"):
+        db.export(export_dir, overwrite=False)
+    # Test export
+    shutil.rmtree(export_dir)
+    try:
+        db.export(export_dir, max_chunk_rows=100, create_if_not_exists=True)
+        with open(version_dir.joinpath("info.json"), "r") as f:
+            info = json.load(f)
+            assert info["num_rows"] == 50000
+        data_dir = version_dir.joinpath("data")
+        with open(data_dir.joinpath(".meta", "info.json"), "r") as f:
+            data_meta_info = json.load(f)
+        data_arrow_files = glob.glob(data_dir.joinpath("*.arrow").as_posix())
+        assert len(data_arrow_files) == data_meta_info["num_files"]
+        assert info["num_rows"] == data_meta_info["num_rows"]
+    finally:
+        shutil.rmtree(export_dir)

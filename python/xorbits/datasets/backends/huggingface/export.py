@@ -16,10 +16,10 @@
 import dataclasses
 import json
 import os
-from queue import Queue
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, Optional
+from queue import Queue
+from typing import Dict, Optional, Union
 
 import cloudpickle
 import fsspec
@@ -41,7 +41,6 @@ class HuggingfaceExport(DataOperand, DataOperandMixin):
     version: str = StringField("version")
 
     def __call__(self, dataset):
-        ArrowWriter.ensure_path(self.path, self.storage_options)
         return self.new_tileable([dataset], **dataset.params)
 
     @classmethod
@@ -102,9 +101,9 @@ class ArrowWriter:
     @classmethod
     def ensure_path(
         cls,
-        path: str,
+        path: Union[str, bytes, os.PathLike],
         storage_options: Optional[dict] = None,
-        create_if_not_exists: bool = True,
+        create_if_not_exists: Optional[bool] = True,
     ):
         fs_token_paths = fsspec.get_fs_token_paths(
             path, storage_options=storage_options
@@ -119,6 +118,17 @@ class ArrowWriter:
         elif not fs.isdir(path):
             raise Exception(f"The path {path} should be a dir.")
         return cls(fs, path)
+
+    def check_version(
+        self, version: Optional[str] = None, overwrite: Optional[bool] = True
+    ):
+        version = version or self._DEFAULT_VERSION
+        version_path = os.path.join(self._path, version)
+        if self._fs.exists(version_path):
+            if overwrite:
+                self._fs.rmdir(version_path)
+            else:
+                raise Exception(f"The version {version_path} already exists.")
 
     def _embed_and_write_table(self, file: str, pa_table: pa.Table, features, info):
         """Write a Table to file.
@@ -185,8 +195,7 @@ class ArrowWriter:
         num_threads: Optional[int] = None,
         version: Optional[str] = None,
     ):
-        path = os.path.join(self._path, version or self._DEFAULT_VERSION)
-
+        version_path = os.path.join(self._path, version or self._DEFAULT_VERSION)
         schema_info = cloudpickle.loads(meta["__schema_info"][0].as_py())
         meta = meta.drop_columns("__schema_info")
 
@@ -197,7 +206,7 @@ class ArrowWriter:
             q = Queue()
 
             for name in meta.column_names:
-                meta_path = os.path.join(path, name, self._META_DIR)
+                meta_path = os.path.join(version_path, name, self._META_DIR)
                 futures.append(
                     executor.submit(
                         self._write_group_meta,
@@ -211,7 +220,7 @@ class ArrowWriter:
 
             group_info = q.get()
             info = {"groups": meta.column_names, "num_rows": group_info["num_rows"]}
-            info_file = os.path.join(path, "info.json")
+            info_file = os.path.join(version_path, "info.json")
             with self._fs.open(info_file, "w") as f:
                 json.dump(info, f)
 
@@ -257,9 +266,9 @@ class ArrowWriter:
                 features[col_name] = dataset.features[col_name]
             feature_groups.append(features)
 
-        path = os.path.join(self._path, version or self._DEFAULT_VERSION)
+        version_path = os.path.join(self._path, version or self._DEFAULT_VERSION)
         for name in column_groups.keys():
-            self._fs.mkdirs(os.path.join(path, name), exist_ok=True)
+            self._fs.mkdirs(os.path.join(version_path, name), exist_ok=True)
 
         schema_info = None
         info = defaultdict(list)
@@ -283,7 +292,7 @@ class ArrowWriter:
                     filename = self._FILE_NAME_FORMATTER.format(
                         prefix=name, chunk_index=chunk_index, index=idx
                     )
-                    file = os.path.join(path, name, filename)
+                    file = os.path.join(version_path, name, filename)
                     file_info = {
                         "file": filename,
                         "num_rows": pa_table.num_rows,
@@ -313,13 +322,17 @@ class ArrowWriter:
 
 def export(
     dataset,
-    path: str,
+    path: Union[str, bytes, os.PathLike],
     storage_options: Optional[dict] = None,
+    create_if_not_exists: Optional[bool] = True,
     max_chunk_rows: Optional[int] = None,
     column_groups: Optional[dict] = None,
     num_threads: Optional[int] = None,
     version: Optional[str] = None,
+    overwrite: Optional[bool] = True,
 ):
+    arrow_writer = ArrowWriter.ensure_path(path, storage_options, create_if_not_exists)
+    arrow_writer.check_version(version, overwrite)
     op = HuggingfaceExport(
         output_types=[OutputType.object],
         path=path,
@@ -331,5 +344,5 @@ def export(
     )
     meta = op(dataset).execute().fetch()
     meta = pa.Table.from_pandas(meta, preserve_index=False)
-    info = ArrowWriter.ensure_path(path, storage_options).write_meta(meta)
+    info = arrow_writer.write_meta(meta)
     return info
