@@ -20,3 +20,7 @@ class SubtaskNotExist(Exception):
 
 class SlotOccupiedAlready(Exception):
     pass
+
+
+class WorkerStorageDataNotFound(Exception):
+    pass

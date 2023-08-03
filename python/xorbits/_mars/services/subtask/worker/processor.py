@@ -160,6 +160,10 @@ class SubtaskProcessor:
                 keys,
                 self.subtask.subtask_id,
             )
+            
+            # Get worker storage actor ref
+                        
+            
             inputs = await self._storage_api.get.batch(*gets)
             self._processor_context.update(
                 {
