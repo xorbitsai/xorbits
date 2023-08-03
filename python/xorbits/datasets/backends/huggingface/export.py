@@ -126,7 +126,7 @@ class ArrowWriter:
         version_path = os.path.join(self._path, version)
         if self._fs.exists(version_path):
             if overwrite:
-                self._fs.rmdir(version_path)
+                self._fs.rm(version_path, recursive=True)
             else:
                 raise Exception(f"The version {version_path} already exists.")
 
@@ -165,10 +165,17 @@ class ArrowWriter:
     ):
         self._fs.mkdirs(meta_path, exist_ok=True)
         pa_table = pa_table.select([name]).flatten()
+        schema_table = schema_info.schema.empty_table().select(
+            schema_info.column_groups[name]
+        )
         info = {
             "num_bytes": pc.sum(pa_table[f"{name}.num_bytes"]).as_py(),
             "num_rows": pc.sum(pa_table[f"{name}.num_rows"]).as_py(),
+            "num_columns": schema_table.num_columns,
             "num_files": pa_table.num_rows,
+            "schema_string": schema_table.schema.to_string(
+                show_field_metadata=False, show_schema_metadata=False
+            ),
         }
         q.put(info)
         info_file = os.path.join(meta_path, "info.json")
@@ -181,9 +188,6 @@ class ArrowWriter:
                 writer.write(pa_table)
         # Write schema empty table.
         schema_file = os.path.join(meta_path, "schema.arrow")
-        schema_table = schema_info.schema.empty_table().select(
-            schema_info.column_groups[name]
-        )
         with self._fs.open(schema_file, "wb") as stream:
             with self._WRITER_CLASS(stream, schema_table.schema) as writer:
                 writer.write(schema_table)
@@ -259,11 +263,11 @@ class ArrowWriter:
                 column_groups[self._DATA_PREFIX] = data_columns
 
         feature_groups = []
-        column_names = dataset.column_names
+        data_table = dataset.data
         for name, columns in column_groups.items():
             features = {}
             for col in columns:
-                col_name = column_names[col]
+                col_name = data_table.field(col).name
                 features[col_name] = dataset.features[col_name]
             feature_groups.append(features)
 
@@ -313,7 +317,7 @@ class ArrowWriter:
             for fut in as_completed(futures):
                 fut.result()
         # to_pandas() then from_pandas() will lose metadata, so we add a special column.
-        # TODO(codingl2k1) Move schema info to the metadata of mata table if xorbits
+        # TODO(codingl2k1) Move schema info to the metadata of meta table if xorbits
         # supports put pyarrow table.
         info["__schema_info"] = [None] * len(next(iter(info.values())))
         if schema_info is not None:

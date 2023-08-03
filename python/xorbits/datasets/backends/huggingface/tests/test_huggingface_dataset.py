@@ -175,7 +175,7 @@ def test_export(setup):
         db.export(export_dir, max_chunk_rows=100, create_if_not_exists=True)
         with open(version_dir.joinpath("info.json"), "r") as f:
             info = json.load(f)
-            assert info["num_rows"] == 50000
+        assert info["num_rows"] == 50000
         data_dir = version_dir.joinpath("data")
         with open(data_dir.joinpath(".meta", "info.json"), "r") as f:
             data_meta_info = json.load(f)
@@ -183,5 +183,20 @@ def test_export(setup):
         assert len(data_arrow_files) == 50000 / 100
         assert len(data_arrow_files) == data_meta_info["num_files"]
         assert info["num_rows"] == data_meta_info["num_rows"]
+
+        db = from_huggingface("imdb", split="train")
+        db.export(
+            export_dir,
+            column_groups={"my_text": ["text"], "my_label": ["label"]},
+            max_chunk_rows=1000,
+        )
+        with open(version_dir.joinpath("info.json"), "r") as f:
+            info = json.load(f)
+        assert info["num_rows"] == 25000
+        assert info["groups"] == ["my_text", "my_label"]
+        my_text_dir = version_dir.joinpath("my_text")
+        with open(my_text_dir.joinpath(".meta", "info.json"), "r") as f:
+            my_text_meta_info = json.load(f)
+        assert my_text_meta_info["num_columns"] == 1
     finally:
         shutil.rmtree(export_dir)
