@@ -19,7 +19,7 @@ import os
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from queue import Queue
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import cloudpickle
 import numpy as np
@@ -31,7 +31,10 @@ from ...._mars.serialization.serializables import DictField, Int32Field, StringF
 from ...._mars.utils import lazy_import
 from ...operand import DataOperand, DataOperandMixin
 
-AbstractFileSystem = lazy_import("fsspec.AbstractFileSystem")
+if TYPE_CHECKING:
+    from fsspec import AbstractFileSystem
+else:
+    AbstractFileSystem = lazy_import("fsspec.AbstractFileSystem")
 
 
 class HuggingfaceExport(DataOperand, DataOperandMixin):
