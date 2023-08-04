@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 try:
@@ -44,6 +45,7 @@ from ...._mars.core.operand.objects import ObjectFetch
 from ...._mars.serialization.serializables import FieldTypes, ListField
 from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset, DatasetChunk, DatasetChunkData, DatasetData
+from .export import export
 from .getitem import getitem
 from .loader import load_huggingface_dataset
 from .map import map
@@ -104,6 +106,29 @@ class HuggingfaceDatasetData(DatasetData):
 
     def to_dataframe(self, types_mapper=None):
         return to_dataframe(self, types_mapper)
+
+    def export(
+        self,
+        path: Union[str, os.PathLike],
+        storage_options: Optional[dict] = None,
+        create_if_not_exists: Optional[bool] = True,
+        max_chunk_rows: Optional[int] = None,
+        column_groups: Optional[dict] = None,
+        num_threads: Optional[int] = None,
+        version: Optional[str] = None,
+        overwrite: Optional[bool] = True,
+    ):
+        return export(
+            self,
+            path,
+            storage_options,
+            create_if_not_exists,
+            max_chunk_rows,
+            column_groups,
+            num_threads,
+            version,
+            overwrite,
+        )
 
     def __getitem__(self, item: Union[int, slice, str]):
         return getitem(self, item)
