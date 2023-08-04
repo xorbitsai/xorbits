@@ -382,3 +382,4 @@ jobs:
       with:
         working-directory: ./python
         flags: unittests
+        token: ${{ secrets.CODECOV_TOKEN }}
