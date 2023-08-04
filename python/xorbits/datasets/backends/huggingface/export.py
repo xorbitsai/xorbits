@@ -22,14 +22,16 @@ from queue import Queue
 from typing import Any, Dict, List, Optional, Union
 
 import cloudpickle
-import fsspec
 import numpy as np
 import pyarrow as pa
 import pyarrow.compute as pc
 
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import DictField, Int32Field, StringField
+from ...._mars.utils import lazy_import
 from ...operand import DataOperand, DataOperandMixin
+
+AbstractFileSystem = lazy_import("fsspec.AbstractFileSystem")
 
 
 class HuggingfaceExport(DataOperand, DataOperandMixin):
@@ -92,7 +94,7 @@ class ArrowWriter:
 
     def __init__(
         self,
-        fs: fsspec.AbstractFileSystem,
+        fs: AbstractFileSystem,
         path: Union[str, os.PathLike],
     ):
         self._fs = fs
@@ -105,6 +107,8 @@ class ArrowWriter:
         storage_options: Optional[dict] = None,
         create_if_not_exists: Optional[bool] = True,
     ):
+        import fsspec
+
         fs_token_paths = fsspec.get_fs_token_paths(
             path, storage_options=storage_options
         )
