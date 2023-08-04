@@ -37,39 +37,31 @@ class RunnerStorageActor(mo.Actor):
     def gen_uid(cls, band_name: str, slot_id: int):
         return f"slot_{band_name}_{slot_id}_worker_storage"
     
-    async def _get_data(
+    async def get_data(
         self, 
-        band: BandType, 
-        slot_id: int, 
-        data_key: str
+        key: str
     ):
         logger.info(
-            f"Getting data with key {data_key} on worker storage with slot id {slot_id} and band name {band}"
+            f"Getting data with key {key} on worker storage with slot id {self._slot_id} and band name {self._band_name}"
         )
-        assert band == self._band_name
-        assert slot_id == self._slot_id
-        
-        if data_key not in self._data_storage:
+
+        if key not in self._data_storage:
             raise WorkerStorageDataNotFound(
-                f"There is no data with key {data_key}) in Worker Storage {self.uid} at {self.address}, cannot find value. "
+                f"There is no data with key {key}) in Worker Storage {self.uid} at {self.address}, cannot find value. "
             )
-        data = yield self._data_storage[data_key]
+        data = yield self._data_storage[key]
         raise mo.Return(data)
     
-    async def _put_data(
+    async def put_data(
         self, 
-        band: BandType, 
-        slot_id: int, 
-        data_key: str, 
+        key: str,
         data: Any
     ):
         logger.info(
-            f"Putting data with key {data_key} to worker storage with slot id {slot_id} and band name {band}"
+            f"Putting data with key {key} to worker storage with slot id {self._slot_id} and band name {self._band_name}"
         )
-        assert band == self._band_name
-        assert slot_id == self._slot_id
         # Add or update
-        self._data_storage[data_key] = data
+        self._data_storage[key] = data
         
         
 

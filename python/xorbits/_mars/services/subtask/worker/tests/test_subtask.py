@@ -136,40 +136,6 @@ def _gen_subtask(t, session_id):
 
 
 @pytest.mark.asyncio
-async def test_runner_storage(actor_pool):
-    pool, session_id, meta_api, storage_api, manager = actor_pool
-
-    a = mt.ones((10, 10), chunk_size=10)
-    b = a + 1
-
-    subtask = _gen_subtask(b, session_id)
-    subtask_runner: SubtaskRunnerRef = await mo.actor_ref(
-        SubtaskRunnerActor.gen_uid("numa-0", 0), address=pool.external_address
-    )
-    runner_storage = await mo.create_actor(
-        RunnerStorageActor,
-        band=("lll", "kkk"),
-        slot_id=0,
-        uid=RunnerStorageActor.gen_uid(("lll", "kkk"), 0), # 应该传什么参
-        address=pool.external_address, # 这是干嘛的
-    )
-    runner_storage._put_data(
-        ("lll", "kkk"),
-        0,
-        key="abcd",
-        data=1234,
-    )
-    data = runner_storage._get_data(
-        ("lll", "kkk"),
-        0,
-        key="abcd",
-    )
-    assert data == 1234
-    
-
-
-@pytest.mark.skip
-@pytest.mark.asyncio
 async def test_subtask_success(actor_pool):
     pool, session_id, meta_api, storage_api, manager = actor_pool
 
@@ -180,9 +146,19 @@ async def test_subtask_success(actor_pool):
     subtask_runner: SubtaskRunnerRef = await mo.actor_ref(
         SubtaskRunnerActor.gen_uid("numa-0", 0), address=pool.external_address
     )
-    runner_storage: RunnerStorageRef = await mo.create_actor(
+    # test runner storage.
+    runner_storage: RunnerStorageRef = await mo.actor_ref(
         RunnerStorageActor.gen_uid("numa-0", 0), address=pool.external_address
     )
+    await runner_storage.put_data(
+        key="abcd",
+        data=1234,
+    )
+    data = await runner_storage.get_data(
+        key="abcd",
+    )
+    assert data == 1234
+
     await subtask_runner.run_subtask(subtask)
     result = await subtask_runner.get_subtask_result()
     assert result.status == SubtaskStatus.succeeded
