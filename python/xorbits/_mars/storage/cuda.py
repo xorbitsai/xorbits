@@ -67,7 +67,10 @@ class CudaFileObject:
         from rmm import DeviceBuffer
 
         self._buffers = [
-            _convert_to_cupy_ndarray(DeviceBuffer(size=size)) for size in sizes
+            cupy.ndarray(shape=0, dtype="u1")
+            if size == 0
+            else _convert_to_cupy_ndarray(DeviceBuffer(size=size))
+            for size in sizes
         ]
 
     @property
@@ -96,7 +99,10 @@ class CudaFileObject:
                 self._buffers.append(buf.astype("u1", copy=False))
                 buffer_types.append(["cuda", buf.size])
             elif isinstance(buf, Buffer):
-                self._buffers.append(_convert_to_cupy_ndarray(buf))
+                if buf.size == 0:
+                    self._buffers.append(cupy.ndarray(shape=0, dtype="u1"))
+                else:
+                    self._buffers.append(_convert_to_cupy_ndarray(buf))
                 buffer_types.append(["cuda", buf.size])
             else:
                 size = getattr(buf, "size", len(buf))
