@@ -16,24 +16,6 @@
 import os
 from typing import Any, Dict, Optional, Union
 
-try:
-    # For type hint.
-    from datasets import (
-        DownloadConfig,
-        DownloadMode,
-        Features,
-        Split,
-        VerificationMode,
-        Version,
-    )
-except ImportError:
-    DownloadConfig = Any
-    DownloadMode = Any
-    Features = Any
-    Split = Any
-    VerificationMode = Any
-    Version = Any
-
 from ...._mars.core import is_build_mode
 from ...._mars.core.entity import (
     OutputType,
