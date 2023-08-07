@@ -24,7 +24,7 @@ import pandas as pd
 import pytest
 
 from ....._mars.tests.core import mock
-from ..core import from_huggingface
+from ..from_huggingface import from_huggingface
 
 SAMPLE_DATASET_IDENTIFIER = "lhoestq/test"  # has dataset script
 SAMPLE_DATASET_IDENTIFIER2 = "lhoestq/test2"  # only has data files
