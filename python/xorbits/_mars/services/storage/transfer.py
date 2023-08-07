@@ -17,7 +17,7 @@ import asyncio
 import logging
 from dataclasses import dataclass
 from io import UnsupportedOperation
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 
 import xoscar as mo
 from xoscar.core import BufferRef
@@ -43,6 +43,7 @@ class SenderManagerActor(mo.StatelessActor):
         data_manager_ref: mo.ActorRefType[DataManagerActor] = None,
         storage_handler_ref: mo.ActorRefType[StorageHandlerActor] = None,
     ):
+        super().__init__()
         self._band_name = band_name
         self._data_manager_ref = data_manager_ref
         self._storage_handler = storage_handler_ref
@@ -75,7 +76,6 @@ class SenderManagerActor(mo.StatelessActor):
         block_size: int,
     ):
         await mo.copy_to(local_buffers, remote_buffers, block_size=block_size)
-        await receiver_ref.handle_transmission_done(session_id, data_keys)
 
     @staticmethod
     def _get_buffer_size(buf: Any):
@@ -145,7 +145,6 @@ class SenderManagerActor(mo.StatelessActor):
         try:
             await asyncio.shield(write_task)
         except asyncio.CancelledError:
-            await receiver_ref.handle_transmission_cancellation(session_id, data_keys)
             raise
 
     @mo.extensible
@@ -153,20 +152,14 @@ class SenderManagerActor(mo.StatelessActor):
         self,
         session_id: str,
         data_keys: List[str],
-        is_transferring_list: List[bool],
+        to_send_keys: List,
+        to_wait_keys: List,
         remote_band: BandType,
         block_size: int = None,
     ):
         logger.debug(
             "Begin to send data (%s, %s) to %s", session_id, data_keys, remote_band
         )
-        to_send_keys = []
-        to_wait_keys = []
-        for data_key, is_transferring in zip(data_keys, is_transferring_list):
-            if is_transferring:
-                to_wait_keys.append(data_key)
-            else:
-                to_send_keys.append(data_key)
 
         receiver_ref: mo.ActorRefType[
             ReceiverManagerActor
@@ -176,19 +169,8 @@ class SenderManagerActor(mo.StatelessActor):
             logger.debug("Start sending %s to %s", to_send_keys, receiver_ref.address)
             block_size = block_size or self._transfer_block_size
             await self._send_data(receiver_ref, session_id, to_send_keys, block_size)
-            logger.debug("Done sending %s", to_send_keys)
         if to_wait_keys:
-            logger.debug("Start waiting %s", to_wait_keys)
             await receiver_ref.wait_transfer_done(session_id, to_wait_keys)
-            logger.debug("Done waiting %s", to_wait_keys)
-        unpin_tasks = []
-        for data_key in data_keys:
-            unpin_tasks.append(
-                self._data_manager_ref.unpin.delay(
-                    session_id, [data_key], self._band_name, error="ignore"
-                )
-            )
-        await self._data_manager_ref.unpin.batch(*unpin_tasks)
         logger.debug(
             "Finish sending data (%s, %s) to %s",
             session_id,
@@ -214,16 +196,9 @@ class ReceiverManagerActor(mo.StatelessActor):
         storage_handler_ref: mo.ActorRefType[StorageHandlerActor] = None,
     ):
         self._quota_refs = quota_refs
-        # self._storage_handler = storage_handler_ref
+        self._storage_handler = storage_handler_ref
         self._writing_infos: Dict[tuple, WritingInfo] = dict()
         self._lock = asyncio.Lock()
-
-    async def __post_create__(self):
-        # if self._storage_handler is None:  # for test
-        #     self._storage_handler = await mo.actor_ref(
-        #         self.address, StorageHandlerActor.gen_uid("numa-0")
-        #     )
-        pass
 
     async def get_buffers(
         self,
@@ -266,38 +241,27 @@ class ReceiverManagerActor(mo.StatelessActor):
                 self._decref_writing_key(session_id, data_key)
 
     async def handle_transmission_cancellation(self, session_id: str, data_keys: List):
+        data_keys_to_be_deleted = []
         async with self._lock:
             for data_key in data_keys:
                 if (session_id, data_key) in self._writing_infos:
                     if self._writing_infos[(session_id, data_key)].ref_counts == 1:
                         info = self._writing_infos[(session_id, data_key)]
                         await self._quota_refs[info.level].release_quota(info.size)
-                        await self._storage_handler.delete(
-                            session_id, data_key, error="ignore"
-                        )
+                        data_keys_to_be_deleted.append(data_key)
                         await info.writer.clean_up()
                         info.event.set()
                         self._decref_writing_key(session_id, data_key)
+        return data_keys_to_be_deleted
 
     @classmethod
     def gen_uid(cls, band_name: str):
         return f"receiver_manager_{band_name}"
 
-    def lock(self):
-        self._lock.acquire()
-
-    def unlock(self):
-        self._lock.release()
-
     def _decref_writing_key(self, session_id: str, data_key: str):
         self._writing_infos[(session_id, data_key)].ref_counts -= 1
         if self._writing_infos[(session_id, data_key)].ref_counts == 0:
             del self._writing_infos[(session_id, data_key)]
-
-    def is_writing_info_existed(
-        self, session_id: str, data_keys: List[Union[str, tuple]]
-    ) -> List[bool]:
-        return [(session_id, data_key) in self._writing_infos for data_key in data_keys]
 
     async def add_writers(
         self,
@@ -324,73 +288,6 @@ class ReceiverManagerActor(mo.StatelessActor):
                 else:
                     is_transferring.append(True)
         return is_transferring
-
-    async def create_writers(
-        self,
-        session_id: str,
-        data_keys: List[str],
-        data_sizes: List[int],
-        level: StorageLevel,
-        sub_infos: List,
-        band_name: str,
-    ) -> List[bool]:
-        tasks = dict()
-        key_to_sub_infos = dict()
-        data_key_to_size = dict()
-        being_processed = []
-        for data_key, data_size, sub_info in zip(data_keys, data_sizes, sub_infos):
-            data_key_to_size[data_key] = data_size
-            if (session_id, data_key) not in self._writing_infos:
-                being_processed.append(False)
-                tasks[data_key] = self._storage_handler.open_writer.delay(
-                    session_id,
-                    data_key,
-                    data_size,
-                    level,
-                    request_quota=False,
-                    band_name=band_name,
-                )
-                key_to_sub_infos[data_key] = sub_info
-            else:
-                being_processed.append(True)
-                self._writing_infos[(session_id, data_key)].ref_counts += 1
-        if tasks:
-            logger.debug("Executing open_writer.batch")
-            writers = await self._storage_handler.open_writer.batch(
-                *tuple(tasks.values())
-            )
-            for data_key, writer in zip(tasks, writers):
-                self._writing_infos[(session_id, data_key)] = WritingInfo(
-                    writer, data_key_to_size[data_key], level, asyncio.Event(), 1
-                )
-                if key_to_sub_infos[data_key] is not None:
-                    writer._sub_key_infos = key_to_sub_infos[data_key]
-        return being_processed
-
-    async def open_writers(
-        self,
-        session_id: str,
-        data_keys: List[str],
-        data_sizes: List[int],
-        sub_infos,
-        level: StorageLevel,
-        band_name
-    ) -> List[bool]:
-        logger.debug("Start opening writers for %s", data_keys)
-
-        async with self._lock:
-            logger.debug("Opening writers for %s", data_keys)
-            future = asyncio.create_task(
-                self.create_writers(
-                    session_id, data_keys, data_sizes, level, sub_infos, band_name
-                )
-            )
-            try:
-                return await future
-            except asyncio.CancelledError:
-                await self._quota_refs[level].release_quota(sum(data_sizes))
-                future.cancel()
-                raise
 
     async def wait_transfer_done(self, session_id, data_keys):
         await asyncio.gather(
