@@ -38,25 +38,28 @@ except ImportError:
     VerificationMode = Any
     Version = Any
 
+from ...._mars.core import recursive_tile
 from ...._mars.core.context import get_context
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import (
+    BoolField,
     DictField,
-    Int32Field,
     ListField,
     StringField,
 )
 from ....utils import check_signature_compatible, get_non_default_kwargs
 from ...dataset import Dataset
 from ...operand import DataOperand, DataOperandMixin
+from .rechunk import rechunk
 
 
 class FromHuggingface(DataOperand, DataOperandMixin):
     path = StringField("path")
     hf_kwargs = DictField("hf_kwargs")
+    cache_dir = StringField("cache_dir")
     single_data_file = StringField("single_data_file")
-    num_chunks: int = Int32Field("num_chunks")
     data_files = ListField("data_files")
+    auto_rechunk: bool = BoolField("auto_rechunk")
 
     def __call__(self):
         from datasets import load_dataset_builder
@@ -66,6 +69,8 @@ class FromHuggingface(DataOperand, DataOperandMixin):
 
         builder_kwargs = self._get_kwargs(load_dataset_builder, self.hf_kwargs)
         builder = load_dataset_builder(self.path, **builder_kwargs)
+        assert "cache_dir" in inspect.signature(load_dataset_builder).parameters
+        self.cache_dir = builder.cache_dir
         data_files = builder.config.data_files
         # TODO(codingl2k1): support multiple splits
         split = self.hf_kwargs["split"]
@@ -104,6 +109,7 @@ class FromHuggingface(DataOperand, DataOperandMixin):
     @classmethod
     def tile(cls, op: "FromHuggingface"):
         assert len(op.inputs) == 0
+        out = op.outputs[0]
 
         data_files = op.data_files
         # Set op.data_files to None, we don't want every chunk op copy this field.
@@ -120,16 +126,42 @@ class FromHuggingface(DataOperand, DataOperandMixin):
                 chunk_op = op.copy().reset_key()
                 assert f, "Invalid data file from DatasetBuilder."
                 chunk_op.single_data_file = f
-                chunk_op.num_chunks = len(data_files)
                 chunk_op.expect_band = band
+                # The cache dir can't be shared, because there will be a file lock
+                # on the cache dir when initializing builder.
+                chunk_op.hf_kwargs = dict(
+                    op.hf_kwargs,
+                    cache_dir=os.path.join(
+                        op.cache_dir, f"part_{index}_{len(data_files)}"
+                    ),
+                )
+                chunk_op.cache_dir = None
                 c = chunk_op.new_chunk(inputs=[], index=(index, 0))
                 chunks.append(c)
         else:
             chunk_op = op.copy().reset_key()
             chunk_op.single_data_file = None
+            chunk_op.cache_dir = None
             chunks.append(chunk_op.new_chunk(inputs=[], index=(0, 0)))
+            if op.auto_rechunk:
+                ctx = get_context()
+                cluster_cpu_count = int(ctx.get_total_n_cpu())
+                if (
+                    out.shape
+                    and not np.isnan(out.shape[0])
+                    and out.shape[0] >= cluster_cpu_count
+                ):
+                    inp = op.copy().new_tileable(
+                        op.inputs,
+                        chunks=chunks,
+                        nsplits=((np.nan,) * len(chunks), (np.nan,)),
+                        **out.params,
+                    )
+                    auto_rechunked = yield from recursive_tile(
+                        rechunk(inp, cluster_cpu_count)
+                    )
+                    return auto_rechunked
 
-        out = op.outputs[0]
         return op.copy().new_tileable(
             op.inputs,
             chunks=chunks,
@@ -141,26 +173,18 @@ class FromHuggingface(DataOperand, DataOperandMixin):
     def execute(cls, ctx, op: "FromHuggingface"):
         from datasets import DatasetBuilder, VerificationMode, load_dataset_builder
 
-        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
-
-        # TODO(codingl2k1): not sure if it's OK to share one cache dir among workers.
         # load_dataset_builder from every worker may be slow, but it's error to
         # deserialized a builder instance in a clean process / node, e.g. raise
         # ModuleNotFoundError: No module named 'datasets_modules'.
         #
         # Please refer to issue: https://github.com/huggingface/transformers/issues/11565
+        builder_kwargs = cls._get_kwargs(load_dataset_builder, op.hf_kwargs)
         builder = load_dataset_builder(op.path, **builder_kwargs)
         download_and_prepare_kwargs = cls._get_kwargs(
             DatasetBuilder.download_and_prepare, op.hf_kwargs
         )
 
         if op.single_data_file is not None:
-            chunk = op.outputs[0]
-            chunk_index = chunk.index[0]
-            output_dir = builder._output_dir
-            output_dir = output_dir if output_dir is not None else builder.cache_dir
-            output_dir = os.path.join(output_dir, f"part_{chunk_index}_{op.num_chunks}")
-            download_and_prepare_kwargs["output_dir"] = output_dir
             download_and_prepare_kwargs[
                 "verification_mode"
             ] = VerificationMode.NO_CHECKS
@@ -172,13 +196,6 @@ class FromHuggingface(DataOperand, DataOperandMixin):
         as_dataset_kwargs = cls._get_kwargs(DatasetBuilder.as_dataset, op.hf_kwargs)
         ds = builder.as_dataset(**as_dataset_kwargs)
         ctx[op.outputs[0].key] = ds
-
-
-def load_huggingface_dataset(path: str, **hf_kwargs):
-    op = FromHuggingface(
-        output_types=[OutputType.huggingface_dataset], path=path, hf_kwargs=hf_kwargs
-    )
-    return op()
 
 
 def from_huggingface(
@@ -309,7 +326,11 @@ def from_huggingface(
     # because non-compatible params are defaults values.
     kwargs = get_non_default_kwargs(locals(), from_huggingface)
     kwargs.pop("path")
+    auto_rechunk = kwargs.pop("auto_rechunk", True)
     op = FromHuggingface(
-        output_types=[OutputType.huggingface_dataset], path=path, hf_kwargs=kwargs
+        output_types=[OutputType.huggingface_dataset],
+        path=path,
+        auto_rechunk=auto_rechunk,
+        hf_kwargs=kwargs,
     )
     return op().to_dataset()
