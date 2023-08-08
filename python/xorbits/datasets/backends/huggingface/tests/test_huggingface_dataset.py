@@ -200,3 +200,13 @@ def test_export(setup):
         assert my_text_meta_info["num_columns"] == 1
     finally:
         shutil.rmtree(export_dir)
+
+
+def test_iterable_dataset():
+    from ....iterable_dataset import IterableDataset
+
+    ds = IterableDataset("/Users/po/Work/xorbits/python/out/0.0.0", shuffle=True)
+    for idx, s in enumerate(ds):
+        print(idx)
+    print(ds.schema())
+    print(ds)
