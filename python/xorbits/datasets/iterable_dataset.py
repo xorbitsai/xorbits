@@ -13,16 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import dataclasses
+import functools
 import json
 import os.path
 import threading
-import functools
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import ExitStack
 from queue import Queue
-from typing import Dict, List, Optional, Tuple, Union, Any, Callable
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-import fsspec
 import numpy as np
 import pyarrow as pa
 
@@ -91,6 +90,10 @@ class FeatureFormatter(Formatter):
 
 
 class IterableDataset(_TorchIterableDataset):
+    _FORMAT_BATCH_SIZE = 10
+    _DEFAULT_VERSION = "0.0.0"
+    _META_DIR = ".meta"
+
     def __init__(
         self,
         path: Union[str, os.PathLike],
@@ -99,11 +102,41 @@ class IterableDataset(_TorchIterableDataset):
         fetch_retry: int = 2,
         fetch_timeout: float = 60,
         shuffle: bool = False,
-        shuffle_seed: int = 0,
+        shuffle_seed: int = 9176,
         distributed_rank: Optional[int] = None,
         distributed_world_size: Optional[int] = None,
         num_threads: Optional[int] = None,
+        version: Optional[str] = None,
     ):
+        """
+        A IterableDataset to the export path.
+
+        Parameters
+        ----------
+        path: str
+            The export path of Dataset include version.
+        storage_options: dict
+            Key/value pairs to be passed on to the caching file-system backend, if any.
+        prefetch: int
+            Prefetch chunks, default is 2.
+        fetch_retry: int
+            Fetch data retry times.
+        fetch_timeout: float
+            Fetch data timeout seconds.
+        shuffle: bool
+            Whether shuffle or not.
+        shuffle_seed: int
+            Shuffle seed, default is a fixed value.
+        distributed_rank: int
+            Distributed rank, if not set, use `RANK` from environment var.
+        distributed_world_size: int
+            Distributed world size, if not set, use `WORLD_SIZE` from environment var.
+        num_threads: int
+            The max worker threads for __iter__.
+        version: str
+            The version string, default is 0.0.0.
+        """
+        path = os.path.join(path, version or self._DEFAULT_VERSION)
         self._info, self._group_infos = self._get_infos(path, storage_options)
         self._path = path
         self._storage_options = storage_options
@@ -118,6 +151,8 @@ class IterableDataset(_TorchIterableDataset):
         self._epoch = 0
 
     def __iter__(self):
+        import fsspec
+
         rank, world_size = self._get_rank(), self._get_world_size()
         if rank is None or world_size is None:
             rank = 0
@@ -126,19 +161,25 @@ class IterableDataset(_TorchIterableDataset):
             assert rank < world_size
         formatter = self._get_formatters()
 
-        rng = self._get_rng_generator()
+        # Generate a index for the Dataset index.
+        rng = self._get_rng_generator() if self._shuffle else None
         total_chunks = len(self._group_infos[0].index)
         index_of_index = np.arange(total_chunks)
         if self._shuffle:
             rng.shuffle(index_of_index)
+        # Get each worker index by rank and world size.
         index_of_index = index_of_index[rank:total_chunks:world_size]
 
+        # Create a new fs instance in __iter__ make sure the fs instance
+        # is bound to worker.
         fs_token_paths = fsspec.get_fs_token_paths(
             self._path, storage_options=self._storage_options
         )
         fs: fsspec.AbstractFileSystem = fs_token_paths[0]
         finish_sentinel = object()
+        # The queue _prefecher -> _formatter
         prefetch_queue = Queue(maxsize=self._prefetch)
+        # The queue _formatter -> __iter__
         format_queue = Queue()
 
         def _load_arrow_table(filepath):
@@ -158,14 +199,18 @@ class IterableDataset(_TorchIterableDataset):
             prefetch_queue.put(finish_sentinel)
 
         def _formatter(_executor: ThreadPoolExecutor):
+            # TODO(codingl2k1): Use as_completed to optimize shuffle True.
             while tables := prefetch_queue.get():
                 if tables is finish_sentinel:
                     break
                 tables = list(tables)
                 num_chunks = len(tables[0])
                 in_table_index = np.arange(num_chunks)
-                rng.shuffle(in_table_index)
-                for indices in np.array_split(in_table_index, num_chunks // 10 + 1):
+                if self._shuffle:
+                    rng.shuffle(in_table_index)
+                for indices in np.array_split(
+                    in_table_index, num_chunks // self._FORMAT_BATCH_SIZE + 1
+                ):
                     format_queue.put(
                         _executor.submit(formatter.format_batch, tables, indices)
                     )
@@ -175,6 +220,7 @@ class IterableDataset(_TorchIterableDataset):
             max_workers=self._num_threads,
             thread_name_prefix=self.__iter__.__qualname__,
         ) as executor:
+            # _prefetcher and _fomatter share one thread pool.
             prefetch_thread = threading.Thread(target=_prefetcher, args=(executor,))
             prefetch_thread.start()
             format_thread = threading.Thread(target=_formatter, args=(executor,))
@@ -199,8 +245,10 @@ class IterableDataset(_TorchIterableDataset):
         for i in range(n_examples):
             yield {col: array[i] for col, array in batch.items()}
 
-    @staticmethod
-    def _get_infos(path, storage_options) -> Tuple[Dict, List[_GroupInfo]]:
+    @classmethod
+    def _get_infos(cls, path, storage_options) -> Tuple[Dict, List[_GroupInfo]]:
+        import fsspec
+
         # TODO(codingl2k1): Merge group meta files into one.
         group_infos = []
         futures = []
@@ -219,7 +267,7 @@ class IterableDataset(_TorchIterableDataset):
 
             for name in info["groups"]:
                 group_path = os.path.join(path, name)
-                group_meta_path = os.path.join(group_path, ".meta")
+                group_meta_path = os.path.join(group_path, cls._META_DIR)
                 group_info = _GroupInfo()
                 group_info.path = group_path
                 group_infos.append(group_info)
@@ -287,7 +335,7 @@ class IterableDataset(_TorchIterableDataset):
         if self._shuffle and self._epoch == 0:
             return np.random.default_rng(self._shuffle_seed)
         elif self._shuffle:
-            # Create new seed using self._epoch (we subtract in order to avoid overflow in long_scalars)
+            # Create epoch seed using self._epoch (we subtract in order to avoid overflow in long_scalars)
             epoch_seed = (
                 np.random.default_rng(self._shuffle_seed).integers(0, 1 << 63)
                 - self._epoch
@@ -298,13 +346,19 @@ class IterableDataset(_TorchIterableDataset):
             raise ValueError("This dataset is not shuffled")
 
     def _get_formatters(self) -> Formatter:
-        from datasets.features.features import generate_from_dict
+        """
+        Get formatters from metadata.
+
+        Returns
+        -------
+            The Formatter instance.
+        """
         from datasets.features.audio import Audio
+        from datasets.features.features import generate_from_dict
         from datasets.features.image import Image
 
-        # Get formatters from metadata.
-        # TODO(codingl2k1): Impl encoders by ourself.
-        metadata = self.schema().metadata.get(b"huggingface")
+        # TODO(codingl2k1): Impl our decoders.
+        metadata = self.schema.metadata.get(b"huggingface")
         if metadata:
             metadata = json.loads(metadata.decode())
             metadata = generate_from_dict(metadata)
@@ -316,13 +370,16 @@ class IterableDataset(_TorchIterableDataset):
         else:
             return Formatter()
 
-    @functools.cache
-    def column_groups(self):
+    @functools.cached_property
+    def column_groups(self) -> List[str]:
         return self._info["groups"]
 
-    @functools.cache
-    def schema(self):
+    @functools.cached_property
+    def schema(self) -> pa.Schema:
         return pa.unify_schemas([gi.schema for gi in self._group_infos])
 
     def set_epoch(self, epoch: int):
         self._epoch = epoch
+
+    def epoch(self) -> int:
+        return self._epoch
