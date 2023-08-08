@@ -16,10 +16,11 @@ import dataclasses
 import json
 import os.path
 import threading
+import functools
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import ExitStack
 from queue import Queue
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, Any, Callable
 
 import fsspec
 import numpy as np
@@ -37,6 +38,56 @@ class _GroupInfo:
     index: pa.Table
     schema: pa.Schema
     info: dict
+
+
+@dataclasses.dataclass
+class _FormatColumnInfo:
+    as_py_columns: List[int] = dataclasses.field(default_factory=list)
+    column_name_to_decoder: Dict[int, Callable] = dataclasses.field(
+        default_factory=dict
+    )
+
+
+class Formatter:
+    def format_batch(self, tables: List[pa.Table], indices: List[int]):
+        result = {}
+        for t in tables:
+            d = t.take(indices).to_pydict()
+            result.update(d)
+        return result
+
+
+class FeatureFormatter(Formatter):
+    def __init__(self, features: Dict[str, Any], table_schemas: List[pa.Schema]):
+        table_format_infos = []
+        for ts in table_schemas:
+            info = _FormatColumnInfo()
+            for idx, name in enumerate(ts.names):
+                if feat := features.get(name):
+                    info.column_name_to_decoder[name] = feat.decode_example
+                else:
+                    info.as_py_columns.append(idx)
+            table_format_infos.append(info)
+        self._table_format_infos = table_format_infos
+
+    def format_batch(self, tables: List[pa.Table], indices: List[int]):
+        result = {}
+        for info, table in zip(self._table_format_infos, tables):
+            d = (
+                table.select(info.as_py_columns).take(indices).to_pydict()
+                if info.as_py_columns
+                else {}
+            )
+            for name, decoder in info.column_name_to_decoder.items():
+                chunked_array = table[name]
+                d[name] = [
+                    decoder(
+                        {"bytes": chunked_array[idx]["bytes"].as_buffer(), "path": None}
+                    )
+                    for idx in indices
+                ]
+            result.update(d)
+        return result
 
 
 class IterableDataset(_TorchIterableDataset):
@@ -73,6 +124,7 @@ class IterableDataset(_TorchIterableDataset):
             world_size = 1
         else:
             assert rank < world_size
+        formatter = self._get_formatters()
 
         rng = self._get_rng_generator()
         total_chunks = len(self._group_infos[0].index)
@@ -95,13 +147,6 @@ class IterableDataset(_TorchIterableDataset):
                 with pa.ipc.RecordBatchStreamReader(f) as reader:
                     return reader.read_all()
 
-        def _format_row(tables, index):
-            row = {}
-            for t in tables:
-                d = t.take([index]).to_pydict()
-                row.update(d)
-            return row
-
         def _prefetcher(_executor: ThreadPoolExecutor):
             for idx in index_of_index:
                 group_files = [
@@ -117,10 +162,13 @@ class IterableDataset(_TorchIterableDataset):
                 if tables is finish_sentinel:
                     break
                 tables = list(tables)
-                in_table_index = np.arange(len(tables[0]))
+                num_chunks = len(tables[0])
+                in_table_index = np.arange(num_chunks)
                 rng.shuffle(in_table_index)
-                for idx in in_table_index:
-                    format_queue.put(_executor.submit(_format_row, tables, idx))
+                for indices in np.array_split(in_table_index, num_chunks // 10 + 1):
+                    format_queue.put(
+                        _executor.submit(formatter.format_batch, tables, indices)
+                    )
             format_queue.put(finish_sentinel)
 
         with ThreadPoolExecutor(
@@ -131,17 +179,25 @@ class IterableDataset(_TorchIterableDataset):
             prefetch_thread.start()
             format_thread = threading.Thread(target=_formatter, args=(executor,))
             format_thread.start()
-
-            while fut := format_queue.get():
-                if fut is finish_sentinel:
-                    break
-                yield fut.result()
-
-            prefetch_thread.join()
-            format_thread.join()
+            try:
+                while fut := format_queue.get():
+                    if fut is finish_sentinel:
+                        break
+                    for example in self._batch_to_examples(fut.result()):
+                        yield example
+            finally:
+                prefetch_thread.join()
+                format_thread.join()
 
     def __len__(self):
         return self._info["num_rows"]
+
+    @staticmethod
+    def _batch_to_examples(batch: Dict[str, list]) -> List[Dict[str, Any]]:
+        """Convert a batch (dict of examples) to examples list"""
+        n_examples = len(batch[next(iter(batch))])
+        for i in range(n_examples):
+            yield {col: array[i] for col, array in batch.items()}
 
     @staticmethod
     def _get_infos(path, storage_options) -> Tuple[Dict, List[_GroupInfo]]:
@@ -241,9 +297,30 @@ class IterableDataset(_TorchIterableDataset):
         else:
             raise ValueError("This dataset is not shuffled")
 
+    def _get_formatters(self) -> Formatter:
+        from datasets.features.features import generate_from_dict
+        from datasets.features.audio import Audio
+        from datasets.features.image import Image
+
+        # Get formatters from metadata.
+        # TODO(codingl2k1): Impl encoders by ourself.
+        metadata = self.schema().metadata.get(b"huggingface")
+        if metadata:
+            metadata = json.loads(metadata.decode())
+            metadata = generate_from_dict(metadata)
+            features = metadata["info"]["features"]
+            return FeatureFormatter(
+                {k: v for k, v in features.items() if isinstance(v, (Audio, Image))},
+                [group.schema for group in self._group_infos],
+            )
+        else:
+            return Formatter()
+
+    @functools.cache
     def column_groups(self):
         return self._info["groups"]
 
+    @functools.cache
     def schema(self):
         return pa.unify_schemas([gi.schema for gi in self._group_infos])
 
