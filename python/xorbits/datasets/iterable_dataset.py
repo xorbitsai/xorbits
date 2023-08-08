@@ -20,7 +20,17 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import ExitStack
 from queue import Queue
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import pyarrow as pa
@@ -28,7 +38,10 @@ import pyarrow as pa
 from .._mars.utils import lazy_import
 
 torch = lazy_import("torch")
-_TorchIterableDataset = object if torch is None else torch.utils.data.IterableDataset
+if TYPE_CHECKING or torch is None:
+    _TorchIterableDataset = object
+else:
+    _TorchIterableDataset = torch.utils.data.IterableDataset
 
 
 @dataclasses.dataclass(init=False)
@@ -109,7 +122,7 @@ class IterableDataset(_TorchIterableDataset):
         version: Optional[str] = None,
     ):
         """
-        A IterableDataset to the export path.
+        A IterableDataset from the export path.
 
         Parameters
         ----------
@@ -239,7 +252,9 @@ class IterableDataset(_TorchIterableDataset):
         return self._info["num_rows"]
 
     @staticmethod
-    def _batch_to_examples(batch: Dict[str, list]) -> List[Dict[str, Any]]:
+    def _batch_to_examples(
+        batch: Dict[str, list]
+    ) -> Generator[Dict[str, Any], None, None]:
         """Convert a batch (dict of examples) to examples list"""
         n_examples = len(batch[next(iter(batch))])
         for i in range(n_examples):
