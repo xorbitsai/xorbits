@@ -55,6 +55,7 @@ RUN /opt/conda/bin/conda install \
     fsspec>=2022.7.1,!=2022.8.0 \
     s3fs \
     pyopenssl>=23.0.0 \
+    datasets \
   && /opt/conda/bin/conda clean --all -f -y
 
 ENV NVM_DIR /usr/local/nvm
