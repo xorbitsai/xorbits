@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import collections
 import shutil
 import tempfile
 from pathlib import Path
@@ -43,5 +44,50 @@ def test_iterable_dataset():
         assert s.keys() == {"img", "label"}
         assert isinstance(s["img"], PIL.Image.Image)
         assert type(s["label"]) is int
+        assert ds.epoch() == 0
+        labels1 = [s["label"] for s in ds]
+        labels2 = [s["label"] for s in ds]
+        assert labels1 == labels2
+        ds.set_epoch(1)
+        labels3 = [s["label"] for s in ds]
+        labels4 = [s["label"] for s in ds]
+        assert labels3 == labels4
+        assert labels1 != labels3
+        assert len(labels1) == len(labels3)
+        counter1 = collections.Counter(labels1)
+        counter3 = collections.Counter(labels3)
+        assert counter1 == counter3
+        dss1 = IterableDataset(
+            export_dir, distributed_rank=0, distributed_world_size=5, shuffle=True
+        )
+        labels1 = [s["label"] for s in dss1]
+        dss2 = IterableDataset(
+            export_dir, distributed_rank=1, distributed_world_size=5, shuffle=True
+        )
+        labels2 = [s["label"] for s in dss2]
+        dss3 = IterableDataset(
+            export_dir, distributed_rank=2, distributed_world_size=5, shuffle=True
+        )
+        labels3 = [s["label"] for s in dss3]
+        dss4 = IterableDataset(
+            export_dir, distributed_rank=3, distributed_world_size=5, shuffle=True
+        )
+        labels4 = [s["label"] for s in dss4]
+        dss5 = IterableDataset(
+            export_dir, distributed_rank=4, distributed_world_size=5, shuffle=True
+        )
+        labels5 = [s["label"] for s in dss5]
+        assert (
+            len(labels1) + len(labels2) + len(labels3) + len(labels4) + len(labels5)
+            == 50000
+        )
+        assert (
+            collections.Counter(labels1)
+            + collections.Counter(labels2)
+            + collections.Counter(labels3)
+            + collections.Counter(labels4)
+            + collections.Counter(labels5)
+            == counter1
+        )
     finally:
         shutil.rmtree(export_dir)
