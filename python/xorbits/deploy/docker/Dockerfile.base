@@ -5,17 +5,23 @@ FROM ${BASE_CONTAINER} AS base
 FROM base AS py3.8-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
-RUN if [ "$PYTHON_VERSION" == "3.8" ] ; then /opt/conda/bin/conda install --freeze-installed python=3.8 "conda-forge::pandas>=1.5.0" "main::numpy>=1.14.0,<1.23.0" "main::scipy>=1.9.2" ; fi
+RUN if [ "$PYTHON_VERSION" == "3.8" ] ; then \
+    /opt/conda/bin/conda install --freeze-installed python=3.8 "conda-forge::pandas>=1.5.0" "main::numpy>=1.14.0,<1.23.0" "main::scipy>=1.9.2" && \
+    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
 
 FROM base AS py3.9-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
-RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.9 "numpy>=1.14.0,<1.23.0" scipy\>=1.9.2 pandas\>=1.5.0 ; fi
+RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then \
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.9 "numpy>=1.14.0,<1.23.0" scipy\>=1.9.2 pandas\>=1.5.0 && \
+    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
 
 FROM base AS py3.10-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
-RUN if [ "$PYTHON_VERSION" == "3.10" ] ; then /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.10 numpy\>=1.14.0 scipy\>=1.9.2 pandas\>=1.5.0 ; fi
+RUN if [ "$PYTHON_VERSION" == "3.10" ] ; then \
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.10 numpy\>=1.14.0 scipy\>=1.9.2 pandas\>=1.5.0 && \
+    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
 
 FROM base AS py3.11-base
 SHELL ["/bin/bash", "-c"]
@@ -29,7 +35,7 @@ FROM py${PYTHON_VERSION}-base AS final
 RUN /opt/conda/bin/conda install \
     cython \
     mkl \
-    numexpr \
+    numexpr\<2.8.5 \
     psutil \
     scikit-learn \
     sqlalchemy \
@@ -50,8 +56,6 @@ RUN /opt/conda/bin/conda install \
     s3fs \
     pyopenssl>=23.0.0 \
   && /opt/conda/bin/conda clean --all -f -y
-
-RUN /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 14.21.1
