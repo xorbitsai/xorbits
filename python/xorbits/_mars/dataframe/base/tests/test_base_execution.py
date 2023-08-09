@@ -28,7 +28,7 @@ except ImportError:  # pragma: no cover
 
 from .... import execute, fetch
 from ....config import option_context, options
-from ....dataframe import DataFrame, Series
+from ....dataframe import DataFrame, Index, Series
 from ....tensor import arange, tensor
 from ....tensor.random import rand
 from ....tests.core import require_cudf
@@ -3184,3 +3184,27 @@ def test_nunique(setup, method, chunked, axis):
         raw_df.nunique(axis=axis),
         mdf.nunique(axis=axis, method=method).execute().fetch(),
     )
+
+
+def test_dataframe_copy(setup):
+    import pandas._testing as tm
+
+    df = DataFrame(pd.DataFrame(np.random.rand(10, 3)))
+    df_copy = df.copy()
+    tm.assert_frame_equal(df.to_pandas(), df_copy.to_pandas())
+
+
+def test_series_copy(setup):
+    import pandas._testing as tm
+
+    s = Series(pd.Series(np.random.rand(10)))
+    s_copy = s.copy()
+    tm.assert_series_equal(s.to_pandas(), s_copy.to_pandas())
+
+
+def test_index_copy(setup):
+    import pandas._testing as tm
+
+    idx = Index(pd.Index(np.random.rand(10)))
+    idx_copy = idx.copy()
+    tm.assert_index_equal(idx.to_pandas(), idx_copy.to_pandas())
