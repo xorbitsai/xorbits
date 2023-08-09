@@ -236,7 +236,7 @@ jobs:
         fi
         if [[ "$MODULE" == "datasets" ]]; then
           # test huggingface datasets
-          pip install datasets
+          pip install datasets torch
         fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python

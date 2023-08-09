@@ -55,7 +55,7 @@ class _GroupInfo:
 @dataclasses.dataclass
 class _FormatColumnInfo:
     as_py_columns: List[int] = dataclasses.field(default_factory=list)
-    column_name_to_decoder: Dict[int, Callable] = dataclasses.field(
+    column_name_to_decoder: Dict[str, Callable] = dataclasses.field(
         default_factory=dict
     )
 
@@ -122,7 +122,7 @@ class IterableDataset(_TorchIterableDataset):
         version: Optional[str] = None,
     ):
         """
-        A IterableDataset from the export path.
+        An IterableDataset from the export path.
 
         Parameters
         ----------
@@ -137,7 +137,7 @@ class IterableDataset(_TorchIterableDataset):
         fetch_timeout: float
             Fetch data timeout seconds.
         shuffle: bool
-            Whether shuffle or not.
+            Whether shuffle or not, default is False.
         shuffle_seed: int
             Shuffle seed, default is a fixed value.
         distributed_rank: int
@@ -167,21 +167,17 @@ class IterableDataset(_TorchIterableDataset):
         import fsspec
 
         rank, world_size = self._get_rank(), self._get_world_size()
-        if rank is None or world_size is None:
-            rank = 0
-            world_size = 1
-        else:
-            assert rank < world_size
+        assert rank < world_size
         formatter = self._get_formatters()
 
         # Generate a index for the Dataset index.
         rng = self._get_rng_generator() if self._shuffle else None
-        total_chunks = len(self._group_infos[0].index)
-        index_of_index = np.arange(total_chunks)
+        num_group_chunks = len(self._group_infos[0].index)
+        index_of_index = np.arange(num_group_chunks)
         if self._shuffle:
             rng.shuffle(index_of_index)
         # Get each worker index by rank and world size.
-        index_of_index = index_of_index[rank:total_chunks:world_size]
+        index_of_index = index_of_index[rank:num_group_chunks:world_size]
 
         # Create a new fs instance in __iter__ make sure the fs instance
         # is bound to worker.
@@ -193,7 +189,9 @@ class IterableDataset(_TorchIterableDataset):
         # The queue _prefecher -> _formatter
         prefetch_queue = Queue(maxsize=self._prefetch)
         # The queue _formatter -> __iter__
-        format_queue = Queue()
+        format_queue = Queue(
+            maxsize=self._info["max_chunk_rows"] // self._FORMAT_BATCH_SIZE + 1
+        )
 
         def _load_arrow_table(filepath):
             # TODO(codingl2k1): mmap if local.
@@ -217,12 +215,12 @@ class IterableDataset(_TorchIterableDataset):
                 if tables is finish_sentinel:
                     break
                 tables = list(tables)
-                num_chunks = len(tables[0])
-                in_table_index = np.arange(num_chunks)
+                num_chunk_rows = len(tables[0])
+                in_table_index = np.arange(num_chunk_rows)
                 if self._shuffle:
                     rng.shuffle(in_table_index)
                 for indices in np.array_split(
-                    in_table_index, num_chunks // self._FORMAT_BATCH_SIZE + 1
+                    in_table_index, num_chunk_rows // self._FORMAT_BATCH_SIZE + 1
                 ):
                     format_queue.put(
                         _executor.submit(formatter.format_batch, tables, indices)
@@ -378,10 +376,16 @@ class IterableDataset(_TorchIterableDataset):
             metadata = json.loads(metadata.decode())
             metadata = generate_from_dict(metadata)
             features = metadata["info"]["features"]
-            return FeatureFormatter(
-                {k: v for k, v in features.items() if isinstance(v, (Audio, Image))},
-                [group.schema for group in self._group_infos],
-            )
+            requires_decoding = {
+                k: v for k, v in features.items() if isinstance(v, (Audio, Image))
+            }
+            if requires_decoding:
+                return FeatureFormatter(
+                    requires_decoding,
+                    [group.schema for group in self._group_infos],
+                )
+            else:
+                return Formatter()
         else:
             return Formatter()
 
