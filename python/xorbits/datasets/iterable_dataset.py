@@ -156,6 +156,7 @@ def map_retry(executor, fn, *iterables, timeout=None, retry=0):
                             yield _result_or_cancel(fut)
                         else:
                             yield _result_or_cancel(fut, end_time - time.monotonic())
+                        break
                     except Exception as e:
                         if retry_time == retry:
                             raise e

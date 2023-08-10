@@ -57,6 +57,9 @@ def test_map_retry():
         with pytest.raises(MyException):
             list(r)
 
+        r = map_retry(executor, lambda x: x * x, [0, 1, 2])
+        assert list(r) == [0, 1, 4]
+
         r = map_retry(executor, raise_retry, [0, 1, 2], retry=2)
         list(r)
         assert call_count == [3, 3, 3]
