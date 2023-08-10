@@ -293,6 +293,8 @@ class ArrowWriter:
         with ThreadPoolExecutor(
             max_workers=num_threads, thread_name_prefix=self.write.__qualname__
         ) as executor:
+            # TODO(codingl2k1): split by max_chunk_rows may lead to rank data skew.
+            # e.g. if 1000, 1000, 80, then the rank 2 world 3 worker read very few data.
             max_chunk_rows = max_chunk_rows or self._DEFAULT_MAX_CHUNK_ROWS
             for idx, pa_table in enumerate(
                 dataset.with_format("arrow").iter(max_chunk_rows)

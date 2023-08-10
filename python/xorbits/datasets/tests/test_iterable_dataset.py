@@ -24,8 +24,53 @@ from ..iterable_dataset import IterableDataset
 
 def test_iterable_dataset():
     import PIL.Image
+    import torch
 
     tmp_dir = Path(tempfile.gettempdir())
+
+    export_dir = tmp_dir.joinpath("test_iterable_dataset")
+    shutil.rmtree(export_dir, ignore_errors=True)
+    db = from_huggingface("imdb", split="train")
+    db.export(
+        export_dir,
+        column_groups={"my_text": ["text"], "my_label": ["label"]},
+        max_chunk_rows=1000,
+    )
+
+    try:
+        ds = IterableDataset(
+            export_dir, shuffle=False, distributed_rank=0, distributed_world_size=2
+        )
+        len1 = len(ds)
+        len_list1 = len(list(ds))
+        assert len1 == len_list1
+        ds = IterableDataset(
+            export_dir, shuffle=False, distributed_rank=1, distributed_world_size=2
+        )
+        len2 = len(ds)
+        len_list2 = len(list(ds))
+        assert len2 == len_list2
+        assert len1 + len2 == len(IterableDataset(export_dir))
+        # Check len does not affect shuffle.
+        ds = IterableDataset(
+            export_dir, shuffle=True, distributed_rank=2, distributed_world_size=5
+        )
+        before_len_list = list(ds)
+        len(ds)
+        after_len_list = list(ds)
+        assert before_len_list == after_len_list
+
+        ds = IterableDataset(
+            export_dir, shuffle=True, distributed_rank=2, distributed_world_size=5
+        )
+        torch_result = list(torch.utils.data.DataLoader(ds, num_workers=2))
+        assert len(torch_result) == len(after_len_list)
+        assert {i["text"][0] for i in torch_result} == {
+            i["text"] for i in after_len_list
+        }
+    finally:
+        shutil.rmtree(export_dir, ignore_errors=True)
+
     export_dir = tmp_dir.joinpath("test_iterable_dataset")
     shutil.rmtree(export_dir, ignore_errors=True)
     db = from_huggingface("cifar10", split="train")
@@ -39,7 +84,7 @@ def test_iterable_dataset():
         idx = 0
         s = None
         for idx, s in enumerate(ds):
-            print(idx)
+            pass
         assert idx == 50000 - 1
         assert s.keys() == {"img", "label"}
         assert isinstance(s["img"], PIL.Image.Image)
@@ -49,6 +94,7 @@ def test_iterable_dataset():
         labels2 = [s["label"] for s in ds]
         assert labels1 == labels2
         ds.set_epoch(1)
+        assert ds.epoch() == 1
         labels3 = [s["label"] for s in ds]
         labels4 = [s["label"] for s in ds]
         assert labels3 == labels4
@@ -90,4 +136,4 @@ def test_iterable_dataset():
             == counter1
         )
     finally:
-        shutil.rmtree(export_dir)
+        shutil.rmtree(export_dir, ignore_errors=True)

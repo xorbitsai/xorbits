@@ -34,6 +34,7 @@ from typing import (
 
 import numpy as np
 import pyarrow as pa
+import pyarrow.compute as pc
 
 from .._mars.utils import lazy_import
 
@@ -46,6 +47,7 @@ else:
 
 @dataclasses.dataclass(init=False)
 class _GroupInfo:
+    name: str
     path: str
     index: pa.Table
     schema: pa.Schema
@@ -118,6 +120,8 @@ class IterableDataset(_TorchIterableDataset):
         shuffle_seed: int = 9176,
         distributed_rank: Optional[int] = None,
         distributed_world_size: Optional[int] = None,
+        worker_of_rank: Optional[int] = None,
+        workers_per_rank: Optional[int] = None,
         num_threads: Optional[int] = None,
         version: Optional[str] = None,
     ):
@@ -144,6 +148,10 @@ class IterableDataset(_TorchIterableDataset):
             Distributed rank, if not set, use `RANK` from environment var.
         distributed_world_size: int
             Distributed world size, if not set, use `WORLD_SIZE` from environment var.
+        worker_of_rank: int
+            The worker id of rank, if not set, try to get from `torch.utils.data.get_worker_info`.
+        workers_per_rank: int
+            The num workers per rank, if not set, try to get from `torch.utils.data.get_worker_info`.
         num_threads: int
             The max worker threads for __iter__.
         version: str
@@ -160,24 +168,16 @@ class IterableDataset(_TorchIterableDataset):
         self._shuffle_seed = shuffle_seed
         self._distributed_rank = distributed_rank
         self._distributed_world_size = distributed_world_size
+        self._worker_of_rank = worker_of_rank
+        self._workers_per_rank = workers_per_rank
         self._num_threads = num_threads
         self._epoch = 0
 
     def __iter__(self):
         import fsspec
 
-        rank, world_size = self._get_rank(), self._get_world_size()
-        assert rank < world_size
+        worker_index = self._get_worker_index()
         formatter = self._get_formatters()
-
-        # Generate a index for the Dataset index.
-        rng = self._get_rng_generator() if self._shuffle else None
-        num_group_chunks = len(self._group_infos[0].index)
-        index_of_index = np.arange(num_group_chunks)
-        if self._shuffle:
-            rng.shuffle(index_of_index)
-        # Get each worker index by rank and world size.
-        index_of_index = index_of_index[rank:num_group_chunks:world_size]
 
         # Create a new fs instance in __iter__ make sure the fs instance
         # is bound to worker.
@@ -200,7 +200,7 @@ class IterableDataset(_TorchIterableDataset):
                     return reader.read_all()
 
         def _prefetcher(_executor: ThreadPoolExecutor):
-            for idx in index_of_index:
+            for idx in worker_index:
                 group_files = [
                     os.path.join(group.path, group.index[0][idx].as_py())
                     for group in self._group_infos
@@ -211,16 +211,21 @@ class IterableDataset(_TorchIterableDataset):
 
         def _formatter(_executor: ThreadPoolExecutor):
             # TODO(codingl2k1): Use as_completed to optimize shuffle True.
+            rng = (
+                np.random.default_rng(self._shuffle_seed + self._epoch)
+                if self._shuffle
+                else None
+            )
             while tables := prefetch_queue.get():
                 if tables is finish_sentinel:
                     break
                 tables = list(tables)
                 num_chunk_rows = len(tables[0])
-                in_table_index = np.arange(num_chunk_rows)
+                in_chunk_index = np.arange(num_chunk_rows)
                 if self._shuffle:
-                    rng.shuffle(in_table_index)
+                    rng.shuffle(in_chunk_index)
                 for indices in np.array_split(
-                    in_table_index, num_chunk_rows // self._FORMAT_BATCH_SIZE + 1
+                    in_chunk_index, num_chunk_rows // self._FORMAT_BATCH_SIZE + 1
                 ):
                     format_queue.put(
                         _executor.submit(formatter.format_batch, tables, indices)
@@ -247,7 +252,13 @@ class IterableDataset(_TorchIterableDataset):
                 format_thread.join()
 
     def __len__(self):
-        return self._info["num_rows"]
+        if self._get_world_size() > 1:
+            worker_index = self._get_worker_index()
+            group = self._group_infos[0]
+            num_rows_series = group.index[f"{group.name}.num_rows"]
+            return pc.sum(num_rows_series.take(worker_index)).as_py()
+        else:
+            return self._info["num_rows"]
 
     @staticmethod
     def _batch_to_examples(
@@ -282,6 +293,7 @@ class IterableDataset(_TorchIterableDataset):
                 group_path = os.path.join(path, name)
                 group_meta_path = os.path.join(group_path, cls._META_DIR)
                 group_info = _GroupInfo()
+                group_info.name = name
                 group_info.path = group_path
                 group_infos.append(group_info)
 
@@ -344,19 +356,37 @@ class IterableDataset(_TorchIterableDataset):
             return int(os.environ.get("WORLD_SIZE", 1))
         return world_size
 
-    def _get_rng_generator(self):
-        if self._shuffle and self._epoch == 0:
-            return np.random.default_rng(self._shuffle_seed)
-        elif self._shuffle:
-            # Create epoch seed using self._epoch (we subtract in order to avoid overflow in long_scalars)
-            epoch_seed = (
-                np.random.default_rng(self._shuffle_seed).integers(0, 1 << 63)
-                - self._epoch
-            )
-            epoch_seed = (1 << 63) + epoch_seed if epoch_seed < 0 else epoch_seed
-            return np.random.default_rng(epoch_seed)
-        else:
-            raise ValueError("This dataset is not shuffled")
+    def _get_worker_info(self) -> Tuple[int, int]:
+        worker_id = self._worker_of_rank
+        num_workers = self._workers_per_rank
+        if worker_id is None or num_workers is None:
+            worker_info = torch and torch.utils.data.get_worker_info()
+            if worker_info is None:
+                worker_id = 0
+                num_workers = 1
+            else:
+                worker_id = worker_info.id
+                num_workers = worker_info.num_workers
+        return worker_id, num_workers
+
+    def _get_worker_index(self):
+        rank, world_size = self._get_rank(), self._get_world_size()
+        assert rank < world_size
+
+        # Generate an index for the Dataset group index.
+        num_group_chunks = len(self._group_infos[0].index)
+        rank_index = np.arange(num_group_chunks)
+        if self._shuffle:
+            rng = np.random.default_rng(self._shuffle_seed + self._epoch)
+            rng.shuffle(rank_index)
+        # Get each worker index by rank and world size.
+        rank_index = rank_index[rank:num_group_chunks:world_size]
+        worker_id, num_workers = self._get_worker_info()
+        return (
+            rank_index[worker_id : len(rank_index) : num_workers]
+            if num_workers > 1
+            else rank_index
+        )
 
     def _get_formatters(self) -> Formatter:
         """
