@@ -17,6 +17,7 @@ import functools
 import json
 import os.path
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import ExitStack
 from queue import Queue
@@ -102,6 +103,68 @@ class FeatureFormatter(Formatter):
                 ]
             result.update(d)
         return result
+
+
+def _result_or_cancel(fut, timeout=None):
+    try:
+        try:
+            return fut.result(timeout)
+        finally:
+            fut.cancel()
+    finally:
+        # Break a reference cycle with the exception in self._exception
+        del fut
+
+
+def map_retry(executor, fn, *iterables, timeout=None, retry=0):
+    """Returns an iterator equivalent to map(fn, iter).
+
+    Args:
+        executor: A ThreadPoolExecutor instance.
+        fn: A callable that will take as many arguments as there are
+            passed iterables.
+        timeout: The maximum number of seconds to wait. If None, then there
+            is no limit on the wait time.
+        retry: The retry times.
+
+    Returns:
+        An iterator equivalent to: map(func, *iterables) but the calls may
+        be evaluated out-of-order.
+
+    Raises:
+        TimeoutError: If the entire result iterator could not be generated
+            before the given timeout.
+        Exception: If fn(*args) raises for any values.
+    """
+    if timeout is not None:
+        end_time = timeout + time.monotonic()
+
+    fs = [(executor.submit(fn, *args), args) for args in zip(*iterables)]
+
+    # Yield must be hidden in closure so that the futures are submitted
+    # before the first iterator value is required.
+    def result_iterator():
+        try:
+            # reverse to keep finishing order
+            fs.reverse()
+            while fs:
+                # Careful not to keep a reference to the popped future
+                fut, args = fs.pop()
+                for retry_time in range(retry + 1):
+                    try:
+                        if timeout is None:
+                            yield _result_or_cancel(fut)
+                        else:
+                            yield _result_or_cancel(fut, end_time - time.monotonic())
+                    except Exception as e:
+                        if retry_time == retry:
+                            raise e
+                        fut = executor.submit(fn, *args)
+        finally:
+            for future, _ in fs:
+                future.cancel()
+
+    return result_iterator()
 
 
 class IterableDataset(_TorchIterableDataset):
@@ -205,7 +268,13 @@ class IterableDataset(_TorchIterableDataset):
                     os.path.join(group.path, group.index[0][idx].as_py())
                     for group in self._group_infos
                 ]
-                tables = _executor.map(_load_arrow_table, group_files)
+                tables = map_retry(
+                    _executor,
+                    _load_arrow_table,
+                    group_files,
+                    timeout=self._fetch_timeout,
+                    retry=self._fetch_retry,
+                )
                 prefetch_queue.put(tables)
             prefetch_queue.put(finish_sentinel)
 
@@ -222,7 +291,7 @@ class IterableDataset(_TorchIterableDataset):
                 tables = list(tables)
                 num_chunk_rows = len(tables[0])
                 in_chunk_index = np.arange(num_chunk_rows)
-                if self._shuffle:
+                if rng is not None:
                     rng.shuffle(in_chunk_index)
                 for indices in np.array_split(
                     in_chunk_index, num_chunk_rows // self._FORMAT_BATCH_SIZE + 1
@@ -356,7 +425,8 @@ class IterableDataset(_TorchIterableDataset):
             return int(os.environ.get("WORLD_SIZE", 1))
         return world_size
 
-    def _get_worker_info(self) -> Tuple[int, int]:
+    def _get_worker_info(self):
+        """Get worker id and num workers."""
         worker_id = self._worker_of_rank
         num_workers = self._workers_per_rank
         if worker_id is None or num_workers is None:

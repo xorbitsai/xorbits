@@ -16,10 +16,54 @@
 import collections
 import shutil
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+import pytest
+
 from ..backends.huggingface.from_huggingface import from_huggingface
-from ..iterable_dataset import IterableDataset
+from ..iterable_dataset import IterableDataset, map_retry
+
+
+def test_map_retry():
+    class MyException(Exception):
+        pass
+
+    def may_raise(i):
+        if i == 1:
+            raise MyException("test raise")
+        return i
+
+    call_count = [0, 0, 0]
+
+    def raise_retry(i):
+        call_count[i] += 1
+        if call_count[i] == 3:
+            return i
+        raise MyException("test raise")
+
+    call_count2 = [0, 0, 0]
+
+    def raise_retry2(i):
+        call_count2[i] += 1
+        if call_count2[i] == 3:
+            return i
+        if i == 1:
+            raise MyException("test raise")
+        return i
+
+    with ThreadPoolExecutor() as executor:
+        r = map_retry(executor, may_raise, [0, 1, 2])
+        with pytest.raises(MyException):
+            list(r)
+
+        r = map_retry(executor, raise_retry, [0, 1, 2], retry=2)
+        list(r)
+        assert call_count == [3, 3, 3]
+
+        r = map_retry(executor, raise_retry2, [0, 1, 2], retry=2)
+        list(r)
+        assert call_count2 == [1, 3, 1]
 
 
 def test_iterable_dataset():
