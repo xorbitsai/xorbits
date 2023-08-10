@@ -240,7 +240,7 @@ class IterableDataset(_TorchIterableDataset):
         import fsspec
 
         worker_index = self._get_worker_index()
-        formatter = self._get_formatters()
+        formatter = self._get_formatter()
 
         # Create a new fs instance in __iter__ make sure the fs instance
         # is bound to worker.
@@ -458,7 +458,7 @@ class IterableDataset(_TorchIterableDataset):
             else rank_index
         )
 
-    def _get_formatters(self) -> Formatter:
+    def _get_formatter(self) -> Formatter:
         """
         Get formatters from metadata.
 
