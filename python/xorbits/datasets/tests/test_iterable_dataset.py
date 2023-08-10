@@ -16,6 +16,7 @@
 import collections
 import shutil
 import tempfile
+import weakref
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -23,6 +24,15 @@ import pytest
 
 from ..backends.huggingface.from_huggingface import from_huggingface
 from ..iterable_dataset import IterableDataset, map_retry
+
+
+class MyObject(object):
+    def my_method(self):
+        pass
+
+
+def make_dummy_object(_):
+    return MyObject()
 
 
 def test_map_retry():
@@ -67,6 +77,13 @@ def test_map_retry():
         r = map_retry(executor, raise_retry2, [0, 1, 2], retry=2)
         list(r)
         assert call_count2 == [1, 3, 1]
+
+        # Issue #14406: Result iterator should not keep an internal
+        # reference to result objects.
+        for obj in map_retry(executor, make_dummy_object, range(10)):
+            wr = weakref.ref(obj)
+            del obj
+            assert wr() is None
 
 
 def test_iterable_dataset():

@@ -139,7 +139,11 @@ def map_retry(executor, fn, *iterables, timeout=None, retry=0):
     if timeout is not None:
         end_time = timeout + time.monotonic()
 
-    fs = [(executor.submit(fn, *args), args) for args in zip(*iterables)]
+    fs = []
+    arg_list = []
+    for args in zip(*iterables):
+        arg_list.append(args)
+        fs.append(executor.submit(fn, *args))
 
     # Yield must be hidden in closure so that the futures are submitted
     # before the first iterator value is required.
@@ -148,21 +152,23 @@ def map_retry(executor, fn, *iterables, timeout=None, retry=0):
             # reverse to keep finishing order
             fs.reverse()
             while fs:
+                curr_args = arg_list.pop()
                 # Careful not to keep a reference to the popped future
-                fut, args = fs.pop()
                 for retry_time in range(retry + 1):
                     try:
                         if timeout is None:
-                            yield _result_or_cancel(fut)
+                            yield _result_or_cancel(fs.pop())
                         else:
-                            yield _result_or_cancel(fut, end_time - time.monotonic())
+                            yield _result_or_cancel(
+                                fs.pop(), end_time - time.monotonic()
+                            )
                         break
                     except Exception as e:
                         if retry_time == retry:
                             raise e
-                        fut = executor.submit(fn, *args)
+                        fs.append(executor.submit(fn, *curr_args))
         finally:
-            for future, _ in fs:
+            for future in fs:
                 future.cancel()
 
     return result_iterator()
