@@ -16,6 +16,7 @@ import dataclasses
 import functools
 import json
 import os.path
+import queue
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -255,6 +256,11 @@ class IterableDataset(_TorchIterableDataset):
             self._path, storage_options=self._storage_options
         )
         fs: fsspec.AbstractFileSystem = fs_token_paths[0]
+        # The exception caught in processing pipeline.
+        exception = None
+        # The flag to check whether finis or exception.
+        finish = False
+        # A sentinel to mark the upstream is finish.
         finish_sentinel = object()
         # The queue _prefecher -> _formatter
         prefetch_queue = Queue(maxsize=self._prefetch)
@@ -263,14 +269,39 @@ class IterableDataset(_TorchIterableDataset):
             maxsize=self._info["max_chunk_rows"] // self._FORMAT_BATCH_SIZE + 1
         )
 
+        def _exception_safe(output_queue):
+            def _wrapper(func):
+                def __wrapper(*args, **kwargs):
+                    try:
+                        return func(*args, **kwargs)
+                    except Exception as e:
+                        nonlocal exception
+                        exception = e
+                    finally:
+                        nonlocal finish
+                        finish = True
+                        while not prefetch_queue.empty():
+                            try:
+                                prefetch_queue.get_nowait()
+                            except queue.Empty:
+                                break
+                        output_queue.put(finish_sentinel)
+
+                return __wrapper
+
+            return _wrapper
+
         def _load_arrow_table(filepath):
             # TODO(codingl2k1): mmap if local.
             with fs.open(filepath, "rb") as f:
                 with pa.ipc.RecordBatchStreamReader(f) as reader:
                     return reader.read_all()
 
+        @_exception_safe(output_queue=prefetch_queue)
         def _prefetcher(_executor: ThreadPoolExecutor):
             for idx in worker_index:
+                if finish is True:
+                    break
                 group_files = [
                     os.path.join(group.path, group.index[0][idx].as_py())
                     for group in self._group_infos
@@ -283,8 +314,8 @@ class IterableDataset(_TorchIterableDataset):
                     retry=self._fetch_retry,
                 )
                 prefetch_queue.put(tables)
-            prefetch_queue.put(finish_sentinel)
 
+        @_exception_safe(output_queue=format_queue)
         def _formatter(_executor: ThreadPoolExecutor):
             # TODO(codingl2k1): Use as_completed to optimize shuffle True.
             rng = (
@@ -306,7 +337,6 @@ class IterableDataset(_TorchIterableDataset):
                     format_queue.put(
                         _executor.submit(formatter.format_batch, tables, indices)
                     )
-            format_queue.put(finish_sentinel)
 
         with ThreadPoolExecutor(
             max_workers=self._num_threads,
@@ -324,8 +354,14 @@ class IterableDataset(_TorchIterableDataset):
                     for example in self._batch_to_examples(fut.result()):
                         yield example
             finally:
+                finish = True
+                while not prefetch_queue.empty():
+                    prefetch_queue.get_nowait()
                 prefetch_thread.join()
                 format_thread.join()
+            # Reraise the exception.
+            if exception is not None:
+                raise exception
 
     def __len__(self):
         if self._get_world_size() > 1:
