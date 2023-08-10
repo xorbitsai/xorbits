@@ -31,6 +31,7 @@ class YarnSupervisorCommandRunner(YarnServiceMixin, SupervisorCommandRunner):
     def parse_args(self, parser, argv, environ=None):
         args = super().parse_args(parser, argv, environ=environ)
         self.config["web"]["host"] = args.endpoint.split(":", 1)[0]
+        self.config["cluster"]["backend"] = "yarn"
         return args
 
     async def start_services(self):

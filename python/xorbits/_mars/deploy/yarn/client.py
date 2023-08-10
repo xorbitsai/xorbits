@@ -68,14 +68,6 @@ def _get_ready_container_count(app_client, svc):
     return len(container_ids.intersection(registered_ids))
 
 
-def _get_app_log(app_id: str):
-    import skein
-
-    skein_client = skein.Client()
-    logs = skein_client.application_logs(app_id)
-    logger.warning(f"App id: {app_id} logs:\n%s", logs.dumps())
-
-
 def new_cluster(
     environment=None,
     supervisor_num=1,
@@ -206,8 +198,6 @@ def new_cluster(
         web_endpoint = random.choice(
             [to_str(v).split("@", 1)[0] for v in web_endpoint_kv.values()]
         )
-
-        _get_app_log(app_id)
         logger.warning(f"Web endpoint is: {web_endpoint}")
         return YarnClusterClient(
             skein_client,
