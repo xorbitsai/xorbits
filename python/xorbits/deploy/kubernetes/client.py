@@ -532,7 +532,7 @@ class KubernetesCluster:
                 name=pv_name, body={"metadata": {"finalizers": None}}
             )
             api.delete_persistent_volume(pv_name)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             logger.warning(f"Error happens during deleting pv: {e}")
 
     def stop(self, wait: bool = False, timeout: int = 0):
