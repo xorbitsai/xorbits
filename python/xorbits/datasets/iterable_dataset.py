@@ -16,7 +16,6 @@ import dataclasses
 import functools
 import json
 import os.path
-import queue
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -62,6 +61,11 @@ class _FormatColumnInfo:
     column_name_to_decoder: Dict[str, Callable] = dataclasses.field(
         default_factory=dict
     )
+
+
+@dataclasses.dataclass
+class _FinishSentinel:
+    exception: Optional[Exception] = None
 
 
 class Formatter:
@@ -256,40 +260,20 @@ class IterableDataset(_TorchIterableDataset):
             self._path, storage_options=self._storage_options
         )
         fs: fsspec.AbstractFileSystem = fs_token_paths[0]
-        # The exception caught in processing pipeline.
-        exception = None
-        # The flag to check whether finis or exception.
+        # The flag to stop the _formatter thread.
         finish = False
         # A sentinel to mark the upstream is finish.
-        finish_sentinel = object()
-        # The queue _prefecher -> _formatter
-        prefetch_queue = Queue(maxsize=self._prefetch)
+        finish_sentinel = _FinishSentinel()
         # The queue _formatter -> __iter__
         format_queue = Queue(
             maxsize=self._info["max_chunk_rows"] // self._FORMAT_BATCH_SIZE + 1
         )
 
-        def _exception_safe(output_queue):
-            def _wrapper(func):
-                def __wrapper(*args, **kwargs):
-                    try:
-                        return func(*args, **kwargs)
-                    except Exception as e:
-                        nonlocal exception
-                        exception = e
-                    finally:
-                        nonlocal finish
-                        finish = True
-                        while not prefetch_queue.empty():
-                            try:
-                                prefetch_queue.get_nowait()
-                            except queue.Empty:
-                                break
-                        output_queue.put(finish_sentinel)
-
-                return __wrapper
-
-            return _wrapper
+        def _next(g):
+            try:
+                return next(g)
+            except StopIteration:
+                return None
 
         def _load_arrow_table(filepath):
             # TODO(codingl2k1): mmap if local.
@@ -297,71 +281,77 @@ class IterableDataset(_TorchIterableDataset):
                 with pa.ipc.RecordBatchStreamReader(f) as reader:
                     return reader.read_all()
 
-        @_exception_safe(output_queue=prefetch_queue)
         def _prefetcher(_executor: ThreadPoolExecutor):
             for idx in worker_index:
-                if finish is True:
-                    break
                 group_files = [
                     os.path.join(group.path, group.index[0][idx].as_py())
                     for group in self._group_infos
                 ]
-                tables = map_retry(
+                yield map_retry(
                     _executor,
                     _load_arrow_table,
                     group_files,
                     timeout=self._fetch_timeout,
                     retry=self._fetch_retry,
                 )
-                prefetch_queue.put(tables)
 
-        @_exception_safe(output_queue=format_queue)
-        def _formatter(_executor: ThreadPoolExecutor):
+        def _formatter(_output_queue: Queue):
             # TODO(codingl2k1): Use as_completed to optimize shuffle True.
             rng = (
                 np.random.default_rng(self._shuffle_seed + self._epoch)
                 if self._shuffle
                 else None
             )
-            while tables := prefetch_queue.get():
-                if tables is finish_sentinel:
-                    break
-                tables = list(tables)
-                num_chunk_rows = len(tables[0])
-                in_chunk_index = np.arange(num_chunk_rows)
-                if rng is not None:
-                    rng.shuffle(in_chunk_index)
-                for indices in np.array_split(
-                    in_chunk_index, num_chunk_rows // self._FORMAT_BATCH_SIZE + 1
-                ):
-                    format_queue.put(
-                        _executor.submit(formatter.format_batch, tables, indices)
-                    )
+            with ThreadPoolExecutor(
+                max_workers=self._num_threads,
+                thread_name_prefix=self.__iter__.__qualname__,
+            ) as executor:
+                try:
+                    prefetch = _prefetcher(executor)
+                    buffer = [_next(prefetch) for _ in range(self._prefetch)]
+                    idx = 0
+                    buffer_len = len(buffer)
+                    while not finish:
+                        tables = buffer[idx]
+                        if tables is None:
+                            break
+                        buffer[idx] = _next(prefetch)
+                        idx += 1
+                        idx %= buffer_len
 
-        with ThreadPoolExecutor(
-            max_workers=self._num_threads,
-            thread_name_prefix=self.__iter__.__qualname__,
-        ) as executor:
-            # _prefetcher and _fomatter share one thread pool.
-            prefetch_thread = threading.Thread(target=_prefetcher, args=(executor,))
-            prefetch_thread.start()
-            format_thread = threading.Thread(target=_formatter, args=(executor,))
-            format_thread.start()
-            try:
-                while fut := format_queue.get():
-                    if fut is finish_sentinel:
-                        break
-                    for example in self._batch_to_examples(fut.result()):
-                        yield example
-            finally:
-                finish = True
-                while not prefetch_queue.empty():
-                    prefetch_queue.get_nowait()
-                prefetch_thread.join()
-                format_thread.join()
-            # Reraise the exception.
-            if exception is not None:
-                raise exception
+                        tables = list(tables)
+                        num_chunk_rows = len(tables[0])
+                        in_chunk_index = np.arange(num_chunk_rows)
+                        if rng is not None:
+                            rng.shuffle(in_chunk_index)
+                        for indices in np.array_split(
+                            in_chunk_index,
+                            num_chunk_rows // self._FORMAT_BATCH_SIZE + 1,
+                        ):
+                            _output_queue.put(
+                                executor.submit(formatter.format_batch, tables, indices)
+                            )
+                except Exception as ex:
+                    finish_sentinel.exception = ex
+                finally:
+                    _output_queue.put(finish_sentinel)
+
+        format_thread = threading.Thread(target=_formatter, args=(format_queue,))
+        format_thread.start()
+        try:
+            while fut := format_queue.get():
+                if fut is finish_sentinel:
+                    break
+                for example in self._batch_to_examples(fut.result()):
+                    yield example
+        except Exception as e:
+            finish = True
+            finish_sentinel.exception = e
+        finally:
+            format_thread.join()
+        # Reraise the exception.
+        if finish_sentinel.exception is not None:
+            raise finish_sentinel.exception
 
     def __len__(self):
         if self._get_world_size() > 1:
