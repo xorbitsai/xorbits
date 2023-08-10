@@ -52,6 +52,8 @@ class YarnClusterClient:
         try:
             skein_client = skein.Client()
             app_client = skein_client.connect(self._application_id)
+            logs = skein_client.application_logs(self._application_id)
+            logger.warning("Logs:\n%s", logs.dumps())
             app_client.shutdown(status=status)
             if self._is_client_managed:
                 self._skein_client.close()

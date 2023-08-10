@@ -296,7 +296,7 @@ jobs:
           export YARN_HOME=$HADOOP_HOME
           export HADOOP_COMMON_LIB_NATIVE_DIR="$HADOOP_HOME/lib/native"
           export PATH="$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin"
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning xorbits/_mars -m hadoop
+          pytest --timeout=1500 -W ignore::PendingDeprecationWarning xorbits/_mars -m hadoop -o log_cli=true --log-cli-level=DEBUG
         elif [[ "$MODULE" == "vineyard" ]]; then
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
