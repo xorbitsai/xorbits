@@ -53,10 +53,6 @@ class YarnClusterClient:
             skein_client = skein.Client()
             app_client = skein_client.connect(self._application_id)
             app_client.shutdown(status=status)
-
-            logs = skein_client.application_logs(self._application_id)
-            print(f"YARN logs:\n{logs.dumps()}")
-
             if self._is_client_managed:
                 self._skein_client.close()
         except skein.ApplicationNotRunningError:
@@ -202,7 +198,6 @@ def new_cluster(
         web_endpoint = random.choice(
             [to_str(v).split("@", 1)[0] for v in web_endpoint_kv.values()]
         )
-        print(f"Web endpoint is: {web_endpoint}")
         return YarnClusterClient(
             skein_client,
             app_client.id,

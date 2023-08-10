@@ -43,7 +43,6 @@ class YarnSupervisorCommandRunner(YarnServiceMixin, SupervisorCommandRunner):
 
         web_api = await OscarWebAPI.create(self.args.endpoint)
         web_endpoint = await web_api.get_web_address()
-        print(f"!!!Register web address: {web_endpoint}")
         self.register_endpoint(self.web_service_name, web_endpoint)
 
 
