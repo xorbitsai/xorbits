@@ -208,6 +208,7 @@ def new_cluster(
         )
 
         _get_app_log(app_id)
+        logger.warning(f"Web endpoint is: {web_endpoint}")
         return YarnClusterClient(
             skein_client,
             app_client.id,
