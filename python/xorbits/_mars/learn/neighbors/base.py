@@ -32,8 +32,8 @@ from ._kneighbors_graph import KNeighborsGraph
 from ._proxima import METRIC_TO_PROXIMA_METRIC_TYPE, build_proxima_index, proxima_query
 
 VALID_METRICS = dict(
-    ball_tree=SklearnBallTree.valid_metrics,
-    kd_tree=SklearnKDTree.valid_metrics,
+    ball_tree=SklearnBallTree.valid_metrics(),
+    kd_tree=SklearnKDTree.valid_metrics(),
     # The following list comes from the
     # sklearn.metrics.pairwise doc string
     brute=(
