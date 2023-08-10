@@ -20,6 +20,7 @@ from typing import Dict, List
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 import pytest
 
 from ...config import option_context
@@ -32,6 +33,8 @@ from ..utils import (
     _get_index_map,
     auto_merge_chunks,
     build_concatenated_rows_frame,
+    build_df,
+    build_empty_df,
     build_split_idx_to_origin_idx,
     decide_dataframe_chunk_sizes,
     decide_series_chunk_size,
@@ -730,3 +733,12 @@ def test_index_map(setup_gpu, gpu):
         actual = _get_index_map(src, func4)
         expected = df.index.map(func4)
         pd.testing.assert_index_equal(actual, expected)
+
+
+def test_build_df():
+    table = pa.table({"a": [1, 2, 3], "b": list("abc")})
+    df = DataFrame(table.to_pandas(types_mapper=pd.ArrowDtype))
+    r1 = build_df(df)
+    pd.testing.assert_series_equal(r1.dtypes, df.dtypes)
+    r2 = build_empty_df(df.dtypes)
+    pd.testing.assert_series_equal(r2.dtypes, df.dtypes)
