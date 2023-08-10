@@ -28,6 +28,11 @@ class YarnSupervisorCommandRunner(YarnServiceMixin, SupervisorCommandRunner):
         os.environ["MARS_CONTAINER_IP"] = self.get_container_ip()
         return super().__call__(*args, **kwargs)
 
+    def parse_args(self, parser, argv, environ=None):
+        args = super().parse_args(parser, argv, environ=environ)
+        self.config["web"]["host"] = args.endpoint.split(":", 1)[0]
+        return args
+
     async def start_services(self):
         self.register_endpoint()
 
@@ -37,6 +42,7 @@ class YarnSupervisorCommandRunner(YarnServiceMixin, SupervisorCommandRunner):
 
         web_api = await OscarWebAPI.create(self.args.endpoint)
         web_endpoint = await web_api.get_web_address()
+        print(f"!!!Register web address: {web_endpoint}")
         self.register_endpoint(self.web_service_name, web_endpoint)
 
 
