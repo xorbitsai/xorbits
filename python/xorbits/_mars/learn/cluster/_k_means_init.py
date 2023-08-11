@@ -235,7 +235,7 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
                     random_state=op.state,
                     n_local_trials=op.n_local_trials,
                 )[0]
-            else:
+            else:  # pragma: no cover
                 ctx[op.outputs[0].key] = _kmeans_plusplus(
                     x,
                     op.n_clusters,
