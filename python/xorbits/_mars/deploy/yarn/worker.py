@@ -27,6 +27,11 @@ class YarnWorkerCommandRunner(YarnServiceMixin, WorkerCommandRunner):
         os.environ["MARS_CONTAINER_IP"] = self.get_container_ip()
         return super().__call__(*args, **kwargs)
 
+    def parse_args(self, parser, argv, environ=None):
+        args = super().parse_args(parser, argv, environ=environ)
+        self.config["cluster"]["backend"] = "yarn"
+        return args
+
     async def start_services(self):
         from ...services.cluster import ClusterAPI
         from ..oscar.worker import start_worker
