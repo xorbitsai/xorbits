@@ -269,12 +269,6 @@ class IterableDataset(_TorchIterableDataset):
             maxsize=self._info["max_chunk_rows"] // self._FORMAT_BATCH_SIZE + 1
         )
 
-        def _next(g):
-            try:
-                return next(g)
-            except StopIteration:
-                return None
-
         def _load_arrow_table(filepath):
             # TODO(codingl2k1): mmap if local.
             with fs.open(filepath, "rb") as f:
@@ -308,14 +302,14 @@ class IterableDataset(_TorchIterableDataset):
             ) as executor:
                 try:
                     prefetch = _prefetcher(executor)
-                    buffer = [_next(prefetch) for _ in range(self._prefetch)]
+                    buffer = [next(prefetch, None) for _ in range(self._prefetch)]
                     idx = 0
                     buffer_len = len(buffer)
                     while not finish:
                         tables = buffer[idx]
                         if tables is None:
                             break
-                        buffer[idx] = _next(prefetch)
+                        buffer[idx] = next(prefetch, None)
                         idx += 1
                         idx %= buffer_len
 
@@ -354,6 +348,7 @@ class IterableDataset(_TorchIterableDataset):
             raise finish_sentinel.exception
 
     def __len__(self):
+        """Get data length according to rank, world size, worker id and num workers."""
         if self._get_world_size() > 1:
             worker_index = self._get_worker_index()
             group = self._group_infos[0]
@@ -517,10 +512,8 @@ class IterableDataset(_TorchIterableDataset):
                     requires_decoding,
                     [group.schema for group in self._group_infos],
                 )
-            else:
-                return Formatter()
-        else:
-            return Formatter()
+        # Fast path without decoding.
+        return Formatter()
 
     @functools.cached_property
     def column_groups(self) -> List[str]:
