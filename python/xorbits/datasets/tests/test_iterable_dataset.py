@@ -88,25 +88,43 @@ def test_map_retry():
 
 
 def test_exception_handler():
-    ds = IterableDataset("/Users/po/Work/xorbits/python/out2", shuffle=True)
-    with mock.patch("fsspec.implementations.local.LocalFileSystem.open") as mock_open:
-        mock_open.side_effect = Exception("test raise when fetch")
-        with pytest.raises(Exception, match="fetch"):
-            len(list(ds))
-    with mock.patch(
-        "xorbits.datasets.iterable_dataset.Formatter.format_batch"
-    ) as mock_format:
-        mock_format.side_effect = Exception("test raise when format")
-        with pytest.raises(Exception, match="format"):
-            len(list(ds))
-    with mock.patch("xorbits.datasets.iterable_dataset.map_retry") as mock_map_retry:
-        mock_map_retry.side_effect = Exception("test raise in _prefetcher")
-        with pytest.raises(Exception, match="_prefetcher"):
-            len(list(ds))
-    with mock.patch("numpy.random.default_rng") as mock_default_rng:
-        mock_default_rng.side_effect = Exception("test raise in _formatter")
-        with pytest.raises(Exception, match="_formatter"):
-            len(list(ds))
+    tmp_dir = Path(tempfile.gettempdir())
+
+    export_dir = tmp_dir.joinpath("test_iterable_dataset")
+    shutil.rmtree(export_dir, ignore_errors=True)
+    db = from_huggingface("imdb", split="train")
+    db.export(
+        export_dir,
+        column_groups={"my_text": ["text"], "my_label": ["label"]},
+        max_chunk_rows=1000,
+    )
+
+    try:
+        ds = IterableDataset(export_dir, shuffle=True)
+        with mock.patch(
+            "fsspec.implementations.local.LocalFileSystem.open"
+        ) as mock_open:
+            mock_open.side_effect = Exception("test raise when fetch")
+            with pytest.raises(Exception, match="fetch"):
+                len(list(ds))
+        with mock.patch(
+            "xorbits.datasets.iterable_dataset.Formatter.format_batch"
+        ) as mock_format:
+            mock_format.side_effect = Exception("test raise when format")
+            with pytest.raises(Exception, match="format"):
+                len(list(ds))
+        with mock.patch(
+            "xorbits.datasets.iterable_dataset.map_retry"
+        ) as mock_map_retry:
+            mock_map_retry.side_effect = Exception("test raise in _prefetcher")
+            with pytest.raises(Exception, match="_prefetcher"):
+                len(list(ds))
+        with mock.patch("numpy.random.default_rng") as mock_default_rng:
+            mock_default_rng.side_effect = Exception("test raise in _formatter")
+            with pytest.raises(Exception, match="_formatter"):
+                len(list(ds))
+    finally:
+        shutil.rmtree(export_dir, ignore_errors=True)
 
 
 def test_iterable_dataset():
