@@ -26,6 +26,7 @@ from ...tensor.random import RandomStateField
 from ...utils import has_unknown_shape
 from ..metrics import euclidean_distances
 from ..operands import LearnOperand, LearnOperandMixin
+from ..utils.core import sklearn_version
 
 
 def _kmeans_plus_plus_init(
@@ -225,14 +226,23 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
         )
 
         with device(device_id):
-            ctx[op.outputs[0].key] = _kmeans_plusplus(
-                x,
-                op.n_clusters,
-                sample_weight=sample_weight,
-                x_squared_norms=x_squared_norms,
-                random_state=op.state,
-                n_local_trials=op.n_local_trials,
-            )[0]
+            if sklearn_version() >= "1.3.0":
+                ctx[op.outputs[0].key] = _kmeans_plusplus(
+                    x,
+                    op.n_clusters,
+                    sample_weight=sample_weight,
+                    x_squared_norms=x_squared_norms,
+                    random_state=op.state,
+                    n_local_trials=op.n_local_trials,
+                )[0]
+            else:
+                ctx[op.outputs[0].key] = _kmeans_plusplus(
+                    x,
+                    op.n_clusters,
+                    x_squared_norms=x_squared_norms,
+                    random_state=op.state,
+                    n_local_trials=op.n_local_trials,
+                )[0]
 
 
 ###############################################################################
