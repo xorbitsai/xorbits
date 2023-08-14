@@ -22,6 +22,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 import pytest
 import scipy.sparse as sps
 from xoscar.serialization import AioDeserializer, AioSerializer
@@ -382,3 +383,16 @@ async def test_cuda_backend():
         write_data = await storage.get(writer._file._object_id)
         _compare_objs(write_data, get_data)
         await storage.delete(put_info.object_id)
+
+
+@pytest.mark.asyncio
+@require_lib
+async def test_put_get_arrow(storage_context):
+    storage = storage_context
+
+    data = [pa.Table.from_pydict({"a": [1, 2, 3], "b": list("abc")}),
+            pa.RecordBatch.from_pydict({"a": [1, 2, 3], "b": list("abc")})]
+    for d in data:
+        put_info = await storage.put(d)
+        get_data = await storage.get(put_info.object_id)
+        assert d == get_data
