@@ -390,8 +390,10 @@ async def test_cuda_backend():
 async def test_put_get_arrow(storage_context):
     storage = storage_context
 
-    data = [pa.Table.from_pydict({"a": [1, 2, 3], "b": list("abc")}),
-            pa.RecordBatch.from_pydict({"a": [1, 2, 3], "b": list("abc")})]
+    data = [
+        pa.Table.from_pydict({"a": [1, 2, 3], "b": list("abc")}),
+        pa.RecordBatch.from_pydict({"a": [1, 2, 3], "b": list("abc")}),
+    ]
     for d in data:
         put_info = await storage.put(d)
         get_data = await storage.get(put_info.object_id)
