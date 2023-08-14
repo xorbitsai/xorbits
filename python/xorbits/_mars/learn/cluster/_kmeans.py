@@ -493,6 +493,7 @@ def _init_centroids(
     X,
     n_clusters=8,
     init="k-means++",
+    sample_weight=None,
     random_state=None,
     x_squared_norms=None,
     init_size=None,
@@ -558,7 +559,11 @@ def _init_centroids(
 
     if isinstance(init, str) and init == "k-means++":
         centers = _k_init(
-            X, n_clusters, random_state=random_state, x_squared_norms=x_squared_norms
+            X,
+            n_clusters,
+            sample_weight=sample_weight,
+            random_state=random_state,
+            x_squared_norms=x_squared_norms,
         )
     elif isinstance(init, str) and init == "k-means||":
         centers = _scalable_k_init(
@@ -879,6 +884,7 @@ class KMeans(TransformerMixin, ClusterMixin, BaseEstimator):
 
         self._check_params(X)
         random_state = check_random_state(self.random_state).to_numpy()
+        sample_weight = _check_sample_weight(sample_weight, X, dtype=X.dtype)
 
         tol = _tolerance(X, self.tol)
 
@@ -914,6 +920,7 @@ class KMeans(TransformerMixin, ClusterMixin, BaseEstimator):
                 X,
                 self.n_clusters,
                 init,
+                sample_weight=sample_weight,
                 random_state=random_state,
                 x_squared_norms=x_squared_norms,
                 oversampling_factor=self.oversampling_factor,

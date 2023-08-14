@@ -154,3 +154,9 @@ def sort_by(
     df = DataFrame(i_to_tensors)
     sorted_df = df.sort_values(by_name, ascending=ascending)
     return [sorted_df[i].to_tensor() for i in range(len(tensors))]
+
+
+def sklearn_version():
+    import sklearn
+
+    return sklearn.__version__
