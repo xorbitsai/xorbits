@@ -91,7 +91,7 @@ jobs:
       - name: Build web
         run: |
           pip install -r CI/requirements-wheel.txt
-          cd python && python setup.py build_web
+          cd python && python setup.py build_web && git reset --hard HEAD
 
       - name: Build sdist
         run: cd python && pipx run build --sdist
