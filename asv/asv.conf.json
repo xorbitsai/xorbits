@@ -88,7 +88,7 @@
         "numpy": [],
         "Cython": ["0.29.24"],
         "pandas": [],
-        "scipy": [],
+        "pip+scipy": [],
         "scikit-learn": [],
         "numexpr": [],
         "cloudpickle": [],
