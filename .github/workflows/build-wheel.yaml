@@ -91,7 +91,7 @@ jobs:
       - name: Build web
         run: |
           pip install -r CI/requirements-wheel.txt
-          cd python && python setup.py build_web
+          cd python && python setup.py build_web && git reset --hard HEAD
 
       - name: Build sdist
         run: cd python && pipx run build --sdist
@@ -119,6 +119,7 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
+          skip-existing: true
 
       # if is not xprobe repo, upload to test
       - uses: pypa/gh-action-pypi-publish@v1.5.0
