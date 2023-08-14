@@ -114,7 +114,7 @@ jobs:
           path: dist
 
       # if is xprobe repo, upload to pypi
-      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository == 'xorbitsai/xorbits'
         with:
           user: __token__
@@ -122,10 +122,11 @@ jobs:
           skip-existing: true
 
       # if is not xprobe repo, upload to test
-      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository != 'xorbitsai/xorbits'
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_PASSWORD }}
           verbose: true
-          repository_url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
