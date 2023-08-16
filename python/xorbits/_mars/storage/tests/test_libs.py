@@ -388,6 +388,9 @@ async def test_cuda_backend():
 @pytest.mark.asyncio
 @require_lib
 async def test_put_get_arrow(storage_context):
+    if isinstance(storage_context, VineyardStorage):
+        # https://github.com/xorbitsai/xorbits/issues/661
+        return
     storage = storage_context
 
     data = [
