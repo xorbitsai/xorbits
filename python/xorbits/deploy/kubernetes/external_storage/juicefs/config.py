@@ -16,7 +16,7 @@
 import uuid
 from typing import Optional
 
-from xorbits.deploy.kubernetes.config import KubeConfig
+from ...config import KubeConfig
 
 
 class SecretConfig(KubeConfig):
@@ -71,8 +71,8 @@ class PersistentVolumeConfig(KubeConfig):
         return {
             "kind": self._kind,
             "metadata": {
-                "name": "juicefs-pv",
-                "labels": {"juicefs-name": "juicefs-fs"},
+                "name": f"juicefs-pv-{self._namespace}",
+                "labels": {"juicefs-name": f"juicefs-fs-{self._namespace}"},
             },
             "spec": {
                 "capacity": {
@@ -90,7 +90,7 @@ class PersistentVolumeConfig(KubeConfig):
                 "persistentVolumeReclaimPolicy": "Retain",  # persistentVolumeReclaimPolicy is restricted to Retain for Static provisioning. See https://juicefs.com/docs/csi/guide/resource-optimization/#reclaim-policy for more references.
                 "csi": {
                     "driver": "csi.juicefs.com",
-                    "volumeHandle": "juicefs-pv",
+                    "volumeHandle": f"juicefs-pv-{self._namespace}",
                     "fsType": "juicefs",
                     "nodePublishSecretRef": {
                         "name": "juicefs-secret",
@@ -126,6 +126,8 @@ class PersistentVolumeClaimConfig(KubeConfig):
                 "volumeMode": "Filesystem",
                 "storageClassName": "",
                 "resources": {"requests": {"storage": "200M"}},
-                "selector": {"matchLabels": {"juicefs-name": "juicefs-fs"}},
+                "selector": {
+                    "matchLabels": {"juicefs-name": f"juicefs-fs-{self._namespace}"}
+                },
             },
         }

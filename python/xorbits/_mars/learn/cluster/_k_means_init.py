@@ -26,6 +26,7 @@ from ...tensor.random import RandomStateField
 from ...utils import has_unknown_shape
 from ..metrics import euclidean_distances
 from ..operands import LearnOperand, LearnOperandMixin
+from ..utils.core import sklearn_version
 
 
 def _kmeans_plus_plus_init(
@@ -99,6 +100,7 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
     _x = KeyField("x")
     _n_clusters = Int32Field("n_clusters")
     _x_squared_norms = KeyField("x_squared_norms")
+    _sample_weight = KeyField("sample_weight")
     _state = RandomStateField("state")
     _n_local_trials = Int32Field("n_local_trials")
 
@@ -106,6 +108,7 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
         self,
         x=None,
         n_clusters=None,
+        sample_weight=None,
         x_squared_norms=None,
         state=None,
         n_local_trials=None,
@@ -115,6 +118,7 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
         super().__init__(
             _x=x,
             _n_clusters=n_clusters,
+            _sample_weight=sample_weight,
             _x_squared_norms=x_squared_norms,
             _state=state,
             _n_local_trials=n_local_trials,
@@ -133,6 +137,10 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
         return self._n_clusters
 
     @property
+    def sample_weight(self):
+        return self._sample_weight
+
+    @property
     def x_squared_norms(self):
         return self._x_squared_norms
 
@@ -147,10 +155,11 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
     def _set_inputs(self, inputs):
         super()._set_inputs(inputs)
         self._x = self._inputs[0]
-        self._x_squared_norms = self._inputs[-1]
+        self._x_squared_norms = self._inputs[1]
+        self._sample_weight = self._inputs[2]
 
     def __call__(self):
-        inputs = [self._x, self._x_squared_norms]
+        inputs = [self._x, self._x_squared_norms, self._sample_weight]
         kw = {
             "shape": (self._n_clusters, self._x.shape[1]),
             "dtype": self._x.dtype,
@@ -165,7 +174,11 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
         chunk_op = op.copy().reset_key()
         chunk_kw = out.params.copy()
         chunk_kw["index"] = (0, 0)
-        chunk_inputs = [op.x.chunks[0], op.x_squared_norms.chunks[0]]
+        chunk_inputs = [
+            op.x.chunks[0],
+            op.x_squared_norms.chunks[0],
+            op.sample_weight.chunks[0],
+        ]
         chunk = chunk_op.new_chunk(chunk_inputs, kws=[chunk_kw])
 
         kw = out.params
@@ -208,25 +221,37 @@ class KMeansPlusPlusInit(LearnOperand, LearnOperandMixin):
             def _kmeans_plusplus(*args, **kwargs):
                 return _k_init(*args, **kwargs), None
 
-        (x, x_squared_norms), device_id, _ = as_same_device(
+        (x, x_squared_norms, sample_weight), device_id, _ = as_same_device(
             [ctx[inp.key] for inp in op.inputs], device=op.device, ret_extra=True
         )
 
         with device(device_id):
-            ctx[op.outputs[0].key] = _kmeans_plusplus(
-                x,
-                op.n_clusters,
-                x_squared_norms=x_squared_norms,
-                random_state=op.state,
-                n_local_trials=op.n_local_trials,
-            )[0]
+            if sklearn_version() >= "1.3.0":
+                ctx[op.outputs[0].key] = _kmeans_plusplus(
+                    x,
+                    op.n_clusters,
+                    sample_weight=sample_weight,
+                    x_squared_norms=x_squared_norms,
+                    random_state=op.state,
+                    n_local_trials=op.n_local_trials,
+                )[0]
+            else:  # pragma: no cover
+                ctx[op.outputs[0].key] = _kmeans_plusplus(
+                    x,
+                    op.n_clusters,
+                    x_squared_norms=x_squared_norms,
+                    random_state=op.state,
+                    n_local_trials=op.n_local_trials,
+                )[0]
 
 
 ###############################################################################
 # Initialization heuristic
 
 
-def _k_init(X, n_clusters, x_squared_norms, random_state, n_local_trials=None):
+def _k_init(
+    X, n_clusters, x_squared_norms, sample_weight, random_state, n_local_trials=None
+):
     """Init n_clusters seeds according to k-means++
 
     Parameters
@@ -265,6 +290,7 @@ def _k_init(X, n_clusters, x_squared_norms, random_state, n_local_trials=None):
     op = KMeansPlusPlusInit(
         x=X,
         n_clusters=n_clusters,
+        sample_weight=sample_weight,
         x_squared_norms=x_squared_norms,
         state=random_state,
         n_local_trials=n_local_trials,

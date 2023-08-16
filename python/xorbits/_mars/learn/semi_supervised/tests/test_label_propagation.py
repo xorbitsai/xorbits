@@ -15,10 +15,10 @@
 
 import numpy as np
 import pytest
+from numpy.testing import assert_no_warnings
 from sklearn.datasets import make_classification
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
-from sklearn.utils._testing import assert_no_warnings
 
 from .... import tensor as mt
 from ...metrics.pairwise import rbf_kernel
