@@ -493,12 +493,32 @@ class DataFrameReadParquet(
     def _tile_http_url(cls, op: "DataFrameReadParquet"):
         out_chunks = []
         out_df = op.outputs[0]
-        for i, url in enumerate(op.path):
+        z = None
+        zip_filename = None
+        if op.path[0].endswith(".zip"):
+            import urllib.request
+
+            zip_filename, _ = urllib.request.urlretrieve(op.path[0])
+            z = zipfile.ZipFile(zip_filename)
+            paths = z.namelist()
+            paths = [
+                path
+                for path in paths
+                if path.endswith(".parquet") and not path.startswith("__MACOSX")
+            ]
+        else:
+            paths = op.path
+        for i, url in enumerate(paths):
             chunk_op = op.copy().reset_key()
-            chunk_op.path = url
+            if z is not None:
+                chunk_op.path = zip_filename + " " + url
+            else:
+                chunk_op.path = url
             out_chunks.append(
                 chunk_op.new_chunk(None, index=(i, 0), shape=(np.nan, np.nan))
             )
+        if z is not None:
+            z.close()
         new_op = op.copy()
         nsplits = ((np.nan,) * len(out_chunks), (np.nan,))
         return new_op.new_dataframes(
@@ -544,15 +564,25 @@ class DataFrameReadParquet(
     def _pandas_read_parquet(cls, ctx: dict, op: "DataFrameReadParquet"):
         out = op.outputs[0]
         path = op.path
+        z = None
+        ziplist = op.path.split(" ")
         if op.is_http_url:
+            if len(ziplist) > 1:
+                z = zipfile.ZipFile(ziplist[0])
+                f = z.open(ziplist[1])
+            else:
+                f = op.path
             r = pd.read_parquet(
-                op.path,
+                f,
                 columns=op.columns,
                 engine=op.engine,
                 **op.read_kwargs or dict(),
             )
             if op.use_arrow_dtype:
                 r = r.astype(to_arrow_dtypes(r.dtypes).to_dict())
+            if z is not None:
+                z.close()
+                f.close()
             ctx[out.key] = r
             return
         if op.partitions is not None:

@@ -1476,8 +1476,30 @@ def test_read_parquet_fast_parquet(setup):
 
 
 def _start_tornado(port: int, file_path0: str, file_path1: str):
+    import io
+    import zipfile
+
     import tornado.ioloop
     import tornado.web
+
+    class ZipHandler(tornado.web.RequestHandler):
+        def get(self):
+            # 创建一个内存缓冲区
+            mem_zip = io.BytesIO()
+
+            with zipfile.ZipFile(
+                mem_zip, mode="w", compression=zipfile.ZIP_DEFLATED
+            ) as zf:
+                zf.write(file_path0, "file0.parquet")
+                zf.write(file_path1, "file1.parquet")
+
+            mem_zip.seek(0)  # 必须回到流的起始位置
+
+            # 设置响应的头信息
+            self.set_header("Content-Type", "application/zip")
+            self.set_header("Content-Disposition", "attachment; filename=test.zip")
+
+            self.write(mem_zip.read())  # 发送zip文件内容
 
     class Parquet0Handler(tornado.web.RequestHandler):
         def get(self):
@@ -1493,6 +1515,7 @@ def _start_tornado(port: int, file_path0: str, file_path1: str):
         [
             (r"/read-parquet0", Parquet0Handler),
             (r"/read-parquet1", Parquet1Handler),
+            (r"/test.zip", ZipHandler),
         ]
     )
     app.listen(port)
@@ -1514,7 +1537,6 @@ def start_http_server():
         )
         df.iloc[:50].to_parquet(file_path0)
         df.iloc[50:].to_parquet(file_path1)
-
         port = get_next_port()
         proc = multiprocessing.Process(
             target=_start_tornado, args=(port, file_path0, file_path1)
@@ -1525,15 +1547,17 @@ def start_http_server():
         yield df, [
             f"http://127.0.0.1:{port}/read-parquet0",
             f"http://127.0.0.1:{port}/read-parquet1",
-        ]
+        ], f"http://127.0.0.1:{port}/test.zip"
         # Terminate the process
         proc.terminate()
 
 
 def test_read_parquet_with_http_url(setup, start_http_server):
-    df, urls = start_http_server
+    df, urls, zipurls = start_http_server
     mdf = md.read_parquet(urls).execute().fetch()
+    mdf2 = md.read_parquet(zipurls).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
+    pd.testing.assert_frame_equal(df, mdf2)
 
     mdf = md.read_parquet(urls, use_arrow_dtype=True).execute().fetch()
     pd.testing.assert_frame_equal(df, arrow_array_to_objects(mdf))
