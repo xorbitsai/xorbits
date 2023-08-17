@@ -14,6 +14,8 @@
 # limitations under the License.
 
 import os
+import sys
+import zipfile
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
@@ -395,8 +397,8 @@ class DataFrameReadParquet(
 
         dtypes = cls._to_arrow_dtypes(out_df.dtypes, op)
         shape = (np.nan, out_df.shape[1])
-
         path_prefix = ""
+        z = None
         if isinstance(op.path, (tuple, list)):
             paths = op.path
         elif get_fs(op.path, op.storage_options).isdir(op.path):
@@ -404,24 +406,43 @@ class DataFrameReadParquet(
             if parsed_path.scheme.lower() == "hdfs":
                 path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
             paths = get_fs(op.path, op.storage_options).ls(op.path)
+        elif isinstance(op.path, str) and op.path.endswith(".zip"):
+            z = zipfile.ZipFile(op.path)
+            paths = z.namelist()
+            paths = [
+                path
+                for path in paths
+                if path.endswith(".parquet") and not path.startswith("__MACOSX")
+            ]
         else:
             paths = glob(op.path, storage_options=op.storage_options)
-
         first_chunk_row_num, first_chunk_raw_bytes = None, None
         for i, pth in enumerate(paths):
             pth = path_prefix + pth
             if i == 0:
-                with open_file(pth, storage_options=op.storage_options) as f:
-                    first_chunk_row_num = get_engine(op.engine).get_row_num(f)
-                first_chunk_raw_bytes = file_size(
-                    pth, storage_options=op.storage_options
-                )
+                if z is not None:
+                    with z.open(pth) as f:
+                        first_chunk_row_num = get_engine(op.engine).get_row_num(f)
+                        first_chunk_raw_bytes = sys.getsizeof(f)
+                else:
+                    with open_file(pth, storage_options=op.storage_options) as f:
+                        first_chunk_row_num = get_engine(op.engine).get_row_num(f)
+                    first_chunk_raw_bytes = file_size(
+                        pth, storage_options=op.storage_options
+                    )
 
             if op.groups_as_chunks:
-                num_row_groups = pq.ParquetFile(pth).num_row_groups
+                if z is not None:
+                    with z.open(pth) as f:
+                        num_row_groups = pq.ParquetFile(f).num_row_groups
+                else:
+                    num_row_groups = pq.ParquetFile(pth).num_row_groups
                 for group_idx in range(num_row_groups):
                     chunk_op = op.copy().reset_key()
-                    chunk_op.path = pth
+                    if z is not None:
+                        chunk_op.path = op.path + "_" + pth
+                    else:
+                        chunk_op.path = pth
                     chunk_op.group_index = group_idx
                     chunk_op.first_chunk_row_num = first_chunk_row_num
                     chunk_op.first_chunk_raw_bytes = first_chunk_raw_bytes
@@ -438,7 +459,10 @@ class DataFrameReadParquet(
                     chunk_index += 1
             else:
                 chunk_op = op.copy().reset_key()
-                chunk_op.path = pth
+                if z is not None:
+                    chunk_op.path = op.path + " " + pth
+                else:
+                    chunk_op.path = pth
                 chunk_op.first_chunk_row_num = first_chunk_row_num
                 chunk_op.first_chunk_raw_bytes = first_chunk_raw_bytes
                 new_chunk = chunk_op.new_chunk(
@@ -451,7 +475,8 @@ class DataFrameReadParquet(
                 )
                 out_chunks.append(new_chunk)
                 chunk_index += 1
-
+        if z is not None:
+            z.close()
         new_op = op.copy()
         nsplits = ((np.nan,) * len(out_chunks), (out_df.shape[1],))
         return new_op.new_dataframes(
@@ -519,7 +544,6 @@ class DataFrameReadParquet(
     def _pandas_read_parquet(cls, ctx: dict, op: "DataFrameReadParquet"):
         out = op.outputs[0]
         path = op.path
-
         if op.is_http_url:
             r = pd.read_parquet(
                 op.path,
@@ -533,41 +557,55 @@ class DataFrameReadParquet(
             return
         if op.partitions is not None:
             return cls._execute_partitioned(ctx, op)
-
         engine = get_engine(op.engine)
-        with open_file(path, storage_options=op.storage_options) as f:
-            use_arrow_dtype = contain_arrow_dtype(out.dtypes)
-            if op.groups_as_chunks:
-                df = engine.read_group_to_pandas(
-                    f,
-                    op.group_index,
-                    columns=op.columns,
-                    nrows=op.nrows,
-                    use_arrow_dtype=use_arrow_dtype,
-                    **op.read_kwargs or dict(),
-                )
-            else:
-                df = engine.read_to_pandas(
-                    f,
-                    columns=op.columns,
-                    nrows=op.nrows,
-                    use_arrow_dtype=use_arrow_dtype,
-                    **op.read_kwargs or dict(),
-                )
-
-            ctx[out.key] = df
+        z = None
+        ziplist = op.path.split(" ")
+        if len(ziplist) > 1:
+            z = zipfile.ZipFile(ziplist[0])
+            f = z.open(ziplist[1])
+        else:
+            f = open_file(path, storage_options=op.storage_options)
+        use_arrow_dtype = contain_arrow_dtype(out.dtypes)
+        if op.groups_as_chunks:
+            df = engine.read_group_to_pandas(
+                f,
+                op.group_index,
+                columns=op.columns,
+                nrows=op.nrows,
+                use_arrow_dtype=use_arrow_dtype,
+                **op.read_kwargs or dict(),
+            )
+        else:
+            df = engine.read_to_pandas(
+                f,
+                columns=op.columns,
+                nrows=op.nrows,
+                use_arrow_dtype=use_arrow_dtype,
+                **op.read_kwargs or dict(),
+            )
+        ctx[out.key] = df
+        if z is not None:
+            z.close()
+        f.close()
 
     @classmethod
     def _cudf_read_parquet(cls, ctx: dict, op: "DataFrameReadParquet"):
         out = op.outputs[0]
         path = op.path
-
+        ziplist = path.split(" ")
+        z = None
+        if len(ziplist) > 1:
+            path = ziplist[1]
+            z = zipfile.ZipFile(ziplist[0])
         engine = CudfEngine()
         if os.path.exists(path):
             file = op.path
             close = lambda: None
         else:  # pragma: no cover
-            file = open_file(path, storage_options=op.storage_options)
+            if z is not None:
+                file = z.open(path)
+            else:
+                file = open_file(path, storage_options=op.storage_options)
             close = file.close
 
         try:
@@ -613,7 +651,16 @@ class DataFrameReadParquet(
             return super().estimate_size(ctx, op)
         first_chunk_row_num = op.first_chunk_row_num
         first_chunk_raw_bytes = op.first_chunk_raw_bytes
-        raw_bytes = file_size(op.path, storage_options=op.storage_options)
+        if isinstance(op.path, str):
+            ziplist = op.path.split(" ")
+            if len(ziplist) > 1:
+                with zipfile.ZipFile(ziplist[0]) as z:
+                    with z.open(ziplist[1]) as f:
+                        raw_bytes = sys.getsizeof(f)
+            else:
+                raw_bytes = file_size(op.path, storage_options=op.storage_options)
+        else:
+            raw_bytes = file_size(op.path, storage_options=op.storage_options)
         if op.num_group_rows:
             raw_bytes = (
                 np.ceil(np.divide(raw_bytes, op.num_group_rows)).astype(np.int64).item()
@@ -748,7 +795,6 @@ def read_parquet(
             gpu=gpu,
         )
         return op()
-
     fs = get_fs(single_path, storage_options)
     if use_arrow_dtype is None:
         use_arrow_dtype = options.dataframe.use_arrow_dtype
@@ -766,6 +812,10 @@ def read_parquet(
             is_partitioned = True
         else:
             with fs.open(paths[0], mode="rb") as f:
+                dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
+    elif isinstance(path, str) and path.endswith(".zip"):
+        with zipfile.ZipFile(path) as z:
+            with z.open(z.namelist()[0]) as f:
                 dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
     else:
         if not isinstance(path, list):
