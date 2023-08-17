@@ -1402,6 +1402,7 @@ def test_read_parquet_zip(setup, engine):
         r = mdf.execute().fetch()
         pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
 
+
 @require_cudf
 def test_read_parquet_zip_gpu(setup, engine):
     with tempfile.TemporaryDirectory() as tempdir:
