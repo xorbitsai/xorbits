@@ -1402,6 +1402,34 @@ def test_read_parquet_zip(setup, engine):
         r = mdf.execute().fetch()
         pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
 
+@require_cudf
+def test_read_parquet_zip_gpu(setup, engine):
+    with tempfile.TemporaryDirectory() as tempdir:
+        df = pd.DataFrame(
+            {
+                "a": np.arange(300).astype(np.int64, copy=False),
+                "b": [f"s{i}" for i in range(300)],
+                "c": np.random.rand(300),
+            }
+        )
+
+        file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
+        df[:100].to_parquet(file_paths[0], row_group_size=50)
+        df[100:200].to_parquet(file_paths[1], row_group_size=30)
+        df[200:].to_parquet(file_paths[2])
+        import zipfile
+
+        zip_file = zipfile.ZipFile(os.path.join(tempdir, "test.zip"), "w")
+
+        zip_file.write(file_paths[0])
+        zip_file.write(file_paths[1])
+        zip_file.write(file_paths[2])
+
+        zip_file.close()
+        mdf = md.read_parquet(f"{tempdir}/test.zip", gpu=True)
+        r = mdf.execute().fetch(to_cpu=False)
+        pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
+
 
 def test_read_parquet_arrow_dtype(setup):
     test_df = pd.DataFrame(
