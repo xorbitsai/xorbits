@@ -1391,15 +1391,12 @@ def test_read_parquet_zip(setup, engine):
         df[200:].to_parquet(file_paths[2])
         import zipfile
 
-        # 创建ZipFile对象
         zip_file = zipfile.ZipFile(os.path.join(tempdir, "test.zip"), "w")
 
-        # 在zip文件中添加文件
         zip_file.write(file_paths[0])
         zip_file.write(file_paths[1])
         zip_file.write(file_paths[2])
 
-        # 关闭ZipFile对象
         zip_file.close()
         mdf = md.read_parquet(f"{tempdir}/test.zip", engine=engine)
         r = mdf.execute().fetch()
