@@ -1404,7 +1404,7 @@ def test_read_parquet_zip(setup, engine):
 
 
 @require_cudf
-def test_read_parquet_zip_gpu(setup, engine):
+def test_read_parquet_zip_gpu(setup):
     with tempfile.TemporaryDirectory() as tempdir:
         df = pd.DataFrame(
             {
