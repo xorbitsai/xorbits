@@ -1429,7 +1429,9 @@ def test_read_parquet_zip_gpu(setup):
         zip_file.close()
         mdf = md.read_parquet(f"{tempdir}/test.zip", gpu=True)
         r = mdf.execute().fetch(to_cpu=False)
-        pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
+        pd.testing.assert_frame_equal(
+            df, r.sort_values("a").to_pandas().reset_index(drop=True)
+        )
 
 
 def test_read_parquet_arrow_dtype(setup):
