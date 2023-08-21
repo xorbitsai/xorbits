@@ -1,5 +1,4 @@
 # Copyright 2022-2023 XProbe Inc.
-# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -84,6 +83,7 @@ class HuggingfaceExport(DataOperand, DataOperandMixin):
 class SchemaInfo:
     schema: pa.Schema
     column_groups: Dict
+    max_chunk_rows: int
 
 
 class ArrowWriter:
@@ -172,15 +172,15 @@ class ArrowWriter:
     ):
         self._fs.mkdirs(meta_path, exist_ok=True)
         pa_table = pa_table.select([name]).flatten()
-        schema_table = schema_info.schema.empty_table().select(
+        group_schema_table = schema_info.schema.empty_table().select(
             schema_info.column_groups[name]
         )
         info = {
             "num_bytes": pc.sum(pa_table[f"{name}.num_bytes"]).as_py(),
             "num_rows": pc.sum(pa_table[f"{name}.num_rows"]).as_py(),
-            "num_columns": schema_table.num_columns,
+            "num_columns": group_schema_table.num_columns,
             "num_files": pa_table.num_rows,
-            "schema_string": schema_table.schema.to_string(
+            "schema_string": group_schema_table.schema.to_string(
                 show_field_metadata=False, show_schema_metadata=False
             ),
         }
@@ -196,8 +196,8 @@ class ArrowWriter:
         # Write schema empty table.
         schema_file = os.path.join(meta_path, "schema.arrow")
         with self._fs.open(schema_file, "wb") as stream:
-            with self._WRITER_CLASS(stream, schema_table.schema) as writer:
-                writer.write(schema_table)
+            with self._WRITER_CLASS(stream, group_schema_table.schema) as writer:
+                writer.write(group_schema_table)
         return info
 
     def write_meta(
@@ -230,7 +230,11 @@ class ArrowWriter:
                 )
 
             group_info = q.get()
-            info = {"groups": meta.column_names, "num_rows": group_info["num_rows"]}
+            info = {
+                "groups": meta.column_names,
+                "num_rows": group_info["num_rows"],
+                "max_chunk_rows": schema_info.max_chunk_rows,
+            }
             info_file = os.path.join(version_path, "info.json")
             with self._fs.open(info_file, "w") as f:
                 json.dump(info, f)
@@ -288,13 +292,16 @@ class ArrowWriter:
         with ThreadPoolExecutor(
             max_workers=num_threads, thread_name_prefix=self.write.__qualname__
         ) as executor:
+            # TODO(codingl2k1): split by max_chunk_rows may lead to rank data skew.
+            # e.g. if 1000, 1000, 80, then the rank 2 world 3 worker read very few data.
+            max_chunk_rows = max_chunk_rows or self._DEFAULT_MAX_CHUNK_ROWS
             for idx, pa_table in enumerate(
-                dataset.with_format("arrow").iter(
-                    max_chunk_rows or self._DEFAULT_MAX_CHUNK_ROWS
-                )
+                dataset.with_format("arrow").iter(max_chunk_rows)
             ):
                 if chunk_index == 0 and idx == 0:
-                    schema_info = SchemaInfo(pa_table.schema, column_groups)
+                    schema_info = SchemaInfo(
+                        pa_table.schema, column_groups, max_chunk_rows
+                    )
                 pa_table = pa_table.combine_chunks()
                 for (name, columns), features in zip(
                     column_groups.items(), feature_groups
