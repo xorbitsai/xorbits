@@ -333,22 +333,17 @@ class ArrowWriter:
             for fut in as_completed(futures):
                 fut.result()
 
+        struct_schema = pa.struct(
+            [
+                ("index", pa.list_(pa.int32(), 2)),
+                ("num_rows", pa.int64()),
+                ("num_bytes", pa.int64()),
+            ]
+        )
         meta_table = pa.Table.from_pydict(
             meta_info,
             schema=pa.schema(
-                [
-                    pa.field(
-                        k,
-                        pa.struct(
-                            [
-                                ("index", pa.list_(pa.int32(), 2)),
-                                ("num_rows", pa.int64()),
-                                ("num_bytes", pa.int64()),
-                            ]
-                        ),
-                    )
-                    for k in meta_info
-                ],
+                [pa.field(k, struct_schema) for k in meta_info],
                 metadata=None
                 if schema_info is None
                 else {self._META_SCHEMA_INFO_KEY: cloudpickle.dumps(schema_info)},
