@@ -183,7 +183,7 @@ def test_iterable_dataset():
     try:
         ds = IterableDataset(export_dir, shuffle=True)
         assert ds.schema.names == ["img", "label"]
-        assert ds.column_groups == ["mdata", "data"]
+        assert ds.groups == ["mdata", "data"]
         assert len(ds) == 50000
         idx = 0
         s = None
