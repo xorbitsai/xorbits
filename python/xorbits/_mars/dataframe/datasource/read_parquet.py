@@ -415,6 +415,7 @@ class DataFrameReadParquet(
             paths = fsspec.get_fs_token_paths(
                 op.path, storage_options=op.storage_options
             )[0].ls(op.path)
+            paths = sorted(paths)
         elif isinstance(op.path, str) and op.path.endswith(".zip"):
             z = zipfile.ZipFile(op.path)
             paths = z.namelist()
@@ -507,11 +508,9 @@ class DataFrameReadParquet(
         out_chunks = []
         out_df = op.outputs[0]
         z = None
-        zip_filename = None
         if op.path[0].endswith(".zip"):
-            import urllib.request
-
-            zip_filename, _ = urllib.request.urlretrieve(op.path[0])
+            fs, _, _ = fsspec.get_fs_token_paths(op.path[0])
+            zip_filename = fs.open(op.path[0])
             z = zipfile.ZipFile(zip_filename)
             paths = z.namelist()
             paths = [
