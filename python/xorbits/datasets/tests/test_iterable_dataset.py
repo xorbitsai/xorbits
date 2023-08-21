@@ -183,7 +183,11 @@ def test_iterable_dataset():
     try:
         ds = IterableDataset(export_dir, shuffle=True)
         assert ds.schema.names == ["img", "label"]
+        assert ds.shape == (50000, 2)
         assert ds.groups == ["mdata", "data"]
+        assert len(ds.group_infos()) == 2
+        assert [gi.name for gi in ds.group_infos()] == ["mdata", "data"]
+        assert ds.info()["num_rows"] == 50000
         assert len(ds) == 50000
         idx = 0
         s = None
