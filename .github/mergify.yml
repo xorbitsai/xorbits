@@ -7,7 +7,7 @@ pull_request_rules:
       update:
   - name: Automatic merge
     conditions:
-      - "#approved-reviews-by>=2"
+      - "#approved-reviews-by>=1"
       - check-success=lint (ubuntu-latest, 3.10)
       - check-success=build_test_job (ubuntu-latest, 3.8, xorbits)
       - check-success=build_test_job (ubuntu-latest, 3.9, xorbits)
