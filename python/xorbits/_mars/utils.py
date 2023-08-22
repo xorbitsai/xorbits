@@ -60,6 +60,7 @@ from urllib.parse import urlparse
 import cloudpickle as pickle
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 from xoscar._utils import (
     TypeDispatcher,
     new_random_id,
@@ -795,6 +796,9 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
                     for key, value in d.items():
                         result[key].extend(value)
         return result
+    elif isinstance(v, pa.Table):
+        result = [r[1] for r in chunk_results]
+        return pa.concat_tables(result)
     elif hf_datasets is not None and isinstance(v, hf_datasets.Dataset):
         result = [r[1] for r in chunk_results]
         return hf_datasets.concatenate_datasets(result)

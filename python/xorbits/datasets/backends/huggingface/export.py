@@ -93,7 +93,8 @@ class ArrowWriter:
     _META_DIR = ".meta"
     _MULTIMEDIA_PREFIX = "mdata"
     _DATA_PREFIX = "data"
-    _FILE_NAME_FORMATTER = "{prefix}_{chunk_index}_{index}.arrow"
+    _FILE_NAME_FORMATTER = "{chunk_index}_{index}.arrow"
+    _META_SCHEMA_INFO_KEY = b"xdataset_schema_info"
 
     def __init__(
         self,
@@ -166,20 +167,20 @@ class ArrowWriter:
         self,
         q: Queue,
         meta_path: str,
-        pa_table: pa.Table,
+        meta_table: pa.Table,
         name: str,
         schema_info: SchemaInfo,
     ):
         self._fs.mkdirs(meta_path, exist_ok=True)
-        pa_table = pa_table.select([name]).flatten()
+        meta_table = meta_table.select([name]).flatten()
         group_schema_table = schema_info.schema.empty_table().select(
             schema_info.column_groups[name]
         )
         info = {
-            "num_bytes": pc.sum(pa_table[f"{name}.num_bytes"]).as_py(),
-            "num_rows": pc.sum(pa_table[f"{name}.num_rows"]).as_py(),
+            "num_bytes": pc.sum(meta_table[f"{name}.num_bytes"]).as_py(),
+            "num_rows": pc.sum(meta_table[f"{name}.num_rows"]).as_py(),
             "num_columns": group_schema_table.num_columns,
-            "num_files": pa_table.num_rows,
+            "num_files": meta_table.num_rows,
             "schema_string": group_schema_table.schema.to_string(
                 show_field_metadata=False, show_schema_metadata=False
             ),
@@ -191,8 +192,8 @@ class ArrowWriter:
         # Write index arrow table.
         index_file = os.path.join(meta_path, "index.arrow")
         with self._fs.open(index_file, "wb") as stream:
-            with self._WRITER_CLASS(stream, pa_table.schema) as writer:
-                writer.write(pa_table)
+            with self._WRITER_CLASS(stream, meta_table.schema) as writer:
+                writer.write(meta_table)
         # Write schema empty table.
         schema_file = os.path.join(meta_path, "schema.arrow")
         with self._fs.open(schema_file, "wb") as stream:
@@ -202,13 +203,14 @@ class ArrowWriter:
 
     def write_meta(
         self,
-        meta: pa.Table,
+        meta_table: pa.Table,
         num_threads: Optional[int] = None,
         version: Optional[str] = None,
     ):
         version_path = os.path.join(self._path, version or self._DEFAULT_VERSION)
-        schema_info = cloudpickle.loads(meta["__schema_info"][0].as_py())
-        meta = meta.drop_columns("__schema_info")
+        schema_info = cloudpickle.loads(
+            meta_table.schema.metadata[self._META_SCHEMA_INFO_KEY]
+        )
 
         futures = []
         with ThreadPoolExecutor(
@@ -216,14 +218,14 @@ class ArrowWriter:
         ) as executor:
             q: Queue = Queue()
 
-            for name in meta.column_names:
+            for name in meta_table.column_names:
                 meta_path = os.path.join(version_path, name, self._META_DIR)
                 futures.append(
                     executor.submit(
                         self._write_group_meta,
                         q,
                         meta_path,
-                        meta,
+                        meta_table,
                         name,
                         schema_info,
                     )
@@ -231,7 +233,7 @@ class ArrowWriter:
 
             group_info = q.get()
             info = {
-                "groups": meta.column_names,
+                "groups": meta_table.column_names,
                 "num_rows": group_info["num_rows"],
                 "max_chunk_rows": schema_info.max_chunk_rows,
             }
@@ -240,7 +242,7 @@ class ArrowWriter:
                 json.dump(info, f)
 
         # Raise exception if exists.
-        return dict(zip(meta.column_names, (fut.result() for fut in futures)))
+        return dict(zip(meta_table.column_names, (fut.result() for fut in futures)))
 
     def write(
         self,
@@ -287,7 +289,7 @@ class ArrowWriter:
             self._fs.mkdirs(os.path.join(version_path, name), exist_ok=True)
 
         schema_info = None
-        info: Dict[str, List[Any]] = defaultdict(list)
+        meta_info: Dict[str, List[Any]] = defaultdict(list)
         futures = []
         with ThreadPoolExecutor(
             max_workers=num_threads, thread_name_prefix=self.write.__qualname__
@@ -309,15 +311,15 @@ class ArrowWriter:
                     pa_group_table = pa_table.select(columns)
                     # The schema is not changed, don't need to table_cast.
                     filename = self._FILE_NAME_FORMATTER.format(
-                        prefix=name, chunk_index=chunk_index, index=idx
+                        chunk_index=chunk_index, index=idx
                     )
                     file = os.path.join(version_path, name, filename)
                     file_info = {
-                        "file": filename,
+                        "index": (chunk_index, idx),
                         "num_rows": pa_table.num_rows,
                         "num_bytes": pa_group_table.nbytes,
                     }
-                    info[name].append(file_info)
+                    meta_info[name].append(file_info)
                     futures.append(
                         executor.submit(
                             self._embed_and_write_table,
@@ -330,15 +332,24 @@ class ArrowWriter:
             # Raise exception if exists.
             for fut in as_completed(futures):
                 fut.result()
-        # to_pandas() then from_pandas() will lose metadata, so we add a special column.
-        # TODO(codingl2k1) Move schema info to the metadata of meta table if xorbits
-        # supports put pyarrow table.
-        info["__schema_info"] = [None] * len(next(iter(info.values())))
-        if schema_info is not None:
-            info["__schema_info"][0] = cloudpickle.dumps(schema_info)
-        # to_pandas() to walk-around issue: https://github.com/xorbitsai/xorbits/issues/638
-        meta = pa.Table.from_pydict(info).to_pandas()
-        return meta
+
+        struct_schema = pa.struct(
+            [
+                ("index", pa.list_(pa.int32(), 2)),
+                ("num_rows", pa.int64()),
+                ("num_bytes", pa.int64()),
+            ]
+        )
+        meta_table = pa.Table.from_pydict(
+            meta_info,
+            schema=pa.schema(
+                [pa.field(k, struct_schema) for k in meta_info],
+                metadata=None
+                if schema_info is None
+                else {self._META_SCHEMA_INFO_KEY: cloudpickle.dumps(schema_info)},
+            ),
+        )
+        return meta_table
 
 
 def export(
@@ -363,7 +374,6 @@ def export(
         num_threads=num_threads,
         version=version,
     )
-    meta = op(dataset).execute().fetch()
-    meta = pa.Table.from_pandas(meta, preserve_index=False)
-    info = arrow_writer.write_meta(meta)
+    meta_table = op(dataset).execute().fetch()
+    info = arrow_writer.write_meta(meta_table)
     return info
