@@ -36,5 +36,5 @@ markers = [
 
 [tool.cibuildwheel]
 build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
-skip = "pp* *musllinux* *i686 cp36* cp310-win32 cp311-win32"
+skip = "pp* *musllinux* *i686 cp36* cp38-win32 cp39-win32 cp310-win32 cp311-win32"
 manylinux-x86_64-image = "manylinux2014"

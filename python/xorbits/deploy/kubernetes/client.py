@@ -521,6 +521,20 @@ class KubernetesCluster:
             self.stop()
             raise
 
+    def _delete_pv(self):
+        from kubernetes.client import CoreV1Api
+
+        api = CoreV1Api(self._api_client)
+        pv_name = f"juicefs-pv-{self._namespace}"
+        try:
+            # K8s issue: https://github.com/kubernetes/kubernetes/issues/69697
+            api.patch_persistent_volume(
+                name=pv_name, body={"metadata": {"finalizers": None}}
+            )
+            api.delete_persistent_volume(pv_name)
+        except Exception as e:  # pragma: no cover
+            logger.warning(f"Error happens during deleting pv: {e}")
+
     def stop(self, wait: bool = False, timeout: int = 0):
         # stop isolation
         stop_isolation()
@@ -530,7 +544,7 @@ class KubernetesCluster:
         api = CoreV1Api(self._api_client)
         api.delete_namespace(self._namespace)
         if self._external_storage == "juicefs":
-            api.delete_persistent_volume("juicefs-pv")
+            self._delete_pv()
         if wait:
             start_time = time.time()
             while True:

@@ -17,12 +17,12 @@ from itertools import product
 
 import numpy as np
 import pytest
-from sklearn.exceptions import UndefinedMetricWarning
-from sklearn.utils._testing import (
+from numpy.testing import (
     assert_almost_equal,
     assert_array_almost_equal,
     assert_array_equal,
 )
+from sklearn.exceptions import UndefinedMetricWarning
 
 from .... import tensor as mt
 from .. import r2_score

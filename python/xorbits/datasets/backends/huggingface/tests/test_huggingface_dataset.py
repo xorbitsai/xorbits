@@ -1,5 +1,4 @@
 # Copyright 2022-2023 XProbe Inc.
-# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,13 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import glob
+import json
+import os
+import shutil
+import tempfile
+from pathlib import Path
 
 import datasets
 import pandas as pd
 import pytest
 
 from ....._mars.tests.core import mock
-from ..core import from_huggingface
+from ..from_huggingface import from_huggingface
 
 SAMPLE_DATASET_IDENTIFIER = "lhoestq/test"  # has dataset script
 SAMPLE_DATASET_IDENTIFIER2 = "lhoestq/test2"  # only has data files
@@ -146,3 +151,51 @@ def test_getitem_execute(setup):
     assert a == {"text": []}
     a = xds[5:4]
     assert a == {"text": []}
+
+
+def test_export(setup):
+    tmp_dir = Path(tempfile.gettempdir())
+    export_dir = tmp_dir.joinpath("test_export")
+    shutil.rmtree(export_dir, ignore_errors=True)
+    db = from_huggingface("cifar10", split="train")
+    # Test invalid export dir
+    Path(export_dir).touch()
+    with pytest.raises(Exception, match="dir"):
+        db.export(export_dir)
+    os.remove(export_dir)
+    # Test check version
+    version_dir = export_dir.joinpath("0.0.0")
+    os.makedirs(version_dir, exist_ok=True)
+    with pytest.raises(Exception, match="exist"):
+        db.export(export_dir, overwrite=False)
+    # Test export
+    shutil.rmtree(export_dir)
+    try:
+        db.export(export_dir, max_chunk_rows=100, create_if_not_exists=True)
+        with open(version_dir.joinpath("info.json"), "r") as f:
+            info = json.load(f)
+        assert info["num_rows"] == 50000
+        data_dir = version_dir.joinpath("data")
+        with open(data_dir.joinpath(".meta", "info.json"), "r") as f:
+            data_meta_info = json.load(f)
+        data_arrow_files = glob.glob(data_dir.joinpath("*.arrow").as_posix())
+        assert len(data_arrow_files) == 50000 / 100
+        assert len(data_arrow_files) == data_meta_info["num_files"]
+        assert info["num_rows"] == data_meta_info["num_rows"]
+
+        db = from_huggingface("imdb", split="train")
+        db.export(
+            export_dir,
+            column_groups={"my_text": ["text"], "my_label": ["label"]},
+            max_chunk_rows=1000,
+        )
+        with open(version_dir.joinpath("info.json"), "r") as f:
+            info = json.load(f)
+        assert info["num_rows"] == 25000
+        assert info["groups"] == ["my_text", "my_label"]
+        my_text_dir = version_dir.joinpath("my_text")
+        with open(my_text_dir.joinpath(".meta", "info.json"), "r") as f:
+            my_text_meta_info = json.load(f)
+        assert my_text_meta_info["num_columns"] == 1
+    finally:
+        shutil.rmtree(export_dir)

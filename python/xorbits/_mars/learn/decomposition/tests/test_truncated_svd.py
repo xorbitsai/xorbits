@@ -16,8 +16,8 @@
 import numpy as np
 import pytest
 import scipy.sparse as sp
+from numpy.testing import assert_array_almost_equal, assert_array_less
 from sklearn.utils import check_random_state
-from sklearn.utils._testing import assert_array_almost_equal, assert_array_less
 
 from .... import tensor as mt
 from .. import TruncatedSVD
