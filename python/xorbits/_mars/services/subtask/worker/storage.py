@@ -82,5 +82,5 @@ async def usage_example():
             uid=RunnerStorageActor.gen_uid("session_id"),
             address="address",
         )
-    result = await runner_storage_actor._get_data()
+    result = await runner_storage_actor.get_data()
 

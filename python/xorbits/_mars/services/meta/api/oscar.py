@@ -88,6 +88,7 @@ class BaseMetaAPI(AbstractMetaAPI):
         bands: List[BandType] = None,
         fields: List[str] = None,
         exclude_fields: List[str] = None,
+        slot_id: int = None,
         **extra
     ):
         if isinstance(chunk.op, Fuse):
@@ -118,6 +119,7 @@ class BaseMetaAPI(AbstractMetaAPI):
             bands=bands,
             memory_size=memory_size,
             store_size=store_size,
+            slot_id=slot_id,
             object_refs=object_refs
         )
 
@@ -130,6 +132,7 @@ class BaseMetaAPI(AbstractMetaAPI):
         bands: List[BandType] = None,
         fields: List[str] = None,
         exclude_fields: List[str] = None,
+        slot_id: int = None,
         **extra
     ):
         """
@@ -147,6 +150,8 @@ class BaseMetaAPI(AbstractMetaAPI):
             fields to include in meta
         exclude_fields: list
             fields to exclude in meta
+        slot_id: int
+            slot_id of the processor
         extra
 
         Returns
@@ -160,6 +165,7 @@ class BaseMetaAPI(AbstractMetaAPI):
             bands=bands,
             fields=fields,
             exclude_fields=exclude_fields,
+            slot_id=slot_id,
             **extra
         )
         return await self._meta_store.set_meta(meta.object_id, meta)

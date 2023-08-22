@@ -41,6 +41,7 @@ from ...task import TaskAPI, task_options
 from ...task.task_info_collector import TaskInfoCollector
 from ..core import Subtask, SubtaskResult, SubtaskStatus
 from ..utils import get_mapper_data_keys, iter_input_data_keys, iter_output_data
+from .storage import RunnerStorageActor, RunnerStorageRef
 
 logger = logging.getLogger(__name__)
 
@@ -334,6 +335,8 @@ class SubtaskProcessor:
         data_key_to_store_size = dict()
         data_key_to_memory_size = dict()
         data_key_to_object_id = dict()
+        data_key_to_band = dict()
+        data_key_to_slot_id = dict()
         data_info_fmt = "data keys: %s, subtask id: %s, storage level: %s"
         for storage_level, data_key_to_puts in level_to_data_key_to_puts.items():
             stored_keys.extend(list(data_key_to_puts.keys()))
@@ -345,6 +348,22 @@ class SubtaskProcessor:
                 storage_level,
             )
             if puts:
+                try:
+                    runner_storage: RunnerStorageActor = await mo.actor_ref(
+                        uid=RunnerStorageActor.gen_uid(self._band[1], self._slot_id),
+                        address=self._supervisor_address, # 这个supervisor_address是不是actor对应的address？
+                    )
+                except mo.ActorNotExist:
+                    logger.debug(
+                        f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
+                    )
+                    self.result.status = SubtaskStatus.errored
+                    raise
+                # puts 里每个元素都是 DelayedArgument，可用参数 args 取到内部元组 (key,value)
+                for put in puts:
+                    put_key, put_data = put.args
+                    await runner_storage.put_data(put_key, put_data)
+                
                 put_infos = asyncio.create_task(self._storage_api.put.batch(*puts))
                 try:
                     store_infos = await put_infos
@@ -352,6 +371,8 @@ class SubtaskProcessor:
                         data_key_to_store_size[store_key] = store_info.store_size
                         data_key_to_memory_size[store_key] = store_info.memory_size
                         data_key_to_object_id[store_key] = store_info.object_id
+                        data_key_to_band[store_key] = self._band
+                        data_key_to_slot_id[store_key] = self._slot_id
                     logger.debug(
                         f"Finish putting {data_info_fmt}",
                         stored_keys,
@@ -464,10 +485,10 @@ class SubtaskProcessor:
         update_meta_chunks: Set[ChunkType],
     ):
         # store meta
-        set_chunk_metas = []
-        set_worker_chunk_metas = []
-        result_data_size = 0
-        set_meta_keys = []
+        set_chunk_metas = []        # 
+        set_worker_chunk_metas = [] # 
+        result_data_size = 0        # 累加所有 normal_chunk 的 memory_size
+        set_meta_keys = []          # 要存哪些 key 对应数据的 meta，但最后好像没用上啊只在 logger 里出现了
         for result_chunk in chunk_graph.result_chunks:
             chunk_key = result_chunk.key
             set_meta_keys.append(chunk_key)
@@ -496,6 +517,7 @@ class SubtaskProcessor:
                         bands=[self._band],
                         chunk_key=chunk_key,
                         exclude_fields=["object_ref"],
+                        slot_id=self._slot_id,
                     )
                 )
             # for supervisor, only save basic meta that is small like memory_size etc
@@ -508,6 +530,7 @@ class SubtaskProcessor:
                     chunk_key=chunk_key,
                     object_ref=object_ref,
                     fields=BASIC_META_FIELDS,
+                    slot_id=self._slot_id,
                 )
             )
         logger.debug(
