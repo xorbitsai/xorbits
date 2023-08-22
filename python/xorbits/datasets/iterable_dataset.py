@@ -46,7 +46,7 @@ else:
 
 
 @dataclasses.dataclass(init=False)
-class _GroupInfo:
+class GroupInfo:
     name: str
     path: str
     index: pa.Table
@@ -182,6 +182,7 @@ class IterableDataset(_TorchIterableDataset):
     _FORMAT_BATCH_SIZE = 10
     _DEFAULT_VERSION = "0.0.0"
     _META_DIR = ".meta"
+    _FILE_NAME_FORMATTER = "{}_{}.arrow"
 
     def __init__(
         self,
@@ -277,7 +278,10 @@ class IterableDataset(_TorchIterableDataset):
         def _prefetcher(_executor: ThreadPoolExecutor):
             for idx in worker_index:
                 group_files = [
-                    os.path.join(group.path, group.index[0][idx].as_py())
+                    os.path.join(
+                        group.path,
+                        self._FILE_NAME_FORMATTER.format(*group.index[0][idx].as_py()),
+                    )
                     for group in self._group_infos
                 ]
                 yield map_retry(
@@ -366,7 +370,7 @@ class IterableDataset(_TorchIterableDataset):
             yield {col: array[i] for col, array in batch.items()}
 
     @classmethod
-    def _get_infos(cls, path, storage_options) -> Tuple[Dict, List[_GroupInfo]]:
+    def _get_infos(cls, path, storage_options) -> Tuple[Dict, List[GroupInfo]]:
         import fsspec
 
         # TODO(codingl2k1): Merge group meta files into one.
@@ -388,7 +392,7 @@ class IterableDataset(_TorchIterableDataset):
             for name in info["groups"]:
                 group_path = os.path.join(path, name)
                 group_meta_path = os.path.join(group_path, cls._META_DIR)
-                group_info = _GroupInfo()
+                group_info = GroupInfo()
                 group_info.name = name
                 group_info.path = group_path
                 group_infos.append(group_info)
@@ -515,12 +519,23 @@ class IterableDataset(_TorchIterableDataset):
         return Formatter()
 
     @functools.cached_property
-    def column_groups(self) -> List[str]:
+    def groups(self) -> List[str]:
         return self._info["groups"]
 
     @functools.cached_property
     def schema(self) -> pa.Schema:
         return pa.unify_schemas([gi.schema for gi in self._group_infos])
+
+    @functools.cached_property
+    def shape(self) -> Tuple:
+        return len(self), len(self.schema.names)
+
+    def info(self) -> Dict:
+        return self._info
+
+    def group_infos(self) -> List[GroupInfo]:
+        """Groups has order, so returns a list."""
+        return self._group_infos
 
     def set_epoch(self, epoch: int):
         self._epoch = epoch
