@@ -19,7 +19,6 @@ import weakref
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import datasets
 import pytest
 
 from ..._mars.tests.core import mock
