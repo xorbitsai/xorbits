@@ -874,6 +874,12 @@ def test_data_frame_pivot_table_execute(setup):
             values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, observed=True
         )
 
+    # test infer dtypes
+    df_raw = pd.DataFrame({"col1": [1] * 5, "col2": [1, 2, 3, 4, 4]})
+    df = from_pandas_df(df_raw, chunk_size=1)
+    r = df.pivot_table(index="col1").execute()
+    assert all(r.dtypes.notna())
+
 
 def test_transform_execute(setup):
     cols = [chr(ord("A") + i) for i in range(10)]

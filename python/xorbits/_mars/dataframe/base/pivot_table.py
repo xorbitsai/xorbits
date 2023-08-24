@@ -211,10 +211,12 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         output_columns = list(combined_dtypes.keys())
         output_dtypes = pd.Series(combined_dtypes)
 
+        infer_flag = True
         # generate combine chunks
         combine_chunks = []
         for chunk in filtered_chunks:
             if chunk.shape[1] < len(output_columns):
+                infer_flag = False
                 combine_op = op.copy().reset_key()
                 combine_op.stage = OperandStage.combine
                 combine_op.output_columns = output_columns
@@ -239,6 +241,9 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
             (len(output_columns),),
         )
         kw.update(dict(chunks=combine_chunks, nsplits=new_nsplits))
+
+        if infer_flag:
+            kw.update(dict(dtypes=output_dtypes))
 
         return new_op.new_tileables(op.inputs, **kw)
 
