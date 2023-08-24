@@ -425,9 +425,12 @@ class DataFrameReadParquet(
                 if path.endswith(".parquet") and not path.startswith("__MACOSX")
             ]
         else:
-            paths = fsspec.get_fs_token_paths(
-                op.path, storage_options=op.storage_options
-            )[0].glob(op.path, storage_options=op.storage_options)
+            if op.path.startswith("hdfs"):
+                paths = [op.path]
+            else:
+                paths = fsspec.get_fs_token_paths(
+                    op.path, storage_options=op.storage_options
+                )[0].glob(op.path, storage_options=op.storage_options)
         first_chunk_row_num, first_chunk_raw_bytes = None, None
         for i, pth in enumerate(paths):
             pth = path_prefix + pth
@@ -873,10 +876,12 @@ def read_parquet(
                 dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
     else:
         if not isinstance(path, list):
-            file_path = fs.glob(path, storage_options=storage_options)[0]
+            if path.startswith("hdfs"):
+                file_path = path
+            else:
+                file_path = fs.glob(path, storage_options=storage_options)[0]
         else:
             file_path = path[0]
-
         with fsspec.get_fs_token_paths(file_path, storage_options=storage_options)[
             0
         ].open(file_path, storage_options=storage_options) as f:
