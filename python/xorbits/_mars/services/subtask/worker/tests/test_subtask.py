@@ -175,10 +175,10 @@ async def test_subtask_success(actor_pool):
     chunk_meta = await meta_api.get_chunk_meta(result_key)
     assert chunk_meta is not None
     assert chunk_meta["bands"][0] == (pool.external_address, "numa-0")
+    assert chunk_meta["slot_ids"][0] == 0
     assert await subtask_runner.is_runner_free() is True
 
 
-@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_shuffle_subtask(actor_pool):
     pool, session_id, meta_api, storage_api, manager = actor_pool
@@ -207,12 +207,14 @@ async def test_shuffle_subtask(actor_pool):
     subtask_runner: SubtaskRunnerRef = await mo.actor_ref(
         SubtaskRunnerActor.gen_uid("numa-0", 0), address=pool.external_address
     )
+    runner_storage: RunnerStorageRef = await mo.actor_ref(
+        RunnerStorageActor.gen_uid("numa-0", 0), address=pool.external_address
+    )
     await subtask_runner.run_subtask(subtask)
     result = await subtask_runner.get_subtask_result()
     assert result.status == SubtaskStatus.succeeded
 
 
-@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_subtask_failure(actor_pool):
     pool, session_id, meta_api, storage_api, manager = actor_pool
@@ -226,6 +228,9 @@ async def test_subtask_failure(actor_pool):
     subtask_runner: SubtaskRunnerRef = await mo.actor_ref(
         SubtaskRunnerActor.gen_uid("numa-0", 0), address=pool.external_address
     )
+    runner_storage: RunnerStorageRef = await mo.actor_ref(
+        RunnerStorageActor.gen_uid("numa-0", 0), address=pool.external_address
+    )
     with pytest.raises(ExecutionError) as ex_info:
         await subtask_runner.run_subtask(subtask)
     assert isinstance(ex_info.value.nested_error, FloatingPointError)
@@ -235,12 +240,14 @@ async def test_subtask_failure(actor_pool):
     assert await subtask_runner.is_runner_free() is True
 
 
-@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_cancel_subtask(actor_pool):
     pool, session_id, meta_api, storage_api, manager = actor_pool
     subtask_runner: SubtaskRunnerRef = await mo.actor_ref(
         SubtaskRunnerActor.gen_uid("numa-0", 0), address=pool.external_address
+    )
+    runner_storage: RunnerStorageRef = await mo.actor_ref(
+        RunnerStorageActor.gen_uid("numa-0", 0), address=pool.external_address
     )
 
     def sleep(timeout: int):
@@ -289,12 +296,14 @@ async def test_cancel_subtask(actor_pool):
     assert await subtask_runner.is_runner_free() is True
 
 
-@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_subtask_op_progress(actor_pool):
     pool, session_id, meta_api, storage_api, manager = actor_pool
     subtask_runner: SubtaskRunnerRef = await mo.actor_ref(
         SubtaskRunnerActor.gen_uid("numa-0", 0), address=pool.external_address
+    )
+    runner_storage: RunnerStorageRef = await mo.actor_ref(
+        RunnerStorageActor.gen_uid("numa-0", 0), address=pool.external_address
     )
 
     def progress_sleep(interval: float, count: int):
@@ -321,7 +330,6 @@ async def test_subtask_op_progress(actor_pool):
     assert result.progress == 1.0
 
 
-@pytest.mark.skip
 def test_update_subtask_result():
     subtask_result = SubtaskResult(
         subtask_id="test_subtask_abc",

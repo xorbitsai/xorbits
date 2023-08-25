@@ -67,6 +67,7 @@ class _TileableMeta(_CommonMeta):
 class _ChunkMeta(_CommonMeta):
     index: Tuple[int] = None
     bands: List[BandType] = None
+    slot_ids: List[int] = None
     # needed by ray ownership to keep object alive when worker died.
     object_refs: List[Any] = None
 
@@ -75,4 +76,6 @@ class _ChunkMeta(_CommonMeta):
             self.bands = list(set(self.bands) | set(value.bands))
         if value.object_refs:
             self.object_refs = list(set(self.object_refs) | set(value.object_refs))
+        if value.slot_ids:
+            self.slot_ids = list(set(self.slot_ids) | set(value.slot_ids))
         return self

@@ -64,7 +64,7 @@ class ProcessorContext(dict):
         return self._current_chunk
 
 
-BASIC_META_FIELDS = ["memory_size", "store_size", "bands", "object_ref"]
+BASIC_META_FIELDS = ["memory_size", "store_size", "bands", "object_ref", "slot_ids"]
 
 
 class SubtaskProcessor:
@@ -517,7 +517,7 @@ class SubtaskProcessor:
                         bands=[self._band],
                         chunk_key=chunk_key,
                         exclude_fields=["object_ref"],
-                        slot_id=self._slot_id,
+                        slot_ids=[self._slot_id],
                     )
                 )
             # for supervisor, only save basic meta that is small like memory_size etc
@@ -530,7 +530,7 @@ class SubtaskProcessor:
                     chunk_key=chunk_key,
                     object_ref=object_ref,
                     fields=BASIC_META_FIELDS,
-                    slot_id=self._slot_id,
+                    slot_ids=[self._slot_id],
                 )
             )
         logger.debug(
