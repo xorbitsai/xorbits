@@ -771,7 +771,7 @@ def test_data_frame_pivot_table_execute(setup):
 
     # test basic pivot_table
     r = df.pivot_table(values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum)
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum
     )
@@ -781,7 +781,7 @@ def test_data_frame_pivot_table_execute(setup):
     r = df.pivot_table(
         values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
     )
@@ -791,7 +791,7 @@ def test_data_frame_pivot_table_execute(setup):
     r = df.pivot_table(
         values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
     )
@@ -806,7 +806,7 @@ def test_data_frame_pivot_table_execute(setup):
         index=["A", "C"],
         aggfunc={"D": [range_func, np.mean], "E": [min, max, np.mean]},
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values=["D", "E"],
         index=["A", "C"],
@@ -838,7 +838,7 @@ def test_data_frame_pivot_table_execute(setup):
         columns=["C", "E"],
         aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values=["D", "E"],
         index=["A", "B"],
