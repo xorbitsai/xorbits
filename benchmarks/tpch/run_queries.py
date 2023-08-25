@@ -593,8 +593,8 @@ def q09(lineitem, orders, part, nation, partsupp, supplier):
 @timethis
 @collect_datasets
 def q10(lineitem, orders, customer, nation):
-    date1 = xd.Timestamp("1994-11-01")
-    date2 = xd.Timestamp("1995-02-01")
+    date1 = xd.Timestamp("1993-10-01")
+    date2 = xd.Timestamp("1994-01-01")
     osel = (orders.O_ORDERDATE >= date1) & (orders.O_ORDERDATE < date2)
     lsel = lineitem.L_RETURNFLAG == "R"
     forders = orders[osel]
