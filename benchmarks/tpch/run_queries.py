@@ -327,7 +327,7 @@ def q02(part, partsupp, supplier, nation, region):
 @timethis
 @collect_datasets
 def q03(lineitem, orders, customer):
-    date = xd.Timestamp("1995-03-04")
+    date = xd.Timestamp("1995-03-15")
     lineitem_filtered = lineitem.loc[
         :, ["L_ORDERKEY", "L_EXTENDEDPRICE", "L_DISCOUNT", "L_SHIPDATE"]
     ]
@@ -337,7 +337,7 @@ def q03(lineitem, orders, customer):
     customer_filtered = customer.loc[:, ["C_MKTSEGMENT", "C_CUSTKEY"]]
     lsel = lineitem_filtered.L_SHIPDATE > date
     osel = orders_filtered.O_ORDERDATE < date
-    csel = customer_filtered.C_MKTSEGMENT == "HOUSEHOLD"
+    csel = customer_filtered.C_MKTSEGMENT == "BUILDING"
     flineitem = lineitem_filtered[lsel]
     forders = orders_filtered[osel]
     fcustomer = customer_filtered[csel]
