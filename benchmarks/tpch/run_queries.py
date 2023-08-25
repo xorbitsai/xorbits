@@ -321,7 +321,7 @@ def q02(part, partsupp, supplier, nation, region):
         by=["S_ACCTBAL", "N_NAME", "S_NAME", "P_PARTKEY"],
         ascending=[False, True, True, True],
     )
-    print(total)
+    print(total.head(100))
 
 
 @timethis
