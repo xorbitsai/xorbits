@@ -901,10 +901,10 @@ def q19(lineitem, part):
 @timethis
 @collect_datasets
 def q20(lineitem, part, nation, partsupp, supplier):
-    date1 = xd.Timestamp("1996-01-01")
-    date2 = xd.Timestamp("1997-01-01")
-    psel = part.P_NAME.str.startswith("azure")
-    nsel = nation.N_NAME == "JORDAN"
+    date1 = xd.Timestamp("1994-01-01")
+    date2 = xd.Timestamp("1995-01-01")
+    psel = part.P_NAME.str.startswith("forest")
+    nsel = nation.N_NAME == "CANADA"
     lsel = (lineitem.L_SHIPDATE >= date1) & (lineitem.L_SHIPDATE < date2)
     fpart = part[psel]
     fnation = nation[nsel]
