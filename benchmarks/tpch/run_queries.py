@@ -398,16 +398,16 @@ def q05(lineitem, orders, customer, nation, region, supplier):
 @timethis
 @collect_datasets
 def q06(lineitem):
-    date1 = xd.Timestamp("1996-01-01")
-    date2 = xd.Timestamp("1997-01-01")
+    date1 = xd.Timestamp("1994-01-01")
+    date2 = xd.Timestamp("1995-01-01")
     lineitem_filtered = lineitem.loc[
         :, ["L_QUANTITY", "L_EXTENDEDPRICE", "L_DISCOUNT", "L_SHIPDATE"]
     ]
     sel = (
         (lineitem_filtered.L_SHIPDATE >= date1)
         & (lineitem_filtered.L_SHIPDATE < date2)
-        & (lineitem_filtered.L_DISCOUNT >= 0.08)
-        & (lineitem_filtered.L_DISCOUNT <= 0.1)
+        & (lineitem_filtered.L_DISCOUNT >= 0.05)
+        & (lineitem_filtered.L_DISCOUNT <= 0.07)
         & (lineitem_filtered.L_QUANTITY < 24)
     )
     flineitem = lineitem_filtered[sel]
