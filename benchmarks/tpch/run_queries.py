@@ -29,7 +29,10 @@ def load_lineitem(
 ) -> xd.DataFrame:
     data_path = data_folder + "/lineitem"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     df["L_SHIPDATE"] = xd.to_datetime(df.L_SHIPDATE, format="%Y-%m-%d")
     df["L_RECEIPTDATE"] = xd.to_datetime(df.L_RECEIPTDATE, format="%Y-%m-%d")
@@ -43,7 +46,10 @@ def load_part(
 ) -> xd.DataFrame:
     data_path = data_folder + "/part"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -54,7 +60,10 @@ def load_orders(
 ) -> xd.DataFrame:
     data_path = data_folder + "/orders"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     df["O_ORDERDATE"] = xd.to_datetime(df.O_ORDERDATE, format="%Y-%m-%d")
     return df
@@ -66,7 +75,10 @@ def load_customer(
 ) -> xd.DataFrame:
     data_path = data_folder + "/customer"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -77,7 +89,10 @@ def load_nation(
 ) -> xd.DataFrame:
     data_path = data_folder + "/nation"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -88,7 +103,10 @@ def load_region(
 ) -> xd.DataFrame:
     data_path = data_folder + "/region"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -99,7 +117,10 @@ def load_supplier(
 ) -> xd.DataFrame:
     data_path = data_folder + "/supplier"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -110,7 +131,10 @@ def load_partsupp(
 ) -> xd.DataFrame:
     data_path = data_folder + "/partsupp"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -129,7 +153,9 @@ _query_to_datasets: Dict[int, List[str]] = dict()
 
 
 def collect_datasets(func: Callable):
-    _query_to_datasets[int(func.__name__[1:])] = list(inspect.signature(func).parameters)
+    _query_to_datasets[int(func.__name__[1:])] = list(
+        inspect.signature(func).parameters
+    )
     return func
 
 
@@ -803,8 +829,9 @@ def q18(lineitem, orders, customer):
 @timethis
 @collect_datasets
 def q19(lineitem, part):
-    Brand31 = "Brand#31"
-    Brand43 = "Brand#43"
+    Brand12 = "Brand#12"
+    Brand23 = "Brand#23"
+    Brand34 = "Brand#34"
     SMBOX = "SM BOX"
     SMCASE = "SM CASE"
     SMPACK = "SM PACK"
@@ -820,81 +847,51 @@ def q19(lineitem, part):
     DELIVERINPERSON = "DELIVER IN PERSON"
     AIR = "AIR"
     AIRREG = "AIRREG"
-    lsel = (
-        (
-            ((lineitem.L_QUANTITY <= 36) & (lineitem.L_QUANTITY >= 26))
-            | ((lineitem.L_QUANTITY <= 25) & (lineitem.L_QUANTITY >= 15))
-            | ((lineitem.L_QUANTITY <= 14) & (lineitem.L_QUANTITY >= 4))
-        )
-        & (lineitem.L_SHIPINSTRUCT == DELIVERINPERSON)
-        & ((lineitem.L_SHIPMODE == AIR) | (lineitem.L_SHIPMODE == AIRREG))
-    )
-    psel = (part.P_SIZE >= 1) & (
-        (
-            (part.P_SIZE <= 5)
-            & (part.P_BRAND == Brand31)
-            & (
-                (part.P_CONTAINER == SMBOX)
-                | (part.P_CONTAINER == SMCASE)
-                | (part.P_CONTAINER == SMPACK)
-                | (part.P_CONTAINER == SMPKG)
-            )
-        )
-        | (
-            (part.P_SIZE <= 10)
-            & (part.P_BRAND == Brand43)
-            & (
-                (part.P_CONTAINER == MEDBAG)
-                | (part.P_CONTAINER == MEDBOX)
-                | (part.P_CONTAINER == MEDPACK)
-                | (part.P_CONTAINER == MEDPKG)
-            )
-        )
-        | (
-            (part.P_SIZE <= 15)
-            & (part.P_BRAND == Brand43)
-            & (
-                (part.P_CONTAINER == LGBOX)
-                | (part.P_CONTAINER == LGCASE)
-                | (part.P_CONTAINER == LGPACK)
-                | (part.P_CONTAINER == LGPKG)
-            )
-        )
-    )
-    flineitem = lineitem[lsel]
-    fpart = part[psel]
-    jn = flineitem.merge(fpart, left_on="L_PARTKEY", right_on="P_PARTKEY")
+    flineitem = lineitem[((lineitem.L_SHIPMODE == AIR) | (lineitem.L_SHIPMODE == AIRREG))
+        & (lineitem.L_SHIPINSTRUCT == DELIVERINPERSON)]
+    jn = flineitem.merge(part, left_on="L_PARTKEY", right_on="P_PARTKEY")
     jnsel = (
-        (jn.P_BRAND == Brand31)
-        & (
-            (jn.P_CONTAINER == SMBOX)
-            | (jn.P_CONTAINER == SMCASE)
-            | (jn.P_CONTAINER == SMPACK)
-            | (jn.P_CONTAINER == SMPKG)
+        (
+            (
+                (jn.P_BRAND == Brand12)
+                & (
+                    (jn.P_CONTAINER == SMCASE)
+                    | (jn.P_CONTAINER == SMBOX)
+                    | (jn.P_CONTAINER == SMPACK)
+                    | (jn.P_CONTAINER == SMPKG)
+                )
+                & (jn.L_QUANTITY >= 1)
+                & (jn.L_QUANTITY <= 11)
+                & (jn.P_SIZE >= 1)
+                & (jn.P_SIZE <= 5)
+            )
+            | (
+                (jn.P_BRAND == Brand23)
+                & (
+                    (jn.P_CONTAINER == MEDBAG)
+                    | (jn.P_CONTAINER == MEDBOX)
+                    | (jn.P_CONTAINER == MEDPKG)
+                    | (jn.P_CONTAINER == MEDPACK)
+                )
+                & (jn.L_QUANTITY >= 10)
+                & (jn.L_QUANTITY <= 20)
+                & (jn.P_SIZE >= 1)
+                & (jn.P_SIZE <= 10)
+            )
+            | (
+                (jn.P_BRAND == Brand34)
+                & (
+                    (jn.P_CONTAINER == LGCASE)
+                    | (jn.P_CONTAINER == LGBOX)
+                    | (jn.P_CONTAINER == LGPACK)
+                    | (jn.P_CONTAINER == LGPKG)
+                )
+                & (jn.L_QUANTITY >= 20)
+                & (jn.L_QUANTITY <= 30)
+                & (jn.P_SIZE >= 1)
+                & (jn.P_SIZE <= 15)
+            )
         )
-        & (jn.L_QUANTITY >= 4)
-        & (jn.L_QUANTITY <= 14)
-        & (jn.P_SIZE <= 5)
-        | (jn.P_BRAND == Brand43)
-        & (
-            (jn.P_CONTAINER == MEDBAG)
-            | (jn.P_CONTAINER == MEDBOX)
-            | (jn.P_CONTAINER == MEDPACK)
-            | (jn.P_CONTAINER == MEDPKG)
-        )
-        & (jn.L_QUANTITY >= 15)
-        & (jn.L_QUANTITY <= 25)
-        & (jn.P_SIZE <= 10)
-        | (jn.P_BRAND == Brand43)
-        & (
-            (jn.P_CONTAINER == LGBOX)
-            | (jn.P_CONTAINER == LGCASE)
-            | (jn.P_CONTAINER == LGPACK)
-            | (jn.P_CONTAINER == LGPKG)
-        )
-        & (jn.L_QUANTITY >= 26)
-        & (jn.L_QUANTITY <= 36)
-        & (jn.P_SIZE <= 15)
     )
     jn = jn[jnsel]
     total = (jn.L_EXTENDEDPRICE * (1.0 - jn.L_DISCOUNT)).sum()
@@ -1046,7 +1043,9 @@ def run_queries(
         args = []
         for dataset in _query_to_datasets[query]:
             args.append(
-                globals()[f"load_{dataset}"](root, use_arrow_dtype, gpu, **storage_options)
+                globals()[f"load_{dataset}"](
+                    root, use_arrow_dtype, gpu, **storage_options
+                )
             )
             datasets_to_load.update(args)
         queries_to_args[query] = args
@@ -1103,7 +1102,7 @@ def main():
         "--endpoint",
         type=str,
         required=False,
-        help="The endpoint of existing Xorbits cluster."
+        help="The endpoint of existing Xorbits cluster.",
     )
 
     args = parser.parse_args()
