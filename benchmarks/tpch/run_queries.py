@@ -986,7 +986,7 @@ def q21(lineitem, orders, supplier, nation):
     total = total.groupby("S_NAME", as_index=False, sort=False).size()
     total.columns = ["S_NAME", "NUMWAIT"]
     total = total.sort_values(by=["NUMWAIT", "S_NAME"], ascending=[False, True])
-    print(total)
+    print(total.head(100))
 
 
 @timethis
