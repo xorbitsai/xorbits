@@ -823,7 +823,7 @@ def q18(lineitem, orders, customer):
         sort=False,
     )["L_QUANTITY"].sum()
     total = gb2.sort_values(["O_TOTALPRICE", "O_ORDERDATE"], ascending=[False, True])
-    print(total.head(100))
+    print(total)
 
 
 @timethis
