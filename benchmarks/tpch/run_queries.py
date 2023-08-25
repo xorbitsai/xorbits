@@ -572,7 +572,7 @@ def q08(part, lineitem, supplier, orders, customer, nation, region):
 @timethis
 @collect_datasets
 def q09(lineitem, orders, part, nation, partsupp, supplier):
-    psel = part.P_NAME.str.contains("ghost")
+    psel = part.P_NAME.str.contains("green")
     fpart = part[psel]
     jn1 = lineitem.merge(fpart, left_on="L_PARTKEY", right_on="P_PARTKEY")
     jn2 = jn1.merge(supplier, left_on="L_SUPPKEY", right_on="S_SUPPKEY")
