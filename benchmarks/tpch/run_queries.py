@@ -358,18 +358,14 @@ def q03(lineitem, orders, customer):
 @timethis
 @collect_datasets
 def q04(lineitem, orders):
-    date1 = xd.Timestamp("1993-11-01")
-    date2 = xd.Timestamp("1993-08-01")
+    date1 = xd.Timestamp("1993-10-01")
+    date2 = xd.Timestamp("1993-07-01")
     lsel = lineitem.L_COMMITDATE < lineitem.L_RECEIPTDATE
     osel = (orders.O_ORDERDATE < date1) & (orders.O_ORDERDATE >= date2)
     flineitem = lineitem[lsel]
     forders = orders[osel]
     jn = forders[forders["O_ORDERKEY"].isin(flineitem["L_ORDERKEY"])]
-    total = (
-        jn.groupby("O_ORDERPRIORITY", as_index=False)["O_ORDERKEY"].count()
-        # skip sort when Mars enables sort in groupby
-        # .sort_values(["O_ORDERPRIORITY"])
-    )
+    total = jn.groupby("O_ORDERPRIORITY", as_index=False)["O_ORDERKEY"].count()
     print(total)
 
 
