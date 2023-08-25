@@ -701,8 +701,8 @@ def q13(customer, orders):
 @timethis
 @collect_datasets
 def q14(lineitem, part):
-    startDate = xd.Timestamp("1994-03-01")
-    endDate = xd.Timestamp("1994-04-01")
+    startDate = xd.Timestamp("1995-09-01")
+    endDate = xd.Timestamp("1995-10-01")
     p_type_like = "PROMO"
     part_filtered = part.loc[:, ["P_PARTKEY", "P_TYPE"]]
     lineitem_filtered = lineitem.loc[
@@ -847,50 +847,50 @@ def q19(lineitem, part):
     DELIVERINPERSON = "DELIVER IN PERSON"
     AIR = "AIR"
     AIRREG = "AIRREG"
-    flineitem = lineitem[((lineitem.L_SHIPMODE == AIR) | (lineitem.L_SHIPMODE == AIRREG))
-        & (lineitem.L_SHIPINSTRUCT == DELIVERINPERSON)]
+    flineitem = lineitem[
+        ((lineitem.L_SHIPMODE == AIR) | (lineitem.L_SHIPMODE == AIRREG))
+        & (lineitem.L_SHIPINSTRUCT == DELIVERINPERSON)
+    ]
     jn = flineitem.merge(part, left_on="L_PARTKEY", right_on="P_PARTKEY")
     jnsel = (
         (
-            (
-                (jn.P_BRAND == Brand12)
-                & (
-                    (jn.P_CONTAINER == SMCASE)
-                    | (jn.P_CONTAINER == SMBOX)
-                    | (jn.P_CONTAINER == SMPACK)
-                    | (jn.P_CONTAINER == SMPKG)
-                )
-                & (jn.L_QUANTITY >= 1)
-                & (jn.L_QUANTITY <= 11)
-                & (jn.P_SIZE >= 1)
-                & (jn.P_SIZE <= 5)
+            (jn.P_BRAND == Brand12)
+            & (
+                (jn.P_CONTAINER == SMCASE)
+                | (jn.P_CONTAINER == SMBOX)
+                | (jn.P_CONTAINER == SMPACK)
+                | (jn.P_CONTAINER == SMPKG)
             )
-            | (
-                (jn.P_BRAND == Brand23)
-                & (
-                    (jn.P_CONTAINER == MEDBAG)
-                    | (jn.P_CONTAINER == MEDBOX)
-                    | (jn.P_CONTAINER == MEDPKG)
-                    | (jn.P_CONTAINER == MEDPACK)
-                )
-                & (jn.L_QUANTITY >= 10)
-                & (jn.L_QUANTITY <= 20)
-                & (jn.P_SIZE >= 1)
-                & (jn.P_SIZE <= 10)
+            & (jn.L_QUANTITY >= 1)
+            & (jn.L_QUANTITY <= 11)
+            & (jn.P_SIZE >= 1)
+            & (jn.P_SIZE <= 5)
+        )
+        | (
+            (jn.P_BRAND == Brand23)
+            & (
+                (jn.P_CONTAINER == MEDBAG)
+                | (jn.P_CONTAINER == MEDBOX)
+                | (jn.P_CONTAINER == MEDPKG)
+                | (jn.P_CONTAINER == MEDPACK)
             )
-            | (
-                (jn.P_BRAND == Brand34)
-                & (
-                    (jn.P_CONTAINER == LGCASE)
-                    | (jn.P_CONTAINER == LGBOX)
-                    | (jn.P_CONTAINER == LGPACK)
-                    | (jn.P_CONTAINER == LGPKG)
-                )
-                & (jn.L_QUANTITY >= 20)
-                & (jn.L_QUANTITY <= 30)
-                & (jn.P_SIZE >= 1)
-                & (jn.P_SIZE <= 15)
+            & (jn.L_QUANTITY >= 10)
+            & (jn.L_QUANTITY <= 20)
+            & (jn.P_SIZE >= 1)
+            & (jn.P_SIZE <= 10)
+        )
+        | (
+            (jn.P_BRAND == Brand34)
+            & (
+                (jn.P_CONTAINER == LGCASE)
+                | (jn.P_CONTAINER == LGBOX)
+                | (jn.P_CONTAINER == LGPACK)
+                | (jn.P_CONTAINER == LGPKG)
             )
+            & (jn.L_QUANTITY >= 20)
+            & (jn.L_QUANTITY <= 30)
+            & (jn.P_SIZE >= 1)
+            & (jn.P_SIZE <= 15)
         )
     )
     jn = jn[jnsel]
