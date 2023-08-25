@@ -376,8 +376,8 @@ def q04(lineitem, orders):
 @timethis
 @collect_datasets
 def q05(lineitem, orders, customer, nation, region, supplier):
-    date1 = xd.Timestamp("1996-01-01")
-    date2 = xd.Timestamp("1997-01-01")
+    date1 = xd.Timestamp("1994-01-01")
+    date2 = xd.Timestamp("1995-01-01")
     rsel = region.R_NAME == "ASIA"
     osel = (orders.O_ORDERDATE >= date1) & (orders.O_ORDERDATE < date2)
     forders = orders[osel]
