@@ -1559,6 +1559,7 @@ def test_read_parquet_with_http_url(setup, start_http_server):
     mdf2 = md.read_parquet(urls[1:]).execute().fetch()
     pd.testing.assert_frame_equal(df[50:], mdf2)
 
+
 @require_cudf
 def test_read_parquet_gpu_execution(setup_gpu):
     with tempfile.TemporaryDirectory() as tempdir:
