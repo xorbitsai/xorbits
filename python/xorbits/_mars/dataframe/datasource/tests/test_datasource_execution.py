@@ -1477,7 +1477,7 @@ def test_read_parquet_fast_parquet(setup):
         # assert sum(s[0] for s in size_res) > test_df.memory_usage(deep=True).sum()
 
 
-def _start_tornado(port: int, file_path0: str, file_path1: str):
+def _start_tornado(port: int, file_path0: str, file_path1: str, zip_file_path):
     import tornado.ioloop
     import tornado.web
 
@@ -1491,10 +1491,16 @@ def _start_tornado(port: int, file_path0: str, file_path1: str):
             with open(file_path1, "rb") as f:
                 self.write(f.read())
 
+    class ZipParquetHandler(tornado.web.RequestHandler):
+        def get(self):
+            with open(zip_file_path, "rb") as file:
+                self.write(file.read())
+
     app = tornado.web.Application(
         [
             (r"/read-parquet0", Parquet0Handler),
             (r"/read-parquet1", Parquet1Handler),
+            (r"/test.zip", ZipParquetHandler),
         ]
     )
     app.listen(port)
@@ -1516,9 +1522,14 @@ def start_http_server():
         )
         df.iloc[:50].to_parquet(file_path0)
         df.iloc[50:].to_parquet(file_path1)
+        zip_filename = os.path.join(tempdir, "test.zip")
+        import zipfile
+
+        with zipfile.ZipFile(zip_filename, "w") as zip_file:
+            zip_file.write(file_path0, os.path.basename(file_path0))
         port = get_next_port()
         proc = multiprocessing.Process(
-            target=_start_tornado, args=(port, file_path0, file_path1)
+            target=_start_tornado, args=(port, file_path0, file_path1, zip_filename)
         )
         proc.daemon = True
         proc.start()
@@ -1526,15 +1537,17 @@ def start_http_server():
         yield df, [
             f"http://127.0.0.1:{port}/read-parquet0",
             f"http://127.0.0.1:{port}/read-parquet1",
-        ]
+        ], f"http://127.0.0.1:{port}/test.zip"
         # Terminate the process
         proc.terminate()
 
 
 def test_read_parquet_with_http_url(setup, start_http_server):
-    df, urls = start_http_server
+    df, urls, zip_url = start_http_server
     mdf = md.read_parquet(urls).execute().fetch()
+    mdf2 = md.read_parquet(zip_url).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
+    pd.testing.assert_frame_equal(df, mdf2)
 
     mdf = md.read_parquet(urls, use_arrow_dtype=True).execute().fetch()
     pd.testing.assert_frame_equal(df, arrow_array_to_objects(mdf))
@@ -1545,7 +1558,6 @@ def test_read_parquet_with_http_url(setup, start_http_server):
 
     mdf2 = md.read_parquet(urls[1:]).execute().fetch()
     pd.testing.assert_frame_equal(df[50:], mdf2)
-
 
 @require_cudf
 def test_read_parquet_gpu_execution(setup_gpu):
