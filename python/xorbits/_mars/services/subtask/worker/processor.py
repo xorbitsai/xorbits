@@ -162,22 +162,55 @@ class SubtaskProcessor:
                 self.subtask.subtask_id,
             )
             
-            # Get worker storage actor ref
-                        
+            # Old implementation
+            # inputs = await self._storage_api.get.batch(*gets)
+            # self._processor_context.update(
+            #     {
+            #         key: get
+            #         for key, get, accept_none in zip(keys, inputs, accept_nones)
+            #         if accept_none or get is not None
+            #     }
+            # )
+            # logger.debug(
+            #     "Finish getting input data keys: %.500s, subtask id: %s",
+            #     keys,
+            #     self.subtask.subtask_id,
+            # )
             
-            inputs = await self._storage_api.get.batch(*gets)
-            self._processor_context.update(
-                {
-                    key: get
-                    for key, get, accept_none in zip(keys, inputs, accept_nones)
-                    if accept_none or get is not None
-                }
-            )
-            logger.debug(
-                "Finish getting input data keys: %.500s, subtask id: %s",
-                keys,
-                self.subtask.subtask_id,
-            )
+            # Get metas of necessary data keys
+            # TODO: object_id == data_key (?)
+            # chunks = await self._meta_api.get_band_slot_chunks(self._band, self._slot_id)
+            metas = await self._meta_api.get_chunk_meta.batch(keys)
+            bands = [meta["bands"][0] for meta in metas]
+            slot_ids = [meta["slot_ids"][0] for meta in metas]
+            for key, band, slot_id, accept_none in zip(keys, bands, slot_ids, accept_nones):
+                # Get runner storage actor ref
+                try:
+                    runner_storage: RunnerStorageActor = await mo.actor_ref(
+                        uid=RunnerStorageActor.gen_uid(band[1], slot_id),
+                        address=self._supervisor_address, # 这个supervisor_address是不是actor对应的address？
+                    )
+                except mo.ActorNotExist:
+                    logger.debug(
+                        f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
+                    )
+                    # TODO: really?
+                    self.result.status = SubtaskStatus.errored
+                    raise
+                # Get data from runner storage
+                get = runner_storage.get_data(key)
+                if accept_none or get is not None:
+                    self._processor_context.update(
+                        {
+                            key: get
+                        }
+                    )
+                logger.debug(
+                    "Finish getting input data keys: %.500s, subtask id: %s",
+                    keys,
+                    self.subtask.subtask_id,
+                )
+        
         return keys
 
     @staticmethod

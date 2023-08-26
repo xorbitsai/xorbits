@@ -239,7 +239,7 @@ class BaseMetaAPI(AbstractMetaAPI):
         )
 
     @mo.extensible
-    async def get_band_chunks(self, band: BandType, slot_id: int) -> List[str]:
+    async def get_band_slot_chunks(self, band: BandType, slot_id: int) -> List[str]:
         return await self._meta_store.get_band_slot_chunks(band, slot_id)
 
 
