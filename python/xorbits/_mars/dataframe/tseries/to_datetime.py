@@ -46,7 +46,6 @@ class DataFrameToDatetime(DataFrameOperand, DataFrameOperandMixin):
     format = StringField("format", default=None)
     exact = BoolField("exact", default=None)
     unit = StringField("unit", default=None)
-    infer_datetime_format = BoolField("infer_datetime_format", default=None)
     origin = AnyField("origin", default=None)
     cache = BoolField("cache", default=None)
 
@@ -73,7 +72,6 @@ class DataFrameToDatetime(DataFrameOperand, DataFrameOperandMixin):
                 format=self.format,
                 exact=self.exact,
                 unit=self.unit,
-                infer_datetime_format=self.infer_datetime_format,
                 origin=self.origin,
                 cache=self.cache,
             )
@@ -186,7 +184,6 @@ class DataFrameToDatetime(DataFrameOperand, DataFrameOperandMixin):
             format=op.format,
             exact=op.exact,
             unit=unit,
-            infer_datetime_format=op.infer_datetime_format,
             origin=op.origin,
             cache=op.cache,
         )
@@ -206,7 +203,6 @@ def to_datetime(
     format: str = None,
     exact: bool = True,
     unit: str = None,
-    infer_datetime_format: bool = False,
     origin: Any = "unix",
     cache: bool = True,
 ):
@@ -255,11 +251,6 @@ def to_datetime(
         integer or float number. This will be based off the origin.
         Example, with unit='ms' and origin='unix' (the default), this
         would calculate the number of milliseconds to the unix epoch start.
-    infer_datetime_format : bool, default False
-        If True and no `format` is given, attempt to infer the format of the
-        datetime strings, and if it can be inferred, switch to a faster
-        method of parsing them. In some cases this can increase the parsing
-        speed by ~5-10x.
     origin : scalar, default 'unix'
         Define the reference date. The numeric values would be parsed as number
         of units (defined by `unit`) since this reference date.
@@ -327,9 +318,6 @@ def to_datetime(
     >>> md.to_datetime('13000101', format='%Y%m%d', errors='coerce').execute()
     NaT
 
-    Passing infer_datetime_format=True can often-times speedup a parsing
-    if its not an ISO8601 format exactly, but in a regular format.
-
     >>> s = md.Series(['3/11/2000', '3/12/2000', '3/13/2000'] * 1000)
     >>> s.head().execute()
     0    3/11/2000
@@ -364,7 +352,6 @@ dtype='datetime64[ns]', freq=None)
         format=format,
         exact=exact,
         unit=unit,
-        infer_datetime_format=infer_datetime_format,
         origin=origin,
         cache=cache,
     )

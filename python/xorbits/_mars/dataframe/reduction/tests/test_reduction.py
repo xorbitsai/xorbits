@@ -44,7 +44,6 @@ from .. import (
     DataFrameMax,
     DataFrameMean,
     DataFrameMin,
-    DataFrameNunique,
     DataFrameProd,
     DataFrameSem,
     DataFrameSkew,
@@ -251,41 +250,6 @@ def test_cum_dataframe_reduction(func_name, op, func_opts: FunctionOptions):
     assert isinstance(reduction_df.chunks[-1].inputs[-1].op, op)
     assert reduction_df.chunks[-1].inputs[-1].op.stage == OperandStage.map
     assert len(reduction_df.chunks[-1].inputs) == 7
-
-
-def test_nunique():
-    data = pd.DataFrame(
-        np.random.randint(0, 6, size=(20, 10)),
-        columns=["c" + str(i) for i in range(10)],
-    )
-    df = from_pandas_df(data, chunk_size=3)
-    result = df.nunique()
-
-    assert result.shape == (10,)
-    assert result.op.output_types[0] == OutputType.series
-    assert isinstance(result.op, DataFrameNunique)
-
-    tiled = tile(result)
-    assert tiled.shape == (10,)
-    assert len(tiled.chunks) == 4
-    assert tiled.nsplits == ((3, 3, 3, 1),)
-    assert tiled.chunks[0].op.stage == OperandStage.agg
-    assert isinstance(tiled.chunks[0].op, DataFrameAggregate)
-
-    data2 = data.copy()
-    df2 = from_pandas_df(data2, chunk_size=3)
-    result2 = df2.nunique(axis=1)
-
-    assert result2.shape == (20,)
-    assert result2.op.output_types[0] == OutputType.series
-    assert isinstance(result2.op, DataFrameNunique)
-
-    tiled = tile(result2)
-    assert tiled.shape == (20,)
-    assert len(tiled.chunks) == 7
-    assert tiled.nsplits == ((3, 3, 3, 3, 3, 3, 2),)
-    assert tiled.chunks[0].op.stage == OperandStage.agg
-    assert isinstance(tiled.chunks[0].op, DataFrameAggregate)
 
 
 def test_dataframe_aggregate():

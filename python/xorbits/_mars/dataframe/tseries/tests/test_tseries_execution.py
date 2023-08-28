@@ -16,7 +16,6 @@
 import pandas as pd
 
 from .... import dataframe as md
-from ....tensor import tensor
 from ....tests.core import require_cudf
 from ... import DataFrame, Index, Series, to_datetime
 
@@ -31,16 +30,8 @@ def test_to_datetime_execution(setup):
     expected = pd.to_datetime(1490195805, unit="s")
     assert pd.to_datetime(result) == expected
 
-    # test list like
-    raw = ["3/11/2000", "3/12/2000", "3/13/2000"]
-    t = tensor(raw, chunk_size=2)
-    r = to_datetime(t, infer_datetime_format=True)
-
-    result = r.execute().fetch()
-    expected = pd.to_datetime(raw, infer_datetime_format=True)
-    pd.testing.assert_index_equal(result, expected)
-
     # test series
+    raw = ["3/11/2000", "3/12/2000", "3/13/2000"]
     raw_series = pd.Series(raw)
     s = Series(raw_series, chunk_size=2)
     r = to_datetime(s)

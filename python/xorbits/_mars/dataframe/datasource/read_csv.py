@@ -257,6 +257,7 @@ class DataFrameReadCSV(
                 # The first chunk contains header
                 # As we specify names and dtype, we need to skip header rows
                 csv_kwargs["header"] = op.header
+                csv_kwargs["dtype"] = dtypes.to_dict()
             if op.usecols:
                 usecols = op.usecols if isinstance(op.usecols, list) else [op.usecols]
             else:
@@ -548,11 +549,6 @@ def read_csv(
         :func:`pandas.to_datetime` with ``utc=True``. See
         :ref:`io.csv.mixed_timezones` for more.
         Note: A fast-path exists for iso8601-formatted dates.
-    infer_datetime_format : bool, default False
-        If True and `parse_dates` is enabled, pandas will attempt to infer the
-        format of the datetime strings in the columns, and if it can be inferred,
-        switch to a faster method of parsing them. In some cases this can increase
-        the parsing speed by 5-10x.
     keep_date_col : bool, default False
         If True and `parse_dates` specifies combining multiple columns then
         keep the original columns.
@@ -720,6 +716,7 @@ def read_csv(
             if not gpu and use_arrow_dtype and is_pandas_2()
             else {}
         )
+        csv_kwargs.update(kwargs)
         mini_df = pd.read_csv(
             BytesIO(b),
             sep=sep,

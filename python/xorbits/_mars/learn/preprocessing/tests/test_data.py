@@ -14,9 +14,9 @@
 # limitations under the License.
 
 import pytest
+from numpy.testing import assert_allclose, assert_array_almost_equal
 from sklearn.datasets import load_iris
 from sklearn.utils import gen_batches
-from sklearn.utils._testing import assert_allclose, assert_array_almost_equal
 
 from .... import tensor as mt
 from .. import MinMaxScaler, minmax_scale

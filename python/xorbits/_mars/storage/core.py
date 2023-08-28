@@ -37,6 +37,16 @@ class StorageFileObject(AioFileObject):
     def object_id(self):
         return self._object_id
 
+    @property
+    def buffer(self):
+        if hasattr(self._file, "buffer"):
+            return self._file.buffer
+
+    @property
+    def header(self):
+        if hasattr(self._file, "header"):
+            return self._file.header
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await super().__aexit__(exc_type, exc_val, exc_tb)
         if self._executor:
@@ -79,11 +89,20 @@ class BufferWrappedFileObject(ABC):
 
     @property
     def buffer(self):
+        self.init()
         return self._buffer
 
     @property
     def mode(self):
         return self._mode
+
+    def init(self):
+        if not self._initialized:
+            if self.mode == "w":
+                self._write_init()
+            else:
+                self._read_init()
+            self._initialized = True
 
     def read(self, size=-1):
         if not self._initialized:

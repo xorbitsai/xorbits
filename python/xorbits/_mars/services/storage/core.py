@@ -60,6 +60,7 @@ class WrappedStorageFileObject(AioFileObject):
         data_key: Union[str, Tuple],
         data_manager: mo.ActorRefType["DataManagerActor"],
         storage_handler: StorageBackend,
+        band_name: str = "numa-0",
     ):
         self._object_id = file.object_id
         super().__init__(file)
@@ -69,11 +70,21 @@ class WrappedStorageFileObject(AioFileObject):
         self._data_key = data_key
         self._data_manager = data_manager
         self._storage_handler = storage_handler
+        self._band_name = band_name
         # infos for multiple data
         self._sub_key_infos = dict()
 
     def __getattr__(self, item):
-        return getattr(self._file, item)
+        if hasattr(self._file, item):
+            return getattr(self._file, item)
+
+    def set_file_header(self, header: Any):
+        if hasattr(self._file, "header"):
+            self._file.header = header
+
+    def set_buffers_by_sizes(self, sizes: List):
+        if hasattr(self._file, "set_buffers_by_sizes"):
+            self._file.set_buffers_by_sizes(sizes)
 
     def commit_once(self, sub_key: Tuple, offset: int, size: int):
         self._sub_key_infos[sub_key] = (offset, size)
@@ -90,7 +101,9 @@ class WrappedStorageFileObject(AioFileObject):
         if "w" in self._file.mode:
             object_info = await self._storage_handler.object_info(self._object_id)
             object_info.size = self._size
-            data_info = build_data_info(object_info, self._level, self._size)
+            data_info = build_data_info(
+                object_info, self._level, self._size, band_name=self._band_name
+            )
             await self._data_manager.put_data_info(
                 self._session_id,
                 self._data_key,
@@ -406,7 +419,6 @@ class StorageManagerActor(mo.StatelessActor):
 
     async def __post_create__(self):
         from ..cluster.api import ClusterAPI
-        from .handler import StorageHandlerActor
 
         try:
             self._cluster_api = cluster_api = await ClusterAPI.create(self.address)
@@ -415,6 +427,10 @@ class StorageManagerActor(mo.StatelessActor):
         except mo.ActorNotExist:
             # in some test cases, cluster service is not available
             self._all_bands = ["numa-0"]
+        await self._handle_post_create()
+
+    async def _handle_post_create(self):
+        from .handler import StorageHandlerActor
 
         # stores the mapping from data key to storage info
         self._data_manager = await mo.create_actor(
@@ -642,7 +658,7 @@ class StorageManagerActor(mo.StatelessActor):
                 except asyncio.CancelledError:  # pragma: no cover
                     break
                 except RuntimeError as ex:  # pragma: no cover
-                    if "cannot schedule new futures" not in str(ex):
+                    if "cannot schedule new futures" in str(ex):
                         # when atexit is triggered, the default pool might be shutdown
                         # and to_thread will fail
                         break

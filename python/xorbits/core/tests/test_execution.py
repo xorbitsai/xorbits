@@ -324,3 +324,35 @@ def test_interactive_execution(setup, ip):
     ip.run_cell(raw_cell="df + 3")
     r = ip.run_cell(raw_cell="xorbits.core.execution.need_to_execute(_)")
     assert r.result
+
+
+def test_getitem(setup):
+    import pandas as pd
+
+    from ... import pandas as xpd
+
+    data = {"a": ["abc", "def"]}
+    df = pd.DataFrame(data)
+    xdf = xpd.DataFrame(data)
+    result = xdf[xdf["a"].str[0] == "a"]
+    expected = df[df["a"].str[0] == "a"]
+    pd.testing.assert_frame_equal(result.to_pandas(), expected)
+
+
+def test_execution_with_process_exit_message(mocker):
+    import numpy as np
+    from xoscar.errors import ServerClosed
+
+    import xorbits
+    import xorbits.remote as xr
+
+    mocker.patch(
+        "xorbits._mars.services.subtask.api.SubtaskAPI.run_subtask_in_slot",
+        side_effect=ServerClosed,
+    )
+
+    with pytest.raises(
+        ServerClosed,
+        match=r".*?\(.*?\) with address .*? Out-of-Memory \(OOM\) problem",
+    ):
+        xorbits.run(xr.spawn(lambda *_: np.random.rand(10**4, 10**4)))

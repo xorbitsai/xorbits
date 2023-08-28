@@ -157,11 +157,14 @@ class FileSystemGlob:
     def _iterdir(self, dirname, dironly):
         if not dirname:  # pragma: no cover
             dirname = ""
-        if not self._fs.isdir(dirname):
-            return iter(())
-        for entry in self._fs.ls(dirname):
-            if not dironly or self._fs.isdir(entry):
-                yield self._fs.path_split(entry)[-1]
+        if self._fs.isfile(dirname):
+            return iter([])
+        try:  # pragma: no cover
+            for entry in self._fs.ls(dirname):
+                if not dironly or self._fs.isdir(entry):
+                    yield self._fs.path_split(entry)[-1]
+        except:
+            return iter([])
 
     # Recursively yields relative pathnames inside a literal directory.
     def _rlistdir(self, dirname, dironly):  # pragma: no cover

@@ -147,7 +147,6 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
         if len(in_df.chunks) == 1:
             return cls.tile_one_chunk(op)
 
-        out_df = op.outputs[0]
         output_type = OutputType.dataframe
         chunk_shape = in_df.chunk_shape
 
@@ -209,7 +208,13 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
             [chunk.dtypes for chunk in filtered_chunks]
         ).to_dict()
         output_columns = list(combined_dtypes.keys())
-        output_dtypes = pd.Series(combined_dtypes)
+        output_dtypes = pd.Series(
+            combined_dtypes.values(),
+            index=pd.Index(
+                combined_dtypes.keys(), name=filtered_chunks[0].dtypes.index.name
+            ),
+        )
+        out_columns_value = parse_index(output_dtypes.index, store_data=True)
 
         # generate combine chunks
         combine_chunks = []
@@ -219,21 +224,22 @@ class DataFramePivotTable(MapReduceOperand, DataFrameOperandMixin):
                 combine_op.stage = OperandStage.combine
                 combine_op.output_columns = output_columns
                 params = dict(
-                    shape=(chunk.shape[0], len(output_columns)), index=chunk.index
-                )
-                params.update(
-                    dict(
-                        dtypes=output_dtypes,
-                        columns_value=in_df.columns_value,
-                        index_value=chunk.index_value,
-                    )
+                    shape=(chunk.shape[0], len(output_columns)),
+                    index=chunk.index,
+                    dtypes=output_dtypes,
+                    columns_value=out_columns_value,
+                    index_value=chunk.index_value,
                 )
                 combine_chunks.append(combine_op.new_chunk([chunk], **params))
             else:
                 combine_chunks.append(chunk)
 
         new_op = op.copy()
-        kw = out_df.params.copy()
+        kw = dict(
+            columns_value=out_columns_value,
+            dtypes=output_dtypes,
+            index_value=filtered_chunks[0].index_value,
+        )
         new_nsplits = (
             tuple(chunk.shape[0] for chunk in combine_chunks),
             (len(output_columns),),

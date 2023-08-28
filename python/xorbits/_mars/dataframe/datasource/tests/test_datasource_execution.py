@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import multiprocessing
 import os
 import tempfile
 import time
@@ -46,7 +47,7 @@ from .... import dataframe as md
 from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_cupy
-from ....utils import pd_release_version
+from ....utils import arrow_array_to_objects, get_next_port, pd_release_version
 from ...utils import is_pandas_2
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records
@@ -460,6 +461,15 @@ def test_from_tensor_execution(setup):
     pdf_expected = pd.DataFrame({"a": [pd.Series([1, 2, 3]).sum() + 1]})
     pd.testing.assert_frame_equal(result, pdf_expected)
 
+    # from 1d tensors with unknown shape
+    df_raw = pd.DataFrame({"id": list("abc"), "num": [1, 2, 3]})
+    df13 = from_pandas_df(df_raw, chunk_size=2)
+    s = df13.groupby("id")["num"].count()
+
+    result = dataframe_from_1d_tileables({"t": s.value_counts()}).execute().fetch()
+    pdf_expected = pd.DataFrame({"t": s.value_counts().execute().fetch()})
+    pd.testing.assert_frame_equal(result, pdf_expected)
+
 
 def test_from_records_execution(setup):
     dtype = np.dtype([("x", "int"), ("y", "double"), ("z", "<U16")])
@@ -710,6 +720,22 @@ def test_read_csv_execution(setup):
 
         mdf2 = md.read_csv(testdir, index_col=0, chunk_bytes=50).execute().fetch()
         pd.testing.assert_frame_equal(df, mdf2.sort_index())
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        s = "随机生成的中文字符串"
+        file_path = os.path.join(tempdir, "test.csv")
+        df = pd.DataFrame(
+            {"col1": range(len(s)), "col2": np.random.rand(len(s)), "col3": list(s)}
+        )
+        df.to_csv(file_path, encoding="gbk", index=False)
+        pdf = pd.read_csv(file_path, encoding="gbk")
+        r = md.read_csv(file_path, encoding="gbk")
+        mdf = r.execute().fetch()
+        pd.testing.assert_frame_equal(pdf, mdf)
+
+        r = md.read_csv(file_path, encoding="gbk", chunk_bytes=12)
+        mdf = r.execute().fetch()
+        pd.testing.assert_frame_equal(pdf, mdf)
 
 
 csv_with_comment = """# comment line
@@ -1432,6 +1458,77 @@ def test_read_parquet_fast_parquet(setup):
         pd.testing.assert_frame_equal(result, test_df)
         # size_res = self.executor.execute_dataframe(df, mock=True)
         # assert sum(s[0] for s in size_res) > test_df.memory_usage(deep=True).sum()
+
+
+def _start_tornado(port: int, file_path0: str, file_path1: str):
+    import tornado.ioloop
+    import tornado.web
+
+    class Parquet0Handler(tornado.web.RequestHandler):
+        def get(self):
+            with open(file_path0, "rb") as f:
+                self.write(f.read())
+
+    class Parquet1Handler(tornado.web.RequestHandler):
+        def get(self):
+            with open(file_path1, "rb") as f:
+                self.write(f.read())
+
+    app = tornado.web.Application(
+        [
+            (r"/read-parquet0", Parquet0Handler),
+            (r"/read-parquet1", Parquet1Handler),
+        ]
+    )
+    app.listen(port)
+    tornado.ioloop.IOLoop.current().start()
+
+
+@pytest.fixture
+def start_http_server():
+    with tempfile.TemporaryDirectory() as tempdir:
+        file_path0 = os.path.join(tempdir, "test0.parquet")
+        file_path1 = os.path.join(tempdir, "test1.parquet")
+
+        df = pd.DataFrame(
+            {
+                "col1": np.random.rand(100),
+                "col2": np.random.choice(["a", "b", "c"], (100,)),
+                "col3": np.arange(100),
+            }
+        )
+        df.iloc[:50].to_parquet(file_path0)
+        df.iloc[50:].to_parquet(file_path1)
+
+        port = get_next_port()
+        proc = multiprocessing.Process(
+            target=_start_tornado, args=(port, file_path0, file_path1)
+        )
+        proc.daemon = True
+        proc.start()
+        time.sleep(5)
+        yield df, [
+            f"http://127.0.0.1:{port}/read-parquet0",
+            f"http://127.0.0.1:{port}/read-parquet1",
+        ]
+        # Terminate the process
+        proc.terminate()
+
+
+def test_read_parquet_with_http_url(setup, start_http_server):
+    df, urls = start_http_server
+    mdf = md.read_parquet(urls).execute().fetch()
+    pd.testing.assert_frame_equal(df, mdf)
+
+    mdf = md.read_parquet(urls, use_arrow_dtype=True).execute().fetch()
+    pd.testing.assert_frame_equal(df, arrow_array_to_objects(mdf))
+    assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+
+    mdf1 = md.read_parquet(urls[:1]).execute().fetch()
+    pd.testing.assert_frame_equal(df.iloc[:50], mdf1)
+
+    mdf2 = md.read_parquet(urls[1:]).execute().fetch()
+    pd.testing.assert_frame_equal(df[50:], mdf2)
 
 
 @require_cudf

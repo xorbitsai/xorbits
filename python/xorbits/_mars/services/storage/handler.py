@@ -414,6 +414,7 @@ class StorageHandlerActor(mo.Actor):
         size: int,
         level: StorageLevel,
         request_quota=True,
+        band_name: str = "numa-0",
     ) -> WrappedStorageFileObject:
         if level is None:
             level = self.highest_level
@@ -428,6 +429,7 @@ class StorageHandlerActor(mo.Actor):
             data_key,
             self._data_manager_ref,
             self._clients[level],
+            band_name,
         )
 
     @open_writer.batch
@@ -435,15 +437,20 @@ class StorageHandlerActor(mo.Actor):
         extracted_args = None
         data_keys, sizes = [], []
         for args, kwargs in zip(args_list, kwargs_list):
-            session_id, data_key, size, level, request_quota = self.open_writer.bind(
-                *args, **kwargs
-            )
+            (
+                session_id,
+                data_key,
+                size,
+                level,
+                request_quota,
+                band_name,
+            ) = self.open_writer.bind(*args, **kwargs)
             if extracted_args:
-                assert extracted_args == (session_id, level, request_quota)
-            extracted_args = (session_id, level, request_quota)
+                assert extracted_args == (session_id, level, request_quota, band_name)
+            extracted_args = (session_id, level, request_quota, band_name)
             data_keys.append(data_key)
             sizes.append(size)
-        session_id, level, request_quota = extracted_args
+        session_id, level, request_quota, band_name = extracted_args
         if level is None:  # pragma: no cover
             level = self.highest_level
         if request_quota:  # pragma: no cover
@@ -462,6 +469,7 @@ class StorageHandlerActor(mo.Actor):
                     data_key,
                     self._data_manager_ref,
                     self._clients[level],
+                    band_name=band_name,
                 )
             )
         return wrapped_writers
