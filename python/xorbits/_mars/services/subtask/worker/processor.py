@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Type
 import xoscar as mo
 from xoscar.metrics import Metrics
 from xoscar.serialization import AioSerializer
+from xoscar.backends.allocate_strategy import IdleLabel
 
 from ....core import ChunkGraph, ExecutionError, OperandType, enter_mode
 from ....core.context import get_context
@@ -387,11 +388,19 @@ class SubtaskProcessor:
                         address=self._supervisor_address, # 这个supervisor_address是不是actor对应的address？
                     )
                 except mo.ActorNotExist:
-                    logger.debug(
-                        f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
+                    # logger.debug(
+                    #     f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
+                    # )
+                    # self.result.status = SubtaskStatus.errored
+                    # raise
+                    runner_storage: RunnerStorageActor = await mo.create_actor(
+                        RunnerStorageActor,
+                        band=self._band,
+                        slot_id=self._slot_id,
+                        uid=RunnerStorageActor.gen_uid(self._band[1], self._slot_id),
+                        address=self._supervisor_address,
+                        # allocate_strategy=IdleLabel(self._band[1], "storage_runner"),
                     )
-                    self.result.status = SubtaskStatus.errored
-                    raise
                 # puts 里每个元素都是 DelayedArgument，可用参数 args 取到内部元组 (key,value)
                 for put in puts:
                     put_key, put_data = put.args

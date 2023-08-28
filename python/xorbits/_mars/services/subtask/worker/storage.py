@@ -35,7 +35,7 @@ class RunnerStorageActor(mo.Actor):
     
     @classmethod
     def gen_uid(cls, band_name: str, slot_id: int):
-        return f"slot_{band_name}_{slot_id}_worker_storage"
+        return f"slot_{band_name}_{slot_id}_runner_storage"
     
     async def get_data(
         self, 
