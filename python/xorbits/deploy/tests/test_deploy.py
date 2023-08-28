@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import concurrent.futures
+import os
 import sys
+import tempfile
 
 import psutil
 import pytest
@@ -58,3 +60,19 @@ def test_init():
             init(init_local=True)
     finally:
         _safe_shutdown()
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32" and sys.version_info[:2] < (3, 8),
+    reason="Skip for windows & Python < 3.8",
+)
+def test_init_with_storage_config():
+    tmp_dir = tempfile.mkdtemp()
+    with pytest.raises(ValueError):
+        init(storage_config={"xyz": {"root_dirs": tmp_dir}})
+    with pytest.raises(ValueError):
+        init(storage_config={})
+    init(storage_config={"mmap": {"root_dirs": tmp_dir}})
+    assert repr(pd.Series([1, 2, 3]).sum()) == "6"
+    _safe_shutdown()
+    assert not os.path.exists(tmp_dir)
