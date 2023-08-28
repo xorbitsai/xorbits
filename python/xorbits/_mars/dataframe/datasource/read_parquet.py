@@ -159,9 +159,8 @@ class ParquetEngine:
                 )
 
         # current path is now a parquet file
-        with fsspec.get_fs_token_paths(current_path, storage_options=storage_options)[
-            0
-        ].open(current_path, storage_options=storage_options) as f:
+        of = fsspec.open(current_path, storage_options=storage_options)
+        with of as f:
             dtypes = self.read_dtypes(f)
         for partition in partition_cols:
             dtypes[partition] = pd.CategoricalDtype()
@@ -440,9 +439,8 @@ class DataFrameReadParquet(
                         first_chunk_row_num = get_engine(op.engine).get_row_num(f)
                         first_chunk_raw_bytes = sys.getsizeof(f)
                 else:
-                    with fsspec.get_fs_token_paths(
-                        pth, storage_options=op.storage_options
-                    )[0].open(pth, storage_options=op.storage_options) as f:
+                    of = fsspec.open(pth, storage_options=op.storage_options)
+                    with of as f:
                         first_chunk_row_num = get_engine(op.engine).get_row_num(f)
                     first_chunk_raw_bytes = fsspec.get_fs_token_paths(
                         pth, storage_options=op.storage_options
@@ -526,7 +524,7 @@ class DataFrameReadParquet(
         for i, url in enumerate(paths):
             chunk_op = op.copy().reset_key()
             if z is not None:
-                chunk_op.path = zip_filename + " " + url
+                chunk_op.path = op.path[0] + " " + url
             else:
                 chunk_op.path = url
             out_chunks.append(
@@ -564,9 +562,8 @@ class DataFrameReadParquet(
     def _execute_partitioned(cls, ctx, op: "DataFrameReadParquet"):
         out = op.outputs[0]
         engine = get_engine(op.engine)
-        with fsspec.get_fs_token_paths(op.path, storage_options=op.storage_options)[
-            0
-        ].open(op.path, storage_options=op.storage_options) as f:
+        of = fsspec.open(op.path, storage_options=op.storage_options)
+        with of as f:
             ctx[out.key] = engine.read_partitioned_to_pandas(
                 f,
                 op.partitions,
@@ -585,7 +582,9 @@ class DataFrameReadParquet(
         ziplist = op.path.split(" ")
         if op.is_http_url:
             if len(ziplist) > 1:
-                z = zipfile.ZipFile(ziplist[0])
+                fs, _, _ = fsspec.get_fs_token_paths(ziplist[0])
+                zip_filename = fs.open(ziplist[0])
+                z = zipfile.ZipFile(zip_filename)
                 f = z.open(ziplist[1])
             else:
                 f = op.path
@@ -727,9 +726,8 @@ class DataFrameReadParquet(
             .item()
         )
         if op.columns is not None:
-            with fsspec.get_fs_token_paths(op.path, storage_options=op.storage_options)[
-                0
-            ].open(op.path, storage_options=op.storage_options) as f:
+            of = fsspec.open(op.path, storage_options=op.storage_options)
+            with of as f:
                 all_columns = list(get_engine(op.engine).read_dtypes(f).index)
         else:
             all_columns = list(op.outputs[0].dtypes.index)
@@ -882,9 +880,7 @@ def read_parquet(
                 file_path = fs.glob(path, storage_options=storage_options)[0]
         else:
             file_path = path[0]
-        with fsspec.get_fs_token_paths(file_path, storage_options=storage_options)[
-            0
-        ].open(file_path, storage_options=storage_options) as f:
+        with fs.open(file_path, storage_options=storage_options) as f:
             dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
 
     if columns:
