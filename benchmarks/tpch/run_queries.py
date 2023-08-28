@@ -29,7 +29,10 @@ def load_lineitem(
 ) -> xd.DataFrame:
     data_path = data_folder + "/lineitem"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     df["L_SHIPDATE"] = xd.to_datetime(df.L_SHIPDATE, format="%Y-%m-%d")
     df["L_RECEIPTDATE"] = xd.to_datetime(df.L_RECEIPTDATE, format="%Y-%m-%d")
@@ -43,7 +46,10 @@ def load_part(
 ) -> xd.DataFrame:
     data_path = data_folder + "/part"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -54,7 +60,10 @@ def load_orders(
 ) -> xd.DataFrame:
     data_path = data_folder + "/orders"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     df["O_ORDERDATE"] = xd.to_datetime(df.O_ORDERDATE, format="%Y-%m-%d")
     return df
@@ -66,7 +75,10 @@ def load_customer(
 ) -> xd.DataFrame:
     data_path = data_folder + "/customer"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -77,7 +89,10 @@ def load_nation(
 ) -> xd.DataFrame:
     data_path = data_folder + "/nation"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -88,7 +103,10 @@ def load_region(
 ) -> xd.DataFrame:
     data_path = data_folder + "/region"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -99,7 +117,10 @@ def load_supplier(
 ) -> xd.DataFrame:
     data_path = data_folder + "/supplier"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -110,7 +131,10 @@ def load_partsupp(
 ) -> xd.DataFrame:
     data_path = data_folder + "/partsupp"
     df = xd.read_parquet(
-        data_path, use_arrow_dtype=use_arrow_dtype, storage_options=storage_options, gpu=gpu
+        data_path,
+        use_arrow_dtype=use_arrow_dtype,
+        storage_options=storage_options,
+        gpu=gpu,
     )
     return df
 
@@ -129,7 +153,9 @@ _query_to_datasets: Dict[int, List[str]] = dict()
 
 
 def collect_datasets(func: Callable):
-    _query_to_datasets[int(func.__name__[1:])] = list(inspect.signature(func).parameters)
+    _query_to_datasets[int(func.__name__[1:])] = list(
+        inspect.signature(func).parameters
+    )
     return func
 
 
@@ -295,13 +321,13 @@ def q02(part, partsupp, supplier, nation, region):
         by=["S_ACCTBAL", "N_NAME", "S_NAME", "P_PARTKEY"],
         ascending=[False, True, True, True],
     )
-    print(total)
+    print(total.head(100))
 
 
 @timethis
 @collect_datasets
 def q03(lineitem, orders, customer):
-    date = xd.Timestamp("1995-03-04")
+    date = xd.Timestamp("1995-03-15")
     lineitem_filtered = lineitem.loc[
         :, ["L_ORDERKEY", "L_EXTENDEDPRICE", "L_DISCOUNT", "L_SHIPDATE"]
     ]
@@ -311,7 +337,7 @@ def q03(lineitem, orders, customer):
     customer_filtered = customer.loc[:, ["C_MKTSEGMENT", "C_CUSTKEY"]]
     lsel = lineitem_filtered.L_SHIPDATE > date
     osel = orders_filtered.O_ORDERDATE < date
-    csel = customer_filtered.C_MKTSEGMENT == "HOUSEHOLD"
+    csel = customer_filtered.C_MKTSEGMENT == "BUILDING"
     flineitem = lineitem_filtered[lsel]
     forders = orders_filtered[osel]
     fcustomer = customer_filtered[csel]
@@ -332,26 +358,22 @@ def q03(lineitem, orders, customer):
 @timethis
 @collect_datasets
 def q04(lineitem, orders):
-    date1 = xd.Timestamp("1993-11-01")
-    date2 = xd.Timestamp("1993-08-01")
+    date1 = xd.Timestamp("1993-10-01")
+    date2 = xd.Timestamp("1993-07-01")
     lsel = lineitem.L_COMMITDATE < lineitem.L_RECEIPTDATE
     osel = (orders.O_ORDERDATE < date1) & (orders.O_ORDERDATE >= date2)
     flineitem = lineitem[lsel]
     forders = orders[osel]
     jn = forders[forders["O_ORDERKEY"].isin(flineitem["L_ORDERKEY"])]
-    total = (
-        jn.groupby("O_ORDERPRIORITY", as_index=False)["O_ORDERKEY"].count()
-        # skip sort when Mars enables sort in groupby
-        # .sort_values(["O_ORDERPRIORITY"])
-    )
+    total = jn.groupby("O_ORDERPRIORITY", as_index=False)["O_ORDERKEY"].count()
     print(total)
 
 
 @timethis
 @collect_datasets
 def q05(lineitem, orders, customer, nation, region, supplier):
-    date1 = xd.Timestamp("1996-01-01")
-    date2 = xd.Timestamp("1997-01-01")
+    date1 = xd.Timestamp("1994-01-01")
+    date2 = xd.Timestamp("1995-01-01")
     rsel = region.R_NAME == "ASIA"
     osel = (orders.O_ORDERDATE >= date1) & (orders.O_ORDERDATE < date2)
     forders = orders[osel]
@@ -372,16 +394,16 @@ def q05(lineitem, orders, customer, nation, region, supplier):
 @timethis
 @collect_datasets
 def q06(lineitem):
-    date1 = xd.Timestamp("1996-01-01")
-    date2 = xd.Timestamp("1997-01-01")
+    date1 = xd.Timestamp("1994-01-01")
+    date2 = xd.Timestamp("1995-01-01")
     lineitem_filtered = lineitem.loc[
         :, ["L_QUANTITY", "L_EXTENDEDPRICE", "L_DISCOUNT", "L_SHIPDATE"]
     ]
     sel = (
         (lineitem_filtered.L_SHIPDATE >= date1)
         & (lineitem_filtered.L_SHIPDATE < date2)
-        & (lineitem_filtered.L_DISCOUNT >= 0.08)
-        & (lineitem_filtered.L_DISCOUNT <= 0.1)
+        & (lineitem_filtered.L_DISCOUNT >= 0.05)
+        & (lineitem_filtered.L_DISCOUNT <= 0.07)
         & (lineitem_filtered.L_QUANTITY < 24)
     )
     flineitem = lineitem_filtered[sel]
@@ -546,7 +568,7 @@ def q08(part, lineitem, supplier, orders, customer, nation, region):
 @timethis
 @collect_datasets
 def q09(lineitem, orders, part, nation, partsupp, supplier):
-    psel = part.P_NAME.str.contains("ghost")
+    psel = part.P_NAME.str.contains("green")
     fpart = part[psel]
     jn1 = lineitem.merge(fpart, left_on="L_PARTKEY", right_on="P_PARTKEY")
     jn2 = jn1.merge(supplier, left_on="L_SUPPKEY", right_on="S_SUPPKEY")
@@ -567,8 +589,8 @@ def q09(lineitem, orders, part, nation, partsupp, supplier):
 @timethis
 @collect_datasets
 def q10(lineitem, orders, customer, nation):
-    date1 = xd.Timestamp("1994-11-01")
-    date2 = xd.Timestamp("1995-02-01")
+    date1 = xd.Timestamp("1993-10-01")
+    date2 = xd.Timestamp("1994-01-01")
     osel = (orders.O_ORDERDATE >= date1) & (orders.O_ORDERDATE < date2)
     lsel = lineitem.L_RETURNFLAG == "R"
     forders = orders[osel]
@@ -675,8 +697,8 @@ def q13(customer, orders):
 @timethis
 @collect_datasets
 def q14(lineitem, part):
-    startDate = xd.Timestamp("1994-03-01")
-    endDate = xd.Timestamp("1994-04-01")
+    startDate = xd.Timestamp("1995-09-01")
+    endDate = xd.Timestamp("1995-10-01")
     p_type_like = "PROMO"
     part_filtered = part.loc[:, ["P_PARTKEY", "P_TYPE"]]
     lineitem_filtered = lineitem.loc[
@@ -797,14 +819,15 @@ def q18(lineitem, orders, customer):
         sort=False,
     )["L_QUANTITY"].sum()
     total = gb2.sort_values(["O_TOTALPRICE", "O_ORDERDATE"], ascending=[False, True])
-    print(total.head(100))
+    print(total)
 
 
 @timethis
 @collect_datasets
 def q19(lineitem, part):
-    Brand31 = "Brand#31"
-    Brand43 = "Brand#43"
+    Brand12 = "Brand#12"
+    Brand23 = "Brand#23"
+    Brand34 = "Brand#34"
     SMBOX = "SM BOX"
     SMCASE = "SM CASE"
     SMPACK = "SM PACK"
@@ -820,81 +843,51 @@ def q19(lineitem, part):
     DELIVERINPERSON = "DELIVER IN PERSON"
     AIR = "AIR"
     AIRREG = "AIRREG"
-    lsel = (
-        (
-            ((lineitem.L_QUANTITY <= 36) & (lineitem.L_QUANTITY >= 26))
-            | ((lineitem.L_QUANTITY <= 25) & (lineitem.L_QUANTITY >= 15))
-            | ((lineitem.L_QUANTITY <= 14) & (lineitem.L_QUANTITY >= 4))
-        )
+    flineitem = lineitem[
+        ((lineitem.L_SHIPMODE == AIR) | (lineitem.L_SHIPMODE == AIRREG))
         & (lineitem.L_SHIPINSTRUCT == DELIVERINPERSON)
-        & ((lineitem.L_SHIPMODE == AIR) | (lineitem.L_SHIPMODE == AIRREG))
-    )
-    psel = (part.P_SIZE >= 1) & (
-        (
-            (part.P_SIZE <= 5)
-            & (part.P_BRAND == Brand31)
-            & (
-                (part.P_CONTAINER == SMBOX)
-                | (part.P_CONTAINER == SMCASE)
-                | (part.P_CONTAINER == SMPACK)
-                | (part.P_CONTAINER == SMPKG)
-            )
-        )
-        | (
-            (part.P_SIZE <= 10)
-            & (part.P_BRAND == Brand43)
-            & (
-                (part.P_CONTAINER == MEDBAG)
-                | (part.P_CONTAINER == MEDBOX)
-                | (part.P_CONTAINER == MEDPACK)
-                | (part.P_CONTAINER == MEDPKG)
-            )
-        )
-        | (
-            (part.P_SIZE <= 15)
-            & (part.P_BRAND == Brand43)
-            & (
-                (part.P_CONTAINER == LGBOX)
-                | (part.P_CONTAINER == LGCASE)
-                | (part.P_CONTAINER == LGPACK)
-                | (part.P_CONTAINER == LGPKG)
-            )
-        )
-    )
-    flineitem = lineitem[lsel]
-    fpart = part[psel]
-    jn = flineitem.merge(fpart, left_on="L_PARTKEY", right_on="P_PARTKEY")
+    ]
+    jn = flineitem.merge(part, left_on="L_PARTKEY", right_on="P_PARTKEY")
     jnsel = (
-        (jn.P_BRAND == Brand31)
-        & (
-            (jn.P_CONTAINER == SMBOX)
-            | (jn.P_CONTAINER == SMCASE)
-            | (jn.P_CONTAINER == SMPACK)
-            | (jn.P_CONTAINER == SMPKG)
+        (
+            (jn.P_BRAND == Brand12)
+            & (
+                (jn.P_CONTAINER == SMCASE)
+                | (jn.P_CONTAINER == SMBOX)
+                | (jn.P_CONTAINER == SMPACK)
+                | (jn.P_CONTAINER == SMPKG)
+            )
+            & (jn.L_QUANTITY >= 1)
+            & (jn.L_QUANTITY <= 11)
+            & (jn.P_SIZE >= 1)
+            & (jn.P_SIZE <= 5)
         )
-        & (jn.L_QUANTITY >= 4)
-        & (jn.L_QUANTITY <= 14)
-        & (jn.P_SIZE <= 5)
-        | (jn.P_BRAND == Brand43)
-        & (
-            (jn.P_CONTAINER == MEDBAG)
-            | (jn.P_CONTAINER == MEDBOX)
-            | (jn.P_CONTAINER == MEDPACK)
-            | (jn.P_CONTAINER == MEDPKG)
+        | (
+            (jn.P_BRAND == Brand23)
+            & (
+                (jn.P_CONTAINER == MEDBAG)
+                | (jn.P_CONTAINER == MEDBOX)
+                | (jn.P_CONTAINER == MEDPKG)
+                | (jn.P_CONTAINER == MEDPACK)
+            )
+            & (jn.L_QUANTITY >= 10)
+            & (jn.L_QUANTITY <= 20)
+            & (jn.P_SIZE >= 1)
+            & (jn.P_SIZE <= 10)
         )
-        & (jn.L_QUANTITY >= 15)
-        & (jn.L_QUANTITY <= 25)
-        & (jn.P_SIZE <= 10)
-        | (jn.P_BRAND == Brand43)
-        & (
-            (jn.P_CONTAINER == LGBOX)
-            | (jn.P_CONTAINER == LGCASE)
-            | (jn.P_CONTAINER == LGPACK)
-            | (jn.P_CONTAINER == LGPKG)
+        | (
+            (jn.P_BRAND == Brand34)
+            & (
+                (jn.P_CONTAINER == LGCASE)
+                | (jn.P_CONTAINER == LGBOX)
+                | (jn.P_CONTAINER == LGPACK)
+                | (jn.P_CONTAINER == LGPKG)
+            )
+            & (jn.L_QUANTITY >= 20)
+            & (jn.L_QUANTITY <= 30)
+            & (jn.P_SIZE >= 1)
+            & (jn.P_SIZE <= 15)
         )
-        & (jn.L_QUANTITY >= 26)
-        & (jn.L_QUANTITY <= 36)
-        & (jn.P_SIZE <= 15)
     )
     jn = jn[jnsel]
     total = (jn.L_EXTENDEDPRICE * (1.0 - jn.L_DISCOUNT)).sum()
@@ -904,10 +897,10 @@ def q19(lineitem, part):
 @timethis
 @collect_datasets
 def q20(lineitem, part, nation, partsupp, supplier):
-    date1 = xd.Timestamp("1996-01-01")
-    date2 = xd.Timestamp("1997-01-01")
-    psel = part.P_NAME.str.startswith("azure")
-    nsel = nation.N_NAME == "JORDAN"
+    date1 = xd.Timestamp("1994-01-01")
+    date2 = xd.Timestamp("1995-01-01")
+    psel = part.P_NAME.str.startswith("forest")
+    nsel = nation.N_NAME == "CANADA"
     lsel = (lineitem.L_SHIPDATE >= date1) & (lineitem.L_SHIPDATE < date2)
     fpart = part[psel]
     fnation = nation[nsel]
@@ -993,7 +986,7 @@ def q21(lineitem, orders, supplier, nation):
     total = total.groupby("S_NAME", as_index=False, sort=False).size()
     total.columns = ["S_NAME", "NUMWAIT"]
     total = total.sort_values(by=["NUMWAIT", "S_NAME"], ascending=[False, True])
-    print(total)
+    print(total.head(100))
 
 
 @timethis
@@ -1046,7 +1039,9 @@ def run_queries(
         args = []
         for dataset in _query_to_datasets[query]:
             args.append(
-                globals()[f"load_{dataset}"](root, use_arrow_dtype, gpu, **storage_options)
+                globals()[f"load_{dataset}"](
+                    root, use_arrow_dtype, gpu, **storage_options
+                )
             )
             datasets_to_load.update(args)
         queries_to_args[query] = args
@@ -1103,7 +1098,7 @@ def main():
         "--endpoint",
         type=str,
         required=False,
-        help="The endpoint of existing Xorbits cluster."
+        help="The endpoint of existing Xorbits cluster.",
     )
 
     args = parser.parse_args()
