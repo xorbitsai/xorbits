@@ -13,6 +13,7 @@
 # limitations under the License.
 import asyncio
 import mmap
+import warnings
 from typing import Dict, List, Tuple, Union
 
 import cloudpickle
@@ -43,7 +44,16 @@ class MMAPStorage(DiskStorage):
     @staticmethod
     @implements(StorageBackend.teardown)
     async def teardown(**kwargs):
-        await DiskStorage.teardown(**kwargs)
+        fs = kwargs.get("fs")
+        root_dirs = kwargs.get("root_dirs")
+        try:
+            for d in root_dirs:
+                fs.delete(d, recursive=True)
+        except:  # pragma: no cover
+            warnings.warn(
+                f"Unexpected exceptions occur when deleting directories, "
+                f"please delete these directories manually: {root_dirs}"
+            )
 
     @property
     @implements(StorageBackend.level)
