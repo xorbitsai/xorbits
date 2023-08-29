@@ -33,6 +33,7 @@ from ...tests.core import require_cudf, require_cupy
 from ..base import StorageLevel
 from ..cuda import CudaStorage
 from ..filesystem import AlluxioStorage, DiskStorage, JuiceFSStorage
+from ..mmap import MMAPStorage
 from ..plasma import PlasmaStorage
 from ..shared_memory import SharedMemoryStorage
 from ..vineyard import VineyardStorage
@@ -46,6 +47,7 @@ require_lib = lambda x: x
 params = [
     "filesystem",
     "shared_memory",
+    "mmap",
 ]
 if (
     not sys.platform.startswith("win")
@@ -140,6 +142,18 @@ async def storage_context(request):
 
         teardown_params["object_ids"] = storage._object_ids
         await SharedMemoryStorage.teardown(**teardown_params)
+    elif request.param == "mmap":
+        tempdir = tempfile.mkdtemp()
+        params, teardown_params = await MMAPStorage.setup(
+            fs=LocalFileSystem(), root_dirs=[tempdir]
+        )
+        storage = MMAPStorage(**params)
+        assert storage.level == StorageLevel.MEMORY
+
+        yield storage
+
+        await MMAPStorage.teardown(**teardown_params)
+        assert not os.path.exists(tempdir)
 
 
 def test_storage_level():
@@ -183,7 +197,7 @@ async def test_base_operations(storage_context):
     assert info2.size == put_info2.size
 
     # FIXME: remove when list functionality is ready for vineyard.
-    if not isinstance(storage, (VineyardStorage, SharedMemoryStorage)):
+    if not isinstance(storage, (VineyardStorage, SharedMemoryStorage, MMAPStorage)):
         num = len(await storage.list())
         # juicefs automatically generates 4 files accesslog, config, stats and trash so the num should be 6 for juicefs
         if isinstance(storage, JuiceFSStorage):
@@ -239,10 +253,14 @@ async def test_reader_and_writer(storage_context):
         with pytest.raises((OSError, ValueError)):
             await reader.seek(-1)
 
-        assert 5 == await reader.seek(5)
-        assert 10 == await reader.seek(5, os.SEEK_CUR)
-        assert 10 == await reader.seek(-10 - size, os.SEEK_END)
-        assert 10 == await reader.tell()
+        if not isinstance(storage, MMAPStorage):
+            assert 5 == await reader.seek(5)
+            assert 10 == await reader.seek(5, os.SEEK_CUR)
+            assert 10 == await reader.seek(-10 - size, os.SEEK_END)
+            assert 10 == await reader.tell()
+        else:
+            await reader.seek(-10 - size, os.SEEK_END)
+            assert 10 == await reader.tell()
         r = await AioDeserializer(reader).run()
 
     np.testing.assert_array_equal(t, r)
