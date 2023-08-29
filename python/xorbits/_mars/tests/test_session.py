@@ -30,6 +30,7 @@ except ImportError:  # pragma: no cover
     pa = None
 
 from .. import dataframe as md
+from .. import new_session
 from .. import remote as mr
 from .. import tensor as mt
 from ..config import option_context
@@ -83,6 +84,20 @@ def test_session_async_execute(setup):
     res = fetch(*res.result())
     pd.testing.assert_series_equal(raw_df.sum(), res[0])
     assert raw_a.sum() == res[1]
+
+
+def test_session_with_mmap_storage_backend():
+    tmp_dir = tempfile.mkdtemp()
+    sess = new_session(storage_config={"mmap": {"root_dirs": tmp_dir}})
+
+    raw_a = np.random.RandomState(0).rand(30, 40)
+    a = mt.tensor(raw_a)
+
+    expected = raw_a.sum()
+    res = a.sum().execute().fetch()
+    assert expected == res
+    sess.stop_server()
+    assert not os.path.exists(tmp_dir)
 
 
 def test_executable_tuple_execute(setup):
