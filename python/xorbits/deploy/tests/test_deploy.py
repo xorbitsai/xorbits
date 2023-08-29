@@ -75,4 +75,5 @@ def test_init_with_storage_config():
     init(storage_config={"mmap": {"root_dirs": tmp_dir}})
     assert repr(pd.Series([1, 2, 3]).sum()) == "6"
     _safe_shutdown()
-    assert not os.path.exists(tmp_dir)
+    if sys.platform != "win32":
+        assert not os.path.exists(tmp_dir)
