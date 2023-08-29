@@ -18,8 +18,8 @@ from itertools import product
 import numpy as np
 import pytest
 import scipy.sparse as sps
+from numpy.testing import assert_array_equal
 from scipy.sparse import csr_matrix
-from sklearn.utils._testing import assert_array_equal
 from sklearn.utils.estimator_checks import _NotAnArray
 from sklearn.utils.multiclass import is_multilabel as sklearn_is_multilabel
 from sklearn.utils.multiclass import type_of_target as sklearn_type_of_target

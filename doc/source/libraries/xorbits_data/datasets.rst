@@ -37,22 +37,23 @@ improve concurrency.
 ::
 
     >>> import xorbits.datasets as xdatasets
-    >>> # The `rotten_tomatoes` dataset contains empty data files, so only one
-    >>> # chunk will be in the dataset.   
+    >>> # The `rotten_tomatoes` dataset contains empty data files, then the dataset
+    >>> # will be loaded and auto rechunked by the total cpu of xorbits cluster.
     >>> dataset = xdatasets.from_huggingface("rotten_tomatoes", split="train")
-    >>> # Use rechunk() to improve the concurrency.
-    >>> dataset = dataset.rechunk(10)
     >>> def add_prefix(example):
     >>>     example["text"] = "Xorbits: " + example["text"]
     >>>     return example
-    >>> # 10 processes applying `add_prefix` concurrently.
+    >>> # Multiple processes applying `add_prefix` concurrently.
     >>> dataset = dataset.map(add_prefix)
-    >>> # Currently, you have to fetch() to get the dataset info.
-    >>> dataset.fetch()
+    >>> dataset
     Dataset({
         features: ['text', 'label'],
         num_rows: 8530
     })
+    >>> dataset[1:3]["text"]
+    ['Xorbits: the gorgeously elaborate continuation of " the lord of the rings " trilogy is so huge that a column of words cannot adequately describe co-writer/director peter jackson\'s expanded vision of j . r . r . tolkien\'s middle-earth .',
+     'Xorbits: effective but too-tepid biopic']
+
 
 Datasets Outputs
 ----------------

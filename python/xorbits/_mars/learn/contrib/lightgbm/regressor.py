@@ -25,8 +25,9 @@ except ImportError:
     lightgbm = None
 
 
-LGBMRegressor = make_import_error_func("lightgbm")
-if lightgbm:
+if not lightgbm:
+    LGBMRegressor = make_import_error_func("lightgbm")
+else:
 
     class LGBMRegressor(LGBMScikitLearnBase, lightgbm.LGBMRegressor):
         def fit(

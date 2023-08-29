@@ -19,13 +19,13 @@ import warnings
 import numpy as np
 import pandas as pd
 import pytest
+from numpy.testing import assert_almost_equal, assert_array_almost_equal
 from sklearn.exceptions import UndefinedMetricWarning
 from sklearn.metrics import accuracy_score as sklearn_accuracy_score
 from sklearn.metrics import auc as sklearn_auc
 from sklearn.metrics import roc_curve as sklearn_roc_curve
 from sklearn.metrics.tests.test_ranking import _auc, make_prediction
 from sklearn.utils import check_random_state
-from sklearn.utils._testing import assert_almost_equal, assert_array_almost_equal
 
 from .... import dataframe as md
 from .... import tensor as mt

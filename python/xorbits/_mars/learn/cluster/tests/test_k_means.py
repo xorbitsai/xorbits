@@ -23,7 +23,6 @@ import scipy.sparse as sp
 try:
     from sklearn.datasets import make_blobs
     from sklearn.metrics.cluster import v_measure_score
-    from sklearn.utils._testing import assert_raise_message
 except ImportError:
     pass
 
@@ -216,12 +215,10 @@ def _check_fitted_model(km, n_clusters, n_features, true_labels):
     assert km.inertia_ > 0.0
 
     # check error on dataset being too small
-    assert_raise_message(
-        ValueError,
-        "n_samples=1 should be >= n_clusters=%d" % km.n_clusters,
-        km.fit,
-        [[0.0, 1.0]],
-    )
+    with pytest.raises(
+        ValueError, match="n_samples=1 should be >= n_clusters=%d" % km.n_clusters
+    ):
+        km.fit([[0.0, 1.0]])
 
 
 @pytest.mark.skipif(KMeans is None, reason="scikit-learn not installed")

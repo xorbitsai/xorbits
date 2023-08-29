@@ -60,6 +60,7 @@ from urllib.parse import urlparse
 import cloudpickle as pickle
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 from xoscar._utils import (
     TypeDispatcher,
     new_random_id,
@@ -767,6 +768,37 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         if len(result) == 1:
             return result[0]
         return result
+    elif type(v) is list:
+        result = []
+        for r in chunk_results:
+            result.extend(r[1])
+        return result
+    elif type(v) is dict:
+        # TODO(codingl2k1) : We should register a merge handler for each output type.
+        result = {}
+        chunk_results = [(k, v) for k, v in chunk_results if v]
+        if len(chunk_results) == 1:
+            return chunk_results[0][1]
+        for r in chunk_results:
+            d = r[1]
+            if not result:
+                if not all(
+                    type(key) is str and type(value) is list for key, value in d.items()
+                ):
+                    raise TypeError(
+                        "only support merge dict with type Dict[str, List]."
+                    )
+                result.update(d)
+            else:
+                if d.keys() != result.keys():
+                    raise TypeError(f"unsupported merge dict with different keys.")
+                else:
+                    for key, value in d.items():
+                        result[key].extend(value)
+        return result
+    elif isinstance(v, pa.Table):
+        result = [r[1] for r in chunk_results]
+        return pa.concat_tables(result)
     elif hf_datasets is not None and isinstance(v, hf_datasets.Dataset):
         result = [r[1] for r in chunk_results]
         return hf_datasets.concatenate_datasets(result)

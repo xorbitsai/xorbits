@@ -1,5 +1,4 @@
 # Copyright 2022-2023 XProbe Inc.
-# derived from copyright 1999-2021 Alibaba Group Holding Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import numpy as np
 
 from ...._mars.core.entity import OutputType
 from ...._mars.serialization.serializables import DictField, Int32Field
@@ -39,17 +40,30 @@ class HuggingfaceRechunk(DataOperand, DataOperandMixin):
             for index in range(op.num_chunks):
                 chunk_op = op.copy().reset_key()
                 chunk_op.chunk_index = index
-                c = chunk_op.new_chunk(inputs=input_chunks, index=index)
+                c = chunk_op.new_chunk(inputs=input_chunks, index=(index, 0))
                 chunks.append(c)
-            return op.copy().new_tileable(op.inputs, chunks=chunks, **out.params)
+            return op.copy().new_tileable(
+                op.inputs,
+                chunks=chunks,
+                nsplits=((np.nan,) * len(chunks), (np.nan,)),
+                **out.params
+            )
         else:
-            return op.copy().new_tileable(op.inputs, chunks=input_chunks, **out.params)
+            return op.copy().new_tileable(
+                op.inputs,
+                chunks=input_chunks,
+                nsplits=((np.nan,) * len(input_chunks), (np.nan,)),
+                **out.params
+            )
 
     @classmethod
     def execute(cls, ctx, op: "HuggingfaceRechunk"):
         inp = ctx[op.inputs[0].key]
         out_key = op.outputs[0].key
-        ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **op.hf_kwargs)
+        # Default split dataset by contiguous == True.
+        hf_kwargs = {"contiguous": True}
+        hf_kwargs.update(op.hf_kwargs)
+        ctx[out_key] = inp.shard(op.num_chunks, op.chunk_index, **hf_kwargs)
 
 
 def rechunk(dataset, num_chunks: int, **hf_kwargs):

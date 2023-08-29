@@ -22,6 +22,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 import pytest
 import scipy.sparse as sps
 from xoscar.serialization import AioDeserializer, AioSerializer
@@ -32,6 +33,7 @@ from ...tests.core import require_cudf, require_cupy
 from ..base import StorageLevel
 from ..cuda import CudaStorage
 from ..filesystem import AlluxioStorage, DiskStorage, JuiceFSStorage
+from ..mmap import MMAPStorage
 from ..plasma import PlasmaStorage
 from ..shared_memory import SharedMemoryStorage
 from ..vineyard import VineyardStorage
@@ -45,6 +47,7 @@ require_lib = lambda x: x
 params = [
     "filesystem",
     "shared_memory",
+    "mmap",
 ]
 if (
     not sys.platform.startswith("win")
@@ -139,6 +142,18 @@ async def storage_context(request):
 
         teardown_params["object_ids"] = storage._object_ids
         await SharedMemoryStorage.teardown(**teardown_params)
+    elif request.param == "mmap":
+        tempdir = tempfile.mkdtemp()
+        params, teardown_params = await MMAPStorage.setup(
+            fs=LocalFileSystem(), root_dirs=[tempdir]
+        )
+        storage = MMAPStorage(**params)
+        assert storage.level == StorageLevel.MEMORY
+
+        yield storage
+
+        await MMAPStorage.teardown(**teardown_params)
+        assert not os.path.exists(tempdir)
 
 
 def test_storage_level():
@@ -182,7 +197,7 @@ async def test_base_operations(storage_context):
     assert info2.size == put_info2.size
 
     # FIXME: remove when list functionality is ready for vineyard.
-    if not isinstance(storage, (VineyardStorage, SharedMemoryStorage)):
+    if not isinstance(storage, (VineyardStorage, SharedMemoryStorage, MMAPStorage)):
         num = len(await storage.list())
         # juicefs automatically generates 4 files accesslog, config, stats and trash so the num should be 6 for juicefs
         if isinstance(storage, JuiceFSStorage):
@@ -238,10 +253,14 @@ async def test_reader_and_writer(storage_context):
         with pytest.raises((OSError, ValueError)):
             await reader.seek(-1)
 
-        assert 5 == await reader.seek(5)
-        assert 10 == await reader.seek(5, os.SEEK_CUR)
-        assert 10 == await reader.seek(-10 - size, os.SEEK_END)
-        assert 10 == await reader.tell()
+        if not isinstance(storage, MMAPStorage):
+            assert 5 == await reader.seek(5)
+            assert 10 == await reader.seek(5, os.SEEK_CUR)
+            assert 10 == await reader.seek(-10 - size, os.SEEK_END)
+            assert 10 == await reader.tell()
+        else:
+            await reader.seek(-10 - size, os.SEEK_END)
+            assert 10 == await reader.tell()
         r = await AioDeserializer(reader).run()
 
     np.testing.assert_array_equal(t, r)
@@ -382,3 +401,21 @@ async def test_cuda_backend():
         write_data = await storage.get(writer._file._object_id)
         _compare_objs(write_data, get_data)
         await storage.delete(put_info.object_id)
+
+
+@pytest.mark.asyncio
+@require_lib
+async def test_put_get_arrow(storage_context):
+    if isinstance(storage_context, VineyardStorage):
+        # https://github.com/xorbitsai/xorbits/issues/661
+        return
+    storage = storage_context
+
+    data = [
+        pa.Table.from_pydict({"a": [1, 2, 3], "b": list("abc")}),
+        pa.RecordBatch.from_pydict({"a": [1, 2, 3], "b": list("abc")}),
+    ]
+    for d in data:
+        put_info = await storage.put(d)
+        get_data = await storage.get(put_info.object_id)
+        assert d == get_data

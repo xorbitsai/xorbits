@@ -547,11 +547,6 @@ def read_csv(
         :func:`pandas.to_datetime` with ``utc=True``. See
         :ref:`io.csv.mixed_timezones` for more.
         Note: A fast-path exists for iso8601-formatted dates.
-    infer_datetime_format : bool, default False
-        If True and `parse_dates` is enabled, pandas will attempt to infer the
-        format of the datetime strings in the columns, and if it can be inferred,
-        switch to a faster method of parsing them. In some cases this can increase
-        the parsing speed by 5-10x.
     keep_date_col : bool, default False
         If True and `parse_dates` specifies combining multiple columns then
         keep the original columns.

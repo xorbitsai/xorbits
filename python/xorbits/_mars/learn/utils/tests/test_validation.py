@@ -12,14 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import re
 from itertools import product
 
 import numpy as np
 import pytest
 import scipy.sparse as sp
 from sklearn.utils._mocking import MockDataFrame
-from sklearn.utils._testing import assert_raise_message, assert_raises_regex
 from sklearn.utils.estimator_checks import _NotAnArray
 
 from .... import dataframe as md
@@ -57,28 +56,13 @@ def test_check_array(setup):
     X_array = check_array([0, 1, 2], ensure_2d=False)
     assert X_array.ndim == 1
     # ensure_2d=True with 1d array
-    assert_raise_message(
-        ValueError,
-        "Expected 2D array, got 1D array instead",
-        check_array,
-        [0, 1, 2],
-        ensure_2d=True,
-    )
-    assert_raise_message(
-        ValueError,
-        "Expected 2D array, got 1D array instead",
-        check_array,
-        mt.tensor([0, 1, 2]),
-        ensure_2d=True,
-    )
+    with pytest.raises(ValueError, match="Expected 2D array, got 1D array instead"):
+        check_array([0, 1, 2], ensure_2d=True)
+    with pytest.raises(ValueError, match="Expected 2D array, got 1D array instead"):
+        check_array(mt.tensor([0, 1, 2]), ensure_2d=True)
     # ensure_2d=True with scalar array
-    assert_raise_message(
-        ValueError,
-        "Expected 2D array, got scalar array instead",
-        check_array,
-        10,
-        ensure_2d=True,
-    )
+    with pytest.raises(ValueError, match="Expected 2D array, got scalar array instead"):
+        check_array(10, ensure_2d=True)
     # don't allow ndim > 3
     X_ndim = mt.arange(8).reshape(2, 2, 2)
     with pytest.raises(ValueError):
@@ -177,18 +161,17 @@ def test_check_array_accept_sparse_type_exception():
         "A sparse tensor was passed, but dense data is required. "
         "Use X.todense() to convert to a dense tensor."
     )
-    assert_raise_message(TypeError, msg, check_array, X_csr, accept_sparse=False)
+    with pytest.raises(TypeError, match=re.escape(msg)):
+        check_array(X_csr, accept_sparse=False)
 
     msg = (
         "When providing 'accept_sparse' as a tuple or list, "
         "it must contain at least one string value."
     )
-    assert_raise_message(
-        ValueError, msg.format([]), check_array, X_csr, accept_sparse=[]
-    )
-    assert_raise_message(
-        ValueError, msg.format(()), check_array, X_csr, accept_sparse=()
-    )
+    with pytest.raises(ValueError, match=msg.format([])):
+        check_array(X_csr, accept_sparse=[])
+    with pytest.raises(ValueError, match=msg.format(())):
+        check_array(X_csr, accept_sparse=())
 
     with pytest.raises(ValueError):
         check_array(X_csr, accept_sparse=object)
@@ -205,46 +188,58 @@ def test_check_array_accept_sparse_no_exception():
 
 def test_check_array_min_samples_and_features_messages():
     # empty list is considered 2D by default:
-    msg = "0 feature(s) (shape=(1, 0)) while a minimum of 1 is required."
-    assert_raise_message(ValueError, msg, check_array, [[]])
+    msg = (
+        "Found array with 0 feature(s) (shape=(1, 0)) while a minimum of 1 is required."
+    )
+    with pytest.raises(ValueError, match=re.escape(msg)):
+        check_array([[]])
 
     # If considered a 1D collection when ensure_2d=False, then the minimum
     # number of samples will break:
-    msg = "0 sample(s) (shape=(0,)) while a minimum of 1 is required."
-    assert_raise_message(ValueError, msg, check_array, [], ensure_2d=False)
+    msg = "Found array with 0 sample(s) (shape=(0,)) while a minimum of 1 is required."
+    with pytest.raises(ValueError, match=re.escape(msg)):
+        check_array([], ensure_2d=False)
 
     # Invalid edge case when checking the default minimum sample of a scalar
     msg = "Singleton array array(42) cannot be considered a valid collection."
-    assert_raise_message(TypeError, msg, check_array, 42, ensure_2d=False)
+    with pytest.raises(TypeError, match=re.escape(msg)):
+        check_array(42, ensure_2d=False)
 
 
 def test_check_array_complex_data_error():
     X = mt.array([[1 + 2j, 3 + 4j, 5 + 7j], [2 + 3j, 4 + 5j, 6 + 7j]])
-    assert_raises_regex(ValueError, "Complex data not supported", check_array, X)
+    with pytest.raises(ValueError, match=r"Complex data not supported"):
+        check_array(X)
 
     # list of lists
     X = [[1 + 2j, 3 + 4j, 5 + 7j], [2 + 3j, 4 + 5j, 6 + 7j]]
-    assert_raises_regex(ValueError, "Complex data not supported", check_array, X)
+    with pytest.raises(ValueError, match=r"Complex data not supported"):
+        check_array(X)
 
     # tuple of tuples
     X = ((1 + 2j, 3 + 4j, 5 + 7j), (2 + 3j, 4 + 5j, 6 + 7j))
-    assert_raises_regex(ValueError, "Complex data not supported", check_array, X)
+    with pytest.raises(ValueError, match=r"Complex data not supported"):
+        check_array(X)
 
     # list of np arrays
     X = [mt.array([1 + 2j, 3 + 4j, 5 + 7j]), mt.array([2 + 3j, 4 + 5j, 6 + 7j])]
-    assert_raises_regex(ValueError, "Complex data not supported", check_array, X)
+    with pytest.raises(ValueError, match=r"Complex data not supported"):
+        check_array(X)
 
     # tuple of np arrays
     X = (mt.array([1 + 2j, 3 + 4j, 5 + 7j]), mt.array([2 + 3j, 4 + 5j, 6 + 7j]))
-    assert_raises_regex(ValueError, "Complex data not supported", check_array, X)
+    with pytest.raises(ValueError, match=r"Complex data not supported"):
+        check_array(X)
 
     # dataframe
     X = MockDataFrame(mt.array([[1 + 2j, 3 + 4j, 5 + 7j], [2 + 3j, 4 + 5j, 6 + 7j]]))
-    assert_raises_regex(ValueError, "Complex data not supported", check_array, X)
+    with pytest.raises(ValueError, match=r"Complex data not supported"):
+        check_array(X)
 
     # sparse matrix
     X = sp.coo_matrix([[0, 1 + 2j], [0, 0]])
-    assert_raises_regex(ValueError, "Complex data not supported", check_array, X)
+    with pytest.raises(ValueError, match=r"Complex data not supported"):
+        check_array(X)
 
 
 def test_check_consistent_length(setup):
