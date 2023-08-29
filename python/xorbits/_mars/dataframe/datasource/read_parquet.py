@@ -831,7 +831,9 @@ def read_parquet(
     single_path = path[0] if isinstance(path, list) else path
     is_partitioned = False
     if isinstance(single_path, str) and (
-        single_path.startswith("http://") or single_path.startswith("https://")
+        single_path.startswith("http://")
+        or single_path.startswith("https://")
+        or single_path.startswith("ftp://")
     ):
         urls = path if isinstance(path, (list, tuple)) else [path]
         op = DataFrameReadParquet(
