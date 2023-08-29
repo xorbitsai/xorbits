@@ -69,17 +69,17 @@ class MMAPStorage(DiskStorage):
     def _get_file_via_mmap(object_id: str):
         with open(object_id, "r+b") as f:
             mm = mmap.mmap(f.fileno(), 0)
-            header_bytes = mm[:11]
+            v = memoryview(mm)
+            header_bytes = v[:11]
             header_length = get_header_length(header_bytes)
-            header = cloudpickle.loads(mm[11 : 11 + header_length])
+            header = cloudpickle.loads(v[11 : 11 + header_length])
             buffer_sizes = header[0].pop(BUFFER_SIZES_NAME)
             # get buffers
             buffers = []
             start = 11 + header_length
             for size in buffer_sizes:
-                buffers.append(mm[start : start + size])
+                buffers.append(v[start : start + size])
                 start = start + size
-            mm.close()
             return deserialize(header, buffers)
 
     @implements(StorageBackend.get)
@@ -106,6 +106,7 @@ class MMAPStorage(DiskStorage):
     async def open_reader(self, object_id) -> StorageFileObject:
         with open(object_id, "r+b") as f:
             mm = mmap.mmap(f.fileno(), 0)
+            # TODO: rewrite StorageFileObject interfaces like read to support memoryview(mm)
             return StorageFileObject(mm, object_id)
 
     @implements(StorageBackend.list)
