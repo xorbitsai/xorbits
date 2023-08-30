@@ -826,6 +826,7 @@ def read_parquet(
         single_path.startswith("http://")
         or single_path.startswith("https://")
         or single_path.startswith("ftp://")
+        or single_path.startswith("sftp://")
     ):
         urls = path if isinstance(path, (list, tuple)) else [path]
         op = DataFrameReadParquet(
