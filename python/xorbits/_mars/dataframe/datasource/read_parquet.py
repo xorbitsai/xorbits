@@ -644,7 +644,7 @@ class DataFrameReadParquet(
         if path.endswith(".zip"):
             z = zipfile.ZipFile(path)
         engine = CudfEngine()
-        if os.path.exists(path):
+        if os.path.exists(path) and z is None:
             file = op.path
             close = lambda: None
         else:  # pragma: no cover
@@ -653,7 +653,6 @@ class DataFrameReadParquet(
             else:
                 file = fs.open(path, storage_options=op.storage_options)
             close = file.close
-
         try:
             if op.partitions is not None:
                 ctx[out.key] = engine.read_partitioned_to_cudf(
