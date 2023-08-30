@@ -771,7 +771,7 @@ def read_csv(
     )
     chunk_bytes = chunk_bytes or options.chunk_store_limit
     dtypes = mini_df.dtypes
-    if not gpu and use_arrow_dtype:
+    if not gpu and not is_pandas_2() and use_arrow_dtype:
         dtypes = to_arrow_dtypes(dtypes, test_df=mini_df)
     ret = op(
         index_value=index_value,

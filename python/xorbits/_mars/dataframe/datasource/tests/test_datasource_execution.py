@@ -844,10 +844,13 @@ def test_read_csv_use_arrow_dtype(setup):
         pdf = pd.read_csv(file_path)
         mdf = md.read_csv(file_path, use_arrow_dtype=True)
         result = mdf.execute().fetch()
-        assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
         if is_pandas_2():
+            assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
             assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        else:
+            assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
         assert result.to_dict() == pdf.to_dict()
         # There still exists Float64 != float64 dtype check error even if we use
         # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
@@ -862,10 +865,13 @@ def test_read_csv_use_arrow_dtype(setup):
             pdf = pd.read_csv(file_path)
             mdf = md.read_csv(file_path)
             result = mdf.execute().fetch()
-            assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
             if is_pandas_2():
+                assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+                assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
                 assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+            else:
+                assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+                assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
             assert result.to_dict() == pdf.to_dict()
             # There still exists Float64 != float64 dtype check error even if we use
             # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
@@ -880,10 +886,13 @@ def test_read_csv_use_arrow_dtype(setup):
         pdf = pd.read_csv(file_path, compression="gzip")
         mdf = md.read_csv(file_path, compression="gzip", use_arrow_dtype=True)
         result = mdf.execute().fetch()
-        assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
         if is_pandas_2():
+            assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
             assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        else:
+            assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
         assert result.to_dict() == pdf.to_dict()
         # There still exists Float64 != float64 dtype check error even if we use
         # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
