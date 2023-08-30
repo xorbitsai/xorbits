@@ -1495,17 +1495,14 @@ def _start_tornado(port: int, file_path0: str, file_path1: str, zip_path: str):
         def get(self):
             file_path = zip_path
 
-            # 获取文件大小
             file_size = os.path.getsize(file_path)
 
-            # 解析 Range 请求头部字段
             range_header = self.request.headers.get("Range")
             if range_header:
                 range_start, range_end = self.parse_range_header(range_header)
             else:
                 range_start, range_end = 0, file_size - 1
 
-            # 打开文件
             with open(file_path, "rb") as file:
                 file.seek(range_start)
                 data = file.read(range_end - range_start + 1)
