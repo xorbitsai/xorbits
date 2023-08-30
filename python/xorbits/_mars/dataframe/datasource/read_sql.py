@@ -281,7 +281,7 @@ class DataFrameReadSQL(
             columns_value = parse_index(test_df.columns, store_data=True)
 
             dtypes = test_df.dtypes
-            if use_arrow_dtype:
+            if not is_pandas_2() and use_arrow_dtype:
                 dtypes = to_arrow_dtypes(dtypes, test_df=test_df)
 
             return self.new_dataframe(
@@ -514,7 +514,7 @@ class DataFrameReadSQL(
                     index = index[: op.nrows]
                 df.index = index
 
-            if use_arrow_dtype:
+            if not is_pandas_2() and use_arrow_dtype:
                 dtypes = to_arrow_dtypes(df.dtypes, test_df=df)
                 for i in range(len(dtypes)):
                     dtype = dtypes.iloc[i]
