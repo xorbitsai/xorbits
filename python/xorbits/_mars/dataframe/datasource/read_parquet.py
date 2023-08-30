@@ -642,8 +642,7 @@ class DataFrameReadParquet(
         z = None
         fs = fsspec.get_fs_token_paths(path, storage_options=op.storage_options)[0]
         if path.endswith(".zip"):
-            zip_file = fs.open(path, storage_options=op.storage_options)
-            z = zipfile.ZipFile(zip_file)
+            z = zipfile.ZipFile(path)
         engine = CudfEngine()
         if os.path.exists(path):
             file = op.path
