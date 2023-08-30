@@ -1329,10 +1329,13 @@ def test_read_parquet_arrow(setup, engine):
                 engine=engine,
             )
             result = df.execute().fetch()
-            assert isinstance(df.dtypes.iloc[1], md.ArrowStringDtype)
-            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
             if is_pandas_2():
+                assert isinstance(df.dtypes.iloc[1], pd.ArrowDtype)
+                assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
                 assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+            else:
+                assert isinstance(df.dtypes.iloc[1], md.ArrowStringDtype)
+                assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
             assert result.to_dict() == test_df.to_dict()
             # There still exists Float64 != float64 dtype check error even if we use
             # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
@@ -1374,8 +1377,12 @@ def test_read_parquet_arrow(setup, engine):
                     f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
                 )
                 result = mdf.execute().fetch()
-                assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-                assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
+                if is_pandas_2():
+                    assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+                    assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+                else:
+                    assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+                    assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
 
                 mdf = md.read_parquet(
                     f"{tempdir}/*.parquet",
@@ -1427,10 +1434,13 @@ def test_read_parquet_arrow_dtype(setup):
 
         df = md.read_parquet(file_path, use_arrow_dtype=True)
         result = df.execute().fetch()
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[3], md.ArrowListDtype)
         if is_pandas_2():
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[3], pd.ArrowDtype)
             assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        else:
+            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
+            assert isinstance(result.dtypes.iloc[3], md.ArrowListDtype)
         assert result.to_dict() == test_df.to_dict()
         # There still exists Float64 != float64 dtype check error even if we use
         # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes

@@ -176,12 +176,13 @@ def _parse_prefix(path):
 def _arrow_dtype_mapper(
     tp: Union[np.dtype, arrow_dtype]
 ) -> Optional[Union[ArrowListDtype, ArrowStringDtype, pd.ArrowDtype]]:
-    if tp == pa.string():
+    if is_pandas_2():
+        # Pandas 2.0+ use pd.ArrowDtype instead of xorbits dtype.
+        return pd.ArrowDtype(tp)
+    elif tp == pa.string():
         return ArrowStringDtype()
     elif isinstance(tp, pa.ListType):
         return ArrowListDtype(tp.value_type)
-    elif is_pandas_2():
-        return pd.ArrowDtype(tp)
 
 
 class ArrowEngine(ParquetEngine):
