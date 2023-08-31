@@ -425,10 +425,11 @@ class DataFrameReadParquet(
                 if path.endswith(".parquet") and not path.startswith("__MACOSX")
             ]
         else:
+            paths = fs.glob(op.path, storage_options=op.storage_options)
             if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
-                paths = [op.path]
-            else:
-                paths = fs.glob(op.path, storage_options=op.storage_options)
+                parsed_path = urlparse(op.path)
+                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
+                paths = [path_prefix + path for path in paths]
         first_chunk_row_num, first_chunk_raw_bytes = None, None
         for i, pth in enumerate(paths):
             if i == 0:
@@ -868,10 +869,12 @@ def read_parquet(
                     dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
     else:
         if not isinstance(path, list):
-            if isinstance(fs, fsspec.implementations.local.LocalFileSystem):
-                file_path = fs.glob(path, storage_options=storage_options)[0]
-            else:
-                file_path = path
+            file_path = fs.glob(path, storage_options=storage_options)[0]
+            if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
+                parsed_path = urlparse(path)
+                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
+                file_path = path_prefix + file_path
+
         else:
             file_path = path[0]
         with fs.open(file_path, storage_options=storage_options) as f:
