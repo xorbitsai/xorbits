@@ -31,6 +31,7 @@ def init(
     cuda_devices: Union[List[int], List[List[int]], str] = "auto",
     web: Union[bool, str] = "auto",
     new: bool = True,
+    storage_config: Optional[Dict] = None,
     **kwargs,
 ) -> None:
     """
@@ -96,6 +97,15 @@ def init(
         .. note::
 
           Take effect only when ``init_local`` is False
+
+    storage_config: dict, optional
+        storage backend and its configuration when init a new local cluster.
+        Using ``shared_memory`` storage backend by default.
+        Currently, support `shared_memory`` and ``mmap`` two options.
+
+        .. note::
+
+          Take effect only when ``init_local`` is True
     """
     default_session = session.get_default_session()
     if init_local is True and default_session is not None:
@@ -103,6 +113,16 @@ def init(
             f"`init_local` cannot be True if has initialized,"
             f"call `shutdown` before init."
         )
+    if storage_config is not None:
+        backends = list(storage_config.keys())
+        if len(backends) > 1 or len(backends) == 0:
+            raise ValueError("Only support one storage backend.")
+        backend = backends[0]
+        if backend not in ["shared_memory", "mmap"]:
+            raise ValueError(
+                "Only support one of these storage backends: `shared_memory`, `mmap`."
+            )
+
     if init_local is no_default:
         # if address not specified and has not initialized,
         # force to initialize a local runtime.
@@ -129,6 +149,7 @@ def init(
                 mem_bytes=mem_bytes,
                 cuda_devices=cuda_devices,
                 web=web,
+                storage_config=storage_config,
             )
         )
     kw.update(kwargs)
