@@ -73,6 +73,7 @@ async def new_cluster_in_isolation(
     enable_internal_addr: bool = None,
     oscar_extra_conf: dict = None,
     log_config: dict = None,
+    storage_config: Optional[dict] = None,
 ) -> ClientType:
     cluster = LocalCluster(
         address,
@@ -95,6 +96,7 @@ async def new_cluster_in_isolation(
         enable_internal_addr=enable_internal_addr,
         oscar_extra_conf=oscar_extra_conf,
         log_config=log_config,
+        storage_config=storage_config,
     )
     await cluster.start()
     return await LocalClient.create(cluster, timeout)
@@ -181,6 +183,7 @@ class LocalCluster:
         enable_internal_addr: str = None,
         oscar_extra_conf: dict = None,
         log_config: dict = None,
+        storage_config: Optional[dict] = None,
     ):
         # auto choose the subprocess_start_method.
         if subprocess_start_method is None:
@@ -228,6 +231,16 @@ class LocalCluster:
             enable_internal_addr=enable_internal_addr,
             oscar_extra_conf=oscar_extra_conf,
         )
+
+        # make memory allocation policy more aggressive on local by
+        # assuming all the memory is available.
+        if self._config.get("scheduling", {}).get("mem_hard_limit", None) is None:
+            self._config["scheduling"]["mem_hard_limit"] = None
+
+        if storage_config is not None:
+            backend = list(storage_config.keys())[0]
+            self._config["storage"]["backends"] = [backend]
+            self._config["storage"][backend] = storage_config[backend]
 
         self._bands_to_resource = execution_config.get_deploy_band_resources()
         self._supervisor_pool = None
