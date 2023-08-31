@@ -237,6 +237,7 @@ jobs:
           # test huggingface datasets
           pip install datasets torch
         fi
+        pip install "pandas<=2.0.3"
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
