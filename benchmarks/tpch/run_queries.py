@@ -1112,7 +1112,8 @@ def main():
     gpu = args.gpu
     use_arrow_dtype = args.use_arrow_dtype
     mmap_root_dir = args.mmap_root_dir
-    print(f"Use mmap to run: {mmap_root_dir is not None}")
+    if mmap_root_dir is not None:
+        print(f"Use mmap to run: {mmap_root_dir}")
 
     # credentials to access the datasource.
     storage_options = {}
