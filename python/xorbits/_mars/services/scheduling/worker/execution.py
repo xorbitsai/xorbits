@@ -19,6 +19,7 @@ import logging
 import operator
 import pprint
 import sys
+import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
@@ -39,10 +40,52 @@ from ...meta import MetaAPI
 from ...storage import StorageAPI
 from ...subtask import Subtask, SubtaskAPI, SubtaskResult, SubtaskStatus
 from ...task.task_info_collector import TaskInfoCollector
-from .quota import QuotaActor, StatusMonitorActor
+from .quota import QuotaActor
 from .workerslot import BandSlotManagerActor
 
 logger = logging.getLogger(__name__)
+
+
+class StatusMonitorActor(mo.Actor):
+    def __init__(self, **kw):
+        super().__init__()
+        self._records = dict()
+
+        if kw:  # pragma: no cover
+            pass
+
+    async def __post_create__(self):
+        pass
+
+    async def __pre_destroy__(self):
+        pass
+
+    def report_status(self, keys: tuple[str, str], status: str):
+        if keys not in self._records:
+            self._records[keys] = {
+                "history": [],
+            }
+        self._records[keys]["history"].append((time.time(), status))
+
+    async def get_stale_tasks(self, status: str, timeout: int = 5):
+        cur_timestamp = time.time()
+        stale_tasks_keys = []
+        for k, v in self._records.items():
+            if (
+                cur_timestamp - v["history"][-1][0] >= timeout
+                and v["history"][-1][1] == status
+            ):
+                stale_tasks_keys.append(k)
+
+        return stale_tasks_keys
+
+    async def get_records(self):
+        return self._records
+
+    def print_records(self):
+        print(f"len of records: {len(self._records)}")
+        print(f"records: {self._records}")
+
 
 # the default times to run subtask.
 DEFAULT_SUBTASK_MAX_RETRIES = 0

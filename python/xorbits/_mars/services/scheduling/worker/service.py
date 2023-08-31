@@ -17,8 +17,12 @@ import xoscar as mo
 
 from ....utils import calc_size_by_str
 from ...core import AbstractService
-from .execution import DEFAULT_SUBTASK_MAX_RETRIES, SubtaskExecutionActor
-from .quota import StatusMonitorActor, WorkerQuotaManagerActor
+from .execution import (
+    DEFAULT_SUBTASK_MAX_RETRIES,
+    StatusMonitorActor,
+    SubtaskExecutionActor,
+)
+from .quota import WorkerQuotaManagerActor
 from .workerslot import WorkerSlotManagerActor
 
 

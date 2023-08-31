@@ -32,44 +32,6 @@ logger = logging.getLogger(__name__)
 QuotaDumpType = namedtuple("QuotaDumpType", "allocations requests hold_sizes")
 
 
-class StatusMonitorActor(mo.Actor):
-    def __init__(self, **kw):
-        super().__init__()
-        self._records = dict()
-
-        if kw:  # pragma: no cover
-            pass
-
-    async def __post_create__(self):
-        pass
-
-    async def __pre_destroy__(self):
-        pass
-
-    def report_status(self, keys: tuple[str, str], status: str):
-        if keys not in self._records:
-            self._records[keys] = {
-                "history": [],
-            }
-        self._records[keys]["history"].append((time.time(), status))
-
-    async def get_stale_tasks(self, status: str, timeout: int = 5):
-        cur_timestamp = time.time()
-        stale_tasks_keys = []
-        for k, v in self._records.items():
-            if (
-                cur_timestamp - v["history"][-1][0] >= timeout
-                and v["history"][-1][1] == status
-            ):
-                stale_tasks_keys.append(k)
-
-        return stale_tasks_keys
-
-    def print_records(self):
-        print(f"len of records: {len(self._records)}")
-        print(f"records: {self._records}")
-
-
 @dataclass
 class QuotaRequest:
     req_size: Tuple
@@ -349,6 +311,8 @@ class MemQuotaActor(QuotaActor):
 
     async def __post_create__(self):
         await super().__post_create__()
+        from .execution import StatusMonitorActor
+
         self._stat_monitor_ref = await mo.actor_ref(
             uid=StatusMonitorActor.default_uid(), address=self.address
         )
