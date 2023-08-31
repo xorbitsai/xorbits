@@ -39,7 +39,7 @@ from ...meta import MetaAPI
 from ...storage import StorageAPI
 from ...subtask import Subtask, SubtaskAPI, SubtaskResult, SubtaskStatus
 from ...task.task_info_collector import TaskInfoCollector
-from .quota import QuotaActor
+from .quota import QuotaActor, StatusMonitorActor
 from .workerslot import BandSlotManagerActor
 
 logger = logging.getLogger(__name__)
@@ -168,9 +168,18 @@ class SubtaskExecutionActor(mo.StatelessActor):
             "The count of finished subtasks of the current band.",
             ("band",),
         )
+        self._stat_monitor_ref = None
 
     async def __post_create__(self):
         self._cluster_api = await ClusterAPI.create(self.address)
+        self._stat_monitor_ref = await mo.actor_ref(
+            uid=StatusMonitorActor.default_uid(), address=self.address
+        )
+
+    async def _get_stat_monitor_ref(self) -> mo.ActorRefType[StatusMonitorActor]:
+        return await mo.actor_ref(
+            StatusMonitorActor.default_uid(), address=self.address
+        )
 
     @alru_cache(cache_exceptions=False)
     async def _get_slot_manager_ref(
@@ -376,6 +385,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
                         band_name,
                     )
                 )
+                await self._stat_monitor_ref.report_status(
+                    (subtask.session_id, subtask.subtask_id), "preparing data"
+                )
                 await asyncio.wait_for(
                     prepare_data_task, timeout=self._data_prepare_timeout
                 )
@@ -419,6 +431,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
     async def _retry_run_subtask(
         self, subtask: Subtask, band_name: str, subtask_api: SubtaskAPI, batch_quota_req
     ):
+        await self._stat_monitor_ref.report_status(
+            (subtask.session_id, subtask.subtask_id), "subtask set actor ref"
+        )
         quota_ref = await self._get_band_quota_ref(band_name)
         slot_manager_ref = await self._get_slot_manager_ref(band_name)
         subtask_info = self._subtask_info[subtask.subtask_id]
@@ -429,9 +444,15 @@ class SubtaskExecutionActor(mo.StatelessActor):
             aiotask = None
             slot_id = None
             try:
+                await self._stat_monitor_ref.report_status(
+                    (subtask.session_id, subtask.subtask_id), "subtask request quota"
+                )
                 await quota_ref.request_batch_quota(batch_quota_req)
                 self._check_cancelling(subtask_info)
-
+                await self._stat_monitor_ref.report_status(
+                    (subtask.session_id, subtask.subtask_id),
+                    "subtask acquire free_slot",
+                )
                 slot_id = await slot_manager_ref.acquire_free_slot(
                     (subtask.session_id, subtask.subtask_id)
                 )
@@ -540,6 +561,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
             )
         logger.debug(
             "Start to schedule subtask %s on %s.", subtask.subtask_id, self.address
+        )
+        await self._stat_monitor_ref.report_status(
+            (subtask.session_id, subtask.subtask_id), "subtask start"
         )
         self._submitted_subtask_count.record(1, {"band": self.address})
         with mo.debug.no_message_trace():

@@ -18,7 +18,7 @@ import xoscar as mo
 from ....utils import calc_size_by_str
 from ...core import AbstractService
 from .execution import DEFAULT_SUBTASK_MAX_RETRIES, SubtaskExecutionActor
-from .quota import WorkerQuotaManagerActor
+from .quota import StatusMonitorActor, WorkerQuotaManagerActor
 from .workerslot import WorkerSlotManagerActor
 
 
@@ -58,6 +58,11 @@ class SchedulingWorkerService(AbstractService):
         )
         data_prepare_timeout = scheduling_config.get("data_prepare_timeout", 600)
 
+        await mo.create_actor(
+            StatusMonitorActor,
+            uid=StatusMonitorActor.default_uid(),
+            address=address,
+        )
         await mo.create_actor(
             WorkerSlotManagerActor,
             uid=WorkerSlotManagerActor.default_uid(),
@@ -99,4 +104,7 @@ class SchedulingWorkerService(AbstractService):
             mo.create_actor_ref(
                 uid=WorkerSlotManagerActor.default_uid(), address=address
             )
+        )
+        await mo.destroy_actor(
+            mo.create_actor_ref(uid=StatusMonitorActor.default_uid(), address=address)
         )
