@@ -771,7 +771,7 @@ def test_data_frame_pivot_table_execute(setup):
 
     # test basic pivot_table
     r = df.pivot_table(values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum)
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum
     )
@@ -781,7 +781,7 @@ def test_data_frame_pivot_table_execute(setup):
     r = df.pivot_table(
         values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values="D", index=["A", "B"], columns=["C"], aggfunc=np.sum, fill_value=0
     )
@@ -791,7 +791,7 @@ def test_data_frame_pivot_table_execute(setup):
     r = df.pivot_table(
         values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values=["D", "E"], index=["A", "C"], aggfunc={"D": np.mean, "E": np.mean}
     )
@@ -806,7 +806,7 @@ def test_data_frame_pivot_table_execute(setup):
         index=["A", "C"],
         aggfunc={"D": [range_func, np.mean], "E": [min, max, np.mean]},
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values=["D", "E"],
         index=["A", "C"],
@@ -838,7 +838,7 @@ def test_data_frame_pivot_table_execute(setup):
         columns=["C", "E"],
         aggfunc=[np.sum, np.mean, lambda x: x.mean() ** 2],
     )
-    result = r.execute(extra_config={"check_dtypes": False}).fetch()
+    result = r.execute().fetch()
     expected = df_raw.pivot_table(
         values=["D", "E"],
         index=["A", "B"],
@@ -2066,6 +2066,15 @@ def test_drop_duplicates(setup):
         result = series.execute().fetch()
         expected = s.drop_duplicates()
         pd.testing.assert_series_equal(result, expected)
+
+        # test dataframe with unknown dtypes
+        raw = pd.DataFrame({"c1": range(100)})
+        df = from_pandas_df(raw, chunk_size=1)
+        df["c2"] = df["c1"].map(lambda x: x + 1.0, skip_infer=True)
+        result = df.drop_duplicates(subset="c2").execute().fetch()
+        raw["c2"] = raw["c1"].map(lambda x: x + 1.0)
+        expected = raw.drop_duplicates(subset="c2")
+        pd.testing.assert_frame_equal(result, expected)
 
 
 @pytest.mark.parametrize("method", ["tree", "shuffle"])

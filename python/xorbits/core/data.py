@@ -37,6 +37,7 @@ class DataType(Enum):
     categorical = 7
     dataframe_groupby = 8
     series_groupby = 9
+    dataset = 10
 
 
 DATA_MEMBERS: Dict[DataType, Dict[str, Any]] = defaultdict(dict)
@@ -86,6 +87,10 @@ class Data:
             MARS_TENSOR_TYPE,
         )
 
+        # import MARS_DATASET_TYPE from datasets instead of core.adapter
+        # to avoid recursive import.
+        from ..datasets import MARS_DATASET_TYPE
+
         if isinstance(mars_entity, MARS_DATAFRAME_TYPE):
             data_type = DataType.dataframe
         elif isinstance(mars_entity, MARS_SERIES_TYPE):
@@ -100,6 +105,8 @@ class Data:
             data_type = DataType.index
         elif isinstance(mars_entity, MARS_CATEGORICAL_TYPE):
             data_type = DataType.categorical
+        elif isinstance(mars_entity, MARS_DATASET_TYPE):
+            data_type = DataType.dataset
         elif isinstance(mars_entity, MARS_OBJECT_TYPE):
             data_type = DataType.object_
         else:

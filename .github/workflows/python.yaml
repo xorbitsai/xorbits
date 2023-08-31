@@ -51,7 +51,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 16
       # ESLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
         run: cd python/xorbits/web/ui && npm ci
@@ -96,13 +96,18 @@ jobs:
           - { os: self-hosted, module: gpu, python-version: 3.9}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
           - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
+          - { os: ubuntu-latest, module: datasets, python-version: 3.9 }
     steps:
     - name: Check out code
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
         submodules: recursive
-
+        
+    - name: Add msbuild to PATH
+      if: ${{ matrix.os == 'windows-latest'}}
+      uses: microsoft/setup-msbuild@v1.1
+    
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       if: ${{ matrix.module != 'gpu' && matrix.module != 'kubernetes-juicefs' }}
@@ -129,7 +134,7 @@ jobs:
       if: ${{ matrix.module != 'gpu' }}
       run: |
         pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-        pip install numpy scipy cython coverage flaky
+        pip install numpy scipy cython coverage flaky "numexpr<2.8.5"
 
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
@@ -170,7 +175,7 @@ jobs:
           conda install --quiet --yes -c conda-forge skein libffi conda-pack
         fi
         if [[ "$MODULE" == "vineyard" ]]; then
-          pip install "vineyard>=0.11.1" -i https://pypi.org/simple
+          pip install "vineyard<0.16.1" -i https://pypi.org/simple
           mkdir -p /tmp/etcd-download-test
           export ETCD_VER=v3.4.13
           export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
@@ -210,8 +215,7 @@ jobs:
             "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
         fi
         if [[ "$MODULE" == "_mars/learn" ]]; then
-          # remove when compatible with scikit-learn 1.3.0 
-          pip install scikit-learn\<1.3.0
+          pip install scikit-learn
           pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
             statsmodels tsfresh dask[complete] mimesis\<9.0.0
         fi
@@ -228,6 +232,10 @@ jobs:
         if [[ "$MODULE" == "jax" ]]; then
           # test jax
           pip install "jax>=0.4.0" "jaxlib>=0.4.0"
+        fi
+        if [[ "$MODULE" == "datasets" ]]; then
+          # test huggingface datasets
+          pip install datasets torch
         fi
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
@@ -260,7 +268,7 @@ jobs:
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
           pytest --ignore xorbits/_mars/ --ignore xorbits/xgboost --ignore xorbits/lightgbm \
-            --timeout=1500 \
+            --ignore xorbits/datasets --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [[ "$MODULE" == "mars-core" ]]; then
@@ -348,10 +356,12 @@ jobs:
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         elif [ "$MODULE" == "gpu" ]; then
-          pytest -m cuda --gpu --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
+          pytest -m cuda --gpu --ignore xorbits/datasets --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
+        elif [ "$MODULE" == "datasets" ]; then
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets
         elif [ "$MODULE" == "compatibility" ]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
@@ -371,3 +381,4 @@ jobs:
       with:
         working-directory: ./python
         flags: unittests
+        token: ${{ secrets.CODECOV_TOKEN }}

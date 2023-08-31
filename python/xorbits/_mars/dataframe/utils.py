@@ -609,6 +609,8 @@ def _generate_value(dtype, fill_value):
         np.object_: lambda x: str(fill_value),
     }
     # otherwise, just use dtype.type itself to convert
+    if hasattr(dtype, "numpy_dtype"):
+        dtype = dtype.numpy_dtype
     convert = dispatch.get(dtype.type, dtype.type)
     return convert(fill_value)
 
@@ -627,7 +629,7 @@ def build_empty_df(dtypes, index=None, gpu: Optional[bool] = False):
         # Even if ``s`` is a cudf object, ``s.dtype`` is always a numpy type,
         # so ``pd.api.types.is_dtype_equal`` method is called properly here.
         if not pd.api.types.is_dtype_equal(s.dtype, dtype):
-            df.iloc[:, i] = s.astype(dtype)
+            df.isetitem(i, s.astype(dtype))
 
     df.columns = columns
     return df[:length] if len(df) > length else df

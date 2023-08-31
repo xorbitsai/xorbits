@@ -460,6 +460,15 @@ def test_from_tensor_execution(setup):
     pdf_expected = pd.DataFrame({"a": [pd.Series([1, 2, 3]).sum() + 1]})
     pd.testing.assert_frame_equal(result, pdf_expected)
 
+    # from 1d tensors with unknown shape
+    df_raw = pd.DataFrame({"id": list("abc"), "num": [1, 2, 3]})
+    df13 = from_pandas_df(df_raw, chunk_size=2)
+    s = df13.groupby("id")["num"].count()
+
+    result = dataframe_from_1d_tileables({"t": s.value_counts()}).execute().fetch()
+    pdf_expected = pd.DataFrame({"t": s.value_counts().execute().fetch()})
+    pd.testing.assert_frame_equal(result, pdf_expected)
+
 
 def test_from_records_execution(setup):
     dtype = np.dtype([("x", "int"), ("y", "double"), ("z", "<U16")])
@@ -710,6 +719,22 @@ def test_read_csv_execution(setup):
 
         mdf2 = md.read_csv(testdir, index_col=0, chunk_bytes=50).execute().fetch()
         pd.testing.assert_frame_equal(df, mdf2.sort_index())
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        s = "随机生成的中文字符串"
+        file_path = os.path.join(tempdir, "test.csv")
+        df = pd.DataFrame(
+            {"col1": range(len(s)), "col2": np.random.rand(len(s)), "col3": list(s)}
+        )
+        df.to_csv(file_path, encoding="gbk", index=False)
+        pdf = pd.read_csv(file_path, encoding="gbk")
+        r = md.read_csv(file_path, encoding="gbk")
+        mdf = r.execute().fetch()
+        pd.testing.assert_frame_equal(pdf, mdf)
+
+        r = md.read_csv(file_path, encoding="gbk", chunk_bytes=12)
+        mdf = r.execute().fetch()
+        pd.testing.assert_frame_equal(pdf, mdf)
 
 
 csv_with_comment = """# comment line

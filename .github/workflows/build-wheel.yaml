@@ -58,7 +58,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           pip install -r CI/requirements-wheel.txt
-          cd python && python setup.py build_web
+          cd python && python setup.py build_web && git reset --hard HEAD
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.3
@@ -67,8 +67,8 @@ jobs:
           CIBW_ENVIRONMENT_PASS_LINUX: NO_WEB_UI
           CIBW_ARCHS: ${{ matrix.arch }}
           CIBW_PROJECT_REQUIRES_PYTHON: ${{ matrix.requires-python }}
-          CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web
-          CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web
+          CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
+          CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
           CIBW_TEST_REQUIRES: pytest requests
           CIBW_BUILD_VERBOSITY: 1
@@ -91,7 +91,7 @@ jobs:
       - name: Build web
         run: |
           pip install -r CI/requirements-wheel.txt
-          cd python && python setup.py build_web
+          cd python && python setup.py build_web && git reset --hard HEAD
 
       - name: Build sdist
         run: cd python && pipx run build --sdist
@@ -114,17 +114,19 @@ jobs:
           path: dist
 
       # if is xprobe repo, upload to pypi
-      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository == 'xorbitsai/xorbits'
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
+          skip-existing: true
 
       # if is not xprobe repo, upload to test
-      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository != 'xorbitsai/xorbits'
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_PASSWORD }}
           verbose: true
-          repository_url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true

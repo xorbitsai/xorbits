@@ -18,14 +18,8 @@ from itertools import product
 import numpy as np
 import pytest
 import scipy as sp
+from numpy.testing import assert_almost_equal, assert_array_almost_equal
 from sklearn import datasets
-from sklearn.utils._testing import (
-    assert_almost_equal,
-    assert_array_almost_equal,
-    assert_raise_message,
-    assert_raises,
-    assert_raises_regex,
-)
 
 from .... import tensor as mt
 from .._pca import PCA, _assess_dimension, _infer_dimension
@@ -334,24 +328,22 @@ def test_pca_validation(setup):
                 else:
                     solver_reported = solver
 
-                assert_raises_regex(
+                with pytest.raises(
                     ValueError,
-                    f"n_components={n_components}L? must be between "
+                    match=rf"n_components={n_components}L? must be between "
                     rf"{lower_limit[solver]}L? and min\(n_samples, n_features\)="
-                    f"{smallest_d}L? with svd_solver='{solver_reported}'",
-                    PCA(n_components, svd_solver=solver).fit,
-                    data,
-                )
+                    rf"{smallest_d}L? with svd_solver='{solver_reported}'",
+                ):
+                    PCA(n_components, svd_solver=solver).fit(data)
 
         n_components = 1.0
         type_ncom = type(n_components)
-        assert_raise_message(
+        with pytest.raises(
             ValueError,
-            f"n_components={n_components} must be of type int "
+            match=f"n_components={n_components} must be of type int "
             f"when greater than or equal to 1, was of type={type_ncom}",
-            PCA(n_components, svd_solver=solver).fit,
-            data,
-        )
+        ):
+            PCA(n_components, svd_solver=solver).fit(data)
 
 
 def test_n_components_none(setup):
@@ -436,7 +428,8 @@ def test_n_components_mle(setup):
             error_message = (
                 f"n_components='mle' cannot be a string with svd_solver='{solver}'"
             )
-            assert_raise_message(ValueError, error_message, pca.fit, X)
+            with pytest.raises(ValueError, match=error_message):
+                pca.fit(X)
     assert n_components_dict["auto"] == n_components_dict["full"]
 
 
@@ -661,7 +654,8 @@ def test_pca_sparse_input(setup):
 
         pca = PCA(n_components=3, svd_solver=svd_solver)
 
-        assert_raises(TypeError, pca.fit, X)
+        with pytest.raises(TypeError):
+            pca.fit(X)
 
 
 def test_pca_bad_solver(setup):

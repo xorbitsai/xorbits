@@ -18,6 +18,10 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
+from ....datasets.backends.huggingface.core import (
+    HuggingfaceDatasetChunk,
+    HuggingfaceDatasetChunkData,
+)
 from ...core import OBJECT_CHUNK_TYPE, OBJECT_TYPE
 from ...dataframe.core import (
     CATEGORICAL_CHUNK_TYPE,
@@ -189,6 +193,13 @@ class CategoricalChunkMeta(_ChunkMeta):
 @dataclass
 class ObjectChunkMeta(_ChunkMeta):
     pass
+
+
+@register_meta_type((HuggingfaceDatasetChunk, HuggingfaceDatasetChunkData))
+@dataslots
+@dataclass
+class DatasetChunkMeta(_ChunkMeta):
+    shape: Tuple[int] = None
 
 
 @register_meta_type(DATAFRAME_OR_SERIES_TYPE)

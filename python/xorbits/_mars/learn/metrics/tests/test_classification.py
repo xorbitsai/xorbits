@@ -15,16 +15,16 @@
 
 import numpy as np
 import pytest
+from numpy.testing import (
+    assert_almost_equal,
+    assert_array_almost_equal,
+    assert_array_equal,
+)
 from sklearn import datasets, svm
 from sklearn.exceptions import UndefinedMetricWarning
 from sklearn.metrics import accuracy_score as sklearn_accuracy_score
 from sklearn.utils import check_random_state
 from sklearn.utils._mocking import MockDataFrame
-from sklearn.utils._testing import (
-    assert_almost_equal,
-    assert_array_almost_equal,
-    assert_array_equal,
-)
 
 from .... import execute, fetch
 from .... import tensor as mt

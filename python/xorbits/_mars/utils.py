@@ -60,6 +60,7 @@ from urllib.parse import urlparse
 import cloudpickle as pickle
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 from xoscar._utils import (
     TypeDispatcher,
     new_random_id,
@@ -69,6 +70,7 @@ from xoscar._utils import (
 )
 
 from ._utils import (  # noqa: F401 # pylint: disable=unused-import
+    CUnionFind,
     NamedType,
     Timer,
     ceildiv,
@@ -692,6 +694,8 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
     from .lib.groupby_wrapper import GroupByWrapper
     from .tensor.array_utils import get_array_module, is_array
 
+    hf_datasets = lazy_import("datasets")
+
     chunk_results = sorted(chunk_results, key=operator.itemgetter(0))
     v = chunk_results[0][1]
     if len(chunk_results) == 1 and not (chunk_results[0][0]):
@@ -764,6 +768,40 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         if len(result) == 1:
             return result[0]
         return result
+    elif type(v) is list:
+        result = []
+        for r in chunk_results:
+            result.extend(r[1])
+        return result
+    elif type(v) is dict:
+        # TODO(codingl2k1) : We should register a merge handler for each output type.
+        result = {}
+        chunk_results = [(k, v) for k, v in chunk_results if v]
+        if len(chunk_results) == 1:
+            return chunk_results[0][1]
+        for r in chunk_results:
+            d = r[1]
+            if not result:
+                if not all(
+                    type(key) is str and type(value) is list for key, value in d.items()
+                ):
+                    raise TypeError(
+                        "only support merge dict with type Dict[str, List]."
+                    )
+                result.update(d)
+            else:
+                if d.keys() != result.keys():
+                    raise TypeError(f"unsupported merge dict with different keys.")
+                else:
+                    for key, value in d.items():
+                        result[key].extend(value)
+        return result
+    elif isinstance(v, pa.Table):
+        result = [r[1] for r in chunk_results]
+        return pa.concat_tables(result)
+    elif hf_datasets is not None and isinstance(v, hf_datasets.Dataset):
+        result = [r[1] for r in chunk_results]
+        return hf_datasets.concatenate_datasets(result)
     else:
         result = None
         for cr in chunk_results:
@@ -1664,7 +1702,7 @@ def get_func_token(func):
 
 
 def _get_func_token_values(func):
-    if hasattr(func, "__code__"):
+    if hasattr(func, "__code__") and len(func.__code__.co_code) > 0:
         tokens = [func.__code__.co_code]
         if func.__closure__ is not None:
             cvars = tuple([x.cell_contents for x in func.__closure__])
@@ -1676,7 +1714,12 @@ def _get_func_token_values(func):
             tokens.extend([func.args, func.keywords])
             func = func.func
         if hasattr(func, "__code__"):
-            tokens.extend(_get_func_token_values(func))
+            if len(func.__code__.co_code) > 0:
+                tokens.extend(_get_func_token_values(func))
+            else:
+                # for new python version, cython function has __code__,
+                # but it's an empty string.
+                tokens.extend([func.__module__, func.__name__])
         elif isinstance(func, types.BuiltinFunctionType):
             tokens.extend([func.__module__, func.__name__])
         else:

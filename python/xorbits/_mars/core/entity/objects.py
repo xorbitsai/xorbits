@@ -70,7 +70,20 @@ class ObjectData(TileableData, _ToObjectMixin):
         super().__init__(_op=op, _nsplits=nsplits, _chunks=chunks, **kw)
 
     def __repr__(self):
-        return f"Object <op={type(self.op).__name__}, key={self.key}>"
+        from ...core import is_build_mode
+
+        if is_build_mode() or len(self._executed_sessions) == 0:
+            return f"Object <op={type(self.op).__name__}, key={self.key}>"
+        else:
+            return repr(self._fetch(session=self._executed_sessions[-1]))
+
+    def __str__(self):
+        from ...core import is_build_mode
+
+        if is_build_mode() or len(self._executed_sessions) == 0:
+            return f"Object <op={type(self.op).__name__}, key={self.key}>"
+        else:
+            return str(self._fetch(session=self._executed_sessions[-1]))
 
     @property
     def params(self):

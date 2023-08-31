@@ -23,6 +23,11 @@ try:
 except ImportError:  # pragma: no cover
     pass
 
+try:
+    from pandas import ArrowDtype  # noqa: F401 pandas >= 1.5.x has this type mapper
+except ImportError:
+    ArrowDtype = None
+
 from ..core.utils.fallback import unimplemented_func
 from . import accessors, core, groupby, plotting, window
 from ._config import (

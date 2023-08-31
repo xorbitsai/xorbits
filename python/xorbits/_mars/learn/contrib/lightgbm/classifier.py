@@ -25,8 +25,9 @@ except ImportError:
     lightgbm = None
 
 
-LGBMClassifier = make_import_error_func("lightgbm")
-if lightgbm:
+if not lightgbm:
+    LGBMClassifier = make_import_error_func("lightgbm")
+else:
 
     class LGBMClassifier(LGBMScikitLearnBase, lightgbm.LGBMClassifier):
         def fit(
