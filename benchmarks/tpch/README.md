@@ -1,24 +1,39 @@
-This python script allows you to benchmark TPC-H with one command line.
+We derived these queries from the TPC-H benchmarks. 
+More information about TPC-H can be found [here](https://www.tpc.org/tpch/).
 
-# TPC-H Dataset 
-This script requires the following directory structure for the TPC-H dataset:
+# Generating Data in Parquet Format
+1. Download and Install tpch-dbgen
 ```bash
-<tpch_dataset_dir>
-├── customer
-│   ├── part-xxx.pq
-├── lineitem
-│   ├── part-xxxx.pq
-├── nation
-├── orders
-│   ├── part-xxx.pq
-├── part
-│   ├── part-xxx.pq
-├── partsupp
-│   ├── part-xxx.pq
-├── region
-└── supplier
+git clone https://github.com/Bodo-inc/tpch-dbgen
+cd tpch-dbgen
+make
+cd ../
 ```
-Note that first-level directories and files are without ``.pq`` or ``.parquet`` suffixes.
+
+2. Generate Data
+```bash
+usage: python generate_data_pq.py [-h] --folder FOLDER [--SF N] [--validate_dataset]
+
+    -h, --help        Show this help message and exit
+    folder FOLDER:    output folder name (can be local folder or S3 bucket)
+    SF N:             data size number in GB (Default 1)
+    validate_dataset: Validate each parquet dataset with pyarrow.parquet.ParquetDataset (Default True)
+```
+Example:
+
+Generate 1GB data locally:
+```bash
+python generate_data_pq.py --SF 1 --folder SF1
+```
+
+Generate 1TB data and upload to S3 bucket:
+```bash
+python generate_data_pq.py --SF 1000 --folder s3://bucket-name/
+```
+
+NOTES:
+- This script assumes tpch-dbgen is in the ``same`` directory. If you downloaded it at another location, make sure to update ``tpch_dbgen_location`` in the script with the new location.
+- If using S3 bucket, install ``s3fs`` and add your AWS credentials.
 
 # Execution
 The following commands require the current directory to be the Xorbits home directory.
