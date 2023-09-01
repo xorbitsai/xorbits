@@ -71,6 +71,7 @@ logger = logging.getLogger(__name__)
 CV_THRESHOLD = 0.2
 MEAN_RATIO_THRESHOLD = 2 / 3
 _support_get_group_without_as_index = pd_release_version[:2] > (1, 0)
+PD_VERSION_GREATER_THAN_2_10 = pd_release_version[:2] >= (2, 1)
 
 
 class SizeRecorder:
@@ -1257,13 +1258,21 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 and col_value.nlevels == result.columns.nlevels
             ):
                 result.reset_index(
-                    inplace=True, drop=result.index.name in result.columns
+                    inplace=True,
+                    drop=False
+                    if xdf is pd and PD_VERSION_GREATER_THAN_2_10
+                    else result.index.name in result.columns,
                 )
             if isinstance(col_value, xdf.MultiIndex) and not col_value.is_unique:
                 # reindex doesn't work when the agg function list contains duplicated
                 # functions, e.g. df.groupby(...)agg((func, func))
-                result = result.iloc[:, result.columns.duplicated()]
-                result = xdf.concat([result[c] for c in col_value], axis=1)
+                if xdf is pd and PD_VERSION_GREATER_THAN_2_10:
+                    result = xdf.concat(
+                        [result[c] for c in col_value.drop_duplicates()], axis=1
+                    )
+                else:
+                    result = result.iloc[:, result.columns.duplicated()]
+                    result = xdf.concat([result[c] for c in col_value], axis=1)
                 result.columns = col_value
             else:
                 result = result.reindex(col_value, axis=1)
