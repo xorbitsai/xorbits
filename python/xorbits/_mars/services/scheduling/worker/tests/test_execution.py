@@ -50,14 +50,14 @@ from ....meta import MockMetaAPI, MockWorkerMetaAPI
 from ....session import MockSessionAPI
 from ....storage import MockStorageAPI
 from ....storage.handler import StorageHandlerActor
-from ....subtask import MockSubtaskAPI, Subtask, SubtaskStatus
+from ....subtask import MockSubtaskAPI, Subtask, SubtaskStage, SubtaskStatus
 from ....task.supervisor.manager import TaskManagerActor
 from ....task.task_info_collector import TaskInfoCollectorActor
 from ...supervisor import GlobalResourceManagerActor
 from ...worker import (
     BandSlotManagerActor,
     QuotaActor,
-    StatusMonitorActor,
+    StageMonitorActor,
     SubtaskExecutionActor,
 )
 
@@ -187,9 +187,9 @@ async def actor_pool(request):
             storage_handler_cls=MockStorageHandlerActor,
         )
         # create monitor actor
-        _ = await mo.create_actor(
-            StatusMonitorActor,
-            uid=StatusMonitorActor.default_uid(),
+        monitor_ref = await mo.create_actor(
+            StageMonitorActor,
+            uid=StageMonitorActor.default_uid(),
             address=pool.external_address,
         )
         # create assigner actor
@@ -240,6 +240,7 @@ async def actor_pool(request):
         try:
             yield pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref
         finally:
+            await mo.destroy_actor(monitor_ref)
             await mo.destroy_actor(task_manager_ref)
             await mo.destroy_actor(band_slot_ref)
             await mo.destroy_actor(global_resource_ref)
@@ -639,12 +640,17 @@ async def test_status_monitor_actor(actor_pool):
     target_keys = (session_id, subtask_id)
 
     monitor_ref = await mo.actor_ref(
-        StatusMonitorActor.default_uid(), address=pool.external_address
+        StageMonitorActor.default_uid(), address=pool.external_address
     )
     await asyncio.wait_for(
         execution_ref.run_subtask(subtask, "numa-0", pool.external_address), timeout=30
     )
 
+    for stage in SubtaskStage:
+        stale_tasks = await monitor_ref.get_stale_tasks(stage)
+        assert len(stale_tasks) == 0
+
+    # task not actually started
     records = await monitor_ref.get_records()
     assert target_keys in records
     assert len(records[target_keys]["history"]) > 0

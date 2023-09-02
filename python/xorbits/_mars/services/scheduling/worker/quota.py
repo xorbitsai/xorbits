@@ -311,10 +311,10 @@ class MemQuotaActor(QuotaActor):
 
     async def __post_create__(self):
         await super().__post_create__()
-        from .execution import StatusMonitorActor
+        from .execution import StageMonitorActor
 
         self._stat_monitor_ref = await mo.actor_ref(
-            uid=StatusMonitorActor.default_uid(), address=self.address
+            uid=StageMonitorActor.default_uid(), address=self.address
         )
         self._stat_refresh_task = self.ref().update_mem_stats.tell_delay(
             delay=self._refresh_time
@@ -345,29 +345,6 @@ class MemQuotaActor(QuotaActor):
         self._stat_refresh_task = self.ref().update_mem_stats.tell_delay(
             delay=self._refresh_time
         )
-
-        STALE_TIMEOUT = 5
-        TARGET_STATUS = "subtask request quota"
-        stale_tasks_keys = await self._stat_monitor_ref.get_stale_tasks(
-            status=TARGET_STATUS,
-            timeout=STALE_TIMEOUT,
-        )
-        if len(stale_tasks_keys) > 0:
-            removed = []
-            for k, req in self._requests.items():
-                if k[0] in stale_tasks_keys:
-                    logger.error(
-                        f"subtask [session_id: %s, subtask_id: %s] is not updated for %s seconds after [%s] and being killed as stale task",
-                        k[0][0],
-                        k[0][1],
-                        STALE_TIMEOUT,
-                        TARGET_STATUS,
-                    )
-                    req.event.set()
-                    removed.append(k)
-
-            for k in removed:
-                self._requests.pop(k, None)
 
     async def _has_space(self, delta: int):
         if self._hard_limit is None:
