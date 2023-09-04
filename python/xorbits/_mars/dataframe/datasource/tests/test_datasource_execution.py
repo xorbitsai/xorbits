@@ -1371,6 +1371,69 @@ def test_read_parquet_arrow(setup, engine):
         )
 
 
+@pytest.mark.skipif(
+    len(parquet_engines) == 1, reason="pyarrow and fastparquet are not installed"
+)
+@pytest.mark.parametrize("engine", parquet_engines)
+def test_read_parquet_zip(setup, engine):
+    with tempfile.TemporaryDirectory() as tempdir:
+        df = pd.DataFrame(
+            {
+                "a": np.arange(300).astype(np.int64, copy=False),
+                "b": [f"s{i}" for i in range(300)],
+                "c": np.random.rand(300),
+            }
+        )
+
+        file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
+        df[:100].to_parquet(file_paths[0], row_group_size=50)
+        df[100:200].to_parquet(file_paths[1], row_group_size=30)
+        df[200:].to_parquet(file_paths[2])
+        import zipfile
+
+        zip_file = zipfile.ZipFile(os.path.join(tempdir, "test.zip"), "w")
+
+        zip_file.write(file_paths[0])
+        zip_file.write(file_paths[1])
+        zip_file.write(file_paths[2])
+
+        zip_file.close()
+        mdf = md.read_parquet(f"{tempdir}/test.zip", engine=engine)
+        r = mdf.execute().fetch()
+        pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
+
+
+@require_cudf
+def test_read_parquet_zip_gpu(setup):
+    with tempfile.TemporaryDirectory() as tempdir:
+        df = pd.DataFrame(
+            {
+                "a": np.arange(300).astype(np.int64, copy=False),
+                "b": [f"s{i}" for i in range(300)],
+                "c": np.random.rand(300),
+            }
+        )
+
+        file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
+        df[:100].to_parquet(file_paths[0], row_group_size=50)
+        df[100:200].to_parquet(file_paths[1], row_group_size=30)
+        df[200:].to_parquet(file_paths[2])
+        import zipfile
+
+        zip_file = zipfile.ZipFile(os.path.join(tempdir, "test.zip"), "w")
+
+        zip_file.write(file_paths[0])
+        zip_file.write(file_paths[1])
+        zip_file.write(file_paths[2])
+
+        zip_file.close()
+        mdf = md.read_parquet(os.path.join(tempdir, "test.zip"), gpu=True)
+        r = mdf.execute().fetch(to_cpu=False)
+        pd.testing.assert_frame_equal(
+            df, r.sort_values("a").to_pandas().reset_index(drop=True)
+        )
+
+
 def test_read_parquet_arrow_dtype(setup):
     test_df = pd.DataFrame(
         {
@@ -1414,7 +1477,7 @@ def test_read_parquet_fast_parquet(setup):
         # assert sum(s[0] for s in size_res) > test_df.memory_usage(deep=True).sum()
 
 
-def _start_tornado(port: int, file_path0: str, file_path1: str):
+def _start_tornado(port: int, file_path0: str, file_path1: str, zip_path: str):
     import tornado.ioloop
     import tornado.web
 
@@ -1428,10 +1491,43 @@ def _start_tornado(port: int, file_path0: str, file_path1: str):
             with open(file_path1, "rb") as f:
                 self.write(f.read())
 
+    class RangeZipFileHandler(tornado.web.RequestHandler):
+        def get(self):
+            file_path = zip_path
+
+            file_size = os.path.getsize(file_path)
+
+            range_header = self.request.headers.get("Range")
+            if range_header:
+                range_start, range_end = self.parse_range_header(range_header)
+            else:
+                range_start, range_end = 0, file_size - 1
+
+            with open(file_path, "rb") as file:
+                file.seek(range_start)
+                data = file.read(range_end - range_start + 1)
+
+            self.set_header("Content-Type", "application/zip")
+            self.set_header("Content-Disposition", "attachment; filename=test.zip")
+            self.set_header(
+                "Content-Range", f"bytes {range_start}-{range_end}/{file_size}"
+            )
+            self.set_header("Accept-Ranges", "bytes")
+            self.set_header("Content-Length", len(data))
+            self.set_status(206)  # Partial Content
+            self.write(data)
+
+        def parse_range_header(self, range_header):
+            range_bytes = range_header.replace("bytes=", "").split("-")
+            range_start = int(range_bytes[0])
+            range_end = int(range_bytes[1]) if range_bytes[1] else None
+            return range_start, range_end
+
     app = tornado.web.Application(
         [
             (r"/read-parquet0", Parquet0Handler),
             (r"/read-parquet1", Parquet1Handler),
+            (r"/test.zip", RangeZipFileHandler),
         ]
     )
     app.listen(port)
@@ -1453,10 +1549,17 @@ def start_http_server():
         )
         df.iloc[:50].to_parquet(file_path0)
         df.iloc[50:].to_parquet(file_path1)
+        import zipfile
+
+        zip_path = os.path.join(tempdir, "test.zip")
+        z = zipfile.ZipFile(zip_path, "w")
+        z.write(file_path0)
+        z.write(file_path1)
+        z.close()
 
         port = get_next_port()
         proc = multiprocessing.Process(
-            target=_start_tornado, args=(port, file_path0, file_path1)
+            target=_start_tornado, args=(port, file_path0, file_path1, zip_path)
         )
         proc.daemon = True
         proc.start()
@@ -1464,16 +1567,15 @@ def start_http_server():
         yield df, [
             f"http://127.0.0.1:{port}/read-parquet0",
             f"http://127.0.0.1:{port}/read-parquet1",
-        ]
+        ], f"http://127.0.0.1:{port}/test.zip"
         # Terminate the process
         proc.terminate()
 
 
 def test_read_parquet_with_http_url(setup, start_http_server):
-    df, urls = start_http_server
+    df, urls, zip_url = start_http_server
     mdf = md.read_parquet(urls).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
-
     mdf = md.read_parquet(urls, use_arrow_dtype=True).execute().fetch()
     pd.testing.assert_frame_equal(df, arrow_array_to_objects(mdf))
     assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
@@ -1483,6 +1585,9 @@ def test_read_parquet_with_http_url(setup, start_http_server):
 
     mdf2 = md.read_parquet(urls[1:]).execute().fetch()
     pd.testing.assert_frame_equal(df[50:], mdf2)
+
+    mdf = md.read_parquet(zip_url)
+    pd.testing.assert_frame_equal(df, mdf.execute().fetch())
 
 
 @require_cudf
@@ -1552,3 +1657,64 @@ def test_read_parquet_gpu_execution(setup_gpu):
             df.sort_values("a").reset_index(drop=True),
             r.sort_values("a").reset_index(drop=True),
         )
+
+
+@pytest.fixture
+def ftp_writable():
+    """
+    Fixture providing a writable FTP filesystem.
+    """
+    pytest.importorskip("pyftpdlib")
+    import shutil
+    import subprocess
+    import sys
+
+    from fsspec.implementations.cached import CachingFileSystem
+    from fsspec.implementations.ftp import FTPFileSystem
+
+    FTPFileSystem.clear_instance_cache()  # remove lingering connections
+    CachingFileSystem.clear_instance_cache()
+    d = "temp"
+    os.mkdir(d)
+    P = subprocess.Popen(
+        [sys.executable, "-m", "pyftpdlib", "-d", d, "-u", "user", "-P", "pass", "-w"]
+    )
+    try:
+        time.sleep(1)
+        yield "localhost", 2121, "user", "pass"
+    finally:
+        P.terminate()
+        P.wait()
+        try:
+            shutil.rmtree("temp")
+        except Exception:
+            pass
+
+
+def test_read_parquet_ftp(ftp_writable, setup):
+    pytest.importorskip("pyftpdlib")
+    host, port, user, pw = ftp_writable
+    data = {"Column1": [1, 2, 3], "Column2": ["A", "B", "C"]}
+    df = pd.DataFrame(data)
+    with tempfile.TemporaryDirectory() as tempdir:
+        local_file_path = os.path.join(tempdir, "test.parquet")
+        df.to_parquet("ftp://{}:{}@{}:{}/test.parquet".format(user, pw, host, port))
+        df.to_parquet(local_file_path)
+        import zipfile
+
+        from fsspec.implementations.ftp import FTPFileSystem
+
+        fs = FTPFileSystem(host=host, port=port, username=user, password=pw)
+        fn = "/test.zip"
+        with fs.open(fn, "wb") as f:
+            zf = zipfile.ZipFile(f, mode="w")
+            zf.write(local_file_path)
+            zf.close()
+        mdf = md.read_parquet(
+            "ftp://{}:{}@{}:{}/test.parquet".format(user, pw, host, port)
+        )
+        pd.testing.assert_frame_equal(df, mdf.to_pandas())
+        mdf_zip = md.read_parquet(
+            "ftp://{}:{}@{}:{}/test.zip".format(user, pw, host, port)
+        )
+        pd.testing.assert_frame_equal(df, mdf_zip.to_pandas())
