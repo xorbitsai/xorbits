@@ -19,6 +19,7 @@ from itertools import product
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 import pytest
 
 from ....tests.core import require_cudf
@@ -435,7 +436,7 @@ def test_arrow_string_sort_values(setup):
     raw = pd.DataFrame(
         {"a": rs.rand(10), "b": [f"s{rs.randint(1000)}" for _ in range(10)]}
     )
-    raw["b"] = pyarrow.array(raw["b"])
+    raw["b"] = pa.array(raw["b"])
     mdf = DataFrame(raw, chunk_size=3)
 
     df = mdf.sort_values(by="b")

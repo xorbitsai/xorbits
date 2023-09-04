@@ -24,7 +24,6 @@ from typing import Any, Callable, List, Optional, Union
 import numpy as np
 import pandas as pd
 from pandas.api.extensions import ExtensionDtype
-from pandas.api.types import is_string_dtype
 from pandas.core.dtypes.cast import find_common_type
 
 from ..config import options

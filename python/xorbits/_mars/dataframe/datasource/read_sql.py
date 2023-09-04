@@ -38,7 +38,7 @@ from ...serialization.serializables import (
 )
 from ...tensor.utils import normalize_chunk_sizes
 from ...typing import OperandType, TileableType
-from ..utils import create_sa_connection, parse_index, arrow_dtype_kwargs, is_pandas_2
+from ..utils import arrow_dtype_kwargs, create_sa_connection, is_pandas_2, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,

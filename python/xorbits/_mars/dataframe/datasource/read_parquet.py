@@ -16,7 +16,7 @@
 import os
 import sys
 import zipfile
-from typing import Dict, Optional, Union
+from typing import Dict
 from urllib.parse import urlparse
 
 import numpy as np
@@ -51,7 +51,7 @@ from ...serialization.serializables import (
 )
 from ...utils import is_object_dtype, lazy_import
 from ..operands import OutputType
-from ..utils import parse_index, arrow_dtype_kwargs
+from ..utils import arrow_dtype_kwargs, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,

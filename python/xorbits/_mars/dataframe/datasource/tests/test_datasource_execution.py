@@ -47,7 +47,7 @@ from .... import dataframe as md
 from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_cupy
-from ....utils import arrow_array_to_objects, get_next_port, pd_release_version
+from ....utils import get_next_port, pd_release_version
 from ...utils import is_pandas_2
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records

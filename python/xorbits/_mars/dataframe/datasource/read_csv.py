@@ -38,11 +38,7 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...utils import FixedSizeFileObject, lazy_import, parse_readable_size
-from ..utils import (
-    build_empty_df,
-    parse_index,
-    arrow_dtype_kwargs,
-)
+from ..utils import arrow_dtype_kwargs, build_empty_df, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
