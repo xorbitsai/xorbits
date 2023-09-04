@@ -628,7 +628,6 @@ def test_fetch_data_from_both_cpu_and_gpu(data_type, chunked, setup_gpu):
 @pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
 async def test_status_monitor_actor(actor_pool):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
-
     subtask_id = f"test_subtask_{uuid.uuid4()}"
     subtask = Subtask(
         subtask_id=subtask_id,
@@ -637,20 +636,18 @@ async def test_status_monitor_actor(actor_pool):
         # chunk_graph=chunk_graph,
     )
 
-    target_keys = (session_id, subtask_id)
-
     monitor_ref = await mo.actor_ref(
         StageMonitorActor.default_uid(), address=pool.external_address
     )
     await asyncio.wait_for(
         execution_ref.run_subtask(subtask, "numa-0", pool.external_address), timeout=30
     )
-
     for stage in SubtaskStage:
         stale_tasks = await monitor_ref.get_stale_tasks(stage)
         assert len(stale_tasks) == 0
 
     # task not actually started
+    target_keys = (session_id, subtask_id)
     records = await monitor_ref.get_records()
     assert target_keys in records
     assert len(records[target_keys]["history"]) > 0
