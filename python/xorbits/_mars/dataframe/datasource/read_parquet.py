@@ -51,7 +51,7 @@ from ...serialization.serializables import (
 )
 from ...utils import is_object_dtype, lazy_import
 from ..operands import OutputType
-from ..utils import contain_arrow_dtype, is_pandas_2, parse_index
+from ..utils import parse_index, arrow_dtype_kwargs
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -567,11 +567,14 @@ class DataFrameReadParquet(
                 f = z.open(op.chunk_path)
             else:
                 f = op.path
+            read_kwargs = op.read_kwargs or dict()
+            if op.use_arrow_dtype:
+                read_kwargs.update(arrow_dtype_kwargs())
             r = pd.read_parquet(
                 f,
                 columns=op.columns,
                 engine=op.engine,
-                **op.read_kwargs or dict(),
+                **read_kwargs,
             )
             if z is not None:
                 z.close()
@@ -589,7 +592,7 @@ class DataFrameReadParquet(
             f = z.open(op.chunk_path)
         else:
             f = fs.open(path, storage_options=op.storage_options)
-        use_arrow_dtype = contain_arrow_dtype(out.dtypes)
+        use_arrow_dtype = op.use_arrow_dtype
         if op.groups_as_chunks:
             df = engine.read_group_to_pandas(
                 f,

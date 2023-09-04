@@ -38,7 +38,7 @@ from ...serialization.serializables import (
 )
 from ...tensor.utils import normalize_chunk_sizes
 from ...typing import OperandType, TileableType
-from ..utils import create_sa_connection, is_pandas_2, parse_index
+from ..utils import create_sa_connection, parse_index, arrow_dtype_kwargs, is_pandas_2
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -167,9 +167,8 @@ class DataFrameReadSQL(
             query = (
                 sql.select(selectable.columns).select_from(selectable).limit(test_rows)
             )
-        sql_kwargs = (
-            {"dtype_backend": "pyarrow"} if use_arrow_dtype and is_pandas_2() else {}
-        )
+        # read_sql in pandas 1.5 does not support pyarrow.
+        sql_kwargs = arrow_dtype_kwargs() if use_arrow_dtype and is_pandas_2() else {}
         test_df = pd.read_sql(
             query,
             engine_or_conn,
@@ -490,19 +489,27 @@ class DataFrameReadSQL(
             if use_arrow_dtype is None:
                 use_arrow_dtype = options.dataframe.use_arrow_dtype
 
+            # read_sql in pandas 1.5 does not support pyarrow.
             sql_kwargs = (
-                {"dtype_backend": "pyarrow"}
-                if use_arrow_dtype and is_pandas_2()
-                else {}
+                arrow_dtype_kwargs() if use_arrow_dtype and is_pandas_2() else {}
             )
-            df = pd.read_sql(
-                query,
-                engine,
-                index_col=op.index_col,
-                coerce_float=op.coerce_float,
-                parse_dates=op.parse_dates,
-                **sql_kwargs,
-            )
+            try:
+                df = pd.read_sql(
+                    query,
+                    engine,
+                    index_col=op.index_col,
+                    coerce_float=op.coerce_float,
+                    parse_dates=op.parse_dates,
+                    **sql_kwargs,
+                )
+            except AttributeError as e:
+                if "OptionEngine" in str(e):
+                    import sqlalchemy as sa
+
+                    raise AttributeError(
+                        f"Your SQLAlchemy {sa.__version__} is too new for pandas {pd.__version__}"
+                    ) from e
+                raise e
             if op.method == "offset" and op.index_col is None and op.offset > 0:
                 index = pd.RangeIndex(op.offset, op.offset + out.shape[0])
                 if op.nrows is not None:

@@ -40,9 +40,8 @@ from ...serialization.serializables import (
 from ...utils import FixedSizeFileObject, lazy_import, parse_readable_size
 from ..utils import (
     build_empty_df,
-    contain_arrow_dtype,
-    is_pandas_2,
     parse_index,
+    arrow_dtype_kwargs,
 )
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
@@ -260,13 +259,8 @@ class DataFrameReadCSV(
                 usecols = op.usecols if isinstance(op.usecols, list) else [op.usecols]
             else:
                 usecols = op.usecols
-            if contain_arrow_dtype(dtypes):
-                # when keep_default_na is True which is default,
-                # will replace null value with np.nan,
-                # which will cause failure when converting to arrow string array
-                csv_kwargs["keep_default_na"] = False
-            if op.use_arrow_dtype and is_pandas_2():
-                csv_kwargs["dtype_backend"] = "pyarrow"
+            if op.use_arrow_dtype:
+                csv_kwargs.update(arrow_dtype_kwargs())
             df = pd.read_csv(
                 b,
                 sep=op.sep,
@@ -322,14 +316,8 @@ class DataFrameReadCSV(
             if op.compression is not None:
                 # As we specify names and dtype, we need to skip header rows
                 csv_kwargs["header"] = op.header
-                dtypes = op.outputs[0].dtypes
-                if contain_arrow_dtype(dtypes):
-                    # when keep_default_na is True which is default,
-                    # will replace null value with np.nan,
-                    # which will cause failure when converting to arrow string array
-                    csv_kwargs["keep_default_na"] = False
-                if xdf is pd and op.use_arrow_dtype and is_pandas_2():
-                    csv_kwargs["dtype_backend"] = "pyarrow"
+                if xdf is pd and op.use_arrow_dtype:
+                    csv_kwargs.update(arrow_dtype_kwargs())
                 df = xdf.read_csv(
                     f,
                     sep=op.sep,
@@ -695,11 +683,7 @@ def read_csv(
             head_start, head_end = _find_chunk_start_end(f, 0, head_bytes, True)
             f.seek(head_start)
             b = f.read(head_end - head_start)
-        csv_kwargs = (
-            {"dtype_backend": "pyarrow"}
-            if not gpu and use_arrow_dtype and is_pandas_2()
-            else {}
-        )
+        csv_kwargs = arrow_dtype_kwargs() if not gpu and use_arrow_dtype else {}
         csv_kwargs.update(kwargs)
         mini_df = pd.read_csv(
             BytesIO(b),
