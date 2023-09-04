@@ -134,7 +134,7 @@ jobs:
       if: ${{ matrix.module != 'gpu' }}
       run: |
         pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-        pip install numpy scipy cython coverage flaky "numexpr<2.8.5"
+        pip install numpy scipy cython pyftpdlib coverage flaky "numexpr<2.8.5"
 
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
@@ -237,6 +237,7 @@ jobs:
           # test huggingface datasets
           pip install datasets torch
         fi
+        pip install "pandas<=2.0.3"
         pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
