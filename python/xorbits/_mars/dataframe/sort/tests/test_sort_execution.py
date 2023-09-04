@@ -22,7 +22,7 @@ import pandas as pd
 import pytest
 
 from ....tests.core import require_cudf
-from ... import ArrowStringDtype, DataFrame, Series
+from ... import DataFrame, Series
 
 
 @pytest.mark.parametrize(
@@ -435,7 +435,7 @@ def test_arrow_string_sort_values(setup):
     raw = pd.DataFrame(
         {"a": rs.rand(10), "b": [f"s{rs.randint(1000)}" for _ in range(10)]}
     )
-    raw["b"] = raw["b"].astype(ArrowStringDtype())
+    raw["b"] = pyarrow.array(raw["b"])
     mdf = DataFrame(raw, chunk_size=3)
 
     df = mdf.sort_values(by="b")

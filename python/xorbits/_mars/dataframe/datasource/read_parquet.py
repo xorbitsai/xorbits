@@ -47,9 +47,8 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...utils import is_object_dtype, lazy_import
-from ..arrays import ArrowListDtype, ArrowStringDtype
 from ..operands import OutputType
-from ..utils import contain_arrow_dtype, is_pandas_2, parse_index, to_arrow_dtypes
+from ..utils import contain_arrow_dtype, is_pandas_2, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -173,18 +172,6 @@ def _parse_prefix(path):
     return path_prefix
 
 
-def _arrow_dtype_mapper(
-    tp: Union[np.dtype, arrow_dtype]
-) -> Optional[Union[ArrowListDtype, ArrowStringDtype, pd.ArrowDtype]]:
-    if is_pandas_2():
-        # Pandas 2.0+ use pd.ArrowDtype instead of xorbits dtype.
-        return pd.ArrowDtype(tp)
-    elif tp == pa.string():
-        return ArrowStringDtype()
-    elif isinstance(tp, pa.ListType):
-        return ArrowListDtype(tp.value_type)
-
-
 class ArrowEngine(ParquetEngine):
     def get_row_num(self, f):
         file = pq.ParquetFile(f)
@@ -202,7 +189,7 @@ class ArrowEngine(ParquetEngine):
         if nrows is not None:
             t = t.slice(0, nrows)
         if use_arrow_dtype:
-            df = t.to_pandas(types_mapper=_arrow_dtype_mapper)
+            df = t.to_pandas(types_mapper=pd.ArrowDtype)
         else:
             df = t.to_pandas()
         return df
@@ -239,8 +226,6 @@ class FastpaquetEngine(ParquetEngine):
         df = file.to_pandas(columns, **kwargs)
         if nrows is not None:
             df = df.head(nrows)
-        if use_arrow_dtype:
-            df = df.astype(to_arrow_dtypes(df.dtypes).to_dict())
         return df
 
 
@@ -327,21 +312,10 @@ class DataFrameReadParquet(
         self.columns = columns
 
     @classmethod
-    def _to_arrow_dtypes(cls, dtypes, op):
-        if (
-            op.use_arrow_dtype is None
-            and not op.gpu
-            and options.dataframe.use_arrow_dtype
-        ):  # pragma: no cover
-            # check if use_arrow_dtype set on the server side
-            dtypes = to_arrow_dtypes(dtypes)
-        return dtypes
-
-    @classmethod
     def _tile_partitioned(cls, op: "DataFrameReadParquet"):
         out_df = op.outputs[0]
         shape = (np.nan, out_df.shape[1])
-        dtypes = cls._to_arrow_dtypes(out_df.dtypes, op)
+        dtypes = out_df.dtypes
         dataset = pq.ParquetDataset(op.path, use_legacy_dataset=False)
 
         path_prefix = _parse_prefix(op.path)
@@ -397,7 +371,7 @@ class DataFrameReadParquet(
         out_chunks = []
         out_df = op.outputs[0]
 
-        dtypes = cls._to_arrow_dtypes(out_df.dtypes, op)
+        dtypes = out_df.dtypes
         shape = (np.nan, out_df.shape[1])
 
         path_prefix = ""
@@ -531,8 +505,6 @@ class DataFrameReadParquet(
                 engine=op.engine,
                 **op.read_kwargs or dict(),
             )
-            if op.use_arrow_dtype:
-                r = r.astype(to_arrow_dtypes(r.dtypes).to_dict())
             ctx[out.key] = r
             return
         if op.partitions is not None:
@@ -760,7 +732,7 @@ def read_parquet(
         raise ValueError(
             f"The 'use_arrow_dtype' argument is not supported for the {engine_type} engine"
         )
-    types_mapper = _arrow_dtype_mapper if use_arrow_dtype else None
+    types_mapper = pd.ArrowDtype if use_arrow_dtype else None
 
     if fs.isdir(single_path):
         paths = fs.ls(path)

@@ -38,13 +38,11 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...utils import FixedSizeFileObject, lazy_import, parse_readable_size
-from ..arrays import ArrowStringDtype
 from ..utils import (
     build_empty_df,
     contain_arrow_dtype,
     is_pandas_2,
     parse_index,
-    to_arrow_dtypes,
 )
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
@@ -267,7 +265,6 @@ class DataFrameReadCSV(
                 # will replace null value with np.nan,
                 # which will cause failure when converting to arrow string array
                 csv_kwargs["keep_default_na"] = False
-                csv_kwargs["dtype"] = cls._select_arrow_dtype(dtypes)
             if op.use_arrow_dtype and is_pandas_2():
                 csv_kwargs["dtype_backend"] = "pyarrow"
             df = pd.read_csv(
@@ -314,18 +311,6 @@ class DataFrameReadCSV(
         return df
 
     @classmethod
-    def _contains_arrow_dtype(cls, dtypes):
-        return any(isinstance(dtype, ArrowStringDtype) for dtype in dtypes)
-
-    @classmethod
-    def _select_arrow_dtype(cls, dtypes):
-        return dict(
-            (c, dtype)
-            for c, dtype in dtypes.items()
-            if isinstance(dtype, ArrowStringDtype)
-        )
-
-    @classmethod
     def execute(cls, ctx, op):
         xdf = cudf if op.gpu else pd
         out_df = op.outputs[0]
@@ -343,7 +328,6 @@ class DataFrameReadCSV(
                     # will replace null value with np.nan,
                     # which will cause failure when converting to arrow string array
                     csv_kwargs["keep_default_na"] = False
-                    csv_kwargs["dtype"] = cls._select_arrow_dtype(dtypes)
                 if xdf is pd and op.use_arrow_dtype and is_pandas_2():
                     csv_kwargs["dtype_backend"] = "pyarrow"
                 df = xdf.read_csv(
@@ -771,8 +755,6 @@ def read_csv(
     )
     chunk_bytes = chunk_bytes or options.chunk_store_limit
     dtypes = mini_df.dtypes
-    if not gpu and not is_pandas_2() and use_arrow_dtype:
-        dtypes = to_arrow_dtypes(dtypes, test_df=mini_df)
     ret = op(
         index_value=index_value,
         columns_value=columns_value,

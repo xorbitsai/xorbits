@@ -38,8 +38,7 @@ from ...serialization.serializables import (
 )
 from ...tensor.utils import normalize_chunk_sizes
 from ...typing import OperandType, TileableType
-from ..arrays import ArrowStringDtype
-from ..utils import create_sa_connection, is_pandas_2, parse_index, to_arrow_dtypes
+from ..utils import create_sa_connection, is_pandas_2, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -279,11 +278,7 @@ class DataFrameReadSQL(
                 index_value = parse_index(test_df.index)
 
             columns_value = parse_index(test_df.columns, store_data=True)
-
             dtypes = test_df.dtypes
-            if not is_pandas_2() and use_arrow_dtype:
-                dtypes = to_arrow_dtypes(dtypes, test_df=test_df)
-
             return self.new_dataframe(
                 None,
                 shape=shape,
@@ -514,15 +509,6 @@ class DataFrameReadSQL(
                     index = index[: op.nrows]
                 df.index = index
 
-            if not is_pandas_2() and use_arrow_dtype:
-                dtypes = to_arrow_dtypes(df.dtypes, test_df=df)
-                for i in range(len(dtypes)):
-                    dtype = dtypes.iloc[i]
-                    if isinstance(dtype, ArrowStringDtype):
-                        if pd.__version__ >= "1.5.0":
-                            df.isetitem(i, df.iloc[:, i].astype(dtype))
-                        else:  # pragma: no cover
-                            df.iloc[:, i] = df.iloc[:, i].astype(dtype)
             if out.ndim == 2:
                 ctx[out.key] = df
             else:
