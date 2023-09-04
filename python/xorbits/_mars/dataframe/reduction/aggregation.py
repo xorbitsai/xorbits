@@ -176,7 +176,7 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
             return self.new_series(
                 [df],
                 shape=new_shape,
-                dtype=dtypes[0],
+                dtype=dtypes.iloc[0],
                 name=dtypes.index[0],
                 index_value=new_index,
             )
