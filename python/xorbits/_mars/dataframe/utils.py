@@ -43,6 +43,7 @@ from ..utils import (
     sbytes,
     tokenize,
 )
+from .hash_utils import hash_pandas_object
 
 try:
     import pyarrow as pa
@@ -73,10 +74,17 @@ def _get_hash(
     The hash value of the cudf object is obtained by the ``hash_values`` interface.
     Specifically, for the Index obj in cudf, convert it to DataFrame first.
     """
+    from . import ArrowStringDtype
+
     return (
         (data.to_frame().hash_values() if is_index(data) else data.hash_values())
         if is_cudf(data)
-        else pd.util.hash_pandas_object(data, **kwargs)
+        else (
+            hash_pandas_object(data, **kwargs)
+            if is_dataframe(data)
+            and data.dtypes.map(lambda x: isinstance(x, ArrowStringDtype)).any()
+            else pd.util.hash_pandas_object(data, **kwargs)
+        )
     )
 
 

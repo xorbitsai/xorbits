@@ -232,7 +232,7 @@ class ArrowListDtype(ArrowDtype):
 
 class ArrowArray(ExtensionArray):
     _arrow_type = None
-    _ndarray = None
+    # _ndarray = None
 
     def __init__(self, values, dtype: ArrowDtype = None, copy=False):
         pandas_only = self._pandas_only()
@@ -276,8 +276,8 @@ class ArrowArray(ExtensionArray):
 
         self._use_arrow = True
         self._arrow_array = arrow_array
-        # TODO: How to avoid copy?
-        self._ndarray = arrow_array.to_numpy()
+        # # TODO: How to avoid copy?
+        # self._ndarray = arrow_array.to_numpy()
 
         if NDArrayBacked is not None and isinstance(self, NDArrayBacked):
             NDArrayBacked.__init__(self, np.array([]), dtype)
@@ -287,7 +287,7 @@ class ArrowArray(ExtensionArray):
     def _init_by_numpy(self, values, dtype: ArrowDtype = None, copy=False):
         self._use_arrow = False
 
-        self._ndarray = ndarray = np.array(values, copy=copy)
+        ndarray = np.array(values, copy=copy)
         if NDArrayBacked is not None and isinstance(self, NDArrayBacked):
             NDArrayBacked.__init__(self, ndarray, dtype)
         else:
