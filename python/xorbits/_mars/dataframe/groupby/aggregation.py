@@ -1260,7 +1260,9 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 result.reset_index(
                     inplace=True,
                     drop=False
-                    if xdf is pd and PD_VERSION_GREATER_THAN_2_10
+                    if xdf is pd
+                    and PD_VERSION_GREATER_THAN_2_10
+                    and isinstance(result.columns, pd.MultiIndex)
                     else result.index.name in result.columns,
                 )
             if isinstance(col_value, xdf.MultiIndex) and not col_value.is_unique:

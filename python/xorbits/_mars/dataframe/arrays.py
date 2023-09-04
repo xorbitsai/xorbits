@@ -287,7 +287,7 @@ class ArrowArray(ExtensionArray):
     def _init_by_numpy(self, values, dtype: ArrowDtype = None, copy=False):
         self._use_arrow = False
 
-        ndarray = np.array(values, copy=copy)
+        self._ndarray = ndarray = np.array(values, copy=copy)
         if NDArrayBacked is not None and isinstance(self, NDArrayBacked):
             NDArrayBacked.__init__(self, ndarray, dtype)
         else:
