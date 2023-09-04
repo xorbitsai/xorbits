@@ -41,6 +41,7 @@ from ....cluster import MockClusterAPI
 from ....lifecycle import MockLifecycleAPI
 from ....meta import MetaAPI, MockMetaAPI, MockWorkerMetaAPI
 from ....scheduling import MockSchedulingAPI
+from ....scheduling.worker import StageMonitorActor
 from ....session import MockSessionAPI
 from ....storage import MockStorageAPI, StorageAPI
 from ....subtask import MockSubtaskAPI
@@ -98,6 +99,12 @@ async def actor_pool(task_info_root_path):
             dict(),
             config.get_config_dict(),
             uid=TaskConfigurationActor.default_uid(),
+            address=pool.external_address,
+        )
+        # create monitor actor
+        await mo.create_actor(
+            StageMonitorActor,
+            uid=StageMonitorActor.default_uid(),
             address=pool.external_address,
         )
         # create task manager
