@@ -28,6 +28,7 @@ from ...core import tile
 from ...tests.core import require_cudf, support_cuda
 from ...utils import Timer, lazy_import
 from ..core import IndexValue
+from ..hash_utils import hash_pandas_object
 from ..initializer import DataFrame, Index, Series
 from ..utils import (
     _get_index_map,
@@ -742,3 +743,27 @@ def test_build_df():
     pd.testing.assert_series_equal(r1.dtypes, df.dtypes)
     r2 = build_empty_df(df.dtypes)
     pd.testing.assert_series_equal(r2.dtypes, df.dtypes)
+
+
+def test_hash_utils():
+    df = pd.DataFrame({"foo": [1, 2, 3, 4], "bar": [5, 6, 7, 8]})
+    res = hash_pandas_object(df)
+    pd.testing.assert_series_equal(res, pd.util.hash_pandas_object(df))
+
+    series = pd.Series(["a", "b", "c", "d"])
+    res = hash_pandas_object(series)
+    pd.testing.assert_series_equal(res, pd.util.hash_pandas_object(series))
+
+    index = pd.Index([3.0, 4.0, 15.2, 22])
+    res = hash_pandas_object(index)
+    pd.testing.assert_series_equal(res, pd.util.hash_pandas_object(index))
+
+    df = pd.DataFrame(
+        {
+            "foo": ["who", "is", "your", "daddy"],
+            "bar": ["All", "hail", "Megatron", "!"],
+        },
+        dtype=pd.ArrowDtype(pa.string()),
+    )
+    res = hash_pandas_object(df, index=False)
+    pd.testing.assert_series_equal(res, pd.util.hash_pandas_object(df, index=False))

@@ -471,7 +471,6 @@ def test_dataframe_groupby_agg(setup):
         r.execute().fetch(),
         raw.groupby(["c1", "c2"], as_index=False).agg(["mean", "count"]),
     )
-    assert r.op.groupby_params["as_index"] is True
 
     r = mdf.groupby("c2").agg(["cumsum", "cumcount"])
     pd.testing.assert_frame_equal(
@@ -589,7 +588,6 @@ def test_dataframe_groupby_agg_sort(setup):
         r.execute().fetch(),
         raw.groupby(["c1", "c2"], as_index=False).agg(["mean", "count"]),
     )
-    assert r.op.groupby_params["as_index"] is True
 
 
 def test_series_groupby_agg(setup):

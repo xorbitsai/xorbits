@@ -50,6 +50,7 @@ from ..operands import DataFrameOperand, DataFrameOperandMixin, DataFrameShuffle
 from ..reduction.aggregation import is_funcs_aggregate, normalize_reduction_funcs
 from ..reduction.core import ReductionAggStep, ReductionCompiler, ReductionSteps
 from ..utils import (
+    PD_VERSION_GREATER_THAN_2_10,
     build_concatenated_rows_frame,
     concat_on_columns,
     is_cudf,
@@ -1248,13 +1249,23 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 and col_value.nlevels == result.columns.nlevels
             ):
                 result.reset_index(
-                    inplace=True, drop=result.index.name in result.columns
+                    inplace=True,
+                    drop=False
+                    if xdf is pd
+                    and PD_VERSION_GREATER_THAN_2_10
+                    and isinstance(result.columns, pd.MultiIndex)
+                    else result.index.name in result.columns,
                 )
             if isinstance(col_value, xdf.MultiIndex) and not col_value.is_unique:
                 # reindex doesn't work when the agg function list contains duplicated
                 # functions, e.g. df.groupby(...)agg((func, func))
-                result = result.iloc[:, result.columns.duplicated()]
-                result = xdf.concat([result[c] for c in col_value], axis=1)
+                if xdf is pd and PD_VERSION_GREATER_THAN_2_10:
+                    result = xdf.concat(
+                        [result[c] for c in col_value.drop_duplicates()], axis=1
+                    )
+                else:
+                    result = result.iloc[:, result.columns.duplicated()]
+                    result = xdf.concat([result[c] for c in col_value], axis=1)
                 result.columns = col_value
             else:
                 result = result.reindex(col_value, axis=1)
