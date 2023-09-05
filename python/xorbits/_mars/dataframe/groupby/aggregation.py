@@ -51,6 +51,7 @@ from ..operands import DataFrameOperand, DataFrameOperandMixin, DataFrameShuffle
 from ..reduction.aggregation import is_funcs_aggregate, normalize_reduction_funcs
 from ..reduction.core import ReductionAggStep, ReductionCompiler, ReductionSteps
 from ..utils import (
+    PD_VERSION_GREATER_THAN_2_10,
     build_concatenated_rows_frame,
     concat_on_columns,
     is_cudf,
@@ -71,7 +72,6 @@ logger = logging.getLogger(__name__)
 CV_THRESHOLD = 0.2
 MEAN_RATIO_THRESHOLD = 2 / 3
 _support_get_group_without_as_index = pd_release_version[:2] > (1, 0)
-PD_VERSION_GREATER_THAN_2_10 = pd_release_version[:2] >= (2, 1)
 
 
 class SizeRecorder:

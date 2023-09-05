@@ -40,6 +40,7 @@ from ..utils import (
     is_full_slice,
     lazy_import,
     parse_readable_size,
+    pd_release_version,
     sbytes,
     tokenize,
 )
@@ -53,6 +54,7 @@ except ImportError:  # pragma: no cover
 cudf = lazy_import("cudf", rename="cudf")
 vineyard = lazy_import("vineyard")
 logger = logging.getLogger(__name__)
+PD_VERSION_GREATER_THAN_2_10 = pd_release_version[:2] >= (2, 1)
 
 
 def hash_index(index, size):
@@ -81,7 +83,8 @@ def _get_hash(
         if is_cudf(data)
         else (
             hash_pandas_object(data, **kwargs)
-            if is_dataframe(data)
+            if PD_VERSION_GREATER_THAN_2_10
+            and is_dataframe(data)
             and data.dtypes.map(lambda x: isinstance(x, ArrowStringDtype)).any()
             else pd.util.hash_pandas_object(data, **kwargs)
         )
