@@ -68,7 +68,12 @@ class PandasClsMethodWrapper(ClsMethodWrapper):
 
     def _get_output_type(self, func: Callable) -> MarsOutputType:
         return_annotation = inspect.signature(func).return_annotation
-        if return_annotation is inspect.Signature.empty:
+        # since pandas v2.1.0, the return_annotation of `pd.read_pickle` becomes `DataFrame | Series`,
+        # see https://github.com/pandas-dev/pandas/blob/v2.1.0/pandas/io/pickle.py#L116-L214 .
+        # However, the output_type should be `object` according to its document
+        # (https://pandas.pydata.org/docs/reference/api/pandas.read_pickle.html).
+        # So here's an extra check.
+        if return_annotation is inspect.Signature.empty or func == pd.read_pickle:
             # mostly for python3.7 whose return_annotation is always empty
             return _NO_ANNOTATION_FUNCS.get(func, MarsOutputType.object)
         all_types = [t.strip() for t in return_annotation.split("|")]
