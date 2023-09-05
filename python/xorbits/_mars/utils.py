@@ -1207,32 +1207,6 @@ def calc_object_overhead(chunk: ChunkType, shape: Tuple[int]) -> int:
     return n_strings * shape[0] * OBJECT_FIELD_OVERHEAD
 
 
-def arrow_array_to_objects(
-    obj: Union[pd.DataFrame, pd.Series]
-) -> Union[pd.DataFrame, pd.Series]:
-    from pandas import ArrowDtype
-
-    if isinstance(obj, pd.DataFrame):
-        if any(isinstance(dt, ArrowDtype) for dt in obj.dtypes):
-            # ArrowDtype exists
-            result = pd.DataFrame(columns=obj.columns)
-            for i, dtype in enumerate(obj.dtypes):
-                if isinstance(dtype, ArrowDtype):
-                    result.iloc[:, i] = pd.Series(
-                        obj.iloc[:, i].to_numpy(), index=obj.index
-                    )
-                else:
-                    if pd.__version__ >= "1.5.0":
-                        result.isetitem(i, obj.iloc[:, i])
-                    else:  # pragma: no cover
-                        result.iloc[:, i] = obj.iloc[:, i]
-            obj = result
-    elif isinstance(obj, pd.Series):
-        if isinstance(obj.dtype, ArrowDtype):
-            obj = pd.Series(obj.to_numpy(), index=obj.index, name=obj.name)
-    return obj
-
-
 _enter_counter = 0
 _initial_session = None
 
