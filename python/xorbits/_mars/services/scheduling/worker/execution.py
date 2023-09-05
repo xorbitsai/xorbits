@@ -22,7 +22,7 @@ import sys
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import xoscar as mo
 from xoscar.errors import ServerClosed, XoscarError
@@ -50,7 +50,7 @@ class StageMonitorActor(mo.Actor):
     def __init__(self):
         self._records = dict()
 
-    def report_stage(self, keys: tuple[str, str], status: SubtaskStage):
+    def report_stage(self, keys: Tuple[str, str], status: SubtaskStage):
         if keys not in self._records:
             self._records[keys] = {
                 "history": [],
