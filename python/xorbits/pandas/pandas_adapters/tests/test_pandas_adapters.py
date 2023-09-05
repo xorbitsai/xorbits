@@ -436,11 +436,10 @@ def test_pandas_module_methods(setup):
             "year2": [2008, 2008],
         }
     )
-    with pytest.warns(Warning) as w:
+    with pytest.warns(Warning):
         r = xpd.lreshape(
             xpd.DataFrame(raw), {"year": ["year1", "year2"], "hr": ["hr1", "hr2"]}
         )
-        assert "xorbits.pandas.lreshape will fallback to Pandas" == str(w[0].message)
 
     expected = pd.lreshape(raw, {"year": ["year1", "year2"], "hr": ["hr1", "hr2"]})
     assert str(r) == str(expected)

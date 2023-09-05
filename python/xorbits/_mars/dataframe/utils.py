@@ -40,9 +40,11 @@ from ..utils import (
     is_full_slice,
     lazy_import,
     parse_readable_size,
+    pd_release_version,
     sbytes,
     tokenize,
 )
+from .hash_utils import hash_pandas_object
 
 try:
     import pyarrow as pa
@@ -52,6 +54,7 @@ except ImportError:  # pragma: no cover
 cudf = lazy_import("cudf", rename="cudf")
 vineyard = lazy_import("vineyard")
 logger = logging.getLogger(__name__)
+PD_VERSION_GREATER_THAN_2_10 = pd_release_version[:2] >= (2, 1)
 
 
 def hash_index(index, size):
@@ -73,10 +76,18 @@ def _get_hash(
     The hash value of the cudf object is obtained by the ``hash_values`` interface.
     Specifically, for the Index obj in cudf, convert it to DataFrame first.
     """
+    from . import ArrowStringDtype
+
     return (
         (data.to_frame().hash_values() if is_index(data) else data.hash_values())
         if is_cudf(data)
-        else pd.util.hash_pandas_object(data, **kwargs)
+        else (
+            hash_pandas_object(data, **kwargs)
+            if PD_VERSION_GREATER_THAN_2_10
+            and is_dataframe(data)
+            and data.dtypes.map(lambda x: isinstance(x, ArrowStringDtype)).any()
+            else pd.util.hash_pandas_object(data, **kwargs)
+        )
     )
 
 

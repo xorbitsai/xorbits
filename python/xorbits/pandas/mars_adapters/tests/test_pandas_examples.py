@@ -68,6 +68,10 @@ parameters.extend(
 
 @pytest.mark.parametrize("obj,name", parameters)
 def test_docstrings(setup, doctest_namespace, obj, name):
+    # TODO: remove this condition in further version
+    if name == "median":
+        pytest.skip(f"Skip name={name} due to pandas 2.1.0 doc issue.")
+
     results = run_docstring(
         getattr(obj, name),
         doctest_namespace,
