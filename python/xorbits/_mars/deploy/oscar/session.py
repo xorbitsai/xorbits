@@ -879,12 +879,14 @@ class _IsolatedSession(AbstractAsyncSession):
             for i, (tileable, fetch_tileable) in enumerate(
                 zip(exec_tileables, fetch_tileables)
             ):
-                tileable_shape = tileable.params["shape"]
-                fetch_tileable_shape = fetch_tileable.params["shape"]
+                tileable_shape = tileable.params.get("shape", None)
+                fetch_tileable_shape = fetch_tileable.params.get("shape", None)
                 # The shape inconsistency is usually due to column pruning,
                 # which in ipython can't be fetched directly and needs to be recalculated.
                 if (
                     re_execute_tileables
+                    and tileable_shape is not None
+                    and fetch_tileable_shape is not None
                     and len(tileable_shape) == 2
                     and tileable_shape[1] != fetch_tileable_shape[1]
                 ):
