@@ -52,6 +52,9 @@ def run(obj: DataRef | list[DataRef] | tuple[DataRef], **kwargs) -> None:
 
     mars_tileables = [_get_mars_entity(ref) for ref in refs_to_execute.values()]
     if mars_tileables:
+        # In the ipython environment, tileable objects may encounter missing data issues due to column pruning,
+        # and thus need to be re-executed instead of fetching directly.
+        kwargs["re_execute_tileables"] = _is_ipython_available()
         mars_execute(mars_tileables, **kwargs)
 
 
