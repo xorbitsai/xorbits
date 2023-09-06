@@ -527,7 +527,7 @@ def estimate_pandas_size(
         # MultiIndex's sample size can't be used to estimate
         return sys.getsizeof(pd_obj)
 
-    from .dataframe.arrays import ArrowDtype
+    from pandas import ArrowDtype
 
     def _is_fast_dtype(dtype):
         if isinstance(dtype, np.dtype):
@@ -1205,32 +1205,6 @@ def calc_object_overhead(chunk: ChunkType, shape: Tuple[int]) -> int:
     else:
         n_strings = 0
     return n_strings * shape[0] * OBJECT_FIELD_OVERHEAD
-
-
-def arrow_array_to_objects(
-    obj: Union[pd.DataFrame, pd.Series]
-) -> Union[pd.DataFrame, pd.Series]:
-    from .dataframe.arrays import ArrowDtype
-
-    if isinstance(obj, pd.DataFrame):
-        if any(isinstance(dt, ArrowDtype) for dt in obj.dtypes):
-            # ArrowDtype exists
-            result = pd.DataFrame(columns=obj.columns)
-            for i, dtype in enumerate(obj.dtypes):
-                if isinstance(dtype, ArrowDtype):
-                    result.iloc[:, i] = pd.Series(
-                        obj.iloc[:, i].to_numpy(), index=obj.index
-                    )
-                else:
-                    if pd.__version__ >= "1.5.0":
-                        result.isetitem(i, obj.iloc[:, i])
-                    else:  # pragma: no cover
-                        result.iloc[:, i] = obj.iloc[:, i]
-            obj = result
-    elif isinstance(obj, pd.Series):
-        if isinstance(obj.dtype, ArrowDtype):
-            obj = pd.Series(obj.to_numpy(), index=obj.index, name=obj.name)
-    return obj
 
 
 _enter_counter = 0
