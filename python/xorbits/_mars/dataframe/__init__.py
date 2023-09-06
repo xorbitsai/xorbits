@@ -72,7 +72,6 @@ del (
 del DataFrameFetch, DataFrameFetchShuffle
 
 # noinspection PyUnresolvedReferences
-from .arrays import ArrowStringDtype, ArrowStringArray, ArrowListDtype, ArrowListArray
 from .core import (
     CategoricalIndex,
     DatetimeIndex,

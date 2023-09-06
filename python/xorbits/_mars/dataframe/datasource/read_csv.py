@@ -38,8 +38,7 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...utils import FixedSizeFileObject, lazy_import, parse_readable_size
-from ..arrays import ArrowStringDtype
-from ..utils import build_empty_df, contain_arrow_dtype, parse_index, to_arrow_dtypes
+from ..utils import arrow_dtype_kwargs, build_empty_df, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -159,15 +158,7 @@ class DataFrameReadCSV(
         df = op.outputs[0]
         chunk_bytes = df.extra_params.chunk_bytes
         chunk_bytes = int(parse_readable_size(chunk_bytes)[0])
-
         dtypes = df.dtypes
-        if (
-            op.use_arrow_dtype is None
-            and not op.gpu
-            and options.dataframe.use_arrow_dtype
-        ):  # pragma: no cover
-            # check if use_arrow_dtype set on the server side
-            dtypes = to_arrow_dtypes(df.dtypes)
 
         path_prefix = ""
         if isinstance(op.path, (tuple, list)):
@@ -264,12 +255,8 @@ class DataFrameReadCSV(
                 usecols = op.usecols if isinstance(op.usecols, list) else [op.usecols]
             else:
                 usecols = op.usecols
-            if contain_arrow_dtype(dtypes):
-                # when keep_default_na is True which is default,
-                # will replace null value with np.nan,
-                # which will cause failure when converting to arrow string array
-                csv_kwargs["keep_default_na"] = False
-                csv_kwargs["dtype"] = cls._select_arrow_dtype(dtypes)
+            if op.use_arrow_dtype:
+                csv_kwargs.update(arrow_dtype_kwargs())
             df = pd.read_csv(
                 b,
                 sep=op.sep,
@@ -314,18 +301,6 @@ class DataFrameReadCSV(
         return df
 
     @classmethod
-    def _contains_arrow_dtype(cls, dtypes):
-        return any(isinstance(dtype, ArrowStringDtype) for dtype in dtypes)
-
-    @classmethod
-    def _select_arrow_dtype(cls, dtypes):
-        return dict(
-            (c, dtype)
-            for c, dtype in dtypes.items()
-            if isinstance(dtype, ArrowStringDtype)
-        )
-
-    @classmethod
     def execute(cls, ctx, op):
         xdf = cudf if op.gpu else pd
         out_df = op.outputs[0]
@@ -337,13 +312,8 @@ class DataFrameReadCSV(
             if op.compression is not None:
                 # As we specify names and dtype, we need to skip header rows
                 csv_kwargs["header"] = op.header
-                dtypes = op.outputs[0].dtypes
-                if contain_arrow_dtype(dtypes):
-                    # when keep_default_na is True which is default,
-                    # will replace null value with np.nan,
-                    # which will cause failure when converting to arrow string array
-                    csv_kwargs["keep_default_na"] = False
-                    csv_kwargs["dtype"] = cls._select_arrow_dtype(dtypes)
+                if xdf is pd and op.use_arrow_dtype:
+                    csv_kwargs.update(arrow_dtype_kwargs())
                 df = xdf.read_csv(
                     f,
                     sep=op.sep,
@@ -685,6 +655,8 @@ def read_csv(
     >>> # read from S3
     >>> md.read_csv('s3://bucket/file.txt')
     """
+    if use_arrow_dtype is None:
+        use_arrow_dtype = options.dataframe.use_arrow_dtype
     # infer dtypes and columns
     if isinstance(path, (list, tuple)):
         file_path = path[0]
@@ -707,6 +679,8 @@ def read_csv(
             head_start, head_end = _find_chunk_start_end(f, 0, head_bytes, True)
             f.seek(head_start)
             b = f.read(head_end - head_start)
+        csv_kwargs = arrow_dtype_kwargs() if not gpu and use_arrow_dtype else {}
+        csv_kwargs.update(kwargs)
         mini_df = pd.read_csv(
             BytesIO(b),
             sep=sep,
@@ -715,7 +689,7 @@ def read_csv(
             names=names,
             header=header,
             skiprows=skiprows,
-            **kwargs,
+            **csv_kwargs,
         )
         if header == "infer" and names is not None:
             # ignore header as we always specify names
@@ -761,10 +735,6 @@ def read_csv(
     )
     chunk_bytes = chunk_bytes or options.chunk_store_limit
     dtypes = mini_df.dtypes
-    if use_arrow_dtype is None:
-        use_arrow_dtype = options.dataframe.use_arrow_dtype
-    if not gpu and use_arrow_dtype:
-        dtypes = to_arrow_dtypes(dtypes, test_df=mini_df)
     ret = op(
         index_value=index_value,
         columns_value=columns_value,
