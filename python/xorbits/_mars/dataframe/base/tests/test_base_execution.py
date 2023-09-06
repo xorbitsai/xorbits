@@ -524,9 +524,9 @@ def test_series_apply_closure_execute(setup):
 
 @pytest.mark.skipif(pa is None, reason="pyarrow not installed")
 def test_apply_with_arrow_dtype_execution(setup):
-    df1 = pd.DataFrame({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    table = pa.table({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    df1 = table.to_pandas(types_mapper=pd.ArrowDtype)
     df = from_pandas_df(df1)
-    df["b"] = df["b"].astype("Arrow[string]")
 
     r = df.apply(lambda row: str(row[0]) + row[1], axis=1)
     result = r.execute().fetch()
@@ -535,7 +535,6 @@ def test_apply_with_arrow_dtype_execution(setup):
 
     s1 = df1["b"]
     s = from_pandas_series(s1)
-    s = s.astype("arrow_string")
 
     r = s.apply(lambda x: x + "_suffix")
     result = r.execute().fetch()
@@ -1014,9 +1013,9 @@ def test_transform_execute(setup):
 
 @pytest.mark.skipif(pa is None, reason="pyarrow not installed")
 def test_transform_with_arrow_dtype_execution(setup):
-    raw = pd.DataFrame({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    table = pa.table({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    raw = table.to_pandas(types_mapper=pd.ArrowDtype)
     df = from_pandas_df(raw)
-    df["b"] = df["b"].astype("Arrow[string]")
 
     r = df.transform({"b": lambda x: x + "_suffix"})
     result = r.execute().fetch()
@@ -1026,7 +1025,6 @@ def test_transform_with_arrow_dtype_execution(setup):
 
     s1 = raw["b"]
     s = from_pandas_series(s1)
-    s = s.astype("arrow_string")
 
     r = s.transform(lambda x: x + "_suffix")
     result = r.execute().fetch()
@@ -1786,10 +1784,10 @@ def test_astype(setup):
 
     # test arrow_string dtype
     df = from_pandas_df(raw, chunk_size=8)
-    r = df.astype({"c1": "arrow_string"})
+    r = df.astype({"c1": "string[pyarrow]"})
 
     result = r.execute().fetch()
-    expected = raw.astype({"c1": "arrow_string"})
+    expected = raw.astype({"c1": "string[pyarrow]"})
     pd.testing.assert_frame_equal(expected, result)
 
     # test series
@@ -1802,10 +1800,10 @@ def test_astype(setup):
     pd.testing.assert_series_equal(result, expected)
 
     series = from_pandas_series(s, chunk_size=6)
-    r = series.astype("arrow_string")
+    r = series.astype("string[pyarrow]")
 
     result = r.execute().fetch()
-    expected = s.astype("arrow_string")
+    expected = s.astype("string[pyarrow]")
     pd.testing.assert_series_equal(result, expected)
 
     # test index

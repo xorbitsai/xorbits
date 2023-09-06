@@ -25,7 +25,6 @@ from ...config import options
 from ...core import OutputType
 from ...serialization.serializables import BoolField
 from ...utils import lazy_import
-from ..arrays import ArrowListArray, ArrowListDtype
 from .core import CustomReduction, DataFrameReductionMixin, DataFrameReductionOperand
 
 cudf = lazy_import("cudf")
@@ -46,11 +45,7 @@ class NuniqueReduction(CustomReduction):
     def _drop_duplicates_to_arrow(v, explode=False):
         if explode:
             v = v.explode()
-        try:
-            return ArrowListArray([v.drop_duplicates().to_numpy()])
-        except pa.ArrowInvalid:
-            # fallback due to diverse dtypes
-            return [v.drop_duplicates().to_list()]
+        return [v.drop_duplicates().to_numpy()]
 
     def pre(self, in_data):  # noqa: W0221  # pylint: disable=arguments-differ
         xdf = cudf if self.is_gpu() else pd
@@ -107,8 +102,6 @@ class NuniqueReduction(CustomReduction):
             in_data_iter = in_data.items() if self._axis == 0 else in_data.iterrows()
             data = dict()
             for d, v in in_data_iter:
-                if isinstance(v.dtype, ArrowListDtype):
-                    v = xdf.Series(v.to_numpy())
                 data[d] = v.explode().nunique(dropna=self._dropna)
             return xdf.Series(data)
 

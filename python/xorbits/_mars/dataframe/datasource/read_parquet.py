@@ -16,7 +16,7 @@
 import os
 import sys
 import zipfile
-from typing import Dict, Optional, Union
+from typing import Dict
 from urllib.parse import urlparse
 
 import numpy as np
@@ -50,9 +50,8 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...utils import is_object_dtype, lazy_import
-from ..arrays import ArrowListDtype, ArrowStringDtype
 from ..operands import OutputType
-from ..utils import contain_arrow_dtype, parse_index, to_arrow_dtypes
+from ..utils import arrow_dtype_kwargs, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -97,6 +96,9 @@ def get_engine(engine):
 
 
 class ParquetEngine:
+    """Read parquet by arrow / fastparquet instead of pandas is to read the
+    parquet file by group, please refer to `groups_as_chunks`."""
+
     def get_row_num(self, f):
         raise NotImplementedError
 
@@ -176,17 +178,6 @@ def _parse_prefix(path):
     return path_prefix
 
 
-def _arrow_dtype_mapper(
-    tp: Union[np.dtype, arrow_dtype]
-) -> Optional[Union[ArrowListDtype, ArrowStringDtype]]:
-    if tp == pa.string():
-        return ArrowStringDtype()
-    elif isinstance(tp, pa.ListType):
-        return ArrowListDtype(tp.value_type)
-    else:
-        return
-
-
 class ArrowEngine(ParquetEngine):
     def get_row_num(self, f):
         file = pq.ParquetFile(f)
@@ -204,7 +195,7 @@ class ArrowEngine(ParquetEngine):
         if nrows is not None:
             t = t.slice(0, nrows)
         if use_arrow_dtype:
-            df = t.to_pandas(types_mapper=_arrow_dtype_mapper)
+            df = t.to_pandas(types_mapper=pd.ArrowDtype)
         else:
             df = t.to_pandas()
         return df
@@ -241,8 +232,6 @@ class FastpaquetEngine(ParquetEngine):
         df = file.to_pandas(columns, **kwargs)
         if nrows is not None:
             df = df.head(nrows)
-        if use_arrow_dtype:
-            df = df.astype(to_arrow_dtypes(df.dtypes).to_dict())
         return df
 
 
@@ -330,21 +319,10 @@ class DataFrameReadParquet(
         self.columns = columns
 
     @classmethod
-    def _to_arrow_dtypes(cls, dtypes, op):
-        if (
-            op.use_arrow_dtype is None
-            and not op.gpu
-            and options.dataframe.use_arrow_dtype
-        ):  # pragma: no cover
-            # check if use_arrow_dtype set on the server side
-            dtypes = to_arrow_dtypes(dtypes)
-        return dtypes
-
-    @classmethod
     def _tile_partitioned(cls, op: "DataFrameReadParquet"):
         out_df = op.outputs[0]
         shape = (np.nan, out_df.shape[1])
-        dtypes = cls._to_arrow_dtypes(out_df.dtypes, op)
+        dtypes = out_df.dtypes
         dataset = pq.ParquetDataset(op.path, use_legacy_dataset=False)
 
         path_prefix = _parse_prefix(op.path)
@@ -400,7 +378,7 @@ class DataFrameReadParquet(
         out_chunks = []
         out_df = op.outputs[0]
 
-        dtypes = cls._to_arrow_dtypes(out_df.dtypes, op)
+        dtypes = out_df.dtypes
         shape = (np.nan, out_df.shape[1])
         z = None
         fs, _, _ = fsspec.get_fs_token_paths(
@@ -589,14 +567,15 @@ class DataFrameReadParquet(
                 f = z.open(op.chunk_path)
             else:
                 f = op.path
+            read_kwargs = op.read_kwargs or dict()
+            if op.use_arrow_dtype:
+                read_kwargs.update(arrow_dtype_kwargs())
             r = pd.read_parquet(
                 f,
                 columns=op.columns,
                 engine=op.engine,
-                **op.read_kwargs or dict(),
+                **read_kwargs,
             )
-            if op.use_arrow_dtype:
-                r = r.astype(to_arrow_dtypes(r.dtypes).to_dict())
             if z is not None:
                 z.close()
                 f.close()
@@ -613,7 +592,7 @@ class DataFrameReadParquet(
             f = z.open(op.chunk_path)
         else:
             f = fs.open(path, storage_options=op.storage_options)
-        use_arrow_dtype = contain_arrow_dtype(out.dtypes)
+        use_arrow_dtype = op.use_arrow_dtype
         if op.groups_as_chunks:
             df = engine.read_group_to_pandas(
                 f,
@@ -851,7 +830,7 @@ def read_parquet(
         raise ValueError(
             f"The 'use_arrow_dtype' argument is not supported for the {engine_type} engine"
         )
-    types_mapper = _arrow_dtype_mapper if use_arrow_dtype else None
+    types_mapper = pd.ArrowDtype if use_arrow_dtype else None
 
     if fs.isdir(single_path):
         paths = fs.ls(path)

@@ -24,7 +24,6 @@ from typing import Any, Callable, List, Optional, Union
 import numpy as np
 import pandas as pd
 from pandas.api.extensions import ExtensionDtype
-from pandas.api.types import is_string_dtype
 from pandas.core.dtypes.cast import find_common_type
 
 from ..config import options
@@ -76,16 +75,12 @@ def _get_hash(
     The hash value of the cudf object is obtained by the ``hash_values`` interface.
     Specifically, for the Index obj in cudf, convert it to DataFrame first.
     """
-    from . import ArrowStringDtype
-
     return (
         (data.to_frame().hash_values() if is_index(data) else data.hash_values())
         if is_cudf(data)
         else (
             hash_pandas_object(data, **kwargs)
-            if PD_VERSION_GREATER_THAN_2_10
-            and is_dataframe(data)
-            and data.dtypes.map(lambda x: isinstance(x, ArrowStringDtype)).any()
+            if PD_VERSION_GREATER_THAN_2_10 and is_dataframe(data)
             else pd.util.hash_pandas_object(data, **kwargs)
         )
     )
@@ -1321,74 +1316,8 @@ def create_sa_connection(con, **kwargs):
             engine.dispose()
 
 
-def arrow_table_to_pandas_dataframe(arrow_table, use_arrow_dtype=True, **kw):
-    if not use_arrow_dtype:
-        # if not use arrow string, just return
-        return arrow_table.to_pandas(**kw)
-
-    from .arrays import ArrowListArray, ArrowStringArray
-
-    table: pa.Table = arrow_table
-    schema: pa.Schema = arrow_table.schema
-
-    arrow_field_names = list()
-    arrow_arrays = list()
-    arrow_indexes = list()
-    other_field_names = list()
-    other_arrays = list()
-    for i, arrow_type in enumerate(schema.types):
-        if arrow_type == pa.string() or isinstance(arrow_type, pa.ListType):
-            arrow_field_names.append(schema.names[i])
-            arrow_indexes.append(i)
-            arrow_arrays.append(table.columns[i])
-        else:
-            other_field_names.append(schema.names[i])
-            other_arrays.append(table.columns[i])
-
-    df: pd.DataFrame = pa.Table.from_arrays(
-        other_arrays, names=other_field_names
-    ).to_pandas(**kw)
-    for arrow_index, arrow_name, arrow_array in zip(
-        arrow_indexes, arrow_field_names, arrow_arrays
-    ):
-        if arrow_array.type == pa.string():
-            series = pd.Series(ArrowStringArray(arrow_array))
-        else:
-            assert isinstance(arrow_array.type, pa.ListType)
-            series = pd.Series(ArrowListArray(arrow_array))
-        df.insert(arrow_index, arrow_name, series)
-
-    return df
-
-
-def contain_arrow_dtype(dtypes):
-    from .arrays import ArrowStringDtype
-
-    return any(isinstance(dtype, ArrowStringDtype) for dtype in dtypes)
-
-
-def to_arrow_dtypes(dtypes, test_df=None):
-    from .arrays import ArrowStringDtype
-
-    new_dtypes = dtypes.copy()
-    for i in range(len(dtypes)):
-        dtype = dtypes.iloc[i]
-        if is_string_dtype(dtype):
-            if test_df is not None:
-                series = test_df.iloc[:, i]
-                # check value
-                non_na_series = series[series.notna()]
-                if len(non_na_series) > 0:
-                    first_value = non_na_series.iloc[0]
-                    if isinstance(first_value, str):
-                        new_dtypes.iloc[i] = ArrowStringDtype()
-                else:  # pragma: no cover
-                    # empty, set arrow string dtype
-                    new_dtypes.iloc[i] = ArrowStringDtype()
-            else:
-                # empty, set arrow string dtype
-                new_dtypes.iloc[i] = ArrowStringDtype()
-    return new_dtypes
+def arrow_dtype_kwargs():
+    return {"dtype_backend": "pyarrow"} if is_pandas_2() else {"engine": "pyarrow"}
 
 
 def make_dtype(dtype):
