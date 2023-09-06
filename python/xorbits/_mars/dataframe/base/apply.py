@@ -32,7 +32,6 @@ from ...serialization.serializables import (
     TupleField,
 )
 from ...utils import enter_current_session, get_func_token, quiet_stdio
-from ..arrays import ArrowArray
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
     build_df,
@@ -108,22 +107,9 @@ class ApplyOperand(
                 **op.kwds,
             )
         else:
-            try:
-                result = input_data.apply(
-                    func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
-                )
-            except TypeError:
-                if isinstance(input_data.values, ArrowArray):
-                    input_data = pd.Series(
-                        input_data.to_numpy(),
-                        name=input_data.name,
-                        index=input_data.index,
-                    )
-                    result = input_data.apply(
-                        func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
-                    )
-                else:  # pragma: no cover
-                    raise
+            result = input_data.apply(
+                func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
+            )
         ctx[out.key] = result
 
     @classmethod
