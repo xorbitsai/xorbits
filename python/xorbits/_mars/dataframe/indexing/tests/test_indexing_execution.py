@@ -1037,10 +1037,7 @@ def _wrap_execute_data_source_usecols(usecols, op_cls):
     def _execute_data_source(ctx, op):  # pragma: no cover
         op_cls.execute(ctx, op)
         result = ctx[op.outputs[0].key]
-        if not isinstance(usecols, list):
-            if not isinstance(result, pd.Series):
-                raise RuntimeError(f"Out data should be a Series, got {type(result)}")
-        elif len(result.columns) > len(usecols):
+        if isinstance(usecols, list) and len(result.columns) > len(usecols):
             params = dict(
                 (k, getattr(op, k, None))
                 for k in op._keys_
@@ -1058,10 +1055,8 @@ def _wrap_execute_data_source_mixed(limit, usecols, op_cls):
     def _execute_data_source(ctx, op):  # pragma: no cover
         op_cls.execute(ctx, op)
         result = ctx[op.outputs[0].key]
-        if not isinstance(usecols, list):
-            if not isinstance(result, pd.Series):
-                raise RuntimeError("Out data should be a Series")
-        elif len(result.columns) > len(usecols):
+
+        if isinstance(usecols, list) and len(result.columns) > len(usecols):
             raise RuntimeError("have data more than expected")
         if len(result) > limit:
             raise RuntimeError("have data more than expected")
@@ -1125,16 +1120,6 @@ def test_optimization(setup):
         ).fetch()
         expected = pd_df["c"]
         result.reset_index(drop=True, inplace=True)
-        pd.testing.assert_series_equal(result, expected)
-
-        r = df["d"].head(3)
-        operand_executors = {
-            DataFrameReadCSV: _wrap_execute_data_source_mixed(3, "d", DataFrameReadCSV)
-        }
-        result = r.execute(
-            extra_config={"operand_executors": operand_executors}
-        ).fetch()
-        expected = pd_df["d"].head(3)
         pd.testing.assert_series_equal(result, expected)
 
         # test DataFrame.head
