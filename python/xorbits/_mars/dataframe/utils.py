@@ -75,16 +75,12 @@ def _get_hash(
     The hash value of the cudf object is obtained by the ``hash_values`` interface.
     Specifically, for the Index obj in cudf, convert it to DataFrame first.
     """
-    from . import ArrowStringDtype
-
     return (
         (data.to_frame().hash_values() if is_index(data) else data.hash_values())
         if is_cudf(data)
         else (
             hash_pandas_object(data, **kwargs)
-            if PD_VERSION_GREATER_THAN_2_10
-            and is_dataframe(data)
-            and data.dtypes.map(lambda x: isinstance(x, ArrowStringDtype)).any()
+            if PD_VERSION_GREATER_THAN_2_10 and is_dataframe(data)
             else pd.util.hash_pandas_object(data, **kwargs)
         )
     )
