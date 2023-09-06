@@ -1375,6 +1375,27 @@ def test_read_parquet_arrow(setup, engine):
     len(parquet_engines) == 1, reason="pyarrow and fastparquet are not installed"
 )
 @pytest.mark.parametrize("engine", parquet_engines)
+def test_read_parquet_with_getting_index(setup, engine):
+    test_df = pd.DataFrame(
+        {
+            "a": np.arange(10).astype(np.int64, copy=False),
+            "b": [f"s{i}" for i in range(10)],
+            "c": np.random.rand(10),
+        }
+    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        file = f"{tempdir}/test.pq"
+        test_df.to_parquet(file)
+        mdf = md.read_parquet(file, engine=engine)
+        res = mdf["a"].mean().execute().fetch()
+        assert res == test_df["a"].mean()
+        pd.testing.assert_index_equal(mdf.keys().execute().fetch(), test_df.keys())
+
+
+@pytest.mark.skipif(
+    len(parquet_engines) == 1, reason="pyarrow and fastparquet are not installed"
+)
+@pytest.mark.parametrize("engine", parquet_engines)
 def test_read_parquet_zip(setup, engine):
     with tempfile.TemporaryDirectory() as tempdir:
         df = pd.DataFrame(

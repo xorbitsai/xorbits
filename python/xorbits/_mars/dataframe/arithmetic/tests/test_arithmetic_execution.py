@@ -972,23 +972,3 @@ def test_series_and_tensor(setup):
     result = r.execute().fetch()
     expected = a_raw | s_raw
     pd.testing.assert_series_equal(result, expected)
-
-
-def test_column_pruning(setup):
-    from ..... import pandas as xpd
-
-    # temp_dir = tempfile.mkdtemp()
-    # ff = temp_dir + "/test.pq"
-    # df = pd.DataFrame({'a': np.random.uniform(0, 1, 1000),
-    #                    'b': np.random.uniform(1, 2, 1000)})
-    # df.to_parquet(ff)
-
-    xdf = xpd.read_parquet("/Users/lichengjie/test.pq")
-    # print(xdf)
-    # print(xdf.execute())
-    print(xdf.keys())
-
-    a = xdf["a"]
-    print(a.mean())
-
-    print(xdf.keys())

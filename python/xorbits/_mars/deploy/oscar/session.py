@@ -141,13 +141,7 @@ class ExecutionInfo:
 
     @property
     def to_execute_tileables(self) -> List[TileableType]:
-        return [t for t in self._to_execute_tileables]
-
-    def need_attach_session(self):
-        res = []
-        for t in self._to_execute_tileables:
-            res.append(t.need_attach_session)
-        return res
+        return self._to_execute_tileables
 
     def profiling_result(self) -> dict:
         return self._profiling.result
