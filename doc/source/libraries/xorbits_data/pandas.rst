@@ -261,6 +261,7 @@ Performing a descriptive statistic:
 
    df.mean()
 
+
 Same operation on the other axis:
 
 .. ipython:: python

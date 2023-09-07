@@ -391,12 +391,6 @@ def test_estimate_pandas_size():
     s1 = pd.Series(np.random.rand(1000))
     assert utils.estimate_pandas_size(s1) == sys.getsizeof(s1)
 
-    from ..dataframe.arrays import ArrowStringArray
-
-    array = ArrowStringArray(np.random.choice(["abcd", "def", "gh"], size=(1000,)))
-    s2 = pd.Series(array)
-    assert utils.estimate_pandas_size(s2) == sys.getsizeof(s2)
-
     s3 = pd.Series(np.random.choice(["abcd", "def", "gh"], size=(1000,)))
     assert utils.estimate_pandas_size(s3) != sys.getsizeof(s3)
     assert (

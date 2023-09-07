@@ -47,7 +47,8 @@ from .... import dataframe as md
 from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_cupy
-from ....utils import arrow_array_to_objects, get_next_port, pd_release_version
+from ....utils import get_next_port, pd_release_version
+from ...utils import is_pandas_2
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records
 from ..from_tensor import dataframe_from_1d_tileables, dataframe_from_tensor
@@ -843,9 +844,16 @@ def test_read_csv_use_arrow_dtype(setup):
         pdf = pd.read_csv(file_path)
         mdf = md.read_csv(file_path, use_arrow_dtype=True)
         result = mdf.execute().fetch()
-        assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
+        # read_csv with engine="pyarrow" in pandas 1.5 does not use arrow dtype.
+        if is_pandas_2():
+            assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+            assert result.to_dict() == pdf.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf, check_like=True)
 
     with tempfile.TemporaryDirectory() as tempdir:
         with option_context({"dataframe.use_arrow_dtype": True}):
@@ -855,9 +863,16 @@ def test_read_csv_use_arrow_dtype(setup):
             pdf = pd.read_csv(file_path)
             mdf = md.read_csv(file_path)
             result = mdf.execute().fetch()
-            assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-            pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
+            # read_csv with engine="pyarrow" in pandas 1.5 does not use arrow dtype.
+            if is_pandas_2():
+                assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+                assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+                assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+                assert result.to_dict() == pdf.to_dict()
+            # There still exists Float64 != float64 dtype check error even if we use
+            # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+            # back to numpy.
+            # pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
 
     # test compression
     with tempfile.TemporaryDirectory() as tempdir:
@@ -867,9 +882,16 @@ def test_read_csv_use_arrow_dtype(setup):
         pdf = pd.read_csv(file_path, compression="gzip")
         mdf = md.read_csv(file_path, compression="gzip", use_arrow_dtype=True)
         result = mdf.execute().fetch()
-        assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
+        # read_csv with engine="pyarrow" in pandas 1.5 does not use arrow dtype.
+        if is_pandas_2():
+            assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+            assert result.to_dict() == pdf.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf)
 
 
 @require_cudf
@@ -1118,9 +1140,15 @@ def test_read_sql_use_arrow_dtype(setup):
 
         r = md.read_sql_table("test", uri, chunk_size=4, use_arrow_dtype=True)
         result = r.execute().fetch()
-        assert isinstance(r.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
+        if is_pandas_2():
+            assert isinstance(r.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert result.to_dict() == test_df.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
 
         # test read with sql string and offset method
         r = md.read_sql_query(
@@ -1131,12 +1159,21 @@ def test_read_sql_use_arrow_dtype(setup):
             use_arrow_dtype=True,
         )
         result = r.execute().fetch()
-        assert isinstance(r.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        pd.testing.assert_frame_equal(
-            arrow_array_to_objects(result),
-            test_df[test_df.c > 0.5].reset_index(drop=True),
+        if is_pandas_2():
+            assert isinstance(r.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert (
+            result.to_dict()
+            == test_df[test_df.c > 0.5].reset_index(drop=True).to_dict()
         )
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(
+        #     arrow_array_to_objects(result),
+        #     test_df[test_df.c > 0.5].reset_index(drop=True),
+        # )
 
 
 @pytest.mark.pd_compat
@@ -1295,9 +1332,14 @@ def test_read_parquet_arrow(setup, engine):
                 engine=engine,
             )
             result = df.execute().fetch()
-            assert isinstance(df.dtypes.iloc[1], md.ArrowStringDtype)
-            assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-            pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
+            assert isinstance(df.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+            assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+            assert result.to_dict() == test_df.to_dict()
+            # There still exists Float64 != float64 dtype check error even if we use
+            # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+            # back to numpy.
+            # pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
 
     # test wildcards in path
     for merge_small_file_option in [{"n_sample_file": 1}, None]:
@@ -1334,8 +1376,8 @@ def test_read_parquet_arrow(setup, engine):
                     f"{tempdir}/*.parquet", engine=engine, use_arrow_dtype=True
                 )
                 result = mdf.execute().fetch()
-                assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
-                assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
+                assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
+                assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
 
                 mdf = md.read_parquet(
                     f"{tempdir}/*.parquet",
@@ -1371,6 +1413,69 @@ def test_read_parquet_arrow(setup, engine):
         )
 
 
+@pytest.mark.skipif(
+    len(parquet_engines) == 1, reason="pyarrow and fastparquet are not installed"
+)
+@pytest.mark.parametrize("engine", parquet_engines)
+def test_read_parquet_zip(setup, engine):
+    with tempfile.TemporaryDirectory() as tempdir:
+        df = pd.DataFrame(
+            {
+                "a": np.arange(300).astype(np.int64, copy=False),
+                "b": [f"s{i}" for i in range(300)],
+                "c": np.random.rand(300),
+            }
+        )
+
+        file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
+        df[:100].to_parquet(file_paths[0], row_group_size=50)
+        df[100:200].to_parquet(file_paths[1], row_group_size=30)
+        df[200:].to_parquet(file_paths[2])
+        import zipfile
+
+        zip_file = zipfile.ZipFile(os.path.join(tempdir, "test.zip"), "w")
+
+        zip_file.write(file_paths[0])
+        zip_file.write(file_paths[1])
+        zip_file.write(file_paths[2])
+
+        zip_file.close()
+        mdf = md.read_parquet(f"{tempdir}/test.zip", engine=engine)
+        r = mdf.execute().fetch()
+        pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
+
+
+@require_cudf
+def test_read_parquet_zip_gpu(setup):
+    with tempfile.TemporaryDirectory() as tempdir:
+        df = pd.DataFrame(
+            {
+                "a": np.arange(300).astype(np.int64, copy=False),
+                "b": [f"s{i}" for i in range(300)],
+                "c": np.random.rand(300),
+            }
+        )
+
+        file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
+        df[:100].to_parquet(file_paths[0], row_group_size=50)
+        df[100:200].to_parquet(file_paths[1], row_group_size=30)
+        df[200:].to_parquet(file_paths[2])
+        import zipfile
+
+        zip_file = zipfile.ZipFile(os.path.join(tempdir, "test.zip"), "w")
+
+        zip_file.write(file_paths[0])
+        zip_file.write(file_paths[1])
+        zip_file.write(file_paths[2])
+
+        zip_file.close()
+        mdf = md.read_parquet(os.path.join(tempdir, "test.zip"), gpu=True)
+        r = mdf.execute().fetch(to_cpu=False)
+        pd.testing.assert_frame_equal(
+            df, r.sort_values("a").to_pandas().reset_index(drop=True)
+        )
+
+
 def test_read_parquet_arrow_dtype(setup):
     test_df = pd.DataFrame(
         {
@@ -1387,9 +1492,14 @@ def test_read_parquet_arrow_dtype(setup):
 
         df = md.read_parquet(file_path, use_arrow_dtype=True)
         result = df.execute().fetch()
-        assert isinstance(result.dtypes.iloc[1], md.ArrowStringDtype)
-        assert isinstance(result.dtypes.iloc[3], md.ArrowListDtype)
-        pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
+        assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
+        assert isinstance(result.dtypes.iloc[3], pd.ArrowDtype)
+        assert isinstance(result.dtypes.iloc[0], pd.ArrowDtype)
+        assert result.to_dict() == test_df.to_dict()
+        # There still exists Float64 != float64 dtype check error even if we use
+        # convert_dtypes(dtype_backend='numpy_nullable') convert the arrow dtypes
+        # back to numpy.
+        # pd.testing.assert_frame_equal(arrow_array_to_objects(result), test_df)
 
 
 @pytest.mark.skipif(fastparquet is None, reason="fastparquet not installed")
@@ -1414,7 +1524,7 @@ def test_read_parquet_fast_parquet(setup):
         # assert sum(s[0] for s in size_res) > test_df.memory_usage(deep=True).sum()
 
 
-def _start_tornado(port: int, file_path0: str, file_path1: str):
+def _start_tornado(port: int, file_path0: str, file_path1: str, zip_path: str):
     import tornado.ioloop
     import tornado.web
 
@@ -1428,10 +1538,43 @@ def _start_tornado(port: int, file_path0: str, file_path1: str):
             with open(file_path1, "rb") as f:
                 self.write(f.read())
 
+    class RangeZipFileHandler(tornado.web.RequestHandler):
+        def get(self):
+            file_path = zip_path
+
+            file_size = os.path.getsize(file_path)
+
+            range_header = self.request.headers.get("Range")
+            if range_header:
+                range_start, range_end = self.parse_range_header(range_header)
+            else:
+                range_start, range_end = 0, file_size - 1
+
+            with open(file_path, "rb") as file:
+                file.seek(range_start)
+                data = file.read(range_end - range_start + 1)
+
+            self.set_header("Content-Type", "application/zip")
+            self.set_header("Content-Disposition", "attachment; filename=test.zip")
+            self.set_header(
+                "Content-Range", f"bytes {range_start}-{range_end}/{file_size}"
+            )
+            self.set_header("Accept-Ranges", "bytes")
+            self.set_header("Content-Length", len(data))
+            self.set_status(206)  # Partial Content
+            self.write(data)
+
+        def parse_range_header(self, range_header):
+            range_bytes = range_header.replace("bytes=", "").split("-")
+            range_start = int(range_bytes[0])
+            range_end = int(range_bytes[1]) if range_bytes[1] else None
+            return range_start, range_end
+
     app = tornado.web.Application(
         [
             (r"/read-parquet0", Parquet0Handler),
             (r"/read-parquet1", Parquet1Handler),
+            (r"/test.zip", RangeZipFileHandler),
         ]
     )
     app.listen(port)
@@ -1453,10 +1596,17 @@ def start_http_server():
         )
         df.iloc[:50].to_parquet(file_path0)
         df.iloc[50:].to_parquet(file_path1)
+        import zipfile
+
+        zip_path = os.path.join(tempdir, "test.zip")
+        z = zipfile.ZipFile(zip_path, "w")
+        z.write(file_path0)
+        z.write(file_path1)
+        z.close()
 
         port = get_next_port()
         proc = multiprocessing.Process(
-            target=_start_tornado, args=(port, file_path0, file_path1)
+            target=_start_tornado, args=(port, file_path0, file_path1, zip_path)
         )
         proc.daemon = True
         proc.start()
@@ -1464,25 +1614,29 @@ def start_http_server():
         yield df, [
             f"http://127.0.0.1:{port}/read-parquet0",
             f"http://127.0.0.1:{port}/read-parquet1",
-        ]
+        ], f"http://127.0.0.1:{port}/test.zip"
         # Terminate the process
         proc.terminate()
 
 
 def test_read_parquet_with_http_url(setup, start_http_server):
-    df, urls = start_http_server
+    df, urls, zip_url = start_http_server
     mdf = md.read_parquet(urls).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
-
-    mdf = md.read_parquet(urls, use_arrow_dtype=True).execute().fetch()
-    pd.testing.assert_frame_equal(df, arrow_array_to_objects(mdf))
-    assert isinstance(mdf.dtypes.iloc[1], md.ArrowStringDtype)
+    if is_pandas_2():
+        arrow_df = df.convert_dtypes(dtype_backend="pyarrow")
+        mdf = md.read_parquet(urls, use_arrow_dtype=True).execute().fetch()
+        pd.testing.assert_frame_equal(arrow_df, mdf)
+        assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)
 
     mdf1 = md.read_parquet(urls[:1]).execute().fetch()
     pd.testing.assert_frame_equal(df.iloc[:50], mdf1)
 
     mdf2 = md.read_parquet(urls[1:]).execute().fetch()
     pd.testing.assert_frame_equal(df[50:], mdf2)
+
+    mdf = md.read_parquet(zip_url)
+    pd.testing.assert_frame_equal(df, mdf.execute().fetch())
 
 
 @require_cudf
@@ -1552,3 +1706,64 @@ def test_read_parquet_gpu_execution(setup_gpu):
             df.sort_values("a").reset_index(drop=True),
             r.sort_values("a").reset_index(drop=True),
         )
+
+
+@pytest.fixture
+def ftp_writable():
+    """
+    Fixture providing a writable FTP filesystem.
+    """
+    pytest.importorskip("pyftpdlib")
+    import shutil
+    import subprocess
+    import sys
+
+    from fsspec.implementations.cached import CachingFileSystem
+    from fsspec.implementations.ftp import FTPFileSystem
+
+    FTPFileSystem.clear_instance_cache()  # remove lingering connections
+    CachingFileSystem.clear_instance_cache()
+    d = "temp"
+    os.mkdir(d)
+    P = subprocess.Popen(
+        [sys.executable, "-m", "pyftpdlib", "-d", d, "-u", "user", "-P", "pass", "-w"]
+    )
+    try:
+        time.sleep(1)
+        yield "localhost", 2121, "user", "pass"
+    finally:
+        P.terminate()
+        P.wait()
+        try:
+            shutil.rmtree("temp")
+        except Exception:
+            pass
+
+
+def test_read_parquet_ftp(ftp_writable, setup):
+    pytest.importorskip("pyftpdlib")
+    host, port, user, pw = ftp_writable
+    data = {"Column1": [1, 2, 3], "Column2": ["A", "B", "C"]}
+    df = pd.DataFrame(data)
+    with tempfile.TemporaryDirectory() as tempdir:
+        local_file_path = os.path.join(tempdir, "test.parquet")
+        df.to_parquet("ftp://{}:{}@{}:{}/test.parquet".format(user, pw, host, port))
+        df.to_parquet(local_file_path)
+        import zipfile
+
+        from fsspec.implementations.ftp import FTPFileSystem
+
+        fs = FTPFileSystem(host=host, port=port, username=user, password=pw)
+        fn = "/test.zip"
+        with fs.open(fn, "wb") as f:
+            zf = zipfile.ZipFile(f, mode="w")
+            zf.write(local_file_path)
+            zf.close()
+        mdf = md.read_parquet(
+            "ftp://{}:{}@{}:{}/test.parquet".format(user, pw, host, port)
+        )
+        pd.testing.assert_frame_equal(df, mdf.to_pandas())
+        mdf_zip = md.read_parquet(
+            "ftp://{}:{}@{}:{}/test.zip".format(user, pw, host, port)
+        )
+        pd.testing.assert_frame_equal(df, mdf_zip.to_pandas())

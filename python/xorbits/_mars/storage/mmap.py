@@ -13,8 +13,9 @@
 # limitations under the License.
 import asyncio
 import mmap
+import os
 import warnings
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import cloudpickle
 from xoscar.serialization import deserialize
@@ -22,8 +23,54 @@ from xoscar.serialization.aio import BUFFER_SIZES_NAME, get_header_length
 
 from ..utils import implements
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
-from .core import StorageFileObject
+from .core import BufferWrappedFileObject, StorageFileObject
 from .filesystem import DiskStorage
+
+
+class MMAPFileObject(BufferWrappedFileObject):
+    def __init__(self, object_id: Any, view: memoryview, size: int):
+        super().__init__(object_id, "r", size=size)
+        self._mv = view
+        self._buffer = view
+
+    @property
+    def object_id(self):
+        return self._object_id
+
+    @property
+    def buffer(self):
+        return self._buffer
+
+    def _write_init(self):  # pragma: no cover
+        raise NotImplementedError("MMAPFileObject only supports read operations.")
+
+    def write(self, content: Union[bytes, memoryview]):  # pragma: no cover
+        raise NotImplementedError("MMAPFileObject only supports read operations.")
+
+    def _read_init(self):  # pragma: no cover
+        pass
+
+    def read(self, size=-1):
+        offset = self._offset
+        size = self._size if size < 0 else size
+        end = min(self._size, offset + size)
+        result = self._mv[offset:end]
+        self._offset = end
+        return result
+
+    def _read_close(self):  # pragma: no cover
+        pass
+
+    def _write_close(self):  # pragma: no cover
+        pass
+
+    def seek(self, offset: int, whence: int = os.SEEK_SET):
+        return self._get_new_offset(offset, whence=whence)
+
+
+class MMAPStorageFileObject(StorageFileObject):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 @register_storage_backend
@@ -106,8 +153,8 @@ class MMAPStorage(DiskStorage):
     async def open_reader(self, object_id) -> StorageFileObject:
         with open(object_id, "r+b") as f:
             mm = mmap.mmap(f.fileno(), 0)
-            # TODO: rewrite StorageFileObject interfaces like read to support memoryview(mm)
-            return StorageFileObject(mm, object_id)
+            file = MMAPFileObject(object_id, memoryview(mm), mm.size())
+            return MMAPStorageFileObject(file, object_id=object_id)
 
     @implements(StorageBackend.list)
     async def list(self) -> List:  # pragma: no cover
