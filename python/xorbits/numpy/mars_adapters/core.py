@@ -16,6 +16,7 @@ from types import ModuleType
 from typing import Any, Callable, Dict, List, Optional, Set
 
 import numpy
+import scipy
 
 from ...core.adapter import MARS_TENSOR_TYPE, mars_tensor, wrap_mars_callable
 
@@ -53,6 +54,9 @@ MARS_TENSOR_FFT_CALLABLES: Dict[str, Callable] = _collect_module_callables(
 )
 MARS_TENSOR_LINALG_CALLABLES: Dict[str, Callable] = _collect_module_callables(
     mars_tensor.linalg, numpy.linalg
+)
+MARS_TENSOR_SPECIAL_CALLABLES: Dict[str, Callable] = _collect_module_callables(
+    mars_tensor.special, scipy.special
 )
 
 
