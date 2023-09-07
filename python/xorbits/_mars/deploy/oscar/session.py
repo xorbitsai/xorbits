@@ -894,9 +894,6 @@ class _IsolatedSession(AbstractAsyncSession):
                     != fetch_tileable_shape[1]
                     > 0  # `>0` condition is for possible `nan`
                 ):
-                    print(
-                        f"Here {tileable_shape, fetch_tileable_shape, type(tileable_shape[1])}"
-                    )
                     tileable._executed_sessions.clear()
                     re_execution_indexes.append(i)
                 else:
