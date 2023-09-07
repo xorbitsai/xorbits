@@ -36,6 +36,7 @@ from xoscar.metrics import Metrics
 from ...config import options
 from ...core import ChunkType, TileableGraph, TileableType, enter_mode
 from ...core.operand import Fetch
+from ...dataframe.core import DataFrameData
 from ...lib.aio import (
     Isolation,
     alru_cache,
@@ -818,7 +819,6 @@ class _IsolatedSession(AbstractAsyncSession):
         task_id: str,
         progress: Progress,
         profiling: Profiling,
-        re_execute_tileables: bool,
     ):
         with enter_mode(build=True, kernel=True):
             exec_tileables = [t.tileable() for t in tileables]
@@ -884,9 +884,9 @@ class _IsolatedSession(AbstractAsyncSession):
                 # The shape inconsistency is usually due to column pruning,
                 # which in ipython can't be fetched directly and needs to be recalculated.
                 if (
-                    re_execute_tileables
-                    and tileable_shape is not None
+                    tileable_shape is not None
                     and fetch_tileable_shape is not None
+                    and isinstance(tileable, DataFrameData)
                     and len(tileable_shape) == 2
                     and tileable_shape[1] != fetch_tileable_shape[1]
                 ):
@@ -905,7 +905,6 @@ class _IsolatedSession(AbstractAsyncSession):
             raise RuntimeError("Session closed already")
         fuse_enabled: bool = kwargs.pop("fuse_enabled", None)
         extra_config: dict = kwargs.pop("extra_config", None)
-        re_execute_tileables: bool = kwargs.pop("re_execute_tileables", False)
         warn_duplicated_execution: bool = kwargs.pop("warn_duplicated_execution", False)
         if kwargs:  # pragma: no cover
             raise TypeError(f"run got unexpected key arguments {list(kwargs)!r}")
@@ -944,9 +943,7 @@ class _IsolatedSession(AbstractAsyncSession):
         tileable_wrappers = [TileableWrapper(t) for t in to_execute_tileables]
         # create asyncio.Task
         aio_task = asyncio.create_task(
-            self._run_in_background(
-                tileable_wrappers, task_id, progress, profiling, re_execute_tileables
-            )
+            self._run_in_background(tileable_wrappers, task_id, progress, profiling)
         )
         return ExecutionInfo(
             aio_task,
