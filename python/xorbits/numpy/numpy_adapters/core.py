@@ -19,6 +19,7 @@ from types import ModuleType
 from typing import Any, Callable, Dict, Type
 
 import numpy as np
+import scipy
 
 from ..._mars.core import Entity as MarsEntity
 from ...core import DataType
@@ -145,3 +146,4 @@ NUMPY_MEMBERS = collect_numpy_module_members(np)
 NUMPY_LINALG_MEMBERS = collect_numpy_module_members(np.linalg)
 NUMPY_FFT_MEMBERS = collect_numpy_module_members(np.fft)
 NUMPY_RANDOM_MEMBERS = collect_numpy_module_members(np.random)
+NUMPY_SPECIAL_MEMBERS = collect_numpy_module_members(scipy.special)
