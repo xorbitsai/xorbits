@@ -50,12 +50,15 @@ class StageMonitorActor(mo.Actor):
     def __init__(self):
         self._records = dict()
 
-    def report_stage(self, keys: Tuple[str, str], status: SubtaskStage):
+    def report_stage(self, keys: Tuple[str, str], stage: SubtaskStage):
         if keys not in self._records:
             self._records[keys] = {
                 "history": [],
             }
-        self._records[keys]["history"].append((time.time(), status))
+        if stage == SubtaskStage.FINISHED:
+            self._records.pop(keys)
+            return
+        self._records[keys]["history"].append((time.time(), stage))
 
     async def get_stale_tasks(self, status: SubtaskStage, timeout: int = 5):
         cur_timestamp = time.time()
@@ -66,7 +69,6 @@ class StageMonitorActor(mo.Actor):
                 and v["history"][-1][1] == status
             ):
                 stale_tasks_keys.append(k)
-
         return stale_tasks_keys
 
     async def get_records(self):
@@ -617,6 +619,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         self._subtask_info.pop(subtask.subtask_id, None)
         self._finished_subtask_count.record(1, {"band": self.address})
         logger.debug("Subtask %s finished with result %s", subtask.subtask_id, result)
+        await self._stat_monitor_ref.report_stage(
+            (subtask.session_id, subtask.subtask_id), SubtaskStage.FINISHED
+        )
         return result
 
     async def cancel_subtask(self, subtask_id: str, kill_timeout: Optional[int] = 5):

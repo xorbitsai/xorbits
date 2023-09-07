@@ -43,6 +43,7 @@ class SubtaskStage(Enum):
     EXECUTE = 3
     FINALLY = 4
     IMMEDIATELY = 5
+    FINISHED = 6
 
 
 class SubtaskStatus(Enum):
