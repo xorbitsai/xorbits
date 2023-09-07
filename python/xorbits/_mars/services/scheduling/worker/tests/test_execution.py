@@ -646,8 +646,6 @@ async def test_status_monitor_actor(actor_pool):
         stale_tasks = await monitor_ref.get_stale_tasks(stage)
         assert len(stale_tasks) == 0
 
-    # task not actually started
-    target_keys = (session_id, subtask_id)
+    # task has been finished
     records = await monitor_ref.get_records()
-    assert target_keys in records
-    assert len(records[target_keys]["history"]) > 0
+    assert len(records) == 0
