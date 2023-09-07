@@ -101,7 +101,7 @@ class DataFrameAlign(DataFrameOperand, DataFrameOperandMixin):
         if self.axis is None or self.axis == 1:
             l_empty = build_empty_df(lhs.dtypes)
             r_empty = build_empty_df(rhs.dtypes)
-            aligned, _ = l_empty.align(r_empty, axis=1)
+            aligned, _ = l_empty.align(r_empty, join=self.join, axis=self.axis)
             l_dtypes = r_dtypes = aligned.dtypes
             l_col_val = r_col_val = parse_index(aligned.columns, store_data=True)
             l_shape[1] = r_shape[1] = len(l_dtypes)
