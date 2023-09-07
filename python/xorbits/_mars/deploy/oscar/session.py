@@ -889,8 +889,14 @@ class _IsolatedSession(AbstractAsyncSession):
                     and fetch_tileable_shape is not None
                     and isinstance(tileable, DataFrameData)
                     and len(tileable_shape) == 2
-                    and tileable_shape[1] != fetch_tileable_shape[1]
+                    and 0
+                    < tileable_shape[1]
+                    != fetch_tileable_shape[1]
+                    > 0  # `>0` condition is for possible `nan`
                 ):
+                    print(
+                        f"Here {tileable_shape, fetch_tileable_shape, type(tileable_shape[1])}"
+                    )
                     tileable._executed_sessions.clear()
                     re_execution_indexes.append(i)
                 else:
