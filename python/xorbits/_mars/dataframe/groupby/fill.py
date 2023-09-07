@@ -28,7 +28,6 @@ class GroupByFillOperand(DataFrameOperand, DataFrameOperandMixin):
 
     value = AnyField("value", default=None)
     method = StringField("method", default=None)
-    axis = AnyField("axis", default=0)
     limit = Int64Field("limit", default=None)
     downcast = DictField("downcast", default=None)
 
@@ -40,7 +39,6 @@ class GroupByFillOperand(DataFrameOperand, DataFrameOperandMixin):
             result_df = mock_groupby.fillna(
                 value=self.value,
                 method=self.method,
-                axis=self.axis,
                 limit=self.limit,
                 downcast=self.downcast,
             )
@@ -134,7 +132,6 @@ class GroupByFillOperand(DataFrameOperand, DataFrameOperandMixin):
             ctx[out_chunk.key] = in_data.fillna(
                 value=op.value,
                 method=op.method,
-                axis=op.axis,
                 limit=op.limit,
                 downcast=op.downcast,
             )
@@ -187,7 +184,7 @@ def bfill(groupby, limit=None):
     return op(groupby)
 
 
-def fillna(groupby, value=None, method=None, axis=None, limit=None, downcast=None):
+def fillna(groupby, value=None, method=None, limit=None, downcast=None):
     """
     Fill NA/NaN values using the specified method
 
@@ -197,7 +194,6 @@ def fillna(groupby, value=None, method=None, axis=None, limit=None, downcast=Non
             column (for a DataFrame). Values not in the dict/Series/DataFrame
             will not be filled. This value cannot be a list.
     method: {'backfill','bfill','ffill',None}, default None
-    axis:   {0 or 'index', 1 or 'column'}
     limit:  int, default None
             If method is specified, this is the maximum number of consecutive
             NaN values to forward/backward fill
@@ -207,7 +203,5 @@ def fillna(groupby, value=None, method=None, axis=None, limit=None, downcast=Non
 
     return: DataFrame or None
     """
-    op = GroupByFillNa(
-        value=value, method=method, axis=axis, limit=limit, downcast=downcast
-    )
+    op = GroupByFillNa(value=value, method=method, limit=limit, downcast=downcast)
     return op(groupby)

@@ -1100,11 +1100,20 @@ def main():
         required=False,
         help="The endpoint of existing Xorbits cluster.",
     )
+    parser.add_argument(
+        "--mmap_root_dir",
+        type=str,
+        required=False,
+        help="The directory used by mmap storage backend."
+    )
 
     args = parser.parse_args()
     data_set = args.data_set
     gpu = args.gpu
     use_arrow_dtype = args.use_arrow_dtype
+    mmap_root_dir = args.mmap_root_dir
+    if mmap_root_dir is not None:
+        print(f"Use mmap to run: {mmap_root_dir}")
 
     # credentials to access the datasource.
     storage_options = {}
@@ -1118,7 +1127,11 @@ def main():
         queries = args.queries
     print(f"Queries to run: {queries}")
 
-    xorbits.init(address=args.endpoint, cuda_devices=args.cuda_devices)
+    if mmap_root_dir is not None:
+        xorbits.init(address=args.endpoint, cuda_devices=args.cuda_devices,
+                     storage_config={"mmap": {"root_dirs": mmap_root_dir}})
+    else:
+        xorbits.init(address=args.endpoint, cuda_devices=args.cuda_devices)
     try:
         run_queries(
             data_set,
