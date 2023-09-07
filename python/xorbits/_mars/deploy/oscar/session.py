@@ -36,7 +36,6 @@ from xoscar.metrics import Metrics
 from ...config import options
 from ...core import ChunkType, TileableGraph, TileableType, enter_mode
 from ...core.operand import Fetch
-from ...dataframe.core import DataFrameData
 from ...lib.aio import (
     Isolation,
     alru_cache,
@@ -820,6 +819,8 @@ class _IsolatedSession(AbstractAsyncSession):
         progress: Progress,
         profiling: Profiling,
     ):
+        from ...dataframe.core import DataFrameData
+
         with enter_mode(build=True, kernel=True):
             exec_tileables = [t.tileable() for t in tileables]
             # wait for task to finish
