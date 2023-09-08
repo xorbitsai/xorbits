@@ -151,7 +151,7 @@ def test_local_classifier_from_to_parquet(setup):
         df.iloc[:500].to_parquet(os.path.join(d, "data", "data1.parquet"))
         df.iloc[500:].to_parquet(os.path.join(d, "data", "data2.parquet"))
 
-        df = md.read_parquet(data_dir).set_index("id")
+        df = md.read_parquet(data_dir, use_arrow_dtype=False).set_index("id")
         model = XGBClassifier()
         model.load_model(m_name)
         result = model.predict(df, run=False)
@@ -160,7 +160,12 @@ def test_local_classifier_from_to_parquet(setup):
         # tiles to ensure no iterative tiling exists
         r.execute()
 
-        ret = md.read_parquet(result_dir).to_pandas().iloc[:, 0].to_numpy()
+        ret = (
+            md.read_parquet(result_dir, use_arrow_dtype=False)
+            .to_pandas()
+            .iloc[:, 0]
+            .to_numpy()
+        )
         model2 = xgboost.XGBClassifier()
         model2.load_model(m_name)
         expected = model2.predict(X)
