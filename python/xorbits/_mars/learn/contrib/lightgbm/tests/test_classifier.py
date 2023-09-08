@@ -156,7 +156,7 @@ def test_local_classifier_from_to_parquet(setup):
         df.iloc[:500].to_parquet(os.path.join(d, "data", "data1.parquet"))
         df.iloc[500:].to_parquet(os.path.join(d, "data", "data2.parquet"))
 
-        df = md.read_parquet(data_dir)
+        df = md.read_parquet(data_dir, use_arrow_dtype=False)
         model = LGBMClassifier()
         model.load_model(classifier)
         result = model.predict(df, run=False)
@@ -164,7 +164,12 @@ def test_local_classifier_from_to_parquet(setup):
 
         r.execute()
 
-        ret = md.read_parquet(result_dir).to_pandas().iloc[:, 0].to_numpy()
+        ret = (
+            md.read_parquet(result_dir, use_arrow_dtype=False)
+            .to_pandas()
+            .iloc[:, 0]
+            .to_numpy()
+        )
         expected = classifier.predict(X)
         expected = np.stack([1 - expected, expected]).argmax(axis=0)
         np.testing.assert_array_equal(ret, expected)

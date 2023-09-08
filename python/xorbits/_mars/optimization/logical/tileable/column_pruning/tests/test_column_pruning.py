@@ -32,6 +32,7 @@ from ......dataframe.groupby.core import DataFrameGroupByOperand
 from ......dataframe.indexing.getitem import DataFrameIndex
 from ......dataframe.indexing.setitem import DataFrameSetitem
 from ......dataframe.merge import DataFrameMerge
+from ......dataframe.utils import PD_VERSION_GREATER_THAN_2_10
 from ......optimization.logical.tileable import optimize
 from ......tensor.core import TensorData
 from ......tensor.datasource import ArrayDataSource
@@ -331,6 +332,9 @@ def test_merge_then_groupby_apply(setup, gen_data2):
 
     raw1 = pd.read_parquet(file_path)
     raw2 = pd.read_parquet(file_path2)
+    if PD_VERSION_GREATER_THAN_2_10:
+        raw1 = raw1.convert_dtypes(dtype_backend="pyarrow")
+        raw2 = raw2.convert_dtypes(dtype_backend="pyarrow")
     expected = (
         (
             ((raw1 + 1) * 2).merge(raw2, left_on=["c1", "c3"], right_on=["cc2", "cc4"])[
@@ -387,6 +391,8 @@ def test_two_merges(setup, gen_data2):
         ]
         .merge(raw2, left_on=["cc1"], right_on=["cc3"])
     )
+    if PD_VERSION_GREATER_THAN_2_10:
+        expected = expected.convert_dtypes(dtype_backend="pyarrow")
     pd.testing.assert_frame_equal(r, expected)
 
     parquet_nodes = [n for n in graph._nodes if type(n.op) is DataFrameReadParquet]
@@ -426,6 +432,8 @@ def test_two_groupby_aggs_with_multi_index(setup, gen_data2):
     r = c.execute().fetch()
 
     raw = pd.read_parquet(file_path)
+    if PD_VERSION_GREATER_THAN_2_10:
+        raw = raw.convert_dtypes(dtype_backend="pyarrow")
     expected = (
         (raw * 2)
         .groupby(["c2", "c3"])
