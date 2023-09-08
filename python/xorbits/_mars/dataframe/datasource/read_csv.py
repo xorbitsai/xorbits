@@ -38,7 +38,12 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...utils import FixedSizeFileObject, lazy_import, parse_readable_size
-from ..utils import arrow_dtype_kwargs, build_empty_df, parse_index
+from ..utils import (
+    PD_VERSION_GREATER_THAN_2_10,
+    arrow_dtype_kwargs,
+    build_empty_df,
+    parse_index,
+)
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -624,7 +629,7 @@ def read_csv(
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
     use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns.
+        If True, use arrow dtype to store columns. Default enabled if pandas >= 2.1
     storage_options: dict, optional
         Options for storage connection.
     merge_small_files: bool, default True
@@ -655,6 +660,9 @@ def read_csv(
     >>> # read from S3
     >>> md.read_csv('s3://bucket/file.txt')
     """
+    # We enable arrow dtype by default if pandas >= 2.1
+    if use_arrow_dtype is None:
+        use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
     if use_arrow_dtype is None:
         use_arrow_dtype = options.dataframe.use_arrow_dtype
     # infer dtypes and columns

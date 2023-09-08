@@ -38,7 +38,13 @@ from ...serialization.serializables import (
 )
 from ...tensor.utils import normalize_chunk_sizes
 from ...typing import OperandType, TileableType
-from ..utils import arrow_dtype_kwargs, create_sa_connection, is_pandas_2, parse_index
+from ..utils import (
+    PD_VERSION_GREATER_THAN_2_10,
+    arrow_dtype_kwargs,
+    create_sa_connection,
+    is_pandas_2,
+    parse_index,
+)
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -236,6 +242,9 @@ class DataFrameReadSQL(
                 collect_cols = []
 
             use_arrow_dtype = self.use_arrow_dtype
+            # We enable arrow dtype by default if pandas >= 2.1
+            if use_arrow_dtype is None:
+                use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
             if use_arrow_dtype is None:
                 use_arrow_dtype = options.dataframe.use_arrow_dtype
 
@@ -486,8 +495,6 @@ class DataFrameReadSQL(
                 query = query.limit(op.nrows)
 
             use_arrow_dtype = op.use_arrow_dtype
-            if use_arrow_dtype is None:
-                use_arrow_dtype = options.dataframe.use_arrow_dtype
 
             # read_sql in pandas 1.5 does not support pyarrow.
             sql_kwargs = (
@@ -768,7 +775,7 @@ def read_sql_table(
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
     use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns.
+        If True, use arrow dtype to store columns. Default enabled if pandas >= 2.1
     partition_col : str, default None
         Specify name of the column to split the result of the query. If
         specified, the range ``[low_limit, high_limit]`` will be divided
@@ -892,7 +899,7 @@ def read_sql_query(
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
     use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns.
+        If True, use arrow dtype to store columns. Default enabled if pandas >= 2.1
     test_rows: int, default 5
         The number of rows to fetch for inferring dtypes.
     chunk_size: : int or tuple of ints, optional
