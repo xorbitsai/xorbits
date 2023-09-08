@@ -40,6 +40,7 @@ except ImportError:
 from .... import dataframe as md
 from ....tests.core import flaky
 from ... import DataFrame
+from ...utils import PD_VERSION_GREATER_THAN_2_10
 
 
 def test_to_csv_execution(setup):
@@ -182,7 +183,10 @@ def test_to_parquet_arrow_execution(setup):
         read_df = md.read_parquet(path)
         result = read_df.execute().fetch()
         result = result.sort_index()
-        pd.testing.assert_frame_equal(result, raw)
+        if PD_VERSION_GREATER_THAN_2_10:
+            expected = raw.convert_dtypes(dtype_backend="pyarrow")
+
+        pd.testing.assert_frame_equal(result, expected)
 
         # test read_parquet then to_parquet
         read_df = md.read_parquet(path)
@@ -195,9 +199,11 @@ def test_to_parquet_arrow_execution(setup):
         read_df = md.read_parquet(path)
         result = read_df.execute().fetch()
         result["col3"] = result["col3"].astype("object")
+        if PD_VERSION_GREATER_THAN_2_10:
+            expected["col3"] = expected["col3"].astype("object")
         pd.testing.assert_frame_equal(
             result.sort_values("col1").reset_index(drop=True),
-            raw.sort_values("col1").reset_index(drop=True),
+            expected.sort_values("col1").reset_index(drop=True),
         )
 
 

@@ -1295,7 +1295,7 @@ def test_read_parquet_arrow(setup, engine):
             "c": np.random.rand(10),
         }
     )
-    if PD_VERSION_GREATER_THAN_2_10:
+    if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
         test_df = test_df.convert_dtypes(dtype_backend="pyarrow")
 
     with tempfile.TemporaryDirectory() as tempdir:
@@ -1354,7 +1354,7 @@ def test_read_parquet_arrow(setup, engine):
                 }
             )
 
-            if PD_VERSION_GREATER_THAN_2_10:
+            if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
                 df = df.convert_dtypes(dtype_backend="pyarrow")
 
             file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
@@ -1452,7 +1452,7 @@ def test_read_parquet_zip(setup, engine):
                 "c": np.random.rand(300),
             }
         )
-        if PD_VERSION_GREATER_THAN_2_10:
+        if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
             df = df.convert_dtypes(dtype_backend="pyarrow")
 
         file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]

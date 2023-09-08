@@ -834,6 +834,10 @@ def read_parquet(
         raise ValueError(
             f"The 'use_arrow_dtype' argument is not supported for the {engine_type} engine"
         )
+    # We enable arrow dtype by default if pandas >= 2.1
+    if use_arrow_dtype is None:
+        use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
+
     types_mapper = pd.ArrowDtype if use_arrow_dtype else None
 
     if fs.isdir(single_path):
