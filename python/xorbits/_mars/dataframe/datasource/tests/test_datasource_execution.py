@@ -48,7 +48,7 @@ from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_cupy
 from ....utils import get_next_port, pd_release_version
-from ...utils import is_pandas_2
+from ...utils import PD_VERSION_GREATER_THAN_2_10, is_pandas_2
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records
 from ..from_tensor import dataframe_from_1d_tileables, dataframe_from_tensor
@@ -1295,6 +1295,8 @@ def test_read_parquet_arrow(setup, engine):
             "c": np.random.rand(10),
         }
     )
+    if PD_VERSION_GREATER_THAN_2_10:
+        test_df = test_df.convert_dtypes(dtype_backend="pyarrow")
 
     with tempfile.TemporaryDirectory() as tempdir:
         file_path = os.path.join(tempdir, "test.parquet")
@@ -1351,6 +1353,9 @@ def test_read_parquet_arrow(setup, engine):
                     "c": np.random.rand(300),
                 }
             )
+
+            if PD_VERSION_GREATER_THAN_2_10:
+                df = df.convert_dtypes(dtype_backend="pyarrow")
 
             file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
             df[:100].to_parquet(file_paths[0], row_group_size=50)
@@ -1447,6 +1452,8 @@ def test_read_parquet_zip(setup, engine):
                 "c": np.random.rand(300),
             }
         )
+        if PD_VERSION_GREATER_THAN_2_10:
+            df = df.convert_dtypes(dtype_backend="pyarrow")
 
         file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
         df[:100].to_parquet(file_paths[0], row_group_size=50)
@@ -1642,6 +1649,8 @@ def start_http_server():
 
 def test_read_parquet_with_http_url(setup, start_http_server):
     df, urls, zip_url = start_http_server
+    if PD_VERSION_GREATER_THAN_2_10:
+        df = df.convert_dtypes(dtype_backend="pyarrow")
     mdf = md.read_parquet(urls).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
     if is_pandas_2():
