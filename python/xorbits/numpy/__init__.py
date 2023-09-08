@@ -95,7 +95,7 @@ finally:
     del warnings
 
 
-from . import fft, linalg, random
+from . import fft, linalg, random, special
 from .core import ndarray
 
 

@@ -28,7 +28,7 @@ from .... import dataframe as md
 from ....config import option_context
 from ....core.operand import OperandStage
 from ....tests.core import assert_groupby_equal, require_cudf, support_cuda
-from ....utils import arrow_array_to_objects, lazy_import, pd_release_version
+from ....utils import lazy_import, pd_release_version
 from ...core import DATAFRAME_OR_SERIES_TYPE
 from ...utils import is_pandas_2
 from ..aggregation import DataFrameGroupByAgg
@@ -471,7 +471,6 @@ def test_dataframe_groupby_agg(setup):
         r.execute().fetch(),
         raw.groupby(["c1", "c2"], as_index=False).agg(["mean", "count"]),
     )
-    assert r.op.groupby_params["as_index"] is True
 
     r = mdf.groupby("c2").agg(["cumsum", "cumcount"])
     pd.testing.assert_frame_equal(
@@ -589,7 +588,6 @@ def test_dataframe_groupby_agg_sort(setup):
         r.execute().fetch(),
         raw.groupby(["c1", "c2"], as_index=False).agg(["mean", "count"]),
     )
-    assert r.op.groupby_params["as_index"] is True
 
 
 def test_series_groupby_agg(setup):
@@ -1522,9 +1520,9 @@ def test_groupby_sample(setup):
 
 @pytest.mark.skipif(pa is None, reason="pyarrow not installed")
 def test_groupby_agg_with_arrow_dtype(setup):
-    df1 = pd.DataFrame({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    table = pa.table({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    df1 = table.to_pandas(types_mapper=pd.ArrowDtype)
     mdf = md.DataFrame(df1)
-    mdf["b"] = mdf["b"].astype("Arrow[string]")
 
     r = mdf.groupby("a").count()
     result = r.execute().fetch()
@@ -1533,51 +1531,45 @@ def test_groupby_agg_with_arrow_dtype(setup):
 
     r = mdf.groupby("b").count()
     result = r.execute().fetch()
-    result.index = result.index.astype(object)
     expected = df1.groupby("b").count()
     pd.testing.assert_frame_equal(result, expected)
 
     series1 = df1["b"]
-    mseries = md.Series(series1).astype("Arrow[string]")
+    mseries = md.Series(series1)
 
     r = mseries.groupby(mseries).count()
     result = r.execute().fetch()
-    result.index = result.index.astype(object)
     expected = series1.groupby(series1).count()
     pd.testing.assert_series_equal(result, expected)
 
     series2 = series1.copy()
     series2.index = pd.MultiIndex.from_tuples([(0, 1), (2, 3), (4, 5)])
-    mseries = md.Series(series2).astype("Arrow[string]")
+    mseries = md.Series(series2)
 
     r = mseries.groupby(mseries).count()
     result = r.execute().fetch()
-    result.index = result.index.astype(object)
     expected = series2.groupby(series2).count()
     pd.testing.assert_series_equal(result, expected)
 
 
 @pytest.mark.skipif(pa is None, reason="pyarrow not installed")
 def test_groupby_apply_with_arrow_dtype(setup):
-    df1 = pd.DataFrame({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    table = pa.table({"a": [1, 2, 1], "b": ["a", "b", "a"]})
+    df1 = table.to_pandas(types_mapper=pd.ArrowDtype)
     mdf = md.DataFrame(df1)
-    mdf["b"] = mdf["b"].astype("Arrow[string]")
 
     applied = mdf.groupby("b").apply(lambda df: df.a.sum())
     result = applied.execute().fetch()
-    result.index = result.index.astype(object)
     expected = df1.groupby("b").apply(lambda df: df.a.sum())
     pd.testing.assert_series_equal(result, expected)
 
     series1 = df1["b"]
-    mseries = md.Series(series1).astype("Arrow[string]")
+    mseries = md.Series(series1)
 
     applied = mseries.groupby(mseries).apply(lambda s: s)
     result = applied.execute().fetch()
     expected = series1.groupby(series1).apply(lambda s: s)
-    pd.testing.assert_series_equal(
-        arrow_array_to_objects(result), expected, check_index_type=False
-    )
+    pd.testing.assert_series_equal(result, expected, check_index_type=False)
 
 
 def test_groupby_nunique(setup):

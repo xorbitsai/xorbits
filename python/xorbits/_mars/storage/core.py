@@ -127,11 +127,7 @@ class BufferWrappedFileObject(ABC):
         self._mv[offset:new_offset] = content
         self._offset = new_offset
 
-    def seek(self, offset: int, whence: int = os.SEEK_SET):
-        if not self._initialized:
-            self._read_init()
-            self._initialized = True
-
+    def _get_new_offset(self, offset: int, whence: int = os.SEEK_SET) -> int:
         if whence == os.SEEK_END:
             new_offset = self._size + offset
         elif whence == os.SEEK_CUR:
@@ -146,6 +142,13 @@ class BufferWrappedFileObject(ABC):
             )
         self._offset = new_offset
         return self._offset
+
+    def seek(self, offset: int, whence: int = os.SEEK_SET):
+        if not self._initialized:
+            self._read_init()
+            self._initialized = True
+
+        return self._get_new_offset(offset, whence=whence)
 
     def tell(self):
         return self._offset
