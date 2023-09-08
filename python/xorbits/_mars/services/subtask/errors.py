@@ -22,5 +22,5 @@ class SlotOccupiedAlready(Exception):
     pass
 
 
-class WorkerStorageDataNotFound(Exception):
+class RunnerStorageDataNotFound(Exception):
     pass

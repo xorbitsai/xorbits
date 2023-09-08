@@ -148,7 +148,7 @@ class SubtaskProcessor:
         return self.subtask.subtask_id
 
     async def _load_input_data(self):
-        keys, gets, accept_nones = [], [], []
+        keys, gets, get_metas, accept_nones = [], [], [], []
         for key, is_shuffle in iter_input_data_keys(
             self.subtask, self._chunk_graph, self._chunk_key_to_data_keys
         ):
@@ -156,6 +156,7 @@ class SubtaskProcessor:
             accept_nones.append(not is_shuffle)
             gets_params = {"error": "ignore"} if is_shuffle else {}
             gets.append(self._storage_api.get.delay(key, **gets_params))
+            get_metas.append(self._meta_api.get_chunk_meta.delay(key[0] if isinstance(key, tuple) else key))
         if keys:
             logger.debug(
                 "Start getting input data, keys: %.500s, subtask id: %s",
@@ -181,9 +182,14 @@ class SubtaskProcessor:
             # Get metas of necessary data keys
             # TODO: object_id == data_key (?)
             # chunks = await self._meta_api.get_band_slot_chunks(self._band, self._slot_id)
-            metas = await self._meta_api.get_chunk_meta.batch(keys)
-            bands = [meta["bands"][0] for meta in metas]
-            slot_ids = [meta["slot_ids"][0] for meta in metas]
+            metas = await self._meta_api.get_chunk_meta.batch(*get_metas)
+            try:
+                bands = [meta["bands"][0] for meta in metas]
+                slot_ids = [meta["slot_ids"][0] for meta in metas]
+            except:
+                print(metas)
+                self.result.status = SubtaskStatus.errored
+                raise
             for key, band, slot_id, accept_none in zip(keys, bands, slot_ids, accept_nones):
                 # Get runner storage actor ref
                 try:
@@ -199,7 +205,7 @@ class SubtaskProcessor:
                     self.result.status = SubtaskStatus.errored
                     raise
                 # Get data from runner storage
-                get = runner_storage.get_data(key)
+                get = await runner_storage.get_data(key[0] if isinstance(key, tuple) else key)
                 if accept_none or get is not None:
                     self._processor_context.update(
                         {
@@ -403,8 +409,9 @@ class SubtaskProcessor:
                     )
                 # puts 里每个元素都是 DelayedArgument，可用参数 args 取到内部元组 (key,value)
                 for put in puts:
-                    put_key, put_data = put.args
-                    await runner_storage.put_data(put_key, put_data)
+                    put_key = put.args[0]
+                    put_data = put.args[1]
+                    await runner_storage.put_data(put_key[0] if isinstance(put_key, tuple) else put_key, put_data)
                 
                 put_infos = asyncio.create_task(self._storage_api.put.batch(*puts))
                 try:
