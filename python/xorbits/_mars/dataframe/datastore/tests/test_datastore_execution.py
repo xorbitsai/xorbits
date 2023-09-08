@@ -185,6 +185,8 @@ def test_to_parquet_arrow_execution(setup):
         result = result.sort_index()
         if PD_VERSION_GREATER_THAN_2_10:
             expected = raw.convert_dtypes(dtype_backend="pyarrow")
+        else:
+            expected = raw
 
         pd.testing.assert_frame_equal(result, expected)
 
