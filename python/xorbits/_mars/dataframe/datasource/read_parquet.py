@@ -799,7 +799,7 @@ def read_parquet(
     engine = get_engine(engine_type)
 
     # We enable arrow dtype by default if pandas >= 2.1
-    if use_arrow_dtype is None:
+    if use_arrow_dtype is None and engine_type == "pyarrow":
         use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
 
     single_path = path[0] if isinstance(path, list) else path
