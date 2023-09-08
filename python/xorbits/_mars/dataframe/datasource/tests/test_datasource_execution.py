@@ -1775,6 +1775,8 @@ def test_read_parquet_ftp(ftp_writable, setup):
     host, port, user, pw = ftp_writable
     data = {"Column1": [1, 2, 3], "Column2": ["A", "B", "C"]}
     df = pd.DataFrame(data)
+    if PD_VERSION_GREATER_THAN_2_10:
+        df = df.convert_dtypes(dtype_backend="pyarrow")
     with tempfile.TemporaryDirectory() as tempdir:
         local_file_path = os.path.join(tempdir, "test.parquet")
         df.to_parquet("ftp://{}:{}@{}:{}/test.parquet".format(user, pw, host, port))
