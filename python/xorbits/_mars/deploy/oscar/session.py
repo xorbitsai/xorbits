@@ -76,6 +76,29 @@ class Profiling:
     result: dict = None
 
 
+class TileableWrapper:
+    """
+    This class gives the Tileable object an additional attribute of whether it needs an attached session or not,
+    which is used in the ipython environment to determine whether the Tileable object needs to be re-executed.
+    """
+
+    def __init__(self, tileable: TileableType):
+        self._data = ref(tileable)
+        self._attach_session = True
+
+    @property
+    def tileable(self):
+        return self._data
+
+    @property
+    def attach_session(self) -> bool:
+        return self._attach_session
+
+    @attach_session.setter
+    def attach_session(self, value):
+        self._attach_session = value
+
+
 class ExecutionInfo:
     def __init__(
         self,
@@ -89,8 +112,7 @@ class ExecutionInfo:
         self._progress = progress
         self._profiling = profiling
         self._loop = loop
-        self._to_execute_tileables = [ref(t) for t in to_execute_tileables]
-
+        self._to_execute_tileables = to_execute_tileables
         self._future_local = threading.local()
 
     def _ensure_future(self):
@@ -119,7 +141,7 @@ class ExecutionInfo:
 
     @property
     def to_execute_tileables(self) -> List[TileableType]:
-        return [t() for t in self._to_execute_tileables]
+        return self._to_execute_tileables
 
     def profiling_result(self) -> dict:
         return self._profiling.result
@@ -797,7 +819,10 @@ class _IsolatedSession(AbstractAsyncSession):
         progress: Progress,
         profiling: Profiling,
     ):
+        from ...dataframe.core import DataFrameData
+
         with enter_mode(build=True, kernel=True):
+            exec_tileables = [t.tileable() for t in tileables]
             # wait for task to finish
             cancelled = False
             progress_task = asyncio.create_task(
@@ -849,12 +874,35 @@ class _IsolatedSession(AbstractAsyncSession):
             if cancelled:
                 return
             fetch_tileables = await self._task_api.get_fetch_tileables(task_id)
-            assert len(tileables) == len(fetch_tileables)
+            assert len(exec_tileables) == len(fetch_tileables)
 
-            for tileable, fetch_tileable in zip(tileables, fetch_tileables):
-                self._tileable_to_fetch[tileable] = fetch_tileable
-                # update meta, e.g. unknown shape
-                tileable.params = fetch_tileable.params
+            re_execution_indexes = []
+            for i, (tileable, fetch_tileable) in enumerate(
+                zip(exec_tileables, fetch_tileables)
+            ):
+                tileable_shape = tileable.params.get("shape", None)
+                fetch_tileable_shape = fetch_tileable.params.get("shape", None)
+                # The shape inconsistency is usually due to column pruning,
+                # which in ipython can't be fetched directly and needs to be recalculated.
+                if (
+                    tileable_shape is not None
+                    and fetch_tileable_shape is not None
+                    and isinstance(tileable, DataFrameData)
+                    and len(tileable_shape) == 2
+                    and 0
+                    < tileable_shape[1]
+                    != fetch_tileable_shape[1]
+                    > 0  # `>0` condition is for possible `nan`
+                ):
+                    tileable._executed_sessions.clear()
+                    re_execution_indexes.append(i)
+                else:
+                    self._tileable_to_fetch[tileable] = fetch_tileable
+                    # update meta, e.g. unknown shape
+                    tileable.params = fetch_tileable.params
+
+            for idx in re_execution_indexes:
+                tileables[idx].attach_session = False
 
     async def execute(self, *tileables, **kwargs) -> ExecutionInfo:
         if self._closed:
@@ -895,16 +943,18 @@ class _IsolatedSession(AbstractAsyncSession):
 
         progress = Progress()
         profiling = Profiling()
+
+        tileable_wrappers = [TileableWrapper(t) for t in to_execute_tileables]
         # create asyncio.Task
         aio_task = asyncio.create_task(
-            self._run_in_background(to_execute_tileables, task_id, progress, profiling)
+            self._run_in_background(tileable_wrappers, task_id, progress, profiling)
         )
         return ExecutionInfo(
             aio_task,
             progress,
             profiling,
             asyncio.get_running_loop(),
-            to_execute_tileables,
+            tileable_wrappers,
         )
 
     def _get_to_fetch_tileable(
@@ -1663,7 +1713,8 @@ async def _execute(
     def _attach_session(future: asyncio.Future):
         if future.exception() is None:
             for t in execution_info.to_execute_tileables:
-                t._attach_session(session)
+                if t.attach_session:
+                    t.tileable()._attach_session(session)
 
     execution_info.add_done_callback(_attach_session)
     cancelled = cancelled or asyncio.Event()
