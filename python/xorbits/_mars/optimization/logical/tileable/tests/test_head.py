@@ -23,6 +23,7 @@ import pytest
 from ..... import dataframe as md
 from .....core import TileableGraph, TileableGraphBuilder, enter_mode
 from .....dataframe.indexing.iloc import DataFrameIlocGetItem, SeriesIlocGetItem
+from .....dataframe.utils import PD_VERSION_GREATER_THAN_2_10
 from .. import optimize
 
 
@@ -129,6 +130,8 @@ def test_read_parquet_head(prepare_data, setup):
         extra_config={"operand_executors": _iloc_operand_executors}
     ).fetch()
     expected = pdf.head(5)
+    if PD_VERSION_GREATER_THAN_2_10:
+        expected = expected.convert_dtypes(dtype_backend="pyarrow")
     pd.testing.assert_frame_equal(result, expected)
 
 
