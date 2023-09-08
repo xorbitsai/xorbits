@@ -125,7 +125,9 @@ def test_read_parquet_execution(setup, setup_hdfs):
 
     df = md.read_parquet(f"hdfs://localhost:8020{TEST_DIR}/test.parquet")
     res = df.to_pandas()
-    pd.testing.assert_frame_equal(res, test_df)
+    if PD_VERSION_GREATER_THAN_2_10:
+        expected = test_df.convert_dtypes(dtype_backend="pyarrow")
+    pd.testing.assert_frame_equal(res, expected)
 
     hdfs.mkdir(f"{TEST_DIR}/test_partitioned")
 
@@ -141,5 +143,6 @@ def test_read_parquet_execution(setup, setup_hdfs):
     df = md.read_parquet(f"hdfs://localhost:8020{TEST_DIR}/test_partitioned")
     res = df.to_pandas()
     if PD_VERSION_GREATER_THAN_2_10:
+        test_df = test_df.convert_dtypes(dtype_backend="pyarrow")
         test_df2 = test_df2.convert_dtypes(dtype_backend="pyarrow")
     pd.testing.assert_frame_equal(res, pd.concat([test_df, test_df2]))
