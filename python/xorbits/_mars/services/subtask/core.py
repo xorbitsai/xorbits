@@ -42,7 +42,7 @@ class SubtaskStage(Enum):
     ACQUIRE_SLOT = 2
     EXECUTE = 3
     RELEASE_SLOT = 4
-    FINISHED = 5
+    FINISH = 5
 
 
 class SubtaskStatus(Enum):

@@ -38,6 +38,7 @@ from ....utils import pd_release_version
 from ...datasource.read_csv import DataFrameReadCSV
 from ...datasource.read_parquet import DataFrameReadParquet
 from ...datasource.read_sql import DataFrameReadSQL
+from ...utils import PD_VERSION_GREATER_THAN_2_10
 
 _allow_set_missing_list = pd_release_version[:2] >= (1, 1)
 
@@ -1037,10 +1038,7 @@ def _wrap_execute_data_source_usecols(usecols, op_cls):
     def _execute_data_source(ctx, op):  # pragma: no cover
         op_cls.execute(ctx, op)
         result = ctx[op.outputs[0].key]
-        if not isinstance(usecols, list):
-            if not isinstance(result, pd.Series):
-                raise RuntimeError(f"Out data should be a Series, got {type(result)}")
-        elif len(result.columns) > len(usecols):
+        if isinstance(usecols, list) and len(result.columns) > len(usecols):
             params = dict(
                 (k, getattr(op, k, None))
                 for k in op._keys_
@@ -1058,10 +1056,8 @@ def _wrap_execute_data_source_mixed(limit, usecols, op_cls):
     def _execute_data_source(ctx, op):  # pragma: no cover
         op_cls.execute(ctx, op)
         result = ctx[op.outputs[0].key]
-        if not isinstance(usecols, list):
-            if not isinstance(result, pd.Series):
-                raise RuntimeError("Out data should be a Series")
-        elif len(result.columns) > len(usecols):
+
+        if isinstance(usecols, list) and len(result.columns) > len(usecols):
             raise RuntimeError("have data more than expected")
         if len(result) > limit:
             raise RuntimeError("have data more than expected")
@@ -1125,16 +1121,6 @@ def test_optimization(setup):
         ).fetch()
         expected = pd_df["c"]
         result.reset_index(drop=True, inplace=True)
-        pd.testing.assert_series_equal(result, expected)
-
-        r = df["d"].head(3)
-        operand_executors = {
-            DataFrameReadCSV: _wrap_execute_data_source_mixed(3, "d", DataFrameReadCSV)
-        }
-        result = r.execute(
-            extra_config={"operand_executors": operand_executors}
-        ).fetch()
-        expected = pd_df["d"].head(3)
         pd.testing.assert_series_equal(result, expected)
 
         # test DataFrame.head
@@ -1226,6 +1212,10 @@ def test_optimization(setup):
                 extra_config={"operand_executors": operand_executors}
             ).fetch()
             expected = pd_df.head(3)
+            if PD_VERSION_GREATER_THAN_2_10:
+                result = result.convert_dtypes(dtype_backend="pyarrow")
+                expected = expected.convert_dtypes(dtype_backend="pyarrow")
+
             pd.testing.assert_frame_equal(result, expected)
 
         dirname = os.path.join(tempdir, "test_parquet2")
@@ -1243,6 +1233,10 @@ def test_optimization(setup):
             extra_config={"operand_executors": operand_executors}
         ).fetch()
         expected = pd_df.head(3)
+        if PD_VERSION_GREATER_THAN_2_10:
+            result = result.convert_dtypes(dtype_backend="pyarrow")
+            expected = expected.convert_dtypes(dtype_backend="pyarrow")
+
         pd.testing.assert_frame_equal(result, expected)
 
 
@@ -1654,6 +1648,9 @@ def test_sample_execution(setup):
         df = md.read_parquet(file_path)
         r1 = df.sample(frac=0.05, random_state=0)
         r2 = pd.read_parquet(file_path).sample(frac=0.05, random_state=0)
+        if PD_VERSION_GREATER_THAN_2_10:
+            r2 = r2.convert_dtypes(dtype_backend="pyarrow")
+
         pd.testing.assert_frame_equal(r1.execute().fetch(), r2)
 
     # test series

@@ -13,6 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .column_pruning import ChunkGetitemPruneDataSource
 from .core import optimize
 from .head import ChunkHeadPushDown
