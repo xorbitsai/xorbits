@@ -55,7 +55,7 @@ class StageMonitorActor(mo.Actor):
             self._records[keys] = {
                 "history": [],
             }
-        if stage == SubtaskStage.FINISHED:
+        if stage == SubtaskStage.FINISH:
             self._records.pop(keys)
             return
         self._records[keys]["history"].append((time.time(), stage))
@@ -620,7 +620,7 @@ class SubtaskExecutionActor(mo.StatelessActor):
         self._finished_subtask_count.record(1, {"band": self.address})
         logger.debug("Subtask %s finished with result %s", subtask.subtask_id, result)
         await self._stat_monitor_ref.report_stage(
-            (subtask.session_id, subtask.subtask_id), SubtaskStage.FINISHED
+            (subtask.session_id, subtask.subtask_id), SubtaskStage.FINISH
         )
         return result
 
