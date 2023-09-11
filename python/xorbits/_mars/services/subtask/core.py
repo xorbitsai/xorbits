@@ -37,13 +37,12 @@ from ...typing import BandType, ChunkType
 
 
 class SubtaskStage(Enum):
-    PREPARE = 0
-    QUOTA = 1
-    SLOT = 2
+    PREPARE_DATA = 0
+    REQUEST_QUOTA = 1
+    ACQUIRE_SLOT = 2
     EXECUTE = 3
-    FINALLY = 4
-    IMMEDIATELY = 5
-    FINISHED = 6
+    RELEASE_SLOT = 4
+    FINISHED = 5
 
 
 class SubtaskStatus(Enum):

@@ -415,7 +415,7 @@ class SubtaskExecutionActor(mo.StatelessActor):
                     )
                 )
                 await self._stat_monitor_ref.report_stage(
-                    (subtask.session_id, subtask.subtask_id), SubtaskStage.PREPARE
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.PREPARE_DATA
                 )
                 await asyncio.wait_for(
                     prepare_data_task, timeout=self._data_prepare_timeout
@@ -447,7 +447,7 @@ class SubtaskExecutionActor(mo.StatelessActor):
             _fill_subtask_result_with_exception(subtask, subtask_info)
         finally:
             await self._stat_monitor_ref.report_stage(
-                (subtask.session_id, subtask.subtask_id), SubtaskStage.FINALLY
+                (subtask.session_id, subtask.subtask_id), SubtaskStage.RELEASE_SLOT
             )
             # make sure new slot usages are uploaded in time
             try:
@@ -474,12 +474,12 @@ class SubtaskExecutionActor(mo.StatelessActor):
             slot_id = None
             try:
                 await self._stat_monitor_ref.report_stage(
-                    (subtask.session_id, subtask.subtask_id), SubtaskStage.QUOTA
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.REQUEST_QUOTA
                 )
                 await quota_ref.request_batch_quota(batch_quota_req)
                 self._check_cancelling(subtask_info)
                 await self._stat_monitor_ref.report_stage(
-                    (subtask.session_id, subtask.subtask_id), SubtaskStage.SLOT
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.ACQUIRE_SLOT
                 )
                 slot_id = await slot_manager_ref.acquire_free_slot(
                     (subtask.session_id, subtask.subtask_id)
