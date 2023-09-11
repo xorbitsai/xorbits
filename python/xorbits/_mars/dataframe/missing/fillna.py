@@ -19,10 +19,9 @@ import numpy as np
 import pandas as pd
 
 from ... import opcodes
-from ...config import options
 from ...core import ENTITY_TYPE, Entity, OutputType, get_output_types
 from ...core.operand import OperandStage
-from ...serialization.serializables import AnyField, BoolField, Int64Field, StringField
+from ...serialization.serializables import AnyField, Int64Field, StringField
 from ..align import (
     align_dataframe_dataframe,
     align_dataframe_series,
@@ -43,7 +42,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
     _axis = AnyField("axis")
     _limit = Int64Field("limit")
     _downcast = AnyField("downcast")
-    _use_inf_as_na = BoolField("use_inf_as_na")
 
     _output_limit = Int64Field("output_limit")
 
@@ -54,7 +52,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
         axis=None,
         limit=None,
         downcast=None,
-        use_inf_as_na=None,
         output_types=None,
         output_limit=None,
         **kw
@@ -65,7 +62,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
             _axis=axis,
             _limit=limit,
             _downcast=downcast,
-            _use_inf_as_na=use_inf_as_na,
             _output_types=output_types,
             _output_limit=output_limit,
             **kw
@@ -90,10 +86,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
     @property
     def downcast(self):
         return self._downcast
-
-    @property
-    def use_inf_as_na(self):
-        return self._use_inf_as_na
 
     def _set_inputs(self, inputs):
         super()._set_inputs(inputs)
@@ -180,31 +172,27 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
 
     @classmethod
     def execute(cls, ctx, op):
-        try:
-            pd.set_option("mode.use_inf_as_na", op.use_inf_as_na)
-            if op.stage == OperandStage.map:
-                cls._execute_map(ctx, op)
-            elif op.stage == OperandStage.combine:
-                cls._execute_combine(ctx, op)
+        if op.stage == OperandStage.map:
+            cls._execute_map(ctx, op)
+        elif op.stage == OperandStage.combine:
+            cls._execute_combine(ctx, op)
+        else:
+            input_data = ctx[op.inputs[0].key]
+            value = getattr(op, "value", None)
+            if isinstance(op.value, ENTITY_TYPE):
+                value = ctx[op.value.key]
+            if not isinstance(input_data, pd.Index):
+                ctx[op.outputs[0].key] = input_data.fillna(
+                    value=value,
+                    method=op.method,
+                    axis=op.axis,
+                    limit=op.limit,
+                    downcast=op.downcast,
+                )
             else:
-                input_data = ctx[op.inputs[0].key]
-                value = getattr(op, "value", None)
-                if isinstance(op.value, ENTITY_TYPE):
-                    value = ctx[op.value.key]
-                if not isinstance(input_data, pd.Index):
-                    ctx[op.outputs[0].key] = input_data.fillna(
-                        value=value,
-                        method=op.method,
-                        axis=op.axis,
-                        limit=op.limit,
-                        downcast=op.downcast,
-                    )
-                else:
-                    ctx[op.outputs[0].key] = input_data.fillna(
-                        value=value, downcast=op.downcast
-                    )
-        finally:
-            pd.reset_option("mode.use_inf_as_na")
+                ctx[op.outputs[0].key] = input_data.fillna(
+                    value=value, downcast=op.downcast
+                )
 
     @classmethod
     def _tile_one_by_one(cls, op):
@@ -607,14 +595,12 @@ def fillna(
     else:
         value_df = None
 
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = FillNA(
         value=value,
         method=method,
         axis=axis,
         limit=limit,
         downcast=downcast,
-        use_inf_as_na=use_inf_as_na,
         output_types=get_output_types(df),
     )
     out_df = op(df, value_df=value_df)
@@ -678,11 +664,9 @@ def index_fillna(index, value=None, downcast=None):
     if isinstance(value, (list, pd.Series, SERIES_TYPE)):
         raise ValueError("'value' must be a scalar, passed: %s" % type(value))
 
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = FillNA(
         value=value,
         downcast=downcast,
-        use_inf_as_na=use_inf_as_na,
         output_types=get_output_types(index),
     )
     return op(index)
