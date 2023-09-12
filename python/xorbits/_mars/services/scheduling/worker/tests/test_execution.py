@@ -50,11 +50,16 @@ from ....meta import MockMetaAPI, MockWorkerMetaAPI
 from ....session import MockSessionAPI
 from ....storage import MockStorageAPI
 from ....storage.handler import StorageHandlerActor
-from ....subtask import MockSubtaskAPI, Subtask, SubtaskStatus
+from ....subtask import MockSubtaskAPI, Subtask, SubtaskStage, SubtaskStatus
 from ....task.supervisor.manager import TaskManagerActor
 from ....task.task_info_collector import TaskInfoCollectorActor
 from ...supervisor import GlobalResourceManagerActor
-from ...worker import BandSlotManagerActor, QuotaActor, SubtaskExecutionActor
+from ...worker import (
+    BandSlotManagerActor,
+    QuotaActor,
+    StageMonitorActor,
+    SubtaskExecutionActor,
+)
 
 
 class CancelDetectActorMixin:
@@ -181,7 +186,12 @@ async def actor_pool(request):
             pool.external_address,
             storage_handler_cls=MockStorageHandlerActor,
         )
-
+        # create monitor actor
+        monitor_ref = await mo.create_actor(
+            StageMonitorActor,
+            uid=StageMonitorActor.default_uid(),
+            address=pool.external_address,
+        )
         # create assigner actor
         execution_ref = await mo.create_actor(
             SubtaskExecutionActor,
@@ -230,6 +240,7 @@ async def actor_pool(request):
         try:
             yield pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref
         finally:
+            await mo.destroy_actor(monitor_ref)
             await mo.destroy_actor(task_manager_ref)
             await mo.destroy_actor(band_slot_ref)
             await mo.destroy_actor(global_resource_ref)
@@ -611,3 +622,30 @@ def test_fetch_data_from_both_cpu_and_gpu(data_type, chunked, setup_gpu):
         pd.testing.assert_frame_equal(expected, actual.execute().fetch(to_cpu=True))
     else:
         pd.testing.assert_series_equal(expected, actual.execute().fetch(to_cpu=True))
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
+async def test_status_monitor_actor(actor_pool):
+    pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
+    subtask_id = f"test_subtask_{uuid.uuid4()}"
+    subtask = Subtask(
+        subtask_id=subtask_id,
+        session_id=session_id,
+        task_id=f"test_task_{uuid.uuid4()}",
+        # chunk_graph=chunk_graph,
+    )
+
+    monitor_ref = await mo.actor_ref(
+        StageMonitorActor.default_uid(), address=pool.external_address
+    )
+    await asyncio.wait_for(
+        execution_ref.run_subtask(subtask, "numa-0", pool.external_address), timeout=30
+    )
+    for stage in SubtaskStage:
+        stale_tasks = await monitor_ref.get_stale_tasks(stage)
+        assert len(stale_tasks) == 0
+
+    # task has been finished
+    records = await monitor_ref.get_records()
+    assert len(records) == 0
