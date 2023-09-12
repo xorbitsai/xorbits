@@ -163,7 +163,8 @@ class DataFrameSetitem(DataFrameOperand, DataFrameOperandMixin):
     @classmethod
     def tile(cls, op: "DataFrameSetitem"):
         if op.target.ndim == 2:
-            return cls._tile_dataframe(op)
+            res = yield from cls._tile_dataframe(op)
+            return res
         else:
             return cls._tile_series(op)
 
