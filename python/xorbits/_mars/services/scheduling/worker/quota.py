@@ -307,9 +307,15 @@ class MemQuotaActor(QuotaActor):
 
         self._stat_refresh_task = None
         self._slot_manager_ref = None
+        self._stat_monitor_ref = None
 
     async def __post_create__(self):
         await super().__post_create__()
+        from .execution import StageMonitorActor
+
+        self._stat_monitor_ref = await mo.actor_ref(
+            uid=StageMonitorActor.default_uid(), address=self.address
+        )
         self._stat_refresh_task = self.ref().update_mem_stats.tell_delay(
             delay=self._refresh_time
         )
@@ -332,7 +338,7 @@ class MemQuotaActor(QuotaActor):
         """
         cur_mem_available = mars_resource.virtual_memory().available
         if cur_mem_available > self._last_memory_available:
-            # memory usage reduced: try reallocate existing requests
+            # memory usage reduced: try to reallocate existing requests
             await self._process_requests()
         self._last_memory_available = cur_mem_available
         self._report_quota_info()
