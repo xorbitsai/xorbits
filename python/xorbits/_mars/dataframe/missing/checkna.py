@@ -21,7 +21,6 @@ import pandas as pd
 from ... import dataframe as md
 from ... import opcodes
 from ... import tensor as mt
-from ...config import options
 from ...core import OutputType
 from ...serialization.serializables import BoolField
 from ..operands import (
@@ -39,14 +38,10 @@ class DataFrameCheckNA(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = opcodes.CHECK_NA
 
     _positive = BoolField("positive")
-    _use_inf_as_na = BoolField("use_inf_as_na")
 
-    def __init__(
-        self, positive=None, use_inf_as_na=None, sparse=None, output_types=None, **kw
-    ):
+    def __init__(self, positive=None, sparse=None, output_types=None, **kw):
         super().__init__(
             _positive=positive,
-            _use_inf_as_na=use_inf_as_na,
             _output_types=output_types,
             sparse=sparse,
             **kw,
@@ -55,10 +50,6 @@ class DataFrameCheckNA(DataFrameOperand, DataFrameOperandMixin):
     @property
     def positive(self) -> bool:
         return self._positive
-
-    @property
-    def use_inf_as_na(self) -> bool:
-        return self._use_inf_as_na
 
     def __call__(self, df):
         if isinstance(df, DATAFRAME_TYPE):
@@ -107,15 +98,10 @@ class DataFrameCheckNA(DataFrameOperand, DataFrameOperandMixin):
     @classmethod
     def execute(cls, ctx, op: "DataFrameCheckNA"):
         in_data = ctx[op.inputs[0].key]
-        old_use_inf_as_na = pd.get_option("mode.use_inf_as_na")
-        try:
-            pd.set_option("mode.use_inf_as_na", op.use_inf_as_na)
-            if op.positive:
-                ctx[op.outputs[0].key] = in_data.isna()
-            else:
-                ctx[op.outputs[0].key] = in_data.notna()
-        finally:
-            pd.set_option("mode.use_inf_as_na", old_use_inf_as_na)
+        if op.positive:
+            ctx[op.outputs[0].key] = in_data.isna()
+        else:
+            ctx[op.outputs[0].key] = in_data.notna()
 
 
 def _from_pandas(obj: Any):
@@ -200,14 +186,9 @@ def isna(obj):
         raise NotImplementedError("isna is not defined for MultiIndex")
     elif isinstance(obj, ENTITY_TYPE):
         if isinstance(obj, TENSOR_TYPE):
-            if options.dataframe.mode.use_inf_as_na:
-                return ~mt.isfinite(obj)
-            else:
-                return mt.isnan(obj)
+            return mt.isnan(obj)
         else:
-            op = DataFrameCheckNA(
-                positive=True, use_inf_as_na=options.dataframe.mode.use_inf_as_na
-            )
+            op = DataFrameCheckNA(positive=True)
             return op(obj)
     else:
         return _from_pandas(pd.isna(obj))
@@ -279,14 +260,9 @@ def notna(obj):
         raise NotImplementedError("isna is not defined for MultiIndex")
     elif isinstance(obj, ENTITY_TYPE):
         if isinstance(obj, TENSOR_TYPE):
-            if options.dataframe.mode.use_inf_as_na:
-                return mt.isfinite(obj)
-            else:
-                return ~mt.isnan(obj)
+            return ~mt.isnan(obj)
         else:
-            op = DataFrameCheckNA(
-                positive=False, use_inf_as_na=options.dataframe.mode.use_inf_as_na
-            )
+            op = DataFrameCheckNA(positive=False)
             return op(obj)
     else:
         return _from_pandas(pd.notna(obj))
