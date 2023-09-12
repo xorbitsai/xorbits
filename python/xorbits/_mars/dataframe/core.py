@@ -955,7 +955,7 @@ class IndexData(HasShapeTileableData, _ToPandasMixin):
         return self._to_str(representation=True)
 
     def _to_arr(self):
-        if len(self._executed_sessions) == 0:
+        if len(self._executed_sessions) == 0:  # pragma: no cover
             raise NotImplementedError
 
         data = self.fetch(session=self._executed_sessions[-1])
@@ -1425,7 +1425,7 @@ class BaseSeriesData(HasShapeTileableData, _ToPandasMixin):
         return self._to_str(representation=False)
 
     def _to_arr(self):
-        if len(self._executed_sessions) == 0:
+        if len(self._executed_sessions) == 0:  # pragma: no cover
             raise NotImplementedError
 
         data = self.fetch(session=self._executed_sessions[-1])
