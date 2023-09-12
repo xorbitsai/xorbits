@@ -173,7 +173,6 @@ class DataFrameSetitem(DataFrameOperand, DataFrameOperandMixin):
         in_df = op.inputs[0]
         result_chunks = []
 
-        # index_value = parse_index(in_df.index)
         for chk in in_df.chunks:
             new_op = op.copy().reset_key()
             new_op.output_types = [OutputType.series]
