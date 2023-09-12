@@ -68,14 +68,20 @@ class SchedulingWorkerService(AbstractService):
         await mo.create_actor(
             StageMonitorActor,
             kill_timeout={
-                SubtaskStage.PREPARE_DATA: stage_monitor_config("prepare_data_timeout"),
-                SubtaskStage.REQUEST_QUOTA: stage_monitor_config(
+                SubtaskStage.PREPARE_DATA: stage_monitor_config.get(
+                    "prepare_data_timeout"
+                ),
+                SubtaskStage.REQUEST_QUOTA: stage_monitor_config.get(
                     "request_quota_timeout"
                 ),
-                SubtaskStage.ACQUIRE_SLOT: stage_monitor_config("acquire_slot_timeout"),
-                SubtaskStage.EXECUTE: stage_monitor_config("execution_timeout"),
-                SubtaskStage.RELEASE_SLOT: stage_monitor_config("release_slot_timeout"),
-                SubtaskStage.FINISH: stage_monitor_config("finish_timeout"),
+                SubtaskStage.ACQUIRE_SLOT: stage_monitor_config.get(
+                    "acquire_slot_timeout"
+                ),
+                SubtaskStage.EXECUTE: stage_monitor_config.get("execution_timeout"),
+                SubtaskStage.RELEASE_SLOT: stage_monitor_config.get(
+                    "release_slot_timeout"
+                ),
+                SubtaskStage.FINISH: stage_monitor_config.get("finish_timeout"),
             },
             uid=StageMonitorActor.default_uid(),
             address=address,
