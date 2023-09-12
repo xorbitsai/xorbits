@@ -56,6 +56,13 @@ scheduling:
     # Max number of concurrent speculative run for a subtask.
     max_concurrent_run: 3
   subtask_cancel_timeout: 5
+  stage_monitor:
+    prepare_data_timeout: 300
+    request_quota_timeout: 300
+    acquire_slot_timeout: 300
+    execution_timeout: 300
+    release_slot_timeout: 300
+    finish_timeout: 300
 metrics:
   backend: console
   # If backend is prometheus, then we can add prometheus config as follows:

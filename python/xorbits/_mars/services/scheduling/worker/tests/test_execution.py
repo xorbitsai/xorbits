@@ -50,7 +50,7 @@ from ....meta import MockMetaAPI, MockWorkerMetaAPI
 from ....session import MockSessionAPI
 from ....storage import MockStorageAPI
 from ....storage.handler import StorageHandlerActor
-from ....subtask import MockSubtaskAPI, Subtask, SubtaskStage, SubtaskStatus
+from ....subtask import MockSubtaskAPI, Subtask, SubtaskStatus
 from ....task.supervisor.manager import TaskManagerActor
 from ....task.task_info_collector import TaskInfoCollectorActor
 from ...supervisor import GlobalResourceManagerActor
@@ -626,7 +626,7 @@ def test_fetch_data_from_both_cpu_and_gpu(data_type, chunked, setup_gpu):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
-async def test_status_monitor_actor(actor_pool):
+async def test_stage_monitor_actor(actor_pool):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
     subtask_id = f"test_subtask_{uuid.uuid4()}"
     subtask = Subtask(
@@ -642,10 +642,39 @@ async def test_status_monitor_actor(actor_pool):
     await asyncio.wait_for(
         execution_ref.run_subtask(subtask, "numa-0", pool.external_address), timeout=30
     )
-    for stage in SubtaskStage:
-        stale_tasks = await monitor_ref.get_stale_tasks(stage)
-        assert len(stale_tasks) == 0
+
+    stale_tasks = await monitor_ref.get_all_stale_tasks()
+    assert len(stale_tasks) == 0
 
     # task has been finished
     records = await monitor_ref.get_records()
     assert len(records) == 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
+async def test_terminate_stale_tasks(actor_pool):
+    pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
+
+    def delay_fun(delay):
+        time.sleep(delay)
+        return delay
+
+    remote_result = RemoteFunction(
+        function=delay_fun, function_args=[3600], function_kwargs={}
+    ).new_chunk([])
+    chunk_graph = ChunkGraph([remote_result])
+    chunk_graph.add_node(remote_result)
+
+    subtask = Subtask(
+        f"test_subtask_{uuid.uuid4()}",
+        session_id=session_id,
+        task_id=f"test_task_{uuid.uuid4()}",
+        chunk_graph=chunk_graph,
+    )
+    aiotask = asyncio.create_task(
+        execution_ref.run_subtask(subtask, "numa-0", pool.external_address)
+    )
+
+    r = await asyncio.wait_for(aiotask, timeout=600)
+    assert r.status == SubtaskStatus.cancelled
