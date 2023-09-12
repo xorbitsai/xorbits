@@ -414,5 +414,8 @@ def dataframe_setitem(df, col, value):
 
 
 def series_setitem(series, index, value):
+    """
+    Currently only supports series whose indexes contain `index`
+    """
     op = DataFrameSetitem(target=series, indexes=index, value=value)
     return op(series, value)
