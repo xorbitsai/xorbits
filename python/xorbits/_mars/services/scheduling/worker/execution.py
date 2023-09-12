@@ -19,9 +19,10 @@ import logging
 import operator
 import pprint
 import sys
+import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import xoscar as mo
 from xoscar.errors import ServerClosed, XoscarError
@@ -37,12 +38,42 @@ from ....utils import dataslots, get_chunk_key_to_data_keys, wrap_exception
 from ...cluster import ClusterAPI
 from ...meta import MetaAPI
 from ...storage import StorageAPI
-from ...subtask import Subtask, SubtaskAPI, SubtaskResult, SubtaskStatus
+from ...subtask import Subtask, SubtaskAPI, SubtaskResult, SubtaskStage, SubtaskStatus
 from ...task.task_info_collector import TaskInfoCollector
 from .quota import QuotaActor
 from .workerslot import BandSlotManagerActor
 
 logger = logging.getLogger(__name__)
+
+
+class StageMonitorActor(mo.Actor):
+    def __init__(self):
+        self._records = dict()
+
+    def report_stage(self, keys: Tuple[str, str], stage: SubtaskStage):
+        if keys not in self._records:
+            self._records[keys] = {
+                "history": [],
+            }
+        if stage == SubtaskStage.FINISH:
+            self._records.pop(keys)
+            return
+        self._records[keys]["history"].append((time.time(), stage))
+
+    async def get_stale_tasks(self, status: SubtaskStage, timeout: int = 5):
+        cur_timestamp = time.time()
+        stale_tasks_keys = []
+        for k, v in self._records.items():
+            if (
+                cur_timestamp - v["history"][-1][0] >= timeout
+                and v["history"][-1][1] == status
+            ):
+                stale_tasks_keys.append(k)
+        return stale_tasks_keys
+
+    async def get_records(self):
+        return self._records
+
 
 # the default times to run subtask.
 DEFAULT_SUBTASK_MAX_RETRIES = 0
@@ -168,9 +199,16 @@ class SubtaskExecutionActor(mo.StatelessActor):
             "The count of finished subtasks of the current band.",
             ("band",),
         )
+        self._stat_monitor_ref = None
 
     async def __post_create__(self):
         self._cluster_api = await ClusterAPI.create(self.address)
+        self._stat_monitor_ref = await mo.actor_ref(
+            uid=StageMonitorActor.default_uid(), address=self.address
+        )
+
+    async def _get_stat_monitor_ref(self) -> mo.ActorRefType[StageMonitorActor]:
+        return await mo.actor_ref(StageMonitorActor.default_uid(), address=self.address)
 
     @alru_cache(cache_exceptions=False)
     async def _get_slot_manager_ref(
@@ -376,6 +414,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
                         band_name,
                     )
                 )
+                await self._stat_monitor_ref.report_stage(
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.PREPARE_DATA
+                )
                 await asyncio.wait_for(
                     prepare_data_task, timeout=self._data_prepare_timeout
                 )
@@ -405,6 +446,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         except:  # noqa: E722  # pylint: disable=bare-except
             _fill_subtask_result_with_exception(subtask, subtask_info)
         finally:
+            await self._stat_monitor_ref.report_stage(
+                (subtask.session_id, subtask.subtask_id), SubtaskStage.RELEASE_SLOT
+            )
             # make sure new slot usages are uploaded in time
             try:
                 slot_manager_ref = await self._get_slot_manager_ref(band_name)
@@ -429,9 +473,14 @@ class SubtaskExecutionActor(mo.StatelessActor):
             aiotask = None
             slot_id = None
             try:
+                await self._stat_monitor_ref.report_stage(
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.REQUEST_QUOTA
+                )
                 await quota_ref.request_batch_quota(batch_quota_req)
                 self._check_cancelling(subtask_info)
-
+                await self._stat_monitor_ref.report_stage(
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.ACQUIRE_SLOT
+                )
                 slot_id = await slot_manager_ref.acquire_free_slot(
                     (subtask.session_id, subtask.subtask_id)
                 )
@@ -441,6 +490,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
                 subtask_info.result.status = SubtaskStatus.running
                 aiotask = asyncio.create_task(
                     subtask_api.run_subtask_in_slot(band_name, slot_id, subtask)
+                )
+                await self._stat_monitor_ref.report_stage(
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.EXECUTE
                 )
                 return await asyncio.shield(aiotask)
             except asyncio.CancelledError as ex:
@@ -541,6 +593,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         logger.debug(
             "Start to schedule subtask %s on %s.", subtask.subtask_id, self.address
         )
+        await self._stat_monitor_ref.report_stage(
+            (subtask.session_id, subtask.subtask_id), "subtask start"
+        )
         self._submitted_subtask_count.record(1, {"band": self.address})
         with mo.debug.no_message_trace():
             task = asyncio.create_task(
@@ -564,6 +619,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         self._subtask_info.pop(subtask.subtask_id, None)
         self._finished_subtask_count.record(1, {"band": self.address})
         logger.debug("Subtask %s finished with result %s", subtask.subtask_id, result)
+        await self._stat_monitor_ref.report_stage(
+            (subtask.session_id, subtask.subtask_id), SubtaskStage.FINISH
+        )
         return result
 
     async def cancel_subtask(self, subtask_id: str, kill_timeout: Optional[int] = 5):
