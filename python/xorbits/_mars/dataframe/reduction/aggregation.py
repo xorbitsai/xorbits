@@ -98,7 +98,6 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
     axis = AnyField("axis")
     numeric_only = BoolField("numeric_only")
     bool_only = BoolField("bool_only")
-    use_inf_as_na = BoolField("use_inf_as_na")
 
     combine_size = Int32Field("combine_size")
     pre_funcs = ListField("pre_funcs")
@@ -925,45 +924,41 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
     @redirect_custom_log
     @enter_current_session
     def execute(cls, ctx, op: "DataFrameAggregate"):
-        try:
-            pd.set_option("mode.use_inf_as_na", op.use_inf_as_na)
-            if op.stage == OperandStage.map:
-                cls._execute_map(ctx, op)
-            elif op.stage == OperandStage.combine:
-                cls._execute_combine(ctx, op)
-            elif op.stage == OperandStage.agg:
-                cls._execute_agg(ctx, op)
-            elif not _agg_size_as_series and op.raw_func == "size":
-                xp = cp if op.gpu else np
-                ctx[op.outputs[0].key] = xp.array(
-                    ctx[op.inputs[0].key].agg(op.raw_func, axis=op.axis)
-                ).reshape(op.outputs[0].shape)
+        if op.stage == OperandStage.map:
+            cls._execute_map(ctx, op)
+        elif op.stage == OperandStage.combine:
+            cls._execute_combine(ctx, op)
+        elif op.stage == OperandStage.agg:
+            cls._execute_agg(ctx, op)
+        elif not _agg_size_as_series and op.raw_func == "size":
+            xp = cp if op.gpu else np
+            ctx[op.outputs[0].key] = xp.array(
+                ctx[op.inputs[0].key].agg(op.raw_func, axis=op.axis)
+            ).reshape(op.outputs[0].shape)
+        else:
+            xp = cp if op.gpu else np
+            in_obj = op.inputs[0]
+            in_data = ctx[in_obj.key]
+            in_data = cls._select_dtypes(in_data, op)
+            if isinstance(in_obj, INDEX_CHUNK_TYPE):
+                result = op.func[0](in_data)
+            elif (
+                op.output_types[0] == OutputType.scalar
+                and in_data.shape == (0,)
+                and callable(op.func[0])
+            ):
+                result = op.func[0](in_data)
             else:
-                xp = cp if op.gpu else np
-                in_obj = op.inputs[0]
-                in_data = ctx[in_obj.key]
-                in_data = cls._select_dtypes(in_data, op)
-                if isinstance(in_obj, INDEX_CHUNK_TYPE):
-                    result = op.func[0](in_data)
-                elif (
-                    op.output_types[0] == OutputType.scalar
-                    and in_data.shape == (0,)
-                    and callable(op.func[0])
-                ):
-                    result = op.func[0](in_data)
+                if is_cudf(in_data):
+                    result = cls._cudf_agg(op, in_data)
                 else:
-                    if is_cudf(in_data):
-                        result = cls._cudf_agg(op, in_data)
-                    else:
-                        result = in_data.agg(op.raw_func, axis=op.axis)
-                    if op.outputs[0].ndim == 1:
-                        result = result.astype(op.outputs[0].dtype, copy=False)
+                    result = in_data.agg(op.raw_func, axis=op.axis)
+                if op.outputs[0].ndim == 1:
+                    result = result.astype(op.outputs[0].dtype, copy=False)
 
-                if op.output_types[0] == OutputType.tensor:
-                    result = xp.array(result)
-                ctx[op.outputs[0].key] = result
-        finally:
-            pd.reset_option("mode.use_inf_as_na")
+            if op.output_types[0] == OutputType.tensor:
+                result = xp.array(result)
+            ctx[op.outputs[0].key] = result
 
 
 def is_funcs_aggregate(func, func_kw=None, ndim=2):
@@ -1068,7 +1063,6 @@ def normalize_reduction_funcs(op, ndim=None):
 
 def aggregate(df, func=None, axis=0, **kw):
     axis = validate_axis(axis, df)
-    use_inf_as_na = kw.pop("_use_inf_as_na", options.dataframe.mode.use_inf_as_na)
     if (
         df.ndim == 2
         and isinstance(func, dict)
@@ -1107,7 +1101,6 @@ def aggregate(df, func=None, axis=0, **kw):
         combine_size=combine_size,
         numeric_only=numeric_only,
         bool_only=bool_only,
-        use_inf_as_na=use_inf_as_na,
     )
 
     return op(df, output_type=output_type, dtypes=dtypes, index=index)
