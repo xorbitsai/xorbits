@@ -37,7 +37,6 @@ jobs:
         id: build
         shell: bash -el {0}
         run: |
-          pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
           pip install numpy scipy cython asv==0.5.1 coverage
           cd python && pip install -e ".[dev,extra]"
 
