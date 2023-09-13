@@ -64,7 +64,7 @@ class SchedulingWorkerService(AbstractService):
 
         await mo.create_actor(
             StageMonitorActor,
-            kill_timeout=scheduling_config.get("stage_monitor", {}),
+            default_config=scheduling_config.get("stage_monitor", {}),
             uid=StageMonitorActor.default_uid(),
             address=address,
         )

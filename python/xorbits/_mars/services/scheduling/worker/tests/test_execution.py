@@ -163,7 +163,7 @@ class MockTaskInfoCollectorActor(mo.Actor):
 
 @pytest.fixture
 async def actor_pool(request):
-    n_slots, enable_kill = request.param
+    n_slots, enable_kill, enable_stage_check = request.param
     pool = await create_actor_pool(
         "127.0.0.1", labels=[None] + ["numa-0"] * n_slots, n_process=n_slots
     )
@@ -189,6 +189,12 @@ async def actor_pool(request):
         # create monitor actor
         monitor_ref = await mo.create_actor(
             StageMonitorActor,
+            default_config={
+                "enable_check": True,
+                "execution_timeout": 5,
+            }
+            if enable_stage_check
+            else {},
             uid=StageMonitorActor.default_uid(),
             address=pool.external_address,
         )
@@ -253,7 +259,7 @@ async def actor_pool(request):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
+@pytest.mark.parametrize("actor_pool", [(1, True, False)], indirect=True)
 async def test_execute_tensor(actor_pool):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
 
@@ -334,7 +340,7 @@ _cancel_phases = [
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "actor_pool,cancel_phase",
-    [((1, True), phase) for phase in _cancel_phases],
+    [((1, True, False), phase) for phase in _cancel_phases],
     indirect=["actor_pool"],
 )
 async def test_execute_with_cancel(actor_pool, cancel_phase):
@@ -438,7 +444,7 @@ async def test_execute_with_cancel(actor_pool, cancel_phase):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
+@pytest.mark.parametrize("actor_pool", [(1, True, False)], indirect=True)
 async def test_execute_with_pure_deps(actor_pool):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
 
@@ -519,7 +525,7 @@ def test_estimate_size():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("actor_pool", [(1, False)], indirect=True)
+@pytest.mark.parametrize("actor_pool", [(1, False, False)], indirect=True)
 async def test_cancel_without_kill(actor_pool):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
     executed_file = os.path.join(
@@ -625,7 +631,7 @@ def test_fetch_data_from_both_cpu_and_gpu(data_type, chunked, setup_gpu):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
+@pytest.mark.parametrize("actor_pool", [(1, True, False)], indirect=True)
 async def test_stage_monitor_actor(actor_pool):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
     subtask_id = f"test_subtask_{uuid.uuid4()}"
@@ -652,7 +658,7 @@ async def test_stage_monitor_actor(actor_pool):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("actor_pool", [(1, True)], indirect=True)
+@pytest.mark.parametrize("actor_pool", [(1, True, True)], indirect=True)
 async def test_terminate_stale_tasks(actor_pool):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
 
@@ -672,9 +678,12 @@ async def test_terminate_stale_tasks(actor_pool):
         task_id=f"test_task_{uuid.uuid4()}",
         chunk_graph=chunk_graph,
     )
-    aiotask = asyncio.create_task(
-        execution_ref.run_subtask(subtask, "numa-0", pool.external_address)
-    )
 
-    r = await asyncio.wait_for(aiotask, timeout=600)
-    assert r.status == SubtaskStatus.cancelled
+    with Timer() as timer:
+        aiotask = asyncio.create_task(
+            execution_ref.run_subtask(subtask, "numa-0", pool.external_address)
+        )
+
+        r = await asyncio.wait_for(aiotask, timeout=600)
+        assert r.status == SubtaskStatus.cancelled
+    assert timer.duration < 30

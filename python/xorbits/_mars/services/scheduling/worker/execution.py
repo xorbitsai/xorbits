@@ -49,28 +49,35 @@ logger = logging.getLogger(__name__)
 class StageMonitorActor(mo.Actor):
     def __init__(
         self,
-        kill_timeout: dict = {},
+        default_config: dict = {},
     ):
         self._records = dict()
-        self._refresh_time = 1
+
+        self._enable_check = default_config.get("enable_check", False)
+        self._refresh_time = default_config.get("refresh_time", 1)
         self._kill_timeout = {
-            SubtaskStage.PREPARE_DATA: kill_timeout.get("prepare_data_timeout", 300),
-            SubtaskStage.REQUEST_QUOTA: kill_timeout.get("request_quota_timeout", 300),
-            SubtaskStage.ACQUIRE_SLOT: kill_timeout.get("acquire_slot_timeout", 300),
-            SubtaskStage.EXECUTE: kill_timeout.get("execution_timeout", 300),
-            SubtaskStage.RELEASE_SLOT: kill_timeout.get("release_slot_timeout", 300),
-            SubtaskStage.FINISH: kill_timeout.get("finish_timeout", 300),
+            SubtaskStage.PREPARE_DATA: default_config.get("prepare_data_timeout", 300),
+            SubtaskStage.REQUEST_QUOTA: default_config.get(
+                "request_quota_timeout", 300
+            ),
+            SubtaskStage.ACQUIRE_SLOT: default_config.get("acquire_slot_timeout", 300),
+            SubtaskStage.EXECUTE: default_config.get("execution_timeout", 300),
+            SubtaskStage.RELEASE_SLOT: default_config.get("release_slot_timeout", 300),
+            SubtaskStage.FINISH: default_config.get("finish_timeout", 300),
         }
+        self._check_task = None
 
     async def __post_create__(self):
         await super().__post_create__()
-
-        self._stat_refresh_task = self.ref().check_subtasks.tell_delay(
-            delay=self._refresh_time
-        )
+        if self._enable_check:
+            self._check_task = self.ref().check_subtasks.tell_delay(
+                delay=self._refresh_time
+            )
 
     async def __pre_destroy__(self):
-        self._stat_refresh_task.cancel()
+        if self._enable_check:
+            self._check_task.cancel()
+        await super().__pre_destroy__()
 
     async def check_subtasks(self):
         execution_ref = await mo.actor_ref(
@@ -90,7 +97,7 @@ class StageMonitorActor(mo.Actor):
             except Exception as e:
                 logger.error(e)
 
-        self._stat_refresh_task = self.ref().check_subtasks.tell_delay(
+        self._check_task = self.ref().check_subtasks.tell_delay(
             delay=self._refresh_time
         )
 
