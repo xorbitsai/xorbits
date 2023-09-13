@@ -17,7 +17,6 @@ import xoscar as mo
 
 from ....utils import calc_size_by_str
 from ...core import AbstractService
-from ...subtask import SubtaskStage
 from .execution import (
     DEFAULT_SUBTASK_MAX_RETRIES,
     StageMonitorActor,
@@ -63,26 +62,9 @@ class SchedulingWorkerService(AbstractService):
         )
         data_prepare_timeout = scheduling_config.get("data_prepare_timeout", 600)
 
-        stage_monitor_config = scheduling_config.get("stage_monitor")
-
         await mo.create_actor(
             StageMonitorActor,
-            kill_timeout={
-                SubtaskStage.PREPARE_DATA: stage_monitor_config.get(
-                    "prepare_data_timeout"
-                ),
-                SubtaskStage.REQUEST_QUOTA: stage_monitor_config.get(
-                    "request_quota_timeout"
-                ),
-                SubtaskStage.ACQUIRE_SLOT: stage_monitor_config.get(
-                    "acquire_slot_timeout"
-                ),
-                SubtaskStage.EXECUTE: stage_monitor_config.get("execution_timeout"),
-                SubtaskStage.RELEASE_SLOT: stage_monitor_config.get(
-                    "release_slot_timeout"
-                ),
-                SubtaskStage.FINISH: stage_monitor_config.get("finish_timeout"),
-            },
+            kill_timeout=scheduling_config.get("stage_monitor", {}),
             uid=StageMonitorActor.default_uid(),
             address=address,
         )

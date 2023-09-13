@@ -49,18 +49,18 @@ logger = logging.getLogger(__name__)
 class StageMonitorActor(mo.Actor):
     def __init__(
         self,
-        kill_timeout: dict = {
-            SubtaskStage.PREPARE_DATA: 300,
-            SubtaskStage.REQUEST_QUOTA: 300,
-            SubtaskStage.ACQUIRE_SLOT: 300,
-            SubtaskStage.EXECUTE: 3,
-            SubtaskStage.RELEASE_SLOT: 300,
-            SubtaskStage.FINISH: 300,
-        },
+        kill_timeout: dict = {},
     ):
         self._records = dict()
         self._refresh_time = 1
-        self._kill_timeout = kill_timeout
+        self._kill_timeout = {
+            SubtaskStage.PREPARE_DATA: kill_timeout.get("prepare_data_timeout", 300),
+            SubtaskStage.REQUEST_QUOTA: kill_timeout.get("request_quota_timeout", 300),
+            SubtaskStage.ACQUIRE_SLOT: kill_timeout.get("acquire_slot_timeout", 300),
+            SubtaskStage.EXECUTE: kill_timeout.get("execution_timeout", 300),
+            SubtaskStage.RELEASE_SLOT: kill_timeout.get("release_slot_timeout", 300),
+            SubtaskStage.FINISH: kill_timeout.get("finish_timeout", 300),
+        }
 
     async def __post_create__(self):
         await super().__post_create__()
