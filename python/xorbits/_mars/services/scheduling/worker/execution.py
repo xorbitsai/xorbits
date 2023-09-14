@@ -49,21 +49,28 @@ logger = logging.getLogger(__name__)
 class StageMonitorActor(mo.Actor):
     def __init__(
         self,
-        default_config: dict = {},
+        monitoring_config: Dict,
     ):
+        print(__name__)
         self._records = dict()
 
-        self._enable_check = default_config.get("enable_check", False)
-        self._refresh_time = default_config.get("refresh_time", 1)
+        self._enable_check = monitoring_config.get("enable_check", False)
+        self._refresh_time = monitoring_config.get("refresh_time", 1)
         self._kill_timeout = {
-            SubtaskStage.PREPARE_DATA: default_config.get("prepare_data_timeout", 300),
-            SubtaskStage.REQUEST_QUOTA: default_config.get(
+            SubtaskStage.PREPARE_DATA: monitoring_config.get(
+                "prepare_data_timeout", 300
+            ),
+            SubtaskStage.REQUEST_QUOTA: monitoring_config.get(
                 "request_quota_timeout", 300
             ),
-            SubtaskStage.ACQUIRE_SLOT: default_config.get("acquire_slot_timeout", 300),
-            SubtaskStage.EXECUTE: default_config.get("execution_timeout", 300),
-            SubtaskStage.RELEASE_SLOT: default_config.get("release_slot_timeout", 300),
-            SubtaskStage.FINISH: default_config.get("finish_timeout", 300),
+            SubtaskStage.ACQUIRE_SLOT: monitoring_config.get(
+                "acquire_slot_timeout", 300
+            ),
+            SubtaskStage.EXECUTE: monitoring_config.get("execution_timeout", 300),
+            SubtaskStage.RELEASE_SLOT: monitoring_config.get(
+                "release_slot_timeout", 300
+            ),
+            SubtaskStage.FINISH: monitoring_config.get("finish_timeout", 300),
         }
         self._check_task = None
 
@@ -80,20 +87,29 @@ class StageMonitorActor(mo.Actor):
         await super().__pre_destroy__()
 
     async def check_subtasks(self):
-        execution_ref = await mo.actor_ref(
-            uid=SubtaskExecutionActor.default_uid(), address=self.address
-        )
-
         stale_tasks = await self.get_all_stale_tasks()
         for subtask_key in stale_tasks:
-            _, subtask_id = subtask_key
-
+            session_id, subtask_id = subtask_key
+            execution_ref = await mo.actor_ref(
+                uid=SubtaskExecutionActor.default_uid(), address=self.address
+            )
             try:
-                await asyncio.wait_for(
-                    execution_ref.cancel_subtask(subtask_id, kill_timeout=5),
-                    timeout=10,
-                )
-                logger.info(f"Subtask ({subtask_id} is cancelled for timeout)")
+                # 1. use wait_for
+                # await asyncio.wait_for(
+                #     execution_ref.cancel_subtask(subtask_id, kill_timeout=1),
+                #     timeout=5,
+                # )
+
+                # 2. use TaskAPI
+                # from mars.services.task import TaskAPI
+                # subtask = self._records[subtask_key]['subtask']
+                # task_api = await TaskAPI.create(session_id, self._records[subtask_key]['supervisor_address'])
+                # await task_api.cancel_task(subtask.task_id)
+
+                # 3， use cancel_subtask
+                await execution_ref.cancel_subtask(subtask_id, kill_timeout=1)
+
+                logger.error(f"Subtask ({subtask_id} is cancelled for timeout)")
             except Exception as e:
                 logger.error(e)
 
@@ -110,12 +126,16 @@ class StageMonitorActor(mo.Actor):
                 stale_tasks_keys.append(k)
         return stale_tasks_keys
 
-    async def register_subtask(self, keys: Tuple[str, str]):
+    async def register_subtask(self, subtask: Subtask, supervisor_address: str):
+        keys = (subtask.session_id, subtask.subtask_id)
         self._records[keys] = {
+            "subtask": subtask,
             "history": [],
+            "supervisor_address": supervisor_address,
         }
 
     async def report_stage(self, keys: Tuple[str, str], stage: SubtaskStage):
+        print(stage)
         if stage == SubtaskStage.FINISH:
             self._records.pop(keys)
             return
@@ -647,9 +667,7 @@ class SubtaskExecutionActor(mo.StatelessActor):
             "Start to schedule subtask %s on %s.", subtask.subtask_id, self.address
         )
 
-        await self._stat_monitor_ref.register_subtask(
-            (subtask.session_id, subtask.subtask_id)
-        )
+        await self._stat_monitor_ref.register_subtask(subtask, supervisor_address)
 
         self._submitted_subtask_count.record(1, {"band": self.address})
         with mo.debug.no_message_trace():

@@ -189,7 +189,7 @@ async def actor_pool(request):
         # create monitor actor
         monitor_ref = await mo.create_actor(
             StageMonitorActor,
-            default_config={
+            monitoring_config={
                 "enable_check": True,
                 "execution_timeout": 5,
             }
@@ -686,4 +686,4 @@ async def test_terminate_stale_tasks(actor_pool):
 
         r = await asyncio.wait_for(aiotask, timeout=600)
         assert r.status == SubtaskStatus.cancelled
-    assert timer.duration < 30
+    assert 5 < timer.duration < 30
