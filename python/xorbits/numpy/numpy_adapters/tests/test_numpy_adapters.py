@@ -13,9 +13,11 @@
 # limitations under the License.
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from .... import numpy as xnp
+from .... import pandas as xpd
 
 
 @pytest.mark.parametrize(
@@ -216,3 +218,13 @@ def test_docstring():
     assert docstring is not None and docstring.endswith(
         "This docstring was copied from numpy.ndarray."
     )
+
+
+def test_tensor_tolist(setup):
+    data = np.random.rand(15, 25)
+    tensor = xnp.array(data)
+    assert data.tolist() == tensor.tolist()
+
+    expected = pd.unique(pd.Series([i for i in range(100)])).tolist()
+    result = xpd.unique(xpd.Series([i for i in range(100)])).tolist()
+    assert expected == result
