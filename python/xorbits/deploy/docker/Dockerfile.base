@@ -48,9 +48,11 @@ RUN /opt/conda/bin/conda install \
     jaxlib \
     uvloop \
     libnuma \
+  && pip install -U pip \
   && pip install -U \
     xoscar \
     cloudpickle \
+    azure-storage-blob>=12.18.1 \
     adlfs \
     fsspec>=2022.7.1,!=2022.8.0 \
     s3fs \
