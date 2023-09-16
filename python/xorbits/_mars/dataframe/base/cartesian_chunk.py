@@ -39,58 +39,21 @@ from ..utils import (
 class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
     _op_type_ = opcodes.CARTESIAN_CHUNK
 
-    _left = KeyField("left")
-    _right = KeyField("right")
-    _func = FunctionField("func")
-    _args = TupleField("args")
-    _kwargs = DictField("kwargs")
+    left = KeyField("left")
+    right = KeyField("right")
+    func = FunctionField("func")
+    args = TupleField("args")
+    kwargs = DictField("kwargs")
 
-    def __init__(
-        self,
-        left=None,
-        right=None,
-        func=None,
-        args=None,
-        kwargs=None,
-        output_types=None,
-        **kw
-    ):
-        super().__init__(
-            _left=left,
-            _right=right,
-            _func=func,
-            _args=args,
-            _kwargs=kwargs,
-            _output_types=output_types,
-            **kw
-        )
+    def __init__(self, output_types=None, **kw):
+        super().__init__(_output_types=output_types, **kw)
         if self.memory_scale is None:
             self.memory_scale = 2.0
 
-    @property
-    def left(self):
-        return self._left
-
-    @property
-    def right(self):
-        return self._right
-
-    @property
-    def func(self):
-        return self._func
-
-    @property
-    def args(self):
-        return self._args
-
-    @property
-    def kwargs(self):
-        return self._kwargs
-
     def _set_inputs(self, inputs):
         super()._set_inputs(inputs)
-        self._left = self._inputs[0]
-        self._right = self._inputs[1]
+        self.left = self.inputs[0]
+        self.right = self.inputs[1]
 
     @staticmethod
     def _build_test_obj(obj):
@@ -103,7 +66,7 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
     def __call__(self, left, right, index=None, dtypes=None):
         test_left = self._build_test_obj(left)
         test_right = self._build_test_obj(right)
-        output_type = self._output_types[0] if self._output_types else None
+        output_type = self.output_types[0] if self.output_types else None
 
         if output_type == OutputType.df_or_series:
             return self.new_df_or_series([left, right])
@@ -111,7 +74,7 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
         # try run to infer meta
         try:
             with np.errstate(all="ignore"), quiet_stdio():
-                obj = self._func(test_left, test_right, *self._args, **self._kwargs)
+                obj = self.func(test_left, test_right, *self.args, **self.kwargs)
         except:  # noqa: E722  # nosec  # pylint: disable=bare-except
             if output_type == OutputType.series:
                 obj = pd.Series([], dtype=np.dtype(object))
@@ -126,11 +89,11 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
                 )
 
         if getattr(obj, "ndim", 0) == 1 or output_type == OutputType.series:
-            shape = self._kwargs.pop("shape", (np.nan,))
+            shape = self.kwargs.pop("shape", (np.nan,))
             if index is None:
                 index = obj.index
             index_value = parse_index(
-                index, left, right, self._func, self._args, self._kwargs
+                index, left, right, self.func, self.args, self.kwargs
             )
             return self.new_series(
                 [left, right],
@@ -147,7 +110,7 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
             if index is None:
                 index = obj.index
             index_value = parse_index(
-                index, left, right, self._func, self._args, self._kwargs
+                index, left, right, self.func, self.args, self.kwargs
             )
             return self.new_dataframe(
                 [left, right],
