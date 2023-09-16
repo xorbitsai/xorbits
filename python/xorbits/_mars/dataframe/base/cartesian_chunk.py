@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 import numpy as np
 import pandas as pd
 
@@ -22,11 +24,13 @@ from ...core.custom_log import redirect_custom_log
 from ...serialization.serializables import (
     DictField,
     FunctionField,
+    Int32Field,
     KeyField,
+    StringField,
     TupleField,
 )
 from ...utils import enter_current_session, has_unknown_shape, quiet_stdio
-from ..operands import DataFrameOperand, DataFrameOperandMixin, OutputType
+from ..operands import DataFrameOperand, OutputType
 from ..utils import (
     build_df,
     build_empty_df,
@@ -34,9 +38,12 @@ from ..utils import (
     parse_index,
     validate_output_types,
 )
+from .core import DataFrameAutoMergeMixin
+
+logger = logging.getLogger(__name__)
 
 
-class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
+class DataFrameCartesianChunk(DataFrameOperand, DataFrameAutoMergeMixin):
     _op_type_ = opcodes.CARTESIAN_CHUNK
 
     left = KeyField("left")
@@ -44,6 +51,8 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
     func = FunctionField("func")
     args = TupleField("args")
     kwargs = DictField("kwargs")
+    auto_merge = StringField("auto_merge")
+    auto_merge_threshold = Int32Field("auto_merge_threshold")
 
     def __init__(self, output_types=None, **kw):
         super().__init__(_output_types=output_types, **kw)
@@ -127,6 +136,13 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
         out = op.outputs[0]
         out_type = op.output_types[0]
 
+        auto_merge_threshold = op.auto_merge_threshold
+        auto_merge_before, auto_merge_after = cls._get_auto_merge_options(op.auto_merge)
+
+        yield from cls._merge_before(
+            op, auto_merge_before, auto_merge_threshold, left, right, logger
+        )
+
         if left.ndim == 2 and left.chunk_shape[1] > 1:
             if has_unknown_shape(left):
                 yield
@@ -203,7 +219,12 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
         params["nsplits"] = tuple(tuple(ns) for ns in nsplits) if nsplits else nsplits
         params["chunks"] = out_chunks
         new_op = op.copy()
-        return new_op.new_tileables(op.inputs, kws=[params])
+        ret = new_op.new_tileables(op.inputs, kws=[params])
+
+        ret = yield from cls._merge_after(
+            op, auto_merge_after, auto_merge_threshold, ret, logger
+        )
+        return ret
 
     @classmethod
     @redirect_custom_log
@@ -213,7 +234,16 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameOperandMixin):
         ctx[op.outputs[0].key] = op.func(left, right, *op.args, **(op.kwargs or dict()))
 
 
-def cartesian_chunk(left, right, func, skip_infer=False, args=(), **kwargs):
+def cartesian_chunk(
+    left,
+    right,
+    func,
+    skip_infer=False,
+    args=(),
+    auto_merge: str = "both",
+    auto_merge_threshold: int = 8,
+    **kwargs,
+):
     output_type = kwargs.pop("output_type", None)
     output_types = kwargs.pop("output_types", None)
     object_type = kwargs.pop("object_type", None)
@@ -228,6 +258,10 @@ def cartesian_chunk(left, right, func, skip_infer=False, args=(), **kwargs):
     index = kwargs.pop("index", None)
     dtypes = kwargs.pop("dtypes", None)
     memory_scale = kwargs.pop("memory_scale", None)
+    if auto_merge not in ["both", "none", "before", "after"]:  # pragma: no cover
+        raise ValueError(
+            f"auto_merge can only be `both`, `none`, `before` or `after`, got {auto_merge}"
+        )
 
     op = DataFrameCartesianChunk(
         left=left,
@@ -237,5 +271,7 @@ def cartesian_chunk(left, right, func, skip_infer=False, args=(), **kwargs):
         kwargs=kwargs,
         output_types=output_types,
         memory_scale=memory_scale,
+        auto_merge=auto_merge,
+        auto_merge_threshold=auto_merge_threshold,
     )
     return op(left, right, index=index, dtypes=dtypes)
