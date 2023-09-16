@@ -68,7 +68,7 @@ DEFAULT_BLOOM_FILTER_ON = "large"
 cudf = lazy_import("cudf")
 
 
-class DataFrameMergeAlign(MapReduceOperand, DataFrameAutoMergeMixin):
+class DataFrameMergeAlign(MapReduceOperand, DataFrameOperandMixin):
     _op_type_ = OperandDef.DATAFRAME_SHUFFLE_MERGE_ALIGN
 
     index_shuffle_size = Int32Field("index_shuffle_size")
@@ -174,7 +174,7 @@ class MergeMethod(Enum):
     shuffle = 2
 
 
-class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
+class DataFrameMerge(DataFrameOperand, DataFrameAutoMergeMixin):
     _op_type_ = OperandDef.DATAFRAME_MERGE
 
     how = StringField("how")
