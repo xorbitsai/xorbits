@@ -39,6 +39,7 @@ from ...serialization.serializables import (
 from ...typing import TileableType
 from ...utils import has_unknown_shape, lazy_import
 from ..base.bloom_filter import filter_by_bloom_filter
+from ..base.core import DataFrameAutoMergeMixin
 from ..core import DataFrame, DataFrameChunk, Series
 from ..operands import DataFrameOperand, DataFrameOperandMixin, DataFrameShuffleProxy
 from ..utils import (
@@ -173,7 +174,7 @@ class MergeMethod(Enum):
     shuffle = 2
 
 
-class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
+class DataFrameMerge(DataFrameOperand, DataFrameAutoMergeMixin):
     _op_type_ = OperandDef.DATAFRAME_MERGE
 
     how = StringField("how")
@@ -669,18 +670,6 @@ class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
         return how in [big_side, "inner"] and np.log2(big_chunk_size) > small_chunk_size
 
     @classmethod
-    def _get_auto_merge_options(cls, auto_merge: str) -> Tuple[bool, bool]:
-        if auto_merge == "both":
-            return True, True
-        elif auto_merge == "none":
-            return False, False
-        elif auto_merge == "before":
-            return True, False
-        else:
-            assert auto_merge == "after"
-            return False, True
-
-    @classmethod
     def _choose_merge_method(
         cls, op: "DataFrameMerge", left: TileableType, right: TileableType
     ):
@@ -755,36 +744,9 @@ class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
         auto_merge_threshold = op.auto_merge_threshold
         auto_merge_before, auto_merge_after = cls._get_auto_merge_options(op.auto_merge)
 
-        if (
-            auto_merge_before
-            and len(left.chunks) + len(right.chunks) > auto_merge_threshold
-        ):
-            yield TileStatus([left, right] + left.chunks + right.chunks, progress=0.2)
-            left_chunk_size = len(left.chunks)
-            right_chunk_size = len(right.chunks)
-            left = auto_merge_chunks(ctx, left)
-            right = auto_merge_chunks(ctx, right)
-            logger.info(
-                "Auto merge before %s, left data shape: %s, chunk count: %s -> %s, "
-                "right data shape: %s, chunk count: %s -> %s.",
-                op,
-                left.shape,
-                left_chunk_size,
-                len(left.chunks),
-                right.shape,
-                right_chunk_size,
-                len(right.chunks),
-            )
-        else:
-            logger.info(
-                "Skip auto merge before %s, left data shape: %s, chunk count: %d, "
-                "right data shape: %s, chunk count: %d.",
-                op,
-                left.shape,
-                len(left.chunks),
-                right.shape,
-                len(right.chunks),
-            )
+        yield from cls._merge_before(
+            op, auto_merge_before, auto_merge_threshold, left, right, logger
+        )
 
         method = cls._choose_merge_method(op, left, right)
         if cls._if_apply_bloom_filter(method, op, left, right):
@@ -818,33 +780,14 @@ class DataFrameMerge(DataFrameOperand, DataFrameOperandMixin):
             assert method == MergeMethod.shuffle
             ret = cls._tile_shuffle(op, left, right)
 
-        if (
-            op.how == "inner"
-            and auto_merge_after
-            and len(ret[0].chunks) > auto_merge_threshold
-        ):
+        if op.how == "inner":
             # if how=="inner", output data size will reduce greatly with high probability，
             # use auto_merge_chunks to combine small chunks.
-            yield TileStatus(
-                ret[0].chunks, progress=0.8
-            )  # trigger execution for chunks
-            merged = auto_merge_chunks(get_context(), ret[0])
-            logger.info(
-                "Auto merge after %s, data shape: %s, chunk count: %s -> %s.",
-                op,
-                merged.shape,
-                len(ret[0].chunks),
-                len(merged.chunks),
+            ret = yield from cls._merge_after(
+                op, auto_merge_after, auto_merge_threshold, ret, logger
             )
-            return [merged]
-        else:
-            logger.info(
-                "Skip auto merge after %s, data shape: %s, chunk count: %d.",
-                op,
-                ret[0].shape,
-                len(ret[0].chunks),
-            )
-            return ret
+
+        return ret
 
     @classmethod
     def execute(cls, ctx, op):
