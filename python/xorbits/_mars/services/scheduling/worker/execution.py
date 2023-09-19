@@ -51,7 +51,6 @@ class StageMonitorActor(mo.Actor):
         self,
         monitoring_config: Dict,
     ):
-        print(__name__)
         self._records = dict()
 
         self._enable_check = monitoring_config.get("enable_check", False)
@@ -88,28 +87,10 @@ class StageMonitorActor(mo.Actor):
 
     async def check_subtasks(self):
         stale_tasks = await self.get_all_stale_tasks()
-        for subtask_key in stale_tasks:
-            session_id, subtask_id = subtask_key
-            execution_ref = await mo.actor_ref(
-                uid=SubtaskExecutionActor.default_uid(), address=self.address
-            )
+        for task_key, stage in stale_tasks:
+            session_id, subtask_id = task_key
             try:
-                # 1. use wait_for
-                # await asyncio.wait_for(
-                #     execution_ref.cancel_subtask(subtask_id, kill_timeout=1),
-                #     timeout=5,
-                # )
-
-                # 2. use TaskAPI
-                # from mars.services.task import TaskAPI
-                # subtask = self._records[subtask_key]['subtask']
-                # task_api = await TaskAPI.create(session_id, self._records[subtask_key]['supervisor_address'])
-                # await task_api.cancel_task(subtask.task_id)
-
-                # 3， use cancel_subtask
-                await execution_ref.cancel_subtask(subtask_id, kill_timeout=1)
-
-                logger.error(f"Subtask ({subtask_id} is cancelled for timeout)")
+                logger.warning(f"Subtask ({subtask_id}) is timeout at stage {stage}")
             except Exception as e:
                 logger.error(e)
 
@@ -119,12 +100,12 @@ class StageMonitorActor(mo.Actor):
 
     async def get_all_stale_tasks(self):
         cur_timestamp = time.time()
-        stale_tasks_keys = []
+        stale_tasks = []
         for k, v in self._records.items():
             pre_timestamp, cur_stage = v["history"][-1][0], v["history"][-1][1]
             if cur_timestamp - pre_timestamp >= self._kill_timeout[cur_stage]:
-                stale_tasks_keys.append(k)
-        return stale_tasks_keys
+                stale_tasks.append((k, cur_stage))
+        return stale_tasks
 
     async def register_subtask(self, subtask: Subtask, supervisor_address: str):
         keys = (subtask.session_id, subtask.subtask_id)
@@ -135,7 +116,6 @@ class StageMonitorActor(mo.Actor):
         }
 
     async def report_stage(self, keys: Tuple[str, str], stage: SubtaskStage):
-        print(stage)
         if stage == SubtaskStage.FINISH:
             self._records.pop(keys)
             return

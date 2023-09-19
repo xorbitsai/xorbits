@@ -58,7 +58,7 @@ scheduling:
   subtask_cancel_timeout: 5
   stage_monitor:
     enable_check: false
-    refresh_time: 1
+    refresh_time: 3
     prepare_data_timeout: 300
     request_quota_timeout: 300
     acquire_slot_timeout: 300

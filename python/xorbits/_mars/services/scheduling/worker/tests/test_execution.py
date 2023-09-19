@@ -659,7 +659,7 @@ async def test_stage_monitor_actor(actor_pool):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("actor_pool", [(1, True, True)], indirect=True)
-async def test_terminate_stale_tasks(actor_pool):
+async def test_terminate_stale_tasks(actor_pool, caplog):
     pool, session_id, meta_api, worker_meta_api, storage_api, execution_ref = actor_pool
 
     def delay_fun(delay):
@@ -667,7 +667,7 @@ async def test_terminate_stale_tasks(actor_pool):
         return delay
 
     remote_result = RemoteFunction(
-        function=delay_fun, function_args=[3600], function_kwargs={}
+        function=delay_fun, function_args=[10], function_kwargs={}
     ).new_chunk([])
     chunk_graph = ChunkGraph([remote_result])
     chunk_graph.add_node(remote_result)
@@ -684,6 +684,12 @@ async def test_terminate_stale_tasks(actor_pool):
             execution_ref.run_subtask(subtask, "numa-0", pool.external_address)
         )
 
-        r = await asyncio.wait_for(aiotask, timeout=600)
-        assert r.status == SubtaskStatus.cancelled
-    assert 5 < timer.duration < 30
+        r = await asyncio.wait_for(aiotask, timeout=20)
+        assert r.status == SubtaskStatus.succeeded
+
+    assert 5 < timer.duration < 20
+
+    import re
+
+    match = re.search(r"Subtask.*?\(.*?\).*stage.*", caplog.text)
+    assert match is not None
