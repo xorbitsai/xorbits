@@ -1147,7 +1147,7 @@ def test_agg_with_kwargs(setup, chunk_size):
         {
             "a": rs.choice([1, 3, 8], size=100),
             "b": rs.choice([201.8, 155.7, 95.7], size=100),
-            "c": rs.choice(["foo", "bar", "baz"], size=100),
+            "c": rs.choice([1, np.nan, 3], size=100),
         },
     )
     mdf = md.DataFrame(df, chunk_size=chunk_size)
@@ -1158,3 +1158,15 @@ def test_agg_with_kwargs(setup, chunk_size):
     pd.testing.assert_frame_equal(
         res.execute().fetch(), df.agg(x=("a", "sum"), y=("b", "mean"))
     )
+
+    res = mdf.agg(x=("a", "mean"), y=("c", sum))
+    pd.testing.assert_frame_equal(
+        res.execute().fetch(), df.agg(x=("a", "mean"), y=("c", sum))
+    )
+
+    def g(x):
+        return x.sum() - (x * 3).sum()
+
+    print(df.agg(g=("b", g)))
+    res = mdf.agg(g=("b", g))
+    pd.testing.assert_frame_equal(res.execute().fetch(), df.agg(g=("b", g)))
