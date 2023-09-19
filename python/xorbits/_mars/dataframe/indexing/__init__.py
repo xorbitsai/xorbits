@@ -38,7 +38,7 @@ def _install():
     from .sample import sample
     from .set_axis import df_set_axis, series_set_axis
     from .set_index import set_index
-    from .setitem import dataframe_setitem
+    from .setitem import dataframe_setitem, series_setitem
     from .where import mask, where
 
     for cls in DATAFRAME_TYPE + SERIES_TYPE:
@@ -69,6 +69,7 @@ def _install():
 
     for cls in SERIES_TYPE:
         setattr(cls, "__getitem__", series_getitem)
+        setattr(cls, "__setitem__", series_setitem)
         setattr(cls, "reset_index", series_reset_index)
         setattr(cls, "rename", series_rename)
         setattr(cls, "set_axis", series_set_axis)
