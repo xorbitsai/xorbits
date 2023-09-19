@@ -1167,6 +1167,5 @@ def test_agg_with_kwargs(setup, chunk_size):
     def g(x):
         return x.sum() - (x * 3).sum()
 
-    print(df.agg(g=("b", g)))
     res = mdf.agg(g=("b", g))
     pd.testing.assert_frame_equal(res.execute().fetch(), df.agg(g=("b", g)))
