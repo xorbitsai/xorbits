@@ -18,7 +18,7 @@ import pandas as pd
 
 from ... import opcodes
 from ...core import OutputType
-from ...serialization.serializables import AnyField, DictField, Int64Field, StringField
+from ...serialization.serializables import AnyField, Int64Field, StringField
 from ..operands import DataFrameOperand, DataFrameOperandMixin
 from ..utils import build_empty_df, build_empty_series, parse_index
 
@@ -29,7 +29,6 @@ class GroupByFillOperand(DataFrameOperand, DataFrameOperandMixin):
     value = AnyField("value", default=None)
     method = StringField("method", default=None)
     limit = Int64Field("limit", default=None)
-    downcast = DictField("downcast", default=None)
 
     def _calc_out_dtypes(self, in_groupby):
         mock_groupby = in_groupby.op.build_mock_groupby()
@@ -40,7 +39,6 @@ class GroupByFillOperand(DataFrameOperand, DataFrameOperandMixin):
                 value=self.value,
                 method=self.method,
                 limit=self.limit,
-                downcast=self.downcast,
             )
         else:
             result_df = getattr(mock_groupby, func_name)(limit=self.limit)
@@ -133,7 +131,6 @@ class GroupByFillOperand(DataFrameOperand, DataFrameOperandMixin):
                 value=op.value,
                 method=op.method,
                 limit=op.limit,
-                downcast=op.downcast,
             )
         else:
             result = getattr(in_data, func_name)(limit=op.limit)
@@ -184,7 +181,7 @@ def bfill(groupby, limit=None):
     return op(groupby)
 
 
-def fillna(groupby, value=None, method=None, limit=None, downcast=None):
+def fillna(groupby, value=None, method=None, limit=None):
     """
     Fill NA/NaN values using the specified method
 
@@ -197,11 +194,8 @@ def fillna(groupby, value=None, method=None, limit=None, downcast=None):
     limit:  int, default None
             If method is specified, this is the maximum number of consecutive
             NaN values to forward/backward fill
-    downcast:   dict, default None
-                A dict of item->dtype of what to downcast if possible,
-                or the string ‘infer’ which will try to downcast to an appropriate equal type
 
     return: DataFrame or None
     """
-    op = GroupByFillNa(value=value, method=method, limit=limit, downcast=downcast)
+    op = GroupByFillNa(value=value, method=method, limit=limit)
     return op(groupby)

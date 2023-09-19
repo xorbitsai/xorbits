@@ -57,8 +57,6 @@ def test_fill_na():
     with pytest.raises(ValueError):
         series.fillna(value=df_raw)
     with pytest.raises(NotImplementedError):
-        series.fillna(value=series_raw, downcast="infer")
-    with pytest.raises(NotImplementedError):
         series.ffill(limit=1)
 
     df2 = tile(df.fillna(value_series_raw))
