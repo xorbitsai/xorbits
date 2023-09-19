@@ -114,6 +114,7 @@ class DataFrameReadCSV(
     storage_options = DictField("storage_options")
     merge_small_files = BoolField("merge_small_files")
     merge_small_file_options = DictField("merge_small_file_options")
+    is_http_url = BoolField("is_http_url", None)
 
     def get_columns(self):
         return self.usecols
@@ -151,7 +152,31 @@ class DataFrameReadCSV(
         )
 
     @classmethod
+    def _tile_http_url(cls, op: "DataFrameReadCSV"):
+        out_chunks = []
+        out_df = op.outputs[0]
+        for i, url in enumerate(op.path):
+            chunk_op = op.copy().reset_key()
+            chunk_op.path = url
+            out_chunks.append(
+                chunk_op.new_chunk(None, index=(i, 0), shape=(np.nan, np.nan))
+            )
+        new_op = op.copy()
+        nsplits = ((np.nan,) * len(out_chunks), (np.nan,))
+        return new_op.new_dataframes(
+            None,
+            out_df.shape,
+            dtypes=out_df.dtypes,
+            index_value=out_df.index_value,
+            columns_value=out_df.columns_value,
+            chunks=out_chunks,
+            nsplits=nsplits,
+        )
+
+    @classmethod
     def _tile(cls, op: "DataFrameReadCSV"):
+        if op.is_http_url:
+            return cls._tile_http_url(op)
         if op.compression:
             return cls._tile_compressed(op)
 
@@ -301,7 +326,33 @@ class DataFrameReadCSV(
         return df
 
     @classmethod
+    def _execute_http_url(cls, ctx, op):
+        xdf = cudf if op.gpu else pd
+        out_df = op.outputs[0]
+        csv_kwargs = op.extra_params.copy()
+        if xdf is pd and op.use_arrow_dtype:
+            csv_kwargs.update(arrow_dtype_kwargs())
+        df = xdf.read_csv(
+            op.path,
+            sep=op.sep,
+            names=op.names,
+            header=op.header,
+            index_col=op.index_col,
+            usecols=op.usecols,
+            nrows=op.nrows,
+            compression=op.compression,
+            **csv_kwargs,
+        )
+        if op.keep_usecols_order:
+            df = df[op.usecols]
+        ctx[out_df.key] = df
+
+    @classmethod
     def execute(cls, ctx, op):
+        if op.is_http_url:
+            cls._execute_http_url(ctx, op)
+            return
+
         xdf = cudf if op.gpu else pd
         out_df = op.outputs[0]
         csv_kwargs = op.extra_params.copy()
@@ -330,6 +381,8 @@ class DataFrameReadCSV(
         ctx[out_df.key] = df
 
     def estimate_size(cls, ctx, op):
+        if op.is_http_url:
+            return super().estimate_size(ctx, op)
         phy_size = op.size * (op.memory_scale or 1)
         ctx[op.outputs[0].key] = (phy_size, phy_size * 2)
 
@@ -337,7 +390,10 @@ class DataFrameReadCSV(
         self, index_value=None, columns_value=None, dtypes=None, chunk_bytes=None
     ):
         self._output_types = [OutputType.dataframe]
-        shape = (np.nan, len(dtypes))
+        if dtypes is not None:
+            shape = (np.nan, len(dtypes))
+        else:
+            shape = (np.nan, np.nan)
         return self.new_dataframe(
             None,
             shape,
@@ -657,6 +713,33 @@ def read_csv(
     """
     if use_arrow_dtype is None:
         use_arrow_dtype = options.dataframe.use_arrow_dtype
+
+    single_path = path[0] if isinstance(path, (list, tuple)) else path
+    if isinstance(single_path, str) and (
+        single_path.startswith("http://") or single_path.startswith("https://")
+    ):
+        urls = path if isinstance(path, (list, tuple)) else [path]
+        op = DataFrameReadCSV(
+            path=urls,
+            names=names,
+            sep=sep,
+            header=header,
+            index_col=index_col,
+            usecols=usecols,
+            skiprows=skiprows,
+            compression=compression,
+            gpu=gpu,
+            incremental_index=incremental_index,
+            use_arrow_dtype=use_arrow_dtype,
+            storage_options=storage_options,
+            memory_scale=memory_scale,
+            merge_small_files=merge_small_files,
+            merge_small_file_options=merge_small_file_options,
+            is_http_url=True,
+            **kwargs,
+        )
+        return op()
+
     # infer dtypes and columns
     if isinstance(path, (list, tuple)):
         file_path = path[0]
