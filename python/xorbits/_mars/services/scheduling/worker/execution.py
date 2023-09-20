@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 class StageMonitorActor(mo.Actor):
     def __init__(
         self,
-        monitoring_config: Dict,
+        monitoring_config: Dict = {},
     ):
         self._records = dict()
 
