@@ -364,7 +364,13 @@ class Tileable(Entity):
     def _view(self):
         return super().copy()
 
-    def copy(self: TileableType) -> TileableType:
+    def copy(self: TileableType, **kw) -> TileableType:
+        from ...dataframe import Index
+
+        new_name = None
+        if isinstance(self, Index):
+            new_name = kw.pop("name", None)
+
         new_op = self.op.copy()
         if new_op.create_view:
             # if the operand is a view, make it a copy
@@ -378,6 +384,9 @@ class Tileable(Entity):
         new_outs = new_op.new_tileables(
             self.op.inputs, kws=params, output_limit=len(params)
         )
+        if new_name is not None:
+            for _out in new_outs:
+                _out.name = new_name
         pos = -1
         for i, out in enumerate(self.op.outputs):
             # create a ref to copied one
