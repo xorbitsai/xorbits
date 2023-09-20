@@ -415,6 +415,9 @@ class Tensor(HasShapeTileable):
     def __array__(self, dtype=None):
         return np.asarray(self.to_numpy(), dtype=dtype)
 
+    def tolist(self):
+        return self.to_numpy().tolist()
+
     def __array_function__(self, func, types, args, kwargs):
         from .. import tensor as module
 
