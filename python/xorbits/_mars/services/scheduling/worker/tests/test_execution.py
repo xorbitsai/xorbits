@@ -691,5 +691,5 @@ async def test_terminate_stale_tasks(actor_pool, caplog):
 
     import re
 
-    match = re.search(r"Subtask.*?\(.*?\).*stage.*", caplog.text)
+    match = re.search(r"Subtask\[.*?\].*stage.*", caplog.text)
     assert match is not None
