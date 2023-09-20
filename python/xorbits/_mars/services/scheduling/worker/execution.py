@@ -54,22 +54,14 @@ class StageMonitorActor(mo.Actor):
         self._records = dict()
 
         self._enable_check = monitoring_config.get("enable_check", False)
-        self._refresh_time = monitoring_config.get("refresh_time", 1)
+        self._refresh_time = monitoring_config.get("refresh_time", 3)
         self._kill_timeout = {
-            SubtaskStage.PREPARE_DATA: monitoring_config.get(
-                "prepare_data_timeout", 300
-            ),
-            SubtaskStage.REQUEST_QUOTA: monitoring_config.get(
-                "request_quota_timeout", 300
-            ),
-            SubtaskStage.ACQUIRE_SLOT: monitoring_config.get(
-                "acquire_slot_timeout", 300
-            ),
-            SubtaskStage.EXECUTE: monitoring_config.get("execution_timeout", 300),
-            SubtaskStage.RELEASE_SLOT: monitoring_config.get(
-                "release_slot_timeout", 300
-            ),
-            SubtaskStage.FINISH: monitoring_config.get("finish_timeout", 300),
+            SubtaskStage.PREPARE_DATA: monitoring_config.get("prepare_data_timeout"),
+            SubtaskStage.REQUEST_QUOTA: monitoring_config.get("request_quota_timeout"),
+            SubtaskStage.ACQUIRE_SLOT: monitoring_config.get("acquire_slot_timeout"),
+            SubtaskStage.EXECUTE: monitoring_config.get("execution_timeout"),
+            SubtaskStage.RELEASE_SLOT: monitoring_config.get("release_slot_timeout"),
+            SubtaskStage.FINISH: monitoring_config.get("finish_timeout"),
         }
         self._check_task = None
 
@@ -90,7 +82,12 @@ class StageMonitorActor(mo.Actor):
         for task_key, stage in stale_tasks:
             session_id, subtask_id = task_key
             try:
-                logger.warning(f"Subtask ({subtask_id}) is timeout at stage {stage}")
+                logger.warning(
+                    "Subtask[session_id: %s, subtask_id: %s] is timeout at stage %s",
+                    session_id,
+                    subtask_id,
+                    stage,
+                )
             except Exception as e:
                 logger.error(e)
 
@@ -103,7 +100,10 @@ class StageMonitorActor(mo.Actor):
         stale_tasks = []
         for k, v in self._records.items():
             pre_timestamp, cur_stage = v["history"][-1][0], v["history"][-1][1]
-            if cur_timestamp - pre_timestamp >= self._kill_timeout[cur_stage]:
+            if (
+                self._kill_timeout[cur_stage] is not None
+                and cur_timestamp - pre_timestamp >= self._kill_timeout[cur_stage]
+            ):
                 stale_tasks.append((k, cur_stage))
         return stale_tasks
 

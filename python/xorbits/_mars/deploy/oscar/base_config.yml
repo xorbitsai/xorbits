@@ -62,7 +62,7 @@ scheduling:
     prepare_data_timeout: 300
     request_quota_timeout: 300
     acquire_slot_timeout: 300
-    execution_timeout: 300
+    execution_timeout: null
     release_slot_timeout: 300
     finish_timeout: 300
 metrics:
