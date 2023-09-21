@@ -1729,12 +1729,10 @@ def test_value_counts_execution(setup):
     r = series.value_counts()
     pd.testing.assert_series_equal(r.execute().fetch(), s.value_counts())
 
-    # pandas issue: https://github.com/pandas-dev/pandas/issues/54857
-    if pd.__version__ != "2.1.0":
-        r = series.value_counts(bins=5, normalize=True)
-        pd.testing.assert_series_equal(
-            r.execute().fetch(), s.value_counts(bins=5, normalize=True)
-        )
+    r = series.value_counts(bins=5, normalize=True)
+    pd.testing.assert_series_equal(
+        r.execute().fetch(), s.value_counts(bins=5, normalize=True)
+    )
 
     # test multi chunks
     series = from_pandas_series(s, chunk_size=30)
@@ -1746,11 +1744,10 @@ def test_value_counts_execution(setup):
     pd.testing.assert_series_equal(r.execute().fetch(), s.value_counts(normalize=True))
 
     # test bins and normalize
-    if pd.__version__ != "2.1.0":
-        r = series.value_counts(method="tree", bins=5, normalize=True)
-        pd.testing.assert_series_equal(
-            r.execute().fetch(), s.value_counts(bins=5, normalize=True)
-        )
+    r = series.value_counts(method="tree", bins=5, normalize=True)
+    pd.testing.assert_series_equal(
+        r.execute().fetch(), s.value_counts(bins=5, normalize=True)
+    )
 
 
 def test_astype(setup):
