@@ -366,6 +366,7 @@ class Tileable(Entity):
 
     def copy(self: TileableType, **kw) -> TileableType:
         from ...dataframe import Index
+        from ...deploy.oscar.session import SyncSession
 
         new_name = None
         if isinstance(self, Index):
@@ -384,9 +385,24 @@ class Tileable(Entity):
         new_outs = new_op.new_tileables(
             self.op.inputs, kws=params, output_limit=len(params)
         )
-        if new_name is not None:
-            for _out in new_outs:
+
+        sess = self._executed_sessions[-1] if self._executed_sessions else None
+        to_incref_keys = []
+        for _out in new_outs:
+            if sess:
+                _out._attach_session(sess)
+                to_incref_keys.append(_out.key)
+                if self.data in sess._tileable_to_fetch:
+                    sess._tileable_to_fetch[_out.data] = sess._tileable_to_fetch[
+                        self.data
+                    ]
+            if new_name:
                 _out.name = new_name
+
+        if to_incref_keys:
+            assert sess is not None
+            SyncSession.from_isolated_session(sess).incref(*to_incref_keys)
+
         pos = -1
         for i, out in enumerate(self.op.outputs):
             # create a ref to copied one

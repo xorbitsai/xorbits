@@ -3193,6 +3193,7 @@ def test_copy_deep(setup, chunk_size):
     df = pd.DataFrame(ns.rand(100, 10), columns=["a" + str(i) for i in range(10)])
     mdf = from_pandas_df(df, chunk_size=chunk_size)
 
+    # test case that there is no other result between copy and origin data
     res = mdf.copy()
     res["a0"] = res["a0"] + 1
     dfc = df.copy(deep=True)
@@ -3221,3 +3222,16 @@ def test_copy_deep(setup, chunk_size):
     res = m_index.copy(name="abc")
     pd.testing.assert_index_equal(res.execute().fetch(), index.copy(name="abc"))
     pd.testing.assert_index_equal(m_index.execute().fetch(), index)
+
+    # test case that there is other ops between copy and origin data
+    xdf = (mdf + 1) * 2 / 7
+    expected = (df + 1) * 2 / 7
+    pd.testing.assert_frame_equal(xdf.execute().fetch(), expected)
+
+    xdf_c = xdf.copy()
+    expected_c = expected.copy(deep=True)
+    pd.testing.assert_frame_equal(xdf_c.execute().fetch(), expected)
+    xdf_c["a1"] = xdf_c["a1"] + 0.8
+    expected_c["a1"] = expected_c["a1"] + 0.8
+    pd.testing.assert_frame_equal(xdf_c.execute().fetch(), expected_c)
+    pd.testing.assert_frame_equal(xdf.execute().fetch(), expected)
