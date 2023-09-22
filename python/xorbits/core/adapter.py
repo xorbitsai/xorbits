@@ -499,7 +499,7 @@ def collect_cls_members(
         # For example, Index and IndexData both have `copy` function, but they have completely different semantics.
         # Therefore, when the Index's `copy` method has been collected,
         # the method of the same name on IndexData cannot be collected again.
-        if cls.__name__.endswith("Data") and name in DATA_MEMBERS[data_type]:
+        if cls.__name__.endswith("Data") and name in DATA_MEMBERS[data_type]:  # type: ignore
             continue
         if inspect.isfunction(cls_member) and not name.startswith("_"):
             cls_members[name] = wrap_mars_callable(
