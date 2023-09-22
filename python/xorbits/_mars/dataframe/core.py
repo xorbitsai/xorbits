@@ -1167,6 +1167,37 @@ class Index(HasShapeTileable, _ToPandasMixin):
 
         return series_from_index(self, index=index, name=name)
 
+    def copy(self, name=None, deep=False):
+        """
+        Make a copy of this object.
+
+        Name is set on the new object.
+
+        Parameters
+        ----------
+        name : Label, optional
+            Set name for new object.
+        deep : bool, default False
+
+        Returns
+        -------
+        Index
+            Index refer to new object which is a copy of this object.
+
+        Notes
+        -----
+        In most cases, there should be no functional difference from using
+        ``deep``, but if ``deep`` is passed it will attempt to deepcopy.
+
+        Examples
+        --------
+        >>> idx = pd.Index(['a', 'b', 'c'])
+        >>> new_idx = idx.copy()
+        >>> idx is new_idx
+        False
+        """
+        return super().copy(name=name)
+
 
 class RangeIndex(Index):
     __slots__ = ()
@@ -1591,10 +1622,9 @@ class Series(HasShapeTileable, _ToPandasMixin):
         copy : Series or DataFrame
             Object type matches caller.
         """
-        if deep:
-            return super().copy()
-        else:
-            return super()._view()
+        if deep is False:
+            raise NotImplementedError("Not support `deep=False` for now")
+        return super().copy()
 
     def __len__(self):
         return len(self._data)
@@ -2617,6 +2647,11 @@ class DataFrame(HasShapeTileable, _ToPandasMixin):
         for k, v in kwargs.items():
             data[k] = apply_if_callable(v, data)
         return data
+
+    def copy(self, deep=True):
+        if deep is False:
+            raise NotImplementedError("Not support `deep=False` for now")
+        return super().copy()
 
 
 class DataFrameGroupByChunkData(BaseDataFrameChunkData):
