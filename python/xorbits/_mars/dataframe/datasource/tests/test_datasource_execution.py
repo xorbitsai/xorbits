@@ -48,7 +48,7 @@ from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_cupy
 from ....utils import get_next_port, pd_release_version
-from ...utils import is_pandas_2
+from ...utils import PD_VERSION_GREATER_THAN_2_10, is_pandas_2
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records
 from ..from_tensor import dataframe_from_1d_tileables, dataframe_from_tensor
@@ -1295,6 +1295,8 @@ def test_read_parquet_arrow(setup, engine):
             "c": np.random.rand(10),
         }
     )
+    if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
+        test_df = test_df.convert_dtypes(dtype_backend="pyarrow")
 
     with tempfile.TemporaryDirectory() as tempdir:
         file_path = os.path.join(tempdir, "test.parquet")
@@ -1351,6 +1353,9 @@ def test_read_parquet_arrow(setup, engine):
                     "c": np.random.rand(300),
                 }
             )
+
+            if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
+                df = df.convert_dtypes(dtype_backend="pyarrow")
 
             file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
             df[:100].to_parquet(file_paths[0], row_group_size=50)
@@ -1417,6 +1422,27 @@ def test_read_parquet_arrow(setup, engine):
     len(parquet_engines) == 1, reason="pyarrow and fastparquet are not installed"
 )
 @pytest.mark.parametrize("engine", parquet_engines)
+def test_read_parquet_with_getting_index(setup, engine):
+    test_df = pd.DataFrame(
+        {
+            "a": np.arange(10).astype(np.int64, copy=False),
+            "b": [f"s{i}" for i in range(10)],
+            "c": np.random.rand(10),
+        }
+    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        file = f"{tempdir}/test.pq"
+        test_df.to_parquet(file)
+        mdf = md.read_parquet(file, engine=engine)
+        res = mdf["a"].mean().execute().fetch()
+        assert res == test_df["a"].mean()
+        pd.testing.assert_index_equal(mdf.keys().execute().fetch(), test_df.keys())
+
+
+@pytest.mark.skipif(
+    len(parquet_engines) == 1, reason="pyarrow and fastparquet are not installed"
+)
+@pytest.mark.parametrize("engine", parquet_engines)
 def test_read_parquet_zip(setup, engine):
     with tempfile.TemporaryDirectory() as tempdir:
         df = pd.DataFrame(
@@ -1426,6 +1452,8 @@ def test_read_parquet_zip(setup, engine):
                 "c": np.random.rand(300),
             }
         )
+        if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
+            df = df.convert_dtypes(dtype_backend="pyarrow")
 
         file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
         df[:100].to_parquet(file_paths[0], row_group_size=50)
@@ -1621,6 +1649,8 @@ def start_http_server():
 
 def test_read_parquet_with_http_url(setup, start_http_server):
     df, urls, zip_url = start_http_server
+    if PD_VERSION_GREATER_THAN_2_10:
+        df = df.convert_dtypes(dtype_backend="pyarrow")
     mdf = md.read_parquet(urls).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
     if is_pandas_2():
@@ -1745,6 +1775,8 @@ def test_read_parquet_ftp(ftp_writable, setup):
     host, port, user, pw = ftp_writable
     data = {"Column1": [1, 2, 3], "Column2": ["A", "B", "C"]}
     df = pd.DataFrame(data)
+    if PD_VERSION_GREATER_THAN_2_10:
+        df = df.convert_dtypes(dtype_backend="pyarrow")
     with tempfile.TemporaryDirectory() as tempdir:
         local_file_path = os.path.join(tempdir, "test.parquet")
         df.to_parquet("ftp://{}:{}@{}:{}/test.parquet".format(user, pw, host, port))

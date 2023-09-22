@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import collections
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -24,7 +25,7 @@ from ...core import OutputType, recursive_tile
 from ...serialization.serializables import AnyField, KeyField
 from ...tensor.core import TENSOR_TYPE
 from ...utils import pd_release_version
-from ..core import DATAFRAME_TYPE, SERIES_TYPE, DataFrame
+from ..core import DATAFRAME_TYPE, SERIES_TYPE, DataFrame, Series
 from ..initializer import DataFrame as asframe
 from ..initializer import Series as asseries
 from ..operands import DataFrameOperand, DataFrameOperandMixin
@@ -49,8 +50,6 @@ class DataFrameSetitem(DataFrameOperand, DataFrameOperandMixin):
             _output_types=output_types,
             **kw,
         )
-        if self.output_types is None:
-            self.output_types = [OutputType.dataframe]
 
     @property
     def target(self):
@@ -74,7 +73,7 @@ class DataFrameSetitem(DataFrameOperand, DataFrameOperandMixin):
     def _is_scalar_tensor(t):
         return isinstance(t, TENSOR_TYPE) and t.ndim == 0
 
-    def __call__(self, target: DataFrame, value):
+    def _call_dataframe(self, target: DataFrame, value):
         raw_target = target
 
         inputs = [target]
@@ -145,8 +144,54 @@ class DataFrameSetitem(DataFrameOperand, DataFrameOperandMixin):
         )
         raw_target.data = ret.data
 
+    def _call_series(self, target: Series, value):
+        inputs = [target]
+        dtype = target.dtype
+        shape = target.shape
+        index_value = target.index_value
+
+        target.data = self.new_series(
+            inputs, shape=shape, dtype=dtype, index_value=index_value, name=target.name
+        ).data
+
+    def __call__(self, target: Union[DataFrame, Series], value):
+        if target.ndim == 2:
+            self._call_dataframe(target, value)
+        else:
+            self._call_series(target, value)
+
     @classmethod
     def tile(cls, op: "DataFrameSetitem"):
+        if op.target.ndim == 2:
+            res = yield from cls._tile_dataframe(op)
+            return res
+        else:
+            return cls._tile_series(op)
+
+    @classmethod
+    def _tile_series(cls, op: "DataFrameSetitem"):
+        in_df = op.inputs[0]
+        result_chunks = []
+
+        for chk in in_df.chunks:
+            new_op = op.copy().reset_key()
+            new_op.output_types = [OutputType.series]
+            params = dict(
+                shape=chk.shape,
+                index=chk.index,
+                dtype=chk.dtype,
+                index_value=chk.index_value,
+            )
+            result_chunks.append(new_op.new_chunk([chk], **params))
+
+        _new_op = op.copy()
+        params = op.outputs[0].params.copy()
+        params["nsplits"] = in_df.nsplits
+        params["chunks"] = result_chunks
+        return _new_op.new_seriess(op.inputs, **params)
+
+    @classmethod
+    def _tile_dataframe(cls, op: "DataFrameSetitem"):
         from ..merge.concat import DataFrameConcat
 
         out = op.outputs[0]
@@ -308,6 +353,36 @@ class DataFrameSetitem(DataFrameOperand, DataFrameOperandMixin):
     @classmethod
     def execute(cls, ctx, op: "DataFrameSetitem"):
         target = ctx[op.target.key]
+        if target.ndim == 2:
+            cls._execute_dataframe(ctx, op)
+        else:
+            cls._execute_series(ctx, op)
+
+    @classmethod
+    def _execute_series(cls, ctx, op: "DataFrameSetitem"):
+        target = ctx[op.target.key]
+
+        indexes = op.indexes
+        value = op.value
+
+        try:
+            _ = target[indexes]
+            indexed = True
+        except KeyError:
+            indexed = False
+
+        if indexed:
+            try:
+                target[indexes] = value
+            except ValueError:
+                target = target.copy(deep=True)
+                target[indexes] = value
+
+        ctx[op.outputs[0].key] = target
+
+    @classmethod
+    def _execute_dataframe(cls, ctx, op: "DataFrameSetitem"):
+        target = ctx[op.target.key]
         # only deep copy when updating
         indexes = (
             (op.indexes,)
@@ -336,3 +411,11 @@ class DataFrameSetitem(DataFrameOperand, DataFrameOperandMixin):
 def dataframe_setitem(df, col, value):
     op = DataFrameSetitem(target=df, indexes=col, value=value)
     return op(df, value)
+
+
+def series_setitem(series, index, value):
+    """
+    Currently only supports series whose indexes contain `index`
+    """
+    op = DataFrameSetitem(target=series, indexes=index, value=value)
+    return op(series, value)

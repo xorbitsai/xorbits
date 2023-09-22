@@ -16,7 +16,6 @@
 import numpy as np
 
 from ... import opcodes
-from ...config import options
 from ...core import OutputType
 from .aggregation import where_function
 from .core import DataFrameReductionMixin, DataFrameReductionOperand
@@ -48,7 +47,6 @@ class DataFrameProd(DataFrameReductionOperand, DataFrameReductionMixin):
 def prod_series(
     df, axis=None, skipna=True, level=None, min_count=0, combine_size=None, method=None
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameProd(
         axis=axis,
         skipna=skipna,
@@ -56,7 +54,6 @@ def prod_series(
         min_count=min_count,
         combine_size=combine_size,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
@@ -72,7 +69,6 @@ def prod_dataframe(
     combine_size=None,
     method=None,
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameProd(
         axis=axis,
         skipna=skipna,
@@ -81,7 +77,6 @@ def prod_dataframe(
         numeric_only=numeric_only,
         combine_size=combine_size,
         output_types=[OutputType.series],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)

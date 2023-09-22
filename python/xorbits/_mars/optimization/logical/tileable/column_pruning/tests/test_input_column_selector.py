@@ -116,6 +116,18 @@ def test_df_groupby_agg():
     assert labels.data in input_columns
     assert input_columns[labels.data] == {"label"}
 
+    label1 = Series([1, 1, 1, 1], name="label1")
+    label2 = Series([2, 2, 3, 3], name="label2")
+    s = df.groupby(by=[label1, label2]).sum()
+    input_columns = InputColumnSelector.select(s.data, {"foo"})
+    assert len(input_columns) == 3
+    assert df.data in input_columns
+    assert input_columns[df.data] == {"foo"}
+    assert label1.data in input_columns
+    assert input_columns[label1.data] == {"label1"}
+    assert label2.data in input_columns
+    assert input_columns[label2.data] == {"label2"}
+
 
 @pytest.mark.skip(reason="group by index is not supported yet")
 def test_df_groupby_index_agg():

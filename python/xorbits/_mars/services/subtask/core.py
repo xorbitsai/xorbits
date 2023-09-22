@@ -36,6 +36,15 @@ from ...serialization.serializables.field_type import TupleType
 from ...typing import BandType, ChunkType
 
 
+class SubtaskStage(Enum):
+    PREPARE_DATA = 0
+    REQUEST_QUOTA = 1
+    ACQUIRE_SLOT = 2
+    EXECUTE = 3
+    RELEASE_SLOT = 4
+    FINISH = 5
+
+
 class SubtaskStatus(Enum):
     pending = 0
     running = 1

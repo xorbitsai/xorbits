@@ -16,7 +16,6 @@
 import numpy as np
 
 from ... import opcodes
-from ...config import options
 from ...core import ENTITY_TYPE, OutputType
 from ...serialization.serializables import BoolField
 from .core import DataFrameReductionMixin, DataFrameReductionOperand
@@ -83,7 +82,6 @@ def kurt_series(
     fisher=True,
     method=None,
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameKurtosis(
         axis=axis,
         skipna=skipna,
@@ -92,7 +90,6 @@ def kurt_series(
         bias=bias,
         fisher=fisher,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
@@ -109,7 +106,6 @@ def kurt_dataframe(
     fisher=True,
     method=None,
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameKurtosis(
         axis=axis,
         skipna=skipna,
@@ -119,7 +115,6 @@ def kurt_dataframe(
         fisher=fisher,
         combine_size=combine_size,
         output_types=[OutputType.series],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
