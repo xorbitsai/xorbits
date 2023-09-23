@@ -952,7 +952,11 @@ class DataFrameAggregate(DataFrameOperand, DataFrameOperandMixin):
                 if is_cudf(in_data):
                     result = cls._cudf_agg(op, in_data)
                 else:
-                    result = in_data.agg(op.raw_func, axis=op.axis)
+                    result = (
+                        in_data.agg(op.raw_func, axis=op.axis)
+                        if op.raw_func is not None
+                        else in_data.agg(**op.raw_func_kw, axis=op.axis)
+                    )
                 if op.outputs[0].ndim == 1:
                     result = result.astype(op.outputs[0].dtype, copy=False)
 

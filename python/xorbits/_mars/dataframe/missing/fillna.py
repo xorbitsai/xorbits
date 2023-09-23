@@ -41,7 +41,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
     _method = StringField("method")
     _axis = AnyField("axis")
     _limit = Int64Field("limit")
-    _downcast = AnyField("downcast")
 
     _output_limit = Int64Field("output_limit")
 
@@ -51,7 +50,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
         method=None,
         axis=None,
         limit=None,
-        downcast=None,
         output_types=None,
         output_limit=None,
         **kw
@@ -61,7 +59,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
             _method=method,
             _axis=axis,
             _limit=limit,
-            _downcast=downcast,
             _output_types=output_types,
             _output_limit=output_limit,
             **kw
@@ -82,10 +79,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
     @property
     def limit(self):
         return self._limit
-
-    @property
-    def downcast(self):
-        return self._downcast
 
     def _set_inputs(self, inputs):
         super()._set_inputs(inputs)
@@ -123,7 +116,9 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
         method = op.method
 
         filled = input_data.fillna(
-            method=method, axis=axis, limit=limit, downcast=op.downcast
+            method=method,
+            axis=axis,
+            limit=limit,
         )
         ctx[op.outputs[0].key] = cls._get_first_slice(op, filled, 1)
         del filled
@@ -143,7 +138,9 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
 
         if not summaries:
             ctx[op.outputs[0].key] = input_data.fillna(
-                method=method, axis=axis, limit=limit, downcast=op.downcast
+                method=method,
+                axis=axis,
+                limit=limit,
             )
             return
 
@@ -158,7 +155,9 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
 
         if is_pandas_2():
             concat_df = concat_df.fillna(
-                method=method, axis=axis, limit=limit, downcast=op.downcast
+                method=method,
+                axis=axis,
+                limit=limit,
             )
         else:
             concat_df.fillna(
@@ -166,7 +165,6 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
                 axis=axis,
                 inplace=True,
                 limit=limit,
-                downcast=op.downcast,
             )
         ctx[op.outputs[0].key] = cls._get_first_slice(op, concat_df, -1)
 
@@ -187,12 +185,9 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
                     method=op.method,
                     axis=op.axis,
                     limit=op.limit,
-                    downcast=op.downcast,
                 )
             else:
-                ctx[op.outputs[0].key] = input_data.fillna(
-                    value=value, downcast=op.downcast
-                )
+                ctx[op.outputs[0].key] = input_data.fillna(value=value)
 
     @classmethod
     def _tile_one_by_one(cls, op):
@@ -478,9 +473,7 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
             )
 
 
-def fillna(
-    df, value=None, method=None, axis=None, inplace=False, limit=None, downcast=None
-):
+def fillna(df, value=None, method=None, axis=None, inplace=False, limit=None):
     """
     Fill NA/NaN values using the specified method.
 
@@ -509,10 +502,6 @@ def fillna(
         be partially filled. If method is not specified, this is the
         maximum number of entries along the entire axis where NaNs will be
         filled. Must be greater than 0 if not None.
-    downcast : dict, default is None
-        A dict of item->dtype of what to downcast if possible,
-        or the string 'infer' which will try to downcast to an appropriate
-        equal type (e.g. float64 to int64 if possible).
 
     Returns
     -------
@@ -583,10 +572,6 @@ def fillna(
             % type(value).__name__
         )
 
-    if downcast is not None:
-        raise NotImplementedError(
-            'Currently argument "downcast" is not implemented yet'
-        )
     if limit is not None:
         raise NotImplementedError('Currently argument "limit" is not implemented yet')
 
@@ -600,7 +585,6 @@ def fillna(
         method=method,
         axis=axis,
         limit=limit,
-        downcast=downcast,
         output_types=get_output_types(df),
     )
     out_df = op(df, value_df=value_df)
@@ -610,7 +594,7 @@ def fillna(
         return out_df
 
 
-def ffill(df, axis=None, inplace=False, limit=None, downcast=None):
+def ffill(df, axis=None, inplace=False, limit=None):
     """
     Synonym for :meth:`DataFrame.fillna` with ``method='ffill'``.
 
@@ -619,12 +603,10 @@ def ffill(df, axis=None, inplace=False, limit=None, downcast=None):
     {klass} or None
         Object with missing values filled or None if ``inplace=True``.
     """
-    return fillna(
-        df, method="ffill", axis=axis, inplace=inplace, limit=limit, downcast=downcast
-    )
+    return fillna(df, method="ffill", axis=axis, inplace=inplace, limit=limit)
 
 
-def bfill(df, axis=None, inplace=False, limit=None, downcast=None):
+def bfill(df, axis=None, inplace=False, limit=None):
     """
     Synonym for :meth:`DataFrame.fillna` with ``method='bfill'``.
 
@@ -633,12 +615,10 @@ def bfill(df, axis=None, inplace=False, limit=None, downcast=None):
     {klass} or None
         Object with missing values filled or None if ``inplace=True``.
     """
-    return fillna(
-        df, method="bfill", axis=axis, inplace=inplace, limit=limit, downcast=downcast
-    )
+    return fillna(df, method="bfill", axis=axis, inplace=inplace, limit=limit)
 
 
-def index_fillna(index, value=None, downcast=None):
+def index_fillna(index, value=None):
     """
     Fill NA/NaN values with the specified value.
 
@@ -647,10 +627,6 @@ def index_fillna(index, value=None, downcast=None):
     value : scalar
         Scalar value to use to fill holes (e.g. 0).
         This value cannot be a list-likes.
-    downcast : dict, default is None
-        A dict of item->dtype of what to downcast if possible,
-        or the string 'infer' which will try to downcast to an appropriate
-        equal type (e.g. float64 to int64 if possible).
 
     Returns
     -------
@@ -666,7 +642,6 @@ def index_fillna(index, value=None, downcast=None):
 
     op = FillNA(
         value=value,
-        downcast=downcast,
         output_types=get_output_types(index),
     )
     return op(index)
