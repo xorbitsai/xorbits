@@ -26,11 +26,7 @@ repos:
         additional_dependencies: [tokenize-rt==3.2.0]
         exclude: _mars
         args: [--ignore-missing-imports, --follow-imports, skip]
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.0 # Use the sha or tag you want to point at
-    hooks:
-      - id: prettier
-        types_or: [html, javascript]
+
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.5
     hooks:
