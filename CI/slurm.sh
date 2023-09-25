@@ -34,6 +34,8 @@ function jobqueue_install {
 function jobqueue_script {
     docker exec c1 /bin/bash -c "pip install xorbits"
     docker exec c2 /bin/bash -c "pip install xorbits"
+    docker exec slurmctld /bin/bash -c "python /xorbits/python/xorbits/cluster/Slurm.py"
+    docker exec slurmctld /bin/bash -c "cat /shared_space/output.out"
 }
 
 function jobqueue_after_script {

@@ -19,7 +19,7 @@ class SLURMCluster:
                  output_dir=None,
                  error_dir=None,
                  work_dir=None,
-                 walltime=None,
+                 time=None,
                  processes=None,
                  cores=None,
                  memory=None,
@@ -32,11 +32,13 @@ class SLURMCluster:
         self.partition_option = partition_option
         self.output_dir = output_dir
         self.work_dir = work_dir
-        self.walltime = walltime
+        self.walltime = time
         self.processes = processes
         self.cores = cores
         self.memory = memory
         self.account = account
+        self.load_env = load_env
+        self.commands = None
 
         slurm_params = {
             "job-name": self.job_name,
@@ -57,36 +59,33 @@ class SLURMCluster:
         if self.load_env:
             commands.append(f"source activate {self.load_env}")
 
-        if self.queue:
-            commands.append(f"#SBATCH --partition={self.queue}")
+        commands +=  [
+                    "set -x",
+                    'nodes=$(scontrol show hostnames "$SLURM_JOB_NODELIST")',
+                    "nodes_array=($nodes)",
+                    "head_node=${nodes_array[0]}",
+                    "port=16380",
+                    "web_port=16379",
+                    'echo "Starting SUPERVISOR at ${head_node}"',
+                    'srun --nodes=1 --ntasks=1 -w "${head_node}" \\',
+                    '    xorbits-supervisor -H "${head_node}" -p "${port}" -w "${web_port}"&',
+                    "sleep 10",
+                    'worker_num=$((SLURM_JOB_NUM_NODES - 1))',
+                    'for ((i = 1; i <= worker_num; i++)); do',
+                    '    node_i=${nodes_array[$i]}',
+                    '    port_i=$((port + i))',
+                    '    echo "Starting WORKER $i at ${node_i}"',
+                    '    srun --nodes=1 --ntasks=1 -w "${node_i}" \\',
+                    '        xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}"&',
+                    'done',
+                    "sleep 5",
+                    'address=http://"${head_node}":"${web_port}"',
+                ]
 
-            commands +=  [
-                "set -x",
-                'nodes=$(scontrol show hostnames "$SLURM_JOB_NODELIST")',
-                "nodes_array=($nodes)",
-                "head_node=${nodes_array[0]}",
-                "port=16380",
-                "web_port=16379",
-                'echo "Starting SUPERVISOR at ${head_node}"',
-                'srun --nodes=1 --ntasks=1 -w "${head_node}" \\',
-                '    xorbits-supervisor -H "${head_node}" -p "${port}" -w "${web_port}"  &',
-                "sleep 10",
-                'worker_num=$((SLURM_JOB_NUM_NODES - 1))',
-                'for ((i = 1; i <= worker_num; i++)); do',
-                '    node_i=${nodes_array[$i]}',
-                '    port_i=$((port + i))',
-                '    echo "Starting WORKER $i at ${node_i}"',
-                '    srun --nodes=1 --ntasks=1 -w "${node_i}" \\',
-                '        xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}" &',
-                'done',
-                "sleep 5",
-                'address=http://"${head_node}":"${web_port}"',
-            ]
-
-            return "\n".join(commands)
+        self.commands = "\n".join(commands)
 
     def run(self):
-        shell_commands = self.shell_commands()
+        shell_commands = self.commands
         with open("slurm.sh", 'w') as f:
             f.write(shell_commands)
 
@@ -126,19 +125,18 @@ class SLURMCluster:
             if self.job_id:
                 command = ["scontrol", "show", "job", self.job_id]
                 result = subprocess.run(command, capture_output=True, text=True)
+                node_list = None
                 if result.returncode == 0:
                     output = result.stdout
                     print(output)
-
-                for line in output.split('\n'):
-                    if line.startswith("NodeList="):
-                        node_list = line[len("NodeList="):].strip()
-                        break
-                if node_list is None:
-                    raise ValueError(f"Job {self.job_id} not found or NodeList information not available.")
-            
+                    for line in output.split('\n'):
+                        if line.startswith("NodeList="):
+                            node_list = line[len("NodeList="):].strip()
+                            break
+                    if node_list is None:
+                        raise ValueError(f"Job {self.job_id} not found or NodeList information not available.")
                 # 提取头节点（第一个节点）
-                self.head_node = node_list.split()[0]
+                    self.head_node = node_list.split()[0]
         except subprocess.CalledProcessError as e:
             print(f"Error executing scontrol: {e}")
         except ValueError as e:
@@ -165,7 +163,7 @@ class SLURMCluster:
                 print(str(e))
 
 if __name__ == "__main__":
-    exp = SLURMCluster(job_name="xorbits",num_nodes=2,cores=2,time="00:30:00",processes=1)
+    exp = SLURMCluster(job_name="xorbits",num_nodes=1,output_dir="/shared_space/output.out",time="00:30:00")
     adress = exp.run()
     print(adress)
     time.sleep(5)
