@@ -1,4 +1,5 @@
 import atexit
+import logging
 import os
 import re
 import subprocess
@@ -11,6 +12,10 @@ DEFAULT_JOB_NAME = "default_job"
 DEFAULT_NUMBER_NODES = 2
 DEFAULT_PARTITION_OPTION = "batch"
 DEFAULT_LOAD_ENV = "LOAD_ENV"
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class SLURMCluster:
@@ -99,18 +104,18 @@ class SLURMCluster:
         result = subprocess.run(["sbatch", "slurm.sh"], capture_output=True, text=True)
 
         if result.returncode == 0:
-            print("Job submitted successfully.")
+            logger.info("Job submitted successfully.")
             self.job_id = self.get_job_id(result.stdout)
             if self.job_id:
-                print(f"Job ID is {self.job_id}.")
+                logger.info(f"Job ID is {self.job_id}.")
                 atexit.register(self.cancel_job)
             else:
-                print("Could not get job ID. Cleanup upon exit is not possible.")
+                logger.error("Could not get job ID. Cleanup upon exit is not possible.")
             return self.get_job_address()
         else:
-            print("Job submission failed.")
-            print("Output:", result.stdout)
-            print("Errors:", result.stderr)
+            logger.error("Job submission failed.")
+            logger.error("Output:", result.stdout)
+            logger.error("Errors:", result.stderr)
             return None
 
     def get_job_id(self, sbatch_output):
@@ -122,7 +127,7 @@ class SLURMCluster:
 
     def cancel_job(self):
         if self.job_id:
-            print(f"Cancelling job {self.job_id}")
+            logger.info(f"Cancelling job {self.job_id}")
             subprocess.run(["scancel", self.job_id])
 
     def update_head_node(self):
@@ -139,7 +144,7 @@ class SLURMCluster:
 
                 if matches:
                     node_list = matches.group(1)
-                    print("NodeList:", node_list)
+                    logger.info("NodeList:", node_list)
                     if node_list is None:
                         raise ValueError(
                             f"Job {self.job_id} not found or NodeList information not available."
@@ -154,17 +159,17 @@ class SLURMCluster:
                     self.head_node = head_node
                     return head_node
                 else:
-                    print("NodeList not found in the string.")
+                    logger.warning("NodeList not found in the string.")
 
         except subprocess.CalledProcessError as e:
-            print(f"Error executing scontrol: {e}")
+            logger.error(f"Error executing scontrol: {e}")
         except ValueError as e:
-            print(f"Error: {e}")
+            logger.error(f"Error: {e}")
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
 
         self.head_node = None
-        print("Failed to retrieve head node.")
+        logger.warning("Failed to retrieve head node.")
 
     def get_job_address(self, retry_attempts=10, sleep_interval=30):
         # We retry several times to get job data
@@ -175,12 +180,12 @@ class SLURMCluster:
                     address = f"http://{self.head_node}:{self.web_port}"
                     return address
                 else:
-                    print(
+                    logger.warning(
                         f"Attempt {attempt + 1} failed, retrying after {sleep_interval}s..."
                     )
                     time.sleep(sleep_interval)
             except Exception as e:
-                print(str(e))
+                logger.error(str(e))
 
 
 if __name__ == "__main__":
@@ -191,8 +196,8 @@ if __name__ == "__main__":
         time="00:30:00",
     )
     address = exp.run()
-    print(address)
+    logger.info(address)
     time.sleep(5)
     address = "http://c1:16379"
     xorbits.init(address)
-    print(np.random.rand(100, 100).mean())
+    logger.info(np.random.rand(100, 100).mean())
