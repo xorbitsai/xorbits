@@ -4,6 +4,7 @@ import time
 import atexit
 import xorbits
 import xorbits.numpy as np
+import re
 
 DEFAULT_JOB_NAME = "default_job"
 DEFAULT_NUMBER_NODES = 2
@@ -23,7 +24,8 @@ class SLURMCluster:
                  processes=None,
                  cores=None,
                  memory=None,
-                 account=None,):
+                 account=None,
+                 webport=16379):
 
         commands = ["#!/bin/bash"]
 
@@ -39,7 +41,7 @@ class SLURMCluster:
         self.account = account
         self.load_env = load_env
         self.commands = None
-
+        self.web_port = webport
         slurm_params = {
             "job-name": self.job_name,
             "nodes": self.num_nodes,
@@ -65,11 +67,11 @@ class SLURMCluster:
                     "nodes_array=($nodes)",
                     "head_node=${nodes_array[0]}",
                     "port=16380",
-                    "web_port=16379",
+                    f"web_port={self.web_port}",
                     'echo "Starting SUPERVISOR at ${head_node}"',
                     'srun --nodes=1 --ntasks=1 -w "${head_node}" \\',
                     '    xorbits-supervisor -H "${head_node}" -p "${port}" -w "${web_port}"&',
-                    "sleep 10",
+                    "sleep 30",
                     'worker_num=$((SLURM_JOB_NUM_NODES - 1))',
                     'for ((i = 1; i <= worker_num; i++)); do',
                     '    node_i=${nodes_array[$i]}',
@@ -78,7 +80,7 @@ class SLURMCluster:
                     '    srun --nodes=1 --ntasks=1 -w "${node_i}" \\',
                     '        xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}"&',
                     'done',
-                    "sleep 5",
+                    "sleep 30",
                     'address=http://"${head_node}":"${web_port}"',
                 ]
 
@@ -123,20 +125,32 @@ class SLURMCluster:
     def update_head_node(self):
         try:
             if self.job_id:
+                time.sleep(5)
                 command = ["scontrol", "show", "job", self.job_id]
                 result = subprocess.run(command, capture_output=True, text=True)
                 node_list = None
                 if result.returncode == 0:
-                    output = result.stdout
-                    print(output)
-                    for line in output.split('\n'):
-                        if line.startswith("NodeList="):
-                            node_list = line[len("NodeList="):].strip()
-                            break
+                    job_info = result.stdout
+                    node_list_pattern = r'NodeList=(c\[\d+-\d+\]|c\d)'
+                    matches = re.search(node_list_pattern, job_info)
+
+                if matches:
+                    node_list = matches.group(1)
+                    print("NodeList:", node_list)                        
                     if node_list is None:
                         raise ValueError(f"Job {self.job_id} not found or NodeList information not available.")
-                # 提取头节点（第一个节点）
-                    self.head_node = node_list.split()[0]
+                    # get_head_node from nodelist
+                    if "[" in node_list:
+                        head_node = node_list.split("-")[0].replace("[","")
+                    else:
+                    # when only one node
+                        head_node = node_list
+
+                    self.head_node = head_node
+                    return head_node
+                else:
+                    print("NodeList not found in the string.")
+                
         except subprocess.CalledProcessError as e:
             print(f"Error executing scontrol: {e}")
         except ValueError as e:
@@ -153,7 +167,6 @@ class SLURMCluster:
             try:
                 self.update_head_node()
                 if self.head_node is not None:
-                    self.head_node = "eval"
                     address=f"http://{self.head_node}:{self.web_port}"
                     return address
                 else:
@@ -163,7 +176,7 @@ class SLURMCluster:
                 print(str(e))
 
 if __name__ == "__main__":
-    exp = SLURMCluster(job_name="xorbits",num_nodes=1,output_dir="/shared_space/output.out",time="00:30:00")
+    exp = SLURMCluster(job_name="xorbits",num_nodes=2,output_dir="/shared_space/output.out",time="00:30:00")
     adress = exp.run()
     print(adress)
     time.sleep(5)
