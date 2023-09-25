@@ -17,7 +17,6 @@ import numpy as np
 import pandas as pd
 
 from ... import opcodes as OperandDef
-from ...config import options
 from ...core import OutputType
 from .core import (
     DATAFRAME_TYPE,
@@ -86,7 +85,6 @@ def all_series(
     combine_size=None,
     method=None,
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameAll(
         axis=axis,
         skipna=skipna,
@@ -94,7 +92,6 @@ def all_series(
         bool_only=bool_only,
         combine_size=combine_size,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(series)
@@ -109,7 +106,6 @@ def all_dataframe(
     combine_size=None,
     method=None,
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     output_types = [OutputType.series] if axis is not None else [OutputType.scalar]
     op = DataFrameAll(
         axis=axis,
@@ -118,13 +114,11 @@ def all_dataframe(
         bool_only=bool_only,
         combine_size=combine_size,
         output_types=output_types,
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
 
 
 def all_index(idx):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
-    op = DataFrameAll(output_types=[OutputType.scalar], use_inf_as_na=use_inf_as_na)
+    op = DataFrameAll(output_types=[OutputType.scalar])
     return op(idx)

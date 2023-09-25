@@ -65,7 +65,6 @@ class DataFrameReductionOperand(DataFrameOperand):
     _numeric_only = BoolField("numeric_only")
     _bool_only = BoolField("bool_only")
     _min_count = Int32Field("min_count")
-    _use_inf_as_na = BoolField("use_inf_as_na")
     _method = StringField("method")
 
     _dtype = DataTypeField("dtype")
@@ -84,7 +83,6 @@ class DataFrameReductionOperand(DataFrameOperand):
         gpu=None,
         sparse=None,
         output_types=None,
-        use_inf_as_na=None,
         method=None,
         **kw,
     ):
@@ -100,7 +98,6 @@ class DataFrameReductionOperand(DataFrameOperand):
             gpu=gpu,
             sparse=sparse,
             _output_types=output_types,
-            _use_inf_as_na=use_inf_as_na,
             _method=method,
             **kw,
         )
@@ -138,10 +135,6 @@ class DataFrameReductionOperand(DataFrameOperand):
         return self._combine_size
 
     @property
-    def use_inf_as_na(self):
-        return self._use_inf_as_na
-
-    @property
     def is_atomic(self):
         return False
 
@@ -163,7 +156,6 @@ class DataFrameReductionOperand(DataFrameOperand):
 class DataFrameCumReductionOperand(DataFrameOperand):
     _axis = AnyField("axis")
     _skipna = BoolField("skipna")
-    _use_inf_as_na = BoolField("use_inf_as_na")
 
     _dtype = DataTypeField("dtype")
 
@@ -175,7 +167,6 @@ class DataFrameCumReductionOperand(DataFrameOperand):
         gpu=None,
         sparse=None,
         output_types=None,
-        use_inf_as_na=None,
         **kw,
     ):
         super().__init__(
@@ -185,7 +176,6 @@ class DataFrameCumReductionOperand(DataFrameOperand):
             gpu=gpu,
             sparse=sparse,
             _output_types=output_types,
-            _use_inf_as_na=use_inf_as_na,
             **kw,
         )
 
@@ -200,10 +190,6 @@ class DataFrameCumReductionOperand(DataFrameOperand):
     @property
     def dtype(self):
         return self._dtype
-
-    @property
-    def use_inf_as_na(self):
-        return self._use_inf_as_na
 
 
 def _default_agg_fun(value, func_name=None, **kw):
@@ -612,14 +598,10 @@ class DataFrameCumReductionMixin(DataFrameOperandMixin):
 
     @classmethod
     def execute(cls, ctx, op):
-        try:
-            pd.set_option("mode.use_inf_as_na", op.use_inf_as_na)
-            if op.stage == OperandStage.map:
-                return cls._execute_map(ctx, op)
-            else:
-                return cls._execute_combine(ctx, op)
-        finally:
-            pd.reset_option("mode.use_inf_as_na")
+        if op.stage == OperandStage.map:
+            return cls._execute_map(ctx, op)
+        else:
+            return cls._execute_combine(ctx, op)
 
     def _call_dataframe(self, df):
         axis = getattr(self, "axis", None) or 0

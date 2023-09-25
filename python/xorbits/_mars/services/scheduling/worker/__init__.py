@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .execution import SubtaskExecutionActor
+from .execution import StageMonitorActor, SubtaskExecutionActor
 from .quota import MemQuotaActor, QuotaActor, WorkerQuotaManagerActor
 from .service import SchedulingWorkerService
 from .workerslot import (
