@@ -1729,12 +1729,10 @@ def test_value_counts_execution(setup):
     r = series.value_counts()
     pd.testing.assert_series_equal(r.execute().fetch(), s.value_counts())
 
-    # pandas issue: https://github.com/pandas-dev/pandas/issues/54857
-    if pd.__version__ != "2.1.0":
-        r = series.value_counts(bins=5, normalize=True)
-        pd.testing.assert_series_equal(
-            r.execute().fetch(), s.value_counts(bins=5, normalize=True)
-        )
+    r = series.value_counts(bins=5, normalize=True)
+    pd.testing.assert_series_equal(
+        r.execute().fetch(), s.value_counts(bins=5, normalize=True)
+    )
 
     # test multi chunks
     series = from_pandas_series(s, chunk_size=30)
@@ -1746,11 +1744,10 @@ def test_value_counts_execution(setup):
     pd.testing.assert_series_equal(r.execute().fetch(), s.value_counts(normalize=True))
 
     # test bins and normalize
-    if pd.__version__ != "2.1.0":
-        r = series.value_counts(method="tree", bins=5, normalize=True)
-        pd.testing.assert_series_equal(
-            r.execute().fetch(), s.value_counts(bins=5, normalize=True)
-        )
+    r = series.value_counts(method="tree", bins=5, normalize=True)
+    pd.testing.assert_series_equal(
+        r.execute().fetch(), s.value_counts(bins=5, normalize=True)
+    )
 
 
 def test_astype(setup):
@@ -3185,3 +3182,53 @@ def test_nunique(setup, method, chunked, axis):
         raw_df.nunique(axis=axis),
         mdf.nunique(axis=axis, method=method).execute().fetch(),
     )
+
+
+@pytest.mark.parametrize("chunk_size", [None, 10])
+def test_copy_deep(setup, chunk_size):
+    ns = np.random.RandomState(0)
+    df = pd.DataFrame(ns.rand(100, 10), columns=["a" + str(i) for i in range(10)])
+    mdf = from_pandas_df(df, chunk_size=chunk_size)
+
+    # test case that there is no other result between copy and origin data
+    res = mdf.copy()
+    res["a0"] = res["a0"] + 1
+    dfc = df.copy(deep=True)
+    dfc["a0"] = dfc["a0"] + 1
+    pd.testing.assert_frame_equal(res.execute().fetch(), dfc)
+    pd.testing.assert_frame_equal(mdf.execute().fetch(), df)
+
+    s = pd.Series(ns.randint(0, 100, size=(100,)))
+    ms = from_pandas_series(s, chunk_size=chunk_size)
+
+    res = ms.copy()
+    res.iloc[0] = 111.0
+    sc = s.copy(deep=True)
+    sc.iloc[0] = 111.0
+    pd.testing.assert_series_equal(res.execute().fetch(), sc)
+    pd.testing.assert_series_equal(ms.execute().fetch(), s)
+
+    index = pd.Index([i for i in range(100)], name="test")
+    m_index = from_pandas_index(index, chunk_size=chunk_size)
+
+    res = m_index.copy()
+    assert res is not m_index
+    pd.testing.assert_index_equal(res.execute().fetch(), index.copy())
+    pd.testing.assert_index_equal(m_index.execute().fetch(), index)
+
+    res = m_index.copy(name="abc")
+    pd.testing.assert_index_equal(res.execute().fetch(), index.copy(name="abc"))
+    pd.testing.assert_index_equal(m_index.execute().fetch(), index)
+
+    # test case that there is other ops between copy and origin data
+    xdf = (mdf + 1) * 2 / 7
+    expected = (df + 1) * 2 / 7
+    pd.testing.assert_frame_equal(xdf.execute().fetch(), expected)
+
+    xdf_c = xdf.copy()
+    expected_c = expected.copy(deep=True)
+    pd.testing.assert_frame_equal(xdf_c.execute().fetch(), expected)
+    xdf_c["a1"] = xdf_c["a1"] + 0.8
+    expected_c["a1"] = expected_c["a1"] + 0.8
+    pd.testing.assert_frame_equal(xdf_c.execute().fetch(), expected_c)
+    pd.testing.assert_frame_equal(xdf.execute().fetch(), expected)
