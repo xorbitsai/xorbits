@@ -65,7 +65,7 @@ class SLURMCluster:
                 if len(str(param)) > 1:
                     commands.append(f"#SBATCH --{param}={value}")
                 else:
-                    commands.append(f"#SBATCH -{param}={value}")
+                    commands.append(f"#SBATCH -{param} {value}")
 
         if self.load_env:
             commands.append(f"source activate {self.load_env}")
@@ -89,7 +89,7 @@ class SLURMCluster:
             '    srun --nodes=1 --ntasks=1 -w "${node_i}" \\',
             '        xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}"&',
             "done",
-            "sleep 100",
+            "sleep 300",
             'address=http://"${head_node}":"${web_port}"',
         ]
 
@@ -200,4 +200,4 @@ if __name__ == "__main__":
     address = exp.run()
     logger.info(address)
     xorbits.init(address)
-    logger.info(np.random.rand(100, 100).mean())
+    test = np.random.rand(100, 100).mean()
