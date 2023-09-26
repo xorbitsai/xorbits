@@ -136,7 +136,14 @@ class DataFrameCustomGroupByNuniqueMixin(DataFrameCustomGroupByAggMixin):
             # since level field in op.groupby_params is not correct.
             groupby_params["level"] = op.raw_groupby_params["level"]
 
-        res = in_data.groupby(**groupby_params).nunique()
+        # For the tuple usage: .agg(x=('a', 'nunique')), firstly set `as_index=True`.
+        # Otherwise, subsequent processing will lose the information about the grouped columns.
+        # TODO: This is due to `reduction` functions, but for now, let's keep it simple.
+        if op.raw_func is None:
+            groupby_params["as_index"] = True
+            res = in_data.groupby(**groupby_params).nunique()
+        else:
+            res = in_data.groupby(**groupby_params).nunique()
         return res
 
     @classmethod
