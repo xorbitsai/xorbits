@@ -1239,8 +1239,6 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                     )
                 elif agg_df.shape[-1] == 1 and func_name in col_value:
                     new_cols = xdf.Index([func_name])
-                elif op.raw_func is None:
-                    new_cols = col_value
             aggs.append((agg_df, new_cols))
 
         for agg_df, new_cols in aggs:
