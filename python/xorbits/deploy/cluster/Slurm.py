@@ -24,6 +24,7 @@ class SLURMCluster:
         error_dir=None,
         work_dir=None,
         time=None,
+        walltime=None,
         processes=None,
         cores=None,
         memory=None,
@@ -37,16 +38,16 @@ class SLURMCluster:
         self.partition_option = partition_option
         self.output_dir = output_dir
         self.work_dir = work_dir
-        self.walltime = time
+        self.walltime = walltime
+        self.time = time
         self.processes = processes
         self.cores = cores
         self.memory = memory
-        self.account = account
         self.load_env = load_env
-        self.commands = None
-        self.web_port = webport
+        self.error_dir = error_dir
+        self.account = account
         slurm_params = {
-            "job-name": self.job_name,
+            "J": self.job_name,
             "nodes": self.num_nodes,
             "partition": self.partition_option,
             "output": self.output_dir,
@@ -55,11 +56,17 @@ class SLURMCluster:
             "ntasks": self.processes,
             "cpus-per-task": self.cores,
             "mem": self.memory,
+            "t": self.time,
+            "A": self.account,
         }
-
+        self.commands = None
+        self.web_port = webport
         for param, value in slurm_params.items():
             if value is not None:
-                commands.append(f"#SBATCH --{param}={value}")
+                if len(value) > 1:
+                    commands.append(f"#SBATCH --{param}={value}")
+                else:
+                    commands.append(f"#SBATCH -{param}={value}")
 
         if self.load_env:
             commands.append(f"source activate {self.load_env}")
