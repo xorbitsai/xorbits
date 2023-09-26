@@ -201,3 +201,4 @@ if __name__ == "__main__":
     logger.info(address)
     xorbits.init(address)
     test = np.random.rand(100, 100).mean()
+    logging.info(f"test_result_{test}")
