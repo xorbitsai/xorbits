@@ -8,11 +8,6 @@ import time
 import xorbits
 import xorbits.numpy as np
 
-DEFAULT_JOB_NAME = "default_job"
-DEFAULT_NUMBER_NODES = 2
-DEFAULT_PARTITION_OPTION = "batch"
-DEFAULT_LOAD_ENV = "LOAD_ENV"
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
