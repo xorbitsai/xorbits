@@ -141,9 +141,7 @@ class DataFrameCustomGroupByNuniqueMixin(DataFrameCustomGroupByAggMixin):
         # TODO: This is due to `reduction` functions, but for now, let's keep it simple.
         if op.raw_func is None:
             groupby_params["as_index"] = True
-            res = in_data.groupby(**groupby_params).nunique()
-        else:
-            res = in_data.groupby(**groupby_params).nunique()
+        res = in_data.groupby(**groupby_params).nunique()
         return res
 
     @classmethod
