@@ -63,7 +63,7 @@ class SLURMCluster:
         self.web_port = webport
         for param, value in slurm_params.items():
             if value is not None:
-                if len(value) > 1:
+                if len(str(value)) > 1:
                     commands.append(f"#SBATCH --{param}={value}")
                 else:
                     commands.append(f"#SBATCH -{param}={value}")
