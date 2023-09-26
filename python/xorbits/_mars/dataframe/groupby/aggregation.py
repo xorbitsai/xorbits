@@ -988,6 +988,12 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
     def _do_custom_agg(
         func_name: str, op: "DataFrameGroupByAgg", in_data: pd.DataFrame
     ) -> Union[pd.Series, pd.DataFrame]:
+        # Must be tuple way, like x=('col', 'agg_func_name')
+        # See `is_funcs_aggregate` func,
+        # if not this way, the code doesn't go here or switch to transform execution.
+        if op.raw_func is None:
+            func_name = list(op.raw_func_kw.values())[0][1]
+
         if op.stage == OperandStage.map:
             return custom_agg_functions[func_name].execute_map(op, in_data)
         elif op.stage == OperandStage.combine:
