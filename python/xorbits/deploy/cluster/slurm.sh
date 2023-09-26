@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=xorbits
+#SBATCH -J=xorbits
 #SBATCH --nodes=2
 #SBATCH --output=/shared_space/output.out
 #SBATCH --time=00:30:00
@@ -21,5 +21,5 @@ for ((i = 1; i <= worker_num; i++)); do
     srun --nodes=1 --ntasks=1 -w "${node_i}" \
         xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}"&
 done
-sleep 30
+sleep 100
 address=http://"${head_node}":"${web_port}"

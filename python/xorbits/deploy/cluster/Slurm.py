@@ -52,18 +52,17 @@ class SLURMCluster:
             "partition": self.partition_option,
             "output": self.output_dir,
             "workdir": self.work_dir,
-            "time": self.walltime,
+            "time": self.time,
             "ntasks": self.processes,
             "cpus-per-task": self.cores,
             "mem": self.memory,
-            "t": self.time,
             "A": self.account,
         }
         self.commands = None
         self.web_port = webport
         for param, value in slurm_params.items():
             if value is not None:
-                if len(str(value)) > 1:
+                if len(str(param)) > 1:
                     commands.append(f"#SBATCH --{param}={value}")
                 else:
                     commands.append(f"#SBATCH -{param}={value}")
@@ -90,7 +89,7 @@ class SLURMCluster:
             '    srun --nodes=1 --ntasks=1 -w "${node_i}" \\',
             '        xorbits-worker -H "${node_i}"  -p "${port_i}" -s "${head_node}":"${port}"&',
             "done",
-            "sleep 30",
+            "sleep 100",
             'address=http://"${head_node}":"${web_port}"',
         ]
 
@@ -116,8 +115,9 @@ class SLURMCluster:
             return self.get_job_address()
         else:
             logger.error("Job submission failed.")
-            logger.error("Output:", result.stdout)
-            logger.error("Errors:", result.stderr)
+            logger.error("Output: {}".format(result.stdout))
+            logger.error("Errors: {}".format(result.stderr))
+
             return None
 
     def get_job_id(self, sbatch_output):
@@ -146,7 +146,7 @@ class SLURMCluster:
 
                 if matches:
                     node_list = matches.group(1)
-                    logger.info("NodeList:", node_list)
+                    logger.info(f"NodeList:{node_list}")
                     if node_list is None:
                         raise ValueError(
                             f"Job {self.job_id} not found or NodeList information not available."
@@ -199,7 +199,5 @@ if __name__ == "__main__":
     )
     address = exp.run()
     logger.info(address)
-    time.sleep(5)
-    address = "http://c1:16379"
     xorbits.init(address)
     logger.info(np.random.rand(100, 100).mean())
