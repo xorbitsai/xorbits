@@ -57,7 +57,7 @@ class TileableDetail extends React.Component {
           <Tab label="Subtask Info" />
         </Tabs>
         <br />
-        <div>
+        <div style={{ overflow : 'auto' }}>
           {this.state.displayedTileableDetail === 0 ? (
             <React.Fragment>
               <Table size="small" style={{ height: '100%' }}>
