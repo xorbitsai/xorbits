@@ -439,7 +439,7 @@ def test_groupby_nunique_by_series(setup, gen_data2, chunk_size, as_index, sort)
 
     # test by with duplicates
     rs = np.random.RandomState(0)
-    by3 = pd.Series([1, 2, 3, 4, 5] * 20)
+    by3 = pd.Series(rs.choice([i for i in range(1, 6)], size=(100,)))
     mby3 = md.Series(by3)
 
     res = mdf.groupby(mby3, as_index=as_index, sort=sort).nunique()

@@ -930,9 +930,14 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
         out_df = op.outputs[0]
 
         by = op.groupby_params["by"]
+        in_df_nsplits_settled: bool = all([not np.isnan(v) for v in in_df.nsplits[0]])
         if isinstance(by, list):
             for i, _by in enumerate(by):
-                if isinstance(_by, ENTITY_TYPE):
+                if (
+                    isinstance(_by, ENTITY_TYPE)
+                    and all([not np.isnan(v) for v in _by.nsplits[0]])
+                    and in_df_nsplits_settled
+                ):
                     by[i] = yield from recursive_tile(
                         _by.rechunk({0: in_df.nsplits[0]})
                     )

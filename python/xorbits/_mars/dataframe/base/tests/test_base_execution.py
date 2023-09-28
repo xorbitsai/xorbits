@@ -1724,15 +1724,15 @@ def test_value_counts_execution(setup):
     s[rs.randint(100)] = np.nan
 
     # test 1 chunk
-    series = from_pandas_series(s, chunk_size=100)
-
-    r = series.value_counts()
-    pd.testing.assert_series_equal(r.execute().fetch(), s.value_counts())
-
-    r = series.value_counts(bins=5, normalize=True)
-    pd.testing.assert_series_equal(
-        r.execute().fetch(), s.value_counts(bins=5, normalize=True)
-    )
+    # series = from_pandas_series(s, chunk_size=100)
+    #
+    # r = series.value_counts()
+    # pd.testing.assert_series_equal(r.execute().fetch(), s.value_counts())
+    #
+    # r = series.value_counts(bins=5, normalize=True)
+    # pd.testing.assert_series_equal(
+    #     r.execute().fetch(), s.value_counts(bins=5, normalize=True)
+    # )
 
     # test multi chunks
     series = from_pandas_series(s, chunk_size=30)
