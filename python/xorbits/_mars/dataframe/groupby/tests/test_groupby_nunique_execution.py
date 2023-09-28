@@ -407,15 +407,6 @@ def test_groupby_agg_nunique_with_tuple_kwargs(
     pd.testing.assert_frame_equal(res.execute().fetch(), expected)
 
 
-def test_111(setup):
-    # df = pd.DataFrame({'a': [1, 2, 3, 4], 'b': [1, 2, 3, 4]})
-    mdf = md.DataFrame({"a": [1, 2, 2, 4]})
-
-    by1 = md.Series([6, 7, 7, 9])
-    res = mdf.groupby(by1).nunique()
-    print(res.execute().fetch())
-
-
 @pytest.mark.parametrize(
     "chunk_size, as_index, sort",
     itertools.product([None, 13], [True, False], [True, False]),
