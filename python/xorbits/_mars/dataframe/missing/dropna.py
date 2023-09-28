@@ -19,7 +19,6 @@ import numpy as np
 import pandas as pd
 
 from ... import opcodes
-from ...config import options
 from ...core import OutputType, recursive_tile
 from ...serialization.serializables import AnyField, BoolField, Int32Field, StringField
 from ...utils import no_default, pd_release_version
@@ -37,7 +36,6 @@ class DataFrameDropNA(DataFrameOperand, DataFrameOperandMixin):
     _how = StringField("how")
     _thresh = Int32Field("thresh")
     _subset = AnyField("subset")
-    _use_inf_as_na = BoolField("use_inf_as_na")
 
     # when True, dropna will be called on the input,
     # otherwise non-nan counts will be used
@@ -51,7 +49,6 @@ class DataFrameDropNA(DataFrameOperand, DataFrameOperandMixin):
         how=None,
         thresh=None,
         subset=None,
-        use_inf_as_na=None,
         drop_directly=None,
         subset_size=None,
         sparse=None,
@@ -63,7 +60,6 @@ class DataFrameDropNA(DataFrameOperand, DataFrameOperandMixin):
             _how=how,
             _thresh=thresh,
             _subset=subset,
-            _use_inf_as_na=use_inf_as_na,
             _drop_directly=drop_directly,
             _subset_size=subset_size,
             _output_types=output_types,
@@ -86,10 +82,6 @@ class DataFrameDropNA(DataFrameOperand, DataFrameOperandMixin):
     @property
     def subset(self) -> list:
         return self._subset
-
-    @property
-    def use_inf_as_na(self) -> bool:
-        return self._use_inf_as_na
 
     @property
     def drop_directly(self) -> bool:
@@ -150,9 +142,7 @@ class DataFrameDropNA(DataFrameOperand, DataFrameOperandMixin):
         subset_df = in_df
         if op.subset:
             subset_df = in_df[op.subset]
-        count_series = yield from recursive_tile(
-            subset_df.agg("count", axis=1, _use_inf_as_na=op.use_inf_as_na)
-        )
+        count_series = yield from recursive_tile(subset_df.agg("count", axis=1))
 
         nsplits, out_shape, left_chunks, right_chunks = align_dataframe_series(
             in_df, count_series, axis=0
@@ -185,35 +175,30 @@ class DataFrameDropNA(DataFrameOperand, DataFrameOperandMixin):
 
     @classmethod
     def execute(cls, ctx, op: "DataFrameDropNA"):
-        try:
-            pd.set_option("mode.use_inf_as_na", op.use_inf_as_na)
-
-            in_data = ctx[op.inputs[0].key]
-            if op.drop_directly:
-                if isinstance(in_data, pd.DataFrame):
-                    result = in_data.dropna(
-                        axis=op.axis, how=op.how, thresh=op.thresh, subset=op.subset
-                    )
-                elif isinstance(in_data, pd.Series):
-                    result = in_data.dropna(axis=op.axis, how=op.how)
-                else:
-                    result = in_data.dropna(how=op.how)
-                ctx[op.outputs[0].key] = result
-                return
-
-            in_counts = ctx[op.inputs[1].key]
-            if op.how == "all":
-                in_counts = in_counts[in_counts > 0]
+        in_data = ctx[op.inputs[0].key]
+        if op.drop_directly:
+            if isinstance(in_data, pd.DataFrame):
+                result = in_data.dropna(
+                    axis=op.axis, how=op.how, thresh=op.thresh, subset=op.subset
+                )
+            elif isinstance(in_data, pd.Series):
+                result = in_data.dropna(axis=op.axis, how=op.how)
             else:
-                if op.thresh is None or op.thresh is no_default:
-                    thresh = op.subset_size
-                else:  # pragma: no cover
-                    thresh = op.thresh
-                in_counts = in_counts[in_counts >= thresh]
+                result = in_data.dropna(how=op.how)
+            ctx[op.outputs[0].key] = result
+            return
 
-            ctx[op.outputs[0].key] = in_data.reindex(in_counts.index)
-        finally:
-            pd.reset_option("mode.use_inf_as_na")
+        in_counts = ctx[op.inputs[1].key]
+        if op.how == "all":
+            in_counts = in_counts[in_counts > 0]
+        else:
+            if op.thresh is None or op.thresh is no_default:
+                thresh = op.subset_size
+            else:  # pragma: no cover
+                thresh = op.thresh
+            in_counts = in_counts[in_counts >= thresh]
+
+        ctx[op.outputs[0].key] = in_data.reindex(in_counts.index)
 
 
 def df_dropna(
@@ -328,14 +313,12 @@ def df_dropna(
     if thresh is no_default and how is no_default:
         how = "any"
 
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameDropNA(
         axis=axis,
         how=how,
         thresh=thresh,
         subset=subset,
         output_types=[OutputType.dataframe],
-        use_inf_as_na=use_inf_as_na,
     )
     out_df = op(df)
     if inplace:
@@ -417,12 +400,10 @@ def series_dropna(series, axis=0, inplace=False, how=None):
     dtype: object
     """
     axis = validate_axis(axis, series)
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameDropNA(
         axis=axis,
         how=how,
         output_types=[OutputType.series],
-        use_inf_as_na=use_inf_as_na,
     )
     out_series = op(series)
     if inplace:
@@ -445,8 +426,5 @@ def index_dropna(index, how="any"):
     -------
     Index
     """
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
-    op = DataFrameDropNA(
-        axis=0, how=how, output_types=[OutputType.index], use_inf_as_na=use_inf_as_na
-    )
+    op = DataFrameDropNA(axis=0, how=how, output_types=[OutputType.index])
     return op(index)

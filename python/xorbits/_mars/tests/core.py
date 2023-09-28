@@ -320,6 +320,10 @@ class ObjectCheckMixin:
                 expected_dtype, cate_dtypes
             ):
                 return
+            if isinstance(real_dtype, pd.ArrowDtype) or isinstance(
+                expected_dtype, pd.ArrowDtype
+            ):
+                return
             if not np.can_cast(real_dtype, expected_dtype) and not np.can_cast(
                 expected_dtype, real_dtype
             ):

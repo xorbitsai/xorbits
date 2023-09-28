@@ -26,6 +26,7 @@ def _install():
     from .fill import bfill, ffill, fillna
     from .getitem import df_groupby_getitem
     from .head import head
+    from .nth import nth
 
     # Just for enabling custom agg function registration.
     # Therefore, del this immediately after import.
@@ -73,6 +74,7 @@ def _install():
         setattr(cls, "cumsum", cumsum)
 
         setattr(cls, "head", head)
+        setattr(cls, "nth", nth)
 
         setattr(cls, "rolling", rolling)
 

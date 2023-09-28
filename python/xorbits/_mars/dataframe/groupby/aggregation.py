@@ -30,7 +30,6 @@ from ...core.custom_log import redirect_custom_log
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
     AnyField,
-    BoolField,
     DictField,
     Int32Field,
     Int64Field,
@@ -170,7 +169,6 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
     groupby_params = DictField("groupby_params")
 
     method = StringField("method")
-    use_inf_as_na = BoolField("use_inf_as_na")
 
     # for chunk
     combine_size = Int32Field("combine_size")
@@ -990,6 +988,12 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
     def _do_custom_agg(
         func_name: str, op: "DataFrameGroupByAgg", in_data: pd.DataFrame
     ) -> Union[pd.Series, pd.DataFrame]:
+        # Must be tuple way, like x=('col', 'agg_func_name')
+        # See `is_funcs_aggregate` func,
+        # if not this way, the code doesn't go here or switch to transform execution.
+        if op.raw_func is None:
+            func_name = list(op.raw_func_kw.values())[0][1]
+
         if op.stage == OperandStage.map:
             return custom_agg_functions[func_name].execute_map(op, in_data)
         elif op.stage == OperandStage.combine:
@@ -1286,18 +1290,14 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
     @redirect_custom_log
     @enter_current_session
     def execute(cls, ctx, op: "DataFrameGroupByAgg"):
-        try:
-            pd.set_option("mode.use_inf_as_na", op.use_inf_as_na)
-            if op.stage == OperandStage.map:
-                cls._execute_map(ctx, op)
-            elif op.stage == OperandStage.combine:
-                cls._execute_combine(ctx, op)
-            elif op.stage == OperandStage.agg:
-                cls._execute_agg(ctx, op)
-            else:  # pragma: no cover
-                raise ValueError("Aggregation operand not executable")
-        finally:
-            pd.reset_option("mode.use_inf_as_na")
+        if op.stage == OperandStage.map:
+            cls._execute_map(ctx, op)
+        elif op.stage == OperandStage.combine:
+            cls._execute_combine(ctx, op)
+        elif op.stage == OperandStage.agg:
+            cls._execute_agg(ctx, op)
+        else:  # pragma: no cover
+            raise ValueError("Aggregation operand not executable")
 
 
 def agg(groupby, func=None, method="auto", combine_size=None, *args, **kwargs):
@@ -1355,8 +1355,6 @@ def agg(groupby, func=None, method="auto", combine_size=None, *args, **kwargs):
             func, *args, _call_agg=True, index=index_value, **kwargs
         )
 
-    use_inf_as_na = kwargs.pop("_use_inf_as_na", options.dataframe.mode.use_inf_as_na)
-
     agg_op = DataFrameGroupByAgg(
         raw_func=func,
         raw_func_kw=kwargs,
@@ -1365,6 +1363,5 @@ def agg(groupby, func=None, method="auto", combine_size=None, *args, **kwargs):
         groupby_params=groupby.op.groupby_params,
         combine_size=combine_size or options.combine_size,
         chunk_store_limit=options.chunk_store_limit,
-        use_inf_as_na=use_inf_as_na,
     )
     return agg_op(groupby)
