@@ -3232,3 +3232,48 @@ def test_copy_deep(setup, chunk_size):
     expected_c["a1"] = expected_c["a1"] + 0.8
     pd.testing.assert_frame_equal(xdf_c.execute().fetch(), expected_c)
     pd.testing.assert_frame_equal(xdf.execute().fetch(), expected)
+
+
+def test_map_chunk_with_empty_input(setup):
+    df = pd.DataFrame(columns=["a", "b", "c"])
+    series = pd.Series(name="hello")
+    mdf = from_pandas_df(df)
+    ms = from_pandas_series(series)
+
+    # df to df
+    def p(d):
+        if not len(d):
+            return pd.DataFrame([[None] * d.shape[1]], columns=d.columns)
+        else:
+            return d
+
+    res = mdf.map_chunk(p)
+    expected = pd.DataFrame([[None] * df.shape[1]], columns=df.columns)
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # series to series
+    def x1(d):
+        if not len(d):
+            return pd.Series([1], name=d.name)
+        else:
+            return d
+
+    res = ms.map_chunk(x1)
+    expected = pd.Series([1], name=series.name)
+    pd.testing.assert_series_equal(res.execute().fetch(), expected)
+
+    # series to df
+    def x2(d):
+        return pd.DataFrame({d.name: [np.nan, 1, 2]})
+
+    res = ms.map_chunk(x2)
+    expected = pd.DataFrame({series.name: [np.nan, 1, 2]})
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # df to series
+    def x3(d):
+        return pd.Series(list(d.columns), name=d.columns[1])
+
+    res = mdf.map_chunk(x3)
+    expected = pd.Series(list(df.columns), name=df.columns[1])
+    pd.testing.assert_series_equal(res.execute().fetch(), expected)
