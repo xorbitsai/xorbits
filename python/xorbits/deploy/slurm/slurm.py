@@ -30,8 +30,8 @@ class SLURMCluster:
         num_nodes=None,
         partition_option=None,
         load_env=None,
-        output_dir=None,
-        error_dir=None,
+        output_path=None,
+        error_path=None,
         work_dir=None,
         time=None,
         walltime=None,
@@ -46,7 +46,7 @@ class SLURMCluster:
         self.job_name = job_name
         self.num_nodes = num_nodes
         self.partition_option = partition_option
-        self.output_dir = output_dir
+        self.output_path = output_path
         self.work_dir = work_dir
         self.walltime = walltime
         self.time = time
@@ -54,14 +54,15 @@ class SLURMCluster:
         self.cores = cores
         self.memory = memory
         self.load_env = load_env
-        self.error_dir = error_dir
+        self.error_path = error_path
         self.account = account
         slurm_params = {
             "J": self.job_name,
             "nodes": self.num_nodes,
             "partition": self.partition_option,
-            "output": self.output_dir,
-            "workdir": self.work_dir,
+            "error": self.error_path,
+            "output": self.output_path,
+            "chdir": self.work_dir,
             "time": self.time,
             "ntasks": self.processes,
             "cpus-per-task": self.cores,

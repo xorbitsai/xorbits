@@ -13,39 +13,58 @@
 # limitations under the License.
 
 from .... import init
-from ... import pandas as pd
+from .... import pandas as pd
 from .. import SLURMCluster
 
 
-def test_header():
-    with SLURMCluster(time="00:02:00", processes=4, cores=8, memory="28G") as cluster:
-        assert "#SBATCH" in cluster.commands
-        assert "#SBATCH -n 1" in cluster.commands
-        assert "#SBATCH --cpus-per-task=8" in cluster.commands
-        assert "#SBATCH --mem28G" in cluster.commands
-        assert "#SBATCH -t 00:02:00" in cluster.commands
-        assert "#SBATCH -p" not in cluster.commands
-        # assert "#SBATCH -A" not in cluster.commands
+def test_header_core_process_memory():
+    cluster = SLURMCluster(time="00:02:00", processes=4, cores=8, memory="28G")
+    assert "#SBATCH" in cluster.commands
+    assert "#SBATCH --cpus-per-task=8" in cluster.commands
+    assert "#SBATCH --mem=28G" in cluster.commands
+    assert "#SBATCH --time=00:02:00" in cluster.commands
+    assert "#SBATCH -A" not in cluster.commands
 
-    with SLURMCluster(
-        queue="regular",
+
+def test_header_partition_account():
+    cluster = SLURMCluster(
+        partition_option="regular",
         account="XorbitsOnSlurm",
         processes=4,
         cores=8,
         memory="28G",
-    ) as cluster:
-        assert "#SBATCH --cpus-per-task=8" in cluster.commands
-        assert "#SBATCH --mem=28G" in cluster.commands
-        assert "#SBATCH -t " in cluster.commands
-        assert "#SBATCH -A XorbitsOnSlurm" in cluster.commands
-        assert "#SBATCH --partion regular" in cluster.commands
+    )
+    assert "#SBATCH --cpus-per-task=8" in cluster.commands
+    assert "#SBATCH --mem=28G" in cluster.commands
+    assert "#SBATCH -A XorbitsOnSlurm" in cluster.commands
+    assert "#SBATCH --partition=regular" in cluster.commands
+
+
+def test_header_work_outputdir_web():
+    # Test additional parameters
+    cluster = SLURMCluster(
+        job_name="my_job",
+        num_nodes=10,
+        output_path="/path/to/output",
+        work_dir="/path/to/work",
+        error_path="/path/to/error",
+        webport=8080,
+        load_env="xorbits",
+    )
+    assert "#SBATCH -J my_job" in cluster.commands
+    assert "#SBATCH --nodes=10" in cluster.commands
+    assert "#SBATCH --output=/path/to/output" in cluster.commands
+    assert "#SBATCH --chdir=/path/to/work" in cluster.commands
+    assert "#SBATCH --error=/path/to/error" in cluster.commands
+    assert "web_port=8080" in cluster.commands
+    assert "source activate xorbits" in cluster.commands
 
 
 def test_jobscript():
     exp = SLURMCluster(
         job_name="xorbits",
         num_nodes=2,
-        output_dir="/shared_space/output.out",
+        output_path="/shared_space/output.out",
         time="00:30:00",
     )
     address = exp.run()
