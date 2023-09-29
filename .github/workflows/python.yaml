@@ -251,13 +251,13 @@ jobs:
     - name: Slurm Setup Job queuing system
       if: ${{ matrix.module == 'slurm' }}
       run: |
-        source CI/${{ matrix.jobqueue }}.sh
+        source CI/${{ matrix.module }}.sh
         jobqueue_before_install
 
     - name: Slurm Install xorbits
       if: ${{ matrix.module == 'slurm' }}
       run: |
-        source CI/${{ matrix.jobqueue }}.sh
+        source CI/${{ matrix.module }}.sh
         jobqueue_install
       
     - name: Install on GPU
@@ -400,7 +400,7 @@ jobs:
     - name: Cleanup on slurm
       if: ${{ matrix.module == 'slurm' }}
       run: |
-        source CI/${{ matrix.jobqueue }}.sh
+        source CI/${{ matrix.module }}.sh
         jobqueue_after_script
 
     - name: Report coverage data
