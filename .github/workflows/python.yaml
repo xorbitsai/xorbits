@@ -299,9 +299,12 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes/external_storage/juicefs
         elif [[ "$MODULE" == "slurm" ]]; then
-          pytest --ignore xorbits/_mars/ --timeout=1500 \
+          docker exec c1 /bin/bash -c "pip install xorbits"
+          docker exec c2 /bin/bash -c "pip install xorbits"
+          docker exec slurmctld /bin/bash -c \
+          "pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/cluster
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/cluster"
         elif [[ "$MODULE" == "hadoop" ]]; then
           export WITH_HADOOP="1"
           export HADOOP_HOME="/usr/local/hadoop"
