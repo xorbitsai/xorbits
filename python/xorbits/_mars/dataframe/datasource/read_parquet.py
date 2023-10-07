@@ -406,8 +406,7 @@ class DataFrameReadParquet(
             paths = fs.glob(op.path, storage_options=op.storage_options)
             if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
                 parsed_path = urlparse(op.path)
-                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
-                paths = [path_prefix + path for path in paths]
+                paths = [f"{parsed_path.scheme}://{path}" for path in paths]
         first_chunk_row_num, first_chunk_raw_bytes = None, None
         for i, pth in enumerate(paths):
             if i == 0:
@@ -416,7 +415,7 @@ class DataFrameReadParquet(
                         first_chunk_row_num = get_engine(op.engine).get_row_num(f)
                         first_chunk_raw_bytes = sys.getsizeof(f)
                 else:
-                    of = fsspec.open(pth, storage_options=op.storage_options)
+                    of = fsspec.open(pth)
                     with of as f:
                         first_chunk_row_num = get_engine(op.engine).get_row_num(f)
                     first_chunk_raw_bytes = fsspec.get_fs_token_paths(
@@ -857,11 +856,6 @@ def read_parquet(
     else:
         if not isinstance(path, list):
             file_path = fs.glob(path, storage_options=storage_options)[0]
-            if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
-                parsed_path = urlparse(path)
-                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
-                file_path = path_prefix + file_path
-
         else:
             file_path = path[0]
         with fs.open(file_path, storage_options=storage_options) as f:
