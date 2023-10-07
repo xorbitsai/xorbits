@@ -394,19 +394,19 @@ class SubtaskProcessor:
                         address=self._supervisor_address, # 这个supervisor_address是不是actor对应的address？
                     )
                 except mo.ActorNotExist:
-                    # logger.debug(
-                    #     f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
-                    # )
-                    # self.result.status = SubtaskStatus.errored
-                    # raise
-                    runner_storage: RunnerStorageActor = await mo.create_actor(
-                        RunnerStorageActor,
-                        band=self._band,
-                        slot_id=self._slot_id,
-                        uid=RunnerStorageActor.gen_uid(self._band[1], self._slot_id),
-                        address=self._supervisor_address,
-                        # allocate_strategy=IdleLabel(self._band[1], "storage_runner"),
+                    logger.debug(
+                        f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
                     )
+                    self.result.status = SubtaskStatus.errored
+                    raise
+                    # runner_storage: RunnerStorageActor = await mo.create_actor(
+                    #     RunnerStorageActor,
+                    #     band=self._band,
+                    #     slot_id=self._slot_id,
+                    #     uid=RunnerStorageActor.gen_uid(self._band[1], self._slot_id),
+                    #     address=self._band[0],
+                    #     # allocate_strategy=IdleLabel(self._band[1], "storage_runner"),
+                    # )
                 # puts 里每个元素都是 DelayedArgument，可用参数 args 取到内部元组 (key,value)
                 for put in puts:
                     put_key = put.args[0]
