@@ -391,8 +391,7 @@ class DataFrameReadParquet(
             paths = sorted(paths)
             if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
                 parsed_path = urlparse(op.path)
-                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
-                paths = [path_prefix + path for path in paths]
+                paths = [f"{parsed_path.scheme}://{path}" for path in paths]
         elif isinstance(op.path, str) and op.path.endswith(".zip"):
             file = fs.open(op.path, storage_options=op.storage_options)
             z = zipfile.ZipFile(file)
