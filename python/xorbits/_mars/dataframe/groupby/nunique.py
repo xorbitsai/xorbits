@@ -15,8 +15,9 @@ from typing import List, Union
 
 import pandas as pd
 
-from ...core import OutputType
+from ...core import ENTITY_TYPE, OutputType
 from ...utils import implements
+from ..utils import is_dataframe
 from .aggregation import DataFrameGroupByAgg
 from .custom_aggregation import (
     DataFrameCustomGroupByAggMixin,
@@ -80,16 +81,45 @@ class DataFrameCustomGroupByNuniqueMixin(DataFrameCustomGroupByAggMixin):
             return selection
 
     @classmethod
+    def _drop_duplicates_by_series(cls, in_data: pd.DataFrame, origin_cols: List):
+        if isinstance(in_data.index, pd.MultiIndex):
+            origin_index_name = in_data.index.names
+        else:
+            origin_index_name = in_data.index.name
+        res = in_data.reset_index()
+        new_cols = list(res.columns)
+        index_cols = [v for v in new_cols if v not in origin_cols]
+        res = res.drop_duplicates().set_index(index_cols)
+        if isinstance(res.index, pd.MultiIndex):
+            res.index.names = origin_index_name
+        else:
+            res.index.name = origin_index_name
+        return res
+
+    @classmethod
     def _get_execute_map_result(
         cls, op: DataFrameGroupByAgg, in_data: pd.DataFrame
     ) -> Union[pd.DataFrame, pd.Series]:
         selections = cls._get_selection_columns(op)
         by_cols = op.raw_groupby_params["by"]
         if by_cols is not None:
-            cols = (
-                [*selections, *by_cols] if selections is not None else in_data.columns
-            )
-            res = in_data[cols].drop_duplicates(subset=cols).set_index(by_cols)
+            # When `by` some series, the series will be used to determine the groups.
+            # We first need to set the index of the data to these series,
+            # and then `reset_index` to let these series become data columns.
+            # Next bring these columns for `drop_duplicates` and reset these columns to index.
+            if isinstance(by_cols, list) and any(
+                [isinstance(v, pd.Series) for v in by_cols]
+            ):
+                origin_cols = list(in_data.columns)
+                res = in_data.set_index(by_cols)
+                res = cls._drop_duplicates_by_series(res, origin_cols)
+            else:
+                cols = (
+                    [*selections, *by_cols]
+                    if selections is not None
+                    else in_data.columns
+                )
+                res = in_data[cols].drop_duplicates(subset=cols).set_index(by_cols)
         else:  # group by level
             selections = selections if selections is not None else in_data.columns
             level_indexes = cls._get_level_indexes(op, in_data)
@@ -111,9 +141,17 @@ class DataFrameCustomGroupByNuniqueMixin(DataFrameCustomGroupByAggMixin):
     def _get_execute_combine_result(
         cls, op: DataFrameGroupByAgg, in_data: pd.DataFrame
     ) -> Union[pd.DataFrame, pd.Series]:
-        # in_data.index.names means MultiIndex (groupby on multi cols)
-        index_col = in_data.index.name or in_data.index.names
-        res = in_data.reset_index().drop_duplicates().set_index(index_col)
+        by = op.raw_groupby_params["by"]
+        if isinstance(by, list) and any([isinstance(v, ENTITY_TYPE) for v in by]):
+            # `in_data` may be series when there is index op after groupby
+            origin_cols = (
+                list(in_data.columns) if is_dataframe(in_data) else [in_data.name]
+            )
+            res = cls._drop_duplicates_by_series(in_data, origin_cols)
+        else:
+            # in_data.index.names means MultiIndex (groupby on multi cols)
+            index_col = in_data.index.name or in_data.index.names
+            res = in_data.reset_index().drop_duplicates().set_index(index_col)
         if op.output_types[0] == OutputType.series:
             res = res.squeeze()
         return res
@@ -127,7 +165,12 @@ class DataFrameCustomGroupByNuniqueMixin(DataFrameCustomGroupByAggMixin):
         by = op.raw_groupby_params["by"]
 
         if by is not None:
-            if op.output_types[0] == OutputType.dataframe:
+            if isinstance(by, list) and any(
+                [isinstance(_by, ENTITY_TYPE) for _by in by]
+            ):
+                # nothing to do here, just group by level is correct
+                pass
+            elif op.output_types[0] == OutputType.dataframe:
                 groupby_params.pop("level", None)
                 groupby_params["by"] = cols
                 in_data = in_data.reset_index()
