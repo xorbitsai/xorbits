@@ -302,7 +302,7 @@ class LinearRegression(MultiOutputMixin, RegressorMixin, LinearModel):
                 self.coef_.execute()
             except LinAlgError:
                 # TODO: implement linalg.lstsq first
-                raise NotImplementedError("Does not support sigular matrix!")
+                raise NotImplementedError("Does not support singular matrix!")
 
         if y.ndim == 1:
             self.coef_ = mt.ravel(self.coef_)
