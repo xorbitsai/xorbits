@@ -134,7 +134,10 @@ class IncrementalIndexDataSourceMixin(DataFrameOperandMixin):
         if (
             op.incremental_index
             and results is not None
-            and isinstance(results[0].index_value.value, IndexValue.RangeIndex)
+            and (
+                results[0].index_value is None
+                or isinstance(results[0].index_value.value, IndexValue.RangeIndex)
+            )
         ):
             result = results[0]
             chunks = []
@@ -159,7 +162,10 @@ class IncrementalIndexDataSourceMixin(DataFrameOperandMixin):
         out = op.outputs[0]
         if (
             op.incremental_index
-            and isinstance(out.index_value.value, IndexValue.RangeIndex)
+            and (
+                out.index_value is None
+                or isinstance(out.index_value.value, IndexValue.RangeIndex)
+            )
             and getattr(op, "incremental_index_recorder_name", None)
         ):
             index = out.index[0]
@@ -173,7 +179,10 @@ class IncrementalIndexDataSourceMixin(DataFrameOperandMixin):
         result = ctx[out.key]
         if (
             op.incremental_index
-            and isinstance(out.index_value.value, IndexValue.RangeIndex)
+            and (
+                out.index_value is None
+                or isinstance(out.index_value.value, IndexValue.RangeIndex)
+            )
             and getattr(op, "incremental_index_recorder_name", None)
         ):
             recorder_name = op.incremental_index_recorder_name
