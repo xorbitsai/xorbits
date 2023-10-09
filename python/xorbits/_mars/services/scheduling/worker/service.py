@@ -64,6 +64,7 @@ class SchedulingWorkerService(AbstractService):
 
         await mo.create_actor(
             StageMonitorActor,
+            monitoring_config=scheduling_config.get("stage_monitor", {}),
             uid=StageMonitorActor.default_uid(),
             address=address,
         )

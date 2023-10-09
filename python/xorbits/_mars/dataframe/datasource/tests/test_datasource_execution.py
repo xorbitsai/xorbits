@@ -606,6 +606,10 @@ def test_read_csv_execution(setup):
         mdf2 = md.read_csv(file_path, index_col=0, chunk_bytes=100).execute().fetch()
         pd.testing.assert_frame_equal(pdf, mdf2)
 
+        mdf3 = md.read_csv(file_path, index_col=[0, 1]).execute().fetch()
+        pdf3 = pd.read_csv(file_path, index_col=[0, 1])
+        pd.testing.assert_frame_equal(pdf3, mdf3)
+
     # test nan
     with tempfile.TemporaryDirectory() as tempdir:
         file_path = os.path.join(tempdir, "test.csv")

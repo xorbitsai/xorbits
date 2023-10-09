@@ -194,6 +194,36 @@ def test_iloc_getitem(setup_gpu, gpu):
         pd.testing.assert_index_equal(index.execute().fetch(), data[selection])
 
 
+def test_series_setitem(setup):
+    data1 = pd.Series(np.arange(10))
+    series = md.Series(data1, chunk_size=3)
+    series[2] = 777
+    real = series.execute().fetch()
+    data1[2] = 777
+    pd.testing.assert_series_equal(real, data1)
+
+    arrays = [
+        ["bar", "bar", "baz", "baz", "foo", "foo", "qux", "qux"],
+        ["one", "two", "one", "two", "one", "two", "one", "two"],
+    ]
+    tuples = list(zip(*arrays))
+    index = pd.MultiIndex.from_tuples(tuples, names=["first", "second"])
+    data2 = pd.Series(np.random.randn(8), index=index)
+    series = md.Series(data2, chunk_size=3)
+    series["bar", "two"] = 0.888888
+    real = series.execute().fetch()
+    data2["bar", "two"] = 0.888888
+    pd.testing.assert_series_equal(real, data2)
+
+    data3 = [9, 99, 999, 9999]
+    series = md.Series(data3, chunk_size=1)
+    series[1] = 88
+    real = series.execute().fetch()
+    expected = pd.Series(data3)
+    expected[1] = 88
+    pd.testing.assert_series_equal(real, expected)
+
+
 def test_iloc_setitem(setup):
     df1 = pd.DataFrame(
         [[1, 3, 3], [4, 2, 6], [7, 8, 9]],

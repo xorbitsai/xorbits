@@ -27,6 +27,7 @@ from ...config import options
 from ...core import ENTITY_TYPE, OutputType
 from ...core.context import get_context
 from ...core.custom_log import redirect_custom_log
+from ...core.entity.utils import recursive_tile
 from ...core.operand import OperandStage
 from ...serialization.serializables import (
     AnyField,
@@ -480,6 +481,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             # force as_index=True for map phase
             map_op.output_types = op.output_types
             map_op.groupby_params = map_op.groupby_params.copy()
+            map_op.raw_groupby_params = map_op.raw_groupby_params.copy()
             map_op.groupby_params["as_index"] = True
             if isinstance(map_op.groupby_params["by"], list):
                 by = []
@@ -491,6 +493,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                     else:
                         by.append(v)
                 map_op.groupby_params["by"] = by
+                map_op.raw_groupby_params["by"] = by
             map_op.stage = OperandStage.map
             map_op.pre_funcs = func_infos.pre_funcs
             map_op.agg_funcs = func_infos.agg_funcs
@@ -926,6 +929,20 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             in_df = build_concatenated_rows_frame(in_df)
         out_df = op.outputs[0]
 
+        by = op.groupby_params["by"]
+        in_df_nsplits_settled: bool = all([not np.isnan(v) for v in in_df.nsplits[0]])
+        if isinstance(by, list):
+            for i, _by in enumerate(by):
+                if (
+                    isinstance(_by, ENTITY_TYPE)
+                    and all([not np.isnan(v) for v in _by.nsplits[0]])
+                    and in_df_nsplits_settled
+                ):
+                    by[i] = yield from recursive_tile(
+                        _by.rechunk({0: in_df.nsplits[0]})
+                    )
+                    yield by[i].chunks
+
         func_infos = cls._compile_funcs(op, in_df)
 
         if op.method == "auto":
@@ -944,6 +961,10 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             raise NotImplementedError
 
     @classmethod
+    def _get_new_by_data(cls, by: List, ctx: Dict):
+        return [ctx[v.key] if isinstance(v, ENTITY_TYPE) else v for v in by]
+
+    @classmethod
     def _get_grouped(cls, op: "DataFrameGroupByAgg", df, ctx, copy=False, grouper=None):
         if copy:
             df = df.copy()
@@ -956,13 +977,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             params["by"] = grouper
             params.pop("level", None)
         elif isinstance(params.get("by"), list):
-            new_by = []
-            for v in params["by"]:
-                if isinstance(v, ENTITY_TYPE):
-                    new_by.append(ctx[v.key])
-                else:
-                    new_by.append(v)
-            params["by"] = new_by
+            params["by"] = cls._get_new_by_data(params["by"], ctx)
 
         grouped = df.groupby(**params)
 
@@ -984,10 +999,23 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             pos += step.output_limit
         return out_dict
 
-    @staticmethod
+    @classmethod
     def _do_custom_agg(
-        func_name: str, op: "DataFrameGroupByAgg", in_data: pd.DataFrame
+        cls, func_name: str, op: "DataFrameGroupByAgg", in_data: pd.DataFrame, ctx: Dict
     ) -> Union[pd.Series, pd.DataFrame]:
+        # Must be tuple way, like x=('col', 'agg_func_name')
+        # See `is_funcs_aggregate` func,
+        # if not this way, the code doesn't go here or switch to transform execution.
+        if op.raw_func is None:
+            func_name = list(op.raw_func_kw.values())[0][1]
+        if (
+            func_name == "nunique"
+            and "by" in op.groupby_params
+            and isinstance(op.groupby_params["by"], list)
+        ):
+            op.raw_groupby_params["by"] = cls._get_new_by_data(
+                op.groupby_params["by"], ctx
+            )
         if op.stage == OperandStage.map:
             return custom_agg_functions[func_name].execute_map(op, in_data)
         elif op.stage == OperandStage.combine:
@@ -1105,7 +1133,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
         ) in op.agg_funcs:
             input_obj = ret_map_groupbys[input_key]
             if map_func_name == "custom_reduction":
-                agg_dfs.append(cls._do_custom_agg(raw_func_name, op, in_data))
+                agg_dfs.append(cls._do_custom_agg(raw_func_name, op, in_data, ctx))
             else:
                 single_func = map_func_name == op.raw_func
                 agg_dfs.append(
@@ -1153,7 +1181,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
         ) in zip(ctx[op.inputs[0].key], op.agg_funcs):
             input_obj = in_data_dict[output_key]
             if agg_func_name == "custom_reduction":
-                combines.append(cls._do_custom_agg(raw_func_name, op, raw_input))
+                combines.append(cls._do_custom_agg(raw_func_name, op, raw_input, ctx))
             else:
                 combines.append(
                     cls._do_predefined_agg(input_obj, agg_func_name, gpu=op.gpu, **kwds)
@@ -1194,7 +1222,7 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
         ) in op.agg_funcs:
             if agg_func_name == "custom_reduction":
                 in_data_dict[output_key] = cls._do_custom_agg(
-                    raw_func_name, op, in_data_dict[output_key]
+                    raw_func_name, op, in_data_dict[output_key], ctx
                 )
             else:
                 input_obj = cls._get_grouped(op, in_data_dict[output_key], ctx)

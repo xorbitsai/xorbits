@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import itertools
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -332,3 +334,151 @@ def test_groupby_agg_nunique(setup, gen_data1):
             )
             expected = df.groupby("b", sort=sort).agg(["sum", "nunique"])
             pd.testing.assert_frame_equal(r.sort_index(), expected.sort_index())
+
+
+@pytest.mark.parametrize(
+    "chunk_size, as_index, sort",
+    itertools.product([None, 13], [True, False], [True, False]),
+)
+def test_groupby_agg_nunique_with_tuple_kwargs(
+    setup, gen_data2, chunk_size, as_index, sort
+):
+    df = gen_data2
+    mdf = md.DataFrame(df, chunk_size=chunk_size)
+
+    res = mdf.groupby("b", as_index=as_index, sort=sort).agg(e=("a", "nunique"))
+    expected = df.groupby("b", as_index=as_index, sort=sort).agg(e=("a", "nunique"))
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby("b", as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("c", "nunique")
+    )
+    expected = df.groupby("b", as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("c", "nunique")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby("b", as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("d", "sum")
+    )
+    expected = df.groupby("b", as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("d", "sum")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby("b", as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("d", "sum"), g=("c", "nunique")
+    )
+    expected = df.groupby("b", as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("d", "sum"), g=("c", "nunique")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # by multi columns
+    res = mdf.groupby(["b", "c"], as_index=as_index, sort=sort).agg(e=("a", "nunique"))
+    expected = df.groupby(["b", "c"], as_index=as_index, sort=sort).agg(
+        e=("a", "nunique")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby(["b", "c"], as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("d", "mean")
+    )
+    expected = df.groupby(["b", "c"], as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("d", "mean")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # index after groupby
+    res = mdf.groupby(["b"], as_index=as_index, sort=sort)[["a"]].agg(
+        e=("a", "nunique")
+    )
+    expected = df.groupby(["b"], as_index=as_index, sort=sort)[["a"]].agg(
+        e=("a", "nunique")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby(["b"], as_index=as_index, sort=sort)[["a", "c"]].agg(
+        e=("a", "nunique"), f=("c", "nunique")
+    )
+    expected = df.groupby(["b"], as_index=as_index, sort=sort)[["a", "c"]].agg(
+        e=("a", "nunique"), f=("c", "nunique")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+
+@pytest.mark.parametrize(
+    "chunk_size, as_index, sort",
+    itertools.product([None, 13], [True, False], [True, False]),
+)
+def test_groupby_nunique_by_series(setup, gen_data2, chunk_size, as_index, sort):
+    df = gen_data2
+    mdf = md.DataFrame(df, chunk_size=chunk_size)
+
+    by1 = pd.Series([i + 100 for i in range(100)])
+    mby1 = md.Series(by1)
+
+    by2 = pd.Series([i + 200 for i in range(100)])
+    mby2 = md.Series(by2)
+
+    res = mdf.groupby(mby1, as_index=as_index, sort=sort).nunique()
+    expected = df.groupby(by1, as_index=as_index, sort=sort).nunique()
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby([mby1, mby2], as_index=as_index, sort=sort).nunique()
+    expected = df.groupby([by1, by2], as_index=as_index, sort=sort).nunique()
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby([mby1, mby2], as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("c", "nunique")
+    )
+    expected = df.groupby([by1, by2], as_index=as_index, sort=sort).agg(
+        e=("a", "nunique"), f=("c", "nunique")
+    )
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # test by with duplicates
+    rs = np.random.RandomState(0)
+    by3 = pd.Series(rs.choice([i for i in range(1, 6)], size=(100,)))
+    mby3 = md.Series(by3)
+
+    res = mdf.groupby(mby3, as_index=as_index, sort=sort).nunique()
+    expected = df.groupby(by3, as_index=as_index, sort=sort).nunique()
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # test by other chunk size
+    by4 = pd.Series(rs.choice([i for i in range(10)], size=(100,)))
+    mby4 = md.Series(by4, chunk_size=21)
+
+    res = mdf.groupby(mby4, as_index=as_index, sort=sort).nunique()
+    expected = df.groupby(by4, as_index=as_index, sort=sort).nunique()
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # test index after groupby
+    res = mdf.groupby(mby3, as_index=as_index, sort=sort)[["a", "b"]].nunique()
+    expected = df.groupby(by3, as_index=as_index, sort=sort)[["a", "b"]].nunique()
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby(mby3, as_index=as_index, sort=sort)[["a"]].nunique()
+    expected = df.groupby(by3, as_index=as_index, sort=sort)[["a"]].nunique()
+    pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    res = mdf.groupby(mby3, as_index=as_index, sort=sort)["a"].nunique()
+    expected = df.groupby(by3, as_index=as_index, sort=sort)["a"].nunique()
+    if as_index:
+        pd.testing.assert_series_equal(res.execute().fetch(), expected)
+    else:
+        pd.testing.assert_frame_equal(res.execute().fetch(), expected)
+
+    # test different methods
+    for method in ["auto", "tree", "shuffle"]:
+        res = mdf.groupby(mby3, as_index=as_index, sort=sort).nunique(method=method)
+        expected = df.groupby(by3, as_index=as_index, sort=sort).nunique()
+        real = res.execute().fetch()
+        if method == "shuffle":
+            pd.testing.assert_frame_equal(
+                real.sort_values(["a", "b", "c", "d"]).reset_index(drop=True),
+                expected.sort_values(["a", "b", "c", "d"]).reset_index(drop=True),
+            )
+        else:
+            pd.testing.assert_frame_equal(real, expected)
