@@ -103,6 +103,7 @@ class DataFrameReadCSV(
     sep = StringField("sep")
     header = AnyField("header")
     index_col = Int32Field("index_col")
+    index_names = ListField("index_names")
     skiprows = Int32Field("skiprows")
     compression = StringField("compression")
     usecols = AnyField("usecols")
@@ -266,6 +267,7 @@ class DataFrameReadCSV(
                 nrows=op.nrows,
                 **csv_kwargs,
             )
+            df.index.names = op.index_names
             if op.keep_usecols_order:
                 df = df[op.usecols]
         return df
@@ -352,7 +354,7 @@ def read_csv(
     path: str,
     names: Union[List, Tuple] = None,
     sep: str = ",",
-    index_col: int = None,
+    index_col: Union[int, str, List[int], List[str]] = None,
     compression: str = None,
     header: Union[str, List] = "infer",
     dtype: Union[str, Dict] = None,
@@ -709,8 +711,8 @@ def read_csv(
     else:
         index_value = parse_index(mini_df.index)
     columns_value = parse_index(mini_df.columns, store_data=True)
-    if index_col and not isinstance(index_col, int):
-        index_col = list(mini_df.columns).index(index_col)
+    # Set names and index_col may lose multiindex names, so we have to fix it.
+    index_names = mini_df.index.names
 
     # convert path to abs_path
     abs_path = convert_to_abspath(path, storage_options)
@@ -721,6 +723,7 @@ def read_csv(
         sep=sep,
         header=header,
         index_col=index_col,
+        index_names=index_names,
         usecols=usecols,
         skiprows=skiprows,
         compression=compression,
