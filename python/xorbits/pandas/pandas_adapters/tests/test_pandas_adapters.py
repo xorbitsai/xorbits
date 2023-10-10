@@ -22,6 +22,7 @@ import pytest
 
 from .... import pandas as xpd
 from ....core.data import DataRef
+from ....core.execution import need_to_execute
 
 
 def test_pandas_dataframe_methods(setup):
@@ -499,3 +500,36 @@ def test_read_pickle(setup):
             assert (x == y).all()
     finally:
         shutil.rmtree(tempdir)
+
+
+def test_copy(setup):
+    index = xpd.Index([i for i in range(100)], name="test")
+    index_iloc = index[:20]
+    assert need_to_execute(index_iloc) is True
+    repr(index_iloc)
+
+    index_copy = index_iloc.copy()
+    assert need_to_execute(index_copy) is False
+    pd.testing.assert_index_equal(index_copy.to_pandas(), index_iloc.to_pandas())
+
+    index_copy = index_iloc.copy(name="abc")
+    assert need_to_execute(index_copy) is True
+    pd.testing.assert_index_equal(
+        index_copy.to_pandas(), index_iloc.to_pandas().copy(name="abc")
+    )
+
+    series = xpd.Series([1, 2, 3, 4, np.nan, 6])
+    series = series + 1
+    assert need_to_execute(series) is True
+    repr(series)
+
+    sc = series.copy()
+    assert need_to_execute(sc) is False
+    expected = series.to_pandas()
+    pd.testing.assert_series_equal(sc.to_pandas(), expected)
+
+    sc[0] = np.nan
+    assert need_to_execute(sc) is True
+    ec = expected.copy()
+    ec[0] = np.nan
+    pd.testing.assert_series_equal(sc.to_pandas(), ec)
