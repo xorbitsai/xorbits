@@ -46,7 +46,14 @@ class DataFrameSum(DataFrameReductionOperand, DataFrameReductionMixin):
 
 
 def sum_series(
-    df, axis=None, skipna=True, level=None, min_count=0, combine_size=None, method=None
+    df,
+    axis=None,
+    skipna=True,
+    level=None,
+    min_count=0,
+    combine_size=None,
+    method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
 ):
     op = DataFrameSum(
         axis=axis,
@@ -69,6 +76,7 @@ def sum_dataframe(
     numeric_only=None,
     combine_size=None,
     method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
 ):
     op = DataFrameSum(
         axis=axis,
