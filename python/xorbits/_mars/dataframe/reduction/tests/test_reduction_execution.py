@@ -781,6 +781,34 @@ def test_dataframe_aggregate(setup, check_ref_counts):
         result.execute().fetch(), data.agg(realized_volatility)
     )
 
+    def trip_type(x):
+        return np.min(x)
+    
+    df = md.DataFrame(data)
+    result = df.agg(trip_type)
+    pd.testing.assert_series_equal(
+        result.execute().fetch(), data.agg(trip_type)
+    )
+
+
+    def trip_type_max(x):
+        return np.max(x)
+    
+    df = md.DataFrame(data)
+    result = df.agg(trip_type_max)
+    pd.testing.assert_series_equal(
+        result.execute().fetch(), data.agg(trip_type_max)
+    )
+
+    def trip_type_mean(x):
+        return np.mean(x)
+    
+    df = md.DataFrame(data)
+    result = df.agg(trip_type_mean)
+    pd.testing.assert_series_equal(
+        result.execute().fetch(), data.agg(trip_type_mean)
+    )
+
     df = md.DataFrame(data)
     result = df.agg(all_aggs)
     pd.testing.assert_frame_equal(result.execute().fetch(), data.agg(all_aggs))
