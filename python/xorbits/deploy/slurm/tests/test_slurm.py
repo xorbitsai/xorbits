@@ -65,6 +65,7 @@ def test_header_work_outputdir_web():
     assert "source activate xorbits" in cluster.commands
 
 
+# Construct slurm in a docker environment, so this test could only be exec when there is sbatch command supported
 @pytest.mark.skipif(not slurm_available, reason="Cannot run without slurm cluster")
 def test_jobscript():
     exp = SLURMCluster(
