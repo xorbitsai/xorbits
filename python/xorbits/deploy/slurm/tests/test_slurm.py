@@ -11,10 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from distutils.spawn import find_executable
+
+import pytest
 
 from .... import init
 from .... import pandas as pd
 from .. import SLURMCluster
+
+slurm_available = find_executable("sbatch") is not None
 
 
 def test_header_core_process_memory():
@@ -60,6 +65,7 @@ def test_header_work_outputdir_web():
     assert "source activate xorbits" in cluster.commands
 
 
+@pytest.mark.skipif(not slurm_available, reason="Cannot run without slurm cluster")
 def test_jobscript():
     exp = SLURMCluster(
         job_name="xorbits",
