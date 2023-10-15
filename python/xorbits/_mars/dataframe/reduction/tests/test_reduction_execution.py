@@ -771,6 +771,16 @@ def test_dataframe_aggregate(setup, check_ref_counts):
     ]
     data = pd.DataFrame(np.random.rand(20, 20))
 
+    def realized_volatility(series):
+        print(series)
+        return np.sqrt(np.sum(series**2))
+
+    df = md.DataFrame(data)
+    result = df.agg(realized_volatility)
+    pd.testing.assert_series_equal(
+        result.execute().fetch(), data.agg(realized_volatility)
+    )
+
     df = md.DataFrame(data)
     result = df.agg(all_aggs)
     pd.testing.assert_frame_equal(result.execute().fetch(), data.agg(all_aggs))
