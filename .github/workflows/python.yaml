@@ -304,7 +304,7 @@ jobs:
           docker exec slurmctld /bin/bash -c \
           "pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/cluster"
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/slurm"
         elif [[ "$MODULE" == "hadoop" ]]; then
           export WITH_HADOOP="1"
           export HADOOP_HOME="/usr/local/hadoop"
