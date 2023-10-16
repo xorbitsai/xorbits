@@ -33,13 +33,46 @@ class SLURMCluster:
         error_path=None,
         work_dir=None,
         time=None,
-        walltime=None,
         processes=None,
         cores=None,
         memory=None,
         account=None,
         webport=16379,
+        **kwargs,
     ):
+        """
+        The entrance of deploying a SLURM cluster.
+
+        Parameters
+        ----------
+        job_name : str, optional
+            Name of the Slurm job, by default None
+        num_nodes : int, optional
+            Number of nodes in the Slurm cluster, by default None
+        partition_option : str, optional
+            Request a specific partition for the resource allocation, by default None
+        load_env : str, optional
+            Conda Environment to load, by default None
+        output_path : str, optional
+            Path for Log output, by default None
+        error_path : str, optional
+            Path for Log error, by default None
+        work_dir : str, optional
+            Slurm‘s Working directory,the default place to receive the logs and result, by default None
+        time : str, optional
+            Minimum time limit on the job allocation, by default None
+        processes : int, optional
+            Number of processes, by default None
+        cores : int, optional
+            Number of cores, by default None
+        memory : str, optional
+            Specify the real memory required per node. Default units are megabytes, by default None
+        account : str, optional
+            Charge resources used by this job to specified account, by default None
+        webport : int, optional
+            Xorbits' Web port, by default 16379
+        If user have some specifics needing for can just follow the slurm interface we add it at the end automatically
+        """
         commands = ["#!/bin/bash"]
 
         self.job_name = job_name
@@ -47,7 +80,6 @@ class SLURMCluster:
         self.partition_option = partition_option
         self.output_path = output_path
         self.work_dir = work_dir
-        self.walltime = walltime
         self.time = time
         self.processes = processes
         self.cores = cores
@@ -67,11 +99,13 @@ class SLURMCluster:
             "cpus-per-task": self.cores,
             "mem": self.memory,
             "A": self.account,
+            **kwargs,
         }
         self.commands = None
         self.web_port = webport
         for param, value in slurm_params.items():
             if value is not None:
+                # there are two modes of sbatch, one is like --time, the other one is like -A，so i just judge it by using len
                 if len(str(param)) > 1:
                     commands.append(f"#SBATCH --{param}={value}")
                 else:
@@ -102,7 +136,7 @@ class SLURMCluster:
             "sleep 300",
             'address=http://"${head_node}":"${web_port}"',
         ]
-
+        # here I give a very long sleep time to avoid when supervisor nodes don't start, and the other node can't find the supervisor node
         self.commands = "\n".join(commands)
 
     def run(self):
