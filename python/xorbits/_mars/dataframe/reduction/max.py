@@ -27,7 +27,15 @@ class DataFrameMax(DataFrameReductionOperand, DataFrameReductionMixin):
         return True
 
 
-def max_series(df, axis=None, skipna=True, level=None, combine_size=None, method=None):
+def max_series(
+    df,
+    axis=None,
+    skipna=True,
+    level=None,
+    combine_size=None,
+    method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
+):
     op = DataFrameMax(
         axis=axis,
         skipna=skipna,
@@ -47,6 +55,7 @@ def max_dataframe(
     numeric_only=None,
     combine_size=None,
     method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
 ):
     op = DataFrameMax(
         axis=axis,
