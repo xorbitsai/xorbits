@@ -219,3 +219,106 @@ The SLURM script looks like this:
 
     python -u test.py --endpoint "${address}"
 
+## Initialization
+
+To create a `SLURMCluster` instance, you can use the following parameters:
+
+- `job_name` (str, optional): Name of the Slurm job.
+- `num_nodes` (int, optional): Number of nodes in the Slurm cluster.
+- `partition_option` (str, optional): Request a specific partition for the resource allocation.
+- `load_env` (str, optional): Conda Environment to load.
+- `output_path` (str, optional): Path for Log output.
+- `error_path` (str, optional): Path for Log error.
+- `work_dir` (str, optional): Slurm's Working directory, the default place to receive the logs and results.
+- `time` (str, optional): Minimum time limit on the job allocation.
+- `processes` (int, optional): Number of processes.
+- `cores` (int, optional): Number of cores.
+- `memory` (str, optional): Specify the real memory required per node. Default units are megabytes.
+- `account` (str, optional): Charge resources used by this job to the specified account.
+- `webport` (int, optional): Xorbits' Web port.
+- `**kwargs`: Additional parameters that can be added using the slurm interface.
+
+Example usage:
+
+```python
+cluster = SLURMCluster(
+    job_name="my_job",
+    num_nodes=4,
+    partition_option="compute",
+    load_env="my_env",
+    output_path="logs/output.log",
+    error_path="logs/error.log",
+    work_dir="/path/to/work_dir",
+    time="1:00:00",
+    processes=8,
+    cores=2,
+    memory="8G",
+    account="my_account",
+    webport=16379,
+    custom_param1="value1",
+    custom_param2="value2"
+)
+```
+
+## Running the Job
+
+To submit the job to SLURM, use the `run()` method. Then it will  return the address.
+
+Example usage:
+
+```python
+address = cluster.run()
+```
+
+## Getting Job Information
+
+- `get_job_id()`: This method extracts the job ID from the output of the `sbatch` command.
+
+Example usage:
+
+```python
+job_id = cluster.get_job_id()
+```
+
+- `cancel_job()`: This method cancels the job using the `scancel` command. We have designed a hook so that  while the programming cancel, the slurm task will also cancel.
+
+Example usage:
+
+```python
+cluster.cancel_job(job_id)
+```
+
+- `update_head_node()`: This method retrieves the head node information from the SLURM job.
+
+Example usage:
+
+```python
+cluster.update_head_node()
+```
+
+- `get_job_address(retry_attempts=10, sleep_interval=30)`: This method retrieves the job address after deployment. It retries several times to get the job data.
+
+Example usage:
+
+```python
+job_address = cluster.get_job_address()
+```
+
+## Example
+
+Here's an example of how to use the `SLURMCluster` class:
+
+```python
+import Xorbits
+from xorbits.deploy.slurm import SLURMCluster
+
+test_cluster = SLURMCluster(
+        job_name="xorbits",
+        num_nodes=2,
+        output_path="/shared_space/output.out",
+        time="00:30:00",
+    )
+address = test_cluster.run()
+xorbits.init(address)
+assert (pd.Series([1, 2, 3]).sum()) == "6"
+```

@@ -138,6 +138,7 @@ class SLURMCluster:
         ]
         # here I give a very long sleep time to avoid when supervisor nodes don't start, and the other node can't find the supervisor node
         self.commands = "\n".join(commands)
+        self.sbatch_out = ""
 
     def run(self):
         shell_commands = self.commands
@@ -150,7 +151,8 @@ class SLURMCluster:
 
         if result.returncode == 0:
             logger.info("Job submitted successfully.")
-            self.job_id = self.get_job_id(result.stdout)
+            self.sbatch_out = result.stdout
+            self.job_id = self.get_job_id()
             if self.job_id:
                 logger.info(f"Job ID is {self.job_id}.")
                 atexit.register(self.cancel_job)
@@ -164,12 +166,17 @@ class SLURMCluster:
 
             return None
 
-    def get_job_id(self, sbatch_output):
+    def get_job_id(self):
+        sbatch_output = self.sbatch_out
         job_id = None
         for line in sbatch_output.split("\n"):
             if "Submitted batch job" in line:
                 job_id = line.split(" ")[-1]
         return job_id
+
+    def get_sbatch_out(self):
+        logging.info(f"getting batch_out:{self.sbatch_out}")
+        return self.sbatch_out
 
     def cancel_job(self):
         if self.job_id:
