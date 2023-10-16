@@ -32,7 +32,15 @@ class DataFrameMean(DataFrameReductionOperand, DataFrameReductionMixin):
         return mean
 
 
-def mean_series(df, axis=None, skipna=True, level=None, combine_size=None, method=None):
+def mean_series(
+    df,
+    axis=None,
+    skipna=True,
+    level=None,
+    combine_size=None,
+    method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
+):
     op = DataFrameMean(
         axis=axis,
         skipna=skipna,
@@ -52,6 +60,7 @@ def mean_dataframe(
     numeric_only=None,
     combine_size=None,
     method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
 ):
     op = DataFrameMean(
         axis=axis,
