@@ -55,9 +55,13 @@ class ColumnPruningRule(OptimizationRule):
         """
         successors = self._get_successors(data)
         if successors:
-            return set().union(
+            res = set().union(
                 *[self._context[successor][data] for successor in successors]
             )
+            # When getting the required columns of a DataFrameIndex node, we need to consider itself.
+            if isinstance(data.op, DataFrameIndex) and len(data.dtypes) > 0:
+                res = res.union(set(data.dtypes.index))
+            return res
         else:
             return self._get_all_columns(data)
 
