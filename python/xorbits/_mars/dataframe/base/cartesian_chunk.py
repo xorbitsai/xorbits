@@ -139,9 +139,10 @@ class DataFrameCartesianChunk(DataFrameOperand, DataFrameAutoMergeMixin):
         auto_merge_threshold = op.auto_merge_threshold
         auto_merge_before, auto_merge_after = cls._get_auto_merge_options(op.auto_merge)
 
-        yield from cls._merge_before(
+        merge_before_res = yield from cls._merge_before(
             op, auto_merge_before, auto_merge_threshold, left, right, logger
         )
+        left, right = merge_before_res[0], merge_before_res[1]
 
         if left.ndim == 2 and left.chunk_shape[1] > 1:
             if has_unknown_shape(left):

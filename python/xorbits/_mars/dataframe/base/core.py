@@ -128,6 +128,7 @@ class DataFrameAutoMergeMixin(DataFrameOperandMixin):
                 right.shape,
                 len(right.chunks),
             )
+        return [left, right]
 
     @classmethod
     def _merge_after(

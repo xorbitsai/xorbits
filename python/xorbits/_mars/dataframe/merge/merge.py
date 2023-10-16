@@ -744,9 +744,10 @@ class DataFrameMerge(DataFrameOperand, DataFrameAutoMergeMixin):
         auto_merge_threshold = op.auto_merge_threshold
         auto_merge_before, auto_merge_after = cls._get_auto_merge_options(op.auto_merge)
 
-        yield from cls._merge_before(
+        merge_before_res = yield from cls._merge_before(
             op, auto_merge_before, auto_merge_threshold, left, right, logger
         )
+        left, right = merge_before_res[0], merge_before_res[1]
 
         method = cls._choose_merge_method(op, left, right)
         if cls._if_apply_bloom_filter(method, op, left, right):
