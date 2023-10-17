@@ -339,7 +339,7 @@ def test_getitem(setup):
     pd.testing.assert_frame_equal(result.to_pandas(), expected)
 
 
-def test_column_setitem(setup):
+def test_column_index_setitem(setup):
     import pandas as pd
 
     from ... import pandas as xpd
