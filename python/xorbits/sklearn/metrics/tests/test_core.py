@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
 
 try:
     import sklearn
@@ -35,9 +34,7 @@ def test_doc():
         assert docstring is not None
 
 
-@pytest.mark.skipif(
-    sklearn is None or sys.maxsize <= 2**32, reason="scikit-learn not installed"
-)
+@pytest.mark.skipif(sklearn is None, reason="scikit-learn not installed")
 def test_classification():
     from sklearn.metrics import f1_score as sklearn_f1_score
     from sklearn.metrics import fbeta_score as sklearn_fbeta_score
