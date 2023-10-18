@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 
 try:
     import sklearn
@@ -64,7 +65,9 @@ def test_linear_regression():
     assert np.shape(predict) == (n_rows,)
 
 
-@pytest.mark.skipif(sklearn is None, reason="scikit-learn not installed")
+@pytest.mark.skipif(
+    sklearn is None or sys.maxsize <= 2**32, reason="scikit-learn not installed"
+)
 def test_logistic_regression():
     lr = LogisticRegression(max_iter=1)
     lr.fit(X, y_cat)
