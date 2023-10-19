@@ -489,7 +489,7 @@ def calc_data_size(dt: Any, shape: Tuple[int] = None) -> int:
         return 0
 
     if isinstance(dt, tuple):
-        return sum(calc_data_size(c) for c in dt)
+        return int(sum(calc_data_size(c) for c in dt))
 
     shape = getattr(dt, "shape", None) or shape
     if isinstance(dt, (pd.DataFrame, pd.Series)):
