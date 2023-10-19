@@ -72,35 +72,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "windows-latest" ]
-        python-version: [ "3.11" ]
-        module: [ "xorbits" ]
-#      matrix:
-#        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-#        python-version: ["3.8", "3.9", "3.10", "3.11"]
-#        module: ["xorbits", "kubernetes"]
-#        exclude:
-#          - { os: macos-latest, python-version: 3.10}
-#          - { os: macos-latest, python-version: 3.9}
-#          - { os: windows-latest, python-version: 3.10}
-#          - { os: windows-latest, python-version: 3.9}
-#          - { os: windows-latest, module: kubernetes}
-#          - { os: macos-latest, module: kubernetes}
-#        include:
-#          - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: learn, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
-#          - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
-#          - { os: self-hosted, module: gpu, python-version: 3.9}
-#          - { os: ubuntu-latest, module: jax, python-version: 3.9 }
-#          - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
-#          - { os: ubuntu-latest, module: datasets, python-version: 3.9 }
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        module: ["xorbits", "kubernetes"]
+        exclude:
+          - { os: macos-latest, python-version: 3.10}
+          - { os: macos-latest, python-version: 3.9}
+          - { os: windows-latest, python-version: 3.10}
+          - { os: windows-latest, python-version: 3.9}
+          - { os: windows-latest, module: kubernetes}
+          - { os: macos-latest, module: kubernetes}
+        include:
+          - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
+          - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
+          - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
+          - { os: ubuntu-latest, module: learn, python-version: 3.9 }
+          - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
+          - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
+          - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
+          - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
+          - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
+          - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
+          - { os: self-hosted, module: gpu, python-version: 3.9}
+          - { os: ubuntu-latest, module: jax, python-version: 3.9 }
+          - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
+          - { os: ubuntu-latest, module: datasets, python-version: 3.9 }
     steps:
     - name: Check out code
       uses: actions/checkout@v3

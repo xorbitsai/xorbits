@@ -26,8 +26,7 @@ n_rows = 100
 n_columns = 5
 X = np.random.rand(n_rows, n_columns)
 y = np.random.rand(n_rows)
-# dtype for windows CI, windows makes data np.int32 by default
-y_cat = np.random.randint(0, 2, n_rows, dtype=np.int64)
+y_cat = np.random.randint(0, 2, n_rows)
 X_new = np.random.rand(n_rows, n_columns)
 
 
