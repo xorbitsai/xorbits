@@ -489,13 +489,15 @@ def calc_data_size(dt: Any, shape: Tuple[int] = None) -> int:
         return 0
 
     if isinstance(dt, tuple):
-        return sum(calc_data_size(c) for c in dt)
+        # int() for windows CI, otherwise may return numpy.int32 by `sum`
+        return int(sum(calc_data_size(c) for c in dt))
 
     shape = getattr(dt, "shape", None) or shape
     if isinstance(dt, (pd.DataFrame, pd.Series)):
         return estimate_pandas_size(dt)
     if hasattr(dt, "estimate_size"):
-        return dt.estimate_size()
+        # int() for windows CI, otherwise may return numpy.int32
+        return int(dt.estimate_size()) if dt.estimate_size() is not None else None
     if hasattr(dt, "nbytes"):
         return max(sys.getsizeof(dt), dt.nbytes)
     if hasattr(dt, "shape") and len(dt.shape) == 0:
