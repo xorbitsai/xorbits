@@ -495,7 +495,7 @@ def calc_data_size(dt: Any, shape: Tuple[int] = None) -> int:
     if isinstance(dt, (pd.DataFrame, pd.Series)):
         return estimate_pandas_size(dt)
     if hasattr(dt, "estimate_size"):
-        return dt.estimate_size()
+        return int(dt.estimate_size()) if dt.estimate_size() is not None else None
     if hasattr(dt, "nbytes"):
         return max(sys.getsizeof(dt), dt.nbytes)
     if hasattr(dt, "shape") and len(dt.shape) == 0:
