@@ -442,3 +442,27 @@ def test_mars_tensor_magic(setup):
     np.testing.assert_array_equal(expected, actual)
     with pytest.raises(ValueError, match="could not convert string to float"):
         DataFrame(expected).__mars_tensor__(dtype="float64").execute()
+
+
+def test_series_and_index_array(setup):
+    data = np.random.rand(10)
+    series = Series(data).execute()
+
+    array = np.array(series)
+    np.testing.assert_array_equal(array, data)
+
+    df = pd.DataFrame({"a": [1, 2], "b": ["foo", "bar"]})
+    xdf = DataFrame(df)
+    index = xdf.index.execute()
+    np.testing.assert_array_equal(np.array(df.index), np.array(index))
+
+    arrays = [
+        ["bar", "bar", "baz", "baz", "foo", "foo", "qux", "qux"],
+        ["one", "two", "one", "two", "one", "two", "one", "two"],
+    ]
+    tuples = list(zip(*arrays))
+    index = pd.MultiIndex.from_tuples(tuples, names=["first", "second"])
+    s = pd.Series(np.random.randn(8), index=index)
+    xs = Series(s).index.execute()
+
+    np.testing.assert_array_equal(np.array(s.index), np.array(xs))

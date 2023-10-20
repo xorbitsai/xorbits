@@ -19,9 +19,10 @@ import logging
 import operator
 import pprint
 import sys
+import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import xoscar as mo
 from xoscar.errors import ServerClosed, XoscarError
@@ -37,12 +38,92 @@ from ....utils import dataslots, get_chunk_key_to_data_keys, wrap_exception
 from ...cluster import ClusterAPI
 from ...meta import MetaAPI
 from ...storage import StorageAPI
-from ...subtask import Subtask, SubtaskAPI, SubtaskResult, SubtaskStatus
+from ...subtask import Subtask, SubtaskAPI, SubtaskResult, SubtaskStage, SubtaskStatus
 from ...task.task_info_collector import TaskInfoCollector
 from .quota import QuotaActor
 from .workerslot import BandSlotManagerActor
 
 logger = logging.getLogger(__name__)
+
+
+class StageMonitorActor(mo.Actor):
+    def __init__(
+        self,
+        monitoring_config: Dict = {},
+    ):
+        self._records = dict()
+
+        self._enable_check = monitoring_config.get("enable_check", False)
+        self._refresh_time = monitoring_config.get("refresh_time", 3)
+        self._kill_timeout = {
+            SubtaskStage.PREPARE_DATA: monitoring_config.get("prepare_data_timeout"),
+            SubtaskStage.REQUEST_QUOTA: monitoring_config.get("request_quota_timeout"),
+            SubtaskStage.ACQUIRE_SLOT: monitoring_config.get("acquire_slot_timeout"),
+            SubtaskStage.EXECUTE: monitoring_config.get("execution_timeout"),
+            SubtaskStage.RELEASE_SLOT: monitoring_config.get("release_slot_timeout"),
+            SubtaskStage.FINISH: monitoring_config.get("finish_timeout"),
+        }
+        self._check_task = None
+
+    async def __post_create__(self):
+        await super().__post_create__()
+        if self._enable_check:
+            self._check_task = self.ref().check_subtasks.tell_delay(
+                delay=self._refresh_time
+            )
+
+    async def __pre_destroy__(self):
+        if self._enable_check:
+            self._check_task.cancel()
+        await super().__pre_destroy__()
+
+    async def check_subtasks(self):
+        stale_tasks = await self.get_all_stale_tasks()
+        for task_key, stage in stale_tasks:
+            session_id, subtask_id = task_key
+            try:
+                logger.warning(
+                    "Subtask[session_id: %s, subtask_id: %s] is timeout at stage %s",
+                    session_id,
+                    subtask_id,
+                    stage,
+                )
+            except Exception as e:
+                logger.error(e)
+
+        self._check_task = self.ref().check_subtasks.tell_delay(
+            delay=self._refresh_time
+        )
+
+    async def get_all_stale_tasks(self):
+        cur_timestamp = time.time()
+        stale_tasks = []
+        for k, v in self._records.items():
+            pre_timestamp, cur_stage = v["history"][-1][0], v["history"][-1][1]
+            if (
+                self._kill_timeout[cur_stage] is not None
+                and cur_timestamp - pre_timestamp >= self._kill_timeout[cur_stage]
+            ):
+                stale_tasks.append((k, cur_stage))
+        return stale_tasks
+
+    async def register_subtask(self, subtask: Subtask, supervisor_address: str):
+        keys = (subtask.session_id, subtask.subtask_id)
+        self._records[keys] = {
+            "subtask": subtask,
+            "history": [],
+            "supervisor_address": supervisor_address,
+        }
+
+    async def report_stage(self, keys: Tuple[str, str], stage: SubtaskStage):
+        if stage == SubtaskStage.FINISH:
+            self._records.pop(keys)
+            return
+        self._records[keys]["history"].append((time.time(), stage))
+
+    async def get_records(self):
+        return self._records
+
 
 # the default times to run subtask.
 DEFAULT_SUBTASK_MAX_RETRIES = 0
@@ -168,9 +249,16 @@ class SubtaskExecutionActor(mo.StatelessActor):
             "The count of finished subtasks of the current band.",
             ("band",),
         )
+        self._stat_monitor_ref = None
 
     async def __post_create__(self):
         self._cluster_api = await ClusterAPI.create(self.address)
+        self._stat_monitor_ref = await mo.actor_ref(
+            uid=StageMonitorActor.default_uid(), address=self.address
+        )
+
+    async def _get_stat_monitor_ref(self) -> mo.ActorRefType[StageMonitorActor]:
+        return await mo.actor_ref(StageMonitorActor.default_uid(), address=self.address)
 
     @alru_cache(cache_exceptions=False)
     async def _get_slot_manager_ref(
@@ -366,6 +454,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         )
         try:
             logger.debug("Preparing data for subtask %s", subtask.subtask_id)
+            await self._stat_monitor_ref.report_stage(
+                (subtask.session_id, subtask.subtask_id), SubtaskStage.PREPARE_DATA
+            )
             with Timer() as timer:
                 prepare_data_task = asyncio.create_task(
                     _retry_run(
@@ -376,6 +467,7 @@ class SubtaskExecutionActor(mo.StatelessActor):
                         band_name,
                     )
                 )
+
                 await asyncio.wait_for(
                     prepare_data_task, timeout=self._data_prepare_timeout
                 )
@@ -429,19 +521,28 @@ class SubtaskExecutionActor(mo.StatelessActor):
             aiotask = None
             slot_id = None
             try:
+                await self._stat_monitor_ref.report_stage(
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.REQUEST_QUOTA
+                )
                 await quota_ref.request_batch_quota(batch_quota_req)
                 self._check_cancelling(subtask_info)
-
+                await self._stat_monitor_ref.report_stage(
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.ACQUIRE_SLOT
+                )
                 slot_id = await slot_manager_ref.acquire_free_slot(
                     (subtask.session_id, subtask.subtask_id)
                 )
                 subtask_info.slot_id = slot_id
                 self._check_cancelling(subtask_info)
 
+                await self._stat_monitor_ref.report_stage(
+                    (subtask.session_id, subtask.subtask_id), SubtaskStage.EXECUTE
+                )
                 subtask_info.result.status = SubtaskStatus.running
                 aiotask = asyncio.create_task(
                     subtask_api.run_subtask_in_slot(band_name, slot_id, subtask)
                 )
+
                 return await asyncio.shield(aiotask)
             except asyncio.CancelledError as ex:
                 try:
@@ -502,6 +603,10 @@ class SubtaskExecutionActor(mo.StatelessActor):
                     await slot_manager_ref.release_free_slot(
                         slot_id, (subtask.session_id, subtask.subtask_id)
                     )
+                    await self._stat_monitor_ref.report_stage(
+                        (subtask.session_id, subtask.subtask_id),
+                        SubtaskStage.RELEASE_SLOT,
+                    )
                     logger.debug(
                         "Released slot %d for subtask %s", slot_id, subtask.subtask_id
                     )
@@ -541,6 +646,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         logger.debug(
             "Start to schedule subtask %s on %s.", subtask.subtask_id, self.address
         )
+
+        await self._stat_monitor_ref.register_subtask(subtask, supervisor_address)
+
         self._submitted_subtask_count.record(1, {"band": self.address})
         with mo.debug.no_message_trace():
             task = asyncio.create_task(
@@ -564,6 +672,9 @@ class SubtaskExecutionActor(mo.StatelessActor):
         self._subtask_info.pop(subtask.subtask_id, None)
         self._finished_subtask_count.record(1, {"band": self.address})
         logger.debug("Subtask %s finished with result %s", subtask.subtask_id, result)
+        await self._stat_monitor_ref.report_stage(
+            (subtask.session_id, subtask.subtask_id), SubtaskStage.FINISH
+        )
         return result
 
     async def cancel_subtask(self, subtask_id: str, kill_timeout: Optional[int] = 5):

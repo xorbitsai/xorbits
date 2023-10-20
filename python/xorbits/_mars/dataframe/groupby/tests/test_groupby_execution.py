@@ -1878,3 +1878,101 @@ def test_series_groupby_rolling_agg(setup, window, min_periods, center, closed, 
     mresult = mresult.execute().fetch()
 
     pd.testing.assert_series_equal(presult, mresult.sort_index())
+
+
+@pytest.mark.skipif(pd.__version__ <= "1.5.3", reason="pandas version is too low")
+@pytest.mark.parametrize(
+    "chunk_size, dropna", list(product([None, 3], [None, "any", "all"]))
+)
+def test_groupby_nth(setup, chunk_size, dropna):
+    df1 = pd.DataFrame(
+        {
+            "a": np.random.randint(0, 5, size=20),
+            "b": np.random.randint(0, 5, size=20),
+            "c": np.random.randint(0, 5, size=20),
+            "d": np.random.randint(0, 5, size=20),
+        }
+    )
+    mdf = md.DataFrame(df1, chunk_size=chunk_size)
+
+    r = mdf.groupby("b").nth(0)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b").nth(0)
+    )
+    r = mdf.groupby("b").nth(-1)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b").nth(-1)
+    )
+    r = mdf.groupby("b")[["a", "c"]].nth(0)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b")[["a", "c"]].nth(0)
+    )
+
+    # test nth with list index
+    r = mdf.groupby("b").nth([0, 1])
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b").nth([0, 1])
+    )
+
+    # test nth with slice
+    r = mdf.groupby("b").nth(slice(None, 1))
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b").nth(slice(None, 1))
+    )
+
+    # test nth with selection
+    r = mdf.groupby("b")[["a", "d"]].nth(0)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b")[["a", "d"]].nth(0)
+    )
+    r = mdf.groupby("b")[["c", "a", "d"]].nth(0)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b")[["c", "a", "d"]].nth(0)
+    )
+    r = mdf.groupby("b")["c"].nth(0)
+    pd.testing.assert_series_equal(
+        r.execute().fetch().sort_index(), df1.groupby("b")["c"].nth(0)
+    )
+
+    series1 = pd.Series([3, 4, 5, 3, 5, 4, 1, 2, 3])
+    ms = md.Series(series1, chunk_size=chunk_size)
+
+    r = ms.groupby(lambda x: x % 2).nth(0)
+    pd.testing.assert_series_equal(
+        r.execute().fetch().sort_index(), series1.groupby(lambda x: x % 2).nth(0)
+    )
+
+    # test with special index
+    series1 = pd.Series([3, 4, 5, 3, 5, 4, 1, 2, 3], index=[4, 1, 2, 3, 5, 8, 6, 7, 9])
+    ms = md.Series(series1, chunk_size=chunk_size)
+
+    r = ms.groupby(lambda x: x % 2).nth(0)
+    pd.testing.assert_series_equal(
+        r.execute().fetch().sort_index(),
+        series1.groupby(lambda x: x % 2).nth(0).sort_index(),
+    )
+
+    df2 = pd.DataFrame(
+        {
+            "a": [3, 5, 2, np.nan, 1, 2, 4, 6, 2, 4],
+            "b": [8, 3, 4, 1, 8, np.nan, 2, 2, 2, 3],
+            "c": [1, 8, 8, np.nan, 3, 5, 0, 0, 5, 4],
+            "d": [np.nan, 7, 6, 3, 6, 3, 2, 1, 5, 8],
+        }
+    )
+
+    mdf = md.DataFrame(df2)
+
+    r = mdf.groupby("b").nth(0, dropna=dropna)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df2.groupby("b").nth(0, dropna=dropna)
+    )
+    r = mdf.groupby("b").nth(-1, dropna=dropna)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(), df2.groupby("b").nth(-1, dropna=dropna)
+    )
+    r = mdf.groupby("b")[["a", "c"]].nth(0, dropna=dropna)
+    pd.testing.assert_frame_equal(
+        r.execute().fetch().sort_index(),
+        df2.groupby("b")[["a", "c"]].nth(0, dropna=dropna),
+    )

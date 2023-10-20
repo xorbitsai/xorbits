@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from ... import opcodes as OperandDef
-from ...config import options
 from ...core import OutputType
 from ...serialization.serializables import Int32Field
 from .core import DataFrameReductionMixin, DataFrameReductionOperand
@@ -48,7 +47,6 @@ class DataFrameSem(DataFrameReductionOperand, DataFrameReductionMixin):
 def sem_series(
     series, axis=None, skipna=True, level=None, ddof=1, combine_size=None, method=None
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameSem(
         axis=axis,
         skipna=skipna,
@@ -56,7 +54,6 @@ def sem_series(
         ddof=ddof,
         combine_size=combine_size,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(series)
@@ -72,7 +69,6 @@ def sem_dataframe(
     combine_size=None,
     method=None,
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameSem(
         axis=axis,
         skipna=skipna,
@@ -81,7 +77,6 @@ def sem_dataframe(
         numeric_only=numeric_only,
         combine_size=combine_size,
         output_types=[OutputType.series],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
