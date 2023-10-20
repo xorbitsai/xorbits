@@ -51,7 +51,7 @@ from ...serialization.serializables import (
 )
 from ...utils import is_object_dtype, lazy_import
 from ..operands import OutputType
-from ..utils import arrow_dtype_kwargs, parse_index
+from ..utils import PD_VERSION_GREATER_THAN_2_10, arrow_dtype_kwargs, parse_index
 from .core import (
     ColumnPruneSupportedDataSourceMixin,
     IncrementalIndexDatasource,
@@ -391,8 +391,7 @@ class DataFrameReadParquet(
             paths = sorted(paths)
             if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
                 parsed_path = urlparse(op.path)
-                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
-                paths = [path_prefix + path for path in paths]
+                paths = [f"{parsed_path.scheme}://{path}" for path in paths]
         elif isinstance(op.path, str) and op.path.endswith(".zip"):
             file = fs.open(op.path, storage_options=op.storage_options)
             z = zipfile.ZipFile(file)
@@ -406,8 +405,7 @@ class DataFrameReadParquet(
             paths = fs.glob(op.path, storage_options=op.storage_options)
             if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
                 parsed_path = urlparse(op.path)
-                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
-                paths = [path_prefix + path for path in paths]
+                paths = [f"{parsed_path.scheme}://{path}" for path in paths]
         first_chunk_row_num, first_chunk_raw_bytes = None, None
         for i, pth in enumerate(paths):
             if i == 0:
@@ -416,7 +414,7 @@ class DataFrameReadParquet(
                         first_chunk_row_num = get_engine(op.engine).get_row_num(f)
                         first_chunk_raw_bytes = sys.getsizeof(f)
                 else:
-                    of = fsspec.open(pth, storage_options=op.storage_options)
+                    of = fsspec.open(pth)
                     with of as f:
                         first_chunk_row_num = get_engine(op.engine).get_row_num(f)
                     first_chunk_raw_bytes = fsspec.get_fs_token_paths(
@@ -778,7 +776,7 @@ def read_parquet(
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
     use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns.
+        If True, use arrow dtype to store columns. Default enabled if pandas >= 2.1
     storage_options: dict, optional
         Options for storage connection.
     memory_scale: int, optional
@@ -797,6 +795,10 @@ def read_parquet(
 
     engine_type = check_engine(engine)
     engine = get_engine(engine_type)
+
+    # We enable arrow dtype by default if pandas >= 2.1
+    if use_arrow_dtype is None and engine_type == "pyarrow":
+        use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
 
     single_path = path[0] if isinstance(path, list) else path
     is_partitioned = False
@@ -830,6 +832,10 @@ def read_parquet(
         raise ValueError(
             f"The 'use_arrow_dtype' argument is not supported for the {engine_type} engine"
         )
+    # We enable arrow dtype by default if pandas >= 2.1
+    if use_arrow_dtype is None:
+        use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
+
     types_mapper = pd.ArrowDtype if use_arrow_dtype else None
 
     if fs.isdir(single_path):
@@ -849,11 +855,6 @@ def read_parquet(
     else:
         if not isinstance(path, list):
             file_path = fs.glob(path, storage_options=storage_options)[0]
-            if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
-                parsed_path = urlparse(path)
-                path_prefix = f"{parsed_path.scheme}://{parsed_path.netloc}"
-                file_path = path_prefix + file_path
-
         else:
             file_path = path[0]
         with fs.open(file_path, storage_options=storage_options) as f:

@@ -48,7 +48,7 @@ from .... import tensor as mt
 from ....config import option_context
 from ....tests.core import require_cudf, require_cupy
 from ....utils import get_next_port, pd_release_version
-from ...utils import is_pandas_2
+from ...utils import PD_VERSION_GREATER_THAN_2_10, is_pandas_2
 from ..dataframe import from_pandas as from_pandas_df
 from ..from_records import from_records
 from ..from_tensor import dataframe_from_1d_tileables, dataframe_from_tensor
@@ -605,6 +605,10 @@ def test_read_csv_execution(setup):
 
         mdf2 = md.read_csv(file_path, index_col=0, chunk_bytes=100).execute().fetch()
         pd.testing.assert_frame_equal(pdf, mdf2)
+
+        mdf3 = md.read_csv(file_path, index_col=[0, 1]).execute().fetch()
+        pdf3 = pd.read_csv(file_path, index_col=[0, 1])
+        pd.testing.assert_frame_equal(pdf3, mdf3)
 
     # test nan
     with tempfile.TemporaryDirectory() as tempdir:
@@ -1295,6 +1299,8 @@ def test_read_parquet_arrow(setup, engine):
             "c": np.random.rand(10),
         }
     )
+    if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
+        test_df = test_df.convert_dtypes(dtype_backend="pyarrow")
 
     with tempfile.TemporaryDirectory() as tempdir:
         file_path = os.path.join(tempdir, "test.parquet")
@@ -1351,6 +1357,9 @@ def test_read_parquet_arrow(setup, engine):
                     "c": np.random.rand(300),
                 }
             )
+
+            if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
+                df = df.convert_dtypes(dtype_backend="pyarrow")
 
             file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
             df[:100].to_parquet(file_paths[0], row_group_size=50)
@@ -1447,6 +1456,8 @@ def test_read_parquet_zip(setup, engine):
                 "c": np.random.rand(300),
             }
         )
+        if PD_VERSION_GREATER_THAN_2_10 and engine != "fastparquet":
+            df = df.convert_dtypes(dtype_backend="pyarrow")
 
         file_paths = [os.path.join(tempdir, f"test{i}.parquet") for i in range(3)]
         df[:100].to_parquet(file_paths[0], row_group_size=50)
@@ -1545,7 +1556,9 @@ def test_read_parquet_fast_parquet(setup):
         # assert sum(s[0] for s in size_res) > test_df.memory_usage(deep=True).sum()
 
 
-def _start_tornado(port: int, file_path0: str, file_path1: str, zip_path: str):
+def _start_tornado(
+    port: int, file_path0: str, file_path1: str, csv_path: str, zip_path: str
+):
     import tornado.ioloop
     import tornado.web
 
@@ -1557,6 +1570,11 @@ def _start_tornado(port: int, file_path0: str, file_path1: str, zip_path: str):
     class Parquet1Handler(tornado.web.RequestHandler):
         def get(self):
             with open(file_path1, "rb") as f:
+                self.write(f.read())
+
+    class CSVHandler(tornado.web.RequestHandler):
+        def get(self):
+            with open(csv_path, "rb") as f:
                 self.write(f.read())
 
     class RangeZipFileHandler(tornado.web.RequestHandler):
@@ -1596,6 +1614,7 @@ def _start_tornado(port: int, file_path0: str, file_path1: str, zip_path: str):
             (r"/read-parquet0", Parquet0Handler),
             (r"/read-parquet1", Parquet1Handler),
             (r"/test.zip", RangeZipFileHandler),
+            (r"/read-csv", CSVHandler),
         ]
     )
     app.listen(port)
@@ -1607,6 +1626,7 @@ def start_http_server():
     with tempfile.TemporaryDirectory() as tempdir:
         file_path0 = os.path.join(tempdir, "test0.parquet")
         file_path1 = os.path.join(tempdir, "test1.parquet")
+        csv_path = os.path.join(tempdir, "test.csv")
 
         df = pd.DataFrame(
             {
@@ -1617,6 +1637,7 @@ def start_http_server():
         )
         df.iloc[:50].to_parquet(file_path0)
         df.iloc[50:].to_parquet(file_path1)
+        df.to_csv(csv_path)
         import zipfile
 
         zip_path = os.path.join(tempdir, "test.zip")
@@ -1627,7 +1648,8 @@ def start_http_server():
 
         port = get_next_port()
         proc = multiprocessing.Process(
-            target=_start_tornado, args=(port, file_path0, file_path1, zip_path)
+            target=_start_tornado,
+            args=(port, file_path0, file_path1, csv_path, zip_path),
         )
         proc.daemon = True
         proc.start()
@@ -1635,13 +1657,15 @@ def start_http_server():
         yield df, [
             f"http://127.0.0.1:{port}/read-parquet0",
             f"http://127.0.0.1:{port}/read-parquet1",
-        ], f"http://127.0.0.1:{port}/test.zip"
+        ], f"http://127.0.0.1:{port}/test.zip", f"http://127.0.0.1:{port}/read-csv"
         # Terminate the process
         proc.terminate()
 
 
 def test_read_parquet_with_http_url(setup, start_http_server):
-    df, urls, zip_url = start_http_server
+    df, urls, zip_url, _ = start_http_server
+    if PD_VERSION_GREATER_THAN_2_10:
+        df = df.convert_dtypes(dtype_backend="pyarrow")
     mdf = md.read_parquet(urls).execute().fetch()
     pd.testing.assert_frame_equal(df, mdf)
     if is_pandas_2():
@@ -1766,6 +1790,8 @@ def test_read_parquet_ftp(ftp_writable, setup):
     host, port, user, pw = ftp_writable
     data = {"Column1": [1, 2, 3], "Column2": ["A", "B", "C"]}
     df = pd.DataFrame(data)
+    if PD_VERSION_GREATER_THAN_2_10:
+        df = df.convert_dtypes(dtype_backend="pyarrow")
     with tempfile.TemporaryDirectory() as tempdir:
         local_file_path = os.path.join(tempdir, "test.parquet")
         df.to_parquet("ftp://{}:{}@{}:{}/test.parquet".format(user, pw, host, port))
@@ -1788,3 +1814,30 @@ def test_read_parquet_ftp(ftp_writable, setup):
             "ftp://{}:{}@{}:{}/test.zip".format(user, pw, host, port)
         )
         pd.testing.assert_frame_equal(df, mdf_zip.to_pandas())
+
+
+def test_read_csv_http_url(setup, start_http_server):
+    df, _, _, csv_url = start_http_server
+    mdf = md.read_csv(csv_url)
+    pd.testing.assert_frame_equal(pd.read_csv(csv_url), mdf.execute().fetch())
+
+    mdf = md.read_csv(csv_url, names=["col1", "col2", "col3"])
+    pd.testing.assert_frame_equal(
+        pd.read_csv(csv_url, names=["col1", "col2", "col3"]), mdf.execute().fetch()
+    )
+
+    mdf = md.read_csv(csv_url, header=0)
+    pd.testing.assert_frame_equal(pd.read_csv(csv_url, header=0), mdf.execute().fetch())
+
+    mdf = md.read_csv(csv_url, header=None)
+    pd.testing.assert_frame_equal(
+        pd.read_csv(csv_url, header=None), mdf.execute().fetch()
+    )
+
+    if is_pandas_2():
+        df = df.convert_dtypes(dtype_backend="pyarrow")
+        mdf = md.read_csv(csv_url, use_arrow_dtype=True).execute().fetch()
+        pd.testing.assert_frame_equal(
+            pd.read_csv(csv_url, dtype_backend="pyarrow"), mdf
+        )
+        assert isinstance(mdf.dtypes.iloc[1], pd.ArrowDtype)

@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import numpy as np
+import pytest
 
 from .. import (
     add,
@@ -281,3 +282,10 @@ def test_flat(setup):
 
     np.testing.assert_array_equal(b.execute(), npb)
     np.testing.assert_array_equal(a.execute(), npa)
+
+
+@pytest.mark.parametrize("chunk_size", [None, 1, 4])
+def test_tolist(setup, chunk_size):
+    data = np.random.rand(10, 20)
+    a = tensor(data, chunk_size=chunk_size)
+    assert a.tolist() == data.tolist()

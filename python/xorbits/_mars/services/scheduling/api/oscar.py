@@ -174,9 +174,16 @@ class MockSchedulingAPI(SchedulingAPI):
 
         from .... import resource as mars_resource
         from ..worker import (
+            StageMonitorActor,
             SubtaskExecutionActor,
             WorkerQuotaManagerActor,
             WorkerSlotManagerActor,
+        )
+
+        await mo.create_actor(
+            StageMonitorActor,
+            uid=StageMonitorActor.default_uid(),
+            address=address,
         )
 
         await mo.create_actor(

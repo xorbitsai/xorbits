@@ -19,6 +19,7 @@ import pytest
 
 from .... import dataframe as md
 from ....tests.core import require_hadoop
+from ...utils import PD_VERSION_GREATER_THAN_2_10
 
 TEST_DIR = "/tmp/test"
 
@@ -54,6 +55,9 @@ def test_to_parquet_execution(setup, setup_hdfs):
     dir_name = f"hdfs://localhost:8020{TEST_DIR}/test_to_parquet/"
     hdfs.mkdir(dir_name)
     df.to_parquet(dir_name).execute()
+
+    if PD_VERSION_GREATER_THAN_2_10:
+        test_df = test_df.convert_dtypes(dtype_backend="pyarrow")
 
     result = md.read_parquet(dir_name).to_pandas()
     pd.testing.assert_frame_equal(result.reset_index(drop=True), test_df)

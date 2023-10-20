@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from ... import opcodes as OperandDef
-from ...config import options
 from ...core import OutputType
 from .core import DataFrameReductionMixin, DataFrameReductionOperand
 
@@ -28,15 +27,21 @@ class DataFrameMin(DataFrameReductionOperand, DataFrameReductionMixin):
         return True
 
 
-def min_series(df, axis=None, skipna=True, level=None, combine_size=None, method=None):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
+def min_series(
+    df,
+    axis=None,
+    skipna=True,
+    level=None,
+    combine_size=None,
+    method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
+):
     op = DataFrameMin(
         axis=axis,
         skipna=skipna,
         level=level,
         combine_size=combine_size,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
@@ -50,8 +55,8 @@ def min_dataframe(
     numeric_only=None,
     combine_size=None,
     method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameMin(
         axis=axis,
         skipna=skipna,
@@ -59,18 +64,15 @@ def min_dataframe(
         numeric_only=numeric_only,
         combine_size=combine_size,
         output_types=[OutputType.series],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
 
 
 def min_index(df, axis=None, skipna=True):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameMin(
         axis=axis,
         skipna=skipna,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
     )
     return op(df)

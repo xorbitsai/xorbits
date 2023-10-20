@@ -954,6 +954,16 @@ class IndexData(HasShapeTileableData, _ToPandasMixin):
     def __repr__(self):
         return self._to_str(representation=True)
 
+    def _to_arr(self):
+        if len(self._executed_sessions) == 0:  # pragma: no cover
+            raise NotImplementedError
+
+        data = self.fetch(session=self._executed_sessions[-1])
+        return np.asarray(data)
+
+    def __array__(self):
+        return self._to_arr()
+
     def _to_mars_tensor(self, dtype=None, order="K", extract_multi_index=False):
         tensor = self.to_tensor(extract_multi_index=extract_multi_index)
         dtype = dtype if dtype is not None else tensor.dtype
@@ -1156,6 +1166,37 @@ class Index(HasShapeTileable, _ToPandasMixin):
         from . import series_from_index
 
         return series_from_index(self, index=index, name=name)
+
+    def copy(self, name=None, deep=False):
+        """
+        Make a copy of this object.
+
+        Name is set on the new object.
+
+        Parameters
+        ----------
+        name : Label, optional
+            Set name for new object.
+        deep : bool, default False
+
+        Returns
+        -------
+        Index
+            Index refer to new object which is a copy of this object.
+
+        Notes
+        -----
+        In most cases, there should be no functional difference from using
+        ``deep``, but if ``deep`` is passed it will attempt to deepcopy.
+
+        Examples
+        --------
+        >>> idx = pd.Index(['a', 'b', 'c'])
+        >>> new_idx = idx.copy()
+        >>> idx is new_idx
+        False
+        """
+        return super().copy(name=name)
 
 
 class RangeIndex(Index):
@@ -1414,6 +1455,16 @@ class BaseSeriesData(HasShapeTileableData, _ToPandasMixin):
     def __repr__(self):
         return self._to_str(representation=False)
 
+    def _to_arr(self):
+        if len(self._executed_sessions) == 0:  # pragma: no cover
+            raise NotImplementedError
+
+        data = self.fetch(session=self._executed_sessions[-1])
+        return np.asarray(data)
+
+    def __array__(self):
+        return self._to_arr()
+
     @property
     def dtype(self):
         return getattr(self, "_dtype", None) or getattr(self.op, "dtype", None)
@@ -1571,10 +1622,9 @@ class Series(HasShapeTileable, _ToPandasMixin):
         copy : Series or DataFrame
             Object type matches caller.
         """
-        if deep:
-            return super().copy()
-        else:
-            return super()._view()
+        if deep is False:
+            raise NotImplementedError("Not support `deep=False` for now")
+        return super().copy()
 
     def __len__(self):
         return len(self._data)
@@ -2597,6 +2647,11 @@ class DataFrame(HasShapeTileable, _ToPandasMixin):
         for k, v in kwargs.items():
             data[k] = apply_if_callable(v, data)
         return data
+
+    def copy(self, deep=True):
+        if deep is False:
+            raise NotImplementedError("Not support `deep=False` for now")
+        return super().copy()
 
 
 class DataFrameGroupByChunkData(BaseDataFrameChunkData):

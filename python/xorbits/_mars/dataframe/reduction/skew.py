@@ -16,7 +16,6 @@
 import numpy as np
 
 from ... import opcodes
-from ...config import options
 from ...core import ENTITY_TYPE, OutputType
 from ...serialization.serializables import BoolField
 from .core import DataFrameReductionMixin, DataFrameReductionOperand
@@ -68,7 +67,6 @@ class DataFrameSkew(DataFrameReductionOperand, DataFrameReductionMixin):
 def skew_series(
     df, axis=None, skipna=True, level=None, combine_size=None, bias=False, method=None
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameSkew(
         axis=axis,
         skipna=skipna,
@@ -76,7 +74,6 @@ def skew_series(
         combine_size=combine_size,
         bias=bias,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
@@ -92,7 +89,6 @@ def skew_dataframe(
     bias=False,
     method=None,
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameSkew(
         axis=axis,
         skipna=skipna,
@@ -101,7 +97,6 @@ def skew_dataframe(
         bias=bias,
         combine_size=combine_size,
         output_types=[OutputType.series],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)

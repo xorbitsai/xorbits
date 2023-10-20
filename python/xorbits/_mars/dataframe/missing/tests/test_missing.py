@@ -57,8 +57,6 @@ def test_fill_na():
     with pytest.raises(ValueError):
         series.fillna(value=df_raw)
     with pytest.raises(NotImplementedError):
-        series.fillna(value=series_raw, downcast="infer")
-    with pytest.raises(NotImplementedError):
         series.ffill(limit=1)
 
     df2 = tile(df.fillna(value_series_raw))
@@ -226,19 +224,10 @@ def test_replace():
     assert r.chunks[0].op.limit is None
 
 
-@pytest.mark.parametrize("inf_as_na", [True, False])
-def test_isna(setup, inf_as_na):
-    from ....config import options
+def test_isna(setup):
     from ..checkna import isna
 
-    old_mars_inf_as_na = options.dataframe.mode.use_inf_as_na
-    options.dataframe.mode.use_inf_as_na = inf_as_na
-    # this option could be changed by mars execution.
-    old_pd_inf_as_na = pd.get_option("mode.use_inf_as_na")
-    pd.options.mode.use_inf_as_na = inf_as_na
-
     # scalars
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     assert isna("dog") == pd.isna("dog")
     assert isna(None) == pd.isna(None)
     assert isna(md.NA) == pd.isna(pd.NA)
@@ -247,47 +236,39 @@ def test_isna(setup, inf_as_na):
     assert isna(type) == pd.isna(type)
 
     # multi index
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     with pytest.raises(NotImplementedError):
         midx = md.MultiIndex()
         isna(midx)
 
     # list
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     l = [1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT]
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     actual = isna(l).execute().fetch()
     expected = pd.isna(l)
     np.testing.assert_array_equal(expected, actual)
 
     # tuple
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     t = (1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT)
     assert not isna(t)
 
     # numpy ndarray
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     narr = np.array((1, 2, 3, np.Inf, np.NaN))
     actual = isna(narr).execute().fetch()
     expected = pd.isna(narr)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas index
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     pi = pd.Index((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
     actual = isna(pi).execute().fetch()
     expected = pd.isna(pi)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas series
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     ps = pd.Series((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
     actual = isna(ps).execute().fetch()
     expected = pd.isna(ps)
     pd.testing.assert_series_equal(expected, actual)
 
     # pandas dataframe
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     pdf = pd.DataFrame(
         {"foo": (1, 2, 3, np.Inf, pd.NA), "bar": (4, 5, 6, np.NaN, pd.NaT)}
     )
@@ -296,7 +277,6 @@ def test_isna(setup, inf_as_na):
     pd.testing.assert_frame_equal(expected, actual)
 
     # mars tensor
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     marr = mt.tensor(narr)
     actual = isna(marr).execute().fetch()
     expected = pd.isna(narr)
@@ -305,7 +285,6 @@ def test_isna(setup, inf_as_na):
     # mars index
     from ...datasource.index import from_pandas as from_pandas_index
 
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     mi = from_pandas_index(pi)
     actual = isna(mi).execute().fetch()
     expected = pd.isna(pi)
@@ -314,7 +293,6 @@ def test_isna(setup, inf_as_na):
     # mars series
     from ...datasource.series import from_pandas as from_pandas_series
 
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     ms = from_pandas_series(ps)
     actual = isna(ms).execute().fetch()
     expected = pd.isna(ps)
@@ -323,29 +301,16 @@ def test_isna(setup, inf_as_na):
     # mars dataframe
     from ...datasource.dataframe import from_pandas as from_pandas_df
 
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     mdf = from_pandas_df(pdf)
     actual = isna(mdf).execute().fetch()
     expected = pd.isna(pdf)
     pd.testing.assert_frame_equal(expected, actual)
 
-    options.dataframe.mode.use_inf_as_na = old_mars_inf_as_na
-    pd.options.mode.use_inf_as_na = old_pd_inf_as_na
 
-
-@pytest.mark.parametrize("inf_as_na", [True, False])
-def test_notna(setup, inf_as_na):
-    from ....config import options
+def test_notna(setup):
     from ..checkna import notna
 
-    old_mars_inf_as_na = options.dataframe.mode.use_inf_as_na
-    options.dataframe.mode.use_inf_as_na = inf_as_na
-    # this option could be changed by mars execution.
-    old_pd_inf_as_na = pd.get_option("mode.use_inf_as_na")
-    pd.options.mode.use_inf_as_na = inf_as_na
-
     # scalars
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     assert notna("dog") == pd.notna("dog")
     assert notna(None) == pd.notna(None)
     assert notna(md.NA) == pd.notna(pd.NA)
@@ -354,46 +319,39 @@ def test_notna(setup, inf_as_na):
     assert notna(type) == pd.notna(type)
 
     # multi index
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     with pytest.raises(NotImplementedError):
         midx = md.MultiIndex()
         notna(midx)
 
     # list
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     l = [1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT]
     actual = notna(l).execute().fetch()
     expected = pd.notna(l)
     np.testing.assert_array_equal(expected, actual)
 
     # tuple
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     t = (1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT)
     assert notna(t)
 
     # numpy ndarray
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     narr = np.array((1, 2, 3, np.Inf, np.NaN))
     actual = notna(narr).execute().fetch()
     expected = pd.notna(narr)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas index
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     pi = pd.Index((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
     actual = notna(pi).execute().fetch()
     expected = pd.notna(pi)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas series
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     ps = pd.Series((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
     actual = notna(ps).execute().fetch()
     expected = pd.notna(ps)
     pd.testing.assert_series_equal(expected, actual)
 
     # pandas dataframe
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     pdf = pd.DataFrame(
         {"foo": (1, 2, 3, np.Inf, pd.NA), "bar": (4, 5, 6, np.NaN, pd.NaT)}
     )
@@ -402,7 +360,6 @@ def test_notna(setup, inf_as_na):
     pd.testing.assert_frame_equal(expected, actual)
 
     # mars tensor
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     marr = mt.tensor(narr)
     actual = notna(marr).execute().fetch()
     expected = pd.notna(narr)
@@ -411,7 +368,6 @@ def test_notna(setup, inf_as_na):
     # mars index
     from ...datasource.index import from_pandas as from_pandas_index
 
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     mi = from_pandas_index(pi)
     actual = notna(mi).execute().fetch()
     expected = pd.notna(pi)
@@ -420,7 +376,6 @@ def test_notna(setup, inf_as_na):
     # mars series
     from ...datasource.series import from_pandas as from_pandas_series
 
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     ms = from_pandas_series(ps)
     actual = notna(ms).execute().fetch()
     expected = pd.notna(ps)
@@ -429,11 +384,7 @@ def test_notna(setup, inf_as_na):
     # mars dataframe
     from ...datasource.dataframe import from_pandas as from_pandas_df
 
-    assert pd.get_option("mode.use_inf_as_na") == inf_as_na
     mdf = from_pandas_df(pdf)
     actual = notna(mdf).execute().fetch()
     expected = pd.notna(pdf)
     pd.testing.assert_frame_equal(expected, actual)
-
-    options.dataframe.mode.use_inf_as_na = old_mars_inf_as_na
-    pd.options.mode.use_inf_as_na = old_pd_inf_as_na
