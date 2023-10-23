@@ -22,3 +22,11 @@ API                                     Implemented version or plan
 ``xorbits.scipy``                       Planned in the future
 ``xorbits.statsmodels``                 Planned in the future
 ======================================= =========================================================
+
+
+
+
+.. toctree::
+    :maxdepth: 2
+
+    lightgbm
