@@ -117,12 +117,8 @@ class DataFrameGroupbySortShuffle(MapReduceOperand, DataFrameOperandMixin):
     def _execute_map(cls, ctx, op: "DataFrameGroupbySortShuffle"):
         df, pivots = [ctx[c.key] for c in op.inputs]
         out = op.outputs[0]
-        xdf = cudf if op.gpu else pd
 
         def _get_out_df(p_index, in_df):
-            if isinstance(in_df.index, xdf.MultiIndex):
-                # TODO: performance issue
-                in_df = in_df.sort_index()
             if p_index == 0:
                 out_df = in_df.loc[: pivots[p_index]]
             elif p_index == op.n_partition - 1:

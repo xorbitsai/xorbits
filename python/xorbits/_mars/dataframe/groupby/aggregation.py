@@ -1150,6 +1150,9 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             size_recorder = ctx.get_remote_object(op.size_recorder_name)
             size_recorder.record(raw_size, agg_size)
 
+        for ad in agg_dfs:
+            if not ad.index.is_monotonic_increasing:
+                print(f"==============map: {ad}")
         ctx[op.outputs[0].key] = tuple(agg_dfs)
 
     @classmethod
@@ -1186,6 +1189,13 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
                 combines.append(
                     cls._do_predefined_agg(input_obj, agg_func_name, gpu=op.gpu, **kwds)
                 )
+        for i, combine in enumerate(combines):
+            if (
+                isinstance(combine.index, xdf.MultiIndex)
+                and op.groupby_params["sort"] is True
+                and not combine.index.is_monotonic_increasing
+            ):
+                combines[i] = combine.sort_index()
         ctx[op.outputs[0].key] = tuple(combines)
 
     @classmethod
