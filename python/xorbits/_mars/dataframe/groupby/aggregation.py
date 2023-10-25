@@ -1150,9 +1150,6 @@ class DataFrameGroupByAgg(DataFrameOperand, DataFrameOperandMixin):
             size_recorder = ctx.get_remote_object(op.size_recorder_name)
             size_recorder.record(raw_size, agg_size)
 
-        for ad in agg_dfs:
-            if not ad.index.is_monotonic_increasing:
-                print(f"==============map: {ad}")
         ctx[op.outputs[0].key] = tuple(agg_dfs)
 
     @classmethod
