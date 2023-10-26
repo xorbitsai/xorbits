@@ -503,6 +503,17 @@ class AbstractSyncSession(AbstractSession, metaclass=ABCMeta):
         """
 
     @abstractmethod
+    def incref(self, *tileables_keys):
+        """
+        Incref tileables.
+
+        Parameters
+        ----------
+        tileables_keys : list
+            Tileables' keys
+        """
+
+    @abstractmethod
     def _get_ref_counts(self) -> Dict[str, int]:
         """
         Get all ref counts
@@ -960,10 +971,19 @@ class _IsolatedSession(AbstractAsyncSession):
     def _get_to_fetch_tileable(
         self, tileable: TileableType
     ) -> Tuple[TileableType, List[Union[slice, Integral]]]:
-        from ...dataframe.indexing.iloc import DataFrameIlocGetItem, SeriesIlocGetItem
+        from ...dataframe.indexing.iloc import (
+            DataFrameIlocGetItem,
+            IndexIlocGetItem,
+            SeriesIlocGetItem,
+        )
         from ...tensor.indexing import TensorIndex
 
-        slice_op_types = TensorIndex, DataFrameIlocGetItem, SeriesIlocGetItem
+        slice_op_types = (
+            TensorIndex,
+            DataFrameIlocGetItem,
+            SeriesIlocGetItem,
+            IndexIlocGetItem,
+        )
 
         if hasattr(tileable, "data"):
             tileable = tileable.data
@@ -1199,6 +1219,10 @@ class _IsolatedSession(AbstractAsyncSession):
     async def decref(self, *tileable_keys):
         logger.debug("Decref tileables on client: %s", tileable_keys)
         return await self._lifecycle_api.decref_tileables(list(tileable_keys))
+
+    async def incref(self, *tileable_keys):
+        logger.debug("Incref tileables on client: %s", tileable_keys)
+        return await self._lifecycle_api.incref_tileables(list(tileable_keys))
 
     async def _get_ref_counts(self) -> Dict[str, int]:
         return await self._lifecycle_api.get_all_chunk_ref_counts()
@@ -1621,6 +1645,11 @@ class SyncSession(AbstractSyncSession):
     @implements(AbstractSyncSession.decref)
     @_delegate_to_isolated_session
     def decref(self, *tileables_keys):
+        pass  # pragma: no cover
+
+    @implements(AbstractSyncSession.incref)
+    @_delegate_to_isolated_session
+    def incref(self, *tileables_keys):
         pass  # pragma: no cover
 
     @implements(AbstractSyncSession._get_ref_counts)

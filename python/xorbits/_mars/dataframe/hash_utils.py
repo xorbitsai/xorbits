@@ -9,10 +9,11 @@ import itertools
 from typing import TYPE_CHECKING, Hashable, Iterable, Iterator, cast
 
 import numpy as np
+import pandas as pd
 from pandas._libs import lib
 from pandas._libs.hashing import hash_object_array
 from pandas._typing import ArrayLike, npt
-from pandas.core.dtypes.common import is_categorical_dtype, is_list_like
+from pandas.core.dtypes.common import is_list_like
 from pandas.core.dtypes.generic import (
     ABCDataFrame,
     ABCExtensionArray,
@@ -272,7 +273,7 @@ def hash_array(
     # For categoricals, we hash the categories, then remap the codes to the
     # hash values. (This check is above the complex check so that we don't ask
     # numpy if categorical is a subdtype of complex, as it will choke).
-    if is_categorical_dtype(dtype):
+    if isinstance(dtype, pd.CategoricalDtype):
         vals = cast("Categorical", vals)
         return _hash_categorical(vals, encoding, hash_key)
 

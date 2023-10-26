@@ -16,7 +16,6 @@
 import numpy as np
 
 from ... import opcodes
-from ...config import options
 from ...core import OutputType
 from .core import DataFrameReductionMixin, DataFrameReductionOperand
 
@@ -47,9 +46,15 @@ class DataFrameSum(DataFrameReductionOperand, DataFrameReductionMixin):
 
 
 def sum_series(
-    df, axis=None, skipna=True, level=None, min_count=0, combine_size=None, method=None
+    df,
+    axis=None,
+    skipna=True,
+    level=None,
+    min_count=0,
+    combine_size=None,
+    method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameSum(
         axis=axis,
         skipna=skipna,
@@ -57,7 +62,6 @@ def sum_series(
         min_count=min_count,
         combine_size=combine_size,
         output_types=[OutputType.scalar],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)
@@ -72,8 +76,8 @@ def sum_dataframe(
     numeric_only=None,
     combine_size=None,
     method=None,
+    **kwargs,  # kwargs for compatible with numpy reduction
 ):
-    use_inf_as_na = options.dataframe.mode.use_inf_as_na
     op = DataFrameSum(
         axis=axis,
         skipna=skipna,
@@ -82,7 +86,6 @@ def sum_dataframe(
         numeric_only=numeric_only,
         combine_size=combine_size,
         output_types=[OutputType.series],
-        use_inf_as_na=use_inf_as_na,
         method=method,
     )
     return op(df)

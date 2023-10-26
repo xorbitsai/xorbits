@@ -193,6 +193,9 @@ class DataFrameValueCounts(DataFrameOperand, DataFrameOperandMixin):
             # convert CategoricalDtype which generated in `cut`
             # to IntervalDtype
             result.index = result.index.astype("interval")
+            # index name changed since pandas 2.1.1
+            if pd_release_version >= (2, 1, 1):
+                result.index.name = None
         if op.nrows:
             result = result.head(op.nrows)
         result.name = op.outputs[0].name

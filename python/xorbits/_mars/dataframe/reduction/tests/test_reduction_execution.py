@@ -771,6 +771,37 @@ def test_dataframe_aggregate(setup, check_ref_counts):
     ]
     data = pd.DataFrame(np.random.rand(20, 20))
 
+    def realized_volatility(series):
+        print(series)
+        return np.sqrt(np.sum(series**2))
+
+    df = md.DataFrame(data)
+    result = df.agg(realized_volatility)
+    pd.testing.assert_series_equal(
+        result.execute().fetch(), data.agg(realized_volatility)
+    )
+
+    def trip_type(x):
+        return np.min(x)
+
+    df = md.DataFrame(data)
+    result = df.agg(trip_type)
+    pd.testing.assert_series_equal(result.execute().fetch(), data.agg(trip_type))
+
+    def trip_type_max(x):
+        return np.max(x)
+
+    df = md.DataFrame(data)
+    result = df.agg(trip_type_max)
+    pd.testing.assert_series_equal(result.execute().fetch(), data.agg(trip_type_max))
+
+    def trip_type_mean(x):
+        return np.mean(x)
+
+    df = md.DataFrame(data)
+    result = df.agg(trip_type_mean)
+    pd.testing.assert_series_equal(result.execute().fetch(), data.agg(trip_type_mean))
+
     df = md.DataFrame(data)
     result = df.agg(all_aggs)
     pd.testing.assert_frame_equal(result.execute().fetch(), data.agg(all_aggs))
@@ -1138,3 +1169,34 @@ def test_aggregate_on_same_funcs(setup_gpu, gpu):
         s.agg((g1, g2, g3)), ms.agg((g1, g2, g3)).execute().fetch()
     )
     pd.testing.assert_series_equal(s.agg((g1, g1)), ms.agg((g1, g1)).execute().fetch())
+
+
+@pytest.mark.parametrize("chunk_size", [None, 1, 5, 10])
+def test_agg_with_kwargs(setup, chunk_size):
+    rs = np.random.RandomState(0)
+    df = pd.DataFrame(
+        {
+            "a": rs.choice([1, 3, 8], size=100),
+            "b": rs.choice([201.8, 155.7, 95.7], size=100),
+            "c": rs.choice([1, np.nan, 3], size=100),
+        },
+    )
+    mdf = md.DataFrame(df, chunk_size=chunk_size)
+    res = mdf.agg(a=("a", "sum"))
+    pd.testing.assert_frame_equal(res.execute().fetch(), df.agg(a=("a", "sum")))
+
+    res = mdf.agg(x=("a", "sum"), y=("b", "mean"))
+    pd.testing.assert_frame_equal(
+        res.execute().fetch(), df.agg(x=("a", "sum"), y=("b", "mean"))
+    )
+
+    res = mdf.agg(x=("a", "mean"), y=("c", sum))
+    pd.testing.assert_frame_equal(
+        res.execute().fetch(), df.agg(x=("a", "mean"), y=("c", sum))
+    )
+
+    def g(x):
+        return x.sum() - (x * 3).sum()
+
+    res = mdf.agg(g=("b", g))
+    pd.testing.assert_frame_equal(res.execute().fetch(), df.agg(g=("b", g)))

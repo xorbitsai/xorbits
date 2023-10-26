@@ -286,8 +286,10 @@ def bincount(x, weights=None, minlength=0, chunk_size_limit=None):
     x = astensor(x)
     weights = astensor(weights) if weights is not None else None
 
-    if not np.issubdtype(x.dtype, np.int_):
-        raise TypeError(f"Cannot cast array data from {x.dtype} to {np.dtype(np.int_)}")
+    if not np.issubdtype(x.dtype, np.int64):
+        raise TypeError(
+            f"Cannot cast array data from {x.dtype} to {np.dtype(np.int64)}"
+        )
     if x.ndim != 1:
         raise ValueError("'x' must be 1 dimension")
     if minlength < 0:
