@@ -18,7 +18,6 @@ Customarily, we import and init as follows:
    import xorbits.numpy as np
    from xorbits.lightgbm import LGBMRegressor
    from xorbits.sklearn.model_selection import train_test_split
-   from xorbits.sklearn.metrics import mean_squared_error
    xorbits.init()
 
 Model Creation
@@ -95,9 +94,6 @@ In regression problems, the :code:`.score` method usually returns the coefficien
 Calculate the model's estimated accuracy on the test set.
 
 ..  ipython:: python
-
-    mse = mean_squared_error(y_test, y_pred)
-    mse
 
     accuracy = lgbm_regressor.score(X_test, y_test)
     accuracy
