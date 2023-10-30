@@ -150,7 +150,6 @@ static/
 doc/source/savefig/
 
 asv/results
-
 .DS_Store
 
 #slrm.sh generated sh
