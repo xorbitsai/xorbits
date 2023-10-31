@@ -222,11 +222,11 @@ The SLURM script looks like this:
 
     python -u test.py --endpoint "${address}"
 
-.. code:: python
+
 
     Initialization
     -----------------
-    
+    .. code:: python
     To create a `SLURMCluster` instance, you can use the following parameters:
     
     - `job_name` (str, optional): Name of the Slurm job.
