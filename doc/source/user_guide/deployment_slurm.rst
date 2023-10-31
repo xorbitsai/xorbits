@@ -251,6 +251,7 @@ To create an instance of the `SLURMCluster` class, you can use the following par
 
 
 .. code-block:: python
+
     from xorbits.deploy.slurm import SLURMCluster
     cluster = SLURMCluster(
           job_name="my_job",
