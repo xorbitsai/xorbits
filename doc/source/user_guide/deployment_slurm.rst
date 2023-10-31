@@ -316,7 +316,7 @@ Getting Job Information
 Example
 ~~~~~~~
 
-Here's an example of how to use the `SLURMCluster` class::
+Here's an example of how to use the `SLURMCluster` class
 
 .. code-block:: python
 
