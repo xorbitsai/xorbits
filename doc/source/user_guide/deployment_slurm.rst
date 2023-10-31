@@ -231,7 +231,7 @@ Code Method
    
 
 Initialization
-   --------------
+--------------
 
    To create an instance of the `SLURMCluster` class, you can use the following parameters:
 
@@ -275,17 +275,17 @@ Initialization
    .. note::
        Modify the parameters as needed for your specific use case.
 
-   Running the Job
-   ---------------
+Running the Job
+---------------
 
    To submit the job to SLURM, use the `run()` method. It will return the job's address.
 
-   Example usage::
+   .. code-block:: python
 
       address = cluster.run()
 
-   Getting Job Information
-   -----------------------
+Getting Job Information
+-----------------------
 
    - `get_job_id()`: This method extracts the job ID from the output of the `sbatch` command.
 
@@ -311,8 +311,8 @@ Initialization
 
       job_address = cluster.get_job_address()
 
-   Example
-   -------
+Example
+-------
 
    Here's an example of how to use the `SLURMCluster` class::
 
