@@ -152,3 +152,6 @@ doc/source/savefig/
 asv/results
 
 .DS_Store
+
+#slrm.sh generated sh
+python/xorbits/deploy/slurm/tests/slurm.sh
