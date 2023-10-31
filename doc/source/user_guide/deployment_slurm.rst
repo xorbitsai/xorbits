@@ -173,7 +173,7 @@ Name this SLURM script file as ``xorbits_slurm.sh``. Submit the job via:
 
 
 Put all together
-----------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 The SLURM script looks like this:
 
@@ -249,8 +249,8 @@ Initialization
    - `webport` (int, optional): Xorbits' web port.
    - `**kwargs`: Additional parameters that can be added using the Slurm interface.
 
-   .. code-block:: python
 
+.. code-block:: python
       from xorbits.deploy.slurm import SLURMCluster
 
       cluster = SLURMCluster(
@@ -271,51 +271,52 @@ Initialization
           custom_param2="value2"
       )
 
-   .. note::
-       Modify the parameters as needed for your specific use case.
+.. note::
+    Modify the parameters as needed for your specific use case.
 
 Running the Job
 ~~~~~~~~~~~~~~~
 
-   To submit the job to SLURM, use the `run()` method. It will return the job's address.
+To submit the job to SLURM, use the `run()` method. It will return the job's address.
 
-   .. code-block:: python
+.. code-block:: python
 
-      address = cluster.run()
+    address = cluster.run()
 
 Getting Job Information
-----------------
+----------------------
 
-   - `get_job_id()`: This method extracts the job ID from the output of the `sbatch` command.
+- `get_job_id()`: This method extracts the job ID from the output of the `sbatch` command.
 
-   .. code-block:: python
+.. code-block:: python
 
-      job_id = cluster.get_job_id()
+job_id = cluster.get_job_id()
 
-   - `cancel_job()`: This method cancels the job using the `scancel` command. A hook is designed so that while canceling the program, the Slurm task will also be canceled.
+- `cancel_job()`: This method cancels the job using the `scancel` command. A hook is designed so that while canceling the program, the Slurm task will also be canceled.
 
-  .. code-block:: python
+.. code-block:: python
 
-      cluster.cancel_job(job_id)
+cluster.cancel_job(job_id)
 
-   - `update_head_node()`: This method retrieves the head node information from the SLURM job.
+- `update_head_node()`: This method retrieves the head node information from the SLURM job.
 
-   .. code-block:: python
+.. code-block:: python
 
-      cluster.update_head_node()
+    cluster.update_head_node()
 
-   - `get_job_address(retry_attempts=10, sleep_interval=30)`: This method retrieves the job address after deployment. It retries several times to get the job data.
+- `get_job_address(retry_attempts=10, sleep_interval=30)`: This method retrieves the job address after deployment. It retries several times to get the job data.
 
-   .. code-block:: python
+.. code-block:: python
 
-      job_address = cluster.get_job_address()
+    job_address = cluster.get_job_address()
+
 
 Example
 ~~~~~~~
 
-   Here's an example of how to use the `SLURMCluster` class::
+Here's an example of how to use the `SLURMCluster` class::
 
-   .. code-block:: python
+.. code-block:: python
 
       import pandas as pd
       from xorbits.deploy.slurm import SLURMCluster
