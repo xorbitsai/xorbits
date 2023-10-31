@@ -232,7 +232,7 @@ Code Method
 Initialization
 ~~~~~~~~~~~~~~
 
-   To create an instance of the `SLURMCluster` class, you can use the following parameters:
+To create an instance of the `SLURMCluster` class, you can use the following parameters:
 
    - `job_name` (str, optional): Name of the Slurm job.
    - `num_nodes` (int, optional): Number of nodes in the Slurm cluster.
@@ -251,9 +251,8 @@ Initialization
 
 
 .. code-block:: python
-      from xorbits.deploy.slurm import SLURMCluster
-
-      cluster = SLURMCluster(
+    from xorbits.deploy.slurm import SLURMCluster
+    cluster = SLURMCluster(
           job_name="my_job",
           num_nodes=4,
           partition_option="compute",
@@ -269,7 +268,8 @@ Initialization
           webport=16379,
           custom_param1="value1",
           custom_param2="value2"
-      )
+    )
+
 
 .. note::
     Modify the parameters as needed for your specific use case.
@@ -318,17 +318,16 @@ Example
 Here's an example of how to use the `SLURMCluster` class::
 
 .. code-block:: python
+    import pandas as pd
+    from xorbits.deploy.slurm import SLURMCluster
 
-      import pandas as pd
-      from xorbits.deploy.slurm import SLURMCluster
-
-      test_cluster = SLURMCluster(
+    test_cluster = SLURMCluster(
           job_name="xorbits",
           num_nodes=2,
           output_path="/shared_space/output.out",
           time="00:30:00",
       )
-      address = test_cluster.run()
-      xorbits.init(address)
-      assert pd.Series([1, 2, 3]).sum() == 6
+    address = test_cluster.run()
+    xorbits.init(address)
+    assert pd.Series([1, 2, 3]).sum() == 6
 
