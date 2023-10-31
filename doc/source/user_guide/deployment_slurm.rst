@@ -250,7 +250,7 @@ Initialization
    - `webport` (int, optional): Xorbits' web port.
    - `**kwargs`: Additional parameters that can be added using the Slurm interface.
 
-   Example usage::
+   .. code-block:: python
 
       from xorbits.deploy.slurm import SLURMCluster
 
@@ -289,25 +289,25 @@ Initialization
 
    - `get_job_id()`: This method extracts the job ID from the output of the `sbatch` command.
 
-   Example usage::
+   .. code-block:: python
 
       job_id = cluster.get_job_id()
 
    - `cancel_job()`: This method cancels the job using the `scancel` command. A hook is designed so that while canceling the program, the Slurm task will also be canceled.
 
-   Example usage::
+  .. code-block:: python
 
       cluster.cancel_job(job_id)
 
    - `update_head_node()`: This method retrieves the head node information from the SLURM job.
 
-   Example usage::
+   .. code-block:: python
 
       cluster.update_head_node()
 
    - `get_job_address(retry_attempts=10, sleep_interval=30)`: This method retrieves the job address after deployment. It retries several times to get the job data.
 
-   Example usage::
+   .. code-block:: python
 
       job_address = cluster.get_job_address()
 
