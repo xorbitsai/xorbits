@@ -2,11 +2,11 @@
 
 
 SLURM deployment
-**********
+****************
 
-==================
+=============
 Script Method
-==================
+=============
 
 
 
@@ -225,9 +225,9 @@ The SLURM script looks like this:
 
     python -u test.py --endpoint "${address}"
 
-==================
+===========
 Code Method
-==================
+===========
    
 
 Initialization
