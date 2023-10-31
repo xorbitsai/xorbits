@@ -96,6 +96,7 @@ jobs:
           - { os: self-hosted, module: gpu, python-version: 3.9}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
           - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
+          - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
           - { os: ubuntu-latest, module: datasets, python-version: 3.9 }
     steps:
     - name: Check out code
@@ -247,6 +248,18 @@ jobs:
         python setup.py build_ext -i
       working-directory: ./python
 
+    - name: Slurm Setup Job queuing system
+      if: ${{ matrix.module == 'slurm' }}
+      run: |
+        source CI/slurm/${{ matrix.module }}.sh
+        jobqueue_before_install
+
+    - name: Slurm Install xorbits
+      if: ${{ matrix.module == 'slurm' }}
+      run: |
+        source CI/slurm/${{ matrix.module }}.sh
+        jobqueue_install
+      
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
@@ -285,6 +298,11 @@ jobs:
           pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes/external_storage/juicefs
+        elif [[ "$MODULE" == "slurm" ]]; then
+          docker exec c1 /bin/bash -c "pip install xorbits"
+          docker exec c2 /bin/bash -c "pip install xorbits"
+          docker exec slurmctld /bin/bash -c \
+          "pytest /xorbits/python/xorbits/deploy/slurm/tests/test_slurm.py "
         elif [[ "$MODULE" == "hadoop" ]]; then
           export WITH_HADOOP="1"
           export HADOOP_HOME="/usr/local/hadoop"
@@ -375,6 +393,13 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
         fi
       working-directory: ./python
+
+
+    - name: Cleanup on slurm
+      if: ${{ matrix.module == 'slurm' }}
+      run: |
+        source CI/slurm/${{ matrix.module }}.sh
+        jobqueue_after_script
 
     - name: Report coverage data
       uses: codecov/codecov-action@v3

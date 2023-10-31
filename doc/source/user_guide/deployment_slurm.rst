@@ -1,8 +1,9 @@
 .. _deployment_slurm:
 
-==================
+
 SLURM deployment
-==================
+=============
+
 
 If you have access to a SLURM cluster, you can refer to the following guide to run an Xorbits job. Other HPC job schedulers like Torque or LSF are similar.
 You are recommended to read the :ref:`cluster deployment <deployment_cluster>` first to know some basic knowledge of a Xorbits cluster.
@@ -32,6 +33,10 @@ The below walkthrough will do the following:
 5. Launch worker processes on other worker nodes with the head node's address.
 
 6. After the underlying Xorbits cluster is ready, submit the user-specified task.
+
+
+Script Method
+--------------
 
 SLURM script file
 ~~~~~~~~~~~~~~~~~
@@ -168,7 +173,7 @@ Name this SLURM script file as ``xorbits_slurm.sh``. Submit the job via:
 
 
 Put all together
-----------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 The SLURM script looks like this:
 
@@ -218,4 +223,114 @@ The SLURM script looks like this:
     address=http://"${head_node}":"${web_port}"
 
     python -u test.py --endpoint "${address}"
+
+
+Code Method
+-----------
+   
+
+Initialization
+~~~~~~~~~~~~~~
+
+To create an instance of the `SLURMCluster` class, you can use the following parameters:
+
+   - `job_name` (str, optional): Name of the Slurm job.
+   - `num_nodes` (int, optional): Number of nodes in the Slurm cluster.
+   - `partition_option` (str, optional): Request a specific partition for resource allocation.
+   - `load_env` (str, optional): Conda Environment to load.
+   - `output_path` (str, optional): Path for log output.
+   - `error_path` (str, optional): Path for log errors.
+   - `work_dir` (str, optional): Slurm's working directory, the default location for logs and results.
+   - `time` (str, optional): Minimum time limit for job allocation.
+   - `processes` (int, optional): Number of processes.
+   - `cores` (int, optional): Number of cores.
+   - `memory` (str, optional): Specify the real memory required per node. Default units are megabytes.
+   - `account` (str, optional): Charge resources used by this job to the specified account.
+   - `webport` (int, optional): Xorbits' web port.
+   - `**kwargs`: Additional parameters that can be added using the Slurm interface.
+
+
+.. code-block:: python
+
+    from xorbits.deploy.slurm import SLURMCluster
+    cluster = SLURMCluster(
+          job_name="my_job",
+          num_nodes=4,
+          partition_option="compute",
+          load_env="my_env",
+          output_path="logs/output.log",
+          error_path="logs/error.log",
+          work_dir="/path/to/work_dir",
+          time="1:00:00",
+          processes=8,
+          cores=2,
+          memory="8G",
+          account="my_account",
+          webport=16379,
+          custom_param1="value1",
+          custom_param2="value2"
+    )
+
+
+.. note::
+    Modify the parameters as needed for your specific use case.
+
+Running the Job
+~~~~~~~~~~~~~~~
+
+To submit the job to SLURM, use the `run()` method. It will return the job's address.
+
+.. code-block:: python
+
+    address = cluster.run()
+
+Getting Job Information
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+- `get_job_id()`: This method extracts the job ID from the output of the `sbatch` command.
+
+.. code-block:: python
+
+    job_id = cluster.get_job_id()
+
+- `cancel_job()`: This method cancels the job using the `scancel` command. A hook is designed so that while canceling the program, the Slurm task will also be canceled.
+
+.. code-block:: python
+
+    cluster.cancel_job(job_id)
+
+- `update_head_node()`: This method retrieves the head node information from the SLURM job.
+
+.. code-block:: python
+
+    cluster.update_head_node()
+
+- `get_job_address(retry_attempts=10, sleep_interval=30)`: This method retrieves the job address after deployment. It retries several times to get the job data.
+
+.. code-block:: python
+
+    job_address = cluster.get_job_address(retry_attempts=10, sleep_interval=30)
+
+
+Example
+~~~~~~~
+
+
+Here's an example of how to use the `SLURMCluster` class
+
+.. code-block:: python
+
+    import pandas as pd
+    from xorbits.deploy.slurm import SLURMCluster
+
+    test_cluster = SLURMCluster(
+          job_name="xorbits",
+          num_nodes=2,
+          output_path="/shared_space/output.out",
+          time="00:30:00",
+      )
+    address = test_cluster.run()
+    xorbits.init(address)
+    assert pd.Series([1, 2, 3]).sum() == 6
 
