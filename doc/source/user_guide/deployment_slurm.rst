@@ -284,7 +284,8 @@ To submit the job to SLURM, use the `run()` method. It will return the job's add
     address = cluster.run()
 
 Getting Job Information
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 - `get_job_id()`: This method extracts the job ID from the output of the `sbatch` command.
 
