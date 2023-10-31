@@ -310,7 +310,7 @@ Getting Job Information
 
 .. code-block:: python
 
-    job_address = cluster.get_job_address()
+    job_address = cluster.get_job_address(retry_attempts=10, sleep_interval=30)
 
 
 Example
