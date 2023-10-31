@@ -1,9 +1,10 @@
 .. _deployment_slurm:
 
-==================
+
 SLURM deployment
 **********
 
+==================
 Script Method
 ==================
 
@@ -224,9 +225,12 @@ The SLURM script looks like this:
 
     python -u test.py --endpoint "${address}"
 
+==================
 Code Method
 ==================
-   Initialization
+   
+
+Initialization
    --------------
 
    To create an instance of the `SLURMCluster` class, you can use the following parameters:
