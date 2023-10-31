@@ -2,11 +2,7 @@
 
 
 SLURM deployment
-****************
-
-Script Method
 =============
-
 
 
 If you have access to a SLURM cluster, you can refer to the following guide to run an Xorbits job. Other HPC job schedulers like Torque or LSF are similar.
@@ -37,6 +33,10 @@ The below walkthrough will do the following:
 5. Launch worker processes on other worker nodes with the head node's address.
 
 6. After the underlying Xorbits cluster is ready, submit the user-specified task.
+
+
+Script Method
+--------------
 
 SLURM script file
 ~~~~~~~~~~~~~~~~~
@@ -224,12 +224,13 @@ The SLURM script looks like this:
 
     python -u test.py --endpoint "${address}"
 
+
 Code Method
-===========
+-----------
    
 
 Initialization
-----------------
+~~~~~~~~~~~~~~
 
    To create an instance of the `SLURMCluster` class, you can use the following parameters:
 
@@ -274,7 +275,7 @@ Initialization
        Modify the parameters as needed for your specific use case.
 
 Running the Job
-----------------
+~~~~~~~~~~~~~~~
 
    To submit the job to SLURM, use the `run()` method. It will return the job's address.
 
@@ -310,7 +311,7 @@ Getting Job Information
       job_address = cluster.get_job_address()
 
 Example
-----------------
+~~~~~~~
 
    Here's an example of how to use the `SLURMCluster` class::
 
