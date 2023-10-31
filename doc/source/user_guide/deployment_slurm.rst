@@ -291,13 +291,13 @@ Getting Job Information
 
 .. code-block:: python
 
-job_id = cluster.get_job_id()
+    job_id = cluster.get_job_id()
 
 - `cancel_job()`: This method cancels the job using the `scancel` command. A hook is designed so that while canceling the program, the Slurm task will also be canceled.
 
 .. code-block:: python
 
-cluster.cancel_job(job_id)
+    cluster.cancel_job(job_id)
 
 - `update_head_node()`: This method retrieves the head node information from the SLURM job.
 
@@ -318,6 +318,7 @@ Example
 Here's an example of how to use the `SLURMCluster` class::
 
 .. code-block:: python
+
     import pandas as pd
     from xorbits.deploy.slurm import SLURMCluster
 
