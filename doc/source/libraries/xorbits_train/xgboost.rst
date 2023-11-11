@@ -45,7 +45,7 @@ In order to train the model, we split the dataset into a training set and a test
 
 ..  ipython:: python
 
-    X_train, X_test, y_train, y_test = train_test_split(data['data'], data['target'], test_size=.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2)
 
 Model Training
 ---------------
@@ -67,6 +67,7 @@ Once you have trained a model, you can use the :code:`.predict` method to apply 
 
     # make predictions
     preds = bst.predict(X_test)
+    preds
 
 Model Evaluation
 ---------------
