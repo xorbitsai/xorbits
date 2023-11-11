@@ -18,10 +18,11 @@ from typing import List, Tuple, Union
 from ...core import ChunkType
 from ...tensor.fuse import TensorJAXFuseChunk
 from ...tensor.fuse.jax import (
-    ARITHMETIC_SUPPORT,
+    BINARY_ARITHMETIC_SUPPORT,
     JAX_INSTALLED,
     REDUCTION_SUPPORT,
     TREE_SUPPORT,
+    UNARY_ARITHMETIC_SUPPORT,
 )
 from .core import REDUCTION, GraphTraversalOptimizer, _Fuse, register_optimizer
 
@@ -40,7 +41,11 @@ class JAXRuntimeOptimizer(GraphTraversalOptimizer):
                 return REDUCTION
             else:  # pragma: no cover
                 return False
-        if op_type not in ARITHMETIC_SUPPORT and op_type not in TREE_SUPPORT:
+        if (
+            op_type not in UNARY_ARITHMETIC_SUPPORT
+            and op_type not in BINARY_ARITHMETIC_SUPPORT
+            and op_type not in TREE_SUPPORT
+        ):
             return False
         return True
 
