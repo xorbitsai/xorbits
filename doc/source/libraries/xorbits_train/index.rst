@@ -27,3 +27,4 @@ API                                     Implemented version or plan
     :maxdepth: 2
 
     lightgbm
+    xgboost
