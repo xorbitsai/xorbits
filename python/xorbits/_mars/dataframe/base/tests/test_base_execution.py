@@ -553,6 +553,31 @@ def test_data_frame_where_execute(setup):
     expected = df_raw.where(condition)
     pd.testing.assert_frame_equal(result, expected)
 
+    # Test with a more complex condition function
+    condition = lambda x: (x["A"] % 2 == 0) & (x["B"] % 2 == 0)
+    r = df.where(condition)
+    result = r.execute().fetch()
+    expected = df_raw.where(condition)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # Test with 'other' parameter as a scalar
+    r = df.where(condition, other=-1)
+    result = r.execute().fetch()
+    expected = df_raw.where(condition, other=-1)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # Test with 'skip_infer' parameter set to True
+    r = df.where(condition, skip_infer=True)
+    result = r.execute().fetch()
+    expected = df_raw.where(condition)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # Test with 'other' parameter as a scalar and 'skip_infer' set to True
+    r = df.where(condition, other=-1, skip_infer=True)
+    result = r.execute().fetch()
+    expected = df_raw.where(condition, other=-1)
+    pd.testing.assert_frame_equal(result, expected)
+
 
 def test_data_frame_applymap_execute(setup):
     # TODO: support GPU for appltmap operation
