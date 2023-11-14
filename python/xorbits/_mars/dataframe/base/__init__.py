@@ -56,6 +56,7 @@ from .to_gpu import to_gpu
 from .transform import df_transform, series_transform
 from .transpose import transpose
 from .value_counts import value_counts
+from .where import df_where
 
 
 def _install():
@@ -72,6 +73,7 @@ def _install():
         setattr(t, "describe", describe)
         setattr(t, "apply", df_apply)
         setattr(t, "applymap", df_applymap)
+        setattr(t, "where", df_where)
         setattr(t, "transform", df_transform)
         setattr(t, "isin", df_isin)
         setattr(t, "shift", shift)
