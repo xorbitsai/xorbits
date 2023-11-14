@@ -138,7 +138,7 @@ class DataFrameWhere(DataFrameOperand, DataFrameOperandMixin):
     def _infer_df_func_returns(self, df: pd.DataFrame):
         condition = self._load_condition()
         other = self._load_other()
-
+        # judge instance of (condition) like if condition is a bool/series/DataFrame
         if isinstance(condition, np.ufunc):
             output_type = OutputType.dataframe
             new_dtypes = None
