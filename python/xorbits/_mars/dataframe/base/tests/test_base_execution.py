@@ -545,12 +545,20 @@ def test_apply_with_arrow_dtype_execution(setup):
 def test_data_frame_where_execute(setup):
     # Test with a simple condition function
     df_raw = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
+    df_raw_empty = pd.DataFrame()
+    df_empty = from_pandas_df(pd.DataFrame())
     df = from_pandas_df(df_raw, chunk_size=2)
 
     condition = lambda x: x % 2 == 0
     r = df.where(condition)
     result = r.execute().fetch()
     expected = df_raw.where(condition)
+    pd.testing.assert_frame_equal(result, expected)
+
+    condition = lambda x: x % 2 == 0
+    r = df_empty.where(condition)
+    result = r.execute().fetch()
+    expected = df_raw_empty.where(condition)
     pd.testing.assert_frame_equal(result, expected)
 
     # Test with a more complex condition function
