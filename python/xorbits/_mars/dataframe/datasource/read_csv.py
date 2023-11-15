@@ -189,7 +189,7 @@ class DataFrameReadCSV(
 
         path_prefix = ""
         if isinstance(op.path, Path):
-            op.path = op.path.as_posix()
+            op.path = str(op.path)
         if isinstance(op.path, (tuple, list)):
             paths = op.path
         elif get_fs(op.path, op.storage_options).isdir(op.path):
@@ -747,7 +747,7 @@ def read_csv(
 
     # infer dtypes and columns
     if isinstance(path, Path):
-        path = path.as_posix()
+        path = str(path)
     if isinstance(path, (list, tuple)):
         file_path = path[0]
     elif get_fs(path, storage_options).isdir(path):

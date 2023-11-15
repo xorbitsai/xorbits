@@ -528,7 +528,7 @@ def test_read_csv_execution_with_pathlib_Path(setup):
         df[200:].to_csv(file_paths[2])
 
         # test the pathlib.Path type for a directory
-        testdir=Path(testdir)
+        testdir = Path(testdir)
         # As we can not guarantee the order in which these files are processed,
         # the result may not keep the original order.
         mdf = md.read_csv(testdir, index_col=0).execute().fetch()
