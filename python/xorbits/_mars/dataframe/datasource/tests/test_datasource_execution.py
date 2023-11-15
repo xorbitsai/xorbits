@@ -24,6 +24,7 @@ from string import printable
 import numpy as np
 import pandas as pd
 import pytest
+from pathlib import Path
 
 from ....tensor.core import TENSOR_TYPE
 
@@ -487,6 +488,54 @@ def test_from_records_execution(setup):
     df2 = from_records(ndarr)
     df2_result = df2.execute().fetch()
     pd.testing.assert_frame_equal(df2_result, pdf_expected)
+
+
+def test_read_csv_execution_with_pathlib_Path(setup):
+    with tempfile.TemporaryDirectory() as tempdir:
+        file_path = os.path.join(tempdir, "test.csv")
+
+        df = pd.DataFrame(
+            np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]], dtype=np.int64),
+            columns=["a", "b", "c"],
+        )
+        df.to_csv(file_path)
+
+        # test the pathlib.Path type for a Single file
+        file_path = Path(file_path)
+        pdf = pd.read_csv(file_path, index_col=0)
+        r = md.read_csv(file_path, index_col=0)
+        mdf = r.execute().fetch()
+        pd.testing.assert_frame_equal(pdf, mdf)
+        # size_res = self.executor.execute_dataframe(r, mock=True)
+        # assert sum(s[0] for s in size_res) == os.stat(file_path).st_size
+
+        mdf2 = md.read_csv(file_path, index_col=0, chunk_bytes=10).execute().fetch()
+        pd.testing.assert_frame_equal(pdf, mdf2)
+
+        mdf = md.read_csv(file_path, index_col=0, nrows=1).execute().fetch()
+        pd.testing.assert_frame_equal(df[:1], mdf)
+
+    # test read directory
+    with tempfile.TemporaryDirectory() as tempdir:
+        testdir = os.path.join(tempdir, "test_dir")
+        os.makedirs(testdir, exist_ok=True)
+
+        df = pd.DataFrame(np.random.rand(300, 3), columns=["a", "b", "c"])
+
+        file_paths = [os.path.join(testdir, f"test{i}.csv") for i in range(3)]
+        df[:100].to_csv(file_paths[0])
+        df[100:200].to_csv(file_paths[1])
+        df[200:].to_csv(file_paths[2])
+
+        # test the pathlib.Path type for a directory
+        testdir=Path(testdir)
+        # As we can not guarantee the order in which these files are processed,
+        # the result may not keep the original order.
+        mdf = md.read_csv(testdir, index_col=0).execute().fetch()
+        pd.testing.assert_frame_equal(df, mdf.sort_index())
+
+        mdf2 = md.read_csv(testdir, index_col=0, chunk_bytes=50).execute().fetch()
+        pd.testing.assert_frame_equal(df, mdf2.sort_index())
 
 
 def test_read_csv_execution(setup):
