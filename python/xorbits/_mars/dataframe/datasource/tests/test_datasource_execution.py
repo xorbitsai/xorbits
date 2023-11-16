@@ -19,12 +19,12 @@ import tempfile
 import time
 from collections import OrderedDict
 from datetime import datetime
+from pathlib import Path
 from string import printable
 
 import numpy as np
 import pandas as pd
 import pytest
-from pathlib import Path
 
 from ....tensor.core import TENSOR_TYPE
 

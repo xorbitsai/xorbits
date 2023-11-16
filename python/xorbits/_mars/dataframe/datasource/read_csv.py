@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from io import BytesIO
+from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 from urllib.parse import urlparse
 
 import numpy as np
 import pandas as pd
-from pathlib import Path
 
 try:
     from pyarrow import NativeFile
