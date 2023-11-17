@@ -272,4 +272,4 @@ async def test_request_workers_insufficient():
         cluster_api = WebClusterAPI(address=cluster_client.endpoint)
         with pytest.raises(Exception) as e:
             print(e)
-            await cluster_api.request_workers(worker_num=1, timeout=30)
+            await cluster_api.request_workers(worker_num=10, timeout=30)
