@@ -47,6 +47,7 @@ In order to train the model, we split the dataset into a training set and a test
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2)
 
+
 Model Training
 ---------------
 The :code:`.fit` method takes the training data (independent variable x and dependent variable y) and fits the model to the data.
