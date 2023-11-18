@@ -122,6 +122,7 @@ jobs:
       with:
         driver: none
         kubernetes-version: v1.23.12
+        minikube-version: 1.31.2
 
     - name: Install ucx dependencies
       if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.python-version != '3.11') }}
