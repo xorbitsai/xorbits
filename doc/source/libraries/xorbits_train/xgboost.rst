@@ -55,8 +55,6 @@ The model adjusts its parameters to minimize the error between the predicted val
 
 .. ipython:: python
 
-
-    # fit model
     bst.fit(X_train, y_train)
 
 Model Prediction
@@ -65,7 +63,6 @@ Once you have trained a model, you can use the :code:`.predict` method to apply 
 
 .. ipython:: python
 
-    # make predictions
     preds = bst.predict(X_test)
     preds
 

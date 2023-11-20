@@ -14,11 +14,11 @@ Customarily, we import and init as follows:
 
 .. ipython:: python
 
-   import xorbits
-   import xorbits.numpy as np
-   from xorbits.lightgbm import LGBMRegressor
-   from xorbits.sklearn.model_selection import train_test_split
-   xorbits.init()
+    import xorbits
+    import xorbits.numpy as np
+    from xorbits.lightgbm import LGBMRegressor
+    from xorbits.sklearn.model_selection import train_test_split
+    xorbits.init()
 
 Model Creation
 --------------
