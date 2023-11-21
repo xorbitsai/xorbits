@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from io import BytesIO
+from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 from urllib.parse import urlparse
 
@@ -187,6 +188,8 @@ class DataFrameReadCSV(
         dtypes = df.dtypes
 
         path_prefix = ""
+        if isinstance(op.path, Path):
+            op.path = str(op.path)
         if isinstance(op.path, (tuple, list)):
             paths = op.path
         elif get_fs(op.path, op.storage_options).isdir(op.path):
@@ -407,7 +410,7 @@ class DataFrameReadCSV(
 
 
 def read_csv(
-    path: str,
+    path: Union[str, Path],
     names: Union[List, Tuple] = None,
     sep: str = ",",
     index_col: Union[int, str, List[int], List[str]] = None,
@@ -743,6 +746,8 @@ def read_csv(
         return op()
 
     # infer dtypes and columns
+    if isinstance(path, Path):
+        path = str(path)
     if isinstance(path, (list, tuple)):
         file_path = path[0]
     elif get_fs(path, storage_options).isdir(path):
