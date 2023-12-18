@@ -542,6 +542,52 @@ def test_apply_with_arrow_dtype_execution(setup):
     pd.testing.assert_series_equal(result, expected)
 
 
+def test_data_frame_mask_execute(setup):
+    # Test the mask operator with a simple condition function
+    df_raw = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
+    df_raw_empty = pd.DataFrame()
+    df_empty = from_pandas_df(pd.DataFrame())
+    df = from_pandas_df(df_raw, chunk_size=3)
+
+    condition = lambda x: x % 3 == 0
+    r = df.mask(condition)
+    result = r.execute().fetch()
+    expected = df_raw.mask(condition)
+
+    pd.testing.assert_frame_equal(result, expected)
+
+    condition = lambda x: x % 3 == 0
+    r = df_empty.mask(condition)
+    result = r.execute().fetch()
+    expected = df_raw_empty.mask(condition)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # Test with a more complex condition function
+    condition = lambda x: (x["A"] % 2 == 0) & (x["B"] % 3 == 0) & (x["B"] % 4 == 0)
+    r = df.mask(condition)
+    result = r.execute().fetch()
+    expected = df_raw.mask(condition)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # Test with 'other' parameter as a scalar
+    r = df.mask(condition, other=-1)
+    result = r.execute().fetch()
+    expected = df_raw.mask(condition, other=-1)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # Test with 'skip_infer' parameter set to True
+    r = df.mask(condition, skip_infer=True)
+    result = r.execute().fetch()
+    expected = df_raw.mask(condition)
+    pd.testing.assert_frame_equal(result, expected)
+
+    # Test with 'other' parameter as a scalar and 'skip_infer' set to True
+    r = df.mask(condition, other=-1, skip_infer=True)
+    result = r.execute().fetch()
+    expected = df_raw.mask(condition, other=-1)
+    pd.testing.assert_frame_equal(result, expected)
+
+
 def test_data_frame_applymap_execute(setup):
     # TODO: support GPU for appltmap operation
     # test one chunk
