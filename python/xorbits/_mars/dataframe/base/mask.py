@@ -111,8 +111,8 @@ class DataFrameMask(DataFrameOperand, DataFrameOperandMixin):
             ):
                 if arg is None:
                     raise TypeError(
-                        f"Cannot determine {desc} by calculating with enumerate data, "
-                        "please specify it as arguments"
+                        f"Cannot determine {desc} by calculating with "
+                        "enumerate data, please specify it as arguments"
                     )
 
         if index_value == "inherit":
@@ -174,9 +174,9 @@ def df_mask(
 ):
     """
     Apply a condition to a DataFrame elementwise.
-    This method applies a condition that returns a boolean value to every element
-    of a DataFrame. If the boolean is True, the element value is replaced with 'other';
-    If False, the original value remains unchanged.
+    This method applies a condition that returns a boolean value to every
+    element of a DataFrame. If the boolean is True, the element value is
+    replaced with 'other'; If False, the original value remains unchanged.
 
     Parameters
     ----------
@@ -212,14 +212,15 @@ def df_mask(
     0  1  NaN
     1 NaN  5
     2  3  NaN
-    You can also specify an 'other' value to mask elements that satisfy the condition:
+    You can also specify an 'other' value to mask elements that satisfy
+    the condition:
     >>> df_mask(df, condition, other=-1)
     A  B
     0  1 -1
     1 -1  5
     2  3 -1
-    Note that the 'other' parameter can be a scalar value or a DataFrame with the
-    same shape as the input DataFrame `df`.
+    Note that the 'other' parameter can be a scalar value or a DataFrame with
+    the same shape as the input DataFrame `df`.
     """
     op = DataFrameMask(condition=condition, other=other, kwds=kwds)
     return op(df, skip_infer=skip_infer)
