@@ -19,6 +19,7 @@ import tempfile
 from pathlib import Path
 
 import datasets
+import filelock
 import pandas as pd
 import pytest
 
@@ -58,10 +59,10 @@ def test_from_huggingface_execute(setup, path):
 
 
 def test_from_huggingface_file_lock(setup):
-    real_lock_init = datasets.utils.filelock.BaseFileLock.__init__
+    real_lock_init = filelock.BaseFileLock.__init__
 
     with mock.patch(
-        "datasets.utils.filelock.BaseFileLock.__init__",
+        "filelock.BaseFileLock.__init__",
         autospec=True,
         side_effect=real_lock_init,
     ) as mock_lock:
