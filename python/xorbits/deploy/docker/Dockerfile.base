@@ -2,13 +2,6 @@ ARG BASE_CONTAINER=continuumio/miniconda3:4.12.0
 ARG PYTHON_VERSION=3.9
 FROM ${BASE_CONTAINER} AS base
 
-FROM base AS py3.8-base
-SHELL ["/bin/bash", "-c"]
-ARG PYTHON_VERSION=3.9
-RUN if [ "$PYTHON_VERSION" == "3.8" ] ; then \
-    /opt/conda/bin/conda install --freeze-installed python=3.8 "conda-forge::pandas>=1.5.0" "main::numpy>=1.14.0,<1.23.0" "main::scipy>=1.9.2" && \
-    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
-
 FROM base AS py3.9-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9

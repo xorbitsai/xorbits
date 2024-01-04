@@ -45,8 +45,8 @@ def _safe_shutdown():
 
 
 @pytest.mark.skipif(
-    sys.platform == "win32" and sys.version_info[:2] < (3, 8),
-    reason="Skip for windows & Python < 3.8",
+    sys.platform == "win32" and sys.version_info[:2] < (3, 9),
+    reason="Skip for windows & Python < 3.9",
 )
 def test_init():
     init(n_cpu=2, init_local=True)
@@ -63,8 +63,8 @@ def test_init():
 
 
 @pytest.mark.skipif(
-    sys.platform == "win32" and sys.version_info[:2] < (3, 8),
-    reason="Skip for windows & Python < 3.8",
+    sys.platform == "win32" and sys.version_info[:2] < (3, 9),
+    reason="Skip for windows & Python < 3.9",
 )
 def test_init_with_storage_config():
     tmp_dir = tempfile.mkdtemp()
