@@ -67,11 +67,14 @@ class DataFramePivot(MapReduceOperand, DataFrameOperandMixin):
         input_data = ctx[op.inputs[0].key]
         out = op.outputs[0]
 
-        for dtype in op.output_columns:
-            if dtype not in input_data.dtypes.index:
-                input_data[dtype] = np.nan
+        dtypes = [
+            dtype for dtype in op.output_columns if dtype not in input_data.dtypes.index
+        ]
+        nan_data = pd.DataFrame(
+            {col: [np.nan] for col in dtypes}, index=input_data.index
+        )
 
-        ctx[out.key] = input_data
+        ctx[out.key] = pd.concat([input_data, nan_data], axis=1)
 
     @classmethod
     def execute(cls, ctx: Union[dict, Context], op: "DataFramePivot"):
