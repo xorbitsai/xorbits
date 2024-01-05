@@ -37,6 +37,7 @@ from .explode import df_explode, series_explode
 from .isin import df_isin, series_isin
 from .map import index_map, series_map
 from .map_chunk import map_chunk
+from .mask import df_mask
 from .melt import melt
 from .memory_usage import df_memory_usage, index_memory_usage, series_memory_usage
 from .nlargest import dataframe_nlargest, series_nlargest
@@ -71,6 +72,7 @@ def _install():
         setattr(t, "rechunk", rechunk)
         setattr(t, "describe", describe)
         setattr(t, "apply", df_apply)
+        setattr(t, "mask", df_mask)
         setattr(t, "applymap", df_applymap)
         setattr(t, "transform", df_transform)
         setattr(t, "isin", df_isin)
