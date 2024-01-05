@@ -519,6 +519,10 @@ class IterableDataset(_TorchIterableDataset):
         return Formatter()
 
     @functools.cached_property
+    def path(self):
+        return self._path
+
+    @functools.cached_property
     def groups(self) -> List[str]:
         return self._info["groups"]
 
