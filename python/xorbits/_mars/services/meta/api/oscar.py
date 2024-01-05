@@ -88,6 +88,7 @@ class BaseMetaAPI(AbstractMetaAPI):
         bands: List[BandType] = None,
         fields: List[str] = None,
         exclude_fields: List[str] = None,
+        slot_ids: List[int] = None,
         **extra
     ):
         if isinstance(chunk.op, Fuse):
@@ -118,6 +119,7 @@ class BaseMetaAPI(AbstractMetaAPI):
             bands=bands,
             memory_size=memory_size,
             store_size=store_size,
+            slot_ids=slot_ids,
             object_refs=object_refs
         )
 
@@ -130,6 +132,7 @@ class BaseMetaAPI(AbstractMetaAPI):
         bands: List[BandType] = None,
         fields: List[str] = None,
         exclude_fields: List[str] = None,
+        slot_ids: List[int] = None,
         **extra
     ):
         """
@@ -147,6 +150,8 @@ class BaseMetaAPI(AbstractMetaAPI):
             fields to include in meta
         exclude_fields: list
             fields to exclude in meta
+        slot_id: int
+            chunk data slot_ids
         extra
 
         Returns
@@ -160,6 +165,7 @@ class BaseMetaAPI(AbstractMetaAPI):
             bands=bands,
             fields=fields,
             exclude_fields=exclude_fields,
+            slot_ids=slot_ids,
             **extra
         )
         return await self._meta_store.set_meta(meta.object_id, meta)
@@ -205,8 +211,8 @@ class BaseMetaAPI(AbstractMetaAPI):
         return await self._meta_store.del_meta.batch(*del_chunk_metas)
 
     @mo.extensible
-    async def add_chunk_bands(self, object_id: str, bands: List[BandType]):
-        return await self._meta_store.add_chunk_bands(object_id, bands)
+    async def add_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
+        return await self._meta_store.add_chunk_bands(object_id, bands, slot_ids)
 
     @add_chunk_bands.batch
     async def batch_add_chunk_bands(self, args_list, kwargs_list):
@@ -218,8 +224,8 @@ class BaseMetaAPI(AbstractMetaAPI):
         return await self._meta_store.add_chunk_bands.batch(*add_chunk_bands_tasks)
 
     @mo.extensible
-    async def remove_chunk_bands(self, object_id: str, bands: List[BandType]):
-        return await self._meta_store.remove_chunk_bands(object_id, bands)
+    async def remove_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
+        return await self._meta_store.remove_chunk_bands(object_id, bands, slot_ids)
 
     @remove_chunk_bands.batch
     async def batch_remove_chunk_bands(self, args_list, kwargs_list):
@@ -233,8 +239,8 @@ class BaseMetaAPI(AbstractMetaAPI):
         )
 
     @mo.extensible
-    async def get_band_chunks(self, band: BandType) -> List[str]:
-        return await self._meta_store.get_band_chunks(band)
+    async def get_band_slot_chunks(self, band: BandType, slot_id: int) -> List[str]:
+        return await self._meta_store.get_band_slot_chunks(band, slot_id)
 
 
 class MetaAPI(BaseMetaAPI):
