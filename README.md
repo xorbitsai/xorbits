@@ -70,6 +70,7 @@ pip install xorbits
 * [Examples and Tutorials](https://doc.xorbits.io/en/latest/getting_started/examples.html)
 * [Performance Benchmarks](https://xorbits.io/benchmark)
 * [Development Guide](https://doc.xorbits.io/en/latest/development/index.html)
+* [Research Paper on Xorbits' Internals](https://arxiv.org/abs/2401.00865)
 
 ## License
 [Apache 2](LICENSE)
@@ -101,3 +102,19 @@ with other upcoming ones we will propose. Stay tuned!
 | [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg) | Collaborating with other Xorbits users.            |
 | [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits)                           | Asking questions about how to use Xorbits.         |
 | [Twitter](https://twitter.com/xorbitsio)                                                      | Staying up-to-date on new features.                |
+
+## Citing Xorbits
+
+If Xorbits could help you, please cite our paper which is accepted by ICDE 2024 Industry and Applications Track:
+
+```
+@article{lu2023xorbits,
+  title={Xorbits: Automating Operator Tiling for Distributed Data Science}, 
+  author={Weizheng Lu and Kaisheng He and Xuye Qin and Chengjie Li and Zhong Wang and Tao Yuan and Feng Zhang and Yueguo Chen and Xiaoyong Du},
+  year={2023},
+  archivePrefix={arXiv},
+  url={https://doi.org/10.48550/arXiv.2401.00865},
+  eprinttype={arXiv}，
+  eprint={2401.00865},
+}
+```
