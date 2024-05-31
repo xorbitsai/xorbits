@@ -30,24 +30,24 @@ TEST_DIR = "/tmp/test"
 @require_hadoop
 @pytest.fixture(scope="module")
 def setup_hdfs():
-    import pyarrow
+    from pyarrow import fs
 
-    hdfs = pyarrow.hdfs.connect(host="localhost", port=8020)
-    if hdfs.exists(TEST_DIR):
-        hdfs.rm(TEST_DIR, recursive=True)
+    hdfs = fs.HadoopFileSystem(host="localhost", port=8020)
+    if hdfs.get_file_info(TEST_DIR):
+        hdfs.delete_dir(TEST_DIR)
     try:
         yield hdfs
     finally:
-        if hdfs.exists(TEST_DIR):
-            hdfs.rm(TEST_DIR, recursive=True)
+        if hdfs.get_file_info(TEST_DIR):
+            hdfs.delete_dir(TEST_DIR)
 
 
 @require_hadoop
 def test_read_csv_execution(setup, setup_hdfs):
     hdfs = setup_hdfs
 
-    with hdfs.open(f"{TEST_DIR}/simple_test.csv", "wb", replication=1) as f:
-        f.write(b"name,amount,id\nAlice,100,1\nBob,200,2")
+    with hdfs.open_output_stream(f"{TEST_DIR}/simple_test.csv") as file:
+        file.write(b"name,amount,id\nAlice,100,1\nBob,200,2")
 
     df = md.read_csv(f"hdfs://localhost:8020{TEST_DIR}/simple_test.csv")
     expected = pd.read_csv(BytesIO(b"name,amount,id\nAlice,100,1\nBob,200,2"))

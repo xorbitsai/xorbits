@@ -135,6 +135,7 @@ sudo ln -s "/usr/local/hadoop-$VERSION" /usr/local/hadoop
 sudo chown -R hduser:hadoop "/usr/local/hadoop-$VERSION"
 
 export HADOOP_HOME=/usr/local/hadoop
+export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
 
 # enable ssh login without password
 sudo su - hduser -c "ssh-keygen -t rsa -P \"\" -f /home/hduser/.ssh/id_rsa"
