@@ -175,6 +175,10 @@ jobs:
         fi
         if [[ "$MODULE" == "hadoop" ]]; then
           ../CI/install-hadoop.sh
+          echo $CLASSPATH
+          echo "=====CLASSPATH====="
+          echo $HADOOP_HOME
+          echo $JAVA_HOME
           echo "import coverage; coverage.process_startup()" > \
             $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
           conda install --quiet --yes -c conda-forge skein libffi conda-pack grpcio=1.42.0

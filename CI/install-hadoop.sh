@@ -108,6 +108,7 @@ EOF
 cat > /tmp/hadoop.sh << EOF
 #!/bin/bash
 export HADOOP_HOME=/usr/local/hadoop
+export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
 EOF
 sudo mv /tmp/hadoop.sh /etc/profile.d/
 sudo chmod a+x /etc/profile.d/hadoop.sh
