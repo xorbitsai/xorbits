@@ -10,7 +10,7 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
+    rev: 6.0.0
     hooks:
       - id: flake8
         args: [--config, python/setup.cfg]
