@@ -48,7 +48,7 @@ jobs:
       - name: mypy
         run: pip install mypy && cd python && mypy xorbits
       - name: codespell
-        run: pip install codespell && cd python && codespell xorbits
+        run: pip install codespell==2.2.6 && cd python && codespell xorbits
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
