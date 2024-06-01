@@ -311,11 +311,6 @@ jobs:
           export WITH_HADOOP="1"
           export HADOOP_HOME="/usr/local/hadoop"
           export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
-          echo "=====JAVA HOME===="
-          echo $JAVA_HOME
-          echo $HADOOP_HOME
-          echo $CLASSPATH
-          which java
           export HADOOP_INSTALL=$HADOOP_HOME
           export HADOOP_MAPRED_HOME=$HADOOP_HOME
           export HADOOP_COMMON_HOME=$HADOOP_HOME
