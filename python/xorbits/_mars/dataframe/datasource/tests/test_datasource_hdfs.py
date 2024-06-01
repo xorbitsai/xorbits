@@ -30,18 +30,22 @@ TEST_DIR = "/tmp/test"
 @require_hadoop
 @pytest.fixture(scope="module")
 def setup_hdfs():
-    from pyarrow import fs
+    import pyarrow
 
-    hdfs = fs.HadoopFileSystem(host="localhost", port=8020)
+    hdfs = pyarrow.fs.HadoopFileSystem(host="localhost", port=8020)
     file = hdfs.get_file_info(TEST_DIR)
-    if file.type != fs.FileType.NotFound:
+    if file.type == pyarrow.fs.FileType.Directory:
         hdfs.delete_dir(TEST_DIR)
+    if file.type == pyarrow.fs.FileType.File:
+        hdfs.delete_file(TEST_DIR)
     try:
         yield hdfs
     finally:
         file = hdfs.get_file_info(TEST_DIR)
-        if file.type != fs.FileType.NotFound:
+        if file.type == pyarrow.fs.FileType.Directory:
             hdfs.delete_dir(TEST_DIR)
+        if file.type == pyarrow.fs.FileType.File:
+            hdfs.delete_file(TEST_DIR)
 
 
 @require_hadoop
