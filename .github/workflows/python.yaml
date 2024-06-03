@@ -40,6 +40,7 @@ jobs:
         with:
           src: "python/xorbits"
           options: "--check"
+          version: "23.12.0"
       - uses: isort/isort-action@master
         with:
           sortPaths: "python/xorbits"
@@ -47,7 +48,7 @@ jobs:
       - name: mypy
         run: pip install mypy && cd python && mypy xorbits
       - name: codespell
-        run: pip install codespell && cd python && codespell xorbits
+        run: pip install codespell==2.2.6 && cd python && codespell xorbits
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -110,7 +111,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     
     - name: Set up conda ${{ matrix.python-version }}
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       if: ${{ matrix.module != 'gpu' && matrix.module != 'kubernetes-juicefs' }}
       with:
         python-version: ${{ matrix.python-version }}
@@ -128,7 +129,9 @@ jobs:
       if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.python-version != '3.11') }}
       run: |
         conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
-
+    - name: Install libomp (macOS)
+      if: matrix.os == 'macos-latest'
+      run: brew install libomp
     - name: Install dependencies
       env:
         MODULE: ${{ matrix.module }}
@@ -307,6 +310,7 @@ jobs:
         elif [[ "$MODULE" == "hadoop" ]]; then
           export WITH_HADOOP="1"
           export HADOOP_HOME="/usr/local/hadoop"
+          export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
           export HADOOP_INSTALL=$HADOOP_HOME
           export HADOOP_MAPRED_HOME=$HADOOP_HOME
           export HADOOP_COMMON_HOME=$HADOOP_HOME
