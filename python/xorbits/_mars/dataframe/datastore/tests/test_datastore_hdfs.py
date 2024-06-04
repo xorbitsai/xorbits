@@ -29,14 +29,20 @@ TEST_DIR = "/tmp/test"
 def setup_hdfs():
     import pyarrow
 
-    hdfs = pyarrow.hdfs.connect(host="localhost", port=8020)
-    if hdfs.exists(TEST_DIR):
-        hdfs.rm(TEST_DIR, recursive=True)
-
-    yield hdfs
-
-    if hdfs.exists(TEST_DIR):
-        hdfs.rm(TEST_DIR, recursive=True)
+    hdfs = pyarrow.fs.HadoopFileSystem(host="localhost", port=8020)
+    file = hdfs.get_file_info(TEST_DIR)
+    if file.type == pyarrow.fs.FileType.Directory:
+        hdfs.delete_dir(TEST_DIR)
+    if file.type == pyarrow.fs.FileType.File:
+        hdfs.delete_file(TEST_DIR)
+    try:
+        yield hdfs
+    finally:
+        file = hdfs.get_file_info(TEST_DIR)
+        if file.type == pyarrow.fs.FileType.Directory:
+            hdfs.delete_dir(TEST_DIR)
+        if file.type == pyarrow.fs.FileType.File:
+            hdfs.delete_file(TEST_DIR)
 
 
 @require_hadoop
@@ -53,7 +59,7 @@ def test_to_parquet_execution(setup, setup_hdfs):
     df = md.DataFrame(test_df, chunk_size=5)
 
     dir_name = f"hdfs://localhost:8020{TEST_DIR}/test_to_parquet/"
-    hdfs.mkdir(dir_name)
+    hdfs.create_dir(dir_name)
     df.to_parquet(dir_name).execute()
 
     if PD_VERSION_GREATER_THAN_2_10:
@@ -64,7 +70,7 @@ def test_to_parquet_execution(setup, setup_hdfs):
 
     # test wildcard
     dir_name = f"hdfs://localhost:8020{TEST_DIR}/test_to_parquet2/*.parquet"
-    hdfs.mkdir(dir_name.rsplit("/", 1)[0])
+    hdfs.create_dir(dir_name.rsplit("/", 1)[0])
     df.to_parquet(dir_name).execute()
 
     result = md.read_parquet(dir_name.rsplit("/", 1)[0]).to_pandas()
