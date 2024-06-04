@@ -116,5 +116,4 @@ def test_plot(setup):
         }
     )
     df = md.DataFrame(raw, chunk_size=3)
-
     _check_plot_works(df.groupby("A").plot)
