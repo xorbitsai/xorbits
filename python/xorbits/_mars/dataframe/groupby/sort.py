@@ -122,13 +122,21 @@ class DataFrameGroupbySortShuffle(MapReduceOperand, DataFrameOperandMixin):
             if p_index == 0:
                 out_df = in_df.loc[: pivots[p_index]]
             elif p_index == op.n_partition - 1:
-                out_df = in_df.loc[pivots[p_index - 1] :].drop(
-                    index=pivots[p_index - 1], errors="ignore"
-                )
+                # in_df may not have the index in pivot
+                # return an empty dataframe
+                try:
+                    out_df = in_df.loc[pivots[p_index - 1] :].drop(
+                        index=pivots[p_index - 1], errors="ignore"
+                    )
+                except Exception:
+                    out_df = pd.DataFrame(columns=in_df.columns)
             else:
-                out_df = in_df.loc[pivots[p_index - 1] : pivots[p_index]].drop(
-                    index=pivots[p_index - 1], errors="ignore"
-                )
+                try:
+                    out_df = in_df.loc[pivots[p_index - 1] : pivots[p_index]].drop(
+                        index=pivots[p_index - 1], errors="ignore"
+                    )
+                except Exception:
+                    out_df = pd.DataFrame(columns=in_df.columns)
             return out_df
 
         for i in range(op.n_partition):
