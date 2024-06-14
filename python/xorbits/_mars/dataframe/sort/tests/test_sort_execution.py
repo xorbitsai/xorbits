@@ -289,6 +289,8 @@ def test_sort_values_execution(setup, distinct_opt):
 
 
 def test_sort_index_execution(setup):
+    from ...utils import is_pandas_2
+
     raw = pd.DataFrame(np.random.rand(100, 20), index=np.random.rand(100))
 
     mdf = DataFrame(raw)
@@ -341,13 +343,11 @@ def test_sort_index_execution(setup):
 
     mdf = DataFrame(raw, chunk_size=4)
 
-    result = mdf.sort_index(axis=1, ignore_index=True).execute().fetch()
-    try:  # for python3.5
+    # behavior of sort_index(axis=1, ignore_index=True) change after 2.0
+    if is_pandas_2():
+        result = mdf.sort_index(axis=1, ignore_index=True).execute().fetch()
         expected = raw.sort_index(axis=1, ignore_index=True)
-    except TypeError:
-        expected = raw.sort_index(axis=1)
-        expected.index = pd.RangeIndex(len(expected))
-    pd.testing.assert_frame_equal(result, expected)
+        pd.testing.assert_frame_equal(result, expected)
 
     # test series
     raw = pd.Series(np.random.rand(10), index=np.random.rand(10))
