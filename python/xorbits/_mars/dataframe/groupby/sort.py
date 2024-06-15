@@ -122,20 +122,20 @@ class DataFrameGroupbySortShuffle(MapReduceOperand, DataFrameOperandMixin):
             if p_index == 0:
                 out_df = in_df.loc[: pivots[p_index]]
             elif p_index == op.n_partition - 1:
-                # in_df may not have the index in pivot
-                # return an empty dataframe
+                # in_df may not have the index in pivots, and throw ZeroDivisionError
+                # in this case, just return an empty dataframe
                 try:
                     out_df = in_df.loc[pivots[p_index - 1] :].drop(
                         index=pivots[p_index - 1], errors="ignore"
                     )
-                except Exception:
+                except ZeroDivisionError:
                     out_df = pd.DataFrame(columns=in_df.columns)
             else:
                 try:
                     out_df = in_df.loc[pivots[p_index - 1] : pivots[p_index]].drop(
                         index=pivots[p_index - 1], errors="ignore"
                     )
-                except Exception:
+                except ZeroDivisionError:
                     out_df = pd.DataFrame(columns=in_df.columns)
             return out_df
 
