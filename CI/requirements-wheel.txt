@@ -2,11 +2,11 @@ oldest-supported-numpy
 
 pandas==1.2.2; python_version>='3.9' and python_version<'3.10'
 pandas==1.3.4; python_version>='3.10' and python_version<'3.11'
-pandas==2.2.2; python_version>='3.11'
+pandas==1.5.1; python_version>='3.11' and python_version<'3.12'
 
 scipy==1.5.4; python_version>='3.9' and python_version<'3.10'
 scipy==1.7.2; python_version>='3.10' and python_version<'3.11'
-scipy==1.13.1; python_version>='3.11'
+scipy==1.10.0; python_version>='3.11' and python_version<'3.12'
 
 # see: https://github.com/cython/cython/commit/afc00fc3ba5d43c67151c0039847a526e7b627a5
 cython==0.29.33
