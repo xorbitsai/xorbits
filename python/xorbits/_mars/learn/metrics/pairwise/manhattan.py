@@ -88,7 +88,7 @@ class ManhattanDistances(PairwiseDistances):
             [ctx[inp.key] for inp in op.inputs], device=op.device, ret_extra=True
         )
         out = op.outputs[0]
-        
+
         with device(device_id):
             if sklearn_manhattan_distances is not None:
                 ctx[out.key] = sklearn_manhattan_distances(
