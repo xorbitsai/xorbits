@@ -95,8 +95,6 @@ def _check_plot_works(f, filterwarnings="always", **kwargs):  # pragma: no cover
 
 @pytest.mark.skipif(matplotlib is None, reason="matplotlib is not installed")
 def test_plot(setup):
-    from ...utils import is_pandas_2
-
     raw = pd.DataFrame(
         {
             "a": ["s" + str(i) for i in range(10)],
@@ -118,7 +116,4 @@ def test_plot(setup):
         }
     )
     df = md.DataFrame(raw, chunk_size=3)
-
-    # older pandas versions(e.g. 1.5.3) conflict with matplotlib(version >= 3.7)
-    if is_pandas_2():
-        _check_plot_works(df.groupby("A").plot)
+    _check_plot_works(df.groupby("A").plot)

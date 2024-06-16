@@ -19,10 +19,8 @@ import pytest
 
 from ..... import dataframe as md
 from .....core import tile
-from ....utils import is_pandas_2
 
 
-@pytest.mark.skipif(not is_pandas_2(), reason="Pandas version is too low")
 def test_rolling():
     df = pd.DataFrame(np.random.rand(4, 3), columns=list("abc"))
     df2 = md.DataFrame(df)
@@ -48,7 +46,6 @@ def test_rolling():
     assert "c" not in dir(r["a", "b"])
 
 
-@pytest.mark.skipif(not is_pandas_2(), reason="Pandas version is too low")
 def test_rolling_agg():
     df = pd.DataFrame(np.random.rand(4, 3), columns=list("abc"))
     df2 = md.DataFrame(df, chunk_size=3)
