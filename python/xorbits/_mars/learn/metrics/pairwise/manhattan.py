@@ -24,8 +24,7 @@ except ImportError:  # pragma: no cover
 
 from .... import opcodes as OperandDef
 from ....core import recursive_tile
-from ....serialization.serializables import BoolField, KeyField
-from ....tensor.arithmetic import abs as mt_abs
+from ....serialization.serializables import KeyField
 from ....tensor.array_utils import as_same_device, device
 from ....tensor.core import TensorOrder
 from ....tensor.spatial.distance import cdist
