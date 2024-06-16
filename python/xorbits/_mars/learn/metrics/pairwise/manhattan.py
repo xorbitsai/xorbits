@@ -105,6 +105,7 @@ def manhattan_distances(X, Y=None):
     """ Compute the L1 distances between the vectors in X and Y.
 
     Read more in the :ref:`User Guide <metrics>`.
+    
     Parameters
     ----------
     X : array_like
