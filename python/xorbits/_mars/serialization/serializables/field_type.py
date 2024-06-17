@@ -60,7 +60,7 @@ _primitive_type_to_valid_types = {
     PrimitiveType.float32: (float, np.float32),
     PrimitiveType.float64: (float, np.float64),
     PrimitiveType.bytes: (bytes, np.bytes_),
-    PrimitiveType.string: (str, np.str_),
+    PrimitiveType.string: (str, np.unicode_),
     PrimitiveType.complex64: (complex, np.complex64),
     PrimitiveType.complex128: (complex, np.complex128),
 }
