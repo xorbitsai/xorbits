@@ -26,16 +26,8 @@ def test_manhattan_distances():
     x = mt.random.randint(10, size=(10, 3), density=0.4)
     y = mt.random.randint(10, size=(11, 3), density=0.5)
 
-    with pytest.raises(TypeError):
-        manhattan_distances(x, y, sum_over_features=False)
-
-    x = x.todense()
-    y = y.todense()
-
-    d = manhattan_distances(x, y, sum_over_features=True)
+    d = manhattan_distances(x, y)
     assert d.shape == (10, 11)
-    d = manhattan_distances(x, y, sum_over_features=False)
-    assert d.shape == (110, 3)
 
 
 raw_x = np.random.rand(20, 5)
@@ -67,19 +59,16 @@ def test_manhattan_distances_execution(setup, x, y, is_sparse):
     else:
         rx, ry = raw_x, raw_y
 
-    sv = [True, False] if not is_sparse else [True]
+    d = manhattan_distances(x, y)
 
-    for sum_over_features in sv:
-        d = manhattan_distances(x, y, sum_over_features)
+    result = d.execute().fetch()
+    expected = sk_manhattan_distances(rx, ry)
 
-        result = d.execute().fetch()
-        expected = sk_manhattan_distances(rx, ry, sum_over_features=sum_over_features)
+    np.testing.assert_almost_equal(result, expected)
 
-        np.testing.assert_almost_equal(result, expected)
+    d = manhattan_distances(x)
 
-        d = manhattan_distances(x, sum_over_features=sum_over_features)
+    result = d.execute().fetch()
+    expected = sk_manhattan_distances(rx)
 
-        result = d.execute().fetch()
-        expected = sk_manhattan_distances(rx, sum_over_features=sum_over_features)
-
-        np.testing.assert_almost_equal(result, expected)
+    np.testing.assert_almost_equal(result, expected)
