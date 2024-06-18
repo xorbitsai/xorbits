@@ -35,7 +35,7 @@ function show_network_interfaces {
     for c in slurmctld c1 c2; do
         echo '------------------------------------------------------------'
         echo docker container: $c
-        docker exec $c python -c 'import psutil; print(psutil.net_if_addrs().keys())'
+        docker exec $c ip -o link show | awk -F': ' '{print $2}'
         echo '------------------------------------------------------------'
     done
 }
