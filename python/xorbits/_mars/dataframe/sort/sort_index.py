@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import pandas as pd
+from pandas.core.indexes.api import default_index
 
 from ... import opcodes as OperandDef
 from ...core import OutputType, recursive_tile
@@ -122,16 +123,12 @@ class DataFrameSortIndex(DataFrameSortOperand, DataFramePSRSOperandMixin):
         ctx[op.outputs[0].key] = result
 
     def _call_dataframe(self, df):
-        if self.ignore_index:
-            index_value = parse_index(pd.RangeIndex(df.shape[0]))
-        else:
-            index_value = df.index_value
         if self.axis == 0:
             return self.new_dataframe(
                 [df],
                 shape=df.shape,
                 dtypes=df.dtypes,
-                index_value=index_value,
+                index_value=df.index_value,
                 columns_value=df.columns_value,
             )
         else:
@@ -141,7 +138,7 @@ class DataFrameSortIndex(DataFrameSortOperand, DataFramePSRSOperandMixin):
                 [df],
                 shape=df.shape,
                 dtypes=dtypes,
-                index_value=index_value,
+                index_value=df.index_value,
                 columns_value=columns_value,
             )
 
@@ -246,6 +243,11 @@ def sort_index(
         gpu=a.op.is_gpu(),
     )
     sorted_a = op(a)
+    if ignore_index:
+        if axis == 1:
+            sorted_a.columns = default_index(len(sorted_a.columns))
+        else:
+            sorted_a.index = default_index(len(sorted_a.index))
     if inplace:
         a.data = sorted_a.data
     else:
