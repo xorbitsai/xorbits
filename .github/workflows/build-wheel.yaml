@@ -26,7 +26,6 @@ jobs:
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.9,<3.12"
-        exclude:  
           - os: macos-latest
             arch: arm64
             requires-python: ">=3.9,<3.11"
