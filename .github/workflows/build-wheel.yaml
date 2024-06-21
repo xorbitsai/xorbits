@@ -54,7 +54,7 @@ jobs:
           cd python && python setup.py build_web && git reset --hard HEAD
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.11.3
+        uses: pypa/cibuildwheel@v2.16.5
         env:
           CIBW_ENVIRONMENT_LINUX: NO_WEB_UI=1
           CIBW_ENVIRONMENT_PASS_LINUX: NO_WEB_UI
