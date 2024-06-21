@@ -26,15 +26,20 @@ jobs:
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.9,<3.12"
+        exclude:  
           - os: macos-latest
-            arch: universal2
-            requires-python: ">=3.9,<3.12"
+            arch: arm64
+            requires-python: ">=3.9,<3.11"
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
+
+      - name: Add msbuild to PATH
+        if: ${{ matrix.os == 'windows-latest'}}
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Set up QEMU
         if: ${{ matrix.arch == 'aarch64' }}
