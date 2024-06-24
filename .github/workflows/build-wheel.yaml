@@ -27,14 +27,18 @@ jobs:
             arch: aarch64
             requires-python: ">=3.9,<3.12"
           - os: macos-latest
-            arch: universal2
-            requires-python: ">=3.9,<3.12"
+            arch: arm64
+            requires-python: ">=3.9,<3.11"
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
+
+      - name: Add msbuild to PATH
+        if: ${{ matrix.os == 'windows-latest'}}
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Set up QEMU
         if: ${{ matrix.arch == 'aarch64' }}
@@ -49,7 +53,7 @@ jobs:
           cd python && python setup.py build_web && git reset --hard HEAD
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.11.3
+        uses: pypa/cibuildwheel@v2.16.5
         env:
           CIBW_ENVIRONMENT_LINUX: NO_WEB_UI=1
           CIBW_ENVIRONMENT_PASS_LINUX: NO_WEB_UI
