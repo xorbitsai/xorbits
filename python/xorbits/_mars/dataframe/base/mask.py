@@ -167,7 +167,7 @@ class DataFrameMask(DataFrameOperand, DataFrameOperandMixin):
 
 def df_mask(
     df: pd.DataFrame,
-    condition: Callable,
+    cond: Callable,
     other: Union[pd.DataFrame, pd.Series] = np.nan,
     skip_infer: bool = False,
     **kwds,
@@ -180,7 +180,7 @@ def df_mask(
 
     Parameters
     ----------
-    condition : callable
+    cond : callable
         Python function that returns a boolean value for each element.
     other : DataFrame or Series, default np.nan
         The value to replace elements where the condition is true. This can be
@@ -222,5 +222,12 @@ def df_mask(
     Note that the 'other' parameter can be a scalar value or a DataFrame with
     the same shape as the input DataFrame `df`.
     """
-    op = DataFrameMask(condition=condition, other=other, kwds=kwds)
-    return op(df, skip_infer=skip_infer)
+    inplace = kwds.pop("inplace", None)
+
+    op = DataFrameMask(condition=cond, other=other, kwds=kwds)
+    new_df = op(df, skip_infer=skip_infer)
+
+    if inplace:
+        df.data = new_df.data
+    else:
+        return new_df

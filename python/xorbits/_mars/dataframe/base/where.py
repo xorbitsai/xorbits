@@ -174,7 +174,7 @@ class DataFrameWhere(DataFrameOperand, DataFrameOperandMixin):
 
 def df_where(
     df: pd.DataFrame,
-    condition: Callable,
+    cond: Callable,
     other: Union[pd.DataFrame, pd.Series] = np.nan,
     skip_infer: bool = False,
     **kwds,
@@ -188,7 +188,7 @@ def df_where(
 
     Parameters
     ----------
-    condition : callable
+    cond : callable
         Python function that returns a boolean value for each element.
 
     other : DataFrame or Series, default np.nan
@@ -239,5 +239,12 @@ def df_where(
     Note that the 'other' parameter can be a scalar value or a DataFrame with the
     same shape as the input DataFrame `df`.
     """
-    op = DataFrameWhere(condition=condition, other=other, kwds=kwds)
-    return op(df, skip_infer=skip_infer)
+    inplace = kwds.pop("inplace", None)
+
+    op = DataFrameWhere(condition=cond, other=other, kwds=kwds)
+    new_df = op(df, skip_infer=skip_infer)
+
+    if inplace:
+        df.data = new_df.data
+    else:
+        return new_df
