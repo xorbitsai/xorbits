@@ -28,7 +28,7 @@ jobs:
             requires-python: ">=3.9,<3.12"
           - os: macos-latest
             arch: arm64
-            requires-python: ">=3.9,<3.11"
+            requires-python: ">=3.9,<3.12"
 
     steps:
       - uses: actions/checkout@v3
