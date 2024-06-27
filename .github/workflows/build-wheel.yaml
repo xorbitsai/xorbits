@@ -28,7 +28,7 @@ jobs:
             requires-python: ">=3.9,<3.12"
           - os: macos-latest
             arch: arm64
-            requires-python: ">=3.9,<3.11"
+            requires-python: ">=3.9,<3.12"
 
     steps:
       - uses: actions/checkout@v3
@@ -62,7 +62,7 @@ jobs:
           CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
-          CIBW_TEST_REQUIRES: pytest requests
+          CIBW_TEST_REQUIRES: pytest requests "setuptools<64" "numpy<2.0.0"
           CIBW_BUILD_VERBOSITY: 1
         with:
           package-dir: ./python/
