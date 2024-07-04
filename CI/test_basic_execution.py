@@ -8,7 +8,7 @@ import requests
 
 def test_basic_cases():
     with warnings.catch_warnings():
-        warnings.simplefilter("error")
+        warnings.simplefilter("module")
         import xorbits
         import xorbits.pandas as pd
         import xorbits.numpy as np

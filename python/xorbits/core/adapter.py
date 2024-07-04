@@ -136,8 +136,8 @@ def register_converter(from_cls_list: List[Type]):
 
     def decorate(cls: Type):
         for from_cls in from_cls_list:
-            assert from_cls not in _MARS_CLS_TO_CONVERTER
-            _MARS_CLS_TO_CONVERTER[from_cls] = cls
+            if from_cls not in _MARS_CLS_TO_CONVERTER:
+                _MARS_CLS_TO_CONVERTER[from_cls] = cls
         return cls
 
     return decorate

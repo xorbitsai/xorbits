@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy
+import numpy  # noqa: F401
 
 from ...core.adapter import (
     MarsCClass,
@@ -21,7 +21,7 @@ from ...core.adapter import (
     MarsRClass,
     register_converter,
 )
-from ...core.utils.docstring import attach_module_callable_docstring
+from ...core.utils.docstring import attach_module_callable_docstring  # noqa: F401
 
 
 @register_converter(from_cls_list=[MarsCClass])
@@ -30,7 +30,7 @@ class CClass(MarsGetItemProxy):
         super().__init__(MarsCClass())
 
 
-attach_module_callable_docstring(CClass, numpy, numpy.lib.index_tricks.CClass)
+# attach_module_callable_docstring(CClass, numpy, numpy.lib.index_tricks.CClass)
 c_ = CClass()
 
 
@@ -40,7 +40,7 @@ class RClass(MarsGetItemProxy):
         super().__init__(MarsRClass())
 
 
-attach_module_callable_docstring(RClass, numpy, numpy.lib.index_tricks.RClass)
+# attach_module_callable_docstring(RClass, numpy, numpy.lib.index_tricks.RClass)
 r_ = RClass()
 
 
@@ -50,7 +50,7 @@ class OGridClass(MarsGetItemProxy):
         super().__init__(MarsOGridClass())
 
 
-attach_module_callable_docstring(OGridClass, numpy, numpy.lib.index_tricks.OGridClass)
+# attach_module_callable_docstring(OGridClass, numpy, numpy.lib.index_tricks.OGridClass)
 ogrid = OGridClass()
 
 
@@ -60,5 +60,5 @@ class MGridClass(MarsGetItemProxy):
         super().__init__(MarsMGridClass())
 
 
-attach_module_callable_docstring(MGridClass, numpy, numpy.lib.index_tricks.MGridClass)
+# attach_module_callable_docstring(MGridClass, numpy, numpy.lib.index_tricks.MGridClass)
 mgrid = MGridClass()

@@ -15,15 +15,16 @@
 import inspect
 from typing import Any, Callable, Dict, Optional
 
+import numpy
+
+if numpy.lib.NumpyVersion(numpy.__version__) >= "2.0.0b1":
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
+
 from numpy import (
-    NAN,
-    NINF,
-    AxisError,
-    Inf,
-    NaN,
     bool_,
     bytes_,
-    cfloat,
     character,
     complex64,
     complex128,
@@ -38,7 +39,6 @@ from numpy import (
     float16,
     float32,
     float64,
-    float_,
     floating,
     generic,
     inexact,
@@ -57,17 +57,21 @@ from numpy import (
     object_,
     pi,
     signedinteger,
+    str_,
     timedelta64,
     uint,
     uint8,
     uint16,
     uint32,
     uint64,
-    unicode_,
     unsignedinteger,
     void,
 )
-from numpy.lib.index_tricks import ndindex
+
+if numpy.lib.NumpyVersion(numpy.__version__) >= "2.0.0b1":
+    from numpy.lib._index_tricks_impl import ndindex
+else:
+    from numpy.lib.index_tricks import ndindex
 
 from ..core.utils.fallback import unimplemented_func
 

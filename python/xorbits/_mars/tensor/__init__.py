@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import numpy
 from .datasource import (
     tensor,
     array,
@@ -304,16 +304,16 @@ from .core import Tensor
 # noinspection PyUnresolvedReferences
 from ..core import ExecutableTuple
 
+if numpy.lib.NumpyVersion(numpy.__version__) >= "2.0.0b1":
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
+
 # noinspection PyUnresolvedReferences
 from numpy import (
     newaxis,
-    AxisError,
     inf,
-    Inf,
-    NINF,
     nan,
-    NAN,
-    NaN,
     pi,
     e,
     errstate,
@@ -337,10 +337,9 @@ from numpy import (
     flexible,
     int_ as int,
     bool_ as bool,
-    float_ as float,
-    cfloat,
+    float64 as float,
     bytes_,
-    unicode_,
+    str_,
     void,
     object_ as object,
     intc,
