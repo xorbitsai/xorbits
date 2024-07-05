@@ -229,7 +229,6 @@ class StorageHandlerActor(mo.Actor):
                 object_info.size - data_info.memory_size
             )
         await self.notify_spillable_space(level)
-        print(f"StorageHandlerActor put")
         return data_info
 
     @put.batch
@@ -556,7 +555,6 @@ class StorageHandlerActor(mo.Actor):
     ):
         from .transfer import ReceiverManagerActor, SenderManagerActor
 
-        print(f"fetch_via_transfer")
         logger.debug("Begin to fetch %s from band %s", data_keys, remote_band)
 
         remote_data_manager_ref: mo.ActorRefType[DataManagerActor] = await mo.actor_ref(
