@@ -68,6 +68,7 @@ async def create_actors(request):
         await pool.start()
         return pool
 
+    print(f"start_pool: {bands[0]}, {bands[1]}")
     worker_pool_1 = await start_pool(bands[0])
     worker_pool_2 = await start_pool(bands[1])
 
@@ -110,7 +111,8 @@ def _generate_band_scheme():
         gpu_bands.extend([(f"gpu-{i}", f"gpu-{i+1}") for i in range(gpu_counts - 1)])
     bands = [("gpu-0", "gpu-0")]
     bands.extend(gpu_bands)
-    schemes = [(None, None), ("ucx", "ucx"), (None, "ucx"), ("ucx", None)]
+    schemes = [("ucx", "ucx")]
+    # schemes = [(None, None), ("ucx", "ucx"), (None, "ucx"), ("ucx", None)]
     for band in bands:
         for scheme in schemes:
             yield band, scheme

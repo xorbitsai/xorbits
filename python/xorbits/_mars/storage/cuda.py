@@ -281,7 +281,7 @@ class CudaStorage(StorageBackend):
             if isinstance(buf, cupy.ndarray):
                 new_buffers.append(DeviceBuffer(ptr=buf.data.ptr, size=buf.size))
             elif isinstance(buf, CPBuffer):
-                new_buffers.append(DeviceBuffer(ptr=buf.ptr, size=buf.size))
+                new_buffers.append(DeviceBuffer(ptr=buf.owner._ptr, size=buf.size))
             else:
                 new_buffers.append(buf)
         return deserialize(headers, new_buffers)
