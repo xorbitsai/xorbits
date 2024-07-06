@@ -93,12 +93,6 @@ class WrappedStorageFileObject(AioFileObject):
         self._file.close()
 
     async def close(self):
-        logger.debug(
-            "Writer closed for %s, %s on %s",
-            self._session_id,
-            self._data_key,
-            self._data_manager.address,
-        )
         self._file.close()
         if self._object_id is None:
             # for some backends like vineyard,
@@ -328,9 +322,6 @@ class DataManagerActor(mo.Actor):
         level: StorageLevel,
         band_name: str,
     ):
-        logger.debug(
-            "Deleting %s, %s from %s, %s", session_id, data_key, level, band_name
-        )
         if (session_id, data_key) in self._data_key_to_infos:
             self._data_info_list[level, band_name].pop((session_id, data_key))
             self._spill_strategy[level, band_name].record_delete_info(
@@ -635,7 +626,6 @@ class StorageManagerActor(mo.StatelessActor):
         storage_config = storage_config or dict()
         init_params, teardown_params = await backend.setup(**storage_config)
         client = backend(**init_params)
-        logger.debug(f"_setup_storage: {band_name}, {storage_backend}, {init_params}")
         self._init_params[band_name][storage_backend] = init_params
         self._teardown_params[band_name][storage_backend] = teardown_params
         return client

@@ -285,7 +285,6 @@ class StorageHandlerActor(mo.Actor):
         level: StorageLevel,
     ):
         data_key = await self._data_manager_ref.get_store_key(session_id, data_key)
-        logger.debug("Delete object %s, %s on %s", session_id, data_key, self.address)
         await self._data_manager_ref.delete_data_info(
             session_id, data_key, level, self._band_name
         )
@@ -369,9 +368,6 @@ class StorageHandlerActor(mo.Actor):
                         self._data_manager_ref.delete_data_info.delay(
                             session_id, key, level, info.band
                         )
-                    )
-                    logger.debug(
-                        "Batch delete %s, %s on %s", session_id, key, self.address
                     )
                     to_removes.append((level, info.object_id))
                     level_sizes[level] += info.store_size
