@@ -11,12 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy
-
-if numpy.lib.NumpyVersion(numpy.__version__) >= "2.0.0b1":
-    import numpy.lib._index_tricks_impl as index_tricks
+from numpy import __version__ as np_ver
+if np_ver >= "2.0.0":
+    from numpy.lib import _index_tricks_impl as index_tricks
 else:
-    import numpy.lib.index_tricks as index_tricks
+    from numpy.lib import index_tricks
 
 from ...core.adapter import (
     MarsCClass,
@@ -26,7 +25,7 @@ from ...core.adapter import (
     MarsRClass,
     register_converter,
 )
-from ...core.utils.docstring import attach_module_callable_docstring  # noqa: F401
+from ...core.utils.docstring import attach_module_callable_docstring
 
 
 @register_converter(from_cls_list=[MarsCClass])

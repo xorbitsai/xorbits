@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy
 from .datasource import (
     tensor,
     array,
@@ -304,7 +303,8 @@ from .core import Tensor
 # noinspection PyUnresolvedReferences
 from ..core import ExecutableTuple
 
-if numpy.lib.NumpyVersion(numpy.__version__) >= "2.0.0b1":
+from numpy import __version__ as np_ver
+if np_ver >= "2.0.0":
     from numpy.exceptions import AxisError
 else:
     from numpy import AxisError
