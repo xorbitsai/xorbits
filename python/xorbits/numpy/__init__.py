@@ -16,6 +16,7 @@ import inspect
 from typing import Any, Callable, Dict, Optional
 
 from numpy import __version__ as np_ver
+
 if np_ver >= "2.0.0":
     from numpy.exceptions import AxisError
     from numpy.lib._index_tricks_impl import ndindex

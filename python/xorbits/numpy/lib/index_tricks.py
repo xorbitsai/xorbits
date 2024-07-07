@@ -13,6 +13,7 @@
 # limitations under the License.
 import numpy
 from numpy import __version__ as np_ver
+
 if np_ver >= "2.0.0":
     from numpy.lib import _index_tricks_impl as index_tricks
 else:

@@ -19,6 +19,7 @@ import numpy as np
 from numpy.core.numeric import ScalarType
 
 from numpy import __version__ as np_ver
+
 if np_ver >= "2.0.0":
     from numpy.lib._index_tricks_impl import ndindex
 else:
@@ -351,6 +352,7 @@ class AxisConcatenator:
         # find_common_type is deprecated
         if np_ver >= "2.0.0":
             from numpy import result_type
+
             final_dtype = result_type(arraytypes, scalartypes)
         else:
             from numpy.core.numerictypes import find_common_type

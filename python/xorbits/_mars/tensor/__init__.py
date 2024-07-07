@@ -304,6 +304,7 @@ from .core import Tensor
 from ..core import ExecutableTuple
 
 from numpy import __version__ as np_ver
+
 if np_ver >= "2.0.0":
     from numpy.exceptions import AxisError
 else:
