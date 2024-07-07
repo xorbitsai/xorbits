@@ -16,9 +16,8 @@
 import math
 
 import numpy as np
-from numpy.core.numeric import ScalarType
-
 from numpy import __version__ as np_ver
+from numpy.core.numeric import ScalarType
 
 if np_ver >= "2.0.0":
     from numpy.lib._index_tricks_impl import ndindex
