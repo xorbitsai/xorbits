@@ -106,6 +106,7 @@ def test_docstrings(setup, doctest_namespace, obj, name):
         "datetime_as_string",
         "datetime_data",
         "divmod",
+        "expm1x",
         "fastCopyAndTranspose",
         "flatiter",
         "float128",
