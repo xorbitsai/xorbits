@@ -232,7 +232,7 @@ def test_isna(setup):
     assert isna(None) == pd.isna(None)
     assert isna(md.NA) == pd.isna(pd.NA)
     assert isna(md.NaT) == pd.isna(pd.NaT)
-    assert isna(mt.NaN) == pd.isna(np.NaN)
+    assert isna(mt.nan) == pd.isna(np.nan)
     assert isna(type) == pd.isna(type)
 
     # multi index
@@ -315,7 +315,7 @@ def test_notna(setup):
     assert notna(None) == pd.notna(None)
     assert notna(md.NA) == pd.notna(pd.NA)
     assert notna(md.NaT) == pd.notna(pd.NaT)
-    assert notna(mt.NaN) == pd.notna(np.NaN)
+    assert notna(mt.nan) == pd.notna(np.nan)
     assert notna(type) == pd.notna(type)
 
     # multi index

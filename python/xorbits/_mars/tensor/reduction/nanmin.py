@@ -113,7 +113,7 @@ def nanmin(a, axis=None, out=None, keepdims=None, combine_size=None):
 
     >>> mt.nanmin([1, 2, mt.nan, mt.inf]).execute()
     1.0
-    >>> mt.nanmin([1, 2, mt.nan, mt.NINF]).execute()
+    >>> mt.nanmin([1, 2, mt.nan, -mt.inf]).execute()
     -inf
 
     """

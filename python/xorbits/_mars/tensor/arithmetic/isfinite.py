@@ -89,8 +89,6 @@ def isfinite(x, out=None, where=None, **kwargs):
     False
     >>> mt.isfinite(mt.inf).execute()
     False
-    >>> mt.isfinite(mt.NINF).execute()
-    False
     >>> mt.isfinite([mt.log(-1.).execute(),1.,mt.log(0).execute()]).execute()
     array([False,  True, False])
 

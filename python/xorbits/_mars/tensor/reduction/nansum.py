@@ -113,7 +113,7 @@ def nansum(a, axis=None, dtype=None, out=None, keepdims=None, combine_size=None)
     array([ 2.,  1.])
     >>> mt.nansum([1, mt.nan, mt.inf]).execute()
     inf
-    >>> mt.nansum([1, mt.nan, mt.NINF]).execute()
+    >>> mt.nansum([1, mt.nan, -mt.inf]).execute()
     -inf
     >>> mt.nansum([1, mt.nan, mt.inf, -mt.inf]).execute() # both +/- infinity present
     nan

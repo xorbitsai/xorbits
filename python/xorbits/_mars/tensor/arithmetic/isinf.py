@@ -86,8 +86,6 @@ def isinf(x, out=None, where=None, **kwargs):
     True
     >>> mt.isinf(mt.nan).execute()
     False
-    >>> mt.isinf(mt.NINF).execute()
-    True
     >>> mt.isinf([mt.inf, -mt.inf, 1.0, mt.nan]).execute()
     array([ True,  True, False, False])
 
