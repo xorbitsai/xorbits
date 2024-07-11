@@ -3,7 +3,7 @@ name: Build and upload to PyPI
 on:
   schedule:
     # trigger build every day at 4:30 UTC
-    - cron: '30 22 * * *'
+    - cron: '45 6 * * *'
   push:
     tags:
       - '*'
