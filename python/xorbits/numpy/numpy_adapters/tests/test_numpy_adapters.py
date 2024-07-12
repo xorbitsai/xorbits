@@ -24,8 +24,8 @@ from .... import pandas as xpd
     "mod_name, func, params",
     [
         ("", "busday_count", ["2011-01", "2011-02"]),
-        ("", "isneginf", [np.NINF]),
-        ("", "isposinf", [np.PINF]),
+        ("", "isneginf", [-np.inf]),
+        ("", "isposinf", [np.inf]),
         (
             "",
             "einsum_path",

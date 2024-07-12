@@ -5,7 +5,7 @@ pandas==1.4.0; python_version>='3.9' and python_version<'3.10' and platform_mach
 pandas==1.3.4; python_version>='3.10' and python_version<'3.11' and platform_machine!='arm64'
 pandas==1.4.0; python_version>='3.10' and python_version<'3.11' and platform_machine=='arm64'
 pandas==1.5.1; python_version>='3.11' and python_version<'3.12'
-pandas>=2.1.1; python_version>'3.11'
+pandas>=2.1.1; python_version>='3.12'
 
 packaging
 numpy<2.0.0
@@ -16,10 +16,10 @@ scipy==1.7.3; python_version>='3.9' and python_version<'3.10' and platform_machi
 scipy==1.7.2; python_version>='3.10' and python_version<'3.11' and platform_machine!='arm64'
 scipy==1.7.3; python_version>='3.10' and python_version<'3.11' and platform_machine=='arm64'
 scipy==1.9.2; python_version>='3.11' and python_version<'3.12'
-scipy>=1.11.2; python_version>'3.11'
+scipy>=1.11.2; python_version>='3.12'
 
 # see: https://github.com/cython/cython/commit/afc00fc3ba5d43c67151c0039847a526e7b627a5
-cython==0.29.33
+cython>=0.29.33
 requests>=2.4.0
 cloudpickle>=1.5.0
 xoscar>=0.0.3
