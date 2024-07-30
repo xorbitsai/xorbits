@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up conda python3.9
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: 3.9
 
@@ -37,7 +37,7 @@ jobs:
         id: build
         shell: bash -el {0}
         run: |
-          pip install numpy scipy cython asv==0.5.1 coverage
+          pip install "numpy<2.0" scipy cython asv==0.5.1 coverage
           cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
