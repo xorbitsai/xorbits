@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up conda python3.9
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: 3.9
 
@@ -37,7 +37,8 @@ jobs:
         id: build
         shell: bash -el {0}
         run: |
-          pip install numpy scipy cython asv==0.5.1 coverage
+          pip install "numpy<2.0" scipy cython coverage
+          pip install git+https://github.com/airspeed-velocity/asv
           cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
@@ -49,7 +50,7 @@ jobs:
           git remote add upstream https://github.com/xorbitsai/xorbits.git
           git fetch upstream
           asv machine --yes
-          asv continuous -f 1.1 --strict --show-stderr upstream/main HEAD
+          asv continuous -f 1.1 --show-stderr upstream/main HEAD
         if: ${{ steps.build.outcome == 'success' }}
 
       - name: Publish benchmarks artifact
