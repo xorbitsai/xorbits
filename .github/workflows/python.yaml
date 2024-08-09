@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '*'
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -135,8 +137,7 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-        pip install "numpy<2.0.0" scipy cython pyftpdlib coverage flaky "numexpr<2.8.5"
+        pip install xoscar "numpy<2.0.0" scipy cython pyftpdlib coverage flaky numexpr
 
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
@@ -245,7 +246,6 @@ jobs:
     - name: Install on JuiceFsCI
       if: ${{ matrix.module == 'kubernetes-juicefs' }}
       run: |
-        pip install -U xoscar
         python setup.py build_ext -i
       working-directory: ./python
 
@@ -264,7 +264,6 @@ jobs:
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
-        pip install -U xoscar
         python setup.py build_ext -i
       working-directory: ./python
 
