@@ -6,34 +6,35 @@ FROM base AS py3.9-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
 RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then \
-    conda install python=3.9 && \
-    conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.9 "numpy>=1.14.0,<1.23.0" scipy\>=1.9.2 pandas\>=1.5.0 && \
+    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
 
 FROM base AS py3.10-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
 RUN if [ "$PYTHON_VERSION" == "3.10" ] ; then \
-    conda install python=3.10 && \
-    conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.10 numpy\>=1.14.0 scipy\>=1.9.2 pandas\>=1.5.0 && \
+    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
 
 FROM base AS py3.11-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
 RUN if [ "$PYTHON_VERSION" == "3.11" ] ; then \
-    conda install python=3.11 && \
-    conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge \
+    python=3.11 numpy\>=1.14.0 pandas\>=1.5.0 cython\>=0.29.33 scipy\>=1.9.2 \
+    mkl numexpr psutil scikit-learn sqlalchemy tornado lz4 ; fi
 
 FROM py${PYTHON_VERSION}-base AS final
-RUN conda install \
+RUN /opt/conda/bin/conda install \
     cython \
     mkl \
-    numexpr \
+    numexpr\<2.8.5 \
     psutil \
     scikit-learn \
     sqlalchemy \
     tornado \
     lz4 \
-  && conda install -c conda-forge \
+  && /opt/conda/bin/conda install -c conda-forge \
     pyarrow\>=1.0 \
     python-kubernetes \
     jax \
@@ -41,8 +42,6 @@ RUN conda install \
     uvloop \
     libnuma \
   && pip install -U pip \
-  && pip install -U "numpy>=1.14.0,<2.0" \
-  && pip install scipy\>=1.9.2 pandas\>=1.5.0 \
   && pip install -U \
     xoscar \
     cloudpickle \
@@ -52,7 +51,7 @@ RUN conda install \
     s3fs \
     pyopenssl>=23.0.0 \
     datasets \
-  && conda clean --all -f -y
+  && /opt/conda/bin/conda clean --all -f -y
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 14.21.1
