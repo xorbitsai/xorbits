@@ -138,7 +138,8 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        pip install xoscar "numpy<2.0.0" scipy cython pyftpdlib coverage flaky numexpr
+        pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
+        pip install "numpy<2.0.0" scipy cython pyftpdlib coverage flaky numexpr
 
         if [[ "$MODULE" == "xorbits" ]]; then
           pip install openpyxl
