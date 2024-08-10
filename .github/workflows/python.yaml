@@ -280,40 +280,30 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
-            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
-            --ignore xorbits/datasets --timeout=1500 \
+          pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/deploy
-          echo "tested xorbits/deploy"
-          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
-            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
-            --ignore xorbits/datasets --timeout=1500 \
+          pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/experimental
-          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
-            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
-            --ignore xorbits/datasets --timeout=1500 \
+          pytest --ignore xorbits/core/tests/test_execution_exit.py --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/core
-          echo "tested xorbits/core"
-          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
-            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
-            --ignore xorbits/datasets --timeout=1500 \
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+            xorbits/core/tests/test_execution_exit.py
+          pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/tests
-          echo "tested xorbits/tests"
-          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
-            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
-            --ignore xorbits/datasets --timeout=1500 \
+          pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/web
-          echo "tested xorbits/web"
         elif [[ "$MODULE" == "xorbits/pandas" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
