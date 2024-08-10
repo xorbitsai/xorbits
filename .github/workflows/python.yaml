@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '*'
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -133,8 +135,7 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        # pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-        pip install xoscar
+        pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
         pip install "numpy<2.0.0" scipy cython pyftpdlib coverage flaky numexpr
 
         if [[ "$MODULE" == "xorbits/pandas" ]]; then
@@ -280,30 +281,19 @@ jobs:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --timeout=1500 \
+          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
+            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
+            --ignore xorbits/datasets \
+            --ignore xorbits/core/tests/test_execution_exit.py \
+            --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/deploy
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/experimental
-          pytest --ignore xorbits/core/tests/test_execution_exit.py --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/core
+            xorbits
+          # workaround: this case will hang, run it separately.
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/core/tests/test_execution_exit.py
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/tests
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/web
         elif [[ "$MODULE" == "xorbits/pandas" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
@@ -314,6 +304,7 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml \
             --cov=xorbits xorbits/numpy
+          # workaround: this case will hang, run it separately.
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml \

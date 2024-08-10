@@ -2,7 +2,7 @@ name: Xorbits CD for DockerHub
 
 on:
   schedule:
-    - cron: '45 1 * * *'
+    - cron: '0 18 * * *'
   push:
     tags:
       - '*'
@@ -33,7 +33,7 @@ jobs:
 
       - name: Build and push Docker image
         shell: bash
-        # if: ${{ github.repository == 'xorbitsai/xorbits' }}
+        if: ${{ github.repository == 'xorbitsai/xorbits' }}
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
           PY_VERSION: ${{ matrix.python-version }}

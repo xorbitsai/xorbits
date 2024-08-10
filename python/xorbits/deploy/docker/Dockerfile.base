@@ -6,36 +6,42 @@ FROM base AS py3.9-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
 RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then \
-    conda install conda-forge::python=3.9 rapidsai:ucx-proc=*=cpu conda-forge::ucx rapidsai::ucx-py \
-    conda-forge::python-kubernetes conda-forge::uvloop conda-forge::libnuma conda-forge::lz4 \; fi
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.9 "numpy>=1.14.0,<1.23.0" scipy\>=1.9.2 pandas\>=1.5.0 && \
+    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
 
 FROM base AS py3.10-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
 RUN if [ "$PYTHON_VERSION" == "3.10" ] ; then \
-    conda install conda-forge::python=3.10 rapidsai:ucx-proc=*=cpu conda-forge::ucx rapidsai::ucx-py \
-    conda-forge::python-kubernetes conda-forge::uvloop conda-forge::libnuma conda-forge::lz4 \; fi
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge python=3.10 numpy\>=1.14.0 scipy\>=1.9.2 pandas\>=1.5.0 && \
+    /opt/conda/bin/conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py ; fi
 
 FROM base AS py3.11-base
 SHELL ["/bin/bash", "-c"]
 ARG PYTHON_VERSION=3.9
 RUN if [ "$PYTHON_VERSION" == "3.11" ] ; then \
-    conda install conda-forge::python=3.11 rapidsai:ucx-proc=*=cpu conda-forge::ucx rapidsai::ucx-py \
-    conda-forge::python-kubernetes conda-forge::uvloop conda-forge::libnuma conda-forge::lz4 \; fi
+    /opt/conda/bin/conda install --freeze-installed -c conda-forge \
+    python=3.11 numpy\>=1.14.0 pandas\>=1.5.0 cython\>=0.29.33 scipy\>=1.9.2 \
+    mkl numexpr psutil scikit-learn sqlalchemy tornado lz4 ; fi
 
 FROM py${PYTHON_VERSION}-base AS final
-RUN pip install -U pip \
-  && pip install pyarrow\>=1.0 \
-    jax \
-    jaxlib \
-  && pip install -U \
+RUN /opt/conda/bin/conda install \
     cython \
     mkl \
-    numexpr \
+    numexpr\<2.8.5 \
     psutil \
     scikit-learn \
     sqlalchemy \
     tornado \
+    lz4 \
+  && /opt/conda/bin/conda install -c conda-forge \
+    pyarrow\>=1.0 \
+    python-kubernetes \
+    jax \
+    jaxlib \
+    uvloop \
+    libnuma \
+  && pip install -U pip \
   && pip install -U \
     xoscar \
     cloudpickle \

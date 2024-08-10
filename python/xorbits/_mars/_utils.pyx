@@ -201,7 +201,7 @@ cdef list tokenize_pandas_series(ob):
 
 
 cdef list tokenize_pandas_dataframe(ob):
-    l = [block.values for block in ob._mgr.blocks]
+    l = [block.values for block in ob._data.blocks]
     l.extend([ob.columns, ob.index])
     return iterative_tokenize(l)
 
