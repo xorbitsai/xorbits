@@ -2,7 +2,7 @@ name: Xorbits CD for DockerHub
 
 on:
   schedule:
-    - cron: '0 18 * * *'
+    - cron: '45 1 * * *'
   push:
     tags:
       - '*'
