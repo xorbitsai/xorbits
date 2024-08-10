@@ -284,11 +284,24 @@ jobs:
             --ignore xorbits/datasets --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
-        elif [[ "$MODULE" == "xorbits.pandas" ]]; then
+        elif [[ "$MODULE" == "xorbits/pandas" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml \
             --cov=xorbits xorbits/pandas
+        elif [[ "$MODULE" == "xorbits/numpy" ]]; then
+          pytest --timeout=1500 --ignore xorbits/numpy/numpy_adapters \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml \
+            --cov=xorbits xorbits/numpy
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml \
+            --cov=xorbits xorbits/numpy/numpy_adapters/tests/test_numpy_adapters.py
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml \
+            --cov=xorbits xorbits/numpy/numpy_adapters/tests/test_numpy_fallback.py
         elif [[ "$MODULE" == "mars-core" ]]; then
           pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
