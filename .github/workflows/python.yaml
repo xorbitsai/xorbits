@@ -289,7 +289,7 @@ jobs:
             --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "not test_execution_with_process_exit_message"
+            -k "not test_execution_with_process_exit_message" \
             xorbits
           # workaround: this case will hang, run it separately.
           pytest --timeout=1500 \
