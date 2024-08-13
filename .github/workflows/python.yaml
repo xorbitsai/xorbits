@@ -67,6 +67,8 @@ jobs:
     needs: lint
     env:
       CONDA_ENV: xorbits-test
+      SELF_HOST_PYTHON: /root/miniconda3/envs/xorbits-test/bin/python
+      SELF_HOST_CONDA: /root/miniconda3/condabin/conda
     defaults:
       run:
         shell: bash -l {0}
@@ -92,7 +94,7 @@ jobs:
           - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
           - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
-          - { os: self-hosted, module: gpu, python-version: 3.9}
+          - { os: xorbits-gpu, module: gpu, python-version: 3.9}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
           - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
           - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
@@ -406,7 +408,7 @@ jobs:
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         elif [ "$MODULE" == "gpu" ]; then
-          pytest -m cuda --gpu --ignore xorbits/datasets --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
+          ${{ env.SELF_HOST_PYTHON }} -m pytest -m cuda --gpu --ignore xorbits/datasets --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
