@@ -411,7 +411,8 @@ jobs:
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
         elif [ "$MODULE" == "datasets" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/backends
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/tests
         elif [ "$MODULE" == "compatibility" ]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
