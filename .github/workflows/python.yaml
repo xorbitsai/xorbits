@@ -94,7 +94,7 @@ jobs:
           - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
           - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
-          - { os: [self-hosted, T4], module: gpu, python-version: 3.11}
+          - { os: xorbits-gpu, module: gpu, python-version: 3.11}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
           - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
           - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
