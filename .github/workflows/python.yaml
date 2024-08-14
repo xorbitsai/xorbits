@@ -94,7 +94,7 @@ jobs:
           - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
           - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
-          - { os: gpu, module: gpu, python-version: 3.11}
+          - { os: [self-hosted, gpu], module: gpu, python-version: 3.11}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
           - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
           - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
@@ -281,7 +281,7 @@ jobs:
       working-directory: ./doc
 
     - name: Test with pytest
-      if: ${{ matrix.module != 'doc-build' }}
+      if: ${{ matrix.module != 'doc-build' && matrix.module != 'gpu' }}
       env:
         MODULE: ${{ matrix.module }}
       run: |
@@ -409,10 +409,6 @@ jobs:
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_failover.py
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
-        elif [ "$MODULE" == "gpu" ]; then
-          pytest -m cuda --gpu --ignore xorbits/datasets --ignore xorbits/_mars/learn \
-          --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-          xorbits
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
@@ -431,6 +427,15 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
         fi
+      working-directory: ./python
+    
+    - name: Test with pytest GPU
+      if: ${{ matrix.module == 'gpu' }}
+      run: |
+        source activate xorbits-test
+        pytest -m cuda --gpu --ignore xorbits/datasets --ignore xorbits/_mars/learn \
+          --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+          xorbits
       working-directory: ./python
 
 
