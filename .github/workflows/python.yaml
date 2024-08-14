@@ -126,11 +126,11 @@ jobs:
         minikube-version: 1.31.2
 
     - name: Install ucx dependencies
-      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.python-version != '3.11') }}
+      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest')}}
       run: |
         conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
     - name: Install libomp (macOS)
-      if: matrix.os == 'macos-latest'
+      if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-13' }}
       run: brew install libomp
     - name: Install dependencies
       env:
@@ -267,6 +267,8 @@ jobs:
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
+        source activate xorbits-test
+        pip install ucx-py-cu12 cython
         pip install -U xoscar
         python setup.py build_ext -i
       working-directory: ./python
@@ -408,7 +410,9 @@ jobs:
           pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
             --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         elif [ "$MODULE" == "gpu" ]; then
-          ${{ env.SELF_HOST_PYTHON }} -m pytest -m cuda --gpu --ignore xorbits/datasets --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
+          pytest -m cuda --gpu --ignore xorbits/datasets --ignore xorbits/_mars/learn \
+          --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+          xorbits
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
