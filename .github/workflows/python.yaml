@@ -67,8 +67,8 @@ jobs:
     needs: lint
     env:
       CONDA_ENV: xorbits-test
-      SELF_HOST_PYTHON: /root/miniconda3/envs/xorbits-test/bin/python
-      SELF_HOST_CONDA: /root/miniconda3/condabin/conda
+      SELF_HOST_PYTHON: /home/ci/.conda/envs/xorbits-test/bin/python
+      SELF_HOST_CONDA: /opt/conda/condabin/conda
     defaults:
       run:
         shell: bash -l {0}
@@ -94,7 +94,7 @@ jobs:
           - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
           - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
-          - { os: self-hosted, module: gpu, python-version: 3.11}
+          - { os: [self-hosted, T4], module: gpu, python-version: 3.11}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
           - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
           - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
