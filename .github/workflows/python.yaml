@@ -227,9 +227,6 @@ jobs:
         if [[ "$MODULE" == "learn" ]]; then
           pip install xgboost lightgbm
         fi
-        if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
-          pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
-        fi
         if [[ "$MODULE" == "compatibility" ]]; then
           # test if compatible with older versions
           pip install "pandas==1.5.3" "scipy<=1.10.1" "numpy<=1.24.1" "matplotlib<=3.7.0" "pyarrow<12.0.0" "sqlalchemy<2"
@@ -374,41 +371,6 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/xgboost xorbits/lightgbm
-        elif [ "$MODULE" == "ray-deploy" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars --ignore=xorbits/_mars/deploy/oscar/ -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_load_modules.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_cluster_standalone.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_client.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_fault_injection.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_scheduling.py -m ray
-        elif [ "$MODULE" == "ray-dag" ]; then
-          export MARS_CI_BACKEND=ray
-          export RAY_idle_worker_killing_time_threshold_ms=60000
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 xorbits/_mars/dataframe \
-            -v -s -m "not skip_ray_dag" --ignore=xorbits/_mars/dataframe/contrib/raydataset
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=500 xorbits/_mars/dataframe/contrib/raydataset -v -s -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=500 xorbits/_mars/tensor -v -s -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=500 xorbits/_mars/learn --ignore xorbits/_mars/learn/contrib \
-            --ignore xorbits/_mars/learn/utils/tests/test_collect_ports.py -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits -v -s -m ray_dag
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag.py
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_failover.py
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
@@ -433,7 +395,8 @@ jobs:
       if: ${{ matrix.module == 'gpu' }}
       run: |
         source activate xorbits-test
-        pytest -m cuda --gpu --ignore xorbits/datasets --ignore xorbits/_mars/learn \
+        pytest -m cuda --gpu --ignore xorbits/datasets \
+          --ignore xorbits/sklearn --ignore xorbits/_mars/learn \
           --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
           xorbits
       working-directory: ./python
