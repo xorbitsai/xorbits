@@ -66,6 +66,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: lint
     env:
+      CONDA_ENV: xorbits-test
       SELF_HOST_PYTHON: /root/miniconda3/bin/python
       SELF_HOST_CONDA: /root/miniconda3/bin/conda
     defaults:
@@ -264,7 +265,7 @@ jobs:
       if: ${{ matrix.module == 'gpu' }}
       run: |
         pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.8.*
-        pip install ucx-py-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle \
+        pip install ucx-py-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
           pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
           pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
         pip install -U xoscar
