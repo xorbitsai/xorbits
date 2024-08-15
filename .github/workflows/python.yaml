@@ -66,9 +66,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: lint
     env:
-      CONDA_ENV: xorbits-test
-      SELF_HOST_PYTHON: /home/ci/.conda/envs/xorbits-test/bin/python
-      SELF_HOST_CONDA: /opt/conda/condabin/conda
+      SELF_HOST_PYTHON: /root/miniconda3/bin/python
+      SELF_HOST_CONDA: /root/miniconda3/bin/conda
     defaults:
       run:
         shell: bash -l {0}
@@ -264,8 +263,10 @@ jobs:
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
-        source activate xorbits-test
-        pip install ucx-py-cu12 cython
+        pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.8.*
+        pip install ucx-py-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle \
+          pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
+          pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
         pip install -U xoscar
         python setup.py build_ext -i
       working-directory: ./python
@@ -394,7 +395,6 @@ jobs:
     - name: Test with pytest GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
-        source activate xorbits-test
         pytest -m cuda --gpu --ignore xorbits/datasets \
           --ignore xorbits/sklearn --ignore xorbits/_mars/learn \
           --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
