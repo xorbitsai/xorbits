@@ -1079,7 +1079,6 @@ def test_groupby_apply_closure(setup_gpu, gpu):
     )
 
 
-@support_cuda
 @pytest.mark.parametrize(
     "chunked,as_index", [(True, True), (True, False), (False, True), (False, False)]
 )
@@ -1092,6 +1091,7 @@ def test_groupby_apply_as_index(chunked, as_index, setup_gpu, gpu):
         }
     )
 
+    # cudf not support udf like this
     def udf(v):
         denominator = v["a"].sum() * v["a"].mean()
         v = v[v["c"] == "c"]
