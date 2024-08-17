@@ -26,7 +26,6 @@ from ..utils import estimate_pandas_size, lazy_import, no_default, pd_release_ve
 
 cudf = lazy_import("cudf")
 
-_HAS_SQUEEZE = pd_release_version < (1, 1, 0)
 _HAS_DROPNA = pd_release_version >= (1, 1, 0)
 _GROUP_KEYS_NO_DEFAULT = pd_release_version >= (1, 5, 0)
 
@@ -96,8 +95,7 @@ class GroupByWrapper:
                 observed=observed,
                 dropna=dropna,
             )
-            if not _HAS_SQUEEZE:  # pragma: no branch
-                groupby_kw.pop("squeeze")
+            groupby_kw.pop("squeeze")
             if not _HAS_DROPNA:  # pragma: no branch
                 groupby_kw.pop("dropna")
 
@@ -286,8 +284,7 @@ def wrapped_groupby(
         observed=observed,
         dropna=dropna,
     )
-    if not _HAS_SQUEEZE:  # pragma: no branch
-        groupby_kw.pop("squeeze")
+    groupby_kw.pop("squeeze")
     if not _HAS_DROPNA:  # pragma: no branch
         groupby_kw.pop("dropna")
 
