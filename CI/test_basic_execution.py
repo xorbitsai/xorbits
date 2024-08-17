@@ -7,10 +7,8 @@ import requests
 
 
 def test_basic_cases():
-    with warnings.catch_warnings():
-        # TODO: change warnings.simplefilter("error") to "module"
-        # "error" help us find the deprecated APIs
-        warnings.simplefilter("module")
+    with warnings.catch_warnings():        # "error" help us find the deprecated APIs
+        warnings.simplefilter("error")
         import xorbits
         import xorbits.pandas as pd
         import xorbits.numpy as np
