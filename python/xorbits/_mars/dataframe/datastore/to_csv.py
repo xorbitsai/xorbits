@@ -35,7 +35,7 @@ from ...serialization.serializables import (
 from ...tensor.core import TensorOrder
 from ...tensor.operands import TensorOperand, TensorOperandMixin
 from ..operands import DataFrameOperand, DataFrameOperandMixin
-from ..utils import is_pandas_2, parse_index
+from ..utils import is_pandas_2, parse_index, is_cudf
 
 
 class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
@@ -373,6 +373,19 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
         else:
             kwargs["line_terminator"] = op.lineterminator
             kwargs.pop("lineterminator")
+
+        # fix issue #795: https://github.com/xorbitsai/xorbits/issues/795
+        if is_cudf(df):
+            kwargs.pop("float_format")
+            kwargs.pop("index_label")
+            kwargs.pop("mode")
+            kwargs.pop("quoting")
+            kwargs.pop("quotechar")
+            kwargs.pop("date_format")
+            kwargs.pop("doublequote")
+            kwargs.pop("escapechar")
+            kwargs.pop("decimal")
+            kwargs["compression"] = None
 
         df.to_csv(path, **kwargs)
 
