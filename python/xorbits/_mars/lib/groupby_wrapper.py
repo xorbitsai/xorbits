@@ -46,7 +46,6 @@ class GroupByWrapper:
         as_index=True,
         sort=True,
         group_keys=_default_group_keys,
-        squeeze=False,
         observed=False,
         dropna=True,
         grouper_cache=None,
@@ -78,7 +77,6 @@ class GroupByWrapper:
         self.as_index = fill_value(as_index, "as_index", "_as_index")
         self.sort = fill_value(sort, "sort", "_sort")
         self.group_keys = fill_value(group_keys, "group_keys", "_group_keys")
-        self.squeeze = fill_value(squeeze, "squeeze")
         self.observed = fill_value(observed, "observed")
         self.dropna = fill_value(dropna, "dropna", "_dropna")
 
@@ -91,11 +89,9 @@ class GroupByWrapper:
                 exclusions=exclusions,
                 as_index=as_index,
                 group_keys=group_keys,
-                squeeze=squeeze,
                 observed=observed,
                 dropna=dropna,
             )
-            groupby_kw.pop("squeeze")
             if not _HAS_DROPNA:  # pragma: no branch
                 groupby_kw.pop("dropna")
 
@@ -125,7 +121,6 @@ class GroupByWrapper:
             as_index=self.as_index,
             sort=self.sort,
             group_keys=self.group_keys,
-            squeeze=self.squeeze,
             observed=self.observed,
             dropna=self.dropna,
         )
@@ -217,7 +212,6 @@ class GroupByWrapper:
             self.as_index,
             self.sort,
             self.group_keys,
-            self.squeeze,
             self.observed,
             self.dropna,
             getattr(getattr(self.groupby_obj, "grouper", None), "_cache", dict()),
@@ -235,7 +229,6 @@ class GroupByWrapper:
             as_index,
             sort,
             group_keys,
-            squeeze,
             observed,
             dropna,
             grouper_cache,
@@ -254,7 +247,6 @@ class GroupByWrapper:
             as_index=as_index,
             sort=sort,
             group_keys=group_keys,
-            squeeze=squeeze,
             observed=observed,
             dropna=dropna,
             grouper_cache=grouper_cache,
@@ -269,7 +261,6 @@ def wrapped_groupby(
     as_index=True,
     sort=True,
     group_keys=_default_group_keys,
-    squeeze=False,
     observed=False,
     dropna=True,
 ):
@@ -280,11 +271,9 @@ def wrapped_groupby(
         as_index=as_index,
         sort=sort,
         group_keys=group_keys,
-        squeeze=squeeze,
         observed=observed,
         dropna=dropna,
     )
-    groupby_kw.pop("squeeze")
     if not _HAS_DROPNA:  # pragma: no branch
         groupby_kw.pop("dropna")
     # cudf currently not support observed,
