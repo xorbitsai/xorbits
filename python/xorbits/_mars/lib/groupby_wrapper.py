@@ -287,6 +287,10 @@ def wrapped_groupby(
     groupby_kw.pop("squeeze")
     if not _HAS_DROPNA:  # pragma: no branch
         groupby_kw.pop("dropna")
+    # cudf currently not support observed,
+    # cudf default to True, while pandas default is False
+    if is_cudf(obj):  # pragma: no branch
+        groupby_kw["observed"] = True
 
     groupby_obj = obj.groupby(**groupby_kw)
     return GroupByWrapper(obj, groupby_obj=groupby_obj, as_index=as_index)
