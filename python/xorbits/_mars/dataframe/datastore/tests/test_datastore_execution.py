@@ -38,11 +38,12 @@ except ImportError:
     fastparquet = None
 
 from .... import dataframe as md
-from ....tests.core import flaky
+from ....tests.core import flaky, support_cuda
 from ... import DataFrame
 from ...utils import PD_VERSION_GREATER_THAN_2_10
 
 
+@support_cuda
 def test_to_csv_execution(setup):
     index = pd.RangeIndex(100, 0, -1, name="index")
     raw = pd.DataFrame(

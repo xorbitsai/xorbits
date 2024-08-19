@@ -17,9 +17,11 @@ import numpy as np
 import pandas as pd
 
 from ....core import tile
+from ....tests.core import support_cuda
 from ... import DataFrame
 
 
+@support_cuda
 def test_to_csv():
     raw = pd.DataFrame(np.random.rand(10, 5))
     df = DataFrame(raw, chunk_size=4)
