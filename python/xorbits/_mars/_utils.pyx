@@ -286,7 +286,7 @@ def tokenize_cupy(ob):
 def tokenize_cudf(ob):
     from xoscar.serialization import serialize
     header, buffers = serialize(ob)
-    return iterative_tokenize([header] + [(buf.ptr, buf.size) for buf in buffers])
+    return iterative_tokenize([header] + [(buf._owner._ptr, buf.size) for buf in buffers])
 
 
 cdef Tokenizer tokenize_handler = Tokenizer()
