@@ -44,7 +44,7 @@ from ...utils import PD_VERSION_GREATER_THAN_2_10
 
 
 @support_cuda
-def test_to_csv_execution(setup):
+def test_to_csv_execution(setup, setup_gpu, gpu):
     index = pd.RangeIndex(100, 0, -1, name="index")
     raw = pd.DataFrame(
         {
@@ -54,7 +54,7 @@ def test_to_csv_execution(setup):
         },
         index=index,
     )
-    df = DataFrame(raw, chunk_size=33)
+    df = DataFrame(raw, gpu=gpu, chunk_size=33)
 
     with tempfile.TemporaryDirectory() as base_path:
         # DATAFRAME TESTS
@@ -83,7 +83,7 @@ def test_to_csv_execution(setup):
         pd.testing.assert_frame_equal(dfs[1].set_index("index"), raw.iloc[33:66])
 
         # test df with unknown shape
-        df2 = DataFrame(raw, chunk_size=(50, 2))
+        df2 = DataFrame(raw, gpu=gpu, chunk_size=(50, 2))
         df2 = df2[df2["col1"] < 1]
         path2 = os.path.join(base_path, "out2.csv")
         df2.to_csv(path2).execute()
@@ -93,7 +93,7 @@ def test_to_csv_execution(setup):
         pd.testing.assert_frame_equal(result, raw)
 
         # SERIES TESTS
-        series = md.Series(raw.col1, chunk_size=33)
+        series = md.Series(raw.col1, gpu=gpu, chunk_size=33)
 
         # test one file with series
         path = os.path.join(base_path, "out.csv")

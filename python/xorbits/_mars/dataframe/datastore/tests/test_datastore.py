@@ -22,9 +22,9 @@ from ... import DataFrame
 
 
 @support_cuda
-def test_to_csv():
+def test_to_csv(setup_gpu, gpu):
     raw = pd.DataFrame(np.random.rand(10, 5))
-    df = DataFrame(raw, chunk_size=4)
+    df = DataFrame(raw, gpu=gpu, chunk_size=4)
 
     r = df.to_csv("*.csv")
     r = tile(r)
