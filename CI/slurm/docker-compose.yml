@@ -16,7 +16,7 @@ services:
       common-network:
 
   slurmdbd:
-    image: slurmbase
+    build: .
     command: ["slurmdbd"]
     container_name: slurmdbd
     hostname: slurmdbd
@@ -32,7 +32,7 @@ services:
       common-network:
 
   slurmctld:
-    image: slurmbase
+    build: .
     command: ["slurmctld"]
     container_name: slurmctld
     hostname: slurmctld
@@ -56,7 +56,7 @@ services:
       - NET_ADMIN
 
   c1:
-    image: slurmbase
+    build: .
     command: ["slurmd"]
     hostname: c1
     container_name: c1
@@ -78,7 +78,7 @@ services:
       - NET_ADMIN
 
   c2:
-    image: slurmbase
+    build: .
     command: ["slurmd"]
     hostname: c2
     container_name: c2
