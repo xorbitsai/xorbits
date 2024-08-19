@@ -19,11 +19,12 @@ function jobqueue_before_install {
 
     # start slurm cluster
     cd ./CI/slurm
+    docker build -t slurmbase .
     docker compose pull
     ./start-slurm.sh
     cd -
 
-    #Set shared space permissions
+    # set shared space permissions
     docker exec slurmctld /bin/bash -c "chmod -R 777 /shared_space"
 
     docker ps -a

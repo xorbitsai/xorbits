@@ -1,2 +1,3 @@
 FROM daskdev/dask-jobqueue:slurm
-RUN pip install xorbits
+
+ENTRYPOINT ["conda", "run", "-n", "dask-jobqueue", "/bin/bash", "-c"]

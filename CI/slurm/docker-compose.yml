@@ -16,7 +16,7 @@ services:
       common-network:
 
   slurmdbd:
-    image: daskdev/dask-jobqueue:slurm
+    image: slurmbase
     build: .
     command: ["slurmdbd"]
     container_name: slurmdbd
@@ -33,7 +33,7 @@ services:
       common-network:
 
   slurmctld:
-    image: daskdev/dask-jobqueue:slurm
+    image: slurmbase
     build: .
     command: ["slurmctld"]
     container_name: slurmctld
@@ -58,7 +58,7 @@ services:
       - NET_ADMIN
 
   c1:
-    image: daskdev/dask-jobqueue:slurm
+    image: slurmbase
     build: .
     command: ["slurmd"]
     hostname: c1
@@ -81,7 +81,7 @@ services:
       - NET_ADMIN
 
   c2:
-    image: daskdev/dask-jobqueue:slurm
+    image: slurmbase
     build: .
     command: ["slurmd"]
     hostname: c2
