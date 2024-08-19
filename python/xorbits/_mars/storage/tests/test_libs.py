@@ -190,7 +190,6 @@ async def test_base_operations(storage_context):
     )
     put_info2 = await storage.put(data2)
     get_data2 = await storage.get(put_info2.object_id)
-
     pd.testing.assert_frame_equal(data2, get_data2)
 
     info2 = await storage.object_info(put_info2.object_id)
