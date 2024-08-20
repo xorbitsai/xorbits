@@ -43,14 +43,14 @@ function show_network_interfaces {
 }
 
 function jobqueue_install {
-    docker exec slurmctld /bin/bash -c "cd xorbits/python/; pip install -e ."
+    docker exec slurmctld /bin/bash -c "source /opt/anaconda/bin/activate dask-jobqueue; cd xorbits/python/; pip install -e ."
 }
 
 function jobqueue_script {
-    docker exec c1 /bin/bash -c "pip install xorbits"
-    docker exec c2 /bin/bash -c "pip install xorbits"
+    docker exec c1 /bin/bash -c "source /opt/anaconda/bin/activate dask-jobqueue; pip install xorbits"
+    docker exec c2 /bin/bash -c "source /opt/anaconda/bin/activate dask-jobqueue; pip install xorbits"
     docker exec slurmctld /bin/bash -c \
-          "pytest --ignore xorbits/_mars/ --timeout=1500 \
+          "source /opt/anaconda/bin/activate dask-jobqueue; pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/slurm"
 }
