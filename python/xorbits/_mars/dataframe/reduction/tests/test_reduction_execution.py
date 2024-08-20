@@ -311,9 +311,6 @@ def test_dataframe_level_reduction(
 
     # behavior of 'skew', 'kurt' differs for cases with and without level
     skip_funcs = ("skew", "kurt")
-    if pd_release_version <= (1, 2, 0):
-        # fails under pandas 1.2. see pandas-dev/pandas#38774 for more details
-        skip_funcs += ("sem",)
 
     if func_name not in skip_funcs:
         data_dict = dict((str(i), rs.rand(100)) for i in range(10))

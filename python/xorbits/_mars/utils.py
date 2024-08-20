@@ -761,7 +761,6 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
             as_index=v.as_index,
             sort=v.sort,
             group_keys=v.group_keys,
-            squeeze=v.squeeze,
             observed=v.observed,
         )
         return grouped.groupby_obj
