@@ -30,13 +30,12 @@ from ....serialization.serializables import (
     StringField,
     TupleField,
 )
-from ....utils import calc_nsplits, has_unknown_shape, lazy_import, pd_release_version
+from ....utils import calc_nsplits, has_unknown_shape, lazy_import
 from ...core import DATAFRAME_TYPE
 from ...operands import DataFrameOperand, DataFrameOperandMixin
 from ...utils import build_empty_df, build_empty_series, parse_index
 
 cudf = lazy_import("cudf")
-_with_pandas_issue_38908 = pd_release_version == (1, 2, 0)
 
 
 class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
@@ -484,17 +483,6 @@ class DataFrameRollingAgg(DataFrameOperand, DataFrameOperandMixin):
             data = xdf.concat(preds + [inp] + succs, axis=axis)
         else:
             data = inp
-
-            # fix for pandas 1.2.0
-            # see: https://github.com/pandas-dev/pandas/issues/38908
-            # df.rolling().aggregate('skew') modified original data
-            # so we copy it first for skew only
-            if (
-                _with_pandas_issue_38908
-                and op.func in ["skew", "kurt"]
-                and op.outputs[0].index[0] == 0
-            ):
-                data = data.copy()
 
         r = data.rolling(
             window=window,
