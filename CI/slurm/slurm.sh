@@ -15,15 +15,15 @@
 
 function jobqueue_before_install {
     docker version
-    docker-compose version
+    docker compose version
 
     # start slurm cluster
     cd ./CI/slurm
-    docker-compose pull
+    docker build -t slurmbase .
     ./start-slurm.sh
     cd -
 
-    #Set shared space permissions
+    # set shared space permissions
     docker exec slurmctld /bin/bash -c "chmod -R 777 /shared_space"
 
     docker ps -a
@@ -35,6 +35,7 @@ function show_network_interfaces {
     for c in slurmctld c1 c2; do
         echo '------------------------------------------------------------'
         echo docker container: $c
+        docker exec $c pip install psutil
         docker exec $c python -c 'import psutil; print(psutil.net_if_addrs().keys())'
         echo '------------------------------------------------------------'
     done
