@@ -20,7 +20,6 @@ function jobqueue_before_install {
     # start slurm cluster
     cd ./CI/slurm
     docker build -t slurmbase .
-    docker compose up
     ./start-slurm.sh
     cd -
 
