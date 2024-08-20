@@ -62,7 +62,7 @@ jobs:
         run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
 
   build_test_job:
-    if: github.repository == 'xorbitsai/xorbits'
+    # if: github.repository == 'xorbitsai/xorbits'
     runs-on: ${{ matrix.os }}
     needs: lint
     env:
