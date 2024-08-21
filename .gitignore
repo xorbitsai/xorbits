@@ -153,5 +153,9 @@ asv/results
 
 .DS_Store
 
-#slrm.sh generated sh
+# slurm.sh generated sh
 python/xorbits/deploy/slurm/tests/slurm.sh
+
+# vineyard & etcd
+
+python/default.etcd/*
