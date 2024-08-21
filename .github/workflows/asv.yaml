@@ -38,7 +38,7 @@ jobs:
         shell: bash -el {0}
         run: |
           conda install anaconda::libmambapy
-          pip install "numpy<2.0" scipy cython coverage asv libmambapy
+          pip install "numpy<2.0" scipy cython coverage asv
           cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
