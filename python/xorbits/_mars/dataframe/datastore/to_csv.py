@@ -374,7 +374,7 @@ class DataFrameToCSV(DataFrameOperand, DataFrameOperandMixin):
             kwargs["line_terminator"] = op.lineterminator
             kwargs.pop("lineterminator")
 
-        # fix issue #795: https://github.com/xorbitsai/xorbits/issues/795
+        # cudf not support following parameters
         if is_cudf(df):
             kwargs.pop("float_format")
             kwargs.pop("index_label")
