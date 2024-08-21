@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up conda python3.11
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v3.0.4
         with:
           python-version: 3.11
 
@@ -37,7 +37,9 @@ jobs:
         id: build
         shell: bash -el {0}
         run: |
-          pip install "numpy<2.0" scipy cython coverage asv
+          conda install anaconda::libmambapy
+          echo "after install mamba"
+          pip install "numpy<2.0" scipy cython coverage asv libmambapy
           cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
