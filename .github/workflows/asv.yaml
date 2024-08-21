@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up conda python3.10
+      - name: Set up conda python3.11
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: 3.11
@@ -45,10 +45,13 @@ jobs:
         run: |
           unset CI
           cd asv
+          echo "----asv check"
           asv check -E existing
           git remote add upstream https://github.com/xorbitsai/xorbits.git
           git fetch upstream
+          echo "----asv machine"
           asv machine --yes
+          echo "----asv continuous"
           asv continuous -f 1.1 --show-stderr upstream/main HEAD
         if: ${{ steps.build.outcome == 'success' }}
 
