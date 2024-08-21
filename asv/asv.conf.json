@@ -86,9 +86,9 @@
     //
     "matrix": {
         "numpy": ["1.26.4"],
-        "Cython": ["0.29.24"],
+        "Cython": [],
         "pandas": [],
-        "scipy": ["1.14.0"],
+        "scipy": [],
         "scikit-learn": [],
         "numexpr": [],
         "cloudpickle": [],
