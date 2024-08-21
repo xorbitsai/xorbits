@@ -33,18 +33,22 @@ jobs:
         with:
           python-version: 3.11
 
+      - name: Install dependencies
+        id: build
+        shell: bash -el {0}
+        run: |
+          pip install "numpy<2.0" scipy cython coverage asv libmambapy
+          cd python && pip install -e ".[dev,extra]"
+
       - name: Run ASV benchmarks
         shell: bash -el {0}
         run: |
           unset CI
           cd asv
-          echo "----asv check"
           asv check -E existing
           git remote add upstream https://github.com/xorbitsai/xorbits.git
           git fetch upstream
-          echo "----asv machine"
           asv machine --yes
-          echo "----asv continuous"
           asv continuous -f 1.1 --show-stderr upstream/main HEAD
         if: ${{ steps.build.outcome == 'success' }}
 
