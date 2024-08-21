@@ -85,10 +85,10 @@
     // will not be set for the current combination.
     //
     "matrix": {
-        "numpy": [],
+        "numpy": ["1.26.4"],
         "Cython": ["0.29.24"],
         "pandas": [],
-        "scipy": ["1.10.0"],
+        "scipy": ["1.14.0"],
         "scikit-learn": [],
         "numexpr": [],
         "cloudpickle": [],
