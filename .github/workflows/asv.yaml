@@ -33,15 +33,6 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: Install dependencies
-        id: build
-        shell: bash -el {0}
-        run: |
-          conda install anaconda::libmambapy
-          echo "after install mamba"
-          pip install "numpy<2.0" scipy cython coverage asv libmambapy
-          cd python && pip install -e ".[dev,extra]"
-
       - name: Run ASV benchmarks
         shell: bash -el {0}
         run: |
