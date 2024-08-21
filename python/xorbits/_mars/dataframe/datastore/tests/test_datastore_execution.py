@@ -93,7 +93,8 @@ def test_to_csv_execution(setup, setup_gpu, gpu):
         pd.testing.assert_frame_equal(result, raw)
 
         # SERIES TESTS
-        series = md.Series(raw.col1, gpu=gpu, chunk_size=33)
+        # cudf series not support to_csv
+        series = md.Series(raw.col1, gpu=False, chunk_size=33)
 
         # test one file with series
         path = os.path.join(base_path, "out.csv")
