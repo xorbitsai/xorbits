@@ -94,32 +94,33 @@ def test_to_csv_execution(setup, setup_gpu, gpu):
 
         # SERIES TESTS
         # cudf series not support to_csv
-        series = md.Series(raw.col1, gpu=False, chunk_size=33)
+        if gpu == False:
+            series = md.Series(raw.col1, chunk_size=33)
 
-        # test one file with series
-        path = os.path.join(base_path, "out.csv")
-        series.to_csv(path).execute()
+            # test one file with series
+            path = os.path.join(base_path, "out.csv")
+            series.to_csv(path).execute()
 
-        result = pd.read_csv(path, dtype=raw.dtypes.to_dict())
-        result.set_index("index", inplace=True)
-        pd.testing.assert_frame_equal(result, raw.col1.to_frame())
+            result = pd.read_csv(path, dtype=raw.dtypes.to_dict())
+            result.set_index("index", inplace=True)
+            pd.testing.assert_frame_equal(result, raw.col1.to_frame())
 
-        # test multi files with series
-        path = os.path.join(base_path, "out-*.csv")
-        series.to_csv(path).execute()
+            # test multi files with series
+            path = os.path.join(base_path, "out-*.csv")
+            series.to_csv(path).execute()
 
-        dfs = [
-            pd.read_csv(
-                os.path.join(base_path, f"out-{i}.csv"), dtype=raw.dtypes.to_dict()
+            dfs = [
+                pd.read_csv(
+                    os.path.join(base_path, f"out-{i}.csv"), dtype=raw.dtypes.to_dict()
+                )
+                for i in range(4)
+            ]
+            result = pd.concat(dfs, axis=0)
+            result.set_index("index", inplace=True)
+            pd.testing.assert_frame_equal(result, raw.col1.to_frame())
+            pd.testing.assert_frame_equal(
+                dfs[1].set_index("index"), raw.col1.to_frame().iloc[33:66]
             )
-            for i in range(4)
-        ]
-        result = pd.concat(dfs, axis=0)
-        result.set_index("index", inplace=True)
-        pd.testing.assert_frame_equal(result, raw.col1.to_frame())
-        pd.testing.assert_frame_equal(
-            dfs[1].set_index("index"), raw.col1.to_frame().iloc[33:66]
-        )
 
 
 @pytest.mark.skipif(sqlalchemy is None, reason="sqlalchemy not installed")
