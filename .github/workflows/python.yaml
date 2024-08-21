@@ -67,7 +67,7 @@ jobs:
     needs: lint
     env:
       CONDA_ENV: xorbits-test
-      SELF_HOST_PYTHON: /root/miniconda3/envs/xoscar-test/bin/python
+      SELF_HOST_PYTHON: /root/miniconda3/envs/xorbits-test/bin/python
       SELF_HOST_CONDA: /root/miniconda3/condabin/conda
     defaults:
       run:
@@ -272,7 +272,6 @@ jobs:
           pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
         pip install -U xoscar
         pip install -e ".[dev,extra,aws]"
-        python setup.py build_ext -i
       working-directory: ./python
 
     - name: Build doc
