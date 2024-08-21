@@ -32,7 +32,7 @@ from ...serialization.serializables import (
     StringField,
 )
 from ...tensor import tensor as astensor
-from ...utils import lazy_import, pd_release_version
+from ...utils import lazy_import
 from ..core import INDEX_TYPE
 from ..core import Index as DataFrameIndexType
 from ..initializer import Index as asindex
@@ -41,9 +41,6 @@ from ..utils import parse_index, validate_axis_style_args
 from .index_lib import DataFrameReindexHandler
 
 cudf = lazy_import("cudf")
-
-# under pandas<1.1, SparseArray ignores zeros on creation
-_pd_sparse_miss_zero = pd_release_version[:2] < (1, 1)
 
 
 class DataFrameReindex(DataFrameOperand, DataFrameOperandMixin):
@@ -274,23 +271,14 @@ class DataFrameReindex(DataFrameOperand, DataFrameOperandMixin):
                         )
                         # convert to SparseDtype(xxx, np.nan)
                         # to ensure 0 in sparse_array not converted to np.nan
-                        if not _pd_sparse_miss_zero:
-                            sparse_array = pd.arrays.SparseArray.from_spmatrix(spmatrix)
-                            sparse_array = pd.arrays.SparseArray(
-                                sparse_array.sp_values,
-                                sparse_index=sparse_array.sp_index,
-                                fill_value=np.nan,
-                                dtype=pd.SparseDtype(sparse_array.dtype, np.nan),
-                            )
-                        else:
-                            from pandas._libs.sparse import IntIndex
+                        sparse_array = pd.arrays.SparseArray.from_spmatrix(spmatrix)
+                        sparse_array = pd.arrays.SparseArray(
+                            sparse_array.sp_values,
+                            sparse_index=sparse_array.sp_index,
+                            fill_value=np.nan,
+                            dtype=pd.SparseDtype(sparse_array.dtype, np.nan),
+                        )
 
-                            sparse_array = pd.arrays.SparseArray(
-                                data,
-                                sparse_index=IntIndex(index_shape, ind),
-                                fill_value=np.nan,
-                                dtype=pd.SparseDtype(data.dtype, np.nan),
-                            )
                         series = pd.Series(sparse_array, index=index)
 
                         i_to_columns[i] = series

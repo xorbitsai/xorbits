@@ -1161,9 +1161,7 @@ class ReductionCompiler:
                             and isinstance(t.op.lhs, DATAFRAME_TYPE)
                             and isinstance(t.op.rhs, str)
                         ):
-                            # for a cudf dataframe, df == 'foo' doesn't work, so we convert the rhs
-                            # to a tuple.
-                            rhs = f"({rhs},) * len({lhs}.columns)"
+                            rhs = f"{rhs} "
                         statements = [
                             f"try:",
                             f"    {var_name} = {lhs}.{func_name}({rhs}, {axis_expr})",
