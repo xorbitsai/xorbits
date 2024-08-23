@@ -728,8 +728,7 @@ def test_groupby_agg_auto_method(setup):
     pd.testing.assert_frame_equal(result.sort_index(), raw.groupby("c1").agg("sum"))
 
 
-@pytest.mark.skip_ray_dag  # _fetch_infos() is not supported by ray backend.
-def test_distributed_groupby_agg(setup_cluster):
+def test_distributed_groupby_agg(setup):
     rs = np.random.RandomState(0)
     raw = pd.DataFrame(rs.rand(50000, 10))
     df = md.DataFrame(raw, chunk_size=raw.shape[0] // 2)
