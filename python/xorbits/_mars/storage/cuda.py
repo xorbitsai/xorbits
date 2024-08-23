@@ -67,9 +67,11 @@ class CudaFileObject:
         from rmm import DeviceBuffer
 
         self._buffers = [
-            cupy.ndarray(shape=0, dtype="u1")
-            if size == 0
-            else _convert_to_cupy_ndarray(DeviceBuffer(size=size))
+            (
+                cupy.ndarray(shape=0, dtype="u1")
+                if size == 0
+                else _convert_to_cupy_ndarray(DeviceBuffer(size=size))
+            )
             for size in sizes
         ]
 
@@ -281,7 +283,9 @@ class CudaStorage(StorageBackend):
             if isinstance(buf, cupy.ndarray):
                 new_buffers.append(DeviceBuffer(ptr=buf.data.ptr, size=buf.size))
             elif isinstance(buf, CPBuffer):
-                new_buffers.append(DeviceBuffer(ptr=buf.owner._ptr, size=buf.size))
+                new_buffers.append(
+                    DeviceBuffer(ptr=buf.owner._ptr + buf._offset, size=buf.size)
+                )
             else:
                 new_buffers.append(buf)
         return deserialize(headers, new_buffers)

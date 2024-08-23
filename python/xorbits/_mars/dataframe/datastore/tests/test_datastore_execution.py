@@ -38,12 +38,13 @@ except ImportError:
     fastparquet = None
 
 from .... import dataframe as md
-from ....tests.core import flaky
+from ....tests.core import flaky, support_cuda
 from ... import DataFrame
 from ...utils import PD_VERSION_GREATER_THAN_2_10
 
 
-def test_to_csv_execution(setup):
+@support_cuda
+def test_to_csv_execution(setup, setup_gpu, gpu):
     index = pd.RangeIndex(100, 0, -1, name="index")
     raw = pd.DataFrame(
         {
@@ -53,7 +54,7 @@ def test_to_csv_execution(setup):
         },
         index=index,
     )
-    df = DataFrame(raw, chunk_size=33)
+    df = DataFrame(raw, gpu=gpu, chunk_size=33)
 
     with tempfile.TemporaryDirectory() as base_path:
         # DATAFRAME TESTS
@@ -82,7 +83,7 @@ def test_to_csv_execution(setup):
         pd.testing.assert_frame_equal(dfs[1].set_index("index"), raw.iloc[33:66])
 
         # test df with unknown shape
-        df2 = DataFrame(raw, chunk_size=(50, 2))
+        df2 = DataFrame(raw, gpu=gpu, chunk_size=(50, 2))
         df2 = df2[df2["col1"] < 1]
         path2 = os.path.join(base_path, "out2.csv")
         df2.to_csv(path2).execute()
@@ -92,32 +93,34 @@ def test_to_csv_execution(setup):
         pd.testing.assert_frame_equal(result, raw)
 
         # SERIES TESTS
-        series = md.Series(raw.col1, chunk_size=33)
+        # cudf series not support to_csv
+        if gpu == False:
+            series = md.Series(raw.col1, chunk_size=33)
 
-        # test one file with series
-        path = os.path.join(base_path, "out.csv")
-        series.to_csv(path).execute()
+            # test one file with series
+            path = os.path.join(base_path, "out.csv")
+            series.to_csv(path).execute()
 
-        result = pd.read_csv(path, dtype=raw.dtypes.to_dict())
-        result.set_index("index", inplace=True)
-        pd.testing.assert_frame_equal(result, raw.col1.to_frame())
+            result = pd.read_csv(path, dtype=raw.dtypes.to_dict())
+            result.set_index("index", inplace=True)
+            pd.testing.assert_frame_equal(result, raw.col1.to_frame())
 
-        # test multi files with series
-        path = os.path.join(base_path, "out-*.csv")
-        series.to_csv(path).execute()
+            # test multi files with series
+            path = os.path.join(base_path, "out-*.csv")
+            series.to_csv(path).execute()
 
-        dfs = [
-            pd.read_csv(
-                os.path.join(base_path, f"out-{i}.csv"), dtype=raw.dtypes.to_dict()
+            dfs = [
+                pd.read_csv(
+                    os.path.join(base_path, f"out-{i}.csv"), dtype=raw.dtypes.to_dict()
+                )
+                for i in range(4)
+            ]
+            result = pd.concat(dfs, axis=0)
+            result.set_index("index", inplace=True)
+            pd.testing.assert_frame_equal(result, raw.col1.to_frame())
+            pd.testing.assert_frame_equal(
+                dfs[1].set_index("index"), raw.col1.to_frame().iloc[33:66]
             )
-            for i in range(4)
-        ]
-        result = pd.concat(dfs, axis=0)
-        result.set_index("index", inplace=True)
-        pd.testing.assert_frame_equal(result, raw.col1.to_frame())
-        pd.testing.assert_frame_equal(
-            dfs[1].set_index("index"), raw.col1.to_frame().iloc[33:66]
-        )
 
 
 @pytest.mark.skipif(sqlalchemy is None, reason="sqlalchemy not installed")
