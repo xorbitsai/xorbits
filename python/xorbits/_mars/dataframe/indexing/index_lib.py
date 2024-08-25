@@ -815,7 +815,7 @@ class NDArrayFancyIndexHandler(_FancyIndexHandler):
                     reorder_indexes[-1]
                 ]
                 params["columns_value"] = parse_index(reorder_columns, store_data=True)
-                params["dtypes"] = concat_chunk.dtypes[reorder_indexes[-1]]
+                params["dtypes"] = concat_chunk.dtypes.iloc[reorder_indexes[-1]]
 
         return reorder_chunk_op.new_chunk([concat_chunk], kws=[params])
 
