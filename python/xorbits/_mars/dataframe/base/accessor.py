@@ -17,10 +17,7 @@ from functools import wraps
 from typing import Iterable
 
 import pandas as pd
-from pandas.api.types import (
-    is_datetime64_dtype,
-    is_timedelta64_dtype,
-)
+from pandas.api.types import is_datetime64_dtype, is_timedelta64_dtype
 
 from ...utils import adapt_mars_docstring
 from .datetimes import SeriesDatetimeMethod, _datetime_method_to_handlers
