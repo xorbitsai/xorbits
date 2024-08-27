@@ -1281,11 +1281,11 @@ def test_date_range_execution(setup):
 
         # start, end and freq
         dr = md.date_range(
-            "2020-1-1", "2020-1-10", freq="12H", chunk_size=chunk_size, **kw
+            "2020-1-1", "2020-1-10", freq="12h", chunk_size=chunk_size, **kw
         )
 
         result = dr.execute().fetch()
-        expected = pd.date_range("2020-1-1", "2020-1-10", freq="12H", **kw)
+        expected = pd.date_range("2020-1-1", "2020-1-10", freq="12h", **kw)
         pd.testing.assert_index_equal(result, expected)
 
     # test timezone
@@ -1317,15 +1317,15 @@ def test_date_range_execution(setup):
     pd.testing.assert_index_equal(result, expected)
 
     # test freq
-    dr = md.date_range(start="1/1/2018", periods=5, freq="M", chunk_size=3)
+    dr = md.date_range(start="1/1/2018", periods=5, freq="ME", chunk_size=3)
 
     result = dr.execute().fetch()
-    expected = pd.date_range(start="1/1/2018", periods=5, freq="M")
+    expected = pd.date_range(start="1/1/2018", periods=5, freq="ME")
     pd.testing.assert_index_equal(result, expected)
 
-    dr = md.date_range(start="2018/01/01", end="2018/07/01", freq="M")
+    dr = md.date_range(start="2018/01/01", end="2018/07/01", freq="ME")
     result = dr.execute().fetch()
-    expected = pd.date_range(start="2018/01/01", end="2018/07/01", freq="M")
+    expected = pd.date_range(start="2018/01/01", end="2018/07/01", freq="ME")
     pd.testing.assert_index_equal(result, expected)
 
 

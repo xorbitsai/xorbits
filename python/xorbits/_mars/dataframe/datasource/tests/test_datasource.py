@@ -599,7 +599,7 @@ def test_date_range():
     with pytest.raises(ValueError):
         _ = date_range(pd.NaT, periods=10)
 
-    expected = pd.date_range("2020-1-1", periods=9.0, name="date")
+    expected = pd.date_range("2020-1-1", periods=9, name="date")
 
     dr = date_range("2020-1-1", periods=9.0, name="date", chunk_size=3)
     assert isinstance(dr, DatetimeIndex)
