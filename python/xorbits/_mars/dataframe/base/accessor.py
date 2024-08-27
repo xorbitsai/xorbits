@@ -19,8 +19,6 @@ from typing import Iterable
 import pandas as pd
 from pandas.api.types import (
     is_datetime64_dtype,
-    is_datetime64tz_dtype,
-    is_period_dtype,
     is_timedelta64_dtype,
 )
 
