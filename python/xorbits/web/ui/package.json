@@ -50,7 +50,7 @@
     "prettier": "3.2.5",
     "react-hot-loader": "^4.13.0",
     "url-loader": "^4.0.0",
-    "webpack": "^5.76.0",
+    "webpack": "^5.94.0",
     "webpack-cli": "^4.10.0"
   }
 }
