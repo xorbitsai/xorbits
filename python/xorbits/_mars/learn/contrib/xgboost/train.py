@@ -165,7 +165,7 @@ class XGBTrain(MergeDictOperand):
         if op.merge:
             return super().execute(ctx, op)
 
-        from xgboost import rabit, train
+        from xgboost import collective, train
 
         params = op.params.copy()
 
@@ -219,12 +219,24 @@ class XGBTrain(MergeDictOperand):
             logger.debug("Distributed train params: %r", params)
 
             rabit_args = ctx[op.tracker.key]
-            rabit.init(
-                [
-                    arg.tobytes() if isinstance(arg, memoryview) else arg
-                    for arg in rabit_args
-                ]
-            )
+            rabit_args = [
+                arg.tobytes() if isinstance(arg, memoryview) else arg
+                for arg in rabit_args
+            ]
+            parsed = {}
+            args_map_dmlc2rabit = {
+                "DMLC_TRACKER_URI": "rabit_tracker_uri",
+                "DMLC_TRACKER_PORT": "rabit_tracker_port",
+                "DMLC_NUM_WORKER": "rabit_num_worker",
+            }
+            if rabit_args:
+                for arg in rabit_args:
+                    kv = arg.decode().split("=")
+                    if len(kv) == 2:
+                        parsed[args_map_dmlc2rabit[kv[0]]] = (
+                            int(kv[1]) if kv[0] == "DMLC_TRACKER_PORT" else kv[1]
+                        )
+            collective.init(**parsed)
             try:
                 logger.debug(
                     "Start to train data, train size: %s, evals sizes: %s",
@@ -236,11 +248,11 @@ class XGBTrain(MergeDictOperand):
                     params, dtrain, evals=evals, evals_result=local_history, **op.kwargs
                 )
                 ret = {"booster": pickle.dumps(bst), "history": local_history}
-                if rabit.get_rank() != 0:
+                if collective.get_rank() != 0:
                     ret = {}
                 ctx[op.outputs[0].key] = ret
             finally:
-                rabit.finalize()
+                collective.finalize()
 
 
 def train(params, dtrain, evals=(), **kwargs):
