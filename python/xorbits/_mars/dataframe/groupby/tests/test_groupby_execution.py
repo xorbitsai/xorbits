@@ -887,7 +887,7 @@ def test_groupby_apply(setup_gpu, gpu):
     # cudf needs to know all function parameter and types when compiling
     # and it will raise errors when `ret_series` not defined
     if gpu:
-        applied = mdf.groupby("b").apply(apply_df)
+        applied = mdf.groupby("b").apply(apply_df, False)
         cdf = cudf.DataFrame(df1)
         cudf.testing.assert_frame_equal(
             applied.execute().fetch(to_cpu=False).sort_index(),
