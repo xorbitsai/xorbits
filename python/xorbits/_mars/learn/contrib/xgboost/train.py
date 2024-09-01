@@ -224,18 +224,11 @@ class XGBTrain(MergeDictOperand):
                 for arg in rabit_args
             ]
             parsed = {}
-            args_map_dmlc2rabit = {
-                "DMLC_TRACKER_URI": "rabit_tracker_uri",
-                "DMLC_TRACKER_PORT": "rabit_tracker_port",
-                "DMLC_NUM_WORKER": "rabit_num_worker",
-            }
             if rabit_args:
                 for arg in rabit_args:
                     kv = arg.decode().split("=")
                     if len(kv) == 2:
-                        parsed[args_map_dmlc2rabit[kv[0]]] = (
-                            int(kv[1]) if kv[0] == "DMLC_TRACKER_PORT" else kv[1]
-                        )
+                        parsed[kv[0]] = kv[1]
             collective.init(**parsed)
             try:
                 logger.debug(

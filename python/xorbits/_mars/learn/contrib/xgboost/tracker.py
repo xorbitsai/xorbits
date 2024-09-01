@@ -241,7 +241,7 @@ class RabitTracker:
         get environment variables for workers
         can be passed in as args or envs
         """
-        return {"DMLC_TRACKER_URI": self.host_ip, "DMLC_TRACKER_PORT": self.port}
+        return {"rabbit_tracker_uri": self.host_ip, "rabbit_tracker_port": self.port}
 
     def _get_tree(self, n_workers: int) -> Tuple[_TreeMap, Dict[int, int]]:
         tree_map: _TreeMap = {}
