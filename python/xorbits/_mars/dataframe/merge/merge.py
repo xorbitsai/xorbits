@@ -115,28 +115,11 @@ class DataFrameMergeAlign(MapReduceOperand, DataFrameOperandMixin):
         # shuffle on index
         for index_idx, index_filter in enumerate(filters):
             reducer_index = (index_idx, chunk.index[1])
-            # for MultiIndex in cudf,
-            # get each line of df and then concat them.
-            if is_cudf(df) and isinstance(df.index, cudf.MultiIndex):
-                filtered_dfs = [
-                    df.iloc[int(index) : int(index) + 1]
-                    for index in index_filter.values
-                ]
-                if filtered_dfs:
-                    filtered_df = cudf.concat(filtered_dfs, axis=0)
-                else:  # empty dataframe
-                    filtered_df = df.iloc[0:0]
-                ctx[chunk.key, reducer_index] = (
-                    op.mapper_id,
-                    ctx.get_current_chunk().index,
-                    filtered_df,
-                )
-            else:
-                ctx[chunk.key, reducer_index] = (
-                    op.mapper_id,
-                    ctx.get_current_chunk().index,
-                    df.iloc[index_filter],
-                )
+            ctx[chunk.key, reducer_index] = (
+                op.mapper_id,
+                ctx.get_current_chunk().index,
+                df.iloc[index_filter],
+            )
 
     @classmethod
     def execute_reduce(cls, ctx, op: "DataFrameMergeAlign"):

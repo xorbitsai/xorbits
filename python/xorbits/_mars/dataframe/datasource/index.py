@@ -272,10 +272,6 @@ def from_pandas(data, chunk_size=None, gpu=None, sparse=False, store_data=False)
     )
 
     shape = data.shape
-    if gpu and hasattr(data, "levels"):
-        # the shape of cudf multi index is a 2-d tuple where the first element represents the
-        # number of rows and the second element represents the number of levels.
-        shape = (data.shape[0], len(data.levels))
     return op(shape=shape, chunk_size=chunk_size)
 
 
