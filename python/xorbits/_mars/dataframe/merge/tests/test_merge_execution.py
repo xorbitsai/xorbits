@@ -334,8 +334,8 @@ def test_join_on(setup_gpu, gpu):
     )
     result2 = jdf2.execute().fetch()
 
-    expected2.set_index("a2", inplace=True)
-    result2.set_index("a2", inplace=True)
+    expected2.set_index("b2", inplace=True)
+    result2.set_index("b2", inplace=True)
     pd.testing.assert_frame_equal(
         sort_dataframe_inplace(expected2, 0), sort_dataframe_inplace(result2, 0)
     )
