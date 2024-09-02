@@ -96,7 +96,8 @@ jobs:
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: [self-hosted, gpu], module: gpu, python-version: 3.11}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
-          - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
+          # a self-hosted runner which needs computing resources, activate when necessary
+          # - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
           - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
           - { os: ubuntu-latest, module: datasets, python-version: 3.9 }
           - { os: ubuntu-latest, module: kubernetes, python-version: 3.11 }
@@ -178,7 +179,7 @@ jobs:
           ../CI/install-hadoop.sh
           echo "import coverage; coverage.process_startup()" > \
             $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
-          conda install --quiet --yes -c conda-forge skein libffi conda-pack grpcio=1.42.0
+          conda install --quiet --yes conda-forge::libffi==3.4.2 conda-forge::skein==0.8.1 conda-forge::conda-pack==0.8.0 conda-forge::protobuf==3.20.1 conda-forge::grpcio==1.42.0
         fi
         if [[ "$MODULE" == "vineyard" ]]; then
           pip install vineyard
