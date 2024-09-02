@@ -96,6 +96,8 @@ jobs:
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
           - { os: [self-hosted, gpu], module: gpu, python-version: 3.11}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
+          # a self-hosted runner which needs computing resources, activate when necessary
+          # - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
           - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
           - { os: ubuntu-latest, module: datasets, python-version: 3.9 }
           - { os: ubuntu-latest, module: kubernetes, python-version: 3.11 }
