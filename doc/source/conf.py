@@ -21,13 +21,13 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
-    "IPython.sphinxext.ipython_directive",
-    "IPython.sphinxext.ipython_console_highlighting",
+    # "IPython.sphinxext.ipython_directive",
+    # "IPython.sphinxext.ipython_console_highlighting",
     "matplotlib.sphinxext.plot_directive",
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = ['reference/numpy/*', 'reference/pandas/*']
 
 # i18n
 locale_dirs = ["locale/"]  # path is example but recommended.

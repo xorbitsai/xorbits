@@ -10,7 +10,7 @@ This is a short introduction to :code:`xorbits.pandas` which is originated from 
 
 Customarily, we import and init as follows:
 
-.. ipython:: python
+.. code-block:: python
 
    import xorbits
    import xorbits.numpy as np
@@ -22,15 +22,14 @@ Object creation
 
 Creating a :class:`Series` by passing a list of values, letting it create a default integer index:
 
-.. ipython:: python
-   :okwarning:
+.. code-block:: python
 
    s = pd.Series([1, 3, 5, np.nan, 6, 8])
    s
 
 Creating a :class:`DataFrame` by passing an array, with a datetime index and labeled columns:
 
-.. ipython:: python
+.. code-block:: python
 
    dates = pd.date_range('20130101', periods=6)
    dates
@@ -39,7 +38,7 @@ Creating a :class:`DataFrame` by passing an array, with a datetime index and lab
 
 Creating a :class:`DataFrame` by passing a dict of objects that can be converted to series-like.
 
-.. ipython:: python
+.. code-block:: python
 
    df2 = pd.DataFrame({'A': 1.,
                        'B': pd.Timestamp('20130102'),
@@ -50,7 +49,7 @@ Creating a :class:`DataFrame` by passing a dict of objects that can be converted
 
 The columns of the resulting :class:`DataFrame` have different dtypes.
 
-.. ipython:: python
+.. code-block:: python
 
    df2.dtypes
 
@@ -60,14 +59,14 @@ Viewing data
 
 Here is how to view the top and bottom rows of the frame:
 
-.. ipython:: python
+.. code-block:: python
 
    df.head()
    df.tail(3)
 
 Display the index, columns:
 
-.. ipython:: python
+.. code-block:: python
 
    df.index
    df.columns
@@ -84,14 +83,14 @@ value to a Python object.
 For ``df``, our :class:`DataFrame` of all floating-point values,
 :meth:`DataFrame.to_numpy` is fast and doesn't require copying data.
 
-.. ipython:: python
+.. code-block:: python
 
    df.to_numpy()
 
 For ``df2``, the :class:`DataFrame` with multiple dtypes, :meth:`DataFrame.to_numpy` is relatively
 expensive.
 
-.. ipython:: python
+.. code-block:: python
 
    df2.to_numpy()
 
@@ -102,19 +101,19 @@ expensive.
 
 :func:`~DataFrame.describe` shows a quick statistic summary of your data:
 
-.. ipython:: python
+.. code-block:: python
 
    df.describe()
 
 Sorting by an axis:
 
-.. ipython:: python
+.. code-block:: python
 
    df.sort_index(axis=1, ascending=False)
 
 Sorting by values:
 
-.. ipython:: python
+.. code-block:: python
 
    df.sort_values(by='B')
 
@@ -134,14 +133,13 @@ Getting
 
 Selecting a single column, which yields a :class:`Series`, equivalent to ``df.A``:
 
-.. ipython:: python
+.. code-block:: python
 
    df['A']
 
 Selecting via ``[]``, which slices the rows:
 
-.. ipython:: python
-   :okwarning:
+.. code-block:: python
 
    df[0:3]
    df['20130102':'20130104']
@@ -151,38 +149,37 @@ Selection by label
 
 For getting a cross section using a label:
 
-.. ipython:: python
+.. code-block:: python
 
    df.loc['20130101']
 
 Selecting on a multi-axis by label:
 
-.. ipython:: python
+.. code-block:: python
 
    df.loc[:, ['A', 'B']]
 
 Showing label slicing, both endpoints are *included*:
 
-.. ipython:: python
-   :okwarning:
+.. code-block:: python
 
    df.loc['20130102':'20130104', ['A', 'B']]
 
 Reduction in the dimensions of the returned object:
 
-.. ipython:: python
+.. code-block:: python
 
    df.loc['20130102', ['A', 'B']]
 
 For getting a scalar value:
 
-.. ipython:: python
+.. code-block:: python
 
    df.loc['20130101', 'A']
 
 For getting fast access to a scalar (equivalent to the prior method):
 
-.. ipython:: python
+.. code-block:: python
 
    df.at['20130101', 'A']
 
@@ -191,43 +188,43 @@ Selection by position
 
 Select via the position of the passed integers:
 
-.. ipython:: python
+.. code-block:: python
 
    df.iloc[3]
 
 By integer slices, acting similar to python:
 
-.. ipython:: python
+.. code-block:: python
 
    df.iloc[3:5, 0:2]
 
 By lists of integer position locations, similar to the python style:
 
-.. ipython:: python
+.. code-block:: python
 
    df.iloc[[1, 2, 4], [0, 2]]
 
 For slicing rows explicitly:
 
-.. ipython:: python
+.. code-block:: python
 
    df.iloc[1:3, :]
 
 For slicing columns explicitly:
 
-.. ipython:: python
+.. code-block:: python
 
    df.iloc[:, 1:3]
 
 For getting a value explicitly:
 
-.. ipython:: python
+.. code-block:: python
 
    df.iloc[1, 1]
 
 For getting fast access to a scalar (equivalent to the prior method):
 
-.. ipython:: python
+.. code-block:: python
 
    df.iat[1, 1]
 
@@ -236,13 +233,13 @@ Boolean indexing
 
 Using a single column's values to select data.
 
-.. ipython:: python
+.. code-block:: python
 
    df[df['A'] > 0]
 
 Selecting values from a DataFrame where a boolean condition is met.
 
-.. ipython:: python
+.. code-block:: python
 
    df[df > 0]
 
@@ -257,14 +254,14 @@ Operations in general *exclude* missing data.
 
 Performing a descriptive statistic:
 
-.. ipython:: python
+.. code-block:: python
 
    df.mean()
 
 
 Same operation on the other axis:
 
-.. ipython:: python
+.. code-block:: python
 
    df.mean(1)
 
@@ -272,7 +269,7 @@ Same operation on the other axis:
 Operating with objects that have different dimensionality and need alignment. In addition,
 :code:`xorbits.pandas` automatically broadcasts along the specified dimension.
 
-.. ipython:: python
+.. code-block:: python
 
    s = pd.Series([1, 3, 5, np.nan, 6, 8], index=dates).shift(2)
    s
@@ -284,7 +281,7 @@ Apply
 
 Applying functions to the data:
 
-.. ipython:: python
+.. code-block:: python
 
    df.apply(lambda x: x.max() - x.min())
 
@@ -297,7 +294,7 @@ code snippet below. Note that pattern-matching in `str` generally uses `regular
 expressions <https://docs.python.org/3/library/re.html>`__ by default (and in
 some cases always uses them).
 
-.. ipython:: python
+.. code-block:: python
 
    s = pd.Series(['A', 'B', 'C', 'Aaba', 'Baca', np.nan, 'CABA', 'dog', 'cat'])
    s.str.lower()
@@ -315,7 +312,7 @@ operations.
 
 Concatenating :code:`xorbits.pandas` objects together with :func:`concat`:
 
-.. ipython:: python
+.. code-block:: python
 
    df = pd.DataFrame(np.random.randn(10, 4))
    df
@@ -336,7 +333,7 @@ Join
 
 SQL style merges.
 
-.. ipython:: python
+.. code-block:: python
 
    left = pd.DataFrame({'key': ['foo', 'foo'], 'lval': [1, 2]})
    right = pd.DataFrame({'key': ['foo', 'foo'], 'rval': [4, 5]})
@@ -346,7 +343,7 @@ SQL style merges.
 
 Another example that can be given is:
 
-.. ipython:: python
+.. code-block:: python
 
    left = pd.DataFrame({'key': ['foo', 'bar'], 'lval': [1, 2]})
    right = pd.DataFrame({'key': ['foo', 'bar'], 'rval': [4, 5]})
@@ -365,7 +362,7 @@ following steps:
  - **Combining** the results into a data structure
 
 
-.. ipython:: python
+.. code-block:: python
 
    df = pd.DataFrame({'A': ['foo', 'bar', 'foo', 'bar',
                             'foo', 'bar', 'foo', 'foo'],
@@ -378,15 +375,14 @@ following steps:
 Grouping and then applying the :meth:`~xorbits.pandas.groupby.DataFrameGroupBy.sum` function to
 the resulting groups.
 
-.. ipython:: python
-   :okwarning:
+.. code-block:: python
 
    df.groupby('A').sum()
 
 Grouping by multiple columns forms a hierarchical index, and again we can
 apply the `sum` function.
 
-.. ipython:: python
+.. code-block:: python
 
    df.groupby(['A', 'B']).sum()
 
@@ -395,12 +391,12 @@ Plotting
 
 We use the standard convention for referencing the matplotlib API:
 
-.. ipython:: python
+.. code-block:: python
 
    import matplotlib.pyplot as plt
    plt.close('all')
 
-.. ipython:: python
+.. code-block:: python
 
    ts = pd.Series(np.random.randn(1000),
                   index=pd.date_range('1/1/2000', periods=1000))
@@ -412,7 +408,7 @@ We use the standard convention for referencing the matplotlib API:
 On a DataFrame, the :meth:`~DataFrame.plot` method is a convenience to plot all
 of the columns with labels:
 
-.. ipython:: python
+.. code-block:: python
 
    df = pd.DataFrame(np.random.randn(1000, 4), index=ts.index,
                      columns=['A', 'B', 'C', 'D'])
@@ -431,18 +427,17 @@ CSV
 
 Writing to a csv file.
 
-.. ipython:: python
+.. code-block:: python
 
    df.to_csv('foo.csv')
 
 Reading from a csv file.
 
-.. ipython:: python
+.. code-block:: python
 
    pd.read_csv('foo.csv')
 
-.. ipython:: python
-   :suppress:
+.. code-block:: python
 
    import os
    os.remove('foo.csv')

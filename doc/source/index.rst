@@ -44,8 +44,6 @@ Getting involved
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | **Platform**                                                                                     | **Purpose**                                        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
-    | `Discourse Forum <https://discuss.xorbits.io/>`_                                                 | Asking usage questions and discussing development. |
-    +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | `Github Issues <https://github.com/xorbitsai/xorbits/issues>`_                                   | Reporting bugs and filing feature requests.        |
     +--------------------------------------------------------------------------------------------------+----------------------------------------------------+
     | `Slack <https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg>`_  | Collaborating with other Xorbits users.            |
@@ -75,6 +73,5 @@ Getting involved
    getting_started/index
    libraries/index
    user_guide/index
-   deployment/index
    reference/index
    development/index
