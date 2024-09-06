@@ -6,5 +6,3 @@ Libraries
     
     xorbits_data/index
     xorbits_train/index
-    xorbits_tune/index
-    xorbits_inference/index
