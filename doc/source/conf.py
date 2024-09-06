@@ -50,9 +50,6 @@ html_theme_options = {
 # see https://stackoverflow.com/a/73497480
 if "zh_cn" not in tags.tags.keys():
     # en
-    html_theme_options["external_links"] = [
-        {"name": "xorbits.io", "url": "https://xorbits.io"},
-    ]
     html_theme_options["icon_links"] = [
         {
             "name": "GitHub",
