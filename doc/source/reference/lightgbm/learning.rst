@@ -1,4 +1,4 @@
-.. _api.learning_api:
+.. _api.lightgbm_learning_api:
 
 ============
 Learning API
