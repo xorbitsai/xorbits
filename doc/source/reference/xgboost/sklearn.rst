@@ -1,4 +1,4 @@
-.. _api.sklearn:
+.. _api.xgboost_sklearn:
 
 ================
 Scikit-Learn API
