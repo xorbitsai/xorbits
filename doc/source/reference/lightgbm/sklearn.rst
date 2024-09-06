@@ -1,4 +1,4 @@
-.. _api.sklearn:
+.. _api.lightgbm_sklearn:
 
 ================
 Scikit-Learn API
@@ -78,7 +78,6 @@ Attributes
     LGBMRanker.load_model
     LGBMRanker.predict
     LGBMRanker.predict_proba
-    LGBMRanker.score
     LGBMRanker.set_params
     LGBMRanker.to_local
 

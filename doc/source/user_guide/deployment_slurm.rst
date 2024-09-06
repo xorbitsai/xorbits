@@ -2,7 +2,7 @@
 
 
 SLURM deployment
-=============
+================
 
 
 If you have access to a SLURM cluster, you can refer to the following guide to run an Xorbits job. Other HPC job schedulers like Torque or LSF are similar.

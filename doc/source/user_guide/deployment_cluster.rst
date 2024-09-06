@@ -70,7 +70,7 @@ You can open a web browser and type ``http://<supervisor_ip>:<supervisor_web_por
 look up resource usage of workers and execution progress of submitted tasks.
 
 Command Line Options
--------------------
+--------------------
 
 Common Options
 ~~~~~~~~~~~~~~
