@@ -25,14 +25,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -m pip install sphinx sphinx-rtd-theme
+          python -m pip install .
 
       - name: Build Sphinx HTML
         run: |
           python -m sphinx -T -b html -d _build/doctrees -D language=en . ${{ github.workspace }}/doc/_build/html
         working-directory: ./doc/source
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Sphinx HTML
-          path: docs/_build/html/
