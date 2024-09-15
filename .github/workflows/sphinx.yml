@@ -1,0 +1,37 @@
+name: Build Sphinx Documentation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools
+          python -m pip install sphinx sphinx-rtd-theme
+
+      - name: Build Sphinx HTML
+        run: |
+          python -m sphinx -T -b html -d _build/doctrees -D language=en . ${{ github.workspace }}/docs/_build/html
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Sphinx HTML
+          path: docs/_build/html/
