@@ -31,7 +31,7 @@ jobs:
           python -m sphinx -T -b html -d _build/doctrees -D language=en . ${{ github.workspace }}/docs/_build/html
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Sphinx HTML
           path: docs/_build/html/
