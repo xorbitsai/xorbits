@@ -28,6 +28,7 @@ jobs:
           python -m pip install ./python
           python -m pip install matplotlib
           python -m pip install datasets
+          python -m pip install pydata-sphinx-theme>=0.3.0 sphinx-intl>=0.9.9
 
       - name: Build Sphinx HTML
         run: |
