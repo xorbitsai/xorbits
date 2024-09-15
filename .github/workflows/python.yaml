@@ -20,46 +20,46 @@ jobs:
         os: [ "ubuntu-latest" ]
         python-version: [ "3.10" ]
 
-    # steps:
-    #   - name: Check out code
-    #     uses: actions/checkout@v3
-    #     with:
-    #       fetch-depth: 0
-    #       submodules: recursive
-    #   - name: Set up Python environment
-    #     uses: actions/setup-python@v4
-    #     with:
-    #       python-version: "3.10"
-    #   - name: flake8 Lint
-    #     uses: py-actions/flake8@v2
-    #     with:
-    #       path: "python/xorbits"
-    #       args: "--config python/setup.cfg"
-    #   - name: black
-    #     uses: psf/black@stable
-    #     with:
-    #       src: "python/xorbits"
-    #       options: "--check"
-    #       version: "23.12.0"
-    #   - uses: isort/isort-action@master
-    #     with:
-    #       sortPaths: "python/xorbits"
-    #       configuration: "--check-only --diff --sp python/setup.cfg"
-    #   - name: mypy
-    #     run: pip install mypy && cd python && mypy xorbits
-    #   - name: codespell
-    #     run: pip install codespell==2.2.6 && cd python && codespell xorbits
-    #   - name: Set up Node.js
-    #     uses: actions/setup-node@v1
-    #     with:
-    #       node-version: 16
-    #   # ESLint and Prettier must be in `package.json`
-    #   - name: Install Node.js dependencies
-    #     run: cd python/xorbits/web/ui && npm ci
-    #   - name: ESLint Check
-    #     run: cd python/xorbits/web/ui && npx eslint .
-    #   - name: Prettier Check
-    #     run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2
+        with:
+          path: "python/xorbits"
+          args: "--config python/setup.cfg"
+      - name: black
+        uses: psf/black@stable
+        with:
+          src: "python/xorbits"
+          options: "--check"
+          version: "23.12.0"
+      - uses: isort/isort-action@master
+        with:
+          sortPaths: "python/xorbits"
+          configuration: "--check-only --diff --sp python/setup.cfg"
+      - name: mypy
+        run: pip install mypy && cd python && mypy xorbits
+      - name: codespell
+        run: pip install codespell==2.2.6 && cd python && codespell xorbits
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      # ESLint and Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: cd python/xorbits/web/ui && npm ci
+      - name: ESLint Check
+        run: cd python/xorbits/web/ui && npx eslint .
+      - name: Prettier Check
+        run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
 
   build_test_job:
     if: github.repository == 'xorbitsai/xorbits'
