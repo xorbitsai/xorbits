@@ -26,6 +26,8 @@ jobs:
           python -m pip install --upgrade pip setuptools
           python -m pip install sphinx sphinx-rtd-theme
           python -m pip install ./python
+          python -m pip install matplotlib
+          python -m pip install datasets
 
       - name: Build Sphinx HTML
         run: |
