@@ -28,7 +28,8 @@ jobs:
 
       - name: Build Sphinx HTML
         run: |
-          python -m sphinx -T -b html -d _build/doctrees -D language=en . ${{ github.workspace }}/docs/_build/html
+          python -m sphinx -T -b html -d _build/doctrees -D language=en . ${{ github.workspace }}/doc/_build/html
+        working-directory: ./doc
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
