@@ -207,7 +207,7 @@ cdef list tokenize_pandas_dataframe(ob):
 
 
 cdef list tokenize_pandas_categorical(ob):
-    l = ob.to_list()
+    l = ob.tolist()
     l.append(ob.shape)
     return iterative_tokenize(l)
 
