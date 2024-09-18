@@ -1725,6 +1725,7 @@ def test_sample_execution(setup):
 
 def test_loc_setitem(setup):
     raw_df = pd.DataFrame({"a": [1, 2, 3, 4, 2, 4, 5, 7, 2, 8, 9], 1: [10] * 11})
+    raw_df = raw_df.astype("object")
     md_data = md.DataFrame(raw_df, chunk_size=3)
     md_data.loc[md_data["a"] <= 4, 1] = "v1"
     pd_data = raw_df.copy(True)
