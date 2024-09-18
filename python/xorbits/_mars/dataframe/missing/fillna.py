@@ -90,6 +90,18 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
         return self._output_limit or 1
 
     @staticmethod
+    def _apply_fillna_with_method(df, value, method, axis, limit, inplace=False):
+        """
+        Parameter method is deprecated since version 2.1.0, use ffill or bfill instead.
+        """
+        if method is not None:
+            if method in ["backfill", "bfill"]:
+                return df.bfill(axis=axis, limit=limit, inplace=inplace)
+            elif method in ["pad", "ffill"]:
+                return df.ffill(axis=axis, limit=limit, inplace=inplace)
+        return df.fillna(value=value, axis=axis, inplace=inplace)
+
+    @staticmethod
     def _get_first_slice(op, df, end):
         if op.method == "bfill":
             if op.output_types[0] == OutputType.series:
@@ -115,11 +127,7 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
         axis = op.axis
         method = op.method
 
-        filled = input_data.fillna(
-            method=method,
-            axis=axis,
-            limit=limit,
-        )
+        filled = cls._apply_fillna_with_method(input_data, None, method, axis, limit)
         ctx[op.outputs[0].key] = cls._get_first_slice(op, filled, 1)
         del filled
 
@@ -137,15 +145,17 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
             summaries = [ctx[inp.key] for inp in op.inputs[1:]]
 
         if not summaries:
-            ctx[op.outputs[0].key] = input_data.fillna(
-                method=method,
-                axis=axis,
-                limit=limit,
+            ctx[op.outputs[0].key] = cls._apply_fillna_with_method(
+                input_data, None, method, axis, limit
             )
             return
 
         valid_summary = cls._get_first_slice(
-            op, pd.concat(summaries, axis=axis).fillna(method=method, axis=axis), 1
+            op,
+            cls._apply_fillna_with_method(
+                pd.concat(summaries, axis=axis), None, method, axis, limit
+            ),
+            1,
         )
 
         if method == "bfill":
@@ -154,17 +164,12 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
             concat_df = pd.concat([valid_summary, input_data], axis=axis)
 
         if is_pandas_2():
-            concat_df = concat_df.fillna(
-                method=method,
-                axis=axis,
-                limit=limit,
+            concat_df = cls._apply_fillna_with_method(
+                concat_df, None, method, axis, limit
             )
         else:
-            concat_df.fillna(
-                method=method,
-                axis=axis,
-                inplace=True,
-                limit=limit,
+            concat_df = cls._apply_fillna_with_method(
+                concat_df, None, method, axis, limit, inplace=True
             )
         ctx[op.outputs[0].key] = cls._get_first_slice(op, concat_df, -1)
 
@@ -180,11 +185,8 @@ class FillNA(DataFrameOperand, DataFrameOperandMixin):
             if isinstance(op.value, ENTITY_TYPE):
                 value = ctx[op.value.key]
             if not isinstance(input_data, pd.Index):
-                ctx[op.outputs[0].key] = input_data.fillna(
-                    value=value,
-                    method=op.method,
-                    axis=op.axis,
-                    limit=op.limit,
+                ctx[op.outputs[0].key] = cls._apply_fillna_with_method(
+                    input_data, value, op.method, op.axis, op.limit
                 )
             else:
                 ctx[op.outputs[0].key] = input_data.fillna(value=value)

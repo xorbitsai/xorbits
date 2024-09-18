@@ -17,12 +17,7 @@ from functools import wraps
 from typing import Iterable
 
 import pandas as pd
-from pandas.api.types import (
-    is_datetime64_dtype,
-    is_datetime64tz_dtype,
-    is_period_dtype,
-    is_timedelta64_dtype,
-)
+from pandas.api.types import is_datetime64_dtype, is_timedelta64_dtype
 
 from ...utils import adapt_mars_docstring
 from .datetimes import SeriesDatetimeMethod, _datetime_method_to_handlers
@@ -238,9 +233,9 @@ class DatetimeAccessor:
     def __init__(self, series):
         if (
             not is_datetime64_dtype(series.dtype)
-            and not is_datetime64tz_dtype(series.dtype)
+            and not isinstance(series.dtype, pd.DatetimeTZDtype)
             and not is_timedelta64_dtype(series.dtype)
-            and not is_period_dtype(series.dtype)
+            and not isinstance(series.dtype, pd.PeriodDtype)
         ):
             raise AttributeError("Can only use .dt accessor with datetimelike values")
         self._series = series

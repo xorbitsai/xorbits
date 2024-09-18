@@ -210,7 +210,7 @@ def test_series_apply_execution(setup):
     ).execute()
     assert res.data_params["dtype"] == "object"
     pd.testing.assert_series_equal(
-        res.fetch(), s.apply(apply_func, args=(5,), convert_dtype=False)
+        res.fetch(), s.apply(apply_func, args=(5,)).astype(object)
     )
 
     res = ms.apply(
@@ -220,9 +220,7 @@ def test_series_apply_execution(setup):
     assert res.shape == (4,)
     with pytest.raises(AttributeError):
         _ = res.dtypes
-    pd.testing.assert_series_equal(
-        res.fetch(), s.apply(apply_func, args=(5,), convert_dtype=True)
-    )
+    pd.testing.assert_series_equal(res.fetch(), s.apply(apply_func, args=(5,)))
 
 
 def test_apply_execution_with_multi_chunks(setup):
