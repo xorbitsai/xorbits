@@ -33,29 +33,25 @@ from ...core.utils.docstring import attach_module_callable_docstring
 MARS_LIGHTGBM_CALLABLES = {}
 
 if lightgbm is not None:
+
     class LGBMBase:
         def __init__(self, *args, **kwargs):
             self.mars_instance = self._marscls(*to_mars(args), **to_mars(kwargs))
 
-
     class LGBMRegressor(LGBMBase):
         _marscls = MarsLGBMRegressor
-
 
     class LGBMClassifier(LGBMBase):
         _marscls = MarsLGBMClassifier
 
-
     class LGBMRanker(LGBMBase):
         _marscls = MarsLGBMRanker
-
 
     LGBM_CLS_MAP = {
         LGBMClassifier: MarsLGBMClassifier,
         LGBMRegressor: MarsLGBMRegressor,
         LGBMRanker: MarsLGBMRanker,
     }
-
 
     def wrap_cls_func(marscls: Callable, name: str):
         @functools.wraps(getattr(marscls, name))
@@ -70,7 +66,6 @@ if lightgbm is not None:
             docstring_src_module=lightgbm,
             docstring_src_cls=getattr(lightgbm, marscls.__name__, None),
         )
-
 
     def _collect_module_callables(
         skip_members: Optional[List[str]] = None,
@@ -89,14 +84,12 @@ if lightgbm is not None:
             )
         return module_callables
 
-
     def _install_cls_members(module_callables: Dict[str, Callable]):
         for x_cls, mars_cls in LGBM_CLS_MAP.items():
             module_callables[x_cls.__name__] = x_cls
             for name, _ in inspect.getmembers(mars_cls, inspect.isfunction):
                 if not name.startswith("_"):
                     setattr(x_cls, name, wrap_cls_func(mars_cls, name))
-
 
     MARS_LIGHTGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
     _install_cls_members(MARS_LIGHTGBM_CALLABLES)
