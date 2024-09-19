@@ -16,7 +16,10 @@ import functools
 import inspect
 from typing import Callable, Dict, List, Optional
 
-import lightgbm
+try:
+    import lightgbm
+except ImportError:  # pragma: no cover
+    lightgbm = None
 
 from ..._mars.learn.contrib import lightgbm as mars_lightgbm
 from ..._mars.learn.contrib.lightgbm.classifier import (
@@ -97,6 +100,8 @@ def _install_cls_members(module_callables: Dict[str, Callable]):
 
 MARS_LIGHTGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
 _install_cls_members(MARS_LIGHTGBM_CALLABLES)
-attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifier)
-attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
-attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)
+
+if lightgbm is not None:
+    attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifier)
+    attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
+    attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)
