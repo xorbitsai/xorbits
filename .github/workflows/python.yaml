@@ -129,7 +129,7 @@ jobs:
         minikube-version: 1.31.2
 
     - name: Install ucx dependencies
-      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest')}}
+      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.module != 'doc-build') }}
       run: |
         conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
     - name: Install libomp (macOS)
@@ -141,111 +141,113 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-        pip install "numpy<2.0.0" scipy cython pyftpdlib coverage flaky numexpr
-
-        if [[ "$MODULE" == "xorbits/pandas" ]]; then
-          pip install openpyxl
-        fi
-        if [[ "$MODULE" == "mars-core" ]]; then
-          pip install oss2
-        fi
-        if [[ "$MODULE" == "kubernetes" ]]; then
-          pip install kubernetes
-        fi
-        if [[ "$MODULE" == "kubernetes-juicefs" ]]; then
-          pip install kubernetes
-          if helm version --short >/dev/null 2>&1; then
-            echo "Helm installed. Skipping installation."
-          else
-            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          fi
-          if helm repo list | grep "juicefs" >/dev/null 2>&1; then
-            echo "Repo juicefs existed. Skipping adding to helm repos."
-          else
-            helm repo add juicefs https://juicedata.github.io/charts/
-            helm repo update
-            helm fetch --untar juicefs/juicefs-csi-driver
-          fi
-          if kubectl get pods -n kube-system | grep "juicefs-csi" >/dev/null 2>&1; then
-            echo "Juicefs-csi-driver installed. Skipping installation."
-          else
-            helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
-          fi
-          sleep 60
-          kubectl apply -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/example-redis-config.yaml
-          sleep 60
-        fi
-        if [[ "$MODULE" == "hadoop" ]]; then
-          ../CI/install-hadoop.sh
-          echo "import coverage; coverage.process_startup()" > \
-            $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
-          conda install --quiet --yes conda-forge::libffi==3.4.2 conda-forge::skein==0.8.1 conda-forge::conda-pack==0.8.0 conda-forge::protobuf==3.20.1 conda-forge::grpcio==1.42.0
-        fi
-        if [[ "$MODULE" == "vineyard" ]]; then
-          pip install vineyard
-          mkdir -p /tmp/etcd-download-test
-          export ETCD_VER=v3.4.13
-          export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
-          curl -L $ETCD_DOWNLOAD_URL/$ETCD_VER/etcd-$ETCD_VER-linux-amd64.tar.gz -o /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz
-          tar xzvf /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
-          sudo mv /tmp/etcd-download-test/etcd /usr/local/bin/
-          sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
-          rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
-        fi
-        if [[ "$MODULE" == "external-storage" ]]; then
-          export CUR_DIR=$(pwd)
-          mkdir -p /tmp/alluxio-download-test
-          cd /tmp/alluxio-download-test
-          wget -q https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
-          tar -xzf alluxio-2.9.3-bin.tar.gz
-          cd alluxio-2.9.3
-          cp conf/alluxio-env.sh.template conf/alluxio-env.sh
-          cp conf/alluxio-site.properties.template conf/alluxio-site.properties
-          echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
-          cd $CUR_DIR
-          sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
-          rm -R /tmp/alluxio-download-test
-          unset CUR_DIR
-          export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
-          ${ALLUXIO_HOME}/bin/alluxio format
-          ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
-          curl -sSL https://d.juicefs.com/install | sh -
-          curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-          sudo apt-get update
-          sudo apt-get install redis
-          export JUICEFS_HOME="/usr/local/bin/juicefs"
-        fi
-        if [[ "$PYTHON" == '3.9' ]]; then
-          pip install h5py zarr matplotlib fastparquet
-          conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
-            "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
-        fi
-        if [[ "$MODULE" == "_mars/learn" ]]; then
-          pip install scikit-learn
-          pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
-            statsmodels tsfresh dask[complete] mimesis\<9.0.0
-        fi
-        if [[ "$MODULE" == "learn" ]]; then
-          pip install xgboost lightgbm
-        fi
-        if [[ "$MODULE" == "compatibility" ]]; then
-          # test if compatible with older versions
-          pip install "pandas==1.5.3" "scipy<=1.10.1" "numpy<=1.24.1" "matplotlib<=3.7.0" "pyarrow<12.0.0" "sqlalchemy<2"
-        fi
-        if [[ "$MODULE" == "jax" ]]; then
-          # test jax
-          pip install "jax>=0.4.0" "jaxlib>=0.4.0"
-        fi
-        if [[ "$MODULE" == "datasets" ]]; then
-          # test huggingface datasets
-          pip install datasets torch
-        fi
         if [[ "$MODULE" == "doc-build" ]]; then
-          pip install -e ".[doc]"
+          pip install --upgrade --no-cache-dir pip setuptools
+          pip install --upgrade --no-cache-dir sphinx readthedocs-sphinx-ext
+          pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir "./python[doc]"
         else
-          pip install -e ".[dev,extra,aws]"
+          pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
+          pip install "numpy<2.0.0" scipy cython pyftpdlib coverage flaky numexpr
+
+          if [[ "$MODULE" == "xorbits/pandas" ]]; then
+            pip install openpyxl
+          fi
+          if [[ "$MODULE" == "mars-core" ]]; then
+            pip install oss2
+          fi
+          if [[ "$MODULE" == "kubernetes" ]]; then
+            pip install kubernetes
+          fi
+          if [[ "$MODULE" == "kubernetes-juicefs" ]]; then
+            pip install kubernetes
+            if helm version --short >/dev/null 2>&1; then
+              echo "Helm installed. Skipping installation."
+            else
+              curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+            fi
+            if helm repo list | grep "juicefs" >/dev/null 2>&1; then
+              echo "Repo juicefs existed. Skipping adding to helm repos."
+            else
+              helm repo add juicefs https://juicedata.github.io/charts/
+              helm repo update
+              helm fetch --untar juicefs/juicefs-csi-driver
+            fi
+            if kubectl get pods -n kube-system | grep "juicefs-csi" >/dev/null 2>&1; then
+              echo "Juicefs-csi-driver installed. Skipping installation."
+            else
+              helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
+            fi
+            sleep 60
+            kubectl apply -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/example-redis-config.yaml
+            sleep 60
+          fi
+          if [[ "$MODULE" == "hadoop" ]]; then
+            ../CI/install-hadoop.sh
+            echo "import coverage; coverage.process_startup()" > \
+              $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
+            conda install --quiet --yes conda-forge::libffi==3.4.2 conda-forge::skein==0.8.1 conda-forge::conda-pack==0.8.0 conda-forge::protobuf==3.20.1 conda-forge::grpcio==1.42.0
+          fi
+          if [[ "$MODULE" == "vineyard" ]]; then
+            pip install vineyard
+            mkdir -p /tmp/etcd-download-test
+            export ETCD_VER=v3.4.13
+            export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
+            curl -L $ETCD_DOWNLOAD_URL/$ETCD_VER/etcd-$ETCD_VER-linux-amd64.tar.gz -o /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz
+            tar xzvf /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+            sudo mv /tmp/etcd-download-test/etcd /usr/local/bin/
+            sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
+            rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
+          fi
+          if [[ "$MODULE" == "external-storage" ]]; then
+            export CUR_DIR=$(pwd)
+            mkdir -p /tmp/alluxio-download-test
+            cd /tmp/alluxio-download-test
+            wget -q https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
+            tar -xzf alluxio-2.9.3-bin.tar.gz
+            cd alluxio-2.9.3
+            cp conf/alluxio-env.sh.template conf/alluxio-env.sh
+            cp conf/alluxio-site.properties.template conf/alluxio-site.properties
+            echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
+            cd $CUR_DIR
+            sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
+            rm -R /tmp/alluxio-download-test
+            unset CUR_DIR
+            export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
+            ${ALLUXIO_HOME}/bin/alluxio format
+            ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
+            curl -sSL https://d.juicefs.com/install | sh -
+            curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+            sudo apt-get update
+            sudo apt-get install redis
+            export JUICEFS_HOME="/usr/local/bin/juicefs"
+          fi
+          if [[ "$PYTHON" == '3.9' ]]; then
+            pip install h5py zarr matplotlib fastparquet
+            conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
+              "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
+          fi
+          if [[ "$MODULE" == "_mars/learn" ]]; then
+            pip install scikit-learn
+            pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
+              statsmodels tsfresh dask[complete] mimesis\<9.0.0
+          fi
+          if [[ "$MODULE" == "learn" ]]; then
+            pip install xgboost lightgbm
+          fi
+          if [[ "$MODULE" == "compatibility" ]]; then
+            # test if compatible with older versions
+            pip install "pandas==1.5.3" "scipy<=1.10.1" "numpy<=1.24.1" "matplotlib<=3.7.0" "pyarrow<12.0.0" "sqlalchemy<2"
+          fi
+          if [[ "$MODULE" == "jax" ]]; then
+            # test jax
+            pip install "jax>=0.4.0" "jaxlib>=0.4.0"
+          fi
+          if [[ "$MODULE" == "datasets" ]]; then
+            # test huggingface datasets
+            pip install datasets torch
+          fi
+            pip install -e ".[dev,extra,aws]"
         fi
       working-directory: ./python
 
