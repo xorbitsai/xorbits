@@ -144,7 +144,7 @@ jobs:
         if [[ "$MODULE" == "doc-build" ]]; then
           pip install --upgrade --no-cache-dir pip setuptools
           pip install --upgrade --no-cache-dir sphinx readthedocs-sphinx-ext
-          pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir "./python[doc]"
+          pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
           pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
           pip install "numpy<2.0.0" scipy cython pyftpdlib coverage flaky numexpr
