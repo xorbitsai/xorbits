@@ -32,74 +32,75 @@ from ...core.utils.docstring import attach_module_callable_docstring
 
 MARS_LIGHTGBM_CALLABLES = {}
 
-
-class LGBMBase:
-    def __init__(self, *args, **kwargs):
-        self.mars_instance = self._marscls(*to_mars(args), **to_mars(kwargs))
-
-
-class LGBMRegressor(LGBMBase):
-    _marscls = MarsLGBMRegressor
+if lightgbm is not None:
+    class LGBMBase:
+        def __init__(self, *args, **kwargs):
+            self.mars_instance = self._marscls(*to_mars(args), **to_mars(kwargs))
 
 
-class LGBMClassifier(LGBMBase):
-    _marscls = MarsLGBMClassifier
+    class LGBMRegressor(LGBMBase):
+        _marscls = MarsLGBMRegressor
 
 
-class LGBMRanker(LGBMBase):
-    _marscls = MarsLGBMRanker
+    class LGBMClassifier(LGBMBase):
+        _marscls = MarsLGBMClassifier
 
 
-LGBM_CLS_MAP = {
-    LGBMClassifier: MarsLGBMClassifier,
-    LGBMRegressor: MarsLGBMRegressor,
-    LGBMRanker: MarsLGBMRanker,
-}
+    class LGBMRanker(LGBMBase):
+        _marscls = MarsLGBMRanker
 
 
-def wrap_cls_func(marscls: Callable, name: str):
-    @functools.wraps(getattr(marscls, name))
-    def wrapped(self, *args, **kwargs):
-        return getattr(self.mars_instance, name)(*args, **kwargs)
-
-    return wrap_mars_callable(
-        wrapped,
-        member_name=name,
-        attach_docstring=True,
-        is_cls_member=True,
-        docstring_src_module=lightgbm,
-        docstring_src_cls=getattr(lightgbm, marscls.__name__, None),
-    )
+    LGBM_CLS_MAP = {
+        LGBMClassifier: MarsLGBMClassifier,
+        LGBMRegressor: MarsLGBMRegressor,
+        LGBMRanker: MarsLGBMRanker,
+    }
 
 
-def _collect_module_callables(
-    skip_members: Optional[List[str]] = None,
-) -> Dict[str, Callable]:
-    module_callables: Dict[str, Callable] = dict()
+    def wrap_cls_func(marscls: Callable, name: str):
+        @functools.wraps(getattr(marscls, name))
+        def wrapped(self, *args, **kwargs):
+            return getattr(self.mars_instance, name)(*args, **kwargs)
 
-    for name, func in inspect.getmembers(mars_lightgbm, inspect.isfunction):
-        if skip_members is not None and name in skip_members:
-            continue
-        module_callables[name] = wrap_mars_callable(
-            func,
+        return wrap_mars_callable(
+            wrapped,
+            member_name=name,
             attach_docstring=True,
-            is_cls_member=False,
+            is_cls_member=True,
             docstring_src_module=lightgbm,
-            docstring_src=getattr(lightgbm, name, None),
+            docstring_src_cls=getattr(lightgbm, marscls.__name__, None),
         )
-    return module_callables
 
 
-def _install_cls_members(module_callables: Dict[str, Callable]):
-    for x_cls, mars_cls in LGBM_CLS_MAP.items():
-        module_callables[x_cls.__name__] = x_cls
-        for name, _ in inspect.getmembers(mars_cls, inspect.isfunction):
-            if not name.startswith("_"):
-                setattr(x_cls, name, wrap_cls_func(mars_cls, name))
+    def _collect_module_callables(
+        skip_members: Optional[List[str]] = None,
+    ) -> Dict[str, Callable]:
+        module_callables: Dict[str, Callable] = dict()
+
+        for name, func in inspect.getmembers(mars_lightgbm, inspect.isfunction):
+            if skip_members is not None and name in skip_members:
+                continue
+            module_callables[name] = wrap_mars_callable(
+                func,
+                attach_docstring=True,
+                is_cls_member=False,
+                docstring_src_module=lightgbm,
+                docstring_src=getattr(lightgbm, name, None),
+            )
+        return module_callables
 
 
-MARS_LIGHTGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
-_install_cls_members(MARS_LIGHTGBM_CALLABLES)
-# attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifier)
-# attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
-# attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)
+    def _install_cls_members(module_callables: Dict[str, Callable]):
+        for x_cls, mars_cls in LGBM_CLS_MAP.items():
+            module_callables[x_cls.__name__] = x_cls
+            for name, _ in inspect.getmembers(mars_cls, inspect.isfunction):
+                if not name.startswith("_"):
+                    setattr(x_cls, name, wrap_cls_func(mars_cls, name))
+
+
+    MARS_LIGHTGBM_CALLABLES = _collect_module_callables(skip_members=["register_op"])
+    _install_cls_members(MARS_LIGHTGBM_CALLABLES)
+
+    attach_module_callable_docstring(LGBMClassifier, lightgbm, lightgbm.LGBMClassifier)
+    attach_module_callable_docstring(LGBMRegressor, lightgbm, lightgbm.LGBMRegressor)
+    attach_module_callable_docstring(LGBMRanker, lightgbm, lightgbm.LGBMRanker)

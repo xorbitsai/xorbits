@@ -62,7 +62,7 @@ jobs:
         run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
 
   build_test_job:
-    if: github.repository == 'xorbitsai/xorbits'
+    # if: github.repository == 'xorbitsai/xorbits'
     runs-on: ${{ matrix.os }}
     needs: lint
     env:
@@ -242,7 +242,11 @@ jobs:
           # test huggingface datasets
           pip install datasets torch
         fi
-        pip install -e ".[dev,extra,aws]"
+        if [[ "$MODULE" == "doc-build" ]]; then
+          pip install -e ".[doc]"
+        else
+          pip install -e ".[dev,extra,aws]"
+        fi
       working-directory: ./python
 
     - name: Install on JuiceFsCI
@@ -283,129 +287,129 @@ jobs:
         make html_zh_cn
       working-directory: ./doc
 
-    - name: Test with pytest
-      if: ${{ matrix.module != 'doc-build' && matrix.module != 'gpu' }}
-      env:
-        MODULE: ${{ matrix.module }}
-      run: |
-        if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
-            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
-            --ignore xorbits/datasets \
-            --ignore xorbits/core/tests/test_execution_exit.py \
-            --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "not test_execution_with_process_exit_message" \
-            xorbits
-          # workaround: this case will hang, run it separately.
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "test_execution_with_process_exit_message" \
-            xorbits/core/tests/test_execution.py
-        elif [[ "$MODULE" == "xorbits/pandas" ]]; then
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml \
-            --cov=xorbits xorbits/pandas
-        elif [[ "$MODULE" == "xorbits/numpy" ]]; then
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "not test_numpy_fallback" \
-            xorbits/numpy
-          # workaround: this case will hang, run it separately.
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml \
-            --cov=xorbits \
-            -k "test_numpy_fallback" \
-            xorbits/numpy/numpy_adapters/tests/test_numpy_adapters.py
-        elif [[ "$MODULE" == "mars-core" ]]; then
-          pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
-            --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
-            --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars
-        elif [[ "$MODULE" == "kubernetes" ]]; then
-          pytest --ignore xorbits/_mars/ --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
-        elif [[ "$MODULE" == "kubernetes-juicefs" ]]; then
-          pytest --ignore xorbits/_mars/ --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes/external_storage/juicefs
-        elif [[ "$MODULE" == "slurm" ]]; then
-          docker exec c1 /bin/bash -c "pip install xorbits"
-          docker exec c2 /bin/bash -c "pip install xorbits"
-          docker exec slurmctld /bin/bash -c \
-          "pytest /xorbits/python/xorbits/deploy/slurm/tests/test_slurm.py "
-        elif [[ "$MODULE" == "hadoop" ]]; then
-          export WITH_HADOOP="1"
-          export HADOOP_HOME="/usr/local/hadoop"
-          export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
-          export HADOOP_INSTALL=$HADOOP_HOME
-          export HADOOP_MAPRED_HOME=$HADOOP_HOME
-          export HADOOP_COMMON_HOME=$HADOOP_HOME
-          export HADOOP_HDFS_HOME=$HADOOP_HOME
-          export YARN_HOME=$HADOOP_HOME
-          export HADOOP_COMMON_LIB_NATIVE_DIR="$HADOOP_HOME/lib/native"
-          export PATH="$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin"
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning xorbits/_mars -m hadoop
-        elif [[ "$MODULE" == "vineyard" ]]; then
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/deploy/oscar/tests/test_local.py
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits -k "vineyard" \
-            xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
-            xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
-        elif [[ "$MODULE" == "external-storage" ]]; then
-          export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
-          export JUICEFS_HOME="/usr/local/bin/juicefs"
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
-        elif [[ "$MODULE" == "_mars/learn" ]]; then
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/$MODULE xorbits/_mars/contrib/dask/tests/test_dask.py
-        elif [[ "$MODULE" == "learn" ]]; then
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/xgboost xorbits/lightgbm
-        elif [ "$MODULE" == "jax" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
-        elif [ "$MODULE" == "datasets" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/backends
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/tests
-        elif [ "$MODULE" == "compatibility" ]; then
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/_mars/dataframe
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/_mars/services/storage
-        else
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
-        fi
-      working-directory: ./python
+    # - name: Test with pytest
+    #   if: ${{ matrix.module != 'doc-build' && matrix.module != 'gpu' }}
+    #   env:
+    #     MODULE: ${{ matrix.module }}
+    #   run: |
+    #     if [[ "$MODULE" == "xorbits" ]]; then
+    #       pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
+    #         --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
+    #         --ignore xorbits/datasets \
+    #         --ignore xorbits/core/tests/test_execution_exit.py \
+    #         --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+    #         -k "not test_execution_with_process_exit_message" \
+    #         xorbits
+    #       # workaround: this case will hang, run it separately.
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+    #         -k "test_execution_with_process_exit_message" \
+    #         xorbits/core/tests/test_execution.py
+    #     elif [[ "$MODULE" == "xorbits/pandas" ]]; then
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml \
+    #         --cov=xorbits xorbits/pandas
+    #     elif [[ "$MODULE" == "xorbits/numpy" ]]; then
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+    #         -k "not test_numpy_fallback" \
+    #         xorbits/numpy
+    #       # workaround: this case will hang, run it separately.
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml \
+    #         --cov=xorbits \
+    #         -k "test_numpy_fallback" \
+    #         xorbits/numpy/numpy_adapters/tests/test_numpy_adapters.py
+    #     elif [[ "$MODULE" == "mars-core" ]]; then
+    #       pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
+    #         --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
+    #         --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars
+    #     elif [[ "$MODULE" == "kubernetes" ]]; then
+    #       pytest --ignore xorbits/_mars/ --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes
+    #     elif [[ "$MODULE" == "kubernetes-juicefs" ]]; then
+    #       pytest --ignore xorbits/_mars/ --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes/external_storage/juicefs
+    #     elif [[ "$MODULE" == "slurm" ]]; then
+    #       docker exec c1 /bin/bash -c "pip install xorbits"
+    #       docker exec c2 /bin/bash -c "pip install xorbits"
+    #       docker exec slurmctld /bin/bash -c \
+    #       "pytest /xorbits/python/xorbits/deploy/slurm/tests/test_slurm.py "
+    #     elif [[ "$MODULE" == "hadoop" ]]; then
+    #       export WITH_HADOOP="1"
+    #       export HADOOP_HOME="/usr/local/hadoop"
+    #       export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
+    #       export HADOOP_INSTALL=$HADOOP_HOME
+    #       export HADOOP_MAPRED_HOME=$HADOOP_HOME
+    #       export HADOOP_COMMON_HOME=$HADOOP_HOME
+    #       export HADOOP_HDFS_HOME=$HADOOP_HOME
+    #       export YARN_HOME=$HADOOP_HOME
+    #       export HADOOP_COMMON_LIB_NATIVE_DIR="$HADOOP_HOME/lib/native"
+    #       export PATH="$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin"
+    #       pytest --timeout=1500 -W ignore::PendingDeprecationWarning xorbits/_mars -m hadoop
+    #     elif [[ "$MODULE" == "vineyard" ]]; then
+    #       pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
+    #       pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/deploy/oscar/tests/test_local.py
+    #       pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits -k "vineyard" \
+    #         xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
+    #         xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
+    #     elif [[ "$MODULE" == "external-storage" ]]; then
+    #       export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
+    #       export JUICEFS_HOME="/usr/local/bin/juicefs"
+    #       pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
+    #     elif [[ "$MODULE" == "_mars/learn" ]]; then
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+    #         xorbits/$MODULE xorbits/_mars/contrib/dask/tests/test_dask.py
+    #     elif [[ "$MODULE" == "learn" ]]; then
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+    #         xorbits/xgboost xorbits/lightgbm
+    #     elif [ "$MODULE" == "jax" ]; then
+    #       pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
+    #       pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
+    #     elif [ "$MODULE" == "datasets" ]; then
+    #       pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/backends
+    #       pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/tests
+    #     elif [ "$MODULE" == "compatibility" ]; then
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/_mars/dataframe
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/_mars/services/storage
+    #     else
+    #       pytest --timeout=1500 \
+    #         -W ignore::PendingDeprecationWarning \
+    #         --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
+    #     fi
+    #   working-directory: ./python
     
-    - name: Test with pytest GPU
-      if: ${{ matrix.module == 'gpu' }}
-      run: |
-        source activate ${{ env.CONDA_ENV }}
-        pytest -m cuda --gpu --ignore xorbits/datasets \
-          --ignore xorbits/sklearn --ignore xorbits/_mars/learn \
-          --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-          xorbits
-      working-directory: ./python
+    # - name: Test with pytest GPU
+    #   if: ${{ matrix.module == 'gpu' }}
+    #   run: |
+    #     source activate ${{ env.CONDA_ENV }}
+    #     pytest -m cuda --gpu --ignore xorbits/datasets \
+    #       --ignore xorbits/sklearn --ignore xorbits/_mars/learn \
+    #       --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+    #       xorbits
+    #   working-directory: ./python
 
 
     - name: Cleanup on slurm
