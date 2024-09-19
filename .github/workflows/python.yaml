@@ -247,7 +247,7 @@ jobs:
             # test huggingface datasets
             pip install datasets torch
           fi
-            pip install -e ".[dev,extra,aws]"
+          pip install -e ".[dev,extra,aws]"
         fi
       working-directory: ./python
 
