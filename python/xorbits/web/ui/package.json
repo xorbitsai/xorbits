@@ -46,11 +46,11 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-simple-import-sort": "^8.0.0",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "prettier": "3.2.5",
     "react-hot-loader": "^4.13.0",
     "url-loader": "^4.0.0",
-    "webpack": "^5.76.0",
+    "webpack": "^5.94.0",
     "webpack-cli": "^4.10.0"
   }
 }
