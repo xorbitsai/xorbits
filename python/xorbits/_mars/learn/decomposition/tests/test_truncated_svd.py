@@ -27,7 +27,7 @@ from .. import TruncatedSVD
 shape = 60, 55
 n_samples, n_features = shape
 rng = check_random_state(42)
-X = rng.randint(-100, 20, np.product(shape)).reshape(shape)
+X = rng.randint(-100, 20, np.prod(shape)).reshape(shape)
 X = sp.csr_matrix(np.maximum(X, 0), dtype=np.float64)
 X.data[:] = 1 + np.log(X.data)
 Xdense = X.A
