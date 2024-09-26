@@ -834,3 +834,7 @@ def implement_scipy(scipy_fun):
         return fun
 
     return wrapper
+
+
+def is_numpy_2():
+    return np.__version__ >= "2.0.0"
