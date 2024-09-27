@@ -31,7 +31,6 @@ from ..core import Tensor
 from ..merge import concatenate
 
 
-
 class nd_grid(object):
     """
     Construct a multi-dimensional "meshgrid".
