@@ -147,7 +147,7 @@ jobs:
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
           pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-          pip install "numpy=2.1.0" scipy cython pyftpdlib coverage flaky numexpr
+          pip install "numpy==2.1.0" scipy cython pyftpdlib coverage flaky numexpr
 
           if [[ "$MODULE" == "xorbits/pandas" ]]; then
             pip install openpyxl
