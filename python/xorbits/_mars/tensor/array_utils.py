@@ -18,10 +18,10 @@ from contextlib import contextmanager
 
 import numpy as np
 
-from .utils import is_numpy_2
 from ..lib import sparse
 from ..lib.sparse.core import get_dense_module, issparse
 from ..utils import is_same_module, lazy_import
+from .utils import is_numpy_2
 
 cp = lazy_import("cupy", rename="cp")
 
