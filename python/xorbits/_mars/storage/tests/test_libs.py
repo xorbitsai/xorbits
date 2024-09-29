@@ -80,7 +80,7 @@ async def storage_context(request):
     elif request.param == "alluxio":
         tempdir = tempfile.mkdtemp()
         params, teardown_params = await AlluxioStorage.setup(
-            root_dir=tempdir, local_environ=True
+            root_dirs=[tempdir], local_environ=True
         )
         storage = AlluxioStorage(**params)
         assert storage.level == StorageLevel.MEMORY
