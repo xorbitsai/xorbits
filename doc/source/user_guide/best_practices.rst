@@ -1,7 +1,7 @@
 .. _best_practices:
 
 ==============
-Best Practices
+Best Practices & Configuration
 ==============
 
 Although Xorbits tries to automatically find the optimal performance mode, in some cases, user intervention
@@ -12,3 +12,4 @@ practices, and helps users solve some common problems.
    :maxdepth: 2
 
    loading_data
+   storage_backend
