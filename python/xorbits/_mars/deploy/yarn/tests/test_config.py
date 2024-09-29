@@ -64,7 +64,7 @@ def test_supervisor_config():
     assert config_envs["MKL_NUM_THREADS"] == "2"
     assert config_envs["MARS_CPU_TOTAL"] == "2"
     assert int(config_envs["MARS_MEMORY_TOTAL"]) == 10 * 1024**3
-    assert config_envs["MARS_LOAD_MODULES"] == "mars.test_mod"
+    assert config_envs["XORBITS_LOAD_MODULES"] == "mars.test_mod"
 
     config = MarsSupervisorConfig(
         "conda://path/to_env",

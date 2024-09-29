@@ -134,8 +134,8 @@ class OscarCommandRunner:
         if args.endpoint is not None and args.host is not None:  # pragma: no cover
             raise ValueError("Cannot specify host and endpoint at the same time")
 
-        if "MARS_TASK_DETAIL" in environ:
-            task_detail = json.loads(environ["MARS_TASK_DETAIL"])
+        if "XORBITS_TASK_DETAIL" in environ:
+            task_detail = json.loads(environ["XORBITS_TASK_DETAIL"])
             task_type, task_index = (
                 task_detail["task"]["type"],
                 task_detail["task"]["index"],

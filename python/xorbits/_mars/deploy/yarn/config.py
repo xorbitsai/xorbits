@@ -209,7 +209,7 @@ class MarsServiceConfig(AppServiceConfig):
             self.add_env("MARS_MEMORY_TOTAL", str(int(self._memory)))
 
         if self._modules:
-            self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
+            self.add_env("XORBITS_LOAD_MODULES", ",".join(self._modules))
 
         if self._path_environ:
             self.add_env("MARS_YARN_PATH", self._path_environ)
