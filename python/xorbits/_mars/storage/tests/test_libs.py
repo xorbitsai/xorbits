@@ -212,8 +212,8 @@ async def test_base_operations(storage_context):
     put_info3 = await storage.put(s)
     get_data3 = await storage.get(put_info3.object_id)
     assert isinstance(get_data3, SparseMatrix)
-    np.testing.assert_array_equal(get_data3.toarray(), s1.A)
-    np.testing.assert_array_equal(get_data3.todense(), s1.A)
+    np.testing.assert_array_equal(get_data3.toarray(), s1.toarray())
+    np.testing.assert_array_equal(get_data3.todense(), s1.toarray())
 
 
 @pytest.mark.asyncio

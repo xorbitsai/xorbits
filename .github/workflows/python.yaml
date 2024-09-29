@@ -91,7 +91,7 @@ jobs:
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
           - { os: ubuntu-latest, module: vineyard, python-version: 3.11 }
-          - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
+          - { os: ubuntu-latest, module: external-storage, python-version: 3.11 }
           # always test compatibility with the latest version
           # - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
