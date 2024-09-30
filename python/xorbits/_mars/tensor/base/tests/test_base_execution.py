@@ -22,6 +22,7 @@ from .... import dataframe as md
 from .... import execute, fetch
 from .... import tensor as mt
 from ....tests.core import require_cupy
+from ....utils import is_numpy_2
 from ...datasource import arange, ones, tensor, zeros
 from .. import (
     argpartition,
@@ -424,10 +425,10 @@ def test_expand_dims_execution(setup):
     res = y.execute().fetch()
     assert np.array_equal(res, np.expand_dims(raw_data, -4)) is True
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError if is_numpy_2() else np.AxisError):
         expand_dims(x, -5)
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError if is_numpy_2() else np.AxisError):
         expand_dims(x, 4)
 
 
