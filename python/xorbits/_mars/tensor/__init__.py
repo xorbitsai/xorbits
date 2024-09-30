@@ -303,12 +303,7 @@ from .core import Tensor
 # noinspection PyUnresolvedReferences
 from ..core import ExecutableTuple
 
-from numpy import __version__ as np_ver
-
-if np_ver >= "2.0.0":
-    from numpy.exceptions import AxisError
-else:
-    from numpy import AxisError
+from numpy.exceptions import AxisError
 
 # noinspection PyUnresolvedReferences
 from numpy import (
