@@ -1,10 +1,10 @@
 .. _loading_data:
 
 ==============
-Loading data
+Loading Data
 ==============
 
-Recommended data formats
+Recommended Data Formats
 -------------------------
 
 Xorbits supports reading data from various data sources, including csv, parquet, sql, xml and other data formats,

@@ -11,7 +11,7 @@ LGBMClassifier
 Constructor
 ~~~~~~~~~~~
 .. autosummary::
-    :toctree: _generate/
+    :toctree: generated/
 
     LGBMClassifier
 
@@ -19,7 +19,7 @@ Constructor
 Attributes
 ~~~~~~~~~~
 .. autosummary::
-    :toctree: _generate/
+    :toctree: generated/
 
     LGBMClassifier.fit
     LGBMClassifier.get_params
@@ -37,7 +37,7 @@ LGBMRegressor
 Constructor
 ~~~~~~~~~~~
 .. autosummary::
-    :toctree: _generate/
+    :toctree: generated/
 
     LGBMRegressor
 
@@ -45,7 +45,7 @@ Constructor
 Attributes
 ~~~~~~~~~~
 .. autosummary::
-    :toctree: _generate/
+    :toctree: generated/
 
     LGBMRegressor.fit
     LGBMRegressor.get_params
@@ -63,7 +63,7 @@ LGBMRanker
 Constructor
 ~~~~~~~~~~~
 .. autosummary::
-    :toctree: _generate/
+    :toctree: generated/
 
     LGBMRanker
 
@@ -71,7 +71,7 @@ Constructor
 Attributes
 ~~~~~~~~~~
 .. autosummary::
-    :toctree: _generate/
+    :toctree: generated/
 
     LGBMRanker.fit
     LGBMRanker.get_params

@@ -285,11 +285,11 @@ def test_parse_args():
     """
 
     env = {
-        "MARS_LOAD_MODULES": "extra.module",
-        "MARS_TASK_DETAIL": task_detail,
-        "MARS_CACHE_MEM_SIZE": "20M",
-        "MARS_PLASMA_DIRS": "/dev/shm",
-        "MARS_SPILL_DIRS": "/tmp",
+        "XORBITS_LOAD_MODULES": "extra.module",
+        "XORBITS_TASK_DETAIL": task_detail,
+        "XORBITS_CACHE_MEM_SIZE": "20M",
+        "XORBITS_PLASMA_DIRS": "/dev/shm",
+        "XORBITS_SPILL_DIRS": "/tmp",
     }
     args = app.parse_args(parser, ["-p", "10324"], env)
     assert args.host == "worker1"
@@ -366,7 +366,7 @@ def test_parse_third_party_modules():
             "worker": ["worker.module"],
         }
     }
-    env = {"MARS_LOAD_MODULES": "extra.module"}
+    env = {"XORBITS_LOAD_MODULES": "extra.module"}
 
     parser = argparse.ArgumentParser(description="TestService")
     app = WorkerCommandRunner()

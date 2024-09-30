@@ -90,8 +90,8 @@ jobs:
           - { os: ubuntu-latest, module: learn, python-version: 3.9 }
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
-          - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
-          - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
+          - { os: ubuntu-latest, module: vineyard, python-version: 3.11 }
+          - { os: ubuntu-latest, module: external-storage, python-version: 3.11 }
           # always test compatibility with the latest version
           # - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
@@ -131,7 +131,9 @@ jobs:
     - name: Install ucx dependencies
       if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.module != 'doc-build') }}
       run: |
-        conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
+        # ucx-py move to ucxx and ucxx-cu12 can be run on CPU
+        # conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
+        pip install ucxx-cu12
     - name: Install libomp (macOS)
       if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-13' }}
       run: brew install libomp
@@ -275,7 +277,7 @@ jobs:
       run: |
         source activate ${{ env.CONDA_ENV }}
         pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.8.*
-        pip install ucx-py-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
+        pip install ucxx-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
           pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
           pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
         pip install -U xoscar

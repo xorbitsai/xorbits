@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import asyncio
+import logging
 import os
 import uuid
 from typing import Dict, List, Optional, Tuple
@@ -24,6 +25,8 @@ from ..lib.filesystem import FileSystem, LocalFileSystem, get_fs
 from ..utils import implements, mod_hash
 from .base import ObjectInfo, StorageBackend, StorageLevel, register_storage_backend
 from .core import StorageFileObject
+
+logger = logging.getLogger(__name__)
 
 
 @register_storage_backend
@@ -50,6 +53,9 @@ class FileSystemStorage(StorageBackend):
                 f'FileSystemStorage got unexpected config: {",".join(kwargs)}'
             )
 
+        # `root_dirs` is actually a single directory here
+        # but the interface is designed to accept a list of directories
+        # so we need to split it if it's a single directory
         if isinstance(root_dirs, str):
             root_dirs = root_dirs.split(":")
         if isinstance(level, str):
@@ -157,13 +163,13 @@ class AlluxioStorage(FileSystemStorage):
 
     def __init__(
         self,
-        root_dir: str,
+        root_dirs: List[str],
         local_environ: bool,  # local_environ means standalone mode
         level: StorageLevel = None,
         size: int = None,
     ):
         self._fs = AioFilesystem(LocalFileSystem())
-        self._root_dirs = [root_dir]
+        self._root_dirs = root_dirs
         self._level = level
         self._size = size
         self._local_environ = local_environ
@@ -172,29 +178,34 @@ class AlluxioStorage(FileSystemStorage):
     @implements(StorageBackend.setup)
     async def setup(cls, **kwargs) -> Tuple[Dict, Dict]:
         kwargs["level"] = StorageLevel.MEMORY
-        root_dir = kwargs.get("root_dir")
+        root_dirs = kwargs.get("root_dirs")
+        # `root_dirs` is actually a single directory here
+        # but the interface is designed to accept a list of directories
+        # so we need to split it if it's a single directory
+        if isinstance(root_dirs, str):
+            root_dirs = root_dirs.split(":")
         local_environ = kwargs.get("local_environ")
         if local_environ:
             proc = await asyncio.create_subprocess_shell(
                 f"""$ALLUXIO_HOME/bin/alluxio fs mkdir /alluxio-storage
-                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dir} /alluxio-storage
+                $ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse mount {root_dirs[0]} /alluxio-storage
                 """
             )
             await proc.wait()
         params = dict(
-            root_dir=root_dir,
+            root_dirs=root_dirs,
             level=StorageLevel.MEMORY,
             size=None,
             local_environ=local_environ,
         )
-        return params, dict(root_dir=root_dir)
+        return params, dict(root_dirs=root_dirs)
 
     @staticmethod
     @implements(StorageBackend.teardown)
     async def teardown(**kwargs):
-        root_dir = kwargs.get("root_dir")
+        root_dirs = kwargs.get("root_dirs")
         proc = await asyncio.create_subprocess_shell(
-            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dir} /alluxio-storage
+            f"""$ALLUXIO_HOME/integration/fuse/bin/alluxio-fuse unmount {root_dirs[0]} /alluxio-storage
             $ALLUXIO_HOME/bin/alluxio fs rm -R /alluxio-storage
             """
         )
@@ -227,6 +238,11 @@ class JuiceFSStorage(FileSystemStorage):
         kwargs["level"] = StorageLevel.MEMORY
         in_k8s = kwargs.get("in_k8s")
         root_dirs = kwargs.get("root_dirs")
+        # `root_dirs` is actually a single directory here
+        # but the interface is designed to accept a list of directories
+        # so we need to split it if it's a single directory
+        if isinstance(root_dirs, str):
+            root_dirs = root_dirs.split(":")
         params = dict(
             root_dirs=root_dirs,
             level=StorageLevel.MEMORY,
