@@ -118,8 +118,8 @@ elements that we want, instead of the step::
     >>> f = np.sin(x)
 
 
-However, the way of loading and saving arrays is quite different. Please see :ref:`io <routines.io>` for
-detailed info. Here's an example of creating and loading an HDF5 file::
+However, the way of loading and saving arrays is quite different. Here's an example of creating 
+and loading an HDF5 file::
 
     >>> import h5py                            # if you don't have h5py installed, run "pip install h5py" first
     >>> arr = np.random.randn(1000)

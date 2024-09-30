@@ -6,7 +6,7 @@ Learning API
 .. currentmodule:: xorbits.lightgbm
 
 .. autosummary::
-    :toctree: _generate/
+    :toctree: generated/
     
     predict
     predict_proba

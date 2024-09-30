@@ -78,7 +78,7 @@ def test_supervisor_object():
     assert container_envs["MKL_NUM_THREADS"]["value"] == "2"
     assert container_envs["MARS_CPU_TOTAL"]["value"] == "2"
     assert int(container_envs["MARS_MEMORY_TOTAL"]["value"]) == 10 * 1024**3
-    assert container_envs["MARS_LOAD_MODULES"]["value"] == "xorbits.test_mod"
+    assert container_envs["XORBITS_LOAD_MODULES"]["value"] == "xorbits.test_mod"
 
     supervisor_config = XorbitsSupervisorsConfig(
         1,
@@ -126,7 +126,7 @@ def test_worker_object():
     assert container_envs["MKL_NUM_THREADS"]["value"] == "2"
     assert container_envs["MARS_CPU_TOTAL"]["value"] == "2"
     assert int(container_envs["MARS_MEMORY_TOTAL"]["value"]) == 10 * 1024**3
-    assert container_envs["MARS_LOAD_MODULES"]["value"] == "xorbits.test_mod"
+    assert container_envs["XORBITS_LOAD_MODULES"]["value"] == "xorbits.test_mod"
     assert set(container_envs["MARS_SPILL_DIRS"]["value"].split(":")) == {
         "/tmp/empty",
         "/mnt/hostpath0",

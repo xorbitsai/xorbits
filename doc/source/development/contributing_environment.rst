@@ -63,9 +63,6 @@ If no C compiler is installed, or you wish to upgrade, or you're using a differe
 Linux distribution, consult your favorite search engine for compiler installation/update
 instructions.
 
-Let us know if you have any difficulties by opening an issue or reaching out on our contributor
-community, join slack in `Community <https://xorbits.io/community>`_.
-
 Step 2: install Node.js
 -----------------------
 
