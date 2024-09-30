@@ -80,6 +80,7 @@ from ._utils import (  # noqa: F401 # pylint: disable=unused-import
     tokenize_int,
 )
 from .lib.version import parse as parse_version
+from .tensor.utils import is_numpy_2
 from .typing import ChunkType, EntityType, OperandType, TileableType
 
 logger = logging.getLogger(__name__)
@@ -1161,7 +1162,7 @@ def is_object_dtype(dtype: np.dtype) -> bool:
     try:
         return (
             np.issubdtype(dtype, np.object_)
-            or np.issubdtype(dtype, np.unicode_)
+            or np.issubdtype(dtype, np.str_ if is_numpy_2() else np.unicode_)
             or np.issubdtype(dtype, np.bytes_)
         )
     except TypeError:  # pragma: no cover

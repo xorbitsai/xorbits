@@ -82,6 +82,22 @@ parameters.extend(
 @pytest.mark.parametrize("obj,name", parameters)
 def test_docstrings(setup, doctest_namespace, obj, name):
     if name in [
+        "acos",
+        "acosh",
+        "asin",
+        "asinh",
+        "atan",
+        "atan2",
+        "atanh",
+        "bitwise_count",
+        "bitwise_invert",
+        "bitwise_left_shift",
+        "bitwise_right_shift",
+        "concat",
+        "long",
+        "pow",
+        "ulong",
+        "vecdot",
         "DataSource",
         "RankWarning",
         "busday_count",
