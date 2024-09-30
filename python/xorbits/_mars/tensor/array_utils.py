@@ -20,7 +20,7 @@ import numpy as np
 
 from ..lib import sparse
 from ..lib.sparse.core import get_dense_module, issparse
-from ..utils import is_numpy_2, is_same_module, lazy_import
+from ..utils import is_same_module, lazy_import
 
 cp = lazy_import("cupy", rename="cp")
 
@@ -46,9 +46,7 @@ def is_cupy(x):
 def get_device_id(input_data):
     # numpy2.0 added `device` attribute to `np.ndarray`
     # but `np.ndarray.device` doesn't have `id` attribute
-    if hasattr(input_data, "device") and not (
-        is_numpy_2() and isinstance(input_data, np.ndarray)
-    ):
+    if hasattr(input_data, "device") and not isinstance(input_data, np.ndarray):
         return input_data.device.id
     else:
         return -1

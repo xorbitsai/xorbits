@@ -18,7 +18,6 @@ import pytest
 
 from ....core import tile
 from ....core.operand import OperandStage
-from ....utils import is_numpy_2
 from ...datasource import arange, ones, tensor
 from .. import (
     TensorCopyTo,
@@ -578,7 +577,7 @@ def test_unique():
     assert np.isnan(indices.chunks[0].shape[0])
     assert indices.chunks[0].dtype == np.dtype(np.intp)
 
-    with pytest.raises(np.exceptions.AxisError if is_numpy_2() else np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         unique(0.1, axis=1)
 
     raw = np.random.randint(10, size=(10), dtype=np.int64)
@@ -685,7 +684,7 @@ def test_sort():
     with pytest.raises(ValueError):
         sort(a, order=["unknown_field"])
 
-    with pytest.raises(np.exceptions.AxisError if is_numpy_2() else np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         sort(np.random.rand(100), axis=1)
 
     with pytest.raises(ValueError):
@@ -744,7 +743,7 @@ def test_partition():
     with pytest.raises(ValueError):
         partition(a, 4, order=["unknown_field"])
 
-    with pytest.raises(np.exceptions.AxisError if is_numpy_2() else np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         partition(np.random.rand(100), 4, axis=1)
 
     with pytest.raises(ValueError):

@@ -20,9 +20,24 @@ from typing import List
 import pytest
 
 from .... import numpy as xnp
-from ...._mars.utils import is_numpy_2
 
 SKIPPED_NAMES = [
+    "acos",
+    "acosh",
+    "asin",
+    "asinh",
+    "atan",
+    "atan2",
+    "atanh",
+    "bitwise_count",
+    "bitwise_invert",
+    "bitwise_left_shift",
+    "bitwise_right_shift",
+    "concat",
+    "long",
+    "pow",
+    "ulong",
+    "vecdot",
     "DataSource",
     "RankWarning",
     "busday_count",
@@ -120,26 +135,6 @@ SKIPPED_NAMES = [
     "set_state",
     "LinAlgError",
 ]
-
-if is_numpy_2():
-    SKIPPED_NAMES += [
-        "acos",
-        "acosh",
-        "asin",
-        "asinh",
-        "atan",
-        "atan2",
-        "atanh",
-        "bitwise_count",
-        "bitwise_invert",
-        "bitwise_left_shift",
-        "bitwise_right_shift",
-        "concat",
-        "long",
-        "pow",
-        "ulong",
-        "vecdot",
-    ]
 
 
 def run_docstring(

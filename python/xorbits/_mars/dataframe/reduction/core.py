@@ -37,7 +37,7 @@ from ...serialization.serializables import (
     Int32Field,
     StringField,
 )
-from ...utils import is_numpy_2, pd_release_version, tokenize
+from ...utils import pd_release_version, tokenize
 from ..core import SERIES_TYPE
 from ..operands import DATAFRAME_TYPE, DataFrameOperand, DataFrameOperandMixin
 from ..utils import (
@@ -365,10 +365,7 @@ class DataFrameReductionMixin(DataFrameOperandMixin):
                     #  handle pandas Dtypes in the future more carefully.
                     reduced_dtype = np.dtype("O")
                 else:
-                    if is_numpy_2():
-                        reduced_dtype = np.result_type(*dtypes)
-                    else:
-                        reduced_dtype = np.find_common_type(dtypes, [])
+                    reduced_dtype = np.result_type(*dtypes)
 
         if level is not None:
             return self._call_groupby_level(df[reduced_cols], level)

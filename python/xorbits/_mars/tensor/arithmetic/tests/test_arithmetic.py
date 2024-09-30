@@ -18,7 +18,6 @@ import pytest
 import scipy.sparse as sps
 
 from ....core import enter_mode, tile
-from ....utils import is_numpy_2
 from ...core import SparseTensor, Tensor
 from ...datasource import array, empty, ones, tensor
 from ...fetch import TensorFetch
@@ -358,11 +357,7 @@ def test_unify_chunk_add():
 
 def test_frexp():
     t1 = ones((3, 4, 5), chunk_size=2)
-
-    if is_numpy_2():
-        t2 = empty((3, 4, 5), dtype=np.float64, chunk_size=2)
-    else:
-        t2 = empty((3, 4, 5), dtype=np.float64, chunk_size=2)
+    t2 = empty((3, 4, 5), dtype=np.float64, chunk_size=2)
 
     op_type = type(t1.op)
 

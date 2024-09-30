@@ -23,7 +23,6 @@ from ....core import recursive_tile
 from ....dataframe.utils import parse_index
 from ....serialization.serializables import BoolField, BytesField, DictField, KeyField
 from ....tensor.core import TENSOR_TYPE, TensorOrder
-from ....utils import is_numpy_2
 from ...operands import LearnOperand, LearnOperandMixin, OutputType
 
 
@@ -76,10 +75,7 @@ class LGBMPredict(LearnOperand, LearnOperandMixin):
             shape = (self.data.shape[0],)
 
         if self._proba:
-            if is_numpy_2():
-                dtype = np.dtype(np.float64)
-            else:
-                dtype = np.dtype(np.float64)
+            dtype = np.dtype(np.float64)
         elif hasattr(self.model, "classes_"):
             dtype = np.array(self.model.classes_).dtype
         else:

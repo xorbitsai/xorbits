@@ -1161,7 +1161,7 @@ def is_object_dtype(dtype: np.dtype) -> bool:
     try:
         return (
             np.issubdtype(dtype, np.object_)
-            or np.issubdtype(dtype, np.str_ if is_numpy_2() else np.unicode_)
+            or np.issubdtype(dtype, np.str_)
             or np.issubdtype(dtype, np.bytes_)
         )
     except TypeError:  # pragma: no cover
@@ -1865,7 +1865,3 @@ def random_string_and_digits(length: int) -> str:
     return "".join(
         random.choice(string.ascii_letters + string.digits) for _ in range(length)
     )
-
-
-def is_numpy_2():
-    return np.__version__ >= "2.0.0"

@@ -17,6 +17,7 @@ import numbers
 import warnings
 
 import numpy as np
+from numpy.exceptions import ComplexWarning
 
 try:
     from sklearn.exceptions import DataConversionWarning
@@ -24,13 +25,6 @@ try:
 except ImportError:  # pragma: no cover
     check_is_fitted = None
     DataConversionWarning = UserWarning
-
-from ...utils import is_numpy_2
-
-if is_numpy_2():
-    from numpy.exceptions import ComplexWarning
-else:
-    from numpy.core.numeric import ComplexWarning
 
 from ... import dataframe as md
 from ... import tensor as mt
