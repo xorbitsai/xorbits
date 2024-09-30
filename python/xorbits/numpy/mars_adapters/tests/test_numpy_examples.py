@@ -22,7 +22,6 @@ import pytest
 from .... import numpy as xnp
 from ...._mars.utils import is_numpy_2
 
-
 SKIPPED_NAMES = [
     "DataSource",
     "RankWarning",

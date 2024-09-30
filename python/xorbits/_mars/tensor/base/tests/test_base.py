@@ -17,8 +17,8 @@ import numpy as np
 import pytest
 
 from ....core import tile
-from ....utils import is_numpy_2
 from ....core.operand import OperandStage
+from ....utils import is_numpy_2
 from ...datasource import arange, ones, tensor
 from .. import (
     TensorCopyTo,
