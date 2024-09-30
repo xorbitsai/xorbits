@@ -43,7 +43,7 @@ from .... import dataframe as md
 from .... import tensor as mt
 from ....lib.sparse import SparseNDArray
 from ....tests.core import require_cupy
-from ....utils import lazy_import
+from ....utils import is_numpy_2, lazy_import
 from ...lib import nd_grid
 from .. import (
     arange,
@@ -968,13 +968,13 @@ def test_index_trick_execution(setup):
     t = mgrid[0:5, 0:5]
 
     res = t.execute().fetch()
-    expected = np.lib.index_tricks.nd_grid()[0:5, 0:5]
+    expected = np.mgrid[0:5, 0:5]
     np.testing.assert_equal(res, expected)
 
     t = mgrid[-1:1:5j]
 
     res = t.execute().fetch()
-    expected = np.lib.index_tricks.nd_grid()[-1:1:5j]
+    expected = np.mgrid[-1:1:5j]
     np.testing.assert_equal(res, expected)
 
     ogrid = nd_grid(sparse=True)
@@ -982,7 +982,7 @@ def test_index_trick_execution(setup):
     t = ogrid[0:5, 0:5]
 
     res = [o.execute().fetch() for o in t]
-    expected = np.lib.index_tricks.nd_grid(sparse=True)[0:5, 0:5]
+    expected = np.ogrid[0:5, 0:5]
     [np.testing.assert_equal(r, e) for r, e in zip(res, expected)]
 
 
