@@ -43,7 +43,7 @@ from .... import dataframe as md
 from .... import tensor as mt
 from ....lib.sparse import SparseNDArray
 from ....tests.core import require_cupy
-from ....utils import is_numpy_2, lazy_import
+from ....utils import lazy_import
 from ...lib import nd_grid
 from .. import (
     arange,
