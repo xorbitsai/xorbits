@@ -1866,5 +1866,6 @@ def random_string_and_digits(length: int) -> str:
         random.choice(string.ascii_letters + string.digits) for _ in range(length)
     )
 
+
 def is_numpy_2():
     return np.__version__ >= "2.0.0"
