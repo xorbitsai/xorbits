@@ -44,6 +44,8 @@ def is_cupy(x):
 
 
 def get_device_id(input_data):
+    # numpy2.0 added `device` attribute to `np.ndarray`
+    # but `np.ndarray.device` doesn't have `id` attribute
     if hasattr(input_data, "device") and not (
         is_numpy_2() and isinstance(input_data, np.ndarray)
     ):
