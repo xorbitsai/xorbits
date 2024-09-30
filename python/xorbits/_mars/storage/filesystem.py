@@ -163,7 +163,7 @@ class AlluxioStorage(FileSystemStorage):
 
     def __init__(
         self,
-        root_dirs: str,
+        root_dirs: List[str],
         local_environ: bool,  # local_environ means standalone mode
         level: StorageLevel = None,
         size: int = None,
