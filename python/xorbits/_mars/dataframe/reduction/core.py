@@ -21,7 +21,6 @@ from typing import Any, Callable, Dict, List, NamedTuple, Optional
 import numpy as np
 import pandas as pd
 
-from ...tensor.utils import is_numpy_2
 from ...core import (
     ENTITY_TYPE,
     OutputType,
@@ -38,6 +37,7 @@ from ...serialization.serializables import (
     Int32Field,
     StringField,
 )
+from ...tensor.utils import is_numpy_2
 from ...utils import pd_release_version, tokenize
 from ..core import SERIES_TYPE
 from ..operands import DATAFRAME_TYPE, DataFrameOperand, DataFrameOperandMixin
