@@ -21,6 +21,7 @@ from typing import Any, Callable, Dict, List, NamedTuple, Optional
 import numpy as np
 import pandas as pd
 
+from ...tensor.utils import is_numpy_2
 from ...core import (
     ENTITY_TYPE,
     OutputType,
@@ -365,7 +366,10 @@ class DataFrameReductionMixin(DataFrameOperandMixin):
                     #  handle pandas Dtypes in the future more carefully.
                     reduced_dtype = np.dtype("O")
                 else:
-                    reduced_dtype = np.find_common_type(dtypes, [])
+                    if is_numpy_2():
+                        reduced_dtype = np.result_type(*dtypes)
+                    else:
+                        reduced_dtype = np.find_common_type(dtypes, [])
 
         if level is not None:
             return self._call_groupby_level(df[reduced_cols], level)
