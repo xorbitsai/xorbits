@@ -79,7 +79,7 @@ class LGBMPredict(LearnOperand, LearnOperandMixin):
             if is_numpy_2():
                 dtype = np.dtype(np.float64)
             else:
-                dtype = np.dtype(np.float_)
+                dtype = np.dtype(np.float64)
         elif hasattr(self.model, "classes_"):
             dtype = np.array(self.model.classes_).dtype
         else:

@@ -362,7 +362,7 @@ def test_frexp():
     if is_numpy_2():
         t2 = empty((3, 4, 5), dtype=np.float64, chunk_size=2)
     else:
-        t2 = empty((3, 4, 5), dtype=np.float_, chunk_size=2)
+        t2 = empty((3, 4, 5), dtype=np.float64, chunk_size=2)
 
     op_type = type(t1.op)
 

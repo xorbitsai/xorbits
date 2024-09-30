@@ -113,5 +113,5 @@ def ifft(a, n=None, axis=-1, norm=None):
     """
     a = astensor(a)
     validate_fft(a, axis, norm)
-    op = TensorIFFT(n=n, axis=axis, norm=norm, dtype=np.dtype(np.complex_))
+    op = TensorIFFT(n=n, axis=axis, norm=norm, dtype=np.dtype(np.complex128))
     return op(a)

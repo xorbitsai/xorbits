@@ -16,7 +16,6 @@
 import numpy as np
 
 from ... import opcodes as OperandDef
-from ...utils import is_numpy_2
 from ..datasource import tensor as astensor
 from .core import TensorComplexFFTMixin, TensorStandardFFT, validate_fft
 
@@ -112,10 +111,5 @@ def fft(a, n=None, axis=-1, norm=None):
     """
     a = astensor(a)
     validate_fft(a, axis, norm)
-
-    if is_numpy_2():
-        op = TensorFFT(n=n, axis=axis, norm=norm, dtype=np.dtype(np.complex128))
-    else:
-        op = TensorFFT(n=n, axis=axis, norm=norm, dtype=np.dtype(np.complex_))
-
+    op = TensorFFT(n=n, axis=axis, norm=norm, dtype=np.dtype(np.complex128))
     return op(a)
