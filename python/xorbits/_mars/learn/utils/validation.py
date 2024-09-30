@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover
     check_is_fitted = None
     DataConversionWarning = UserWarning
 
-from ...tensor.utils import is_numpy_2
+from ...utils import is_numpy_2
 
 if is_numpy_2():
     from numpy.exceptions import ComplexWarning

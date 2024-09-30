@@ -23,7 +23,7 @@ from ....core import recursive_tile
 from ....dataframe.utils import parse_index
 from ....serialization.serializables import BoolField, BytesField, DictField, KeyField
 from ....tensor.core import TENSOR_TYPE, TensorOrder
-from ....tensor.utils import is_numpy_2
+from ....utils import is_numpy_2
 from ...operands import LearnOperand, LearnOperandMixin, OutputType
 
 

@@ -16,8 +16,8 @@
 import numpy as np
 
 from ... import opcodes as OperandDef
+from ...utils import is_numpy_2
 from ..datasource import tensor as astensor
-from ..utils import is_numpy_2
 from .core import TensorComplexFFTMixin, TensorStandardFFT, validate_fft
 
 

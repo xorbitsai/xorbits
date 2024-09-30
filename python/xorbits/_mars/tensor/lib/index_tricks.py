@@ -18,7 +18,7 @@ import math
 import numpy as np
 from numpy.core.numeric import ScalarType
 
-from ..utils import is_numpy_2
+from ...utils import is_numpy_2
 
 if is_numpy_2():
     from numpy.lib._index_tricks_impl import ndindex
