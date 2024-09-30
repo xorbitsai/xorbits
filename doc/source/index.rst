@@ -20,7 +20,7 @@ the capability to scale tasks without the necessity for extensive knowledge of i
 
 - :ref:`Xorbits Train <xorbits_train_index>`: Train your own state-of-the-art models for ML and DL frameworks such as PyTorch, XGBoost, etc.
 
-- :ref:`Xorbits Inference <xorbits_inference_index>`: Scalable serving to deploy state-of-the-art models. Integrate with the most popular deep learning libraries, like PyTorch, ggml, etc.
+- `Xorbits Inference <https://github.com/xorbitsai/inference>`_: Scalable serving to deploy state-of-the-art models. Integrate with the most popular deep learning libraries, like PyTorch, ggml, etc.
 
 Xorbits features a familiar Python API that supports a variety of libraries, including pandas, NumPy, scikit-learn, PyTorch,
 XGBoost, Xarray, etc. With a simple modification of just one line of code, your pandas workflow can be seamlessly scaled using
@@ -73,3 +73,6 @@ Getting involved
    user_guide/index
    reference/index
    development/index
+
+
+.. _xorbits_inference_index: https://github.com/xorbitsai/inference

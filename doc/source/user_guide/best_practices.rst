@@ -1,7 +1,7 @@
 .. _best_practices:
 
 ==============
-Best Practices & Configuration
+Best Practices
 ==============
 
 Although Xorbits tries to automatically find the optimal performance mode, in some cases, user intervention

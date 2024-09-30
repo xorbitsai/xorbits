@@ -30,10 +30,10 @@ The filesystem can be further divided into two categories: local and distributed
 Examples of local filesystem are local disk or mmap; and distributed filesystems are systems like 
 JuiceFS and Alluxio. 
 
-local
+Local
 ^^^^^
 
-Suppose you want to use the `/tmp`` directory on your local disk as the storage backend. You should 
+Suppose you want to use the `/tmp` directory on your local disk as the storage backend. You should 
 create a YAML configuration file named `file.yml` which specify `backends` and `root_dirs`.
 
 .. code-block:: yaml
@@ -44,7 +44,7 @@ create a YAML configuration file named `file.yml` which specify `backends` and `
     disk:
         root_dirs: "/tmp"
 
-Start the worker using the `-f file.yml` option:
+Start the worker using the :code:`-f file.yml` option:
 
 .. code-block:: bash
 
@@ -54,16 +54,20 @@ Start the worker using the `-f file.yml` option:
 mmap
 ^^^^
 
-mmap (memory-mapped file) is a technique that maps a filesystem file or a device into memory. Basically, 
-the performance of mmap is between memory and filesystem. When the data cannot fit in the RAM, mmap will 
-spill data to the filesystem.
+mmap (memory-mapped file) is a technique that maps a filesystem file or a device into RAM. Pandas may 
+encounter OOM(Out-of-Memory) issues when processing large datasets. Xorbits' mmap storage backend enables 
+users to handle datasets much larger than the available RAM capacity. Basically, Xorbits's mmap controls 
+the amount of data in runtime memory at a stable level, loading data from disk when necessary. Therefore, 
+mmap can handle datasets that are sizes of the available disk space.
 
-Xorbits's mmap now can run on a single-node setup. Just initialize in the `xorbits.init()` method like:
+Xorbits's mmap now can run on a single-node setup. Just initialize in the :code:`xorbits.init()` method like
+and specify :code:`root_dirs` to a disk file path:
 
 .. code-block:: python
     
     import xorbits
     xorbits.init(storage_config={"mmap": {"root_dirs": "<your_dir>"}})
+
 
 
 Distributed Filesystems
@@ -76,7 +80,7 @@ path, the data is first cached in memory, and then persisted in a remote underly
 such as HDFS or S3.
 
 Suppose you mount Alluxio or JuiceFS on `/mnt/xorbits`. You can write a YAML file just like the local filesystem
-and start the worker by adding `-f file.yml` option.
+and start the worker by adding :code:`-f file.yml` option.
 
 .. code-block:: yaml
     
@@ -90,7 +94,7 @@ and start the worker by adding `-f file.yml` option.
 GPU
 ---
 
-If you want to run tasks on GPUs, add the `gpu=True` parameter to the data loading method. For example:
+If you want to run tasks on GPUs, add the :code:`gpu=True` parameter to the data loading method. For example:
 
 .. code-block:: python
     

@@ -1,12 +1,12 @@
 <div align="center">
-  <img width="77%" alt="" src="https://doc.xorbits.io/en/latest/_static/xorbits.svg"><br>
+  <img width="77%" alt="" src="https://xorbits.readthedocs.io/en/latest/_static/xorbits.svg"><br>
 </div>
 
 [![PyPI Latest Release](https://img.shields.io/pypi/v/xorbits.svg?style=for-the-badge)](https://pypi.org/project/xorbits/)
 [![License](https://img.shields.io/pypi/l/xorbits.svg?style=for-the-badge)](https://github.com/xorbitsai/xorbits/blob/main/LICENSE)
 [![Coverage](https://img.shields.io/codecov/c/github/xorbitsai/xorbits?style=for-the-badge)](https://codecov.io/gh/xorbitsai/xorbits)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/xorbitsai/xorbits/python.yaml?branch=main&style=for-the-badge&label=GITHUB%20ACTIONS&logo=github)](https://actions-badge.atrox.dev/xorbitsai/xorbits/goto?ref=main)
-[![Doc](https://readthedocs.org/projects/xorbits/badge/?version=latest&style=for-the-badge)](https://doc.xorbits.io)
+[![Doc](https://readthedocs.org/projects/xorbits/badge/?version=latest&style=for-the-badge)](https://xorbits.readthedocs.io/)
 [![Slack](https://img.shields.io/badge/join_Slack-781FF5.svg?logo=slack&style=for-the-badge)](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg)
 [![Twitter](https://img.shields.io/twitter/follow/xorbitsio?logo=twitter&style=for-the-badge)](https://twitter.com/xorbitsio)
 
@@ -16,7 +16,7 @@ Xorbits is an open-source computing framework that makes it easy to scale data s
 from data preprocessing to tuning, training, and model serving. Xorbits can leverage multi-cores or GPUs to accelerate
 computation on a single machine or scale out up to thousands of machines to support processing terabytes of data and training or serving large models.
 
-Xorbits provides a suite of best-in-class [libraries](https://doc.xorbits.io/en/latest/libraries/index.html) for data
+Xorbits provides a suite of best-in-class [libraries](https://xorbits.readthedocs.io/en/latest/libraries/index.html) for data
 scientists and machine learning practitioners. Xorbits provides the capability to scale tasks without the necessity for
 extensive knowledge of infrastructure.
 
@@ -40,15 +40,15 @@ You can keep using your existing notebooks and still enjoy a significant speed b
 
 ### Process large datasets that pandas can't
 
-Xorbits can [leverage all of your computational cores](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/pandas.html#boosting-performance-and-scalability-with-xorbits). 
-It is especially beneficial for handling [larger datasets](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/pandas.html#overcoming-memory-limitations-in-large-datasets-with-xorbits),
+Xorbits can [leverage all of your computational cores](https://xorbits.readthedocs.io/en/latest/getting_started/why_xorbits/pandas.html#boosting-performance-and-scalability-with-xorbits). 
+It is especially beneficial for handling [larger datasets](https://xorbits.readthedocs.io/en/latest/getting_started/why_xorbits/pandas.html#overcoming-memory-limitations-in-large-datasets-with-xorbits),
 where pandas may slow down or run out of memory.
 
 ### Lightning-fast speed
 
 According to our benchmark tests, Xorbits surpasses other popular pandas API frameworks in speed and scalability. 
-See our [performance comparison](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/comparisons.html#performance-comparison)
-and [explanation](https://doc.xorbits.io/en/latest/getting_started/why_xorbits/fast.html).
+See our [performance comparison](https://xorbits.readthedocs.io/en/latest/getting_started/why_xorbits/comparisons.html#performance-comparison)
+, [explanation](https://xorbits.readthedocs.io/en/latest/getting_started/why_xorbits/fast.html) and [research paper](https://arxiv.org/abs/2401.00865).
 
 ### Leverage the Python ecosystem with native integrations
 
@@ -66,10 +66,9 @@ pip install xorbits
 ```
 
 ## Other resources
-* [Documentation](https://doc.xorbits.io)
-* [Examples and Tutorials](https://doc.xorbits.io/en/latest/getting_started/examples.html)
-* [Performance Benchmarks](https://xorbits.io/benchmark)
-* [Development Guide](https://doc.xorbits.io/en/latest/development/index.html)
+* [Documentation](https://xorbits.readthedocs.io)
+* [Performance Benchmarks](https://xorbits.readthedocs.io/en/latest/getting_started/why_xorbits/comparisons.html#performance-comparison)
+* [Development Guide](https://xorbits.readthedocs.io/en/latest/development/index.html)
 * [Research Paper on Xorbits' Internals](https://arxiv.org/abs/2401.00865)
 
 ## License
@@ -97,24 +96,24 @@ with other upcoming ones we will propose. Stay tuned!
 
 | Platform                                                                                      | Purpose                                            |
 |-----------------------------------------------------------------------------------------------|----------------------------------------------------|
-| [Discourse Forum](https://discuss.xorbits.io)                                                 | Asking usage questions and discussing development. |
 | [Github Issues](https://github.com/xorbitsai/xorbits/issues)                                  | Reporting bugs and filing feature requests.        |
-| [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg) | Collaborating with other Xorbits users.            |
 | [StackOverflow](https://stackoverflow.com/questions/tagged/xorbits)                           | Asking questions about how to use Xorbits.         |
-| [Twitter](https://twitter.com/xorbitsio)                                                      | Staying up-to-date on new features.                |
+| [Slack](https://join.slack.com/t/xorbitsio/shared_invite/zt-1o3z9ucdh-RbfhbPVpx7prOVdM1CAuxg) | Collaborating with other Xorbits users.            |
 
 ## Citing Xorbits
 
-If Xorbits could help you, please cite our paper which is accepted by ICDE 2024 Industry and Applications Track:
+If Xorbits could help you, please cite our paper using the following metadata:
 
 ```
-@article{lu2023xorbits,
-  title={Xorbits: Automating Operator Tiling for Distributed Data Science}, 
-  author={Weizheng Lu and Kaisheng He and Xuye Qin and Chengjie Li and Zhong Wang and Tao Yuan and Feng Zhang and Yueguo Chen and Xiaoyong Du},
-  year={2023},
-  archivePrefix={arXiv},
-  url={https://doi.org/10.48550/arXiv.2401.00865},
-  eprinttype={arXiv}，
-  eprint={2401.00865},
+@inproceedings{lu2024Xorbits,
+  title = {Xorbits: Automating Operator Tiling for Distributed Data Science},
+  shorttitle = {Xorbits},
+  booktitle = {2024 {{IEEE}} 40th {{International Conference}} on {{Data Engineering}} ({{ICDE}})},
+  author = {Lu, Weizheng and He, Kaisheng and Qin, Xuye and Li, Chengjie and Wang, Zhong and Yuan, Tao and Liao, Xia and Zhang, Feng and Chen, Yueguo and Du, Xiaoyong},
+  year = {2024},
+  month = may,
+  pages = {5211--5223},
+  issn = {2375-026X},
+  doi = {10.1109/ICDE60146.2024.00392},
 }
 ```
