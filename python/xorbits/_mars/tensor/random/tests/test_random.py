@@ -205,7 +205,7 @@ def test_permutation():
         == x.cix[1, 0].inputs[0].inputs[0].inputs[0].op.seed
     )
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         pytest.raises(permutation("abc"))
 
 

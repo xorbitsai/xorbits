@@ -558,7 +558,7 @@ def test_compress_execution(setup):
     expected = np.compress([False, True], data, axis=1)
     np.testing.assert_array_equal(res, expected)
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         compress([0, 1, 1], a, axis=1)
 
     # test order

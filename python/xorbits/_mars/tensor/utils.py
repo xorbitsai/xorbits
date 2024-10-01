@@ -119,7 +119,7 @@ def gen_random_seeds(n, random_state):
 
 def validate_axis(ndim, axis, argname=None):
     if axis >= ndim or axis < -ndim:
-        raise np.AxisError(axis, ndim=ndim, msg_prefix=argname)
+        raise np.exceptions.AxisError(axis, ndim=ndim, msg_prefix=argname)
 
     return axis if axis >= 0 else ndim + axis
 

@@ -153,14 +153,15 @@ def test_all_any_execution(setup):
 
     arr = tensor(raw, chunk_size=3)
 
-    assert raw.A.all() == arr.all().execute().fetch()
-    assert raw.A.any() == arr.any().execute().fetch()
+    assert raw.toarray().all() == arr.all().execute().fetch()
+    assert raw.toarray().any() == arr.any().execute().fetch()
 
     # test string dtype
+    # `all()` and `any()` now returns booleans for object arrays in numpy2.0+
     a = tensor(list("abcdefghi"), dtype=object)
-    assert a.all().execute().fetch() == "i"
+    assert a.all().execute().fetch()
     a = tensor(list("abcdefghi"), dtype=object, chunk_size=2)
-    assert a.any().execute().fetch() == "a"
+    assert a.any().execute().fetch()
 
 
 def test_mean_execution(setup):

@@ -77,7 +77,7 @@ def expand_dims(a, axis):
     a = astensor(a)
 
     if axis > a.ndim or axis < -a.ndim - 1:
-        raise np.AxisError(
+        raise np.exceptions.AxisError(
             f"Axis must be between -{a.ndim + 1} and {a.ndim}, got {axis}"
         )
 

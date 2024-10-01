@@ -30,9 +30,7 @@ rng = check_random_state(42)
 X = rng.randint(-100, 20, np.prod(shape)).reshape(shape)
 X = sp.csr_matrix(np.maximum(X, 0), dtype=np.float64)
 X.data[:] = 1 + np.log(X.data)
-Xdense = X.A
-n_samples = n_samples
-n_features = n_features
+Xdense = X.toarray()
 
 
 def test_attributes(setup):

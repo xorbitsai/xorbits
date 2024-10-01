@@ -45,13 +45,13 @@ def test_base_reduction():
         res = f(ones((10, 8), chunk_size=3), axis=1)
         assert res.shape == (10,)
 
-        with pytest.raises(np.AxisError):
+        with pytest.raises(np.exceptions.AxisError):
             f(ones((10, 8), chunk_size=3), axis=2)
 
         res = f(ones((10, 8), chunk_size=3), axis=-1)
         assert res.shape == (10,)
 
-        with pytest.raises(np.AxisError):
+        with pytest.raises(np.exceptions.AxisError):
             f(ones((10, 8), chunk_size=3), axis=-3)
 
         res = f(ones((10, 8), chunk_size=3), keepdims=True)
@@ -96,13 +96,13 @@ def test_mean_reduction():
     res = mean(ones((10, 8), chunk_size=3), axis=1)
     assert res.shape == (10,)
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         mean(ones((10, 8), chunk_size=3), axis=2)
 
     res = mean(ones((10, 8), chunk_size=3), axis=-1)
     assert res.shape == (10,)
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         mean(ones((10, 8), chunk_size=3), axis=-3)
 
     res = mean(ones((10, 8), chunk_size=3), keepdims=True)
@@ -161,9 +161,9 @@ def test_arg_reduction():
     pytest.raises(
         TypeError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=(0, 1))
     )
-    pytest.raises(np.AxisError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=3))
+    pytest.raises(np.exceptions.AxisError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=3))
     pytest.raises(
-        np.AxisError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=-4)
+        np.exceptions.AxisError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=-4)
     )
 
 
@@ -188,9 +188,9 @@ def test_cum_reduction():
     assert res1.shape == (10, 8, 8)
     assert res2.shape == (10, 8, 8)
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         cumsum(ones((10, 8), chunk_size=3), axis=2)
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         cumsum(ones((10, 8), chunk_size=3), axis=-3)
 
 

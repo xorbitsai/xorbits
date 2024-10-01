@@ -207,7 +207,7 @@ def stack(tensors, axis=0, out=None):
     if axis < 0:
         axis = ndim + axis + 1
     if axis > ndim or axis < 0:
-        raise np.AxisError(
+        raise np.exceptions.AxisError(
             f"axis {raw_axis} is out of bounds for tensor of dimension {ndim}"
         )
 

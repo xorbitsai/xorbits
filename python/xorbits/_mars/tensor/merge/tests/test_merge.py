@@ -85,7 +85,7 @@ def test_stack():
         raw_arrs2 = [ones((3, 4), chunk_size=2), ones((4, 3), chunk_size=2)]
         stack(raw_arrs2)
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         stack(raw_arrs, axis=3)
 
     arr5 = tile(stack(raw_arrs, -1))
@@ -94,7 +94,7 @@ def test_stack():
     arr6 = tile(stack(raw_arrs, -3))
     assert arr6.nsplits == ((1,) * 10, (2, 1), (2, 2))
 
-    with pytest.raises(np.AxisError):
+    with pytest.raises(np.exceptions.AxisError):
         stack(raw_arrs, axis=-4)
 
     with pytest.raises(TypeError):
