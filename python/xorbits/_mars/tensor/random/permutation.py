@@ -232,7 +232,9 @@ def permutation(random_state, x, axis=0, chunk_size=None):
     else:
         x = astensor(x, chunk_size=chunk_size)
         if x.ndim < 1:
-            raise np.exceptions.AxisError("x must be an integer or at least 1-dimensional")
+            raise np.exceptions.AxisError(
+                "x must be an integer or at least 1-dimensional"
+            )
 
     axis = validate_axis(x.ndim, axis)
     seed = gen_random_seeds(1, random_state.to_numpy())[0]
