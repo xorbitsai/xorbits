@@ -476,7 +476,7 @@ def test_series_apply_execute(setup):
 
     r = series.apply(lambda x: [x, x + 1], convert_dtype=False)
     result = r.execute().fetch()
-    expected = s_raw.apply(lambda x: [x, x + 1], convert_dtype=False)
+    expected = s_raw.apply(lambda x: [x, x + 1]).astype(object)
     pd.testing.assert_series_equal(result, expected)
 
     s_raw2 = pd.Series([np.array([1, 2, 3]), np.array([4, 5, 6])])
@@ -502,7 +502,7 @@ def test_series_apply_closure_execute(setup):
 
     r = series.apply(closure, convert_dtype=False)
     result = r.execute().fetch()
-    expected = s_raw.apply(closure, convert_dtype=False)
+    expected = s_raw.apply(closure).astype(object)
     pd.testing.assert_series_equal(result, expected)
 
     class callable_series:
@@ -518,7 +518,7 @@ def test_series_apply_closure_execute(setup):
     cs = callable_series()
     r = series.apply(cs, convert_dtype=False)
     result = r.execute().fetch()
-    expected = s_raw.apply(cs, convert_dtype=False)
+    expected = s_raw.apply(cs).astype(object)
     pd.testing.assert_series_equal(result, expected)
 
 
@@ -528,9 +528,9 @@ def test_apply_with_arrow_dtype_execution(setup):
     df1 = table.to_pandas(types_mapper=pd.ArrowDtype)
     df = from_pandas_df(df1)
 
-    r = df.apply(lambda row: str(row[0]) + row[1], axis=1)
+    r = df.apply(lambda row: str(row.iloc[0]) + row.iloc[1], axis=1)
     result = r.execute().fetch()
-    expected = df1.apply(lambda row: str(row[0]) + row[1], axis=1)
+    expected = df1.apply(lambda row: str(row.iloc[0]) + row.iloc[1], axis=1)
     pd.testing.assert_series_equal(result, expected)
 
     s1 = df1["b"]

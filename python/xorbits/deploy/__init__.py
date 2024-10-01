@@ -118,7 +118,7 @@ def init(
         if len(backends) > 1 or len(backends) == 0:
             raise ValueError("Only support one storage backend.")
         backend = backends[0]
-        if backend not in ["shared_memory", "mmap"]:
+        if backend not in ["shared_memory", "mmap", "disk"]:
             raise ValueError(
                 "Only support one of these storage backends: `shared_memory`, `mmap`."
             )

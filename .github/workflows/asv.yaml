@@ -54,7 +54,7 @@ jobs:
         if: ${{ steps.build.outcome == 'success' }}
 
       - name: Publish benchmarks artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Benchmarks log
           path: benchmarks/asv_bench/results

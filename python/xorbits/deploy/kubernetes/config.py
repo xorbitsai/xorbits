@@ -759,7 +759,7 @@ class XorbitsReplicationConfig(ReplicationConfig, abc.ABC):
             self.add_env("MARS_MEMORY_TOTAL", str(int(self._memory)))
 
         if self._modules:
-            self.add_env("MARS_LOAD_MODULES", ",".join(self._modules))
+            self.add_env("XORBITS_LOAD_MODULES", ",".join(self._modules))
 
         if self._external_storage == "juicefs":
             self.add_env("XORBITS_EXTERNAL_STORAGE", "juicefs")

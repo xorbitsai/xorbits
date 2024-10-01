@@ -84,11 +84,11 @@ def test_dataframe_fill_na_execution(setup):
 
     # test forward fill in axis=0 without limit
     r = df.fillna(method="pad")
-    pd.testing.assert_frame_equal(r.execute().fetch(), df_raw.fillna(method="pad"))
+    pd.testing.assert_frame_equal(r.execute().fetch(), df_raw.ffill())
 
     # test backward fill in axis=0 without limit
     r = df.fillna(method="backfill")
-    pd.testing.assert_frame_equal(r.execute().fetch(), df_raw.fillna(method="backfill"))
+    pd.testing.assert_frame_equal(r.execute().fetch(), df_raw.bfill())
 
     # test forward fill in axis=1 without limit
     r = df.ffill(axis=1)

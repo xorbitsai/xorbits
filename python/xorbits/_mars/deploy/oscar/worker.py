@@ -24,7 +24,7 @@ from .pool import create_worker_actor_pool
 
 
 class WorkerCommandRunner(OscarCommandRunner):
-    command_description = "Mars Worker"
+    command_description = "Xorbits Worker"
     node_role = NodeRole.WORKER
 
     def __init__(self):
@@ -55,7 +55,7 @@ class WorkerCommandRunner(OscarCommandRunner):
             self.config.get("cluster", {}).get("backend", "fixed") == "fixed"
             and not args.supervisors
         ):  # pragma: no cover
-            raise ValueError("--supervisors is needed to start Mars Worker")
+            raise ValueError("--supervisors is needed to start Xorbits Worker")
 
         args.supervisors = self._process_supervisors_addr_scheme(args.supervisors)
 
@@ -86,13 +86,13 @@ class WorkerCommandRunner(OscarCommandRunner):
         backends = storage_config["backends"] = storage_config.get("backends", [])
         plasma_config = storage_config["plasma"] = storage_config.get("plasma", {})
         disk_config = storage_config["disk"] = storage_config.get("disk", {})
-        if "MARS_CACHE_MEM_SIZE" in environ:
-            plasma_config["store_memory"] = environ["MARS_CACHE_MEM_SIZE"]
-        if "MARS_PLASMA_DIRS" in environ:
-            plasma_config["plasma_directory"] = environ["MARS_PLASMA_DIRS"]
-        if "MARS_SPILL_DIRS" in environ:
+        if "XORBITS_CACHE_MEM_SIZE" in environ:
+            plasma_config["store_memory"] = environ["XORBITS_CACHE_MEM_SIZE"]
+        if "XORBITS_PLASMA_DIRS" in environ:
+            plasma_config["plasma_directory"] = environ["XORBITS_PLASMA_DIRS"]
+        if "XORBITS_SPILL_DIRS" in environ:
             backends.append("disk")
-            disk_config["root_dirs"] = environ["MARS_SPILL_DIRS"]
+            disk_config["root_dirs"] = environ["XORBITS_SPILL_DIRS"]
 
         return args
 

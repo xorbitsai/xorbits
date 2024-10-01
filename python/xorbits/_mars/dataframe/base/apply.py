@@ -107,9 +107,10 @@ class ApplyOperand(
                 **op.kwds,
             )
         else:
-            result = input_data.apply(
-                func, convert_dtype=op.convert_dtype, args=op.args, **op.kwds
-            )
+            if op.convert_dtype:
+                result = input_data.apply(func, args=op.args, **op.kwds)
+            else:
+                result = input_data.apply(func, args=op.args, **op.kwds).astype(object)
         ctx[out.key] = result
 
     @classmethod

@@ -22,7 +22,8 @@ def __dir__():
     try:
         import lightgbm
     except ImportError:  # pragma: no cover
-        raise AttributeError("lightgbm is required but not installed.")
+        # raise AttributeError("lightgbm is required but not installed.")
+        lightgbm = None
     from .mars_adapters import MARS_LIGHTGBM_CALLABLES
 
     return list(MARS_LIGHTGBM_CALLABLES.keys())
@@ -34,7 +35,8 @@ def __getattr__(name: str):
     try:
         import lightgbm
     except ImportError:  # pragma: no cover
-        raise AttributeError("lightgbm is required but not installed.")
+        # raise AttributeError("lightgbm is required but not installed.")
+        lightgbm = None
     from .mars_adapters import MARS_LIGHTGBM_CALLABLES
 
     if name in MARS_LIGHTGBM_CALLABLES:
