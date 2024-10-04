@@ -60,8 +60,11 @@ when creating a Xorbits DataFrame or Array.
 
     import numpy as np
     import pandas as pd
+    import xorbits.numpy as xnp
     import xorbits.pandas as xpd
     
+    a = xnp.ones((100, 100), chunk_size=30)
+
     data = pd.DataFrame(
         np.random.rand(10, 10), index=np.arange(10), columns=np.arange(3, 13)
     )
