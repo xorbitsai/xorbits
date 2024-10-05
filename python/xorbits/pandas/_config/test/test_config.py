@@ -42,7 +42,7 @@ def test_options_execute(setup):
 
     # test reset options
     xpd.reset_option("chunk_store_limit")
-    assert xpd.get_option("chunk_store_limit") == 134217728
+    assert xpd.get_option("chunk_store_limit") == 536870912
     xpd.reset_option("display.max_rows")
     assert xpd.get_option("display.max_rows") == 60
 
