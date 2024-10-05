@@ -103,6 +103,25 @@ def test_config_copy():
     assert target_cfg.a.b.c == 1
 
 
+def test_get_set_config():
+    cfg = Config()
+    cfg.register_option("a.b.c", 1, validator=is_integer)
+
+    assert cfg.get_option("a.b.c") == 1
+
+    with pytest.raises(AttributeError):
+        cfg.get_option("non-exist")
+
+    cfg.set_option("a.b.c", 2)
+    assert cfg.get_option("a.b.c") == 2
+
+    with pytest.raises(ValueError):
+        cfg.set_option("a.b.c", "foo")
+
+    with pytest.raises(AttributeError):
+        cfg.set_option("non-exist", "foo")
+
+
 def test_pickle_config():
     cfg = Config()
     cfg.register_option("a.b.c", 1)

@@ -61,16 +61,16 @@ def test_options_execute(setup):
         xpd.set_option("display.max_rows", "100")
 
     # test error option
-    with pytest.raises(pd._config.config.OptionError):
+    with pytest.raises(AttributeError):
         xpd.set_option("non-exist", None)
 
-    with pytest.raises(pd._config.config.OptionError):
+    with pytest.raises(AttributeError):
         xpd.get_option("non-exist")
 
-    with pytest.raises(pd._config.config.OptionError):
+    with pytest.raises(AttributeError):
         xpd.reset_option("non-exist")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AttributeError):
         xpd.option_context("non-exist", 100)
 
     # test invalid type

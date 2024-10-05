@@ -17,8 +17,8 @@ from typing import Any
 
 import pandas as pd
 
-from ..._mars.config import option_context as mars_option_context
-from ..._mars.config import options
+from ..._mars.config import option_context as xorbits_option_context
+from ..._mars.config import options as xorbits_options
 from ...core.utils.docstring import attach_module_callable_docstring
 
 
@@ -26,10 +26,12 @@ def set_option(pat: Any, value: Any) -> None:
     try:
         attr_list = pat.split(".")
         if len(attr_list) == 1:
-            getattr(options, attr_list[0])
-            setattr(options, attr_list[0], value)
+            getattr(xorbits_options, attr_list[0])
+            setattr(xorbits_options, attr_list[0], value)
         else:
-            setattr(reduce(getattr, attr_list[:-1], options), attr_list[-1], value)
+            setattr(
+                reduce(getattr, attr_list[:-1], xorbits_options), attr_list[-1], value
+            )
     except:
         pd.set_option(pat, value)
 
@@ -37,14 +39,14 @@ def set_option(pat: Any, value: Any) -> None:
 def get_option(pat: Any) -> Any:
     try:
         attr_list = pat.split(".")
-        return reduce(getattr, attr_list, options)
+        return reduce(getattr, attr_list, xorbits_options)
     except:
         return pd.get_option(pat)
 
 
 def reset_option(pat) -> None:
     try:
-        options.reset_option(pat)
+        xorbits_options.reset_option(pat)
     except:
         pd.reset_option(pat)
 
@@ -57,19 +59,24 @@ class option_context:
     def __init__(self, *args):
         # convert tuple to dict
         context_dict = dict(args[i : i + 2] for i in range(0, len(args), 2))
-        mars_dict = {}
+        xorbits_dict = {}
         pd_dict = {}
         for key, value in context_dict.items():
             try:
                 pd.get_option(key)
                 pd_dict[key] = value
-            except:
-                mars_dict[key] = value
-
+            except pd._config.config.OptionError:
+                try:
+                    xorbits_options.get_option(key)
+                    xorbits_dict[key] = value
+                except AttributeError:
+                    raise AttributeError(
+                        f"No such keys(s): '{key}' in pandas and xorbits."
+                    )
         self.option_contexts = None
         self.pandas_option_context = None
-        if mars_dict:
-            self.option_contexts = mars_option_context(mars_dict)
+        if xorbits_dict:
+            self.option_contexts = xorbits_option_context(xorbits_dict)
         if pd_dict:
             self.pandas_option_context = pd.option_context(
                 *tuple(item for sublist in pd_dict.items() for item in sublist)

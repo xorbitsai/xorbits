@@ -21,7 +21,7 @@ import threading
 import warnings
 from copy import deepcopy
 from functools import reduce
-from typing import Dict, Union
+from typing import Any, Dict, Union
 
 _DEFAULT_REDIRECT_WARN = (
     "Option {source} has been replaced by {target} and "
@@ -243,6 +243,42 @@ class Config:
     def copy(self):
         new_options = Config(deepcopy(self._config))
         return new_options
+
+    def get_option(self, option: str) -> Any:
+        splits = option.split(".")
+        conf = self._config
+        for name in splits[:-1]:
+            config = conf.get(name)
+            if not isinstance(config, dict):
+                raise AttributeError(f"No such keys(s): {option}.")
+            else:
+                conf = config
+
+        key = splits[-1]
+        if key not in conf:
+            raise AttributeError(f"No such keys(s): {option}.")
+        (value, _) = conf.get(key)
+        return value
+
+    def set_option(self, option: str, value: Any) -> Any:
+        splits = option.split(".")
+        conf = self._config
+        for name in splits[:-1]:
+            config = conf.get(name)
+            if not isinstance(config, dict):
+                raise AttributeError(f"No such keys(s): {option}.")
+            else:
+                conf = config
+
+        key = splits[-1]
+        if key not in conf:
+            raise AttributeError(f"No such keys(s): {option}.")
+        (old_value, validator) = conf.get(key)
+        if validator is not None:
+            if not validator(value):
+                raise ValueError(f"Invalid value {value} for option {option}")
+
+        conf[key] = value, validator
 
     def update(self, new_config: Union["Config", Dict]):
         if not isinstance(new_config, dict):
