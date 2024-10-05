@@ -14,7 +14,6 @@
 
 
 from . import _version
-from .config import option_context, options
 from .core import run
 from .deploy import init, shutdown
 
@@ -45,4 +44,4 @@ del _install
 
 __version__ = _version.get_versions()["version"]
 
-__all__ = ["init", "shutdown", "run", "options", "option_context"]
+__all__ = ["init", "shutdown", "run"]

@@ -34,18 +34,22 @@ In CPU environments, setting this value higher may not yield substantial benefit
 have a large amount of RAM available. However, in GPU scenarios, it's advisable to set this value 
 higher to maximize the data size within each chunk, thereby minimizing data transfer between GPUs.
 
-You can set this value inside a context:
+You can set this value with a context: :code:`xorbits.pandas.option_context({"chunk_store_limit": 1024 ** 3})`.
 
 .. code-block:: python
 
-    with xorbits.option_context({"chunk_store_limit": 1024 ** 3}):
+    import xorbits.pandas as xpd
+
+    with xpd.option_context({"chunk_store_limit": 1024 ** 3}):
         # your xorbits code
 
-Or you can set this value at the begining of your Python script:
+Or you can set this value at the begining of your Python script: :code:`xorbits.pandas.set_option({"chunk_store_limit": 1024 ** 3})`
 
 .. code-block:: python
 
-    xorbits.options.chunk_store_limit = 1024 ** 3
+    import xorbits.pandas as xpd
+    
+    xpd.set_option("chunk_store_limit", 1024 ** 3)
     # your xorbits code
 
 Manually
