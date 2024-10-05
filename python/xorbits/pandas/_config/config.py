@@ -66,18 +66,26 @@ class option_context:
             except:
                 mars_dict[key] = value
 
-        self.option_contexts = mars_option_context(mars_dict)
-        self.pandas_option_context = pd.option_context(
-            *tuple(item for sublist in pd_dict.items() for item in sublist)
-        )
+        self.option_contexts = None
+        self.pandas_option_context = None
+        if mars_dict:
+            self.option_contexts = mars_option_context(mars_dict)
+        if pd_dict:
+            self.pandas_option_context = pd.option_context(
+                *tuple(item for sublist in pd_dict.items() for item in sublist)
+            )
 
     def __enter__(self):
-        self.option_contexts.__enter__()
-        self.pandas_option_context.__enter__()
+        if self.option_contexts:
+            self.option_contexts.__enter__()
+        if self.pandas_option_context:
+            self.pandas_option_context.__enter__()
 
     def __exit__(self, type, value, traceback):
-        self.option_contexts.__exit__(type, value, traceback)
-        self.pandas_option_context.__exit__(type, value, traceback)
+        if self.option_contexts:
+            self.option_contexts.__exit__(type, value, traceback)
+        if self.pandas_option_context:
+            self.pandas_option_context.__exit__(type, value, traceback)
 
 
 def set_eng_float_format(accuracy: int = 3, use_eng_prefix: bool = False) -> None:
