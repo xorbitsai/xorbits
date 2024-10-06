@@ -21,7 +21,7 @@ Officially Python 3.9, 3.10 and 3.11.
 Packages support
 ----------------
 
-Xorbits partitions large datasets into manageable chunks and processes each individual 
+Xorbits partitions large datasets into chunks and processes each individual 
 chunk using single-node packages (such as pandas). Currently, our latest version strives 
 to be compatible with the latest single-node packages. The table below lists the highest 
 versions of the single-node packages that Xorbits are compatible with. If you are using 
