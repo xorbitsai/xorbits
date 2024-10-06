@@ -3,7 +3,7 @@ name: Build and upload to PyPI
 on:
   schedule:
     # trigger build every day at 4:30 UTC
-    - cron: '12 8 * * *'
+    - cron: '30 4 * * *'
   push:
     tags:
       - '*'
@@ -117,7 +117,7 @@ jobs:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     # upload to PyPI on every tag starting with 'v'
-    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/download-artifact@v3
         with:
