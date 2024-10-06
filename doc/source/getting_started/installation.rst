@@ -61,12 +61,12 @@ Xorbits depends on the following libraries, which are mandatory. When you run
 Recommended dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Recommended dependencies can be installed using ``pip``.
-
 .. note::
 
    You are highly encouraged to install these libraries, as they provide speed improvements,
    especially when working with large datasets.
+
+Recommended dependencies can be installed using ``pip``.
 
 ::
 
