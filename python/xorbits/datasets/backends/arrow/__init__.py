@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .adapter import MARS_DATASET_CALLABLES, MARS_DATASET_TYPE, _install
-from .backends.arrow.from_export import from_export
-from .backends.huggingface.from_huggingface import from_huggingface
-from .dataset import Dataset
-
-globals().update(MARS_DATASET_CALLABLES)
+from .core import (
+    ArrowDataset,
+    ArrowDatasetChunk,
+    ArrowDatasetChunkData,
+    ArrowDatasetData,
+)
