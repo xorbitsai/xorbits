@@ -119,14 +119,14 @@ jobs:
     # upload to PyPI on every tag starting with 'v'
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/download-artifact@v4.1.7
+      - uses: actions/download-artifact@v3
         with:
           # unpacks default artifact into dist/
           # if `name: artifact` is omitted, the action will create extra parent dir
           name: artifact
           path: dist
 
-      # if is xprobe repo, upload to pypi
+      # if is xorbits repo, upload to pypi
       - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository == 'xorbitsai/xorbits'
         with:
@@ -134,7 +134,7 @@ jobs:
           password: ${{ secrets.PYPI_PASSWORD }}
           skip-existing: true
 
-      # if is not xprobe repo, upload to test
+      # if is not xorbits repo, upload to test
       - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository != 'xorbitsai/xorbits'
         with:
