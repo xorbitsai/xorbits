@@ -8,5 +8,7 @@ API Reference
    :maxdepth: 2
 
    xorbits/index
+   lightgbm/index
+   xgboost/index
    datasets/index
    experimental/index
