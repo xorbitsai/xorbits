@@ -277,7 +277,7 @@ jobs:
       run: |
         source activate ${{ env.CONDA_ENV }}
         pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.8.*
-        pip install -U ucxx-cu12 cython numpy cloudpickle scikit-learn \
+        pip install ucxx-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
           pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
           pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
         pip install -U xoscar

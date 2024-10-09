@@ -33,6 +33,12 @@ except (ImportError, OSError):  # pragma: no cover
 from ..core import ExecutableTuple, recursive_tile
 from ..lib.mmh3 import hash_from_buffer
 from ..utils import lazy_import
+from ...utils import is_numpy_2
+
+if is_numpy_2():
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
 
 cp = lazy_import("cupy", rename="cp")
 
@@ -119,7 +125,7 @@ def gen_random_seeds(n, random_state):
 
 def validate_axis(ndim, axis, argname=None):
     if axis >= ndim or axis < -ndim:
-        raise np.exceptions.AxisError(axis, ndim=ndim, msg_prefix=argname)
+        raise AxisError(axis, ndim=ndim, msg_prefix=argname)
 
     return axis if axis >= 0 else ndim + axis
 

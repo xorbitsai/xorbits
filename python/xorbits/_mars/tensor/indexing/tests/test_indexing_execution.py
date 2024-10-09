@@ -20,6 +20,7 @@ import scipy.sparse as sps
 from ....config import options
 from ... import hstack, mod, stack
 from ...datasource import arange, tensor, zeros
+from ...utils import is_numpy_2
 from .. import (
     choose,
     compress,
@@ -30,6 +31,11 @@ from .. import (
     take,
     unravel_index,
 )
+
+if is_numpy_2():
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
 
 
 def test_bool_indexing_execution(setup):
@@ -558,7 +564,7 @@ def test_compress_execution(setup):
     expected = np.compress([False, True], data, axis=1)
     np.testing.assert_array_equal(res, expected)
 
-    with pytest.raises(np.exceptions.AxisError):
+    with pytest.raises(AxisError):
         compress([0, 1, 1], a, axis=1)
 
     # test order

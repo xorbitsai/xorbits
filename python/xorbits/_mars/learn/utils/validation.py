@@ -17,7 +17,13 @@ import numbers
 import warnings
 
 import numpy as np
-from numpy.exceptions import ComplexWarning
+
+from ....utils import is_numpy_2
+
+if is_numpy_2():
+    from numpy.exceptions import ComplexWarning
+else:
+    from numpy.core.numeric import ComplexWarning
 
 try:
     from sklearn.exceptions import DataConversionWarning

@@ -17,12 +17,17 @@ import math
 
 import numpy as np
 from numpy.core.numeric import ScalarType
-from numpy.lib._index_tricks_impl import ndindex
 
 from .. import datasource as _nx
 from ..base import ndim
 from ..core import Tensor
 from ..merge import concatenate
+from ..utils import is_numpy_2
+
+if is_numpy_2():
+    from numpy.lib._index_tricks_impl import ndindex
+else:
+    from numpy.lib.index_tricks import ndindex
 
 
 class nd_grid(object):

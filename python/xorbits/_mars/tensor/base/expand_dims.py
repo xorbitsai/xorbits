@@ -16,6 +16,12 @@
 import numpy as np
 
 from ..datasource import tensor as astensor
+from ..utils import is_numpy_2
+
+if is_numpy_2():
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
 
 
 def expand_dims(a, axis):
@@ -77,9 +83,7 @@ def expand_dims(a, axis):
     a = astensor(a)
 
     if axis > a.ndim or axis < -a.ndim - 1:
-        raise np.exceptions.AxisError(
-            f"Axis must be between -{a.ndim + 1} and {a.ndim}, got {axis}"
-        )
+        raise AxisError(f"Axis must be between -{a.ndim + 1} and {a.ndim}, got {axis}")
 
     axis = axis if axis >= 0 else axis + a.ndim + 1
     indexes = (slice(None),) * axis + (np.newaxis,) + (slice(None),) * (a.ndim - axis)

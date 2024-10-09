@@ -20,6 +20,7 @@ from xoscar.serialization import deserialize, serialize
 from ....core import tile
 from ....serialization.serializables import Serializable
 from ...datasource import tensor as from_ndarray
+from ...utils import is_numpy_2
 from .. import (
     RandomState,
     TensorPermutation,
@@ -33,6 +34,11 @@ from .. import (
     shuffle,
 )
 from ..core import RandomStateField
+
+if is_numpy_2():
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
 
 
 class ObjWithRandomStateField(Serializable):
@@ -205,7 +211,7 @@ def test_permutation():
         == x.cix[1, 0].inputs[0].inputs[0].inputs[0].op.seed
     )
 
-    with pytest.raises(np.exceptions.AxisError):
+    with pytest.raises(AxisError):
         pytest.raises(permutation("abc"))
 
 

@@ -82,3 +82,8 @@ def check_signature_compatible(func1, func2, message):
     match_param_keys = sig1.parameters.keys() & sig2.parameters.keys()
     for k in match_param_keys:
         assert sig1.parameters[k] == sig2.parameters[k], message
+
+def is_numpy_2():
+    import numpy as np
+
+    return np.__version__ >= "2.0.0"

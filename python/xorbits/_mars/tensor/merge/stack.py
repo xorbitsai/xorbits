@@ -24,7 +24,12 @@ from ..array_utils import as_same_device, device
 from ..core import Tensor, TensorOrder
 from ..datasource import tensor as astensor
 from ..operands import TensorOperand, TensorOperandMixin
-from ..utils import check_out_param, unify_chunks
+from ..utils import check_out_param, is_numpy_2, unify_chunks
+
+if is_numpy_2():
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
 
 
 class TensorStack(TensorOperand, TensorOperandMixin):
@@ -207,7 +212,7 @@ def stack(tensors, axis=0, out=None):
     if axis < 0:
         axis = ndim + axis + 1
     if axis > ndim or axis < 0:
-        raise np.exceptions.AxisError(
+        raise AxisError(
             f"axis {raw_axis} is out of bounds for tensor of dimension {ndim}"
         )
 
