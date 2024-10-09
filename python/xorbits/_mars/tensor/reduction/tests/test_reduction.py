@@ -166,9 +166,7 @@ def test_arg_reduction():
     pytest.raises(
         TypeError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=(0, 1))
     )
-    pytest.raises(
-        AxisError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=3)
-    )
+    pytest.raises(AxisError, lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=3))
     pytest.raises(
         AxisError,
         lambda: argmin(ones((10, 8, 10), chunk_size=3), axis=-4),
