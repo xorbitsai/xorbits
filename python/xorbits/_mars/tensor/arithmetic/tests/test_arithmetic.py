@@ -358,7 +358,6 @@ def test_unify_chunk_add():
 def test_frexp():
     t1 = ones((3, 4, 5), chunk_size=2)
     t2 = empty((3, 4, 5), dtype=np.float64, chunk_size=2)
-
     op_type = type(t1.op)
 
     o1, o2 = frexp(t1)
