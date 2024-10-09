@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import numpy
+
 from ...utils import is_numpy_2
 
 if is_numpy_2():

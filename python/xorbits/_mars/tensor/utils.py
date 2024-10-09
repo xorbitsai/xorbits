@@ -30,10 +30,10 @@ try:
 except (ImportError, OSError):  # pragma: no cover
     tildb = None
 
+from ...utils import is_numpy_2
 from ..core import ExecutableTuple, recursive_tile
 from ..lib.mmh3 import hash_from_buffer
 from ..utils import lazy_import
-from ...utils import is_numpy_2
 
 if is_numpy_2():
     from numpy.exceptions import AxisError
