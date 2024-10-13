@@ -19,5 +19,6 @@ Further information on any specific method can be obtained in the
 
    deferred_execution
    deployment
+   configuration
    best_practices
    logging

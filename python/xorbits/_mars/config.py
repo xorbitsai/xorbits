@@ -21,7 +21,7 @@ import threading
 import warnings
 from copy import deepcopy
 from functools import reduce
-from typing import Dict, Union
+from typing import Any, Dict, Union
 
 _DEFAULT_REDIRECT_WARN = (
     "Option {source} has been replaced by {target} and "
@@ -244,6 +244,91 @@ class Config:
         new_options = Config(deepcopy(self._config))
         return new_options
 
+    def get_option(self, option: str) -> Any:
+        """
+        Retrieves the value of the specified option.
+
+        Parameters
+        ----------
+        option : str
+            The name of the option to retrieve. Can be a nested option using dot notation (e.g., dataframe.use_arrow_dtype).
+
+        Returns
+        -------
+        Any
+            The value of the specified option.
+
+        Raises
+        ------
+        AttributeError
+            If the specified option does not exist.
+
+        Examples
+        --------
+        >>> xorbits.options.get_option("show_progress")
+        'auto'
+        """
+        splits = option.split(".")
+        conf = self._config
+        for name in splits[:-1]:
+            config = conf.get(name)
+            if not isinstance(config, dict):
+                raise AttributeError(f"No such keys(s): {option}.")
+            else:
+                conf = config
+
+        key = splits[-1]
+        if key not in conf:
+            raise AttributeError(f"No such keys(s): {option}.")
+        (value, _) = conf.get(key)
+        return value
+
+    def set_option(self, option: str, value: Any) -> Any:
+        """
+        Sets the value of the specified option.
+
+        Parameters
+        ----------
+        option : str
+            The name of the option to set. Can be a nested option using dot notation (e.g., dataframe.use_arrow_dtype).
+        value : Any
+            The value to set for the specified option.
+
+        Returns
+        -------
+        Any
+            The new value of the specified option.
+
+        Raises
+        ------
+        AttributeError
+            If the specified option does not exist.
+        ValueError
+            If the provided value is invalid for the option.
+
+        Examples
+        --------
+        >>> xorbits.options.set_option("show_progress", False)
+        """
+        splits = option.split(".")
+        conf = self._config
+        for name in splits[:-1]:
+            config = conf.get(name)
+            if not isinstance(config, dict):
+                raise AttributeError(f"No such keys(s): {option}.")
+            else:
+                conf = config
+
+        key = splits[-1]
+        if key not in conf:
+            raise AttributeError(f"No such keys(s): {option}.")
+        (old_value, validator) = conf.get(key)
+        if validator is not None:
+            if not validator(value):
+                raise ValueError(f"Invalid value {value} for option {option}")
+
+        conf[key] = value, validator
+
     def update(self, new_config: Union["Config", Dict]):
         if not isinstance(new_config, dict):
             new_config = new_config._config
@@ -277,6 +362,25 @@ class Config:
 
 @contextlib.contextmanager
 def option_context(config=None):
+    """
+    Context manager to temporarily set options in a ``with`` statement.
+
+    Parameters
+    ----------
+    config : dict
+        A dictionary of key-value option pairs to set temporarily.
+
+    Returns
+    -------
+    None
+        No return value.
+
+    Examples
+    --------
+    >>> with xorbits.option_context({'show_progress': False}):
+    ...     # Code here will run with show_progress=False
+    >>> # Outside the context, the original configuration is restored
+    """
     global_options = get_global_option()
 
     try:
@@ -444,6 +548,24 @@ class OptionsProxy:
 
 
 options = OptionsProxy()
+options.__doc__ = """
+An object for accessing and modifying global job-level configuration options.
+
+This object provides access to all the configuration options defined in the global
+configuration. It allows getting and setting option values, as well as accessing
+nested options using dot notation (e.g., dataframe.use_arrow_dtype).
+
+Examples:
+    >>> options.show_progress
+    'auto'
+    >>> options.set_option("show_progress", False)
+    >>> options.show_progress
+    False
+
+See Also:
+    :func:`get_option`: Function to retrieve option values.
+    :func:`set_option`: Function to set option values.
+"""
 
 options.redirect_option("tensor.chunk_store_limit", "chunk_store_limit")
 options.redirect_option("tensor.chunk_size", "chunk_size")
