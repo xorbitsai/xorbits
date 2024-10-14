@@ -13,32 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# try:
-#     from ._kmeans import KMeans, k_means
+try:
+    from ._kmeans import KMeans, k_means
 
-#     def _install():
-#         from ._k_means_common import KMeansInertia, KMeansRelocateEmptyClusters
-#         from ._k_means_elkan_iter import (
-#             KMeansElkanInitBounds,
-#             KMeansElkanPostprocess,
-#             KMeansElkanUpdate,
-#         )
-#         from ._k_means_init import KMeansPlusPlusInit
-#         from ._k_means_lloyd_iter import KMeansLloydPostprocess, KMeansLloydUpdate
+    def _install():
+        from ._k_means_common import KMeansInertia, KMeansRelocateEmptyClusters
+        from ._k_means_elkan_iter import (
+            KMeansElkanInitBounds,
+            KMeansElkanPostprocess,
+            KMeansElkanUpdate,
+        )
+        from ._k_means_init import KMeansPlusPlusInit
+        from ._k_means_lloyd_iter import KMeansLloydPostprocess, KMeansLloydUpdate
 
-#         del (
-#             KMeansInertia,
-#             KMeansRelocateEmptyClusters,
-#             KMeansElkanInitBounds,
-#             KMeansElkanUpdate,
-#             KMeansElkanPostprocess,
-#             KMeansPlusPlusInit,
-#             KMeansLloydUpdate,
-#             KMeansLloydPostprocess,
-#         )
+        del (
+            KMeansInertia,
+            KMeansRelocateEmptyClusters,
+            KMeansElkanInitBounds,
+            KMeansElkanUpdate,
+            KMeansElkanPostprocess,
+            KMeansPlusPlusInit,
+            KMeansLloydUpdate,
+            KMeansLloydPostprocess,
+        )
 
-#     _install()
-#     del _install
-# except ImportError:
-#     KMeans = None
-#     k_means = None
+    _install()
+    del _install
+except ImportError:
+    KMeans = None
+    k_means = None

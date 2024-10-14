@@ -25,8 +25,7 @@ def _install():
     from .lightgbm import _install as _install_lightgbm
     from .numpy import _install as _install_numpy
     from .pandas import _install as _install_pandas
-
-    # from .sklearn import _install as _install_sklearn
+    from .sklearn import _install as _install_sklearn
     from .web import _install as _install_web
     from .xgboost import _install as _install_xgboost
 
@@ -37,7 +36,7 @@ def _install():
     _install_xgboost()
     _install_datasets()
     _install_experimental()
-    # _install_sklearn()
+    _install_sklearn()
 
 
 _install()
