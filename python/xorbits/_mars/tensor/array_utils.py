@@ -46,7 +46,8 @@ def is_cupy(x):
 
 def get_device_id(input_data):
     # numpy2.x added `device` attribute to `np.ndarray`
-    # but `np.ndarray.device` doesn't have `id` attribute
+    # `np.ndarray.device` return `cpu` and does not have `id` attribute
+    # while `cupy.ndarray.device.id` return the GPU device id
     if hasattr(input_data, "device") and not (
         is_numpy_2() and isinstance(input_data, np.ndarray)
     ):

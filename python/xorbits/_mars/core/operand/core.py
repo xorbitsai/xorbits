@@ -22,7 +22,7 @@ from xoscar.metrics import Metrics
 from ....utils import is_numpy_2
 
 try:
-    if is_numpy_2:
+    if is_numpy_2():
         from numpy._core._exceptions import UFuncTypeError
     else:
         from numpy.core._exceptions import UFuncTypeError
