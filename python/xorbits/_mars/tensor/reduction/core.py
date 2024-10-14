@@ -444,6 +444,8 @@ class TensorArgReductionMixin(TensorReductionMixin):
                 inds = np.ogrid[tuple(map(slice, local_args.shape))]
                 if xp != np:
                     inds = [xp.asarray(it) for it in inds]
+                # `ogrid()` returns tuple instead of list in numpy2.x
+                inds = list(inds)
                 inds.insert(axis, local_args)
                 arg = arg[tuple(inds)]
             ctx[op.outputs[0].key] = arg

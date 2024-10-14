@@ -13,9 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
+from ..utils import is_numpy_2, validate_axis
 
-from ..utils import validate_axis
+if is_numpy_2():
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
 
 
 def rollaxis(tensor, axis, start=0):
@@ -66,7 +69,7 @@ def rollaxis(tensor, axis, start=0):
         start += n
     msg = "'%s' arg requires %d <= %s < %d, but %d was passed in"
     if not (0 <= start < n + 1):
-        raise np.AxisError(msg % ("start", -n, "start", n + 1, start))
+        raise AxisError(msg % ("start", -n, "start", n + 1, start))
     if axis < start:
         # it's been removed
         start -= 1

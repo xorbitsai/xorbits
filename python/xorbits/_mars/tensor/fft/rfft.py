@@ -115,5 +115,5 @@ def rfft(a, n=None, axis=-1, norm=None):
     """
     a = astensor(a)
     validate_fft(a, axis=axis, norm=norm)
-    op = TensorRFFT(n=n, axis=axis, norm=norm, dtype=np.dtype(np.complex_))
+    op = TensorRFFT(n=n, axis=axis, norm=norm, dtype=np.dtype(np.complex128))
     return op(a)

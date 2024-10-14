@@ -46,7 +46,7 @@ class DataFrameCorr(DataFrameOperand, DataFrameOperandMixin):
     def __call__(self, df_or_series):
         if isinstance(df_or_series, SERIES_TYPE):
             inputs = filter_inputs([df_or_series, self.other])
-            return self.new_scalar(inputs, dtype=np.dtype(np.float_))
+            return self.new_scalar(inputs, dtype=np.dtype(np.float64))
         else:
 
             def _filter_numeric(obj):
@@ -63,7 +63,7 @@ class DataFrameCorr(DataFrameOperand, DataFrameOperandMixin):
             inputs = filter_inputs([df_or_series, self.other])
             if self.axis is None:
                 dtypes = pd.Series(
-                    [np.dtype(np.float_)] * len(df_or_series.dtypes),
+                    [np.dtype(np.float64)] * len(df_or_series.dtypes),
                     index=df_or_series.dtypes.index,
                 )
                 return self.new_dataframe(
@@ -88,7 +88,7 @@ class DataFrameCorr(DataFrameOperand, DataFrameOperandMixin):
                 return self.new_series(
                     inputs,
                     shape=shape,
-                    dtype=np.dtype(np.float_),
+                    dtype=np.dtype(np.float64),
                     index_value=new_index_value,
                 )
 
@@ -115,8 +115,8 @@ class DataFrameCorr(DataFrameOperand, DataFrameOperandMixin):
             right.fillna(0).to_tensor(),
         )
 
-        nna_left = left.notna().to_tensor().astype(np.float_)
-        nna_right = right.notna().to_tensor().astype(np.float_)
+        nna_left = left.notna().to_tensor().astype(np.float64)
+        nna_right = right.notna().to_tensor().astype(np.float64)
 
         sum_left = left_tensor.T.dot(nna_right)
         sum_right = right_tensor.T.dot(nna_left)
@@ -143,8 +143,8 @@ class DataFrameCorr(DataFrameOperand, DataFrameOperandMixin):
         if has_unknown_shape(left, right):
             yield left.chunks + right.chunks + [left, right]
 
-        nna_left = left.notna().astype(np.float_)
-        nna_right = right.notna().astype(np.float_)
+        nna_left = left.notna().astype(np.float64)
+        nna_right = right.notna().astype(np.float64)
 
         left, right = left.fillna(0), right.fillna(0)
 

@@ -62,5 +62,5 @@ def irfft2(a, s=None, axes=(-2, -1), norm=None):
         raise ValueError("axes length should be 2")
     a = astensor(a)
     axes = validate_fftn(a, s=s, axes=axes, norm=norm)
-    op = TensorIRFFT2(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.float_))
+    op = TensorIRFFT2(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.float64))
     return op(a)

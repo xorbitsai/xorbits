@@ -40,9 +40,9 @@ create a YAML configuration file named `file.yml` which specify `backends` and `
     
     "@inherits": "@default"
     storage:
-    backends: [disk]
-    disk:
-        root_dirs: "/tmp"
+        backends: [disk]
+        disk:
+            root_dirs: "/tmp"
 
 Start the worker using the :code:`-f file.yml` option:
 
@@ -86,9 +86,9 @@ and start the worker by adding :code:`-f file.yml` option.
     
     "@inherits": "@default"
     storage:
-    backends: [disk]
-    disk:
-        root_dirs: "/mnt/xorbits"
+        backends: [disk]
+        disk:
+            root_dirs: "/mnt/xorbits"
 
 
 GPU

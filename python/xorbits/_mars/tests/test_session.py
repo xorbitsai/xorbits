@@ -211,8 +211,8 @@ def test_array_protocol(setup):
 
     arr4 = mt.ones((10, 20)).sum()
 
-    result = np.asarray(arr4, dtype=np.float_)
-    np.testing.assert_array_equal(result, np.asarray(200, dtype=np.float_))
+    result = np.asarray(arr4, dtype=np.float64)
+    np.testing.assert_array_equal(result, np.asarray(200, dtype=np.float64))
 
 
 def test_without_fuse(setup):

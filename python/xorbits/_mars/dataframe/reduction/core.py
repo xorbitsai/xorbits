@@ -365,7 +365,7 @@ class DataFrameReductionMixin(DataFrameOperandMixin):
                     #  handle pandas Dtypes in the future more carefully.
                     reduced_dtype = np.dtype("O")
                 else:
-                    reduced_dtype = np.find_common_type(dtypes, [])
+                    reduced_dtype = np.result_type(*dtypes)
 
         if level is not None:
             return self._call_groupby_level(df[reduced_cols], level)

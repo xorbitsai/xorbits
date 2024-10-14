@@ -19,8 +19,13 @@ from typing import Any, Callable, Dict, List, Tuple, Type, Union
 import numpy as np
 from xoscar.metrics import Metrics
 
+from ....utils import is_numpy_2
+
 try:
-    from numpy.core._exceptions import UFuncTypeError
+    if is_numpy_2():
+        from numpy._core._exceptions import UFuncTypeError
+    else:
+        from numpy.core._exceptions import UFuncTypeError
 except ImportError:  # pragma: no cover
     UFuncTypeError = None
 
