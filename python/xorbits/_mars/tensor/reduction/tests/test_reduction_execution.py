@@ -19,6 +19,7 @@ import scipy.sparse as sps
 
 from ....utils import ignore_warning
 from ...datasource import ones, tensor
+from ...utils import is_numpy_2
 from .. import (
     allclose,
     array_equal,
@@ -153,14 +154,16 @@ def test_all_any_execution(setup):
 
     arr = tensor(raw, chunk_size=3)
 
-    assert raw.A.all() == arr.all().execute().fetch()
-    assert raw.A.any() == arr.any().execute().fetch()
+    assert raw.toarray().all() == arr.all().execute().fetch()
+    assert raw.toarray().any() == arr.any().execute().fetch()
 
     # test string dtype
-    a = tensor(list("abcdefghi"), dtype=object)
-    assert a.all().execute().fetch() == "i"
-    a = tensor(list("abcdefghi"), dtype=object, chunk_size=2)
-    assert a.any().execute().fetch() == "a"
+    # `all()` and `any()` now returns booleans for object arrays in numpy2.x
+    if not is_numpy_2():
+        a = tensor(list("abcdefghi"), dtype=object)
+        assert a.all().execute().fetch() == "i"
+        a = tensor(list("abcdefghi"), dtype=object, chunk_size=2)
+        assert a.any().execute().fetch() == "a"
 
 
 def test_mean_execution(setup):

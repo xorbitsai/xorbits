@@ -24,8 +24,13 @@ from ...serialization.serializables import Int32Field, KeyField
 from ..array_utils import as_same_device, device
 from ..datasource import tensor as astensor
 from ..operands import TensorOperandMixin, TensorShuffleProxy
-from ..utils import gen_random_seeds, validate_axis
+from ..utils import gen_random_seeds, is_numpy_2, validate_axis
 from .core import TensorRandomMapReduceOperand
+
+if is_numpy_2():
+    from numpy.exceptions import AxisError
+else:
+    from numpy import AxisError
 
 
 def _permutation_on_axis(ar, axis, rs, xp):
@@ -223,7 +228,7 @@ def permutation(random_state, x, axis=0, chunk_size=None):
     >>> rng.permutation("abc")
     Traceback (most recent call last):
         ...
-    numpy.AxisError: x must be an integer or at least 1-dimensional
+    numpy.exceptions.AxisError: x must be an integer or at least 1-dimensional
     """
     if isinstance(x, (Integral, np.integer)):
         from ..datasource import arange
@@ -232,7 +237,7 @@ def permutation(random_state, x, axis=0, chunk_size=None):
     else:
         x = astensor(x, chunk_size=chunk_size)
         if x.ndim < 1:
-            raise np.AxisError("x must be an integer or at least 1-dimensional")
+            raise AxisError("x must be an integer or at least 1-dimensional")
 
     axis = validate_axis(x.ndim, axis)
     seed = gen_random_seeds(1, random_state.to_numpy())[0]

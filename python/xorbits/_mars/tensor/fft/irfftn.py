@@ -114,5 +114,5 @@ def irfftn(a, s=None, axes=None, norm=None):
     """
     a = astensor(a)
     axes = validate_fftn(a, s=s, axes=axes, norm=norm)
-    op = TensorIRFFTN(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.float_))
+    op = TensorIRFFTN(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.float64))
     return op(a)

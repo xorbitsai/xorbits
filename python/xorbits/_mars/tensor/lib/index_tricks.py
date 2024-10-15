@@ -16,18 +16,18 @@
 import math
 
 import numpy as np
-from numpy import __version__ as np_ver
 from numpy.core.numeric import ScalarType
-
-if np_ver >= "2.0.0":
-    from numpy.lib._index_tricks_impl import ndindex
-else:
-    from numpy.lib.index_tricks import ndindex
 
 from .. import datasource as _nx
 from ..base import ndim
 from ..core import Tensor
 from ..merge import concatenate
+from ..utils import is_numpy_2
+
+if is_numpy_2():
+    from numpy.lib._index_tricks_impl import ndindex
+else:
+    from numpy.lib.index_tricks import ndindex
 
 
 class nd_grid(object):
@@ -349,14 +349,8 @@ class AxisConcatenator:
 
         # Ensure that scalars won't up-cast unless warranted
         # find_common_type is deprecated
-        if np_ver >= "2.0.0":
-            from numpy import result_type
+        final_dtype = np.result_type(*arraytypes, *scalartypes)
 
-            final_dtype = result_type(arraytypes, scalartypes)
-        else:
-            from numpy.core.numerictypes import find_common_type
-
-            final_dtype = find_common_type(arraytypes, scalartypes)
         if final_dtype is not None:
             for k in scalars:
                 objs[k] = objs[k].astype(final_dtype)

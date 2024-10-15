@@ -122,5 +122,5 @@ def fftn(a, s=None, axes=None, norm=None):
     """
     a = astensor(a)
     axes = validate_fftn(a, s=s, axes=axes, norm=norm)
-    op = TensorFFTN(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.complex_))
+    op = TensorFFTN(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.complex128))
     return op(a)

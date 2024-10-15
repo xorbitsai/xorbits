@@ -21,6 +21,7 @@ import numpy as np
 from ..lib import sparse
 from ..lib.sparse.core import get_dense_module, issparse
 from ..utils import is_same_module, lazy_import
+from .utils import is_numpy_2
 
 cp = lazy_import("cupy", rename="cp")
 
@@ -41,6 +42,18 @@ def is_cupy(x):
         return True
     else:
         return False
+
+
+def get_device_id(input_data):
+    # numpy2.x added `device` attribute to `np.ndarray`
+    # `np.ndarray.device` return `cpu` and does not have `id` attribute
+    # while `cupy.ndarray.device.id` return the GPU device id
+    if hasattr(input_data, "device") and not (
+        is_numpy_2() and isinstance(input_data, np.ndarray)
+    ):
+        return input_data.device.id
+    else:
+        return -1
 
 
 def get_array_module(x, nosparse=False):
@@ -117,8 +130,7 @@ def as_same_device(inputs, device=None, ret_extra=False, copy_if_not_writeable=F
     if device is None:
         try:
             device = _most_nbytes_device(
-                (i.device.id if hasattr(i, "device") else -1, i.nbytes)
-                for i in input_tensors
+                (get_device_id(i), i.nbytes) for i in input_tensors
             )
         except ValueError:
             device = -1

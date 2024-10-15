@@ -152,7 +152,7 @@ class TensorSquareform(TensorMapReduceOperand, TensorOperandMixin):
         tensor = op.outputs[0]
         chunk_size = tensor.extra_params.raw_chunk_size or options.chunk_size
         chunk_size = decide_chunk_sizes(tensor.shape, chunk_size, tensor.dtype.itemsize)
-        n_chunk = np.product([len(cs) for cs in chunk_size])
+        n_chunk = np.prod([len(cs) for cs in chunk_size])
 
         if len(op.input.chunks) == 1 and n_chunk == 1:
             return cls._tile_one_chunk(op)
