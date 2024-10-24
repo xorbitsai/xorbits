@@ -27,7 +27,6 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ['reference/numpy/*']
 
 # i18n
 locale_dirs = ["locale/"]  # path is example but recommended.
@@ -253,8 +252,8 @@ class AccessorCallableDocumenter(AccessorLevelDocumenter, MethodDocumenter):
 
 
 def setup(app):
-    app.connect("autodoc-process-docstring", remove_flags_docstring)
-    app.connect("autodoc-process-docstring", process_class_docstrings)
+    # app.connect("autodoc-process-docstring", remove_flags_docstring)
+    # app.connect("autodoc-process-docstring", process_class_docstrings)
     app.add_autodocumenter(AccessorDocumenter)
     app.add_autodocumenter(AccessorAttributeDocumenter)
     app.add_autodocumenter(AccessorMethodDocumenter)
