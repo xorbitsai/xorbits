@@ -3,181 +3,452 @@
 =======
 GroupBy
 =======
-.. currentmodule:: xorbits.pandas.groupby
+
+The following table lists both implemented and not implemented methods. If you have need
+of an operation that is listed as not implemented, feel free to open an issue on the
+`GitHub repository`_, or give a thumbs up to already created issues. Contributions are
+also welcome!
+
+The following table is structured as follows: The first column contains the method name.
+The second column contains link to a description of corresponding pandas method.
+The third column is a flag for whether or not there is an implementation in Xorbits
+for the method in the left column. ``Y`` stands for yes, ``N`` stands for no, ``P`` standsfor partial 
+(meaning some parameters may not be supported yet), and ``D`` stands for default to pandas.
 
 GroupBy objects are returned by groupby calls: :func:`xorbits.pandas.DataFrame.groupby`,
 :func:`xorbits.pandas.Series.groupby`, etc.
 
 Indexing, iteration
 -------------------
-.. autosummary::
-   :toctree: generated/
 
-   DataFrameGroupBy.__iter__
-   SeriesGroupBy.__iter__
-   DataFrameGroupBy.groups
-   SeriesGroupBy.groups
-   DataFrameGroupBy.indices
-   SeriesGroupBy.indices
-   DataFrameGroupBy.get_group
-   SeriesGroupBy.get_group
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``xorbits.pandas.groupby``     | ``pandas.core.groupby``       | Implemented? (Y/N/P/D) | Notes for Current implementation |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.__iter__``  | `DataFrameGroupBy.__iter__`_  | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.__iter__``     | `SeriesGroupBy.__iter__`_     | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.groups``    | `DataFrameGroupBy.groups`_    | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.groups``       | `SeriesGroupBy.groups`_       | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.indices``   | `DataFrameGroupBy.indices`_   | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.indices``      | `SeriesGroupBy.indices`_      | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.get_group`` | `DataFrameGroupBy.get_group`_ | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.get_group``    | `SeriesGroupBy.get_group`_    | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
 
-.. currentmodule:: xorbits.pandas
-
-.. autosummary::
-   :toctree: generated/
-   :template: autosummary/class_without_autosummary.rst
-
-   Grouper
++--------------------+------------+------------------------+----------------------------------+
+| ``xorbits.pandas`` | ``pandas`` | Implemented? (Y/N/P/D) | Notes for Current implementation |
++--------------------+------------+------------------------+----------------------------------+
+| ``Grouper``        | `Grouper`_ | Y                      |                                  |
++--------------------+------------+------------------------+----------------------------------+
 
 Function application helper
 ---------------------------
-.. autosummary::
-   :toctree: generated/
 
-   NamedAgg
-
-.. currentmodule:: xorbits.pandas.groupby
++--------------------+-------------+------------------------+----------------------------------+
+| ``xorbits.pandas`` | ``pandas``  | Implemented? (Y/N/P/D) | Notes for Current implementation |
++--------------------+-------------+------------------------+----------------------------------+
+| ``NamedAgg``       | `NamedAgg`_ | Y                      |                                  |
++--------------------+-------------+------------------------+----------------------------------+
 
 Function application
 --------------------
-.. autosummary::
-   :toctree: generated/
 
-   SeriesGroupBy.apply
-   DataFrameGroupBy.apply
-   SeriesGroupBy.agg
-   DataFrameGroupBy.agg
-   SeriesGroupBy.aggregate
-   DataFrameGroupBy.aggregate
-   SeriesGroupBy.transform
-   DataFrameGroupBy.transform
-   SeriesGroupBy.pipe
-   DataFrameGroupBy.pipe
-   DataFrameGroupBy.filter
-   SeriesGroupBy.filter
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``xorbits.pandas.groupby``     | ``pandas.core.groupby``       | Implemented? (Y/N/P/D) | Notes for Current implementation |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.apply``        | `SeriesGroupBy.apply`_        | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.apply``     | `DataFrameGroupBy.apply`_     | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.agg``          | `SeriesGroupBy.agg`_          | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.agg``       | `DataFrameGroupBy.agg`_       | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.aggregate``    | `SeriesGroupBy.aggregate`_    | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.aggregate`` | `DataFrameGroupBy.aggregate`_ | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.transform``    | `SeriesGroupBy.transform`_    | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.transform`` | `DataFrameGroupBy.transform`_ | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.pipe``         | `SeriesGroupBy.pipe`_         | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.pipe``      | `DataFrameGroupBy.pipe`_      | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.filter``    | `DataFrameGroupBy.filter`_    | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.filter``       | `SeriesGroupBy.filter`_       | Y                      |                                  |
++--------------------------------+-------------------------------+------------------------+----------------------------------+
 
 ``DataFrameGroupBy`` computations / descriptive stats
 -----------------------------------------------------
-.. autosummary::
-   :toctree: generated/
 
-   DataFrameGroupBy.all
-   DataFrameGroupBy.any
-   DataFrameGroupBy.backfill
-   DataFrameGroupBy.bfill
-   DataFrameGroupBy.corr
-   DataFrameGroupBy.corrwith
-   DataFrameGroupBy.count
-   DataFrameGroupBy.cov
-   DataFrameGroupBy.cumcount
-   DataFrameGroupBy.cummax
-   DataFrameGroupBy.cummin
-   DataFrameGroupBy.cumprod
-   DataFrameGroupBy.cumsum
-   DataFrameGroupBy.describe
-   DataFrameGroupBy.diff
-   DataFrameGroupBy.ffill
-   DataFrameGroupBy.fillna
-   DataFrameGroupBy.first
-   DataFrameGroupBy.head
-   DataFrameGroupBy.idxmax
-   DataFrameGroupBy.idxmin
-   DataFrameGroupBy.last
-   DataFrameGroupBy.mad
-   DataFrameGroupBy.max
-   DataFrameGroupBy.mean
-   DataFrameGroupBy.median
-   DataFrameGroupBy.min
-   DataFrameGroupBy.ngroup
-   DataFrameGroupBy.nth
-   DataFrameGroupBy.nunique
-   DataFrameGroupBy.ohlc
-   DataFrameGroupBy.pad
-   DataFrameGroupBy.pct_change
-   DataFrameGroupBy.prod
-   DataFrameGroupBy.quantile
-   DataFrameGroupBy.rank
-   DataFrameGroupBy.resample
-   DataFrameGroupBy.sample
-   DataFrameGroupBy.sem
-   DataFrameGroupBy.shift
-   DataFrameGroupBy.size
-   DataFrameGroupBy.skew
-   DataFrameGroupBy.std
-   DataFrameGroupBy.sum
-   DataFrameGroupBy.var
-   DataFrameGroupBy.tail
-   DataFrameGroupBy.take
-   DataFrameGroupBy.tshift
-   DataFrameGroupBy.value_counts
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``xorbits.pandas.groupby``        | ``pandas.core.groupby``          | Implemented? (Y/N/P/D) | Notes for Current implementation |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.all``          | `DataFrameGroupBy.all`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.any``          | `DataFrameGroupBy.any`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.backfill``     | `DataFrameGroupBy.backfill`_     | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.bfill``        | `DataFrameGroupBy.bfill`_        | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.corr``         | `DataFrameGroupBy.corr`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.corrwith``     | `DataFrameGroupBy.corrwith`_     | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.count``        | `DataFrameGroupBy.count`_        | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.cov``          | `DataFrameGroupBy.cov`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.cumcount``     | `DataFrameGroupBy.cumcount`_     | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.cummax``       | `DataFrameGroupBy.cummax`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.cummin``       | `DataFrameGroupBy.cummin`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.cumprod``      | `DataFrameGroupBy.cumprod`_      | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.cumsum``       | `DataFrameGroupBy.cumsum`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.describe``     | `DataFrameGroupBy.describe`_     | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.diff``         | `DataFrameGroupBy.diff`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.ffill``        | `DataFrameGroupBy.ffill`_        | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.fillna``       | `DataFrameGroupBy.fillna`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.first``        | `DataFrameGroupBy.first`_        | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.head``         | `DataFrameGroupBy.head`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.idxmax``       | `DataFrameGroupBy.idxmax`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.idxmin``       | `DataFrameGroupBy.idxmin`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.last``         | `DataFrameGroupBy.last`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.mad``          | `DataFrameGroupBy.mad`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.max``          | `DataFrameGroupBy.max`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.mean``         | `DataFrameGroupBy.mean`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.median``       | `DataFrameGroupBy.median`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.min``          | `DataFrameGroupBy.min`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.ngroup``       | `DataFrameGroupBy.ngroup`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.nth``          | `DataFrameGroupBy.nth`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.nunique``      | `DataFrameGroupBy.nunique`_      | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.ohlc``         | `DataFrameGroupBy.ohlc`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.pad``          | `DataFrameGroupBy.pad`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.pct_change``   | `DataFrameGroupBy.pct_change`_   | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.prod``         | `DataFrameGroupBy.prod`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.quantile``     | `DataFrameGroupBy.quantile`_     | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.rank``         | `DataFrameGroupBy.rank`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.resample``     | `DataFrameGroupBy.resample`_     | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.sample``       | `DataFrameGroupBy.sample`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.sem``          | `DataFrameGroupBy.sem`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.shift``        | `DataFrameGroupBy.shift`_        | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.size``         | `DataFrameGroupBy.size`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.skew``         | `DataFrameGroupBy.skew`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.std``          | `DataFrameGroupBy.std`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.sum``          | `DataFrameGroupBy.sum`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.var``          | `DataFrameGroupBy.var`_          | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.tail``         | `DataFrameGroupBy.tail`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.take``         | `DataFrameGroupBy.take`_         | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.tshift``       | `DataFrameGroupBy.tshift`_       | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.value_counts`` | `DataFrameGroupBy.value_counts`_ | Y                      |                                  |
++-----------------------------------+----------------------------------+------------------------+----------------------------------+
 
 ``SeriesGroupBy`` computations / descriptive stats
 --------------------------------------------------
-.. autosummary::
-   :toctree: generated/
 
-   SeriesGroupBy.all
-   SeriesGroupBy.any
-   SeriesGroupBy.backfill
-   SeriesGroupBy.bfill
-   SeriesGroupBy.corr
-   SeriesGroupBy.count
-   SeriesGroupBy.cov
-   SeriesGroupBy.cumcount
-   SeriesGroupBy.cummax
-   SeriesGroupBy.cummin
-   SeriesGroupBy.cumprod
-   SeriesGroupBy.cumsum
-   SeriesGroupBy.describe
-   SeriesGroupBy.diff
-   SeriesGroupBy.ffill
-   SeriesGroupBy.fillna
-   SeriesGroupBy.first
-   SeriesGroupBy.head
-   SeriesGroupBy.last
-   SeriesGroupBy.idxmax
-   SeriesGroupBy.idxmin
-   SeriesGroupBy.is_monotonic_increasing
-   SeriesGroupBy.is_monotonic_decreasing
-   SeriesGroupBy.mad
-   SeriesGroupBy.max
-   SeriesGroupBy.mean
-   SeriesGroupBy.median
-   SeriesGroupBy.min
-   SeriesGroupBy.ngroup
-   SeriesGroupBy.nlargest
-   SeriesGroupBy.nsmallest
-   SeriesGroupBy.nth
-   SeriesGroupBy.nunique
-   SeriesGroupBy.unique
-   SeriesGroupBy.ohlc
-   SeriesGroupBy.pad
-   SeriesGroupBy.pct_change
-   SeriesGroupBy.prod
-   SeriesGroupBy.quantile
-   SeriesGroupBy.rank
-   SeriesGroupBy.resample
-   SeriesGroupBy.sample
-   SeriesGroupBy.sem
-   SeriesGroupBy.shift
-   SeriesGroupBy.size
-   SeriesGroupBy.skew
-   SeriesGroupBy.std
-   SeriesGroupBy.sum
-   SeriesGroupBy.var
-   SeriesGroupBy.tail
-   SeriesGroupBy.take
-   SeriesGroupBy.tshift
-   SeriesGroupBy.value_counts
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``xorbits.pandas.groupby``                | ``pandas.core.groupby``                  | Implemented? (Y/N/P/D) | Notes for Current implementation |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.all``                     | `SeriesGroupBy.all`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.any``                     | `SeriesGroupBy.any`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.backfill``                | `SeriesGroupBy.backfill`_                | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.bfill``                   | `SeriesGroupBy.bfill`_                   | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.corr``                    | `SeriesGroupBy.corr`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.count``                   | `SeriesGroupBy.count`_                   | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.cov``                     | `SeriesGroupBy.cov`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.cumcount``                | `SeriesGroupBy.cumcount`_                | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.cummax``                  | `SeriesGroupBy.cummax`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.cummin``                  | `SeriesGroupBy.cummin`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.cumprod``                 | `SeriesGroupBy.cumprod`_                 | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.cumsum``                  | `SeriesGroupBy.cumsum`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.describe``                | `SeriesGroupBy.describe`_                | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.diff``                    | `SeriesGroupBy.diff`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.ffill``                   | `SeriesGroupBy.ffill`_                   | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.fillna``                  | `SeriesGroupBy.fillna`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.first``                   | `SeriesGroupBy.first`_                   | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.head``                    | `SeriesGroupBy.head`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.last``                    | `SeriesGroupBy.last`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.idxmax``                  | `SeriesGroupBy.idxmax`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.idxmin``                  | `SeriesGroupBy.idxmin`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.is_monotonic_increasing`` | `SeriesGroupBy.is_monotonic_increasing`_ | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.is_monotonic_decreasing`` | `SeriesGroupBy.is_monotonic_decreasing`_ | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.mad``                     | `SeriesGroupBy.mad`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.max``                     | `SeriesGroupBy.max`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.mean``                    | `SeriesGroupBy.mean`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.median``                  | `SeriesGroupBy.median`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.min``                     | `SeriesGroupBy.min`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.ngroup``                  | `SeriesGroupBy.ngroup`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.nlargest``                | `SeriesGroupBy.nlargest`_                | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.nsmallest``               | `SeriesGroupBy.nsmallest`_               | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.nth``                     | `SeriesGroupBy.nth`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.nunique``                 | `SeriesGroupBy.nunique`_                 | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.unique``                  | `SeriesGroupBy.unique`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.ohlc``                    | `SeriesGroupBy.ohlc`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.pad``                     | `SeriesGroupBy.pad`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.pct_change``              | `SeriesGroupBy.pct_change`_              | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.prod``                    | `SeriesGroupBy.prod`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.quantile``                | `SeriesGroupBy.quantile`_                | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.rank``                    | `SeriesGroupBy.rank`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.resample``                | `SeriesGroupBy.resample`_                | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.sample``                  | `SeriesGroupBy.sample`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.sem``                     | `SeriesGroupBy.sem`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.shift``                   | `SeriesGroupBy.shift`_                   | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.size``                    | `SeriesGroupBy.size`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.skew``                    | `SeriesGroupBy.skew`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.std``                     | `SeriesGroupBy.std`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.sum``                     | `SeriesGroupBy.sum`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.var``                     | `SeriesGroupBy.var`_                     | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.tail``                    | `SeriesGroupBy.tail`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.take``                    | `SeriesGroupBy.take`_                    | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.tshift``                  | `SeriesGroupBy.tshift`_                  | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.value_counts``            | `SeriesGroupBy.value_counts`_            | Y                      |                                  |
++-------------------------------------------+------------------------------------------+------------------------+----------------------------------+
 
 Plotting and visualization
 --------------------------
-.. autosummary::
-   :toctree: generated/
 
-   DataFrameGroupBy.boxplot
-   DataFrameGroupBy.hist
-   SeriesGroupBy.hist
-   DataFrameGroupBy.plot
-   SeriesGroupBy.plot
++------------------------------+-----------------------------+------------------------+----------------------------------+
+| ``xorbits.pandas.groupby``   | ``pandas.core.groupby``     | Implemented? (Y/N/P/D) | Notes for Current implementation |
++------------------------------+-----------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.boxplot`` | `DataFrameGroupBy.boxplot`_ | Y                      |                                  |
++------------------------------+-----------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.hist``    | `DataFrameGroupBy.hist`_    | Y                      |                                  |
++------------------------------+-----------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.hist``       | `SeriesGroupBy.hist`_       | Y                      |                                  |
++------------------------------+-----------------------------+------------------------+----------------------------------+
+| ``DataFrameGroupBy.plot``    | `DataFrameGroupBy.plot`_    | Y                      |                                  |
++------------------------------+-----------------------------+------------------------+----------------------------------+
+| ``SeriesGroupBy.plot``       | `SeriesGroupBy.plot`_       | Y                      |                                  |
++------------------------------+-----------------------------+------------------------+----------------------------------+
+
+.. _`GitHub repository`: https://github.com/xorbitsai/xorbits/issues
+.. _`DataFrameGroupBy.__iter__`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.__iter__.html  
+.. _`SeriesGroupBy.__iter__`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.__iter__.html  
+.. _`DataFrameGroupBy.groups`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.groups.html  
+.. _`SeriesGroupBy.groups`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.groups.html  
+.. _`DataFrameGroupBy.indices`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.indices.html  
+.. _`SeriesGroupBy.indices`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.indices.html  
+.. _`DataFrameGroupBy.get_group`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.get_group.html  
+.. _`SeriesGroupBy.get_group`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.get_group.html  
+.. _`Grouper`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html  
+.. _`NamedAgg`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.NamedAgg.html  
+.. _`SeriesGroupBy.apply`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.apply.html  
+.. _`DataFrameGroupBy.apply`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.apply.html  
+.. _`SeriesGroupBy.agg`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.agg.html  
+.. _`DataFrameGroupBy.agg`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.agg.html  
+.. _`SeriesGroupBy.aggregate`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.aggregate.html  
+.. _`DataFrameGroupBy.aggregate`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.aggregate.html  
+.. _`SeriesGroupBy.transform`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.transform.html  
+.. _`DataFrameGroupBy.transform`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.transform.html  
+.. _`SeriesGroupBy.pipe`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.pipe.html  
+.. _`DataFrameGroupBy.pipe`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.pipe.html  
+.. _`DataFrameGroupBy.filter`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.filter.html  
+.. _`SeriesGroupBy.filter`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.filter.html  
+.. _`DataFrameGroupBy.all`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.all.html  
+.. _`DataFrameGroupBy.any`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.any.html  
+.. _`DataFrameGroupBy.backfill`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.backfill.html  
+.. _`DataFrameGroupBy.bfill`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.bfill.html  
+.. _`DataFrameGroupBy.corr`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.corr.html  
+.. _`DataFrameGroupBy.corrwith`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.corrwith.html  
+.. _`DataFrameGroupBy.count`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.count.html  
+.. _`DataFrameGroupBy.cov`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.cov.html  
+.. _`DataFrameGroupBy.cumcount`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.cumcount.html  
+.. _`DataFrameGroupBy.cummax`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.cummax.html  
+.. _`DataFrameGroupBy.cummin`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.cummin.html  
+.. _`DataFrameGroupBy.cumprod`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.cumprod.html  
+.. _`DataFrameGroupBy.cumsum`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.cumsum.html  
+.. _`DataFrameGroupBy.describe`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.describe.html  
+.. _`DataFrameGroupBy.diff`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.diff.html  
+.. _`DataFrameGroupBy.ffill`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.ffill.html  
+.. _`DataFrameGroupBy.fillna`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.fillna.html  
+.. _`DataFrameGroupBy.first`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.first.html  
+.. _`DataFrameGroupBy.head`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.head.html  
+.. _`DataFrameGroupBy.idxmax`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.idxmax.html  
+.. _`DataFrameGroupBy.idxmin`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.idxmin.html  
+.. _`DataFrameGroupBy.last`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.last.html  
+.. _`DataFrameGroupBy.mad`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.mad.html  
+.. _`DataFrameGroupBy.max`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.max.html  
+.. _`DataFrameGroupBy.mean`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.mean.html  
+.. _`DataFrameGroupBy.median`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.median.html  
+.. _`DataFrameGroupBy.min`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.min.html  
+.. _`DataFrameGroupBy.ngroup`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.ngroup.html  
+.. _`DataFrameGroupBy.nth`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.nth.html  
+.. _`DataFrameGroupBy.nunique`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.nunique.html  
+.. _`DataFrameGroupBy.ohlc`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.ohlc.html
+.. _`DataFrameGroupBy.pad`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.pad.html
+.. _`DataFrameGroupBy.pct_change`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.pct_change.html
+.. _`DataFrameGroupBy.prod`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.prod.html
+.. _`DataFrameGroupBy.quantile`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.quantile.html
+.. _`DataFrameGroupBy.rank`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.rank.html
+.. _`DataFrameGroupBy.resample`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.resample.html
+.. _`DataFrameGroupBy.sample`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.sample.html
+.. _`DataFrameGroupBy.sem`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.sem.html
+.. _`DataFrameGroupBy.shift`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.shift.html
+.. _`DataFrameGroupBy.size`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.size.html
+.. _`DataFrameGroupBy.skew`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.skew.html
+.. _`DataFrameGroupBy.std`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.std.html
+.. _`DataFrameGroupBy.sum`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.sum.html
+.. _`DataFrameGroupBy.var`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.var.html
+.. _`DataFrameGroupBy.tail`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.tail.html
+.. _`DataFrameGroupBy.take`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.take.html
+.. _`DataFrameGroupBy.tshift`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.tshift.html
+.. _`DataFrameGroupBy.value_counts`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.value_counts.html
+.. _`SeriesGroupBy.all`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.all.html
+.. _`SeriesGroupBy.any`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.any.html
+.. _`SeriesGroupBy.backfill`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.backfill.html
+.. _`SeriesGroupBy.bfill`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.bfill.html
+.. _`SeriesGroupBy.corr`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.corr.html
+.. _`SeriesGroupBy.count`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.count.html
+.. _`SeriesGroupBy.cov`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.cov.html
+.. _`SeriesGroupBy.cumcount`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.cumcount.html
+.. _`SeriesGroupBy.cummax`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.cummax.html
+.. _`SeriesGroupBy.cummin`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.cummin.html
+.. _`SeriesGroupBy.cumprod`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.cumprod.html
+.. _`SeriesGroupBy.cumsum`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.cumsum.html
+.. _`SeriesGroupBy.describe`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.describe.html
+.. _`SeriesGroupBy.diff`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.diff.html
+.. _`SeriesGroupBy.ffill`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.fillna.html
+.. _`SeriesGroupBy.fillna`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.ffill.html
+.. _`SeriesGroupBy.first`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.first.html
+.. _`SeriesGroupBy.head`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.head.html
+.. _`SeriesGroupBy.last`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.last.html
+.. _`SeriesGroupBy.idxmax`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.idxmax.html
+.. _`SeriesGroupBy.idxmin`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.idxmin.html
+.. _`SeriesGroupBy.is_monotonic_increasing`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.is_monotonic_increasing.html
+.. _`SeriesGroupBy.is_monotonic_decreasing`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.is_monotonic_decreasing.html
+.. _`SeriesGroupBy.mad`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.mad.html
+.. _`SeriesGroupBy.max`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.max.html
+.. _`SeriesGroupBy.mean`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.mean.html
+.. _`SeriesGroupBy.median`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.median.html
+.. _`SeriesGroupBy.min`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.min.html
+.. _`SeriesGroupBy.ngroup`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.ngroup.html
+.. _`SeriesGroupBy.nlargest`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.nlargest.html
+.. _`SeriesGroupBy.nsmallest`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.nsmallest.html
+.. _`SeriesGroupBy.nth`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.nth.html
+.. _`SeriesGroupBy.nunique`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.nunique.html
+.. _`SeriesGroupBy.unique`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.unique.html
+.. _`SeriesGroupBy.ohlc`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.ohlc.html
+.. _`SeriesGroupBy.pad`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.pad.html
+.. _`SeriesGroupBy.pct_change`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.pct_change.html
+.. _`SeriesGroupBy.prod`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.prod.html
+.. _`SeriesGroupBy.quantile`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.quantile.html
+.. _`SeriesGroupBy.rank`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.rank.html
+.. _`SeriesGroupBy.resample`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.resample.html
+.. _`SeriesGroupBy.sample`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.sample.html
+.. _`SeriesGroupBy.sem`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.sem.html
+.. _`SeriesGroupBy.shift`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.shift.html
+.. _`SeriesGroupBy.size`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.size.html
+.. _`SeriesGroupBy.skew`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.skew.html
+.. _`SeriesGroupBy.std`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.std.html
+.. _`SeriesGroupBy.sum`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.sum.html
+.. _`SeriesGroupBy.var`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.var.html
+.. _`SeriesGroupBy.tail`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.tail.html
+.. _`SeriesGroupBy.take`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.take.html
+.. _`SeriesGroupBy.tshift`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.tshift.html
+.. _`SeriesGroupBy.value_counts`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.value_counts.html
+.. _`DataFrameGroupBy.boxplot`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.boxplot.html
+.. _`DataFrameGroupBy.hist`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.hist.html
+.. _`SeriesGroupBy.hist`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.hist.html
+.. _`DataFrameGroupBy.plot`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.DataFrameGroupBy.plot.html
+.. _`SeriesGroupBy.plot`: https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.core.groupby.SeriesGroupBy.plot.html

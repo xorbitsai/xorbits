@@ -27,7 +27,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ['reference/numpy/*', 'reference/pandas/*']
+exclude_patterns = ['reference/numpy/*']
 
 # i18n
 locale_dirs = ["locale/"]  # path is example but recommended.
