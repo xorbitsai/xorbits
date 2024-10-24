@@ -46,7 +46,7 @@ jobs:
           sortPaths: "python/xorbits"
           configuration: "--check-only --diff --sp python/setup.cfg"
       - name: mypy
-        run: pip install mypy && cd python && mypy xorbits
+        run: pip install mypy==1.11.2 && cd python && mypy xorbits
       - name: codespell
         run: pip install codespell==2.2.6 && cd python && codespell xorbits
       - name: Set up Node.js
