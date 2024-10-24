@@ -16,14 +16,12 @@ the method in the left column. ``Y`` stands for yes, ``N`` stands for no, ``P`` 
 for partial (meaning some parameters may not be supported yet), and ``D`` stands for
 default to lightgbm.
 
-+----------------------+--------------+------------------------+----------------------------------+
-| ``xorbits.lightgbm`` | ``lightgbm`` | Implemented? (Y/N/P/D) | Notes for Current implementation |
-+----------------------+--------------+------------------------+----------------------------------+
-|                      |              |                        |                                  |
-+----------------------+--------------+------------------------+----------------------------------+
-
-.. Originally, `predict` and `predict_proba methods` were included,
-.. but they are not consistent with the interfaces of lightgbm.
++---------------------------+--------------+------------------------+----------------------------------+
+| ``xorbits.lightgbm``      | ``lightgbm`` | Implemented? (Y/N/P/D) | Notes for Current implementation |
++---------------------------+--------------+------------------------+----------------------------------+
+| ``predict``               |              | Y                      |                                  |
++---------------------------+--------------+------------------------+----------------------------------+
+| ``predict_proba methods`` |              | Y                      |                                  |
++---------------------------+--------------+------------------------+----------------------------------+
 
 .. _`GitHub repository`: https://github.com/xorbitsai/xorbits/issues
-
