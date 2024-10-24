@@ -14,5 +14,3 @@ Pandas API
    groupby
    indexing
    window
-
-.. _`GitHub repository`: https://github.com/xorbitsai/xorbits/issues
