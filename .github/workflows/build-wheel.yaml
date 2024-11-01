@@ -85,12 +85,6 @@ jobs:
           pip install -r CI/requirements-wheel.txt
           cd python && python setup.py build_web && git reset --hard HEAD
 
-      - name: Set up Python and pip for wheel building
-        if: ${{ matrix.requires-python >= '3.12' }}
-        run: |
-          python -m ensurepip --upgrade
-          python -m pip install --upgrade pip setuptools wheel
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.5
         env:
