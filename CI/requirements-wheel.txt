@@ -8,8 +8,8 @@ pandas==1.5.1; python_version>='3.11' and python_version<'3.12'
 pandas>=2.1.1; python_version>='3.12'
 
 packaging
-numpy<2.0.0
-setuptools<64
+numpy
+setuptools
 
 scipy==1.5.4; python_version>='3.9' and python_version<'3.10' and platform_machine!='arm64'
 scipy==1.7.3; python_version>='3.9' and python_version<'3.10' and platform_machine=='arm64'
