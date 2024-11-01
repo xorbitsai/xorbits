@@ -85,6 +85,12 @@ jobs:
           pip install -r CI/requirements-wheel.txt
           cd python && python setup.py build_web && git reset --hard HEAD
 
+      - name: Set up Python and pip for wheel building
+        if: ${{ matrix.requires-python >= '3.12' }}
+        run: |
+          python -m ensurepip --upgrade
+          python -m pip install --upgrade pip setuptools wheel
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.5
         env:
@@ -92,8 +98,8 @@ jobs:
           CIBW_ENVIRONMENT_PASS_LINUX: NO_WEB_UI
           CIBW_ARCHS: ${{ matrix.arch }}
           CIBW_PROJECT_REQUIRES_PYTHON: ${{ matrix.requires-python }}
-          CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
-          CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
+          CIBW_BEFORE_BUILD_MACOS: python -m pip install --upgrade pip setuptools wheel && pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
+          CIBW_BEFORE_BUILD_WINDOWS: python -m pip install --upgrade pip setuptools wheel && pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
           CIBW_TEST_REQUIRES: pytest requests
           CIBW_BUILD_VERBOSITY: 1
