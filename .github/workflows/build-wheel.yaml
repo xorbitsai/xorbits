@@ -79,11 +79,6 @@ jobs:
         with:
           platforms: all
 
-      - name: Set up Python and pip for wheel building
-        if: ${{ matrix.requires-python >= '3.12' }}
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-
       - name: Build web
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
