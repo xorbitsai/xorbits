@@ -24,7 +24,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         arch: [auto]
-        python-version: [3.9, 3.10, 3.11, 3.12]
         requires-python: [">=3.9,<3.10", ">=3.10,<3.11", ">=3.11,<3.12", ">=3.12,<3.13"]
         include:
           - os: ubuntu-latest
