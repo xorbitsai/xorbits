@@ -1,9 +1,9 @@
 name: Xorbits Continuous Benchmark
 
 on:
-  push:
+  pull_request:
     branches:
-      - '**'
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,7 +31,7 @@ jobs:
       - name: Set up conda python
         uses: conda-incubator/setup-miniconda@v3.0.4
         with:
-          python-version: 3.12
+          python-version: 3.11
 
       - name: Install dependencies
         id: build
