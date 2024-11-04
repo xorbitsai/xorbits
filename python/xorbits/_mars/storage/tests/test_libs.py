@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib.util as importlib_utils
 import os
 import subprocess as sp
-import importlib.util as importlib_utils
 import sys
 import tempfile
 from typing import Any
