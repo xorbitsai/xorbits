@@ -16,7 +16,13 @@
 import math
 
 import numpy as np
-from numpy.core.numeric import ScalarType
+
+from ...utils import is_numpy_2
+
+if is_numpy_2():
+    from numpy._core.numeric import ScalarType
+else:
+    from numpy.core.numeric import ScalarType
 
 from .. import datasource as _nx
 from ..base import ndim
