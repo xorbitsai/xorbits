@@ -1,10 +1,9 @@
 name: Xorbits Continuous Benchmark
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -28,17 +27,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up conda python3.11
+      - name: Set up conda python
         uses: conda-incubator/setup-miniconda@v3.0.4
         with:
-          python-version: 3.11
+          python-version: 3.12
 
       - name: Install dependencies
         id: build
         shell: bash -el {0}
         run: |
           conda install anaconda::libmambapy
-          pip install "numpy<2.0" scipy cython coverage asv
+          pip install numpy scipy cython coverage asv
           cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
