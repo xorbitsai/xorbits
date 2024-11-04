@@ -16,10 +16,10 @@
 
 import collections
 import importlib
+import importlib.util as importlib_utils
 import itertools
 import os
 import pickle
-import pkgutil
 import time
 import types
 import uuid
@@ -48,9 +48,9 @@ from .lib.mmh3 import hash_bytes as mmh_hash_bytes
 from .lib.mmh3 import hash_from_buffer as mmh3_hash_from_buffer
 
 
-cdef bint _has_cupy = bool(pkgutil.find_loader('cupy'))
-cdef bint _has_cudf = bool(pkgutil.find_loader('cudf'))
-cdef bint _has_sqlalchemy = bool(pkgutil.find_loader('sqlalchemy'))
+cdef bint _has_cupy = bool(importlib_utils.find_spec('cupy'))
+cdef bint _has_cudf = bool(importlib_utils.find_spec('cudf'))
+cdef bint _has_sqlalchemy = bool(importlib_utils.find_spec('sqlalchemy'))
 cdef bint _has_interval_array_inclusive = hasattr(
     pd.arrays.IntervalArray, "inclusive"
 )

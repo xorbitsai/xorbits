@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib.util as importlib_utils
 import os
-import pkgutil
 import subprocess as sp
 import sys
 import tempfile
@@ -51,7 +51,7 @@ params = [
 ]
 if (
     not sys.platform.startswith("win")
-    and pkgutil.find_loader("pyarrow.plasma") is not None
+    and importlib_utils.find_spec("pyarrow.plasma") is not None
 ):
     params.append("plasma")
 alluxio = sp.getoutput("echo $ALLUXIO_HOME")
