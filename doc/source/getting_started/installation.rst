@@ -16,7 +16,7 @@ Xorbits can be installed via pip from `PyPI <https://pypi.org/project/xorbits>`_
 Python version support
 ----------------------
 
-Officially Python 3.9, 3.10 and 3.11.
+Officially Python 3.9, 3.10, 3.11, and 3.12.
 
 Packages support
 ----------------
@@ -27,12 +27,20 @@ to be compatible with the latest single-node packages. The table below lists the
 versions of the single-node packages that Xorbits are compatible with. If you are using 
 an older version of pandas, you should either upgrade your pandas or downgrade Xorbits.
 
-======= ========  ========= ========== =========== ===========
-Xorbits `NumPy`_  `pandas`_ `xgboost`_ `lightgbm`_ `datasets`_
-======= ========  ========= ========== =========== ===========
-0.7.4   1.26.4    2.2.3     2.1.1      4.5.0       3.0.1
-======= ========  ========= ========== =========== ===========
+======= =================== ======== ========= ========== =========== ===========
+Xorbits Python              `NumPy`_ `pandas`_ `xgboost`_ `lightgbm`_ `datasets`_
+======= =================== ======== ========= ========== =========== ===========
+0.7.4   3.9,3.10,3.11       1.26.4   2.2.3     2.1.1      4.5.0       3.0.1
+0.8.0   3.9,3.10,3.11,3.12  2.1.3    2.2.3     2.1.2      4.5.0       3.1.0
+======= =================== ======== ========= ========== =========== ===========
 
+
+======= ====================   ======== ========== ========== =========== =========== 
+Xorbits | Python             | NumPy  | pandas     | xgboost   | lightgbm | datasets  
+======= ====================   ======== ========== ========== =========== =========== 
+0.7.4   | 3.9,3.10,3.11      | 1.26.4 | 2.2.3      | 2.1.1    | 4.5.0    | 3.0.1    
+0.8.0   | 3.9,3.10,3.11,3.12 | 2.1.3  | 2.2.3      | 2.1.2    | 4.5.0    | 3.1.0    
+======= ====================   ======== ========== ========== =========== =========== 
 .. _`NumPy`: https://numpy.org
 .. _`pandas`: https://pandas.pydata.org
 .. _`xgboost`: https://xgboost.readthedocs.io
