@@ -17,7 +17,7 @@ import math
 
 import numpy as np
 
-from ...utils import is_numpy_2
+from ....utils import is_numpy_2
 
 if is_numpy_2():
     from numpy._core.numeric import ScalarType
