@@ -7,9 +7,6 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - '*'  # 在推送到任何分支时触发工作流
-    
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
