@@ -96,6 +96,7 @@ def test_array(setup_cluster):
     import dask.array as da
 
     from .....utils import is_numpy_2
+
     if is_numpy_2():
         from numpy._core.numeric import array_equal
     else:
