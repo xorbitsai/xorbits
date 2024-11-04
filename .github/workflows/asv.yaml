@@ -3,7 +3,7 @@ name: Xorbits Continuous Benchmark
 on:
   push:
     branches:
-      - main
+      - *
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
