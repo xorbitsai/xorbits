@@ -20,9 +20,8 @@ for the method in the left column. ``Y`` stands for yes, ``N`` stands for no, ``
 +---------------------+-------------+------------------------+----------------------------------+
 | ``train``           | `train`_    | Y                      |                                  |
 +---------------------+-------------+------------------------+----------------------------------+
-
-.. Originally, `predict` was included,
-.. but it is not consistent with the interface of xgboost.
+| ``predict``         |             | Y                      |                                  |
++---------------------+-------------+------------------------+----------------------------------+
 
 .. _`GitHub repository`: https://github.com/xorbitsai/xorbits/issues
 .. _`train`: https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.train

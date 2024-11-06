@@ -94,7 +94,13 @@ def test_unpartitioned_dataframe(setup_cluster):
 @pytest.mark.skipif(not dask_installed, reason="dask not installed")
 def test_array(setup_cluster):
     import dask.array as da
-    from numpy.core.numeric import array_equal
+
+    from .....utils import is_numpy_2
+
+    if is_numpy_2():
+        from numpy._core.numeric import array_equal
+    else:
+        from numpy.core.numeric import array_equal
 
     x = da.random.random((10000, 10000), chunks=(1000, 1000))
     y = x + x.T
