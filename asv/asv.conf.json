@@ -85,7 +85,7 @@
     // will not be set for the current combination.
     //
     "matrix": {
-        "numpy": ["1.26.4"],
+        "numpy": [],
         "Cython": [],
         "pandas": [],
         "scipy": [],
