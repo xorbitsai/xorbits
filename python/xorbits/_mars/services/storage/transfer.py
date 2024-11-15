@@ -15,6 +15,7 @@
 
 import asyncio
 import logging
+import os
 from dataclasses import dataclass
 from io import UnsupportedOperation
 from typing import Any, Dict, List, Optional, Union
@@ -263,7 +264,80 @@ class ReceiverManagerActor(mo.StatelessActor):
         if self._writing_infos[(session_id, data_key)].ref_counts == 0:
             del self._writing_infos[(session_id, data_key)]
 
-    async def add_writers(
+
+    async def wait_transfer_done(self, session_id, data_keys):
+        await asyncio.gather(
+            *[self._writing_infos[(session_id, key)].event.wait() for key in data_keys]
+        )
+        async with self._lock:
+            for data_key in data_keys:
+                self._decref_writing_key(session_id, data_key)
+
+    async def create_writers(
+        self,
+        session_id: str,
+        data_keys: List[str],
+        data_sizes: List[int],
+        level: StorageLevel,
+        sub_infos: List,
+        band_name: str,
+    ):
+        tasks = dict()
+        key_to_sub_infos = dict()
+        data_key_to_size = dict()
+        being_processed = []
+        for data_key, data_size, sub_info in zip(data_keys, data_sizes, sub_infos):
+            data_key_to_size[data_key] = data_size
+            if (session_id, data_key) not in self._writing_infos:
+                being_processed.append(False)
+                tasks[data_key] = self._storage_handler.open_writer.delay(
+                    session_id,
+                    data_key,
+                    data_size,
+                    level,
+                    request_quota=False,
+                    band_name=band_name,
+                )
+                key_to_sub_infos[data_key] = sub_info
+            else:
+                being_processed.append(True)
+                self._writing_infos[(session_id, data_key)].ref_counts += 1
+        if tasks:
+            writers = await self._storage_handler.open_writer.batch(
+                *tuple(tasks.values())
+            )
+            for data_key, writer in zip(tasks, writers):
+                self._writing_infos[(session_id, data_key)] = WritingInfo(
+                    writer, data_key_to_size[data_key], level, asyncio.Event(), 1
+                )
+                if key_to_sub_infos[data_key] is not None:
+                    writer._sub_key_infos = key_to_sub_infos[data_key]
+        return being_processed
+
+    async def open_writers(
+        self,
+        session_id: str,
+        data_keys: List[str],
+        data_sizes: List[int],
+        level: StorageLevel,
+        sub_infos: List,
+        band_name: str,
+    ):
+        async with self._lock:
+            await self._storage_handler.request_quota_with_spill(level, sum(data_sizes))
+            future = asyncio.create_task(
+                self.create_writers(
+                    session_id, data_keys, data_sizes, level, sub_infos, band_name
+                )
+            )
+            try:
+                return await future
+            except asyncio.CancelledError:
+                await self._quota_refs[level].release_quota(sum(data_sizes))
+                future.cancel()
+                raise
+
+    async def add_in_process_writers(
         self,
         session_id: str,
         data_keys: List[Union[str, tuple]],
@@ -272,6 +346,11 @@ class ReceiverManagerActor(mo.StatelessActor):
         writers: List[Optional[WrappedStorageFileObject]],
         level: StorageLevel,
     ) -> List[bool]:
+        """
+        This method is invoked only when the caller process matches the receiver's process. 
+        To prevent deadlocks, the `writers` are opened directly within the caller's storage 
+        handler before being passed to this function.
+        """
         is_transferring: List[bool] = []
         async with self._lock:
             for data_key, data_size, sub_info, writer in zip(
@@ -289,10 +368,5 @@ class ReceiverManagerActor(mo.StatelessActor):
                     is_transferring.append(True)
         return is_transferring
 
-    async def wait_transfer_done(self, session_id, data_keys):
-        await asyncio.gather(
-            *[self._writing_infos[(session_id, key)].event.wait() for key in data_keys]
-        )
-        async with self._lock:
-            for data_key in data_keys:
-                self._decref_writing_key(session_id, data_key)
+    def get_pid(self):
+        return os.getpid()
