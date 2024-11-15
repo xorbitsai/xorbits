@@ -625,15 +625,15 @@ class StorageHandlerActor(mo.Actor):
                 )
             )
 
-        # If the current process matches the receiver's process ID, open writers directly 
-        # through `self.open_writer` to avoid potential deadlocks. 
+        # If the current process matches the receiver's process ID, open writers directly
+        # through `self.open_writer` to avoid potential deadlocks.
         if os.getpid() == (await receiver_ref.get_pid()):
             writers = await self.open_writer.batch(*open_writer_tasks)
             is_transferring_list = await receiver_ref.add_in_process_writers(
                 session_id, data_keys, data_sizes, sub_infos, writers, level
             )
         # If the current process differs from the receiver's process, initiate writer creation
-        # through the receiver_ref. handler. This avoids potential serialization issues when 
+        # through the receiver_ref. handler. This avoids potential serialization issues when
         # interacting with the NUMA storage handler from another process context.
         else:
             is_transferring_list = await receiver_ref.create_writers(

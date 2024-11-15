@@ -264,7 +264,6 @@ class ReceiverManagerActor(mo.StatelessActor):
         if self._writing_infos[(session_id, data_key)].ref_counts == 0:
             del self._writing_infos[(session_id, data_key)]
 
-
     async def wait_transfer_done(self, session_id, data_keys):
         await asyncio.gather(
             *[self._writing_infos[(session_id, key)].event.wait() for key in data_keys]
@@ -347,8 +346,8 @@ class ReceiverManagerActor(mo.StatelessActor):
         level: StorageLevel,
     ) -> List[bool]:
         """
-        This method is invoked only when the caller process matches the receiver's process. 
-        To prevent deadlocks, the `writers` are opened directly within the caller's storage 
+        This method is invoked only when the caller process matches the receiver's process.
+        To prevent deadlocks, the `writers` are opened directly within the caller's storage
         handler before being passed to this function.
         """
         is_transferring: List[bool] = []
