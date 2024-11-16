@@ -15,15 +15,17 @@
 
 import asyncio
 import logging
+import os
 from dataclasses import dataclass
 from io import UnsupportedOperation
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import xoscar as mo
 from xoscar.core import BufferRef
 
 from ...lib.aio import alru_cache
 from ...storage import StorageLevel
+from ...typing import BandType
 from ...utils import dataslots
 from .core import DataManagerActor, WrappedStorageFileObject
 from .handler import StorageHandlerActor
@@ -42,6 +44,7 @@ class SenderManagerActor(mo.StatelessActor):
         data_manager_ref: mo.ActorRefType[DataManagerActor] = None,
         storage_handler_ref: mo.ActorRefType[StorageHandlerActor] = None,
     ):
+        super().__init__()
         self._band_name = band_name
         self._data_manager_ref = data_manager_ref
         self._storage_handler = storage_handler_ref
@@ -74,7 +77,6 @@ class SenderManagerActor(mo.StatelessActor):
         block_size: int,
     ):
         await mo.copy_to(local_buffers, remote_buffers, block_size=block_size)
-        await receiver_ref.handle_transmission_done(session_id, data_keys)
 
     @staticmethod
     def _get_buffer_size(buf: Any):
@@ -144,7 +146,6 @@ class SenderManagerActor(mo.StatelessActor):
         try:
             await asyncio.shield(write_task)
         except asyncio.CancelledError:
-            await receiver_ref.handle_transmission_cancellation(session_id, data_keys)
             raise
 
     @mo.extensible
@@ -152,89 +153,30 @@ class SenderManagerActor(mo.StatelessActor):
         self,
         session_id: str,
         data_keys: List[str],
-        address: str,
-        level: StorageLevel,
-        band_name: str = "numa-0",
+        to_send_keys: List,
+        to_wait_keys: List,
+        remote_band: BandType,
         block_size: int = None,
-        error: str = "raise",
     ):
         logger.debug(
-            "Begin to send data (%s, %s) to %s", session_id, data_keys, address
+            "Begin to send data (%s, %s) to %s", session_id, data_keys, remote_band
         )
 
-        tasks = []
-        for key in data_keys:
-            tasks.append(self._data_manager_ref.get_store_key.delay(session_id, key))
-        data_keys = await self._data_manager_ref.get_store_key.batch(*tasks)
-        data_keys = list(set(data_keys))
-        sub_infos = await self._data_manager_ref.get_sub_infos.batch(
-            *[
-                self._data_manager_ref.get_sub_infos.delay(session_id, key)
-                for key in data_keys
-            ]
-        )
-
-        block_size = block_size or self._transfer_block_size
         receiver_ref: mo.ActorRefType[
             ReceiverManagerActor
-        ] = await self.get_receiver_ref(address, band_name)
-        get_infos = []
-        pin_tasks = []
-        for data_key in data_keys:
-            get_infos.append(
-                self._data_manager_ref.get_data_info.delay(
-                    session_id, data_key, self._band_name, error
-                )
-            )
-            pin_tasks.append(
-                self._data_manager_ref.pin.delay(
-                    session_id, data_key, self._band_name, error
-                )
-            )
-        await self._data_manager_ref.pin.batch(*pin_tasks)
-        infos = await self._data_manager_ref.get_data_info.batch(*get_infos)
-        filtered = [
-            (data_info, data_key)
-            for data_info, data_key in zip(infos, data_keys)
-            if data_info is not None
-        ]
-        if filtered:
-            infos, data_keys = zip(*filtered)
-        else:  # pragma: no cover
-            # no data to be transferred
-            return
-        data_sizes = [info.store_size for info in infos]
-        if level is None:
-            level = infos[0].level
-        is_transferring_list = await receiver_ref.open_writers(
-            session_id, data_keys, data_sizes, level, sub_infos, band_name
-        )
-        to_send_keys = []
-        to_wait_keys = []
-        for data_key, is_transferring in zip(data_keys, is_transferring_list):
-            if is_transferring:
-                to_wait_keys.append(data_key)
-            else:
-                to_send_keys.append(data_key)
+        ] = await self.get_receiver_ref(remote_band[0], remote_band[1])
 
         if to_send_keys:
+            logger.debug("Start sending %s to %s", to_send_keys, receiver_ref.address)
+            block_size = block_size or self._transfer_block_size
             await self._send_data(receiver_ref, session_id, to_send_keys, block_size)
         if to_wait_keys:
             await receiver_ref.wait_transfer_done(session_id, to_wait_keys)
-        unpin_tasks = []
-        for data_key in data_keys:
-            unpin_tasks.append(
-                self._data_manager_ref.unpin.delay(
-                    session_id, [data_key], self._band_name, error="ignore"
-                )
-            )
-        await self._data_manager_ref.unpin.batch(*unpin_tasks)
         logger.debug(
-            "Finish sending data (%s, %s) to %s, total size is %s",
+            "Finish sending data (%s, %s) to %s",
             session_id,
             data_keys,
-            address,
-            sum(data_sizes),
+            remote_band,
         )
 
 
@@ -258,12 +200,6 @@ class ReceiverManagerActor(mo.StatelessActor):
         self._storage_handler = storage_handler_ref
         self._writing_infos: Dict[tuple, WritingInfo] = dict()
         self._lock = asyncio.Lock()
-
-    async def __post_create__(self):
-        if self._storage_handler is None:  # for test
-            self._storage_handler = await mo.actor_ref(
-                self.address, StorageHandlerActor.gen_uid("numa-0")
-            )
 
     async def get_buffers(
         self,
@@ -306,18 +242,18 @@ class ReceiverManagerActor(mo.StatelessActor):
                 self._decref_writing_key(session_id, data_key)
 
     async def handle_transmission_cancellation(self, session_id: str, data_keys: List):
+        data_keys_to_be_deleted = []
         async with self._lock:
             for data_key in data_keys:
                 if (session_id, data_key) in self._writing_infos:
                     if self._writing_infos[(session_id, data_key)].ref_counts == 1:
                         info = self._writing_infos[(session_id, data_key)]
                         await self._quota_refs[info.level].release_quota(info.size)
-                        await self._storage_handler.delete(
-                            session_id, data_key, error="ignore"
-                        )
+                        data_keys_to_be_deleted.append(data_key)
                         await info.writer.clean_up()
                         info.event.set()
                         self._decref_writing_key(session_id, data_key)
+        return data_keys_to_be_deleted
 
     @classmethod
     def gen_uid(cls, band_name: str):
@@ -327,6 +263,14 @@ class ReceiverManagerActor(mo.StatelessActor):
         self._writing_infos[(session_id, data_key)].ref_counts -= 1
         if self._writing_infos[(session_id, data_key)].ref_counts == 0:
             del self._writing_infos[(session_id, data_key)]
+
+    async def wait_transfer_done(self, session_id, data_keys):
+        await asyncio.gather(
+            *[self._writing_infos[(session_id, key)].event.wait() for key in data_keys]
+        )
+        async with self._lock:
+            for data_key in data_keys:
+                self._decref_writing_key(session_id, data_key)
 
     async def create_writers(
         self,
@@ -392,10 +336,36 @@ class ReceiverManagerActor(mo.StatelessActor):
                 future.cancel()
                 raise
 
-    async def wait_transfer_done(self, session_id, data_keys):
-        await asyncio.gather(
-            *[self._writing_infos[(session_id, key)].event.wait() for key in data_keys]
-        )
+    async def add_in_process_writers(
+        self,
+        session_id: str,
+        data_keys: List[Union[str, tuple]],
+        data_sizes: List[int],
+        sub_infos: List,
+        writers: List[Optional[WrappedStorageFileObject]],
+        level: StorageLevel,
+    ) -> List[bool]:
+        """
+        This method is invoked only when the caller process matches the receiver's process.
+        To prevent deadlocks, the `writers` are opened directly within the caller's storage
+        handler before being passed to this function.
+        """
+        is_transferring: List[bool] = []
         async with self._lock:
-            for data_key in data_keys:
-                self._decref_writing_key(session_id, data_key)
+            for data_key, data_size, sub_info, writer in zip(
+                data_keys, data_sizes, sub_infos, writers
+            ):
+                if (session_id, data_key) not in self._writing_infos:
+                    is_transferring.append(False)
+
+                    self._writing_infos[(session_id, data_key)] = WritingInfo(
+                        writer, data_size, level, asyncio.Event(), 1
+                    )
+                    if sub_info is not None:
+                        writer._sub_key_infos = sub_info
+                else:
+                    is_transferring.append(True)
+        return is_transferring
+
+    def get_pid(self):
+        return os.getpid()
