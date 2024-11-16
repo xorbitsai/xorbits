@@ -1,43 +1,35 @@
-ARG BASE_CONTAINER=continuumio/miniconda3:23.10.0-1
+ARG BASE_CONTAINER=continuumio/miniconda3:24.9.2-0
 ARG PYTHON_VERSION=3.9
 FROM ${BASE_CONTAINER} AS base
 
 FROM base AS py3.9-base
 SHELL ["/bin/bash", "-c"]
 RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then \
-    /opt/conda/bin/conda install python=3.9 ; fi
+    /opt/conda/bin/conda install -y python=3.9 nodejs=20.17 ; fi
     # && /opt/conda/bin/conda install rapidsai::ucxx
 
 FROM base AS py3.10-base
 SHELL ["/bin/bash", "-c"]
 RUN if [ "$PYTHON_VERSION" == "3.10" ] ; then \
-    /opt/conda/bin/conda install python=3.10 ; fi
+    /opt/conda/bin/conda install -y python=3.10 ; fi
     # && /opt/conda/bin/conda install rapidsai::ucxx
 
 FROM base AS py3.11-base
 SHELL ["/bin/bash", "-c"]
 RUN if [ "$PYTHON_VERSION" == "3.11" ] ; then \
-    /opt/conda/bin/conda install python=3.11 ; fi
+    /opt/conda/bin/conda install -y python=3.11 ; fi
     # && /opt/conda/bin/conda install rapidsai::ucxx ; fi
 
 FROM base AS py3.12-base
 SHELL ["/bin/bash", "-c"]
 RUN if [ "$PYTHON_VERSION" == "3.12" ] ; then \
-    /opt/conda/bin/conda install python=3.12 ; fi
+    /opt/conda/bin/conda install -y python=3.12 ; fi
     # && /opt/conda/bin/conda install rapidsai::ucxx ; fi
 
 
 FROM py${PYTHON_VERSION}-base AS final
-RUN /opt/conda/bin/conda install -c conda-forge --solver classic \
-    cython \
-    mkl \
-    lz4 \
-  && /opt/conda/bin/conda install -c conda-forge --solver classic \
-    python-kubernetes \
-    jax \
-    jaxlib \
-    uvloop \
-    libnuma \
+RUN /opt/conda/bin/conda install -y anaconda::nodejs=20.17 \
+  conda-forge::cython conda-forge::libnuma conda-forge::mkl \
   && pip install -U pip \
   && pip install -U \
     numpy \
@@ -57,20 +49,10 @@ RUN /opt/conda/bin/conda install -c conda-forge --solver classic \
     s3fs \
     pyopenssl>=23.0.0 \
     datasets \
+    python-kubernetes \
+    jax \
+    uvloop \
   && /opt/conda/bin/conda clean --all -f -y
-
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 14.21.1
 
 RUN apt-get -y update \
   && apt install -y curl procps gcc g++ \
-  && mkdir -p $NVM_DIR \
-  && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash \
-  && . $NVM_DIR/nvm.sh \
-  && nvm install $NODE_VERSION \
-  && nvm alias default $NODE_VERSION \
-  && nvm use default \
-  && apt-get -yq clean \
-  && rm -rf /var/lib/apt/lists/*
-
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
