@@ -1,6 +1,49 @@
+FROM continuumio/miniconda3:24.9.2-0 AS base
+
 ARG PYTHON_VERSION=3.9
-ARG BASE_CONTAINER=xprobe/xorbits:base-py${PYTHON_VERSION}
-FROM ${BASE_CONTAINER}
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get -y update \
+    && apt-get install -y \
+      curl \
+      procps \
+      gcc \
+      g++ \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN conda install python=${PYTHON_VERSION} \
+    nodejs=20.17 \
+    conda-forge::mkl \
+    conda-forge::libnuma \
+    && conda clean --all -f -y
+# TODO: UCXX is not mature enough for production, add it back when it's ready
+
+RUN pip install -U \
+    numpy \
+    scipy \
+    pandas \
+    numexpr \
+    psutil \
+    scikit-learn \
+    sqlalchemy \
+    tornado \
+    xoscar \
+    pyarrow \
+    cloudpickle \
+    azure-storage-blob \
+    adlfs \
+    fsspec \
+    s3fs \
+    pyopenssl \
+    datasets \
+    python-kubernetes \
+    jax \
+    uvloop \
+    Cython
+
+RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then \
+    pip install -U 'setuptools<64' ; fi
 
 # Run this under `xorbits` dir
 COPY . /opt/xorbits/

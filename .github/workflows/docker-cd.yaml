@@ -69,9 +69,8 @@ jobs:
               git checkout $branch
               export IMAGE_TAG="nightly-$branch"
             fi
-            docker build -t "xprobe/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cpu.base . --build-arg PYTHON_VERSION=$PY_VERSION
             docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PY_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=$PY_VERSION
-            docker push "xprobe/xorbits:base-py$PY_VERSION"
+            docker build -t "$DOCKER_ORG/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cuda . --build-arg PYTHON_VERSION=$PY_VERSION --build-arg CUDA_VERSION=12.0
             docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PY_VERSION}"
           done
           
