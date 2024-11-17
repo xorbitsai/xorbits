@@ -22,6 +22,9 @@ jobs:
     strategy:
       matrix:
         python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+        cuda-version: [ "12.0" ]
+        exclude:
+          - { cuda-version: 12.0, python-version: 3.10}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -41,6 +44,7 @@ jobs:
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
           PY_VERSION: ${{ matrix.python-version }}
+          CUDA_VERSION: ${{ matrix.cuda-version }}
         run: |
           if [[ "$GITHUB_REF" =~ ^"refs/tags/" ]]; then
             export GIT_TAG=$(echo "$GITHUB_REF" | sed -e "s/refs\/tags\///g")
@@ -70,7 +74,7 @@ jobs:
               export IMAGE_TAG="nightly-$branch"
             fi
             docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PY_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=$PY_VERSION
-            docker build -t "$DOCKER_ORG/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cuda . --build-arg PYTHON_VERSION=$PY_VERSION --build-arg CUDA_VERSION=12.0
+            docker build -t "$DOCKER_ORG/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cuda . --build-arg PYTHON_VERSION=$PY_VERSION --build-arg CUDA_VERSION=$CUDA_VERSION
             docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PY_VERSION}"
           done
           
