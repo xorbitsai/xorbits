@@ -1,53 +1,12 @@
-FROM continuumio/miniconda3:24.9.2-0 AS base
-
 ARG PYTHON_VERSION=3.9
-SHELL ["/bin/bash", "-c"]
-RUN conda install python=${PYTHON_VERSION} \
-    nodejs=20.17 \
-    conda-forge::mkl \
-    conda-forge::libnuma \
-    && conda clean --all -f -y
-# TODO: UCXX is not mature enough for production, add it back when it's ready
+ARG BASE_CONTAINER=xprobe/xorbits:base-py${PYTHON_VERSION}
+FROM ${BASE_CONTAINER}
 
-RUN pip install -U \
-    numpy \
-    scipy \
-    pandas \
-    numexpr \
-    psutil \
-    scikit-learn \
-    sqlalchemy \
-    tornado \
-    xoscar \
-    pyarrow \
-    cloudpickle \
-    azure-storage-blob \
-    adlfs \
-    fsspec \
-    s3fs \
-    pyopenssl \
-    datasets \
-    python-kubernetes \
-    jax \
-    uvloop \
-    Cython
-
-RUN if [ "$PYTHON_VERSION" == "3.9" ] ; then \
-    pip install -U 'setuptools<64' ; fi
-
-RUN apt-get -y update \
-    && apt-get install -y \
-      curl \
-      procps \
-      gcc \
-      g++ \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy Xorbits files
+# Run this under `xorbits` dir
 COPY . /opt/xorbits/
 
-# Build extensions
+SHELL ["/bin/bash", "-c"]
+ARG PYTHON_VERSION=3.9
 RUN cd /opt/xorbits/python && \
     if [ "$PYTHON_VERSION" == "3.11" ] ; \
     then CFLAGS="-DCYTHON_FAST_THREAD_STATE=0" python setup.py build_ext -i ; \
@@ -56,17 +15,14 @@ RUN cd /opt/xorbits/python && \
     python setup.py build_web && \
     rm -rf /opt/xorbits/python/xorbits/web/ui/node_modules
 
-# Setup service directory
 RUN mkdir -p /srv
+
 WORKDIR /srv
 
-# Copy and setup entrypoint scripts
 RUN cp /opt/xorbits/python/xorbits/deploy/docker/entrypoint.sh /srv/entrypoint.sh && \
     cp /opt/xorbits/python/xorbits/deploy/docker/install.sh /srv/install.sh && \
     chmod a+x /srv/*.sh
 
-# Set Python path
 ENV PYTHONPATH "${PYTHONPATH}:/opt/xorbits:/opt/xorbits/python"
 
-# Set entrypoint
 ENTRYPOINT [ "/srv/entrypoint.sh" ]
