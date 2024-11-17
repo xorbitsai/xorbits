@@ -192,7 +192,7 @@ msgstr "安装 Python 包"
 
 #: ../../source/user_guide/deployment_kubernetes.rst:94
 msgid ""
-"Refer `DockerFile <https://github.com/xorbitsai"
+"Refer `Dockerfile <https://github.com/xorbitsai"
 "/xorbits/blob/main/python/xorbits/deploy/docker/Dockerfile.cpu>`_ for"
 " the python packages included in the Xorbits image. If you want to "
 "install additional python packages in your Xorbits K8s cluster, use "

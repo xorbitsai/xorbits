@@ -11,8 +11,8 @@ Xorbits can be installed via pip from `PyPI <https://pypi.org/project/xorbits>`_
     pip install xorbits
 
 It will install the latest version of Xorbits and dependencies like ``pandas``, ``numpy``, etc.
-We recommend you to use environment management tools like ``conda`` or ``venv`` to install
-create a new environment. ``conda`` will install the pre-compiled packages, while ``pip`` will
+We recommend you to use environment management tools like ``conda`` or ``venv`` to create 
+a new environment. ``conda`` will install the pre-compiled packages, while ``pip`` will
 install the wheel (which is pre-compiled) or compile the packages from source code if no wheel
 is available.
 
@@ -50,8 +50,10 @@ GPU support
 Xorbits can also scale GPU-accelerated data science tools like `CuPy`_ and `cuDF`_. To enable GPU support, you need to install
 GPU-accelerated packages. As GPU software stacks (i.e.,GPU driver, CUDA, etc.)
 are complicated from CPU, you need to make sure NVIDIA driver and CUDA toolkit are properly installed.
-We recommend you to use ``conda`` to install ``cuDF`` first and then install ``xorbits`` with ``pip``.
+We recommend you to use ``conda`` to install ``cuDF`` first, it will install both ``cudf`` and ``cupy``,
+and then install ``xorbits`` with ``pip``. 
 ``conda`` will help resolve the dependencies of ``cuDF`` and provides supporting software like CUDA.
+Refer to `RAPIDS_INSTALL_DOCS`_ for more details about how to install ``cuDF``.
 
 When using Xorbits with GPU, you need to add the :code:`gpu=True` parameter to the data loading method.
 For example:
@@ -72,6 +74,7 @@ with pre-installed GPU drivers and CUDA toolkit. Please refer to :ref:`docker` f
 
 .. _`Cupy`: https://cupy.dev
 .. _`cuDF`: https://docs.rapids.ai/api/cudf/stable/
+.. _`RAPIDS_INSTALL_DOCS`: https://docs.rapids.ai/install/
 
 Dependencies
 ------------
