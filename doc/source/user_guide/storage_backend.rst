@@ -99,7 +99,15 @@ If you want to run tasks on GPUs, add the :code:`gpu=True` parameter to the data
 .. code-block:: python
     
     import xorbits.pandas as pd
-    pd.read_parquet(path, gpu=True)
+    import xorbits.numpy as np
+    
+    df = pd.read_parquet(path, gpu=True)
+    ...
+
+    a = np.ones((1000, 1000), gpu=True)
+    b = np.ones((1000, 1000), gpu=True)
+    c = np.matmul(a, b)
+    ...
 
 
 All subsequent operations will run on GPUs.
