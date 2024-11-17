@@ -4,7 +4,19 @@ ARG BASE_CONTAINER=rapidsai/base:24.10-cuda${CUDA_VERSION}-py${PYTHON_VERSION}
 FROM ${BASE_CONTAINER} AS base
 
 ARG PYTHON_VERSION=3.11
+USER root
+
 SHELL ["/bin/bash", "-c"]
+
+RUN apt-get -y update \
+  && apt-get install -y \
+    curl \
+    procps \
+    gcc \
+    g++ \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
 RUN conda install conda-forge::libnuma \
     && conda clean --all -f -y
 
@@ -29,15 +41,6 @@ RUN pip install \
   python-kubernetes \
   uvloop \
   Cython
-
-RUN apt-get -y update \
-  && apt-get install -y \
-    curl \
-    procps \
-    gcc \
-    g++ \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
 
 # Copy Xorbits files
 COPY . /opt/xorbits/
