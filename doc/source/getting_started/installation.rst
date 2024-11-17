@@ -10,6 +10,13 @@ Xorbits can be installed via pip from `PyPI <https://pypi.org/project/xorbits>`_
 
     pip install xorbits
 
+It will install the latest version of Xorbits and dependencies like ``pandas``, ``numpy``, etc.
+We recommend you to use environment management tools like ``conda`` or ``venv`` to install
+Xorbits. Take 
+
+::
+
+    pip install 'xorbits[extra]'
 
 .. _install.version:
 

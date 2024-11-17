@@ -117,7 +117,7 @@ Build the Docker image::
     $ cd xorbits
 
     # Build the image
-    docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=<your_python_version>
+    docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cpu . --build-arg PYTHON_VERSION=<your_python_version>
 
 Run Container::
 
