@@ -1,15 +1,11 @@
 name: Xorbits CD for DockerHub
 
-# on:
-#   schedule:
-#     - cron: '0 10 * * *'
-#   push:
-#     tags:
-#       - '*'
-#   workflow_dispatch:
-
 on:
+  schedule:
+    - cron: '0 18 * * *'
   push:
+    tags:
+      - '*'
   workflow_dispatch:
 
 concurrency:
@@ -38,7 +34,7 @@ jobs:
 
       - name: Build and push Docker image
         shell: bash
-        # if: ${{ github.repository == 'xorbitsai/xorbits' }}
+        if: ${{ github.repository == 'xorbitsai/xorbits' }}
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
           PYTHON_VERSION: ${{ matrix.python-version }}
@@ -72,11 +68,13 @@ jobs:
               export IMAGE_TAG="nightly-$branch"
             fi
             if [[ "$CUDA_VERSION" == "none" ]]; then
+              # Build CPU image
               docker build -t "$DOCKER_ORG/xorbits:base-py${PYTHON_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cpu.base . --build-arg PYTHON_VERSION=$PYTHON_VERSION
               docker push "$DOCKER_ORG/xorbits:base-py${PYTHON_VERSION}"
               docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PYTHON_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cpu . --build-arg PYTHON_VERSION=$PYTHON_VERSION
               docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PYTHON_VERSION}"
             else
+              # Build GPU image
               docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-cuda${CUDA_VERSION}-py${PYTHON_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cuda . --build-arg PYTHON_VERSION=$PYTHON_VERSION --build-arg CUDA_VERSION=$CUDA_VERSION
               docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-cuda${CUDA_VERSION}-py${PYTHON_VERSION}"
             fi
