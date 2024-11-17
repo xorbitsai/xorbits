@@ -42,7 +42,7 @@ RUN pip install \
   uvloop \
   Cython
 
-RUN if [ "$PYTHON_VERSION" < "3.12" ] ; then \
+RUN if [ "$PYTHON_VERSION" \< "3.12" ] ; then \
   pip install -U 'setuptools<64' ; fi
 
 # Copy Xorbits files
