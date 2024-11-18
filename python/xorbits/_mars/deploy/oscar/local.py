@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import asyncio
+import copy
 import logging
 import os
 import sys
@@ -408,7 +409,7 @@ class LocalCluster:
                 worker_pool.external_address,
                 self.supervisor_address,
                 band_to_resource,
-                config=self._config,
+                config=copy.deepcopy(self._config),
             )
 
     async def stop(self):
