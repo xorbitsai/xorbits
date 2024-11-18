@@ -106,7 +106,7 @@ For the image tag prefixes, ``nightly-main`` represents the latest code from `Xo
 while ``v<release_version>`` represents version numbers for each release.
 You can choose to pull the image based on your specific requirements.
 
-If you indeed need to manually build Xorbits image, Xorbits provides a ``DockerFile`` in the ``python/xorbits/deploy/docker`` directory to build a Docker image
+If you indeed need to manually build Xorbits image, Xorbits provides a ``Dockerfile`` in the ``python/xorbits/deploy/docker`` directory to build a Docker image
 with a full Xorbits development environment.
 
 **Docker Commands**
@@ -117,7 +117,7 @@ Build the Docker image::
     $ cd xorbits
 
     # Build the image
-    docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=<your_python_version>
+    docker build -t xorbits-dev --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cpu . --build-arg PYTHON_VERSION=<your_python_version>
 
 Run Container::
 
@@ -130,7 +130,7 @@ Run Container::
 
 **Visual Studio Code**
 
-You can use the DockerFile to launch a remote session with Visual Studio Code,
+You can use the Dockerfile to launch a remote session with Visual Studio Code,
 a popular free IDE, using the ``.devcontainer.json`` file.
 See https://code.visualstudio.com/docs/remote/containers for details.
 

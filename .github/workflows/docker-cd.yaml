@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.9", "3.10", "3.11" ]
+        python-version: [ "3.10", "3.11", "3.12" ]
+        cuda-version: [ "none", "12.0", "12.5" ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -36,7 +37,8 @@ jobs:
         if: ${{ github.repository == 'xorbitsai/xorbits' }}
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
-          PY_VERSION: ${{ matrix.python-version }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          CUDA_VERSION: ${{ matrix.cuda-version }}
         run: |
           if [[ "$GITHUB_REF" =~ ^"refs/tags/" ]]; then
             export GIT_TAG=$(echo "$GITHUB_REF" | sed -e "s/refs\/tags\///g")
@@ -65,21 +67,28 @@ jobs:
               git checkout $branch
               export IMAGE_TAG="nightly-$branch"
             fi
-            docker build -t "xprobe/xorbits:base-py$PY_VERSION" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.base . --build-arg PYTHON_VERSION=$PY_VERSION
-            docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PY_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile . --build-arg PYTHON_VERSION=$PY_VERSION
-            docker push "xprobe/xorbits:base-py$PY_VERSION"
-            docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PY_VERSION}"
+            if [[ "$CUDA_VERSION" == "none" ]]; then
+              # Build CPU image
+              docker build -t "$DOCKER_ORG/xorbits:base-py${PYTHON_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cpu.base . --build-arg PYTHON_VERSION=$PYTHON_VERSION
+              docker push "$DOCKER_ORG/xorbits:base-py${PYTHON_VERSION}"
+              docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PYTHON_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cpu . --build-arg PYTHON_VERSION=$PYTHON_VERSION
+              docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-py${PYTHON_VERSION}"
+            else
+              # Build GPU image
+              docker build -t "$DOCKER_ORG/xorbits:${IMAGE_TAG}-cuda${CUDA_VERSION}-py${PYTHON_VERSION}" --progress=plain -f python/xorbits/deploy/docker/Dockerfile.cuda . --build-arg PYTHON_VERSION=$PYTHON_VERSION --build-arg CUDA_VERSION=$CUDA_VERSION
+              docker push "$DOCKER_ORG/xorbits:${IMAGE_TAG}-cuda${CUDA_VERSION}-py${PYTHON_VERSION}"
+            fi
           done
           
       - name: Set default image
         shell: bash
-        if: matrix.python-version == '3.10'
+        if: matrix.python-version == '3.11'
         env:
           DOCKER_ORG: ${{ secrets.DOCKERHUB_USERNAME }}
-          PY_VERSION: ${{ matrix.python-version }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
           if [[ "$GITHUB_REF" =~ ^"refs/tags/" ]]; then
             export GIT_TAG=$(echo "$GITHUB_REF" | sed -e "s/refs\/tags\///g")
-            docker tag "$DOCKER_ORG/xorbits:${GIT_TAG}-py${PY_VERSION}" "$DOCKER_ORG/xorbits:${GIT_TAG}"
+            docker tag "$DOCKER_ORG/xorbits:${GIT_TAG}-py${PYTHON_VERSION}" "$DOCKER_ORG/xorbits:${GIT_TAG}"
             docker push "$DOCKER_ORG/xorbits:${GIT_TAG}"
           fi

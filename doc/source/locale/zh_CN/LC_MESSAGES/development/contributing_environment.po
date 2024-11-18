@@ -223,7 +223,7 @@ msgstr ""
 #: ../../source/development/contributing_environment.rst:112
 msgid ""
 "If you indeed need to manually build Xorbits image, Xorbits provides a "
-"``DockerFile`` in the ``python/xorbits/deploy/docker`` directory to build"
+"``Dockerfile`` in the ``python/xorbits/deploy/docker`` directory to build"
 " a Docker image with a full Xorbits development environment."
 msgstr ""
 "如果你真的需要手动构建镜像，Xorbits 在 ``python/xorbits/deploy/docker`` 目录下提供了一个 Dockerfile 用以构建包含完备开发环境的镜像。"
@@ -254,7 +254,7 @@ msgstr ""
 
 #: ../../source/development/contributing_environment.rst:136
 msgid ""
-"You can use the DockerFile to launch a remote session with Visual Studio "
+"You can use the Dockerfile to launch a remote session with Visual Studio "
 "Code, a popular free IDE, using the ``.devcontainer.json`` file. See "
 "https://code.visualstudio.com/docs/remote/containers for details."
 msgstr ""
