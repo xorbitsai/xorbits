@@ -10,19 +10,23 @@ Xorbits can be installed via pip from `PyPI <https://pypi.org/project/xorbits>`_
 
     pip install xorbits
 
-
-.. _install.version:
+It will install the latest version of Xorbits and dependencies like ``pandas``, ``numpy``, etc.
+We recommend you to use environment management tools like ``conda`` or ``venv`` to create 
+a new environment. ``conda`` will install the pre-compiled packages, while ``pip`` will
+install the wheel (which is pre-compiled) or compile the packages from source code if no wheel
+is available.
 
 Python version support
 ----------------------
 
-Officially Python 3.9, 3.10, 3.11, and 3.12.
+Officially support Python 3.9, 3.10, 3.11, and 3.12.
 
 Packages support
 ----------------
 
 Xorbits partitions large datasets into chunks and processes each individual 
-chunk using single-node packages (such as pandas). Currently, our latest version strives 
+chunk using single-node packages (such as pandas). 
+Currently, our latest version strives 
 to be compatible with the latest single-node packages. The table below lists the highest 
 versions of the single-node packages that Xorbits are compatible with. If you are using 
 an older version of pandas, you should either upgrade your pandas or downgrade Xorbits.
@@ -40,6 +44,37 @@ Xorbits Python              `NumPy`_ `pandas`_ `xgboost`_ `lightgbm`_ `datasets`
 .. _`lightgbm`: https://lightgbm.readthedocs.io
 .. _`datasets`: https://huggingface.co/docs/datasets/index
 
+GPU support
+-----------
+
+Xorbits can also scale GPU-accelerated data science tools like `CuPy`_ and `cuDF`_. To enable GPU support, you need to install
+GPU-accelerated packages. As GPU software stacks (i.e.,GPU driver, CUDA, etc.)
+are complicated from CPU, you need to make sure NVIDIA driver and CUDA toolkit are properly installed.
+We recommend you to use ``conda`` to install ``cuDF`` first, it will install both ``cudf`` and ``cupy``,
+and then install ``xorbits`` with ``pip``. 
+``conda`` will help resolve the dependencies of ``cuDF`` and provides supporting software like CUDA.
+Refer to `RAPIDS_INSTALL_DOCS`_ for more details about how to install ``cuDF``.
+
+When using Xorbits with GPU, you need to add the :code:`gpu=True` parameter to the data loading method.
+For example:
+
+.. code-block:: python
+
+    import xorbits.pandas as pd
+    df = pd.read_parquet(path, gpu=True)
+
+======= =================== ======== =========
+Xorbits Python              `CuPy`_  `cuDF`_  
+======= =================== ======== =========
+0.8.1   3.10,3.11,3.12      13.3.0    24.10   
+======= =================== ======== =========
+
+If you find installing GPU-accelerated packages too complicated, you can use our docker images
+with pre-installed GPU drivers and CUDA toolkit. Please refer to :ref:`docker` for more details.
+
+.. _`Cupy`: https://cupy.dev
+.. _`cuDF`: https://docs.rapids.ai/api/cudf/stable/
+.. _`RAPIDS_INSTALL_DOCS`: https://docs.rapids.ai/install/
 
 Dependencies
 ------------
@@ -89,3 +124,13 @@ The following extra dependencies will be installed.
   library.
 
 * `fsspec <https://github.com/fsspec/filesystem_spec>`__: for cloud data accessing.
+
+.. _docker:
+Docker image
+------------
+
+To simplify the installation of Xorbits, we provide docker images with pre-installed
+Xorbits and its dependencies.
+
+* CPU image: ``xprobe/xorbits:v{version}-py{python_version}``, e.g., ``xprobe/xorbits:v0.8.0-py3.12``
+* GPU image: ``xprobe/xorbits:v{version}-cuda{cuda_version}-py{python_version}``, e.g., ``xprobe/xorbits:v0.8.0-cuda12.0-py3.12``
