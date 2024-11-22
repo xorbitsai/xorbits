@@ -108,6 +108,9 @@ def _discover_pyx():
             if not fn.endswith(".pyx"):
                 continue
             full_fn = os.path.relpath(os.path.join(root, fn), repo_root)
+            # TODO: remove this after learn is available
+            if "xorbits/_mars/learn/" in full_fn.replace(os.path.sep, "/"):
+                continue
             include_dirs, source = ext_include_source_map.get(
                 full_fn.replace(os.path.sep, "/"), [[], []]
             )
