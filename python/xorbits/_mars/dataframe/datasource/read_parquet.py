@@ -273,6 +273,7 @@ class CudfEngine:
                 dictionary.index(value), length=len(raw_df)
             )
             raw_df[col] = cudf.core.column.CategoricalColumn(
+                data=None,
                 dtype=cudf.CategoricalDtype(categories=dictionary, ordered=False),
                 size=codes.size,
                 offset=codes.offset,
