@@ -272,12 +272,11 @@ class CudfEngine:
             codes = cudf.core.column.as_column(
                 dictionary.index(value), length=len(raw_df)
             )
-            raw_df[col] = cudf.core.column.build_categorical_column(
-                categories=dictionary,
-                codes=codes,
+            raw_df[col] = cudf.core.column.CategoricalColumn(
+                dtype=cudf.CategoricalDtype(categories=dictionary, ordered=False),
                 size=codes.size,
                 offset=codes.offset,
-                ordered=False,
+                children=(codes,),
             )
         return raw_df
 
