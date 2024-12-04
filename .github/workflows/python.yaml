@@ -283,7 +283,7 @@ jobs:
       if: ${{ matrix.module == 'gpu' }}
       run: |
         source activate ${{ env.CONDA_ENV }}
-        pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.8.*
+        pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.10.*
         pip install ucxx-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
           pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
           pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
