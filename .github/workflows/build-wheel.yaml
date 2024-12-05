@@ -35,28 +35,28 @@ jobs:
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.12,<3.13"
-          - os: macos-12
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.9,<3.10"
-          - os: macos-12
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.10,<3.11"
-          - os: macos-12
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.11,<3.12"
-          - os: macos-12
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.12,<3.13"
-          - os: macos-12
+          - os: macos-13
             arch: universal2
             requires-python: ">=3.9,<3.10"
-          - os: macos-12
+          - os: macos-13
             arch: universal2
             requires-python: ">=3.10,<3.11"
-          - os: macos-12
+          - os: macos-13
             arch: universal2
             requires-python: ">=3.11,<3.12"
-          - os: macos-12
+          - os: macos-13
             arch: universal2
             requires-python: ">=3.12,<3.13"
 
