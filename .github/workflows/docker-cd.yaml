@@ -1,11 +1,11 @@
 name: Xorbits CD for DockerHub
 
 on:
-  # schedule:
-  #   - cron: '0 18 * * *'
+  schedule:
+    - cron: '0 18 * * *'
   push:
-    # tags:
-    #   - '*'
+    tags:
+      - '*'
   workflow_dispatch:
 
 concurrency:
