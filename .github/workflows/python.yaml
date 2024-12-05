@@ -155,7 +155,7 @@ jobs:
           pip install --upgrade --no-cache-dir sphinx readthedocs-sphinx-ext
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
-          pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
+          pip install "xoscar<=0.4.1"
           pip install -U numpy scipy cython pyftpdlib coverage flaky numexpr
 
           if [[ "$MODULE" == "xorbits/pandas" ]]; then
@@ -283,7 +283,7 @@ jobs:
       if: ${{ matrix.module == 'gpu' }}
       run: |
         source activate ${{ env.CONDA_ENV }}
-        pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.8.*
+        pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.10.*
         pip install ucxx-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
           pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
           pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
