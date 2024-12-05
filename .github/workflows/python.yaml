@@ -155,7 +155,7 @@ jobs:
           pip install --upgrade --no-cache-dir sphinx readthedocs-sphinx-ext
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
-          pip install xoscar==0.4.2
+          pip install xoscar==0.4.1
           pip install -U numpy scipy cython pyftpdlib coverage flaky numexpr
 
           if [[ "$MODULE" == "xorbits/pandas" ]]; then
