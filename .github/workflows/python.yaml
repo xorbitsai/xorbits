@@ -155,7 +155,7 @@ jobs:
           pip install --upgrade --no-cache-dir sphinx readthedocs-sphinx-ext
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
-          pip install "xoscar<=0.4.1"
+          pip install -e "git+https://github.com/codingl2k1/xoscar.git@bugfix/fix_exit_hang#subdirectory=python&egg=xoscar"
           pip install -U numpy scipy cython pyftpdlib coverage flaky numexpr
 
           if [[ "$MODULE" == "xorbits/pandas" ]]; then
@@ -307,18 +307,10 @@ jobs:
           pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
             --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
             --ignore xorbits/datasets \
-            --ignore xorbits/core/tests/test_execution_exit.py \
             --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "not test_execution_with_process_exit_message" \
             xorbits
-          # workaround: this case will hang, run it separately.
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "test_execution_with_process_exit_message" \
-            xorbits/core/tests/test_execution.py
         elif [[ "$MODULE" == "xorbits/pandas" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
@@ -328,15 +320,7 @@ jobs:
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "not test_numpy_fallback" \
             xorbits/numpy
-          # workaround: this case will hang, run it separately.
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml \
-            --cov=xorbits \
-            -k "test_numpy_fallback" \
-            xorbits/numpy/numpy_adapters/tests/test_numpy_adapters.py
         elif [[ "$MODULE" == "mars-core" ]]; then
           pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
