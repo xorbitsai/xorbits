@@ -36,6 +36,18 @@ class Isolation:
         asyncio.set_event_loop(self.loop)
         self._stopped = asyncio.Event()
         self.loop.run_until_complete(self._stopped.wait())
+        self._cancel_all_tasks(self.loop)
+
+    @staticmethod
+    def _cancel_all_tasks(loop):
+        to_cancel = asyncio.all_tasks(loop)
+        if not to_cancel:
+            return
+
+        for task in to_cancel:
+            task.cancel()
+
+        # Waiting for the tasks to be complete at exit may hang.
 
     def start(self):
         if self._threaded:
