@@ -113,29 +113,49 @@ def test_numpy_fallback(mod_name, func, params):
 
 
 def test_random_fallback(setup):
+    def valid_func(xnp_output, np_output):
+        if isinstance(xnp_output, int):
+            xnp_output = np.int64(xnp_output)
+        if isinstance(xnp_output, float):
+            xnp_output = np.float64(xnp_output)
+        assert type(xnp_output) == type(np_output)
+
+        if isinstance(np_output, np.ndarray):
+            assert isinstance(xnp_output, np.ndarray)
+            assert np.equal(xnp_output.all(), np_output.all())
+        if isinstance(np_output, object):
+            assert isinstance(xnp_output, object)
+            assert dir(xnp_output) == dir(np_output)
+
     with pytest.warns(Warning) as w:
-
-        def valid_func(xnp_output, np_output):
-            if isinstance(xnp_output, int):
-                xnp_output = np.int64(xnp_output)
-            if isinstance(xnp_output, float):
-                xnp_output = np.float64(xnp_output)
-            assert type(xnp_output) == type(np_output)
-
-            if isinstance(np_output, np.ndarray):
-                assert isinstance(xnp_output, np.ndarray)
-                assert np.equal(xnp_output.all(), np_output.all())
-            if isinstance(np_output, object):
-                assert isinstance(xnp_output, object)
-                assert dir(xnp_output) == dir(np_output)
-
-        valid_func(xnp.random.default_rng().execute().fetch(), np.random.default_rng())
-        valid_func(xnp.random.PCG64().execute().fetch(), np.random.PCG64())
-        valid_func(xnp.random.MT19937().execute().fetch(), np.random.MT19937())
-        valid_func(
-            xnp.random.Generator(np.random.PCG64()).execute().fetch(),
-            np.random.Generator(np.random.PCG64()),
+        xnp_output = xnp.random.default_rng().execute().fetch()
+        np_output = np.random.default_rng()
+        assert f"xorbits.numpy.random.default_rng will fallback to NumPy" == str(
+            w[0].message
         )
+        valid_func(xnp_output, np_output)
+
+    with pytest.warns(Warning) as w:
+        xnp_output = xnp.random.PCG64().execute().fetch()
+        np_output = np.random.PCG64()
+        assert f"xorbits.numpy.random.PCG64 will fallback to NumPy" == str(w[0].message)
+        valid_func(xnp_output, np_output)
+
+    with pytest.warns(Warning) as w:
+        xnp_output = xnp.random.MT19937().execute().fetch()
+        np_output = np.random.MT19937()
+        assert f"xorbits.numpy.random.MT19937 will fallback to NumPy" == str(
+            w[0].message
+        )
+        valid_func(xnp_output, np_output)
+
+    with pytest.warns(Warning) as w:
+        xnp_output = xnp.random.Generator(np.random.PCG64()).execute().fetch()
+        np_output = np.random.Generator(np.random.PCG64())
+        assert f"xorbits.numpy.random.Generator will fallback to NumPy" == str(
+            w[0].message
+        )
+        valid_func(xnp_output, np_output)
 
 
 def test_tensorsolve_fallback(setup):
