@@ -75,10 +75,6 @@ from .... import pandas as xpd
             [np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])],
         ),
         ("linalg", "pinv", [np.random.randn(9, 6)]),
-        ("random", "default_rng", []),
-        ("random", "PCG64", []),
-        ("random", "MT19937", []),
-        ("random", "Generator", [np.random.PCG64()]),
     ],
 )
 def test_numpy_fallback(mod_name, func, params):
@@ -114,6 +110,32 @@ def test_numpy_fallback(mod_name, func, params):
         if isinstance(np_output, object):
             assert isinstance(xnp_output, object)
             assert dir(xnp_output) == dir(np_output)
+
+
+def test_random_fallback(setup):
+    with pytest.warns(Warning) as w:
+
+        def valid_func(xnp_output, np_output):
+            if isinstance(xnp_output, int):
+                xnp_output = np.int64(xnp_output)
+            if isinstance(xnp_output, float):
+                xnp_output = np.float64(xnp_output)
+            assert type(xnp_output) == type(np_output)
+
+            if isinstance(np_output, np.ndarray):
+                assert isinstance(xnp_output, np.ndarray)
+                assert np.equal(xnp_output.all(), np_output.all())
+            if isinstance(np_output, object):
+                assert isinstance(xnp_output, object)
+                assert dir(xnp_output) == dir(np_output)
+
+        valid_func(xnp.random.default_rng().execute().fetch(), np.random.default_rng())
+        valid_func(xnp.random.PCG64().execute().fetch(), np.random.PCG64())
+        valid_func(xnp.random.MT19937().execute().fetch(), np.random.MT19937())
+        valid_func(
+            xnp.random.Generator(np.random.PCG64()).execute().fetch(),
+            np.random.Generator(np.random.PCG64()),
+        )
 
 
 def test_tensorsolve_fallback(setup):
