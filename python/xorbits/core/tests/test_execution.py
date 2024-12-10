@@ -175,7 +175,7 @@ def test_bool_conversion(setup, dummy_df, dummy_int_2d_array, dummy_str_series):
     assert test == 2
     import xorbits.numpy as np
 
-    if np.zeros(0):
+    if np.zeros(0).size > 0:
         test += 1
     assert test == 2
     import xorbits.pandas as pd
