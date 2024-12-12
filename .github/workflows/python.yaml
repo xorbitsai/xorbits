@@ -75,16 +75,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-13", "windows-latest"]
+        os: ["ubuntu-latest", "macos-14", "windows-latest"]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
         module: ["xorbits", "xorbits/numpy", "xorbits/pandas"]
         exclude:
-          - { os: macos-13, python-version: 3.10}
-          - { os: macos-13, python-version: 3.9}
+          - { os: macos-14, python-version: 3.10}
+          - { os: macos-14, python-version: 3.9}
           - { os: windows-latest, python-version: 3.10}
           - { os: windows-latest, python-version: 3.9}
           - { os: windows-latest, module: kubernetes}
-          - { os: macos-13, module: kubernetes}
+          - { os: macos-14, module: kubernetes}
         include:
           - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
           - { os: ubuntu-latest, module: learn, python-version: 3.9 }
@@ -135,7 +135,7 @@ jobs:
         # conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
         pip install ucxx-cu12
     - name: Install libomp (macOS)
-      if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-13' }}
+      if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-14' }}
       run: brew install libomp
 
     # Important for python == 3.12
@@ -155,7 +155,7 @@ jobs:
           pip install --upgrade --no-cache-dir sphinx readthedocs-sphinx-ext
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
-          pip install "xoscar<=0.4.1"
+          pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
           pip install -U numpy scipy cython pyftpdlib coverage flaky numexpr
 
           if [[ "$MODULE" == "xorbits/pandas" ]]; then
@@ -311,14 +311,7 @@ jobs:
             --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "not test_execution_with_process_exit_message" \
             xorbits
-          # workaround: this case will hang, run it separately.
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "test_execution_with_process_exit_message" \
-            xorbits/core/tests/test_execution.py
         elif [[ "$MODULE" == "xorbits/pandas" ]]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
@@ -328,15 +321,7 @@ jobs:
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            -k "not test_numpy_fallback" \
             xorbits/numpy
-          # workaround: this case will hang, run it separately.
-          pytest --timeout=1500 \
-            -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml \
-            --cov=xorbits \
-            -k "test_numpy_fallback" \
-            xorbits/numpy/numpy_adapters/tests/test_numpy_adapters.py
         elif [[ "$MODULE" == "mars-core" ]]; then
           pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
