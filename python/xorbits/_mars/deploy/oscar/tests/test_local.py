@@ -143,9 +143,7 @@ def _assert_storage_cleaned(session_id: str, addr: str, level: StorageLevel):
         assert info.used_size == 0
 
     isolation = new_isolation()
-    asyncio.run_coroutine_threadsafe(
-        _assert(session_id, addr, level), isolation.loop
-    ).result()
+    asyncio.run_coroutine_threadsafe(_assert(session_id, addr, level), isolation.loop)
 
 
 @pytest.mark.parametrize("backend", ["mars"])
