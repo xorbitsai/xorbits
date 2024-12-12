@@ -339,6 +339,7 @@ def test_getitem(setup):
     pd.testing.assert_frame_equal(result.to_pandas(), expected)
 
 
+# TODO: process exit cause hang
 # def test_execution_with_process_exit_message(mocker):
 #     import numpy as np
 #     from xoscar.errors import ServerClosed
