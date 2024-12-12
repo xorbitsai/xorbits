@@ -21,18 +21,18 @@ from .... import pandas as xpd
 
 
 def valid_func(xnp_output, np_output):
-        if isinstance(xnp_output, int):
-            xnp_output = np.int64(xnp_output)
-        if isinstance(xnp_output, float):
-            xnp_output = np.float64(xnp_output)
-        assert type(xnp_output) == type(np_output)
+    if isinstance(xnp_output, int):
+        xnp_output = np.int64(xnp_output)
+    if isinstance(xnp_output, float):
+        xnp_output = np.float64(xnp_output)
+    assert type(xnp_output) == type(np_output)
 
-        if isinstance(np_output, np.ndarray):
-            assert isinstance(xnp_output, np.ndarray)
-            assert np.equal(xnp_output.all(), np_output.all())
-        if isinstance(np_output, object):
-            assert isinstance(xnp_output, object)
-            assert dir(xnp_output) == dir(np_output)
+    if isinstance(np_output, np.ndarray):
+        assert isinstance(xnp_output, np.ndarray)
+        assert np.equal(xnp_output.all(), np_output.all())
+    if isinstance(np_output, object):
+        assert isinstance(xnp_output, object)
+        assert dir(xnp_output) == dir(np_output)
 
 
 def test_numpy_fallback(setup):
@@ -44,45 +44,45 @@ def test_numpy_fallback(setup):
     #         w[0].message
     #     )
     #     valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
         xnp_output = xnp.isneginf(-np.inf).execute().fetch()
         np_output = np.isneginf(-np.inf)
-        assert f"xorbits.numpy.isneginf will fallback to NumPy" == str(
-            w[0].message
-        )
+        assert f"xorbits.numpy.isneginf will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
         xnp_output = xnp.isposinf(np.inf).execute().fetch()
         np_output = np.isposinf(np.inf)
-        assert f"xorbits.numpy.isposinf will fallback to NumPy" == str(
-            w[0].message
-        )
+        assert f"xorbits.numpy.isposinf will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
-        xnp_output = xnp.einsum_path("ij,jk,kl->il",
+        xnp_output = (
+            xnp.einsum_path(
+                "ij,jk,kl->il",
                 np.random.rand(2, 2),
                 np.random.rand(2, 5),
-                np.random.rand(5, 2),).execute().fetch()
-        np_output = np.einsum_path("ij,jk,kl->il",
-                np.random.rand(2, 2),
-                np.random.rand(2, 5),
-                np.random.rand(5, 2),)
-        assert f"xorbits.numpy.einsum_path will fallback to NumPy" == str(
-            w[0].message
+                np.random.rand(5, 2),
+            )
+            .execute()
+            .fetch()
         )
+        np_output = np.einsum_path(
+            "ij,jk,kl->il",
+            np.random.rand(2, 2),
+            np.random.rand(2, 5),
+            np.random.rand(5, 2),
+        )
+        assert f"xorbits.numpy.einsum_path will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
         xnp_output = xnp.outer(np.ones((5,)), np.linspace(-2, 2, 5)).execute().fetch()
         np_output = np.outer(np.ones((5,)), np.linspace(-2, 2, 5))
-        assert f"xorbits.numpy.outer will fallback to NumPy" == str(
-            w[0].message
-        )
+        assert f"xorbits.numpy.outer will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
-    
+
     # TODO AssertionError: Expected dtype cannot be None
     # with pytest.warns(Warning) as w:
     #     xnp_output = xnp.kron([1, 10, 100], [5, 6, 7]).execute().fetch()
@@ -91,7 +91,7 @@ def test_numpy_fallback(setup):
     #         w[0].message
     #     )
     #     valid_func(xnp_output, np_output)
-    
+
     # TODO: AssertionError: Expected dtype cannot be None
     # with pytest.warns(Warning) as w:
     #     xnp_output = xnp.trace(np.arange(8).reshape((2, 2, 2))).execute().fetch()
@@ -104,11 +104,13 @@ def test_numpy_fallback(setup):
 
 def test_linalg_fallback(setup):
     with pytest.warns(Warning) as w:
-        xnp_output = xnp.linalg.cond(np.array([[1, 0, -1], [0, 1, 0], [1, 0, 1]])).execute().fetch()
-        np_output = np.linalg.cond(np.array([[1, 0, -1], [0, 1, 0], [1, 0, 1]]))
-        assert f"xorbits.numpy.linalg.cond will fallback to NumPy" == str(
-            w[0].message
+        xnp_output = (
+            xnp.linalg.cond(np.array([[1, 0, -1], [0, 1, 0], [1, 0, 1]]))
+            .execute()
+            .fetch()
         )
+        np_output = np.linalg.cond(np.array([[1, 0, -1], [0, 1, 0], [1, 0, 1]]))
+        assert f"xorbits.numpy.linalg.cond will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
 
     with pytest.warns(Warning) as w:
@@ -120,19 +122,15 @@ def test_linalg_fallback(setup):
     with pytest.warns(Warning) as w:
         xnp_output = xnp.linalg.eig(np.diag((1, 2, 3))).execute().fetch()
         np_output = np.linalg.eig(np.diag((1, 2, 3)))
-        assert f"xorbits.numpy.linalg.eig will fallback to NumPy" == str(
-            w[0].message
-        )
+        assert f"xorbits.numpy.linalg.eig will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
 
     with pytest.warns(Warning) as w:
         xnp_output = xnp.linalg.eigh(np.array([[1, -2j], [2j, 5]])).execute().fetch()
         np_output = np.linalg.eigh(np.array([[1, -2j], [2j, 5]]))
-        assert f"xorbits.numpy.linalg.eigh will fallback to NumPy" == str(
-            w[0].message
-        )
+        assert f"xorbits.numpy.linalg.eigh will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
         xnp_output = xnp.linalg.eigvals(np.diag((-1, 1))).execute().fetch()
         np_output = np.linalg.eigvals(np.diag((-1, 1)))
@@ -140,28 +138,40 @@ def test_linalg_fallback(setup):
             w[0].message
         )
         valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
-        xnp_output = xnp.linalg.eigvalsh(np.array([[5 + 2j, 9 - 2j], [0 + 2j, 2 - 1j]])).execute().fetch()
+        xnp_output = (
+            xnp.linalg.eigvalsh(np.array([[5 + 2j, 9 - 2j], [0 + 2j, 2 - 1j]]))
+            .execute()
+            .fetch()
+        )
         np_output = np.linalg.eigvalsh(np.array([[5 + 2j, 9 - 2j], [0 + 2j, 2 - 1j]]))
         assert f"xorbits.numpy.linalg.eigvalsh will fallback to NumPy" == str(
             w[0].message
         )
         valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
-        xnp_output = xnp.linalg.multi_dot([
+        xnp_output = (
+            xnp.linalg.multi_dot(
+                [
                     np.random.random((10000, 100)),
                     np.random.random((100, 1000)),
                     np.random.random((1000, 5)),
                     np.random.random((5, 333)),
-                ]).execute().fetch()
-        np_output = np.linalg.multi_dot([
-                    np.random.random((10000, 100)),
-                    np.random.random((100, 1000)),
-                    np.random.random((1000, 5)),
-                    np.random.random((5, 333)),
-                ])
+                ]
+            )
+            .execute()
+            .fetch()
+        )
+        np_output = np.linalg.multi_dot(
+            [
+                np.random.random((10000, 100)),
+                np.random.random((100, 1000)),
+                np.random.random((1000, 5)),
+                np.random.random((5, 333)),
+            ]
+        )
         assert f"xorbits.numpy.linalg.multi_dot will fallback to NumPy" == str(
             w[0].message
         )
@@ -184,35 +194,45 @@ def test_linalg_fallback(setup):
     #         w[0].message
     #     )
     #     valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
-        xnp_output = xnp.linalg.lstsq(
-            np.vstack([np.array([0, 1, 2, 3]), np.ones(len(np.array([0, 1, 2, 3])))]).T,
-            np.array([-1, 0.2, 0.9, 2.1])
-        ).execute().fetch()
+        xnp_output = (
+            xnp.linalg.lstsq(
+                np.vstack(
+                    [np.array([0, 1, 2, 3]), np.ones(len(np.array([0, 1, 2, 3])))]
+                ).T,
+                np.array([-1, 0.2, 0.9, 2.1]),
+            )
+            .execute()
+            .fetch()
+        )
         np_output = np.linalg.lstsq(
             np.vstack([np.array([0, 1, 2, 3]), np.ones(len(np.array([0, 1, 2, 3])))]).T,
-            np.array([-1, 0.2, 0.9, 2.1])
+            np.array([-1, 0.2, 0.9, 2.1]),
         )
-        assert f"xorbits.numpy.linalg.lstsq will fallback to NumPy" == str(
-            w[0].message
-        )
+        assert f"xorbits.numpy.linalg.lstsq will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
-    
+
     with pytest.warns(Warning) as w:
-        xnp_output = xnp.linalg.slogdet(np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])    ).execute().fetch()
-        np_output = np.linalg.slogdet(np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]]))
+        xnp_output = (
+            xnp.linalg.slogdet(
+                np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])
+            )
+            .execute()
+            .fetch()
+        )
+        np_output = np.linalg.slogdet(
+            np.array([[[1, 2], [3, 4]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]])
+        )
         assert f"xorbits.numpy.linalg.slogdet will fallback to NumPy" == str(
             w[0].message
         )
         valid_func(xnp_output, np_output)
 
     with pytest.warns(Warning) as w:
-        xnp_output = xnp.linalg.pinv(np.random.randn(9, 6)  ).execute().fetch()
+        xnp_output = xnp.linalg.pinv(np.random.randn(9, 6)).execute().fetch()
         np_output = np.linalg.pinv(np.random.randn(9, 6))
-        assert f"xorbits.numpy.linalg.pinv will fallback to NumPy" == str(
-            w[0].message
-        )
+        assert f"xorbits.numpy.linalg.pinv will fallback to NumPy" == str(w[0].message)
         valid_func(xnp_output, np_output)
 
 
