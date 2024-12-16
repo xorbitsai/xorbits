@@ -66,7 +66,7 @@ export default function MainFrame() {
             <DescriptionIcon fontSize="large" sx={{ marginLeft: 3 }} />
             <Link
               align="center"
-              href="https://doc.xorbits.io"
+              href="https://xorbits.readthedocs.io/"
               underline="none"
               color="inherit"
               fontSize="large"
