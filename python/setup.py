@@ -22,7 +22,7 @@ from sysconfig import get_config_vars
 
 import numpy as np
 from Cython.Build import cythonize
-from pkg_resources import parse_version
+from packaging.version import Version
 from setuptools import Command, Extension, setup
 from setuptools.command.develop import develop
 from setuptools.command.install import install
@@ -51,9 +51,9 @@ if sys.platform == "darwin":
         )
         target_macos_version = "10.9"
 
-        parsed_python_target = parse_version(python_target)
-        parsed_current_system = parse_version(current_system)
-        parsed_macos_version = parse_version(target_macos_version)
+        parsed_python_target = Version(python_target)
+        parsed_current_system = Version(current_system)
+        parsed_macos_version = Version(target_macos_version)
         if parsed_python_target <= parsed_macos_version <= parsed_current_system:
             os.environ["MACOSX_DEPLOYMENT_TARGET"] = target_macos_version
 
@@ -108,6 +108,9 @@ def _discover_pyx():
             if not fn.endswith(".pyx"):
                 continue
             full_fn = os.path.relpath(os.path.join(root, fn), repo_root)
+            # TODO: remove this after learn is available
+            if "xorbits/_mars/learn/" in full_fn.replace(os.path.sep, "/"):
+                continue
             include_dirs, source = ext_include_source_map.get(
                 full_fn.replace(os.path.sep, "/"), [[], []]
             )

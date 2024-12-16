@@ -19,6 +19,7 @@ import datetime
 import enum
 import functools
 import importlib
+import importlib.util as importlib_utils
 import inspect
 import io
 import itertools
@@ -26,7 +27,6 @@ import logging
 import numbers
 import operator
 import os
-import pkgutil
 import random
 import socket
 import string
@@ -398,7 +398,7 @@ def lazy_import(
     prefix_name = name.split(".", 1)[0]
     globals_ = globals_ or inspect.currentframe().f_back.f_globals
 
-    if pkgutil.find_loader(prefix_name) is not None:
+    if importlib_utils.find_spec(prefix_name) is not None:
         return LazyModule(name, rename, globals_, locals_)
     elif placeholder:
         return ModulePlaceholder(prefix_name)
@@ -761,7 +761,6 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
             as_index=v.as_index,
             sort=v.sort,
             group_keys=v.group_keys,
-            squeeze=v.squeeze,
             observed=v.observed,
         )
         return grouped.groupby_obj
@@ -1162,7 +1161,7 @@ def is_object_dtype(dtype: np.dtype) -> bool:
     try:
         return (
             np.issubdtype(dtype, np.object_)
-            or np.issubdtype(dtype, np.unicode_)
+            or np.issubdtype(dtype, np.str_)
             or np.issubdtype(dtype, np.bytes_)
         )
     except TypeError:  # pragma: no cover

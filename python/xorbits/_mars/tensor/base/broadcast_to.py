@@ -17,7 +17,7 @@ import numpy as np
 
 from ... import opcodes as OperandDef
 from ...serialization.serializables import KeyField, TupleField
-from ..array_utils import device, get_array_module
+from ..array_utils import device, get_array_module, get_device_id
 from ..datasource import tensor as astensor
 from ..operands import TensorHasInput, TensorOperandMixin
 
@@ -80,7 +80,7 @@ class TensorBroadcastTo(TensorHasInput, TensorOperandMixin):
     def execute(cls, ctx, op):
         xp = get_array_module(ctx[op.input.key])
         input_data = ctx[op.input.key]
-        device_id = input_data.device.id if hasattr(input_data, "device") else -1
+        device_id = get_device_id(input_data)
 
         with device(device_id):
             shape = op.shape

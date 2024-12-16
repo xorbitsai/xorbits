@@ -12,3 +12,5 @@ practices, and helps users solve some common problems.
    :maxdepth: 2
 
    loading_data
+   storage_backend
+   chunking

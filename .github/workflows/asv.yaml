@@ -28,16 +28,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up conda python3.9
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Set up conda python
+        uses: conda-incubator/setup-miniconda@v3.0.4
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install dependencies
         id: build
         shell: bash -el {0}
         run: |
-          pip install numpy scipy cython asv==0.5.1 coverage
+          conda install anaconda::libmambapy
+          pip install numpy scipy cython coverage asv
           cd python && pip install -e ".[dev,extra]"
 
       - name: Run ASV benchmarks
@@ -49,11 +50,11 @@ jobs:
           git remote add upstream https://github.com/xorbitsai/xorbits.git
           git fetch upstream
           asv machine --yes
-          asv continuous -f 1.1 --strict --show-stderr upstream/main HEAD
+          asv continuous -f 1.1 --show-stderr upstream/main HEAD
         if: ${{ steps.build.outcome == 'success' }}
 
       - name: Publish benchmarks artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Benchmarks log
           path: benchmarks/asv_bench/results

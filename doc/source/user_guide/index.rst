@@ -18,6 +18,7 @@ Further information on any specific method can be obtained in the
    :maxdepth: 2
 
    deferred_execution
-   best_practices
    deployment
+   configuration
+   best_practices
    logging

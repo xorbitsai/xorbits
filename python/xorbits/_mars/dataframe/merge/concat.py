@@ -310,10 +310,17 @@ class DataFrameConcat(DataFrameOperand, DataFrameOperandMixin):
                 concat = inputs[0]
             else:
                 xdf = pd if isinstance(inputs[0], pd.Series) or cudf is None else cudf
+                idx_name = None
+                for s in inputs:
+                    if s.index.name is not None:
+                        idx_name = s.index.name
+                        break
                 if chunk.op.axis is not None:
                     concat = xdf.concat(inputs, axis=chunk.op.axis)
                 else:
                     concat = xdf.concat(inputs)
+                if idx_name is not None:
+                    concat.index.name = idx_name
             return concat
 
         def _auto_concat_index_chunks(chunk, inputs):

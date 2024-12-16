@@ -337,7 +337,7 @@ def norm(x, ord=None, axis=None, keepdims=False):
         ord=ord,
         axis=axis,
         keepdims=keepdims,
-        dtype=np.result_type(x.dtype, np.float_),
+        dtype=np.result_type(x.dtype, np.float64),
         sparse=x.issparse(),
     )
     return op(x)

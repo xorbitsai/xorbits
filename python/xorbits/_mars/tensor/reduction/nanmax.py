@@ -111,8 +111,6 @@ def nanmax(a, axis=None, out=None, keepdims=None, combine_size=None):
 
     When positive infinity and negative infinity are present:
 
-    >>> mt.nanmax([1, 2, mt.nan, mt.NINF]).execute()
-    2.0
     >>> mt.nanmax([1, 2, mt.nan, mt.inf]).execute()
     inf
 

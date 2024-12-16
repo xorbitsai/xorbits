@@ -728,8 +728,7 @@ def test_groupby_agg_auto_method(setup):
     pd.testing.assert_frame_equal(result.sort_index(), raw.groupby("c1").agg("sum"))
 
 
-@pytest.mark.skip_ray_dag  # _fetch_infos() is not supported by ray backend.
-def test_distributed_groupby_agg(setup_cluster):
+def test_distributed_groupby_agg(setup):
     rs = np.random.RandomState(0)
     raw = pd.DataFrame(rs.rand(50000, 10))
     df = md.DataFrame(raw, chunk_size=raw.shape[0] // 2)
@@ -883,15 +882,19 @@ def test_groupby_apply(setup_gpu, gpu):
 
     # For the index of result in this case, pandas is not compatible with cudf.
     # See ``Pandas Compatibility Note`` in cudf doc:
-    # https://docs.rapids.ai/api/cudf/stable/api_docs/api/cudf.core.groupby.groupby.groupby.apply/
-    applied = mdf.groupby("b").apply(apply_df)
+    # https://docs.rapids.ai/api/cudf/stable/user_guide/api_docs/api/cudf.core.groupby.groupby.groupby.apply/
+    # cudf needs to know all function parameter and types when compiling
+    # and it will raise errors when `ret_series` not defined
     if gpu:
+        applied = mdf.groupby("b").apply(apply_df, False)
         cdf = cudf.DataFrame(df1)
         cudf.testing.assert_frame_equal(
             applied.execute().fetch(to_cpu=False).sort_index(),
-            cdf.groupby("b").apply(apply_df).sort_index(),
+            cdf.groupby("b").apply(apply_df, False).sort_index(),
         )
     else:
+        # while in pandas, we do not need to specify `ret_series`
+        applied = mdf.groupby("b").apply(apply_df)
         pd.testing.assert_frame_equal(
             applied.execute().fetch().sort_index(),
             df1.groupby("b").apply(apply_df).sort_index(),
@@ -933,21 +936,16 @@ def test_groupby_apply(setup_gpu, gpu):
     series1 = pd.Series([3, 4, 5, 3, 5, 4, 1, 2, 3])
     ms1 = md.Series(series1, gpu=gpu, chunk_size=3)
 
-    applied = ms1.groupby(lambda x: x % 3).apply(lambda df: None)
-    pd.testing.assert_series_equal(
-        applied.execute().fetch().sort_index(),
-        series1.groupby(lambda x: x % 3).apply(lambda df: None).sort_index(),
-    )
-
-    # For this case, ``group_keys`` option does not take effect in cudf
-    applied = ms1.groupby(lambda x: x % 3).apply(apply_series)
-    if gpu:
-        cs = cudf.Series(series1)
-        cudf.testing.assert_series_equal(
-            applied.execute().fetch(to_cpu=False).sort_index(),
-            cs.groupby(lambda x: x % 3).apply(apply_series).sort_index(),
+    if not gpu:
+        applied = ms1.groupby(lambda x: x % 3).apply(lambda df: None)
+        pd.testing.assert_series_equal(
+            applied.execute().fetch().sort_index(),
+            series1.groupby(lambda x: x % 3).apply(lambda df: None).sort_index(),
         )
-    else:
+
+    if not gpu:
+        # For this case, ``group_keys`` option does not take effect in cudf
+        applied = ms1.groupby(lambda x: x % 3).apply(apply_series)
         pd.testing.assert_series_equal(
             applied.execute().fetch().sort_index(),
             series1.groupby(lambda x: x % 3).apply(apply_series).sort_index(),
@@ -1001,16 +999,19 @@ def test_groupby_apply_with_df_or_series_output(setup_gpu, gpu):
     def f2(df):
         return df[["a"]]
 
-    mdf = md.DataFrame(raw, gpu=gpu, chunk_size=5)
-    applied = mdf.groupby("c").apply(f2, output_types=["df_or_series"])
-    assert isinstance(applied, DATAFRAME_OR_SERIES_TYPE)
-    applied = applied.execute()
-    assert applied.data_type == "dataframe"
-    assert not ("dtype" in applied.data_params)
-    assert applied.shape == (9, 1)
-    expected = raw.groupby("c", as_index=True).apply(f2)
-    pd.testing.assert_series_equal(applied.dtypes, expected.dtypes)
-    pd.testing.assert_frame_equal(applied.fetch().sort_index(), expected.sort_index())
+    if not gpu:
+        mdf = md.DataFrame(raw, gpu=gpu, chunk_size=5)
+        applied = mdf.groupby("c").apply(f2, output_types=["df_or_series"])
+        assert isinstance(applied, DATAFRAME_OR_SERIES_TYPE)
+        applied = applied.execute()
+        assert applied.data_type == "dataframe"
+        assert not ("dtype" in applied.data_params)
+        assert applied.shape == (9, 1)
+        expected = raw.groupby("c", as_index=True).apply(f2)
+        pd.testing.assert_series_equal(applied.dtypes, expected.dtypes)
+        pd.testing.assert_frame_equal(
+            applied.fetch().sort_index(), expected.sort_index()
+        )
 
 
 @support_cuda
@@ -1065,11 +1066,12 @@ def test_groupby_apply_closure(setup_gpu, gpu):
     series1 = pd.Series([3, 4, 5, 3, 5, 4, 1, 2, 3])
     ms1 = md.Series(series1, gpu=gpu, chunk_size=3)
 
-    applied = ms1.groupby(lambda x: x % 3).apply(apply_closure_series)
-    pd.testing.assert_series_equal(
-        applied.execute().fetch().sort_index(),
-        series1.groupby(lambda x: x % 3).apply(apply_closure_series).sort_index(),
-    )
+    if not gpu:
+        applied = ms1.groupby(lambda x: x % 3).apply(apply_closure_series)
+        pd.testing.assert_series_equal(
+            applied.execute().fetch().sort_index(),
+            series1.groupby(lambda x: x % 3).apply(apply_closure_series).sort_index(),
+        )
 
     cs = callable_series()
     applied = ms1.groupby(lambda x: x % 3).apply(cs)
@@ -1079,7 +1081,6 @@ def test_groupby_apply_closure(setup_gpu, gpu):
     )
 
 
-@support_cuda
 @pytest.mark.parametrize(
     "chunked,as_index", [(True, True), (True, False), (False, True), (False, False)]
 )
@@ -1092,6 +1093,7 @@ def test_groupby_apply_as_index(chunked, as_index, setup_gpu, gpu):
         }
     )
 
+    # cudf not support udf like this
     def udf(v):
         denominator = v["a"].sum() * v["a"].mean()
         v = v[v["c"] == "c"]

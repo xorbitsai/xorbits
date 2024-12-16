@@ -1684,7 +1684,7 @@ class SyncSession(AbstractSyncSession):
 
     def destroy(self):
         coro = self._isolated_session.destroy()
-        asyncio.run_coroutine_threadsafe(coro, self._loop).result()
+        asyncio.run_coroutine_threadsafe(coro, self._loop)
         self.reset_default()
 
     def stop_server(self, isolation=True):

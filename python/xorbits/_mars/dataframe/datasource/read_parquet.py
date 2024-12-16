@@ -272,12 +272,12 @@ class CudfEngine:
             codes = cudf.core.column.as_column(
                 dictionary.index(value), length=len(raw_df)
             )
-            raw_df[col] = cudf.core.column.build_categorical_column(
-                categories=dictionary,
-                codes=codes,
+            raw_df[col] = cudf.core.column.CategoricalColumn(
+                data=None,
+                dtype=cudf.CategoricalDtype(categories=dictionary, ordered=False),
                 size=codes.size,
                 offset=codes.offset,
-                ordered=False,
+                children=(codes,),
             )
         return raw_df
 
@@ -402,7 +402,7 @@ class DataFrameReadParquet(
                 if path.endswith(".parquet") and not path.startswith("__MACOSX")
             ]
         else:
-            paths = fs.glob(op.path, storage_options=op.storage_options)
+            paths = fs.glob(op.path)
             if not isinstance(fs, fsspec.implementations.local.LocalFileSystem):
                 parsed_path = urlparse(op.path)
                 paths = [f"{parsed_path.scheme}://{path}" for path in paths]
@@ -414,9 +414,8 @@ class DataFrameReadParquet(
                         first_chunk_row_num = get_engine(op.engine).get_row_num(f)
                         first_chunk_raw_bytes = sys.getsizeof(f)
                 else:
-                    of = fsspec.open(pth)
-                    with of as f:
-                        first_chunk_row_num = get_engine(op.engine).get_row_num(f)
+                    of = fs.open(pth)
+                    first_chunk_row_num = get_engine(op.engine).get_row_num(of)
                     first_chunk_raw_bytes = fsspec.get_fs_token_paths(
                         pth, storage_options=op.storage_options
                     )[0].size(pth)
@@ -854,10 +853,10 @@ def read_parquet(
                     dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
     else:
         if not isinstance(path, list):
-            file_path = fs.glob(path, storage_options=storage_options)[0]
+            file_path = fs.glob(path)[0]
         else:
             file_path = path[0]
-        with fs.open(file_path, storage_options=storage_options) as f:
+        with fs.open(file_path) as f:
             dtypes = engine.read_dtypes(f, types_mapper=types_mapper)
     if columns:
         dtypes = dtypes[columns]

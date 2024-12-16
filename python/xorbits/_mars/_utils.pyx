@@ -16,10 +16,10 @@
 
 import collections
 import importlib
+import importlib.util as importlib_utils
 import itertools
 import os
 import pickle
-import pkgutil
 import time
 import types
 import uuid
@@ -48,9 +48,9 @@ from .lib.mmh3 import hash_bytes as mmh_hash_bytes
 from .lib.mmh3 import hash_from_buffer as mmh3_hash_from_buffer
 
 
-cdef bint _has_cupy = bool(pkgutil.find_loader('cupy'))
-cdef bint _has_cudf = bool(pkgutil.find_loader('cudf'))
-cdef bint _has_sqlalchemy = bool(pkgutil.find_loader('sqlalchemy'))
+cdef bint _has_cupy = bool(importlib_utils.find_spec('cupy'))
+cdef bint _has_cudf = bool(importlib_utils.find_spec('cudf'))
+cdef bint _has_sqlalchemy = bool(importlib_utils.find_spec('sqlalchemy'))
 cdef bint _has_interval_array_inclusive = hasattr(
     pd.arrays.IntervalArray, "inclusive"
 )
@@ -201,13 +201,13 @@ cdef list tokenize_pandas_series(ob):
 
 
 cdef list tokenize_pandas_dataframe(ob):
-    l = [block.values for block in ob._data.blocks]
+    l = [block.values for block in ob._mgr.blocks]
     l.extend([ob.columns, ob.index])
     return iterative_tokenize(l)
 
 
 cdef list tokenize_pandas_categorical(ob):
-    l = ob.to_list()
+    l = ob.tolist()
     l.append(ob.shape)
     return iterative_tokenize(l)
 
@@ -286,7 +286,7 @@ def tokenize_cupy(ob):
 def tokenize_cudf(ob):
     from xoscar.serialization import serialize
     header, buffers = serialize(ob)
-    return iterative_tokenize([header] + [(buf.ptr, buf.size) for buf in buffers])
+    return iterative_tokenize([header] + [(buf._owner._ptr, buf.size, buf._offset) for buf in buffers])
 
 
 cdef Tokenizer tokenize_handler = Tokenizer()

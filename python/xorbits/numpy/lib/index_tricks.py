@@ -13,6 +13,13 @@
 # limitations under the License.
 import numpy
 
+from ...utils import is_numpy_2
+
+if is_numpy_2():
+    from numpy.lib import _index_tricks_impl as index_tricks
+else:
+    from numpy.lib import index_tricks
+
 from ...core.adapter import (
     MarsCClass,
     MarsGetItemProxy,
@@ -30,7 +37,7 @@ class CClass(MarsGetItemProxy):
         super().__init__(MarsCClass())
 
 
-attach_module_callable_docstring(CClass, numpy, numpy.lib.index_tricks.CClass)
+attach_module_callable_docstring(CClass, numpy, index_tricks.CClass)
 c_ = CClass()
 
 
@@ -40,7 +47,7 @@ class RClass(MarsGetItemProxy):
         super().__init__(MarsRClass())
 
 
-attach_module_callable_docstring(RClass, numpy, numpy.lib.index_tricks.RClass)
+attach_module_callable_docstring(RClass, numpy, index_tricks.RClass)
 r_ = RClass()
 
 
@@ -50,7 +57,7 @@ class OGridClass(MarsGetItemProxy):
         super().__init__(MarsOGridClass())
 
 
-attach_module_callable_docstring(OGridClass, numpy, numpy.lib.index_tricks.OGridClass)
+attach_module_callable_docstring(OGridClass, numpy, index_tricks.OGridClass)
 ogrid = OGridClass()
 
 
@@ -60,5 +67,5 @@ class MGridClass(MarsGetItemProxy):
         super().__init__(MarsMGridClass())
 
 
-attach_module_callable_docstring(MGridClass, numpy, numpy.lib.index_tricks.MGridClass)
+attach_module_callable_docstring(MGridClass, numpy, index_tricks.MGridClass)
 mgrid = MGridClass()

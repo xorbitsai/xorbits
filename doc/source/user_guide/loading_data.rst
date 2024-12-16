@@ -1,10 +1,10 @@
 .. _loading_data:
 
 ==============
-Loading data
+Loading Data
 ==============
 
-Recommended data formats
+Recommended Data Formats
 -------------------------
 
 Xorbits supports reading data from various data sources, including csv, parquet, sql, xml and other data formats,
@@ -59,7 +59,7 @@ Parquet file to be 16MiB ~ 128MiB in size, so there are not too many files but c
 
 For example with 200MiB of data, single file:
 
-.. code-block:: python
+.. code-block:: 
 
     In [1]: %time print(pd.read_parquet("single.parquet"))
     100%|████████████████████████████████████| 100.00/100 [00:01<00:00, 80.31it/s]
@@ -82,7 +82,7 @@ For example with 200MiB of data, single file:
 
 Stored the same data in a folder with 10 Parquet files, reading the folder:
 
-.. code-block:: python
+.. code-block:: 
 
     In [2]: %time print(pd.read_parquet("parquet_dir"))
     100%|████████████████████████████████████| 100.00/100 [00:00<00:00, 419.56it/s]
@@ -110,13 +110,13 @@ Single Parquet file with multiple row groups
 If storing as a single file, splitting into multiple row groups can also allow parallel reading. First use the
 ``row_group_size`` parameter to store into multiple row groups.
 
-.. code-block:: python
+.. code-block:: 
 
     In [3]: df.to_parquet("all.parquet", row_group_size=20_0000)
 
 When reading, specify ``groups_as_chunks=True``:
 
-.. code-block:: python
+.. code-block::
 
     In [4]: %time print(pd.read_parquet("all.parquet", groups_as_chunks=True))
     100%|███████████████████████████████████| 100.00/100 [00:00<00:00, 231.36it/s]
@@ -148,7 +148,7 @@ and process.
 
 Reading a single Parquet file and calling apply function then, this does not leverage multi-core parallelism:
 
-.. code-block:: python
+.. code-block:: 
 
     In [5]: %time print(pd.read_parquet("all.parquet").apply(lambda row: len(row[1]) * row[2], axis=1))
     100%|███████████████████████████████████| 100.00/100 [00:06<00:00, 16.10it/s]
@@ -170,7 +170,7 @@ Reading a single Parquet file and calling apply function then, this does not lev
 Upon calling rebalance, the computation will make use of multiple cores, although ``rebalance`` will consume
 some additional time, the more subsequent computations, the higher the gain.
 
-.. code-block:: python
+.. code-block:: 
 
     In [6]: %time print(pd.read_parquet("all.parquet").rebalance().apply(lambda row: len(row[1]) * row[2], axis=1))
     100%|███████████████████████████████████| 100.00/100 [00:04<00:00, 20.16it/s]

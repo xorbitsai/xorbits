@@ -232,7 +232,7 @@ def test_isna(setup):
     assert isna(None) == pd.isna(None)
     assert isna(md.NA) == pd.isna(pd.NA)
     assert isna(md.NaT) == pd.isna(pd.NaT)
-    assert isna(mt.NaN) == pd.isna(np.NaN)
+    assert isna(mt.nan) == pd.isna(np.nan)
     assert isna(type) == pd.isna(type)
 
     # multi index
@@ -241,36 +241,36 @@ def test_isna(setup):
         isna(midx)
 
     # list
-    l = [1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT]
+    l = [1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT]
     actual = isna(l).execute().fetch()
     expected = pd.isna(l)
     np.testing.assert_array_equal(expected, actual)
 
     # tuple
-    t = (1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT)
+    t = (1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT)
     assert not isna(t)
 
     # numpy ndarray
-    narr = np.array((1, 2, 3, np.Inf, np.NaN))
+    narr = np.array((1, 2, 3, np.inf, np.nan))
     actual = isna(narr).execute().fetch()
     expected = pd.isna(narr)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas index
-    pi = pd.Index((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
+    pi = pd.Index((1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT))
     actual = isna(pi).execute().fetch()
     expected = pd.isna(pi)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas series
-    ps = pd.Series((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
+    ps = pd.Series((1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT))
     actual = isna(ps).execute().fetch()
     expected = pd.isna(ps)
     pd.testing.assert_series_equal(expected, actual)
 
     # pandas dataframe
     pdf = pd.DataFrame(
-        {"foo": (1, 2, 3, np.Inf, pd.NA), "bar": (4, 5, 6, np.NaN, pd.NaT)}
+        {"foo": (1, 2, 3, np.inf, pd.NA), "bar": (4, 5, 6, np.nan, pd.NaT)}
     )
     actual = isna(pdf).execute().fetch()
     expected = pd.isna(pdf)
@@ -315,7 +315,7 @@ def test_notna(setup):
     assert notna(None) == pd.notna(None)
     assert notna(md.NA) == pd.notna(pd.NA)
     assert notna(md.NaT) == pd.notna(pd.NaT)
-    assert notna(mt.NaN) == pd.notna(np.NaN)
+    assert notna(mt.nan) == pd.notna(np.nan)
     assert notna(type) == pd.notna(type)
 
     # multi index
@@ -324,36 +324,36 @@ def test_notna(setup):
         notna(midx)
 
     # list
-    l = [1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT]
+    l = [1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT]
     actual = notna(l).execute().fetch()
     expected = pd.notna(l)
     np.testing.assert_array_equal(expected, actual)
 
     # tuple
-    t = (1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT)
+    t = (1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT)
     assert notna(t)
 
     # numpy ndarray
-    narr = np.array((1, 2, 3, np.Inf, np.NaN))
+    narr = np.array((1, 2, 3, np.inf, np.nan))
     actual = notna(narr).execute().fetch()
     expected = pd.notna(narr)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas index
-    pi = pd.Index((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
+    pi = pd.Index((1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT))
     actual = notna(pi).execute().fetch()
     expected = pd.notna(pi)
     np.testing.assert_array_equal(expected, actual)
 
     # pandas series
-    ps = pd.Series((1, 2, 3, np.Inf, np.NaN, pd.NA, pd.NaT))
+    ps = pd.Series((1, 2, 3, np.inf, np.nan, pd.NA, pd.NaT))
     actual = notna(ps).execute().fetch()
     expected = pd.notna(ps)
     pd.testing.assert_series_equal(expected, actual)
 
     # pandas dataframe
     pdf = pd.DataFrame(
-        {"foo": (1, 2, 3, np.Inf, pd.NA), "bar": (4, 5, 6, np.NaN, pd.NaT)}
+        {"foo": (1, 2, 3, np.inf, pd.NA), "bar": (4, 5, 6, np.nan, pd.NaT)}
     )
     actual = notna(pdf).execute().fetch()
     expected = pd.notna(pdf)

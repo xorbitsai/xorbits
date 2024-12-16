@@ -212,7 +212,7 @@ def get_third_party_modules_from_config(config: Dict, role: NodeRole, environ=No
         )
 
     all_modules = []
-    for mods in tuple(modules or ()) + (environ.get("MARS_LOAD_MODULES"),):
+    for mods in tuple(modules or ()) + (environ.get("XORBITS_LOAD_MODULES"),):
         all_modules.extend(mods.split(",") if mods else [])
     return all_modules
 

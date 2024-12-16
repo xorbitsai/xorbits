@@ -71,7 +71,7 @@ def test_get_third_party_modules_from_config():
     r = get_third_party_modules_from_config(config, NodeRole.WORKER)
     assert r == ["ab.module"]
 
-    os.environ["MARS_LOAD_MODULES"] = "c.module,d.module"
+    os.environ["XORBITS_LOAD_MODULES"] = "c.module,d.module"
     try:
         r = get_third_party_modules_from_config(config, NodeRole.SUPERVISOR)
         assert r == ["ab.module", "c.module", "d.module"]
@@ -82,7 +82,7 @@ def test_get_third_party_modules_from_config():
         r = get_third_party_modules_from_config({}, NodeRole.WORKER)
         assert r == ["c.module", "d.module"]
     finally:
-        os.environ.pop("MARS_LOAD_MODULES", None)
+        os.environ.pop("XORBITS_LOAD_MODULES", None)
 
     config = {"third_party_modules": "ab.module"}
     with pytest.raises(TypeError, match="str"):

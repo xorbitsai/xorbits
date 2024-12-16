@@ -365,7 +365,7 @@ class DataFrameReductionMixin(DataFrameOperandMixin):
                     #  handle pandas Dtypes in the future more carefully.
                     reduced_dtype = np.dtype("O")
                 else:
-                    reduced_dtype = np.find_common_type(dtypes, [])
+                    reduced_dtype = np.result_type(*dtypes)
 
         if level is not None:
             return self._call_groupby_level(df[reduced_cols], level)
@@ -1161,9 +1161,7 @@ class ReductionCompiler:
                             and isinstance(t.op.lhs, DATAFRAME_TYPE)
                             and isinstance(t.op.rhs, str)
                         ):
-                            # for a cudf dataframe, df == 'foo' doesn't work, so we convert the rhs
-                            # to a tuple.
-                            rhs = f"({rhs},) * len({lhs}.columns)"
+                            rhs = f"{rhs} "
                         statements = [
                             f"try:",
                             f"    {var_name} = {lhs}.{func_name}({rhs}, {axis_expr})",

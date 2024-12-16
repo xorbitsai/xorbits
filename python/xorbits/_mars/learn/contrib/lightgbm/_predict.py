@@ -75,7 +75,7 @@ class LGBMPredict(LearnOperand, LearnOperandMixin):
             shape = (self.data.shape[0],)
 
         if self._proba:
-            dtype = np.dtype(np.float_)
+            dtype = np.dtype(np.float64)
         elif hasattr(self.model, "classes_"):
             dtype = np.array(self.model.classes_).dtype
         else:

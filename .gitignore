@@ -152,3 +152,10 @@ doc/source/savefig/
 asv/results
 
 .DS_Store
+
+# slurm.sh generated sh
+python/xorbits/deploy/slurm/tests/slurm.sh
+
+# vineyard & etcd
+
+python/default.etcd/*

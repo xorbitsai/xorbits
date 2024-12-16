@@ -8,9 +8,9 @@ API Reference
    :maxdepth: 2
 
    xorbits/index
-   pandas/index
    numpy/index
-   datasets/index
-   xgboost/index
+   pandas/index
    lightgbm/index
+   xgboost/index
+   datasets/index
    experimental/index

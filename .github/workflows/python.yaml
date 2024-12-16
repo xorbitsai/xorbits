@@ -40,14 +40,15 @@ jobs:
         with:
           src: "python/xorbits"
           options: "--check"
+          version: "23.12.0"
       - uses: isort/isort-action@master
         with:
           sortPaths: "python/xorbits"
           configuration: "--check-only --diff --sp python/setup.cfg"
       - name: mypy
-        run: pip install mypy && cd python && mypy xorbits
+        run: pip install mypy==1.11.2 && cd python && mypy xorbits
       - name: codespell
-        run: pip install codespell && cd python && codespell xorbits
+        run: pip install codespell==2.2.6 && cd python && codespell xorbits
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -66,37 +67,41 @@ jobs:
     needs: lint
     env:
       CONDA_ENV: xorbits-test
+      SELF_HOST_PYTHON: /root/miniconda3/envs/xorbits-test/bin/python
+      SELF_HOST_CONDA: /root/miniconda3/condabin/conda
     defaults:
       run:
         shell: bash -l {0}
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-        module: ["xorbits", "kubernetes"]
+        os: ["ubuntu-latest", "macos-14", "windows-latest"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        module: ["xorbits", "xorbits/numpy", "xorbits/pandas"]
         exclude:
-          - { os: macos-latest, python-version: 3.10}
-          - { os: macos-latest, python-version: 3.9}
+          - { os: macos-14, python-version: 3.10}
+          - { os: macos-14, python-version: 3.9}
           - { os: windows-latest, python-version: 3.10}
           - { os: windows-latest, python-version: 3.9}
           - { os: windows-latest, module: kubernetes}
-          - { os: macos-latest, module: kubernetes}
+          - { os: macos-14, module: kubernetes}
         include:
           - { os: ubuntu-latest, module: _mars/dataframe, python-version: 3.9 }
-          - { os: ubuntu-latest, module: _mars/tensor, python-version: 3.9 }
-          - { os: ubuntu-latest, module: _mars/learn, python-version: 3.9 }
           - { os: ubuntu-latest, module: learn, python-version: 3.9 }
           - { os: ubuntu-latest, module: mars-core, python-version: 3.9 }
           - { os: ubuntu-20.04, module: hadoop, python-version: 3.9 }
-          - { os: ubuntu-latest, module: vineyard, python-version: 3.9 }
-          - { os: ubuntu-latest, module: external-storage, python-version: 3.9 }
-          - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
+          - { os: ubuntu-latest, module: vineyard, python-version: 3.11 }
+          - { os: ubuntu-latest, module: external-storage, python-version: 3.11 }
           - { os: ubuntu-latest, module: doc-build, python-version: 3.9 }
-          - { os: self-hosted, module: gpu, python-version: 3.9}
+          - { os: self-hosted, module: gpu, python-version: 3.11}
           - { os: ubuntu-latest, module: jax, python-version: 3.9 }
-          - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
           - { os: ubuntu-latest, module: datasets, python-version: 3.9 }
+          - { os: ubuntu-latest, module: kubernetes, python-version: 3.11 }
+          # a self-hosted runner which needs computing resources, activate when necessary
+          # - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
+          # - { os: ubuntu-latest, module: slurm, python-version: 3.9 }
+          # always test compatibility with the latest version
+          # - { os: ubuntu-latest, module: compatibility, python-version: 3.9 }
     steps:
     - name: Check out code
       uses: actions/checkout@v3
@@ -106,10 +111,10 @@ jobs:
         
     - name: Add msbuild to PATH
       if: ${{ matrix.os == 'windows-latest'}}
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
     
     - name: Set up conda ${{ matrix.python-version }}
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       if: ${{ matrix.module != 'gpu' && matrix.module != 'kubernetes-juicefs' }}
       with:
         python-version: ${{ matrix.python-version }}
@@ -121,11 +126,23 @@ jobs:
       with:
         driver: none
         kubernetes-version: v1.23.12
+        minikube-version: 1.31.2
 
     - name: Install ucx dependencies
-      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.python-version != '3.11') }}
+      if: ${{ (matrix.module != 'gpu') && (matrix.os == 'ubuntu-latest') && (matrix.module != 'doc-build') }}
       run: |
-        conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
+        # ucx-py move to ucxx and ucxx-cu12 can be run on CPU
+        # conda install -c conda-forge -c rapidsai ucx-proc=*=cpu ucx ucx-py
+        pip install ucxx-cu12
+    - name: Install libomp (macOS)
+      if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-14' }}
+      run: brew install libomp
+
+    # Important for python == 3.12
+    - name: Update pip and setuptools
+      if: ${{ matrix.python-version == '3.12' }}
+      run: |
+        python -m pip install -U pip setuptools
 
     - name: Install dependencies
       env:
@@ -133,111 +150,114 @@ jobs:
         PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.module != 'gpu' }}
       run: |
-        pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-        pip install numpy scipy cython pyftpdlib coverage flaky "numexpr<2.8.5"
+        if [[ "$MODULE" == "doc-build" ]]; then
+          pip install --upgrade --no-cache-dir pip setuptools
+          pip install --upgrade --no-cache-dir sphinx readthedocs-sphinx-ext
+          pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
+        else
+          pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
+          pip install -U numpy scipy cython pyftpdlib coverage flaky numexpr
 
-        if [[ "$MODULE" == "xorbits" ]]; then
-          pip install openpyxl
-        fi
-        if [[ "$MODULE" == "mars-core" ]]; then
-          pip install oss2
-        fi
-        if [[ "$MODULE" == "kubernetes" ]]; then
-          pip install kubernetes
-        fi
-        if [[ "$MODULE" == "kubernetes-juicefs" ]]; then
-          pip install kubernetes
-          if helm version --short >/dev/null 2>&1; then
-            echo "Helm installed. Skipping installation."
-          else
-            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          if [[ "$MODULE" == "xorbits/pandas" ]]; then
+            pip install openpyxl
           fi
-          if helm repo list | grep "juicefs" >/dev/null 2>&1; then
-            echo "Repo juicefs existed. Skipping adding to helm repos."
-          else
-            helm repo add juicefs https://juicedata.github.io/charts/
-            helm repo update
-            helm fetch --untar juicefs/juicefs-csi-driver
+          if [[ "$MODULE" == "mars-core" ]]; then
+            pip install oss2
           fi
-          if kubectl get pods -n kube-system | grep "juicefs-csi" >/dev/null 2>&1; then
-            echo "Juicefs-csi-driver installed. Skipping installation."
-          else
-            helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
+          if [[ "$MODULE" == "kubernetes" ]]; then
+            pip install kubernetes
           fi
-          sleep 60
-          kubectl apply -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/example-redis-config.yaml
-          sleep 60
+          if [[ "$MODULE" == "kubernetes-juicefs" ]]; then
+            pip install kubernetes
+            if helm version --short >/dev/null 2>&1; then
+              echo "Helm installed. Skipping installation."
+            else
+              curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+            fi
+            if helm repo list | grep "juicefs" >/dev/null 2>&1; then
+              echo "Repo juicefs existed. Skipping adding to helm repos."
+            else
+              helm repo add juicefs https://juicedata.github.io/charts/
+              helm repo update
+              helm fetch --untar juicefs/juicefs-csi-driver
+            fi
+            if kubectl get pods -n kube-system | grep "juicefs-csi" >/dev/null 2>&1; then
+              echo "Juicefs-csi-driver installed. Skipping installation."
+            else
+              helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/values.yaml
+            fi
+            sleep 60
+            kubectl apply -f xorbits/deploy/kubernetes/external_storage/juicefs/tests/example-redis-config.yaml
+            sleep 60
+          fi
+          if [[ "$MODULE" == "hadoop" ]]; then
+            ../CI/install-hadoop.sh
+            echo "import coverage; coverage.process_startup()" > \
+              $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
+            conda install --quiet --yes conda-forge::libffi==3.4.2 conda-forge::skein==0.8.1 conda-forge::conda-pack==0.8.0 conda-forge::protobuf==3.20.1 conda-forge::grpcio==1.42.0
+          fi
+          if [[ "$MODULE" == "vineyard" ]]; then
+            pip install vineyard
+            mkdir -p /tmp/etcd-download-test
+            export ETCD_VER=v3.4.13
+            export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
+            curl -L $ETCD_DOWNLOAD_URL/$ETCD_VER/etcd-$ETCD_VER-linux-amd64.tar.gz -o /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz
+            tar xzvf /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+            sudo mv /tmp/etcd-download-test/etcd /usr/local/bin/
+            sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
+            rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
+          fi
+          if [[ "$MODULE" == "external-storage" ]]; then
+            export CUR_DIR=$(pwd)
+            mkdir -p /tmp/alluxio-download-test
+            cd /tmp/alluxio-download-test
+            wget -q https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
+            tar -xzf alluxio-2.9.3-bin.tar.gz
+            cd alluxio-2.9.3
+            cp conf/alluxio-env.sh.template conf/alluxio-env.sh
+            cp conf/alluxio-site.properties.template conf/alluxio-site.properties
+            echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
+            cd $CUR_DIR
+            sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
+            rm -R /tmp/alluxio-download-test
+            unset CUR_DIR
+            export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
+            ${ALLUXIO_HOME}/bin/alluxio format
+            ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
+            curl -sSL https://d.juicefs.com/install | sh -
+            curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+            sudo apt-get update
+            sudo apt-get install redis
+            export JUICEFS_HOME="/usr/local/bin/juicefs"
+          fi
+          if [[ "$PYTHON" == '3.9' ]]; then
+            pip install h5py zarr matplotlib fastparquet
+            conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
+              "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
+          fi
+          if [[ "$MODULE" == "_mars/learn" ]]; then
+            pip install scikit-learn
+            pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
+              statsmodels tsfresh dask[complete] mimesis\<9.0.0
+          fi
+          if [[ "$MODULE" == "learn" ]]; then
+            pip install xgboost lightgbm
+          fi
+          if [[ "$MODULE" == "compatibility" ]]; then
+            # test if compatible with older versions
+            pip install "pandas==1.5.3" "scipy<=1.10.1" "numpy<=1.24.1" "matplotlib<=3.7.0" "pyarrow<12.0.0" "sqlalchemy<2"
+          fi
+          if [[ "$MODULE" == "jax" ]]; then
+            # test jax
+            pip install "jax>=0.4.0" "jaxlib>=0.4.0"
+          fi
+          if [[ "$MODULE" == "datasets" ]]; then
+            # test huggingface datasets
+            pip install datasets torch
+          fi
+          pip install -e ".[dev,extra,aws]"
         fi
-        if [[ "$MODULE" == "hadoop" ]]; then
-          ../CI/install-hadoop.sh
-          echo "import coverage; coverage.process_startup()" > \
-            $(python -c "import site; print(site.getsitepackages()[-1])")/coverage.pth
-          conda install --quiet --yes -c conda-forge skein libffi conda-pack grpcio=1.42.0
-        fi
-        if [[ "$MODULE" == "vineyard" ]]; then
-          pip install "vineyard<0.16.1" -i https://pypi.org/simple
-          mkdir -p /tmp/etcd-download-test
-          export ETCD_VER=v3.4.13
-          export ETCD_DOWNLOAD_URL=https://github.com/etcd-io/etcd/releases/download
-          curl -L $ETCD_DOWNLOAD_URL/$ETCD_VER/etcd-$ETCD_VER-linux-amd64.tar.gz -o /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz
-          tar xzvf /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
-          sudo mv /tmp/etcd-download-test/etcd /usr/local/bin/
-          sudo mv /tmp/etcd-download-test/etcdctl /usr/local/bin/
-          rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
-        fi
-        if [[ "$MODULE" == "external-storage" ]]; then
-          export CUR_DIR=$(pwd)
-          mkdir -p /tmp/alluxio-download-test
-          cd /tmp/alluxio-download-test
-          wget -q https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
-          tar -xzf alluxio-2.9.3-bin.tar.gz
-          cd alluxio-2.9.3
-          cp conf/alluxio-env.sh.template conf/alluxio-env.sh
-          cp conf/alluxio-site.properties.template conf/alluxio-site.properties
-          echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
-          cd $CUR_DIR
-          sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
-          rm -R /tmp/alluxio-download-test
-          unset CUR_DIR
-          export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
-          ${ALLUXIO_HOME}/bin/alluxio format
-          ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
-          curl -sSL https://d.juicefs.com/install | sh -
-          curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-          sudo apt-get update
-          sudo apt-get install redis
-          export JUICEFS_HOME="/usr/local/bin/juicefs"
-        fi
-        if [[ "$PYTHON" == '3.9' ]]; then
-          pip install h5py zarr matplotlib fastparquet
-          conda install -n test --quiet --yes -c conda-forge python=$PYTHON \
-            "tiledb-py>=0.4.3,<0.6.0" "tiledb<2.0.0" || true
-        fi
-        if [[ "$MODULE" == "_mars/learn" ]]; then
-          pip install scikit-learn
-          pip install xgboost lightgbm keras tensorflow faiss-cpu\<1.7.3 torch torchvision \
-            statsmodels tsfresh dask[complete] mimesis\<9.0.0
-        fi
-        if [[ "$MODULE" == "learn" ]]; then
-          pip install xgboost lightgbm
-        fi
-        if [[ "$MODULE" == "ray-dag" ]] || [[ "$MODULE" == "ray-deploy" ]]; then
-          pip install "xgboost_ray<0.1.14" "protobuf<4" "sqlalchemy<2"
-        fi
-        if [[ "$MODULE" == "compatibility" ]]; then
-          # test if compatible with older versions
-          pip install pandas==1.5.3 pyarrow\<12.0.0 sqlalchemy\<2
-        fi
-        if [[ "$MODULE" == "jax" ]]; then
-          # test jax
-          pip install "jax>=0.4.0" "jaxlib>=0.4.0"
-        fi
-        if [[ "$MODULE" == "datasets" ]]; then
-          # test huggingface datasets
-          pip install datasets torch
-        fi
-        pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
     - name: Install on JuiceFsCI
@@ -247,11 +267,28 @@ jobs:
         python setup.py build_ext -i
       working-directory: ./python
 
+    - name: Slurm Setup Job queuing system
+      if: ${{ matrix.module == 'slurm' }}
+      run: |
+        source CI/slurm/${{ matrix.module }}.sh
+        jobqueue_before_install
+
+    - name: Slurm Install xorbits
+      if: ${{ matrix.module == 'slurm' }}
+      run: |
+        source CI/slurm/${{ matrix.module }}.sh
+        jobqueue_install
+      
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
+        source activate ${{ env.CONDA_ENV }}
+        pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.10.*
+        pip install ucxx-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
+          pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
+          pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
         pip install -U xoscar
-        python setup.py build_ext -i
+        pip install -e ".[dev,extra,aws]"
       working-directory: ./python
 
     - name: Build doc
@@ -262,15 +299,29 @@ jobs:
       working-directory: ./doc
 
     - name: Test with pytest
-      if: ${{ matrix.module != 'doc-build' }}
+      if: ${{ matrix.module != 'doc-build' && matrix.module != 'gpu' }}
       env:
         MODULE: ${{ matrix.module }}
       run: |
         if [[ "$MODULE" == "xorbits" ]]; then
-          pytest --ignore xorbits/_mars/ --ignore xorbits/xgboost --ignore xorbits/lightgbm \
-            --ignore xorbits/datasets --timeout=1500 \
+          pytest --ignore xorbits/_mars/ --ignore xorbits/pandas --ignore xorbits/numpy \
+            --ignore xorbits/xgboost --ignore xorbits/lightgbm --ignore xorbits/sklearn \
+            --ignore xorbits/datasets \
+            --ignore xorbits/core/tests/test_execution_exit.py \
+            --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
-            --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+            xorbits
+        elif [[ "$MODULE" == "xorbits/pandas" ]]; then
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml \
+            --cov=xorbits xorbits/pandas
+        elif [[ "$MODULE" == "xorbits/numpy" ]]; then
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+            xorbits/numpy
         elif [[ "$MODULE" == "mars-core" ]]; then
           pytest --forked --log-level=DEBUG --ignore xorbits/_mars/dataframe --ignore xorbits/_mars/tensor \
             --ignore xorbits/_mars/learn --ignore xorbits/_mars/remote \
@@ -285,9 +336,15 @@ jobs:
           pytest --ignore xorbits/_mars/ --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/deploy/kubernetes/external_storage/juicefs
+        elif [[ "$MODULE" == "slurm" ]]; then
+          docker exec c1 /bin/bash -c "pip install xorbits"
+          docker exec c2 /bin/bash -c "pip install xorbits"
+          docker exec slurmctld /bin/bash -c \
+          "pytest /xorbits/python/xorbits/deploy/slurm/tests/test_slurm.py "
         elif [[ "$MODULE" == "hadoop" ]]; then
           export WITH_HADOOP="1"
           export HADOOP_HOME="/usr/local/hadoop"
+          export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
           export HADOOP_INSTALL=$HADOOP_HOME
           export HADOOP_MAPRED_HOME=$HADOOP_HOME
           export HADOOP_COMMON_HOME=$HADOOP_HOME
@@ -295,7 +352,7 @@ jobs:
           export YARN_HOME=$HADOOP_HOME
           export HADOOP_COMMON_LIB_NATIVE_DIR="$HADOOP_HOME/lib/native"
           export PATH="$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin"
-          pytest --timeout=1500 -W ignore::PendingDeprecationWarning xorbits/_mars -m hadoop
+          pytest --ignore xorbits/_mars/learn --timeout=1500 -W ignore::PendingDeprecationWarning xorbits/_mars -m hadoop
         elif [[ "$MODULE" == "vineyard" ]]; then
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
@@ -320,48 +377,12 @@ jobs:
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/xgboost xorbits/lightgbm
-        elif [ "$MODULE" == "ray-deploy" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars --ignore=xorbits/_mars/deploy/oscar/ -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_load_modules.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_cluster_standalone.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_client.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_fault_injection.py -m ray
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits --durations=0 \
-            --log-level=DEBUG --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_scheduling.py -m ray
-        elif [ "$MODULE" == "ray-dag" ]; then
-          export MARS_CI_BACKEND=ray
-          export RAY_idle_worker_killing_time_threshold_ms=60000
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 --timeout=500 xorbits/_mars/dataframe \
-            -v -s -m "not skip_ray_dag" --ignore=xorbits/_mars/dataframe/contrib/raydataset
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=500 xorbits/_mars/dataframe/contrib/raydataset -v -s -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=500 xorbits/_mars/tensor -v -s -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=500 xorbits/_mars/learn --ignore xorbits/_mars/learn/contrib \
-            --ignore xorbits/_mars/learn/utils/tests/test_collect_ports.py -m "not skip_ray_dag"
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits -v -s -m ray_dag
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag.py
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_failover.py
-          pytest --cov-config=setup.cfg --cov-report=xml --durations=0 \
-            --timeout=200 xorbits/_mars/deploy/oscar/tests/test_ray_dag_oscar.py -m ray
-        elif [ "$MODULE" == "gpu" ]; then
-          pytest -m cuda --gpu --ignore xorbits/datasets --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
         elif [ "$MODULE" == "datasets" ]; then
-          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/backends
+          pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/datasets/tests
         elif [ "$MODULE" == "compatibility" ]; then
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
@@ -375,9 +396,26 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
         fi
       working-directory: ./python
+    
+    - name: Test with pytest GPU
+      if: ${{ matrix.module == 'gpu' }}
+      run: |
+        source activate ${{ env.CONDA_ENV }}
+        pytest -m cuda --gpu --ignore xorbits/datasets \
+          --ignore xorbits/sklearn --ignore xorbits/_mars/learn \
+          --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+          xorbits
+      working-directory: ./python
+
+
+    - name: Cleanup on slurm
+      if: ${{ matrix.module == 'slurm' }}
+      run: |
+        source CI/slurm/${{ matrix.module }}.sh
+        jobqueue_after_script
 
     - name: Report coverage data
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         working-directory: ./python
         flags: unittests

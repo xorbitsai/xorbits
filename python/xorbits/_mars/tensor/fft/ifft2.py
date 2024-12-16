@@ -114,5 +114,5 @@ def ifft2(a, s=None, axes=(-2, -1), norm=None):
         raise ValueError("axes length should be 2")
     a = astensor(a)
     axes = validate_fftn(a, s=s, axes=axes, norm=norm)
-    op = TensorIFFT2(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.complex_))
+    op = TensorIFFT2(shape=s, axes=axes, norm=norm, dtype=np.dtype(np.complex128))
     return op(a)
