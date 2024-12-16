@@ -15,8 +15,6 @@
 
 import itertools
 
-from numpy.compat import basestring
-
 from ..datasource.array import tensor as astensor
 
 __all__ = ["parse_einsum_input", "einsum_path"]
@@ -577,7 +575,7 @@ def parse_einsum_input(operands):
     if len(operands) == 0:
         raise ValueError("No input operands")
 
-    if isinstance(operands[0], basestring):
+    if isinstance(operands[0], str):
         subscripts = operands[0].replace(" ", "")
         operands = [astensor(v) for v in operands[1:]]
 
@@ -855,7 +853,7 @@ def einsum_path(*operands, **kwargs):
     memory_limit = None
 
     # No optimization or a named path algorithm
-    if (path_type is False) or isinstance(path_type, basestring):
+    if (path_type is False) or isinstance(path_type, str):
         pass
 
     # Given an explicit path
@@ -865,7 +863,7 @@ def einsum_path(*operands, **kwargs):
     # Path tuple with memory limit
     elif (
         (len(path_type) == 2)
-        and isinstance(path_type[0], basestring)
+        and isinstance(path_type[0], str)
         and isinstance(path_type[1], (int, float))
     ):  # pragma: no cover
         memory_limit = int(path_type[1])
