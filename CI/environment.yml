@@ -1,0 +1,19 @@
+name: xorbits
+channels:
+  -conda-forge
+  -defaults
+dependencies:
+    -python=3.8
+    -numpy
+    -pandas
+    -scipy
+    -scikit-learn
+    -cloudpickle
+    -pyyaml
+    -pickle5
+    -shared-memory38
+    -tornado
+    -sqlalchemy
+    -defusedxml
+    -tqdm
+    -uvloop
