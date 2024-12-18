@@ -339,11 +339,40 @@ def test_getitem(setup):
     pd.testing.assert_frame_equal(result.to_pandas(), expected)
 
 
+def test_column_index_setitem(setup):
+    import pandas as pd
+
+    from ... import pandas as xpd
+
+    data = {"a": [1, 2, 3], "b": [4, 5, 6]}
+    df = pd.DataFrame(data)
+    xdf = xpd.DataFrame(data)
+
+    xdf.columns = xpd.Index(["c1", "d1"])
+    df.columns = pd.Index(["c1", "d1"])
+    pd.testing.assert_frame_equal(xdf.to_pandas(), df)
+
+    xdf.columns = ["c2", "d2"]
+    df.columns = ["c2", "d2"]
+    pd.testing.assert_frame_equal(xdf.to_pandas(), df)
+
+    xdf.columns = pd.Index(["c3", "d3"])
+    df.columns = pd.Index(["c3", "d3"])
+    pd.testing.assert_frame_equal(xdf.to_pandas(), df)
+
+    xdf.index = ["x1", "y1", "z1"]
+    df.index = ["x1", "y1", "z1"]
+    pd.testing.assert_frame_equal(xdf.to_pandas(), df)
+
+    xdf.index = xpd.Index(["x2", "y2", "z2"])
+    df.index = pd.Index(["x2", "y2", "z2"])
+    pd.testing.assert_frame_equal(xdf.to_pandas(), df)
+
+
 # TODO: process exit cause hang
 # def test_execution_with_process_exit_message(mocker):
 #     import numpy as np
 #     from xoscar.errors import ServerClosed
-
 #     import xorbits
 #     import xorbits.remote as xr
 

@@ -65,7 +65,9 @@ class IndexDataSource(DataFrameOperand, DataFrameOperandMixin):
                 None,
                 shape=shape,
                 dtype=self.dtype,
-                index_value=parse_index(self.data, store_data=self.store_data),
+                # `store_data=True` to make sure
+                # when the `to_pandas()` is called, we can get the actual pandas value.
+                index_value=parse_index(self.data, store_data=True),
                 name=name,
                 names=names,
                 raw_chunk_size=chunk_size,
