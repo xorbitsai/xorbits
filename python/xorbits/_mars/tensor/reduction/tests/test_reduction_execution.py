@@ -442,11 +442,13 @@ def test_nan_reduction(setup):
     assert pytest.approx(np.nanmean(raw.toarray())) == nanmean(arr).execute().fetch()
     assert pytest.approx(np.nanvar(raw.toarray())) == nanvar(arr).execute().fetch()
     assert (
-        pytest.approx(np.nanvar(raw.toarray(), ddof=1)) == nanvar(arr, ddof=1).execute().fetch()
+        pytest.approx(np.nanvar(raw.toarray(), ddof=1))
+        == nanvar(arr, ddof=1).execute().fetch()
     )
     assert pytest.approx(np.nanstd(raw.toarray())) == nanstd(arr).execute().fetch()
     assert (
-        pytest.approx(np.nanstd(raw.toarray(), ddof=1)) == nanstd(arr, ddof=1).execute().fetch()
+        pytest.approx(np.nanstd(raw.toarray(), ddof=1))
+        == nanstd(arr, ddof=1).execute().fetch()
     )
 
     arr = nansum(1)
