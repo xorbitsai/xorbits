@@ -67,20 +67,20 @@ class FakeClusterAPI(ClusterAPI):
     async def create(cls, address: str, **kw):
         dones, _ = await asyncio.wait(
             [
-                mo.create_actor(
+                asyncio.create_task(mo.create_actor(
                     SupervisorPeerLocatorActor,
                     "fixed",
                     address,
                     uid=SupervisorPeerLocatorActor.default_uid(),
                     address=address,
-                ),
-                mo.create_actor(
+                )),
+                asyncio.create_task(mo.create_actor(
                     MockNodeInfoCollectorActor,
                     with_gpu=kw.get("with_gpu", False),
                     uid=NodeInfoCollectorActor.default_uid(),
                     address=address,
-                ),
-                mo.create_actor(
+                )),
+                asyncio.create_task(mo.create_actor(
                     NodeInfoUploaderActor,
                     NodeRole.WORKER,
                     interval=kw.get("upload_interval"),
@@ -88,7 +88,7 @@ class FakeClusterAPI(ClusterAPI):
                     use_gpu=kw.get("use_gpu", False),
                     uid=NodeInfoUploaderActor.default_uid(),
                     address=address,
-                ),
+                )),
             ]
         )
 
