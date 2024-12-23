@@ -31,7 +31,7 @@ except (ImportError, OSError):  # pragma: no cover
     tildb = None
 
 from ...utils import is_numpy_2
-from ..core import ExecutableTuple, recursive_tile
+from ..core import recursive_tile
 from ..lib.mmh3 import hash_from_buffer
 from ..utils import lazy_import
 
@@ -767,50 +767,6 @@ def hash_on_axis(ar, axis, n_dest):
         if ar.ndim == 1:
             ar = ar.reshape(ar.size, 1)
         return np.apply_along_axis(_hash_to_dest, 1 - axis, ar)
-
-
-def fetch_corner_data(tensor, session=None):
-    print_option = np.get_printoptions()
-    # only fetch corner data when data > threshold
-    threshold = print_option["threshold"]
-    # number of edge items to print
-    edgeitems = print_option["edgeitems"]
-
-    # we fetch corner data based on the fact that
-    # the tensor must have been executed,
-    # thus the size could not be NaN
-    if tensor.size > threshold:
-        # two edges for each axis
-        indices_iter = list(itertools.product(*(range(2) for _ in range(tensor.ndim))))
-        corners = np.empty(shape=(2,) * tensor.ndim, dtype=object)
-        shape = [0 for _ in range(tensor.ndim)]
-        for indices in indices_iter:
-            slc = []
-            for ax, i in enumerate(indices):
-                size = tensor.shape[ax]
-                if size > edgeitems * 2 + 2:
-                    # fetch two more elements
-                    if i == 0:
-                        slc.append(slice(edgeitems + 1))
-                    else:
-                        slc.append(slice(-edgeitems - 1, None))
-                    shape[ax] += edgeitems + 1
-                else:
-                    i_sep = size // 2
-                    if i == 0:
-                        slc.append(slice(i_sep))
-                        shape[ax] += i_sep
-                    else:
-                        slc.append(slice(i_sep, None))
-                        shape[ax] += size - i_sep
-            corners[indices] = tensor[tuple(slc)]
-        # fetch together
-        fetched = ExecutableTuple(corners.flat).fetch(session=session)
-        for indices, f in zip(indices_iter, fetched):
-            corners[indices] = f
-        return np.block(corners.tolist())
-    else:
-        return tensor.fetch(session=session)
 
 
 def implement_scipy(scipy_fun):
