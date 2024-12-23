@@ -389,7 +389,7 @@ def test_lu_execution(setup):
 
     t = P.dot(L).dot(U)
     res = t.execute().fetch()
-    np.testing.assert_array_almost_equal(data.A, res)
+    np.testing.assert_array_almost_equal(data.toarray(), res)
 
     a = tensor(data, chunk_size=5)
     P, L, U = lu(a)
@@ -404,7 +404,7 @@ def test_lu_execution(setup):
 
     t = P.dot(L).dot(U)
     res = t.execute().fetch()
-    np.testing.assert_array_almost_equal(data.A, res)
+    np.testing.assert_array_almost_equal(data.toarray(), res)
 
 
 def test_solve_triangular(setup):

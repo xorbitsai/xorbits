@@ -367,6 +367,13 @@ def _get_bin_edges(op, a, bins, range, weights):
             yield from selector.check()
             width = selector.get_result()
             if width:
+                # Reference: https://github.com/numpy/numpy/blob/v2.1.0/numpy/lib/_histograms_impl.py#L413
+                if (
+                    np.__version__ >= "2.1.0"
+                    and np.issubdtype(a.dtype, np.integer)
+                    and width < 1
+                ):
+                    width = 1
                 n_equal_bins = int(
                     np.ceil(_unsigned_subtract(last_edge, first_edge) / width)
                 )

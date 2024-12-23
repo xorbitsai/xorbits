@@ -68,26 +68,32 @@ class FakeClusterAPI(ClusterAPI):
     async def create(cls, address: str, **kw):
         dones, _ = await asyncio.wait(
             [
-                mo.create_actor(
-                    SupervisorPeerLocatorActor,
-                    "fixed",
-                    address,
-                    uid=SupervisorPeerLocatorActor.default_uid(),
-                    address=address,
+                asyncio.create_task(
+                    mo.create_actor(
+                        SupervisorPeerLocatorActor,
+                        "fixed",
+                        address,
+                        uid=SupervisorPeerLocatorActor.default_uid(),
+                        address=address,
+                    )
                 ),
-                mo.create_actor(
-                    MockNodeInfoCollectorActor,
-                    uid=NodeInfoCollectorActor.default_uid(),
-                    address=address,
+                asyncio.create_task(
+                    mo.create_actor(
+                        MockNodeInfoCollectorActor,
+                        uid=NodeInfoCollectorActor.default_uid(),
+                        address=address,
+                    )
                 ),
-                mo.create_actor(
-                    NodeInfoUploaderActor,
-                    NodeRole.WORKER,
-                    interval=kw.get("upload_interval"),
-                    band_to_resource=kw.get("band_to_resource"),
-                    use_gpu=kw.get("use_gpu", False),
-                    uid=NodeInfoUploaderActor.default_uid(),
-                    address=address,
+                asyncio.create_task(
+                    mo.create_actor(
+                        NodeInfoUploaderActor,
+                        NodeRole.WORKER,
+                        interval=kw.get("upload_interval"),
+                        band_to_resource=kw.get("band_to_resource"),
+                        use_gpu=kw.get("use_gpu", False),
+                        uid=NodeInfoUploaderActor.default_uid(),
+                        address=address,
+                    )
                 ),
             ]
         )

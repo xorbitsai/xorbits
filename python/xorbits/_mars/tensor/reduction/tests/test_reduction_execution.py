@@ -106,11 +106,11 @@ def test_max_min_execution(setup):
     assert raw.min() == arr.min().execute().fetch()
 
     np.testing.assert_almost_equal(
-        raw.max(axis=1).A.ravel(), arr.max(axis=1).execute().fetch().toarray()
+        raw.max(axis=1).toarray().ravel(), arr.max(axis=1).execute().fetch().toarray()
     )
     assert arr.max(axis=1).issparse() is True
     np.testing.assert_almost_equal(
-        raw.min(axis=1).A.ravel(), arr.min(axis=1).execute().fetch().toarray()
+        raw.min(axis=1).toarray().ravel(), arr.min(axis=1).execute().fetch().toarray()
     )
     assert arr.min(axis=1).issparse() is True
 
@@ -435,18 +435,20 @@ def test_nan_reduction(setup):
     raw[:3, :3] = np.nan
     arr = tensor(raw, chunk_size=6)
 
-    assert pytest.approx(np.nansum(raw.A)) == nansum(arr).execute().fetch()
-    assert pytest.approx(np.nanprod(raw.A)) == nanprod(arr).execute().fetch()
-    assert pytest.approx(np.nanmax(raw.A)) == nanmax(arr).execute().fetch()
-    assert pytest.approx(np.nanmin(raw.A)) == nanmin(arr).execute().fetch()
-    assert pytest.approx(np.nanmean(raw.A)) == nanmean(arr).execute().fetch()
-    assert pytest.approx(np.nanvar(raw.A)) == nanvar(arr).execute().fetch()
+    assert pytest.approx(np.nansum(raw.toarray())) == nansum(arr).execute().fetch()
+    assert pytest.approx(np.nanprod(raw.toarray())) == nanprod(arr).execute().fetch()
+    assert pytest.approx(np.nanmax(raw.toarray())) == nanmax(arr).execute().fetch()
+    assert pytest.approx(np.nanmin(raw.toarray())) == nanmin(arr).execute().fetch()
+    assert pytest.approx(np.nanmean(raw.toarray())) == nanmean(arr).execute().fetch()
+    assert pytest.approx(np.nanvar(raw.toarray())) == nanvar(arr).execute().fetch()
     assert (
-        pytest.approx(np.nanvar(raw.A, ddof=1)) == nanvar(arr, ddof=1).execute().fetch()
+        pytest.approx(np.nanvar(raw.toarray(), ddof=1))
+        == nanvar(arr, ddof=1).execute().fetch()
     )
-    assert pytest.approx(np.nanstd(raw.A)) == nanstd(arr).execute().fetch()
+    assert pytest.approx(np.nanstd(raw.toarray())) == nanstd(arr).execute().fetch()
     assert (
-        pytest.approx(np.nanstd(raw.A, ddof=1)) == nanstd(arr, ddof=1).execute().fetch()
+        pytest.approx(np.nanstd(raw.toarray(), ddof=1))
+        == nanstd(arr, ddof=1).execute().fetch()
     )
 
     arr = nansum(1)
@@ -471,8 +473,8 @@ def test_cum_reduction(setup):
 
     res1 = arr.cumsum(axis=1).execute().fetch()
     res2 = arr.cumprod(axis=1).execute().fetch()
-    expected1 = raw.A.cumsum(axis=1)
-    expected2 = raw.A.cumprod(axis=1)
+    expected1 = raw.toarray().cumsum(axis=1)
+    expected2 = raw.toarray().cumprod(axis=1)
     assert np.allclose(res1, expected1)
     assert np.allclose(res2, expected2)
 
@@ -530,8 +532,8 @@ def test_nan_cum_reduction(setup):
 
     res1 = nancumsum(arr, axis=1).execute().fetch()
     res2 = nancumprod(arr, axis=1).execute().fetch()
-    expected1 = np.nancumsum(raw.A, axis=1)
-    expected2 = np.nancumprod(raw.A, axis=1)
+    expected1 = np.nancumsum(raw.toarray(), axis=1)
+    expected2 = np.nancumprod(raw.toarray(), axis=1)
     assert np.allclose(res1, expected1) is True
     assert np.allclose(res2, expected2) is True
 
@@ -596,19 +598,19 @@ def test_count_nonzero_execution(setup):
     t = count_nonzero(arr)
 
     res = t.execute().fetch()
-    expected = np.count_nonzero(raw.A)
+    expected = np.count_nonzero(raw.toarray())
     np.testing.assert_equal(res, expected)
 
     t = count_nonzero(arr, axis=0)
 
     res = t.execute().fetch()
-    expected = np.count_nonzero(raw.A, axis=0)
+    expected = np.count_nonzero(raw.toarray(), axis=0)
     np.testing.assert_equal(res, expected)
 
     t = count_nonzero(arr, axis=1)
 
     res = t.execute().fetch()
-    expected = np.count_nonzero(raw.A, axis=1)
+    expected = np.count_nonzero(raw.toarray(), axis=1)
     np.testing.assert_equal(res, expected)
 
     # test string dtype

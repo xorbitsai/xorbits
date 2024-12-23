@@ -56,7 +56,9 @@ def test_concatenate_execution(setup):
 
     d = concatenate([a, b, c], axis=-1)
     res = d.execute().fetch()
-    expected = np.concatenate([a_data.A, b_data.A, c_data.A], axis=-1)
+    expected = np.concatenate(
+        [a_data.toarray(), b_data.toarray(), c_data.toarray()], axis=-1
+    )
     np.testing.assert_array_equal(res.toarray(), expected)
 
 

@@ -333,19 +333,19 @@ def test_arctan2_execution(setup):
 
     assert y.issparse() is False
     result = y.execute().fetch()
-    np.testing.assert_equal(result, np.arctan2(raw1, raw2.A))
+    np.testing.assert_equal(result, np.arctan2(raw1, raw2.toarray()))
 
     y = arctan2(raw2, raw2)
 
     assert y.issparse() is True
     result = y.execute().fetch()
-    np.testing.assert_equal(result, np.arctan2(raw2.A, raw2.A))
+    np.testing.assert_equal(result, np.arctan2(raw2.toarray(), raw2.toarray()))
 
     y = arctan2(0, raw2)
 
     assert y.issparse() is True
     result = y.execute().fetch()
-    np.testing.assert_equal(result, np.arctan2(0, raw2.A))
+    np.testing.assert_equal(result, np.arctan2(0, raw2.toarray()))
 
 
 @pytest.mark.ray_dag

@@ -719,7 +719,7 @@ def test_fill_diagonal_execution(setup):
     def copy(x):
         if hasattr(x, "nnz"):
             # sparse
-            return x.A
+            return x.toarray()
         else:
             return x.copy()
 

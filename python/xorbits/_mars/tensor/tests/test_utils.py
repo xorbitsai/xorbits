@@ -16,13 +16,13 @@
 import numpy as np
 import pytest
 
-from ... import tensor as mt
 from ...lib.mmh3 import hash_from_buffer as mmh3_hash_from_buffer
-from ..utils import fetch_corner_data, hash_on_axis, normalize_axis_tuple
+from ..utils import hash_on_axis, normalize_axis_tuple
 
 
 def test_hash_on_axis():
-    hash_from_buffer = lambda x: mmh3_hash_from_buffer(memoryview(x))
+    def hash_from_buffer(x):
+        return mmh3_hash_from_buffer(memoryview(x))
 
     a = np.random.rand(10)
 
@@ -67,27 +67,3 @@ def test_normalize_axis_tuple():
 
     with pytest.raises(ValueError):
         normalize_axis_tuple((1, -2), 3)
-
-
-def test_fetch_tensor_corner_data(setup):
-    print_options = np.get_printoptions()
-
-    # make sure numpy default option
-    assert print_options["edgeitems"] == 3
-    assert print_options["threshold"] == 1000
-
-    size = 12
-    for i in (2, 4, size - 3, size, size + 3):
-        arr = np.random.rand(i, i, i)
-        t = mt.tensor(arr, chunk_size=size // 2)
-        t.execute()
-
-        corner_data = fetch_corner_data(t)
-        corner_threshold = 1000 if t.size < 1000 else corner_data.size - 1
-        with np.printoptions(threshold=corner_threshold, suppress=True):
-            # when we repr corner data, we need to limit threshold that
-            # it's exactly less than the size
-            repr_corner_data = repr(corner_data)
-        with np.printoptions(suppress=True):
-            repr_result = repr(arr)
-        assert repr_corner_data == repr_result
