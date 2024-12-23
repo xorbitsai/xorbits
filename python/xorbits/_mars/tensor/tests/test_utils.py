@@ -18,7 +18,7 @@ import pytest
 
 from ... import tensor as mt
 from ...lib.mmh3 import hash_from_buffer as mmh3_hash_from_buffer
-from ..utils import fetch_corner_data, hash_on_axis, normalize_axis_tuple
+from ..utils import hash_on_axis, normalize_axis_tuple
 
 
 def test_hash_on_axis():

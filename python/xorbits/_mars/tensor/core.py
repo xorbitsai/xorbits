@@ -43,7 +43,7 @@ from ..serialization.serializables import (
     TupleField,
 )
 from ..utils import on_deserialize_shape, on_serialize_shape
-from .utils import fetch_corner_data, get_chunk_slices
+from .utils import get_chunk_slices
 
 logger = logging.getLogger(__name__)
 
