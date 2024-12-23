@@ -227,7 +227,7 @@ class TensorData(HasShapeTileableData, _ExecuteAndFetchMixin):
             print_options = np.get_printoptions()
             threshold = print_options["threshold"]
 
-            corner_data = fetch_corner_data(self, session=self._executed_sessions[-1])
+            corner_data = self.fetch(session=self._executed_sessions[-1])
             # if less than default threshold, just set it as default,
             # if not, set to corner_data.size - 1 make sure ... exists in repr
             threshold = threshold if self.size <= threshold else corner_data.size - 1

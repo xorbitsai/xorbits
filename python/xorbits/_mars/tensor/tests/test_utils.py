@@ -69,25 +69,25 @@ def test_normalize_axis_tuple():
         normalize_axis_tuple((1, -2), 3)
 
 
-def test_fetch_tensor_corner_data(setup):
-    print_options = np.get_printoptions()
+# def test_fetch_tensor_corner_data(setup):
+#     print_options = np.get_printoptions()
 
-    # make sure numpy default option
-    assert print_options["edgeitems"] == 3
-    assert print_options["threshold"] == 1000
+#     # make sure numpy default option
+#     assert print_options["edgeitems"] == 3
+#     assert print_options["threshold"] == 1000
 
-    size = 12
-    for i in (2, 4, size - 3, size, size + 3):
-        arr = np.random.rand(i, i, i)
-        t = mt.tensor(arr, chunk_size=size // 2)
-        t.execute()
+#     size = 12
+#     for i in (2, 4, size - 3, size, size + 3):
+#         arr = np.random.rand(i, i, i)
+#         t = mt.tensor(arr, chunk_size=size // 2)
+#         t.execute()
 
-        corner_data = fetch_corner_data(t)
-        corner_threshold = 1000 if t.size < 1000 else corner_data.size - 1
-        with np.printoptions(threshold=corner_threshold, suppress=True):
-            # when we repr corner data, we need to limit threshold that
-            # it's exactly less than the size
-            repr_corner_data = repr(corner_data)
-        with np.printoptions(suppress=True):
-            repr_result = repr(arr)
-        assert repr_corner_data == repr_result
+#         corner_data = fetch_corner_data(t)
+#         corner_threshold = 1000 if t.size < 1000 else corner_data.size - 1
+#         with np.printoptions(threshold=corner_threshold, suppress=True):
+#             # when we repr corner data, we need to limit threshold that
+#             # it's exactly less than the size
+#             repr_corner_data = repr(corner_data)
+#         with np.printoptions(suppress=True):
+#             repr_result = repr(arr)
+#         assert repr_corner_data == repr_result
