@@ -61,23 +61,28 @@ async def test_meta_mock_api(obj):
 
         chunk = obj.chunks[0]
 
-        await meta_api.set_chunk_meta(chunk, bands=[(pool.external_address, "numa-0")])
-        meta = await meta_api.get_chunk_meta(chunk.key, fields=["index", "bands"])
+        await meta_api.set_chunk_meta(chunk, bands=[(pool.external_address, "numa-0")], slot_ids = [0])
+        meta = await meta_api.get_chunk_meta(chunk.key, fields=["index", "bands", "slot_ids"])
         assert meta["index"] == chunk.index
         assert meta["bands"] == [(pool.external_address, "numa-0")]
+        assert meta["slot_ids"] == [0]
 
         for i in range(2):
             band = (f"1.2.3.{i}:1234", "numa-0")
-            await meta_api.add_chunk_bands(chunk.key, [band])
-            meta = await meta_api.get_chunk_meta(chunk.key, fields=["bands"])
+            slot_id = i + 10
+            await meta_api.add_chunk_bands(chunk.key, [band], [slot_id])
+            meta = await meta_api.get_chunk_meta(chunk.key, fields=["bands", "slot_ids"])
             assert band in meta["bands"]
-        meta = await meta_api.get_chunk_meta(chunk.key, fields=["bands"])
+            assert slot_id in meta["slot_ids"]
+        meta = await meta_api.get_chunk_meta(chunk.key, fields=["bands", "slot_ids"])
         band = meta["bands"][0]
-        chunks = await meta_api.get_band_chunks(band)
+        slot_id = meta["slot_ids"][0]
+        chunks = await meta_api.get_band_slot_chunks(band, slot_id)
         assert chunk.key in chunks
-        await meta_api.remove_chunk_bands(chunk.key, [band])
-        meta = await meta_api.get_chunk_meta(chunk.key, fields=["bands"])
+        await meta_api.remove_chunk_bands(chunk.key, [band], [slot_id])
+        meta = await meta_api.get_chunk_meta(chunk.key, fields=["bands", "slot_ids"])
         assert band not in meta["bands"]
+        assert slot_id not in meta["slot_ids"]
 
         await meta_api.del_chunk_meta(chunk.key)
         with pytest.raises(KeyError):
@@ -159,10 +164,10 @@ async def test_meta_web_api():
         web_api = WebMetaAPI(session_id, f"http://localhost:{web_port}")
 
         await meta_api.set_chunk_meta(
-            t.chunks[0], bands=[(pool.external_address, "numa-0")]
+            t.chunks[0], bands=[(pool.external_address, "numa-0")], slot_ids=[0]
         )
-        meta = await web_api.get_chunk_meta(t.chunks[0].key, fields=["shape", "bands"])
-        assert set(meta.keys()) == {"shape", "bands"}
+        meta = await web_api.get_chunk_meta(t.chunks[0].key, fields=["shape", "bands", "slot_ids"])
+        assert set(meta.keys()) == {"shape", "bands", "slot_ids"}
 
         with pytest.raises(KeyError):
             await web_api.get_chunk_meta("non-exist-key")
