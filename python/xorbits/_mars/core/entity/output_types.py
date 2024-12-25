@@ -32,6 +32,7 @@ class OutputType(Enum):
     series_groupby = 9
     df_or_series = 10
     huggingface_dataset = 11
+    arrow_dataset = 12
 
     @classmethod
     def serialize_list(cls, output_types):
