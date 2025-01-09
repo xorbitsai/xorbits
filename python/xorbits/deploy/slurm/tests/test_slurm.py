@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from distutils.spawn import find_executable
+import shutil
 
 import pytest
 
@@ -19,7 +19,7 @@ from .... import init
 from .... import pandas as pd
 from .. import SLURMCluster
 
-slurm_available = find_executable("sbatch") is not None
+slurm_available = shutil.which("sbatch") is not None
 
 
 def test_header_core_process_memory():
