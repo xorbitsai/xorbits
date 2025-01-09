@@ -27,7 +27,6 @@ import subprocess
 import tempfile
 import uuid
 from contextlib import contextmanager
-from distutils.spawn import find_executable
 
 import numpy as np
 
@@ -45,8 +44,8 @@ DOCKER_ROOT = os.path.join((os.path.dirname(os.path.dirname(TEST_ROOT))), "docke
 k8s = lazy_import("kubernetes")
 
 kube_available = (
-    find_executable("kubectl") is not None
-    and find_executable("docker") is not None
+    shutil.which("kubectl") is not None
+    and shutil.which("docker") is not None
     and k8s is not None
 )
 
@@ -55,7 +54,7 @@ def _collect_coverage():
     dist_coverage_path = os.path.join(XORBITS_ROOT, ".dist-coverage")
     if os.path.exists(dist_coverage_path):
         # change ownership of coverage files
-        if find_executable("sudo"):
+        if shutil.which("sudo"):
             proc = subprocess.Popen(
                 [
                     "sudo",

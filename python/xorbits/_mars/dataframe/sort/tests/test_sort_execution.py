@@ -169,6 +169,7 @@ def test_sort_values_execution(setup, distinct_opt):
     # test None (issue #1885)
     df = pd.DataFrame(np.random.rand(1000, 10))
 
+    df[0] = df[0].astype("object")
     df[0][df[0] < 0.5] = "A"
     df[0][df[0] != "A"] = None
 
@@ -262,6 +263,7 @@ def test_sort_values_execution(setup, distinct_opt):
     # test series with None
     series = pd.Series(np.arange(1000))
 
+    series = series.astype("object")
     series[series < 500] = "A"
     series[series != "A"] = None
 
