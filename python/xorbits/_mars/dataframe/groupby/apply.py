@@ -99,7 +99,7 @@ class GroupByApply(
         else:
             kwargs = op.kwds.copy()
             if op.include_groups is not None:
-                kwargs['include_groups'] = op.include_groups
+                kwargs["include_groups"] = op.include_groups
             applied = in_data.apply(func, *op.args, **kwargs)
 
         if isinstance(applied, pd.DataFrame):
@@ -337,8 +337,8 @@ def groupby_apply(
         Whether infer dtypes when dtypes or output_type is not specified.
 
     include_groups: bool, default None
-        Whether to include grouping columns in the operation. If None, 
-        defaults to True for backwards compatibility but will change to 
+        Whether to include grouping columns in the operation. If None,
+        defaults to True for backwards compatibility but will change to
         False in a future version.
 
     args, kwargs : tuple and dict
@@ -381,10 +381,10 @@ def groupby_apply(
     dtypes = make_dtypes(dtypes)
     dtype = make_dtype(dtype)
     op = GroupByApply(
-        func=func, 
-        args=args, 
-        kwds=kwargs, 
+        func=func,
+        args=args,
+        kwds=kwargs,
         output_types=output_types,
-        include_groups=include_groups
+        include_groups=include_groups,
     )
     return op(groupby, dtypes=dtypes, dtype=dtype, name=name, index=index)
