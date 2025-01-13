@@ -155,7 +155,7 @@ jobs:
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
           pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-          pip install -U "numpy<2.1,>=1.22" scipy cython pyftpdlib coverage flaky numexpr openpyxl
+          pip install -U numpy scipy cython pyftpdlib coverage flaky numexpr openpyxl
 
           if [[ "$MODULE" == "mars-core" ]]; then
             pip install oss2
