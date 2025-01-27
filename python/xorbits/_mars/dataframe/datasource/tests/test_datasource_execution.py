@@ -696,7 +696,7 @@ def test_read_csv_execution(setup):
         )
         df.to_csv(file_path, compression="gzip")
 
-        pdf = pd.read_csv(file_path, compression="gzip", index_col=0)
+        pdf = pd.read_csv(file_path, compression="gzip")
         mdf = md.read_csv(file_path, compression="gzip", index_col=0).execute().fetch()
         pd.testing.assert_frame_equal(pdf, mdf)
 
@@ -895,7 +895,7 @@ def test_read_csv_use_arrow_dtype(setup):
         df.to_csv(file_path, index=False)
 
         pdf = pd.read_csv(file_path)
-        mdf = md.read_csv(file_path, use_arrow_dtype=True)
+        mdf = md.read_csv(file_path, dtype_backend="pyarrow")
         result = mdf.execute().fetch()
         # read_csv with engine="pyarrow" in pandas 1.5 does not use arrow dtype.
         if is_pandas_2():
@@ -909,7 +909,7 @@ def test_read_csv_use_arrow_dtype(setup):
         # pd.testing.assert_frame_equal(arrow_array_to_objects(result), pdf, check_like=True)
 
     with tempfile.TemporaryDirectory() as tempdir:
-        with option_context({"dataframe.use_arrow_dtype": True}):
+        with option_context({"dataframe.dtype_backend": "pyarrow"}):
             file_path = os.path.join(tempdir, "test.csv")
             df.to_csv(file_path, index=False)
 
@@ -933,7 +933,7 @@ def test_read_csv_use_arrow_dtype(setup):
         df.to_csv(file_path, compression="gzip", index=False)
 
         pdf = pd.read_csv(file_path, compression="gzip")
-        mdf = md.read_csv(file_path, compression="gzip", use_arrow_dtype=True)
+        mdf = md.read_csv(file_path, compression="gzip", dtype_backend="pyarrow")
         result = mdf.execute().fetch()
         # read_csv with engine="pyarrow" in pandas 1.5 does not use arrow dtype.
         if is_pandas_2():
@@ -1191,7 +1191,7 @@ def test_read_sql_use_arrow_dtype(setup):
 
         test_df.to_sql(table_name, uri, index=False)
 
-        r = md.read_sql_table("test", uri, chunk_size=4, use_arrow_dtype=True)
+        r = md.read_sql_table("test", uri, chunk_size=4, dtype_backend="pyarrow")
         result = r.execute().fetch()
         if is_pandas_2():
             assert isinstance(r.dtypes.iloc[1], pd.ArrowDtype)
@@ -1209,7 +1209,7 @@ def test_read_sql_use_arrow_dtype(setup):
             uri,
             parse_dates=["d"],
             chunk_size=4,
-            use_arrow_dtype=True,
+            dtype_backend="pyarrow",
         )
         result = r.execute().fetch()
         if is_pandas_2():
@@ -1571,7 +1571,7 @@ def test_read_parquet_arrow_dtype(setup):
         file_path = os.path.join(tempdir, "test.parquet")
         test_df.to_parquet(file_path)
 
-        df = md.read_parquet(file_path, use_arrow_dtype=True)
+        df = md.read_parquet(file_path, dtype_backend="pyarrow")
         result = df.execute().fetch()
         assert isinstance(result.dtypes.iloc[1], pd.ArrowDtype)
         assert isinstance(result.dtypes.iloc[3], pd.ArrowDtype)

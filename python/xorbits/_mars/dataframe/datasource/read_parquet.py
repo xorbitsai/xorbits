@@ -105,13 +105,11 @@ class ParquetEngine:
     def read_dtypes(self, f, **kwargs):
         raise NotImplementedError
 
-    def read_to_pandas(
-        self, f, columns=None, nrows=None, use_arrow_dtype=None, **kwargs
-    ):
+    def read_to_pandas(self, f, columns=None, nrows=None, dtype_backend=None, **kwargs):
         raise NotImplementedError
 
     def read_group_to_pandas(
-        self, f, group_index, columns=None, nrows=None, use_arrow_dtype=None, **kwargs
+        self, f, group_index, columns=None, nrows=None, dtype_backend=None, **kwargs
     ):
         raise NotImplementedError
 
@@ -122,11 +120,11 @@ class ParquetEngine:
         partition_keys: Dict,
         columns=None,
         nrows=None,
-        use_arrow_dtype=None,
+        dtype_backend=None,
         **kwargs,
     ):
         raw_df = self.read_to_pandas(
-            f, columns=columns, nrows=nrows, use_arrow_dtype=use_arrow_dtype, **kwargs
+            f, columns=columns, nrows=nrows, dtype_backend=dtype_backend, **kwargs
         )
         for col, value in partition_keys.items():
             dictionary = partitions[col]
@@ -191,28 +189,26 @@ class ArrowEngine(ParquetEngine):
         )
 
     @classmethod
-    def _table_to_pandas(cls, t, nrows=None, use_arrow_dtype=None):
+    def _table_to_pandas(cls, t, nrows=None, dtype_backend=None):
         if nrows is not None:
             t = t.slice(0, nrows)
-        if use_arrow_dtype:
+        if dtype_backend == "pyarrow":
             df = t.to_pandas(types_mapper=pd.ArrowDtype)
         else:
             df = t.to_pandas()
         return df
 
-    def read_to_pandas(
-        self, f, columns=None, nrows=None, use_arrow_dtype=None, **kwargs
-    ):
+    def read_to_pandas(self, f, columns=None, nrows=None, dtype_backend=None, **kwargs):
         file = pq.ParquetFile(f)
         t = file.read(columns=columns, **kwargs)
-        return self._table_to_pandas(t, nrows=nrows, use_arrow_dtype=use_arrow_dtype)
+        return self._table_to_pandas(t, nrows=nrows, dtype_backend=dtype_backend)
 
     def read_group_to_pandas(
-        self, f, group_index, columns=None, nrows=None, use_arrow_dtype=None, **kwargs
+        self, f, group_index, columns=None, nrows=None, dtype_backend=None, **kwargs
     ):
         file = pq.ParquetFile(f)
         t = file.read_row_group(group_index, columns=columns, **kwargs)
-        return self._table_to_pandas(t, nrows=nrows, use_arrow_dtype=use_arrow_dtype)
+        return self._table_to_pandas(t, nrows=nrows, dtype_backend=dtype_backend)
 
 
 class FastpaquetEngine(ParquetEngine):
@@ -225,9 +221,7 @@ class FastpaquetEngine(ParquetEngine):
         dtypes_dict = file._dtypes()
         return pd.Series(dict((c, dtypes_dict[c]) for c in file.columns))
 
-    def read_to_pandas(
-        self, f, columns=None, nrows=None, use_arrow_dtype=None, **kwargs
-    ):
+    def read_to_pandas(self, f, columns=None, nrows=None, dtype_backend=None, **kwargs):
         file = fastparquet.ParquetFile(f)
         df = file.to_pandas(columns, **kwargs)
         if nrows is not None:
@@ -547,7 +541,7 @@ class DataFrameReadParquet(
                 op.partition_keys,
                 columns=op.columns,
                 nrows=op.nrows,
-                use_arrow_dtype=op.dtype_backend == "pyarrow",
+                dtype_backend=op.dtype_backend,
                 **op.read_kwargs or dict(),
             )
 
@@ -589,14 +583,14 @@ class DataFrameReadParquet(
             f = z.open(op.chunk_path)
         else:
             f = fs.open(path, storage_options=op.storage_options)
-        use_arrow_dtype = op.dtype_backend == "pyarrow"
+        dtype_backend = op.dtype_backend
         if op.groups_as_chunks:
             df = engine.read_group_to_pandas(
                 f,
                 op.group_index,
                 columns=op.columns,
                 nrows=op.nrows,
-                use_arrow_dtype=use_arrow_dtype,
+                dtype_backend=dtype_backend,
                 **op.read_kwargs or dict(),
             )
         else:
@@ -604,7 +598,7 @@ class DataFrameReadParquet(
                 f,
                 columns=op.columns,
                 nrows=op.nrows,
-                use_arrow_dtype=use_arrow_dtype,
+                dtype_backend=dtype_backend,
                 **op.read_kwargs or dict(),
             )
         ctx[out.key] = df
