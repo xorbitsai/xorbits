@@ -293,7 +293,7 @@ class DataFrameReadParquet(
     chunk_path = AnyField("chunk_path")
     engine = StringField("engine")
     columns = ListField("columns")
-    use_arrow_dtype = BoolField("use_arrow_dtype")
+    dtype_backend = StringField("dtype_backend")
     groups_as_chunks = BoolField("groups_as_chunks")
     group_index = Int32Field("group_index")
     read_kwargs = DictField("read_kwargs")
@@ -547,7 +547,7 @@ class DataFrameReadParquet(
                 op.partition_keys,
                 columns=op.columns,
                 nrows=op.nrows,
-                use_arrow_dtype=op.use_arrow_dtype,
+                use_arrow_dtype=op.dtype_backend == "pyarrow",
                 **op.read_kwargs or dict(),
             )
 
@@ -565,7 +565,7 @@ class DataFrameReadParquet(
             else:
                 f = op.path
             read_kwargs = op.read_kwargs or dict()
-            if op.use_arrow_dtype:
+            if op.dtype_backend == "pyarrow":
                 read_kwargs.update(arrow_dtype_kwargs())
             r = pd.read_parquet(
                 f,
@@ -589,7 +589,7 @@ class DataFrameReadParquet(
             f = z.open(op.chunk_path)
         else:
             f = fs.open(path, storage_options=op.storage_options)
-        use_arrow_dtype = op.use_arrow_dtype
+        use_arrow_dtype = op.dtype_backend == "pyarrow"
         if op.groups_as_chunks:
             df = engine.read_group_to_pandas(
                 f,
@@ -699,7 +699,7 @@ class DataFrameReadParquet(
         else:
             all_columns = list(op.outputs[0].dtypes.index)
         columns = op.columns if op.columns else all_columns
-        if op.use_arrow_dtype:
+        if op.dtype_backend == "pyarrow":
             scale = op.memory_scale or PARQUET_MEMORY_SCALE_WITH_ARROW_DTYPE
         else:
             scale = op.memory_scale or PARQUET_MEMORY_SCALE
@@ -711,7 +711,7 @@ class DataFrameReadParquet(
                 if col in columns and is_object_dtype(dt)
             ]
         )
-        if op.use_arrow_dtype:
+        if op.dtype_backend == "pyarrow":
             pd_size = phy_size
         else:
             pd_size = phy_size + n_strings * estimated_row_num * STRING_FIELD_OVERHEAD
@@ -737,7 +737,7 @@ def read_parquet(
     engine: str = "auto",
     columns: list = None,
     groups_as_chunks: bool = False,
-    use_arrow_dtype: bool = None,
+    dtype_backend: str = None,
     incremental_index: bool = False,
     storage_options: dict = None,
     memory_scale: int = None,
@@ -774,8 +774,11 @@ def read_parquet(
     incremental_index: bool, default False
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns. Default enabled if pandas >= 2.1
+    dtype_backend: {"numpy", "pyarrow"}, default None
+        The dtype backend to use for reading. If None, the global setting
+        options.dataframe.dtype_backend is used. When "pyarrow" is used,
+        columns backed by PyArrow arrays are returned, which can provide
+        significant performance improvements. Requires "pyarrow" engine.
     storage_options: dict, optional
         Options for storage connection.
     memory_scale: int, optional
@@ -796,8 +799,8 @@ def read_parquet(
     engine = get_engine(engine_type)
 
     # We enable arrow dtype by default if pandas >= 2.1
-    if use_arrow_dtype is None and engine_type == "pyarrow":
-        use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
+    if dtype_backend is None and engine_type == "pyarrow":
+        dtype_backend = "pyarrow" if PD_VERSION_GREATER_THAN_2_10 else "numpy"
 
     single_path = path[0] if isinstance(path, list) else path
     is_partitioned = False
@@ -813,7 +816,7 @@ def read_parquet(
             engine=engine_type,
             columns=columns,
             groups_as_chunks=groups_as_chunks,
-            use_arrow_dtype=use_arrow_dtype,
+            dtype_backend=dtype_backend,
             read_kwargs=kwargs,
             incremental_index=incremental_index,
             storage_options=storage_options,
@@ -825,17 +828,17 @@ def read_parquet(
         )
         return op()
     fs, _, _ = fsspec.get_fs_token_paths(single_path, storage_options=storage_options)
-    if use_arrow_dtype is None:
-        use_arrow_dtype = options.dataframe.use_arrow_dtype
-    if use_arrow_dtype and engine_type != "pyarrow":
+    if dtype_backend is None:
+        dtype_backend = options.dataframe.dtype_backend
+    if dtype_backend == "pyarrow" and engine_type != "pyarrow":
         raise ValueError(
-            f"The 'use_arrow_dtype' argument is not supported for the {engine_type} engine"
+            f"The 'dtype_backend=pyarrow' argument is not supported for the {engine_type} engine"
         )
     # We enable arrow dtype by default if pandas >= 2.1
-    if use_arrow_dtype is None:
-        use_arrow_dtype = PD_VERSION_GREATER_THAN_2_10
+    if dtype_backend is None:
+        dtype_backend = "pyarrow" if PD_VERSION_GREATER_THAN_2_10 else "numpy"
 
-    types_mapper = pd.ArrowDtype if use_arrow_dtype else None
+    types_mapper = pd.ArrowDtype if dtype_backend == "pyarrow" else None
 
     if fs.isdir(single_path):
         paths = fs.ls(path)
@@ -871,7 +874,7 @@ def read_parquet(
         engine=engine_type,
         columns=columns,
         groups_as_chunks=groups_as_chunks,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         read_kwargs=kwargs,
         incremental_index=incremental_index,
         storage_options=storage_options,
