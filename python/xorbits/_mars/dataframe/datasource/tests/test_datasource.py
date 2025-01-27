@@ -683,7 +683,7 @@ def test_read_parquet_estimate_size():
         estimate_size(sizes, chunk.op)
         assert sizes[chunk.key][0] <= estimated_size * (2 / 3)
 
-        df = read_parquet(file_path, use_arrow_dtype=True)
+        df = read_parquet(file_path, dtype_backend="pyarrow")
         tiled = tile(df)
         sizes = dict()
         chunk = tiled.chunks[0]
@@ -692,7 +692,7 @@ def test_read_parquet_estimate_size():
         estimated_size_arrow < estimated_size
         assert estimated_size_arrow >= test_df.memory_usage(deep=True).sum() * 1.5
 
-        df = read_parquet(file_path, use_arrow_dtype=True, columns=["a", "c"])
+        df = read_parquet(file_path, dtype_backend="pyarrow", columns=["a", "c"])
         tiled = tile(df)
         sizes = dict()
         chunk = tiled.chunks[0]
