@@ -696,7 +696,7 @@ def test_read_csv_execution(setup):
         )
         df.to_csv(file_path, compression="gzip")
 
-        pdf = pd.read_csv(file_path, compression="gzip")
+        pdf = pd.read_csv(file_path, compression="gzip", index_col=0)
         mdf = md.read_csv(file_path, compression="gzip", index_col=0).execute().fetch()
         pd.testing.assert_frame_equal(pdf, mdf)
 
