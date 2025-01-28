@@ -156,7 +156,7 @@ def test_local_classifier_from_to_parquet(setup):
         df.iloc[:500].to_parquet(os.path.join(d, "data", "data1.parquet"))
         df.iloc[500:].to_parquet(os.path.join(d, "data", "data2.parquet"))
 
-        df = md.read_parquet(data_dir, use_arrow_dtype=False)
+        df = md.read_parquet(data_dir, dtype_backend="numpy")
         model = LGBMClassifier()
         model.load_model(classifier)
         result = model.predict(df, run=False)
