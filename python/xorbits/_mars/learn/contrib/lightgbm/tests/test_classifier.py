@@ -165,7 +165,7 @@ def test_local_classifier_from_to_parquet(setup):
         r.execute()
 
         ret = (
-            md.read_parquet(result_dir, use_arrow_dtype=False)
+            md.read_parquet(result_dir, dtype_backend="numpy")
             .to_pandas()
             .iloc[:, 0]
             .to_numpy()
