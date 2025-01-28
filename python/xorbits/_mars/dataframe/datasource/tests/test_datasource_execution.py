@@ -1382,7 +1382,7 @@ def test_read_parquet_arrow(setup, engine):
             df = md.read_parquet(
                 file_path,
                 groups_as_chunks=True,
-                use_arrow_dtype=True,
+                dtype_backend="pyarrow",
                 incremental_index=True,
                 engine=engine,
             )
@@ -1428,7 +1428,7 @@ def test_read_parquet_arrow(setup, engine):
             r = mdf.execute().fetch()
             pd.testing.assert_frame_equal(df, r.sort_values("a").reset_index(drop=True))
 
-            # test `use_arrow_dtype=True`
+            # test `dtype_backend="pyarrow"`
             if engine != "fastparquet":
                 mdf = md.read_parquet(
                     f"{tempdir}/*.parquet", engine=engine, dtype_backend="pyarrow"
