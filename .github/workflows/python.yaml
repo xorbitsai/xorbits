@@ -208,7 +208,9 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y openjdk-11-jdk
             sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            
+            which java
+            echo "JAVA-VERSION"
+            java --version
             # install Alluxio
             export CUR_DIR=$(pwd)
             mkdir -p /tmp/alluxio-download-test
