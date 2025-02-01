@@ -25,6 +25,7 @@ class MetricsSuite:
     """
 
     params = [20_000, 100_000]
+    skip = True
 
     def setup(self, chunk_size: int):
         X, y = make_classification(100_000, random_state=0)

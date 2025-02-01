@@ -3,7 +3,7 @@ name: Python CI
 on:
   push:
     branches:
-      - '**'
+      - '*'
   # pull_request:
   #   types: ['opened', 'reopened', 'synchronize']
 
@@ -84,15 +84,15 @@ jobs:
           - { os: windows-latest, python-version: 3.10}
           - { os: windows-latest, python-version: 3.9}
         include:
-          # - { os: ubuntu-latest, module: _mars/dataframe, python-version: "3.11" }
-          # - { os: ubuntu-latest, module: learn, python-version: "3.11" }
-          # - { os: ubuntu-latest, module: mars-core, python-version: "3.11" }
-          # - { os: ubuntu-20.04, module: hadoop, python-version: "3.10" }
-          # - { os: ubuntu-latest, module: vineyard, python-version: "3.11" }
-          # - { os: ubuntu-latest, module: doc-build, python-version: "3.11" }
-          # - { os: self-hosted, module: gpu, python-version: "3.11" }
-          # - { os: ubuntu-latest, module: jax, python-version: "3.10" }
-          # - { os: ubuntu-latest, module: datasets, python-version: "3.10" }
+          - { os: ubuntu-latest, module: _mars/dataframe, python-version: "3.11" }
+          - { os: ubuntu-latest, module: learn, python-version: "3.11" }
+          - { os: ubuntu-latest, module: mars-core, python-version: "3.11" }
+          - { os: ubuntu-20.04, module: hadoop, python-version: "3.10" }
+          - { os: ubuntu-latest, module: vineyard, python-version: "3.11" }
+          - { os: ubuntu-latest, module: doc-build, python-version: "3.11" }
+          - { os: self-hosted, module: gpu, python-version: "3.11" }
+          - { os: ubuntu-latest, module: jax, python-version: "3.11" }
+          - { os: ubuntu-latest, module: datasets, python-version: "3.11" }
           - { os: ubuntu-latest, module: external-storage, python-version: "3.11" }
           # a self-hosted runner which needs computing resources, activate when necessary
           # - { os: juicefs-ci, module: kubernetes-juicefs, python-version: 3.9 }
@@ -204,37 +204,19 @@ jobs:
             rm -fr /tmp/etcd-$ETCD_VER-linux-amd64.tar.gz /tmp/etcd-download-test
           fi
           if [[ "$MODULE" == "external-storage" ]]; then
-            # install Java 11
+            # Alluxio needs Java 11, install Java 11
             sudo apt-get update
             sudo apt-get install -y openjdk-11-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
             export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
             export PATH=$JAVA_HOME/bin:$PATH
-            if [[ -z "${JAVA}" ]]; then
-              if [[ -n "${JAVA_HOME}" ]] && [[ -x "${JAVA_HOME}/bin/java" ]];  then
-                JAVA="${JAVA_HOME}/bin/java"
-              elif [[ -n "$(which java 2>/dev/null)" ]]; then
-                JAVA=$(which java)
-              else
-                echo "Error: Cannot find 'java' on path or under \$JAVA_HOME/bin/. Please set JAVA_HOME in alluxio-env.sh or user bash profile."
-                exit 1
-              fi
-            fi
-            JAVA_VERSION=$(${JAVA} -version 2>&1 | awk -F '"' '/version/ {print $2}')
-            JAVA_MAJORMINOR=$(echo "${JAVA_VERSION}" | awk -F. '{printf("%03d%03d",$1,$2);}')
-            JAVA_MAJOR=$(echo "${JAVA_VERSION}" | awk -F. '{printf("%03d",$1);}')
-            echo $JAVA_VERSION
-            if [[ ${JAVA_MAJORMINOR} != 001008 && ${JAVA_MAJOR} != 011 ]]; then
-              echo "Error: Alluxio requires Java 8 or Java 11, currently Java $JAVA_VERSION found."
-              exit 1
-            fi
             # install Alluxio
+            export ALLUXIO_VER=2.9.5
             export CUR_DIR=$(pwd)
             mkdir -p /tmp/alluxio-download-test
             cd /tmp/alluxio-download-test
-            wget -q https://downloads.alluxio.io/downloads/files/2.9.5/alluxio-2.9.5-bin.tar.gz
-            tar -xzf alluxio-2.9.5-bin.tar.gz
-            cd alluxio-2.9.5
+            wget -q https://downloads.alluxio.io/downloads/files/${ALLUXIO_VERSION}/alluxio-${ALLUXIO_VERSION}-bin.tar.gz
+            tar -xzf alluxio-${ALLUXIO_VER}-bin.tar.gz
+            cd alluxio-${ALLUXIO_VER}
             cp conf/alluxio-env.sh.template conf/alluxio-env.sh
             cp conf/alluxio-site.properties.template conf/alluxio-site.properties
             echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
