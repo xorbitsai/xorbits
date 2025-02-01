@@ -208,9 +208,26 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y openjdk-11-jdk
             sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            which java
-            echo "JAVA-VERSION"
-            java --version
+            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+            export PATH=$JAVA_HOME/bin:$PATH
+            if [[ -z "${JAVA}" ]]; then
+              if [[ -n "${JAVA_HOME}" ]] && [[ -x "${JAVA_HOME}/bin/java" ]];  then
+                JAVA="${JAVA_HOME}/bin/java"
+              elif [[ -n "$(which java 2>/dev/null)" ]]; then
+                JAVA=$(which java)
+              else
+                echo "Error: Cannot find 'java' on path or under \$JAVA_HOME/bin/. Please set JAVA_HOME in alluxio-env.sh or user bash profile."
+                exit 1
+              fi
+            fi
+            JAVA_VERSION=$(${JAVA} -version 2>&1 | awk -F '"' '/version/ {print $2}')
+            JAVA_MAJORMINOR=$(echo "${JAVA_VERSION}" | awk -F. '{printf("%03d%03d",$1,$2);}')
+            JAVA_MAJOR=$(echo "${JAVA_VERSION}" | awk -F. '{printf("%03d",$1);}')
+            echo $JAVA_VERSION
+            if [[ ${JAVA_MAJORMINOR} != 001008 && ${JAVA_MAJOR} != 011 ]]; then
+              echo "Error: Alluxio requires Java 8 or Java 11, currently Java $JAVA_VERSION found."
+              exit 1
+            fi
             # install Alluxio
             export CUR_DIR=$(pwd)
             mkdir -p /tmp/alluxio-download-test
