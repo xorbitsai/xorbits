@@ -155,7 +155,7 @@ jobs:
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
           pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
-          pip install -U numpy scipy cython pyftpdlib coverage flaky numexpr openpyxl
+          pip install -U "numpy<2.2.0" "pyarrow<19.0.0" scipy cython pyftpdlib coverage flaky numexpr openpyxl
 
           if [[ "$MODULE" == "mars-core" ]]; then
             pip install oss2
@@ -207,6 +207,7 @@ jobs:
             # Alluxio needs Java 11, install Java 11
             sudo apt-get update
             sudo apt-get install -y openjdk-11-jdk
+            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
             export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
             export PATH=$JAVA_HOME/bin:$PATH
             # install Alluxio
@@ -255,7 +256,7 @@ jobs:
           fi
           if [[ "$MODULE" == "jax" ]]; then
             # test jax
-            pip install "jax>=0.4.0" "jaxlib>=0.4.0"
+            pip install jax jaxlib tensorflow
           fi
           if [[ "$MODULE" == "datasets" ]]; then
             # test huggingface datasets
@@ -381,7 +382,7 @@ jobs:
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/_mars/learn/contrib/xgboost/ xorbits/_mars/learn/contrib/lightgbm/
+            xorbits/xgboost/ xorbits/lightgbm/
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/
