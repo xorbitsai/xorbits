@@ -158,6 +158,9 @@ jobs:
 
           if [[ "$MODULE" == "mars-core" ]]; then
             pip install oss2
+            if [[ "$PYTHON" == "3.11" ]]; then
+              pip install "numpy<2.2.0" "pyarrow<19.0.0"
+            fi
           fi
           if [[ "$MODULE" == "kubernetes" ]]; then
             pip install kubernetes
@@ -206,17 +209,17 @@ jobs:
             export CUR_DIR=$(pwd)
             mkdir -p /tmp/alluxio-download-test
             cd /tmp/alluxio-download-test
-            wget -q https://downloads.alluxio.io/downloads/files/2.9.3/alluxio-2.9.3-bin.tar.gz
-            tar -xzf alluxio-2.9.3-bin.tar.gz
-            cd alluxio-2.9.3
+            wget -q https://downloads.alluxio.io/downloads/files/2.9.5/alluxio-2.9.5-bin.tar.gz
+            tar -xzf alluxio-2.9.5-bin.tar.gz
+            cd alluxio-2.9.5
             cp conf/alluxio-env.sh.template conf/alluxio-env.sh
             cp conf/alluxio-site.properties.template conf/alluxio-site.properties
             echo "alluxio.master.hostname=localhost" >> conf/alluxio-site.properties
             cd $CUR_DIR
-            sudo mv /tmp/alluxio-download-test/alluxio-2.9.3 /usr/local/bin/
+            sudo mv /tmp/alluxio-download-test/alluxio-2.9.5 /usr/local/bin/
             rm -R /tmp/alluxio-download-test
             unset CUR_DIR
-            export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
+            export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.5"
             ${ALLUXIO_HOME}/bin/alluxio format
             ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
             curl -sSL https://d.juicefs.com/install | sh -
@@ -245,7 +248,11 @@ jobs:
           fi
           if [[ "$MODULE" == "jax" ]]; then
             # test jax
-            pip install "jax>=0.4.0" "jaxlib>=0.4.0"
+            if [[ "$PYTHON" == "3.11" ]]; then
+              pip install "numpy<2.2.0" "pyarrow<19.0.0"
+            fi
+            pip install jax jaxlib
+            pip install tensorflow
           fi
           if [[ "$MODULE" == "datasets" ]]; then
             # test huggingface datasets
@@ -273,7 +280,7 @@ jobs:
       run: |
         source CI/slurm/${{ matrix.module }}.sh
         jobqueue_install
-      
+
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
@@ -358,7 +365,7 @@ jobs:
             xorbits/_mars/tensor/datastore/tests/test_datastore_execution.py \
             xorbits/_mars/dataframe/datastore/tests/test_datastore_execution.py
         elif [[ "$MODULE" == "external-storage" ]]; then
-          export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.3"
+          export ALLUXIO_HOME="/usr/local/bin/alluxio-2.9.5"
           export JUICEFS_HOME="/usr/local/bin/juicefs"
           pytest --timeout=1500 -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/storage/tests/test_libs.py
