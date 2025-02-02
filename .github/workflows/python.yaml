@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - '*'
-  # pull_request:
-  #   types: ['opened', 'reopened', 'synchronize']
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -62,7 +62,7 @@ jobs:
         run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
 
   build_test_job:
-    # if: github.repository == 'xorbitsai/xorbits'
+    if: github.repository == 'xorbitsai/xorbits'
     runs-on: ${{ matrix.os }}
     needs: lint
     env:
@@ -155,6 +155,7 @@ jobs:
           pip install --upgrade --upgrade-strategy only-if-needed --no-cache-dir ".[doc]"
         else
           pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
+          # TODO: pandas v2.2.3 now does not support well for numpy v2.2.0 and pyarrow v19.0.0. 
           pip install -U "numpy<2.2.0" "pyarrow<19.0.0" scipy cython pyftpdlib coverage flaky numexpr openpyxl
 
           if [[ "$MODULE" == "mars-core" ]]; then
@@ -205,6 +206,7 @@ jobs:
           fi
           if [[ "$MODULE" == "external-storage" ]]; then
             # Alluxio needs Java 11, install Java 11
+            # see https://github.com/Alluxio/alluxio/blob/main/libexec/alluxio-config.sh
             sudo apt-get update
             sudo apt-get install -y openjdk-11-jdk
             sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
@@ -228,7 +230,6 @@ jobs:
             export ALLUXIO_HOME="/usr/local/bin/alluxio"
             ${ALLUXIO_HOME}/bin/alluxio format
             ${ALLUXIO_HOME}/bin/alluxio-start.sh local SudoMount
-            
             # install JuiceFS
             curl -sSL https://d.juicefs.com/install | sh -
             curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
