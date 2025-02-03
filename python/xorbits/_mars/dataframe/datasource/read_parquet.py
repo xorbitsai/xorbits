@@ -768,11 +768,11 @@ def read_parquet(
     incremental_index: bool, default False
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    dtype_backend: {"numpy", "pyarrow"}, default None
-        The dtype backend to use for reading. If None, the global setting
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
         options.dataframe.dtype_backend is used. When "pyarrow" is used,
-        columns backed by PyArrow arrays are returned, which can provide
-        significant performance improvements. Requires "pyarrow" engine.
+        columns with supported dtypes are backed by ArrowDtype.
     storage_options: dict, optional
         Options for storage connection.
     memory_scale: int, optional
@@ -794,7 +794,7 @@ def read_parquet(
 
     # We enable arrow dtype by default if pandas >= 2.1
     if dtype_backend is None and engine_type == "pyarrow":
-        dtype_backend = "pyarrow" if PD_VERSION_GREATER_THAN_2_10 else "numpy"
+        dtype_backend = "pyarrow" if PD_VERSION_GREATER_THAN_2_10 else "numpy_nullable"
 
     single_path = path[0] if isinstance(path, list) else path
     is_partitioned = False
@@ -830,7 +830,7 @@ def read_parquet(
         )
     # We enable arrow dtype by default if pandas >= 2.1
     if dtype_backend is None:
-        dtype_backend = "pyarrow" if PD_VERSION_GREATER_THAN_2_10 else "numpy"
+        dtype_backend = "pyarrow" if PD_VERSION_GREATER_THAN_2_10 else "numpy_nullable"
 
     types_mapper = pd.ArrowDtype if dtype_backend == "pyarrow" else None
 

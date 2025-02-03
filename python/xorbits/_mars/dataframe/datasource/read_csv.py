@@ -500,11 +500,11 @@ def read_csv(
         example of a valid callable argument would be ``lambda x: x.upper() in
         ['AAA', 'BBB', 'DDD']``. Using this parameter results in much faster
         parsing time and lower memory usage.
-    dtype_backend: {"numpy", "pyarrow"}, default None
-        The dtype backend to use for reading. If None, the global setting
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
         options.dataframe.dtype_backend is used. When "pyarrow" is used,
-        columns backed by PyArrow arrays are returned, which can provide
-        significant performance improvements.
+        columns with supported dtypes are backed by ArrowDtype.
     squeeze : bool, default False
         If the parsed data only contains one column then return a Series.
     prefix : str, optional

@@ -659,11 +659,11 @@ def read_sql(
     incremental_index: bool, default True
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    dtype_backend: {"numpy", "pyarrow"}, default None
-        The dtype backend to use for reading. If None, the global setting
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
         options.dataframe.dtype_backend is used. When "pyarrow" is used,
-        columns backed by PyArrow arrays are returned, which can provide
-        significant performance improvements.
+        columns with supported dtypes are backed by ArrowDtype.
     partition_col : str, default None
         Specify name of the column to split the result of the query. If
         specified, the range ``[low_limit, high_limit]`` will be divided
@@ -778,11 +778,11 @@ def read_sql_table(
     incremental_index: bool, default True
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    dtype_backend: {"numpy", "pyarrow"}, default None
-        The dtype backend to use for reading. If None, the global setting
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
         options.dataframe.dtype_backend is used. When "pyarrow" is used,
-        columns backed by PyArrow arrays are returned, which can provide
-        significant performance improvements.
+        columns with supported dtypes are backed by ArrowDtype.
     partition_col : str, default None
         Specify name of the column to split the result of the query. If
         specified, the range ``[low_limit, high_limit]`` will be divided
@@ -908,11 +908,11 @@ def read_sql_query(
     incremental_index: bool, default True
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    dtype_backend: {"numpy", "pyarrow"}, default None
-        The dtype backend to use for reading. If None, the global setting
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
         options.dataframe.dtype_backend is used. When "pyarrow" is used,
-        columns backed by PyArrow arrays are returned, which can provide
-        significant performance improvements.
+        columns with supported dtypes are backed by ArrowDtype.
     test_rows: int, default 5
         The number of rows to fetch for inferring dtypes.
     chunk_size: : int or tuple of ints, optional

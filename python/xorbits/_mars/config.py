@@ -448,8 +448,8 @@ default_options.register_option("serialize_method", "pickle")
 # dataframe-related options
 default_options.register_option(
     "dataframe.dtype_backend",
-    None,
-    validator=any_validator(is_null, is_in(("numpy", "pyarrow"))),
+    "numpy_nullable",
+    validator=is_in(("numpy_nullable", "pyarrow")),
 )
 default_options.register_option(
     "dataframe.arrow_array.pandas_only",
