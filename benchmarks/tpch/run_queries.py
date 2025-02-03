@@ -1031,24 +1031,6 @@ def run_queries(
     gpu: bool,
     dtype_backend: str = None,
 ):
-    """Run TPC-H queries.
-
-    Parameters
-    ----------
-    root : str
-        Path to TPC-H dataset.
-    storage_options : Dict[str, str]
-        Options for storage connection.
-    queries : List[int]
-        List of query numbers to run.
-    gpu : bool
-        Whether to use GPU.
-    dtype_backend : str, optional
-        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
-        nullable dtypes or pyarrow for backed data. If None,
-        options.dataframe.dtype_backend is used. When "pyarrow" is used,
-        columns with supported dtypes are backed by ArrowDtype.
-    """
     total_start = time.time()
     print("Start data loading")
     queries_to_args = dict()
