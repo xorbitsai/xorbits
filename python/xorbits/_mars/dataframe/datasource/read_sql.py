@@ -58,7 +58,7 @@ class DataFrameReadSQLLogicKeyGenerator(OperatorLogicKeyGeneratorMixin):
                 "columns",
                 "method",
                 "incremental_index",
-                "use_arrow_dtype",
+                "dtype_backend",
                 "partition_col",
             ]
         ]
@@ -91,7 +91,7 @@ class DataFrameReadSQL(
     row_memory_usage = Float64Field("row_memory_usage")
     method = StringField("method")
     incremental_index = BoolField("incremental_index")
-    use_arrow_dtype = BoolField("use_arrow_dtype")
+    dtype_backend = StringField("dtype_backend")
     chunk_size = AnyField("chunk_size")
     # for chunks
     offset = Int64Field("offset")
@@ -152,7 +152,7 @@ class DataFrameReadSQL(
         return selectable
 
     def _collect_info(
-        self, engine_or_conn, selectable, columns, test_rows, use_arrow_dtype
+        self, engine_or_conn, selectable, columns, test_rows, dtype_backend
     ):
         from sqlalchemy import sql
 
@@ -168,7 +168,9 @@ class DataFrameReadSQL(
                 sql.select(selectable.columns).select_from(selectable).limit(test_rows)
             )
         # read_sql in pandas 1.5 does not support pyarrow.
-        sql_kwargs = arrow_dtype_kwargs() if use_arrow_dtype and is_pandas_2() else {}
+        sql_kwargs = (
+            arrow_dtype_kwargs() if dtype_backend == "pyarrow" and is_pandas_2() else {}
+        )
         test_df = pd.read_sql(
             query,
             engine_or_conn,
@@ -235,12 +237,12 @@ class DataFrameReadSQL(
             else:
                 collect_cols = []
 
-            use_arrow_dtype = self.use_arrow_dtype
-            if use_arrow_dtype is None:
-                use_arrow_dtype = options.dataframe.use_arrow_dtype
+            dtype_backend = self.dtype_backend
+            if dtype_backend is None:
+                dtype_backend = options.dataframe.dtype_backend
 
             test_df, shape = self._collect_info(
-                con, selectable, collect_cols, test_rows, use_arrow_dtype
+                con, selectable, collect_cols, test_rows, dtype_backend
             )
 
             # reconstruct selectable using known column names
@@ -485,13 +487,15 @@ class DataFrameReadSQL(
             if op.nrows is not None:
                 query = query.limit(op.nrows)
 
-            use_arrow_dtype = op.use_arrow_dtype
-            if use_arrow_dtype is None:
-                use_arrow_dtype = options.dataframe.use_arrow_dtype
+            dtype_backend = op.dtype_backend
+            if dtype_backend is None:
+                dtype_backend = options.dataframe.dtype_backend
 
             # read_sql in pandas 1.5 does not support pyarrow.
             sql_kwargs = (
-                arrow_dtype_kwargs() if use_arrow_dtype and is_pandas_2() else {}
+                arrow_dtype_kwargs()
+                if dtype_backend == "pyarrow" and is_pandas_2()
+                else {}
             )
             try:
                 df = pd.read_sql(
@@ -543,7 +547,7 @@ def _read_sql(
     columns=None,
     chunksize=None,
     incremental_index=False,
-    use_arrow_dtype=None,
+    dtype_backend=None,
     test_rows=None,
     chunk_size=None,
     engine_kwargs=None,
@@ -568,7 +572,7 @@ def _read_sql(
         columns=columns,
         engine_kwargs=engine_kwargs,
         incremental_index=incremental_index,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         method=method,
         partition_col=partition_col,
         num_partitions=num_partitions,
@@ -592,6 +596,7 @@ def read_sql(
     chunk_size=None,
     engine_kwargs=None,
     incremental_index=True,
+    dtype_backend=None,
     partition_col=None,
     num_partitions=None,
     low_limit=None,
@@ -654,6 +659,11 @@ def read_sql(
     incremental_index: bool, default True
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
+        options.dataframe.dtype_backend is used. When "pyarrow" is used,
+        columns with supported dtypes are backed by ArrowDtype.
     partition_col : str, default None
         Specify name of the column to split the result of the query. If
         specified, the range ``[low_limit, high_limit]`` will be divided
@@ -692,6 +702,7 @@ def read_sql(
         columns=columns,
         engine_kwargs=engine_kwargs,
         incremental_index=incremental_index,
+        dtype_backend=dtype_backend,
         chunksize=chunksize,
         test_rows=test_rows,
         chunk_size=chunk_size,
@@ -715,7 +726,7 @@ def read_sql_table(
     chunk_size=None,
     engine_kwargs=None,
     incremental_index=True,
-    use_arrow_dtype=None,
+    dtype_backend=None,
     partition_col=None,
     num_partitions=None,
     low_limit=None,
@@ -767,8 +778,11 @@ def read_sql_table(
     incremental_index: bool, default True
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns.
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
+        options.dataframe.dtype_backend is used. When "pyarrow" is used,
+        columns with supported dtypes are backed by ArrowDtype.
     partition_col : str, default None
         Specify name of the column to split the result of the query. If
         specified, the range ``[low_limit, high_limit]`` will be divided
@@ -808,6 +822,9 @@ def read_sql_table(
     >>> import mars.dataframe as md
     >>> md.read_sql_table('table_name', 'postgres:///db_name')  # doctest:+SKIP
     """
+    if dtype_backend is None:
+        dtype_backend = options.dataframe.dtype_backend
+
     return _read_sql(
         table_or_sql=table_name,
         con=con,
@@ -818,7 +835,7 @@ def read_sql_table(
         columns=columns,
         engine_kwargs=engine_kwargs,
         incremental_index=incremental_index,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         chunksize=chunksize,
         test_rows=test_rows,
         chunk_size=chunk_size,
@@ -841,7 +858,7 @@ def read_sql_query(
     chunk_size=None,
     engine_kwargs=None,
     incremental_index=True,
-    use_arrow_dtype=None,
+    dtype_backend=None,
     partition_col=None,
     num_partitions=None,
     low_limit=None,
@@ -891,8 +908,11 @@ def read_sql_query(
     incremental_index: bool, default True
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns.
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
+        options.dataframe.dtype_backend is used. When "pyarrow" is used,
+        columns with supported dtypes are backed by ArrowDtype.
     test_rows: int, default 5
         The number of rows to fetch for inferring dtypes.
     chunk_size: : int or tuple of ints, optional
@@ -941,7 +961,7 @@ def read_sql_query(
         parse_dates=parse_dates,
         engine_kwargs=engine_kwargs,
         incremental_index=incremental_index,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         chunksize=chunksize,
         test_rows=test_rows,
         chunk_size=chunk_size,

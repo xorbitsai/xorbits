@@ -111,7 +111,7 @@ class DataFrameReadCSV(
     offset = Int64Field("offset")
     size = Int64Field("size")
     incremental_index = BoolField("incremental_index")
-    use_arrow_dtype = BoolField("use_arrow_dtype")
+    dtype_backend = StringField("dtype_backend")
     keep_usecols_order = BoolField("keep_usecols_order", default=None)
     storage_options = DictField("storage_options")
     merge_small_files = BoolField("merge_small_files")
@@ -284,7 +284,7 @@ class DataFrameReadCSV(
                 usecols = op.usecols if isinstance(op.usecols, list) else [op.usecols]
             else:
                 usecols = op.usecols
-            if op.use_arrow_dtype:
+            if op.dtype_backend == "pyarrow":
                 csv_kwargs.update(arrow_dtype_kwargs())
             df = pd.read_csv(
                 b,
@@ -335,7 +335,7 @@ class DataFrameReadCSV(
         xdf = cudf if op.gpu else pd
         out_df = op.outputs[0]
         csv_kwargs = op.extra_params.copy()
-        if xdf is pd and op.use_arrow_dtype:
+        if xdf is pd and op.dtype_backend == "pyarrow":
             csv_kwargs.update(arrow_dtype_kwargs())
         df = xdf.read_csv(
             op.path,
@@ -368,7 +368,7 @@ class DataFrameReadCSV(
             if op.compression is not None:
                 # As we specify names and dtype, we need to skip header rows
                 csv_kwargs["header"] = op.header
-                if xdf is pd and op.use_arrow_dtype:
+                if xdf is pd and op.dtype_backend == "pyarrow":
                     csv_kwargs.update(arrow_dtype_kwargs())
                 df = xdf.read_csv(
                     f,
@@ -425,7 +425,7 @@ def read_csv(
     head_bytes: Union[str, int] = "100k",
     head_lines: int = None,
     incremental_index: bool = True,
-    use_arrow_dtype: bool = None,
+    dtype_backend: str = None,
     storage_options: dict = None,
     memory_scale: int = None,
     merge_small_files: bool = True,
@@ -500,6 +500,11 @@ def read_csv(
         example of a valid callable argument would be ``lambda x: x.upper() in
         ['AAA', 'BBB', 'DDD']``. Using this parameter results in much faster
         parsing time and lower memory usage.
+    dtype_backend: {"numpy_nullable", "pyarrow"}, default None
+        Which dtype_backend to use, e.g. whether a DataFrame should use NumPy arrays,
+        nullable dtypes or pyarrow for backed data. If None,
+        options.dataframe.dtype_backend is used. When "pyarrow" is used,
+        columns with supported dtypes are backed by ArrowDtype.
     squeeze : bool, default False
         If the parsed data only contains one column then return a Series.
     prefix : str, optional
@@ -684,10 +689,10 @@ def read_csv(
     incremental_index: bool, default True
         If index_col not specified, ensure range index incremental,
         gain a slightly better performance if setting False.
-    use_arrow_dtype: bool, default None
-        If True, use arrow dtype to store columns.
     storage_options: dict, optional
         Options for storage connection.
+    memory_scale: int, optional
+        Memory scale factor.
     merge_small_files: bool, default True
         Merge small files whose size is small.
     merge_small_file_options: dict
@@ -716,8 +721,8 @@ def read_csv(
     >>> # read from S3
     >>> md.read_csv('s3://bucket/file.txt')
     """
-    if use_arrow_dtype is None:
-        use_arrow_dtype = options.dataframe.use_arrow_dtype
+    if dtype_backend is None:
+        dtype_backend = options.dataframe.dtype_backend
 
     single_path = path[0] if isinstance(path, (list, tuple)) else path
     if isinstance(single_path, str) and (
@@ -735,7 +740,7 @@ def read_csv(
             compression=compression,
             gpu=gpu,
             incremental_index=incremental_index,
-            use_arrow_dtype=use_arrow_dtype,
+            dtype_backend=dtype_backend,
             storage_options=storage_options,
             memory_scale=memory_scale,
             merge_small_files=merge_small_files,
@@ -769,7 +774,9 @@ def read_csv(
             head_start, head_end = _find_chunk_start_end(f, 0, head_bytes, True)
             f.seek(head_start)
             b = f.read(head_end - head_start)
-        csv_kwargs = arrow_dtype_kwargs() if not gpu and use_arrow_dtype else {}
+        csv_kwargs = (
+            arrow_dtype_kwargs() if not gpu and dtype_backend == "pyarrow" else {}
+        )
         csv_kwargs.update(kwargs)
         mini_df = pd.read_csv(
             BytesIO(b),
@@ -817,7 +824,7 @@ def read_csv(
         compression=compression,
         gpu=gpu,
         incremental_index=incremental_index,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         memory_scale=memory_scale,
         merge_small_files=merge_small_files,

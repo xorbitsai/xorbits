@@ -107,11 +107,11 @@ jobs:
       with:
         fetch-depth: 0
         submodules: recursive
-        
+
     - name: Add msbuild to PATH
       if: ${{ matrix.os == 'windows-latest'}}
       uses: microsoft/setup-msbuild@v2
-    
+
     - name: Set up conda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v3
       if: ${{ matrix.module != 'gpu' && matrix.module != 'kubernetes-juicefs' }}
@@ -285,7 +285,7 @@ jobs:
       run: |
         source CI/slurm/${{ matrix.module }}.sh
         jobqueue_install
-      
+
     - name: Install on GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |
@@ -403,7 +403,7 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits/deploy --cov=xorbits xorbits/$MODULE
         fi
       working-directory: ./python
-    
+
     - name: Test with pytest GPU
       if: ${{ matrix.module == 'gpu' }}
       run: |

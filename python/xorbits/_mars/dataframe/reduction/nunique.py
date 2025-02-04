@@ -23,7 +23,7 @@ except ImportError:  # pragma: no cover
 from ... import opcodes as OperandDef
 from ...config import options
 from ...core import OutputType
-from ...serialization.serializables import BoolField
+from ...serialization.serializables import BoolField, StringField
 from ...utils import lazy_import
 from .core import CustomReduction, DataFrameReductionMixin, DataFrameReductionOperand
 
@@ -34,12 +34,12 @@ class NuniqueReduction(CustomReduction):
     pre_with_agg = True
 
     def __init__(
-        self, name="unique", axis=0, dropna=True, use_arrow_dtype=False, is_gpu=False
+        self, name="unique", axis=0, dropna=True, dtype_backend=None, is_gpu=False
     ):
         super().__init__(name, is_gpu=is_gpu)
         self._axis = axis
         self._dropna = dropna
-        self._use_arrow_dtype = use_arrow_dtype
+        self._dtype_backend = dtype_backend
 
     @staticmethod
     def _drop_duplicates_to_arrow(v, explode=False):
@@ -56,7 +56,7 @@ class NuniqueReduction(CustomReduction):
             if self._axis == 0:
                 data = dict()
                 for d, v in in_data.items():
-                    if not self._use_arrow_dtype or xdf is cudf:
+                    if self._dtype_backend != "pyarrow" or xdf is cudf:
                         data[d] = [v.drop_duplicates().to_list()]
                     else:
                         data[d] = self._drop_duplicates_to_arrow(v)
@@ -64,7 +64,7 @@ class NuniqueReduction(CustomReduction):
             else:
                 df = xdf.DataFrame(columns=[0])
                 for d, v in in_data.iterrows():
-                    if not self._use_arrow_dtype or xdf is cudf:
+                    if self._dtype_backend != "pyarrow" or xdf is cudf:
                         df.loc[d] = [v.drop_duplicates().to_list()]
                     else:
                         df.loc[d] = self._drop_duplicates_to_arrow(v)
@@ -79,7 +79,7 @@ class NuniqueReduction(CustomReduction):
             if self._axis == 0:
                 data = dict()
                 for d, v in in_data.items():
-                    if not self._use_arrow_dtype or xdf is cudf:
+                    if self._dtype_backend != "pyarrow" or xdf is cudf:
                         data[d] = [v.explode().drop_duplicates().to_list()]
                     else:
                         v = pd.Series(v.to_numpy())
@@ -88,7 +88,7 @@ class NuniqueReduction(CustomReduction):
             else:
                 df = xdf.DataFrame(columns=[0])
                 for d, v in in_data.iterrows():
-                    if not self._use_arrow_dtype or xdf is cudf:
+                    if self._dtype_backend != "pyarrow" or xdf is cudf:
                         df.loc[d] = [v.explode().drop_duplicates().to_list()]
                     else:
                         df.loc[d] = self._drop_duplicates_to_arrow(v, explode=True)
@@ -111,18 +111,18 @@ class DataFrameNunique(DataFrameReductionOperand, DataFrameReductionMixin):
     _func_name = "nunique"
 
     _dropna = BoolField("dropna")
-    _use_arrow_dtype = BoolField("use_arrow_dtype")
+    _dtype_backend = StringField("dtype_backend")
 
-    def __init__(self, dropna=None, use_arrow_dtype=None, **kw):
-        super().__init__(_dropna=dropna, _use_arrow_dtype=use_arrow_dtype, **kw)
+    def __init__(self, dropna=None, dtype_backend=None, **kw):
+        super().__init__(_dropna=dropna, _dtype_backend=dtype_backend, **kw)
 
     @property
     def dropna(self):
         return self._dropna
 
     @property
-    def use_arrow_dtype(self):
-        return self._use_arrow_dtype
+    def dtype_backend(self):
+        return self._dtype_backend
 
     @classmethod
     def get_reduction_callable(cls, op):
@@ -130,7 +130,7 @@ class DataFrameNunique(DataFrameReductionOperand, DataFrameReductionMixin):
             name=cls._func_name,
             axis=op.axis,
             dropna=op.dropna,
-            use_arrow_dtype=op.use_arrow_dtype,
+            dtype_backend=op.dtype_backend,
             is_gpu=op.is_gpu(),
         )
 
@@ -181,7 +181,7 @@ def nunique_dataframe(df, axis=0, dropna=True, combine_size=None):
         dropna=dropna,
         combine_size=combine_size,
         output_types=[OutputType.series],
-        use_arrow_dtype=options.dataframe.use_arrow_dtype,
+        dtype_backend=options.dataframe.dtype_backend,
     )
     return op(df)
 
@@ -227,6 +227,6 @@ def nunique_series(series, dropna=True, combine_size=None):
         dropna=dropna,
         combine_size=combine_size,
         output_types=[OutputType.scalar],
-        use_arrow_dtype=options.dataframe.use_arrow_dtype,
+        dtype_backend=options.dataframe.dtype_backend,
     )
     return op(series)

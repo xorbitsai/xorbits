@@ -71,6 +71,16 @@ Note that you can specify ``--cuda_devices`` to decide which GPUs to use. For ex
 python benchmarks/tpch/run_queries.py --data_set <your_tpch_dataset_dir> --gpu --cuda_devices 0 1
 ```
 
+## Run queries with specific dtype backend
+You can specify which dtype backend to use when reading the data:
+```bash
+# Use pyarrow dtype backend
+python benchmarks/tpch/run_queries.py --data_set <your_tpch_dataset_dir> --dtype-backend pyarrow
+
+# Use numpy_nullable dtype backend (default)
+python benchmarks/tpch/run_queries.py --data_set <your_tpch_dataset_dir> --dtype-backend numpy_nullable
+```
+
 ## Run queries using MMAP backend
 ```bash
 python benchmarks/tpch/run_queries.py --data_set <your_tpch_dataset_dir> --mmap_root_dir <your_dir_for_mmap_files>

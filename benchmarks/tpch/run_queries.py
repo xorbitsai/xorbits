@@ -25,12 +25,12 @@ import xorbits.pandas as xd
 
 @functools.lru_cache
 def load_lineitem(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/lineitem"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -42,12 +42,12 @@ def load_lineitem(
 
 @functools.lru_cache
 def load_part(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/part"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -56,12 +56,12 @@ def load_part(
 
 @functools.lru_cache
 def load_orders(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/orders"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -71,12 +71,12 @@ def load_orders(
 
 @functools.lru_cache
 def load_customer(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/customer"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -85,12 +85,12 @@ def load_customer(
 
 @functools.lru_cache
 def load_nation(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/nation"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -99,12 +99,12 @@ def load_nation(
 
 @functools.lru_cache
 def load_region(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/region"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -113,12 +113,12 @@ def load_region(
 
 @functools.lru_cache
 def load_supplier(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/supplier"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -127,12 +127,12 @@ def load_supplier(
 
 @functools.lru_cache
 def load_partsupp(
-    data_folder: str, use_arrow_dtype: bool = None, gpu: bool = False, **storage_options
+    data_folder: str, dtype_backend: str = None, gpu: bool = False, **storage_options
 ) -> xd.DataFrame:
     data_path = data_folder + "/partsupp"
     df = xd.read_parquet(
         data_path,
-        use_arrow_dtype=use_arrow_dtype,
+        dtype_backend=dtype_backend,
         storage_options=storage_options,
         gpu=gpu,
     )
@@ -554,10 +554,10 @@ def q08(part, lineitem, supplier, orders, customer, nation, region):
     total = total.loc[:, ["VOLUME", "O_YEAR", "NATION"]]
 
     def udf(df):
-        demonimator = df["VOLUME"].sum()
+        demoniator = df["VOLUME"].sum()
         df = df[df["NATION"] == "BRAZIL"]
         numerator = df["VOLUME"].sum()
-        return numerator / demonimator
+        return numerator / demoniator
 
     total = total.groupby("O_YEAR", as_index=False).apply(udf)
     total.columns = ["O_YEAR", "MKT_SHARE"]
@@ -1029,7 +1029,7 @@ def run_queries(
     storage_options: Dict[str, str],
     queries: List[int],
     gpu: bool,
-    use_arrow_dtype: bool = None,
+    dtype_backend: str = None,
 ):
     total_start = time.time()
     print("Start data loading")
@@ -1040,7 +1040,7 @@ def run_queries(
         for dataset in _query_to_datasets[query]:
             args.append(
                 globals()[f"load_{dataset}"](
-                    root, use_arrow_dtype, gpu, **storage_options
+                    root, dtype_backend, gpu, **storage_options
                 )
             )
             datasets_to_load.update(args)
@@ -1076,10 +1076,10 @@ def main():
         help="Comma separated TPC-H queries to run.",
     )
     parser.add_argument(
-        "--use-arrow-dtype",
-        default=False,
-        action="store_true",
-        help="Use arrow dtype.",
+        "--dtype-backend",
+        type=str,
+        choices=["numpy_nullable", "pyarrow"],
+        help="Which dtype_backend to use when reading data",
     )
     parser.add_argument(
         "--gpu",
@@ -1110,7 +1110,6 @@ def main():
     args = parser.parse_args()
     data_set = args.data_set
     gpu = args.gpu
-    use_arrow_dtype = args.use_arrow_dtype
     mmap_root_dir = args.mmap_root_dir
     if mmap_root_dir is not None:
         print(f"Use mmap to run: {mmap_root_dir}")
@@ -1138,7 +1137,7 @@ def main():
             storage_options=storage_options,
             queries=queries,
             gpu=gpu,
-            use_arrow_dtype=use_arrow_dtype,
+            dtype_backend=args.dtype_backend,
         )
     finally:
         xorbits.shutdown()

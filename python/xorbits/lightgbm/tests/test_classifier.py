@@ -156,7 +156,7 @@ def test_local_classifier_from_to_parquet(setup):
         df.iloc[:500].to_parquet(os.path.join(d, "data", "data1.parquet"))
         df.iloc[500:].to_parquet(os.path.join(d, "data", "data2.parquet"))
 
-        df = xpd.read_parquet(data_dir, use_arrow_dtype=False)
+        df = xpd.read_parquet(data_dir, dtype_backend="numpy_nullable")
         model = lgb.LGBMClassifier()
         model.load_model(classifier)
         result = model.predict(df, run=False)
@@ -165,7 +165,7 @@ def test_local_classifier_from_to_parquet(setup):
         r.execute()
 
         ret = (
-            xpd.read_parquet(result_dir, use_arrow_dtype=False)
+            xpd.read_parquet(result_dir, dtype_backend="numpy_nullable")
             .to_pandas()
             .iloc[:, 0]
             .to_numpy()

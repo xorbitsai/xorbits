@@ -251,7 +251,7 @@ class Config:
         Parameters
         ----------
         option : str
-            The name of the option to retrieve. Can be a nested option using dot notation (e.g., dataframe.use_arrow_dtype).
+            The name of the option to retrieve. Can be a nested option using dot notation (e.g., dataframe.dtype_backend).
 
         Returns
         -------
@@ -290,7 +290,7 @@ class Config:
         Parameters
         ----------
         option : str
-            The name of the option to set. Can be a nested option using dot notation (e.g., dataframe.use_arrow_dtype).
+            The name of the option to set. Can be a nested option using dot notation (e.g., dataframe.dtype_backend).
         value : Any
             The value to set for the specified option.
 
@@ -447,10 +447,14 @@ default_options.register_option("serialize_method", "pickle")
 
 # dataframe-related options
 default_options.register_option(
-    "dataframe.use_arrow_dtype", None, validator=any_validator(is_null, is_bool)
+    "dataframe.dtype_backend",
+    "numpy_nullable",
+    validator=is_in(("numpy_nullable", "pyarrow")),
 )
 default_options.register_option(
-    "dataframe.arrow_array.pandas_only", None, validator=any_validator(is_null, is_bool)
+    "dataframe.arrow_array.pandas_only",
+    None,
+    validator=any_validator(is_null, is_bool),
 )
 
 # learn options
@@ -553,7 +557,7 @@ An object for accessing and modifying global job-level configuration options.
 
 This object provides access to all the configuration options defined in the global
 configuration. It allows getting and setting option values, as well as accessing
-nested options using dot notation (e.g., dataframe.use_arrow_dtype).
+nested options using dot notation (e.g., dataframe.dtype_backend).
 
 Examples:
     >>> options.show_progress
