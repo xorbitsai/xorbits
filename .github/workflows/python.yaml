@@ -3,7 +3,7 @@ name: Python CI
 on:
   push:
     branches:
-      - '*'
+      - '**'
   pull_request:
     types: ['opened', 'reopened', 'synchronize']
 
@@ -62,7 +62,6 @@ jobs:
         run: cd python/xorbits/web/ui && ./node_modules/.bin/prettier --check .
 
   build_test_job:
-    if: github.repository == 'xorbitsai/xorbits'
     runs-on: ${{ matrix.os }}
     needs: lint
     env:
@@ -380,6 +379,12 @@ jobs:
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
             xorbits/$MODULE xorbits/_mars/contrib/dask/tests/test_dask.py
         elif [[ "$MODULE" == "learn" ]]; then
+          # Test Mars implementation
+          pytest --timeout=1500 \
+            -W ignore::PendingDeprecationWarning \
+            --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
+            xorbits/_mars/learn/contrib/xgboost/ xorbits/_mars/learn/contrib/lightgbm/
+          # Test Xorbits interface
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
