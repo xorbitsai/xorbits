@@ -81,7 +81,7 @@ def test_check_array(setup):
 
     for X, dtype, order, copy in product(Xs, dtypes, orders, copy_flags):
         X_checked = check_array(
-            X, dtype=dtype, order=order, copy=copy, force_all_finite=False
+            X, dtype=dtype, order=order, copy=copy, ensure_all_finite=False
         )
         if dtype is not None:
             assert X_checked.dtype == dtype

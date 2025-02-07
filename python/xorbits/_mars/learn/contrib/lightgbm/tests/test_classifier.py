@@ -38,8 +38,8 @@ rs = mt.random.RandomState(0)
 X_raw = rs.rand(n_rows, n_columns, chunk_size=chunk_size)
 y_raw = rs.rand(n_rows, chunk_size=chunk_size)
 filter = rs.rand(n_rows, chunk_size=chunk_size) < 0.8
-X = X_raw[filter]
-y = y_raw[filter]
+X = X_raw[filter].rechunk(chunk_size)
+y = y_raw[filter].rechunk(chunk_size)
 
 X_df = md.DataFrame(X)
 x_sparse = np.random.rand(n_rows, n_columns)
