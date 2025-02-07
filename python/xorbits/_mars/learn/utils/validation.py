@@ -606,7 +606,7 @@ def check_X_y(
         dtype=dtype,
         order=order,
         copy=copy,
-        force_all_finite=force_all_finite,
+        ensure_all_finite=ensure_all_finite,
         ensure_2d=ensure_2d,
         allow_nd=allow_nd,
         ensure_min_samples=ensure_min_samples,
@@ -614,7 +614,7 @@ def check_X_y(
         estimator=estimator,
     )
     if multi_output:
-        y = check_array(y, True, force_all_finite=True, ensure_2d=False, dtype=None)
+        y = check_array(y, True, ensure_all_finite=True, ensure_2d=False, dtype=None)
     else:
         y = column_or_1d(y, warn=True)
         y = _assert_all_finite(y, check_only=False)
