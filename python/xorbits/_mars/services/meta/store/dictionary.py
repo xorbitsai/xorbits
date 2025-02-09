@@ -43,7 +43,7 @@ class DictMetaStore(AbstractMetaStore):
         # OrderedSet to make sure that the first band in set stores complete
         # data, other bands may only have part data, so when reducers fetch data,
         # we always choose the first band to avoid unexpected absence.
-        self._band_chunks: Dict[BandType, OrderedSet] = defaultdict(OrderedSet)
+        self._band_slot_chunks: Dict[BandType, Dict[int, OrderedSet]] = defaultdict(lambda: defaultdict(OrderedSet))
         if kw:  # pragma: no cover
             raise TypeError(f"Keyword arguments {kw!r} cannot be recognized.")
 
@@ -56,8 +56,8 @@ class DictMetaStore(AbstractMetaStore):
 
     def _set_meta(self, object_id: str, meta: _CommonMeta):
         if isinstance(meta, _ChunkMeta):
-            for band in meta.bands:
-                self._band_chunks[band].add(object_id)
+            for band, slot_id in zip(meta.bands, meta.slot_ids):
+                self._band_slot_chunks[band][slot_id].add(object_id)
         prev_meta = self._store.get(object_id)
         if prev_meta:
             meta = meta.merge_from(prev_meta)
@@ -106,11 +106,11 @@ class DictMetaStore(AbstractMetaStore):
     def _del_meta(self, object_id: str):
         meta = self._store[object_id]
         if isinstance(meta, _ChunkMeta):
-            for band in meta.bands:
-                chunks = self._band_chunks[band]
+            for band, slot_id in zip(meta.bands, meta.slot_ids):
+                chunks = self._band_slot_chunks[band][slot_id]
                 chunks.remove(object_id)
                 if len(chunks) == 0:
-                    del self._band_chunks[band]
+                    del self._band_slot_chunks[band][slot_id]
         del self._store[object_id]
 
     @implements(AbstractMetaStore.del_meta)
@@ -123,39 +123,41 @@ class DictMetaStore(AbstractMetaStore):
         for args, kwargs in zip(args_list, kwargs_list):
             self._del_meta(*args, **kwargs)
 
-    def _add_chunk_bands(self, object_id: str, bands: List[BandType]):
+    def _add_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
         meta = self._store[object_id]
         assert isinstance(meta, _ChunkMeta)
         meta.bands = list(OrderedSet(meta.bands) | OrderedSet(bands))
-        for band in bands:
-            self._band_chunks[band].add(object_id)
+        meta.slot_ids = list(OrderedSet(meta.slot_ids) | OrderedSet(slot_ids))
+        for band, slot_id in zip(bands, slot_ids):
+            self._band_slot_chunks[band][slot_id].add(object_id)
 
     @implements(AbstractMetaStore.add_chunk_bands)
     @mo.extensible
-    async def add_chunk_bands(self, object_id: str, bands: List[BandType]):
-        self._add_chunk_bands(object_id, bands)
+    async def add_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
+        self._add_chunk_bands(object_id, bands, slot_ids)
 
     @add_chunk_bands.batch
     async def batch_add_chunk_bands(self, args_list, kwargs_list):
         for args, kwargs in zip(args_list, kwargs_list):
             self._add_chunk_bands(*args, **kwargs)
 
-    def _remove_chunk_bands(self, object_id: str, bands: List[BandType]):
+    def _remove_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
         meta = self._store[object_id]
         assert isinstance(meta, _ChunkMeta)
         meta.bands = list(OrderedSet(meta.bands) - OrderedSet(bands))
-        for band in bands:
-            self._band_chunks[band].remove(object_id)
+        meta.slot_ids = list(OrderedSet(meta.slot_ids) - OrderedSet(slot_ids))
+        for band, slot_id in zip(bands, slot_ids):
+            self._band_slot_chunks[band][slot_id].remove(object_id)
 
     @implements(AbstractMetaStore.remove_chunk_bands)
     @mo.extensible
-    async def remove_chunk_bands(self, object_id: str, bands: List[BandType]):
-        self._remove_chunk_bands(object_id, bands)
+    async def remove_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
+        self._remove_chunk_bands(object_id, bands, slot_ids)
 
     @remove_chunk_bands.batch
     async def batch_remove_chunk_bands(self, args_list, kwargs_list):
         for args, kwargs in zip(args_list, kwargs_list):
             self._remove_chunk_bands(*args, **kwargs)
 
-    async def get_band_chunks(self, band: BandType) -> List[str]:
-        return list(self._band_chunks[band])
+    async def get_band_slot_chunks(self, band: BandType, slot_id: int) -> List[str]:
+        return list(self._band_slot_chunks[band][slot_id])
