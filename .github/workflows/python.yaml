@@ -419,7 +419,8 @@ jobs:
 
     - name: Build and Publish
       if: startsWith(github.ref, 'refs/tags/')
-      environment: pypi-publish
+      env:
+        IS_TEST: ${{ contains(github.ref, 'test-') }}
       run: |
         pip install build twine
         python -m build
@@ -432,8 +433,6 @@ jobs:
             --username __token__ \
             --password ${{ secrets.PYPI_TOKEN }}
         fi
-      env:
-        IS_TEST: ${{ contains(github.ref, 'test-') }}
       working-directory: ./python
 
     - name: Cleanup on slurm
