@@ -383,7 +383,7 @@ jobs:
           pytest --timeout=1500 \
             -W ignore::PendingDeprecationWarning \
             --cov-config=setup.cfg --cov-report=xml --cov=xorbits \
-            xorbits/xgboost/ xorbits/lightgbm/
+            xorbits/_mars/learn/contrib/xgboost/ xorbits/_mars/learn/contrib/lightgbm/
         elif [ "$MODULE" == "jax" ]; then
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/fuse/tests/test_runtime_fusion.py
           pytest --cov-config=setup.cfg --cov-report=xml --cov=xorbits xorbits/_mars/tensor/

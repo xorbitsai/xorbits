@@ -171,7 +171,7 @@ def _ensure_no_complex_data(array):
 
 
 def _ensure_sparse_format(
-    spmatrix, accept_sparse, dtype, copy, force_all_finite, accept_large_sparse
+    spmatrix, accept_sparse, dtype, copy, ensure_all_finite, accept_large_sparse
 ):
     """Convert a sparse matrix to a given format.
 
@@ -196,7 +196,7 @@ def _ensure_sparse_format(
         Whether a forced copy will be triggered. If copy=False, a copy might
         be triggered by a conversion.
 
-    force_all_finite : boolean or 'allow-nan', (default=True)
+    ensure_all_finite : boolean or 'allow-nan', (default=True)
         Whether to raise an error on np.inf and np.nan in X. The possibilities
         are:
 
@@ -254,9 +254,9 @@ def _ensure_sparse_format(
         # force copy
         spmatrix = spmatrix.copy()
 
-    if force_all_finite:
+    if ensure_all_finite:
         spmatrix = assert_all_finite(
-            spmatrix, allow_nan=force_all_finite == "allow-nan", check_only=False
+            spmatrix, allow_nan=ensure_all_finite == "allow-nan", check_only=False
         )
 
     return spmatrix
@@ -269,7 +269,7 @@ def check_array(
     dtype="numeric",
     order=None,
     copy=False,
-    force_all_finite=True,
+    ensure_all_finite=True,
     ensure_2d=True,
     allow_nd=False,
     ensure_min_samples=1,
@@ -316,7 +316,7 @@ def check_array(
         Whether a forced copy will be triggered. If copy=False, a copy might
         be triggered by a conversion.
 
-    force_all_finite : boolean or 'allow-nan', (default=True)
+    ensure_all_finite : boolean or 'allow-nan', (default=True)
         Whether to raise an error on np.inf and np.nan in tensor. The
         possibilities are:
 
@@ -377,10 +377,10 @@ def check_array(
             # list of accepted types.
             dtype = dtype[0]
 
-    if force_all_finite not in (True, False, "allow-nan"):
+    if ensure_all_finite not in (True, False, "allow-nan"):
         raise ValueError(
-            'force_all_finite should be a bool or "allow-nan"'
-            f". Got {force_all_finite!r} instead"
+            'ensure_all_finite should be a bool or "allow-nan"'
+            f". Got {ensure_all_finite!r} instead"
         )
 
     if estimator is not None:
@@ -400,7 +400,7 @@ def check_array(
             accept_sparse=accept_sparse,
             dtype=dtype,
             copy=copy,
-            force_all_finite=force_all_finite,
+            ensure_all_finite=ensure_all_finite,
             accept_large_sparse=accept_large_sparse,
         )
     else:
@@ -460,9 +460,9 @@ def check_array(
                 "Found array with dim %d. %s expected <= 2."
                 % (array.ndim, estimator_name)
             )
-        if force_all_finite:
+        if ensure_all_finite:
             array = _assert_all_finite(
-                array, allow_nan=force_all_finite == "allow-nan", check_only=False
+                array, allow_nan=ensure_all_finite == "allow-nan", check_only=False
             )
 
     if ensure_min_samples > 0:
@@ -497,7 +497,7 @@ def check_X_y(
     dtype="numeric",
     order=None,
     copy=False,
-    force_all_finite=True,
+    ensure_all_finite=True,
     ensure_2d=True,
     allow_nd=False,
     multi_output=False,
@@ -548,7 +548,7 @@ def check_X_y(
         Whether a forced copy will be triggered. If copy=False, a copy might
         be triggered by a conversion.
 
-    force_all_finite : boolean or 'allow-nan', (default=True)
+    ensure_all_finite : boolean or 'allow-nan', (default=True)
         Whether to raise an error on np.inf and np.nan in X. This parameter
         does not influence whether y can have np.inf or np.nan values.
         The possibilities are:
@@ -606,7 +606,7 @@ def check_X_y(
         dtype=dtype,
         order=order,
         copy=copy,
-        force_all_finite=force_all_finite,
+        ensure_all_finite=ensure_all_finite,
         ensure_2d=ensure_2d,
         allow_nd=allow_nd,
         ensure_min_samples=ensure_min_samples,
@@ -614,7 +614,7 @@ def check_X_y(
         estimator=estimator,
     )
     if multi_output:
-        y = check_array(y, True, force_all_finite=True, ensure_2d=False, dtype=None)
+        y = check_array(y, True, ensure_all_finite=True, ensure_2d=False, dtype=None)
     else:
         y = column_or_1d(y, warn=True)
         y = _assert_all_finite(y, check_only=False)

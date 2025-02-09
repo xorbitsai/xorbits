@@ -49,7 +49,7 @@ def test_split_arg_required():
     ],
 )
 def test_from_huggingface_execute(setup, path):
-    xds = from_huggingface(path, split="train")
+    xds = from_huggingface(path, split="train", trust_remote_code=True)
     xds.execute()
     ds = xds.fetch()
     ds_expected = datasets.load_dataset(path, split="train")
@@ -83,7 +83,7 @@ def test_from_huggingface_file_lock(setup):
     ],
 )
 def test_to_dataframe_execute(setup, path):
-    xds = from_huggingface(path, split="train")
+    xds = from_huggingface(path, split="train", trust_remote_code=True)
     mdf = xds.to_dataframe()
     mdf.execute()
     df = mdf.fetch()
@@ -103,7 +103,7 @@ def test_map_execute(setup, path):
         x["text"] = "xorbits: " + x["text"]
         return x
 
-    xds = from_huggingface(path, split="train")
+    xds = from_huggingface(path, split="train", trust_remote_code=True)
     xds = xds.map(add_prefix)
     xds.execute()
     ds = xds.fetch()
@@ -119,7 +119,7 @@ def test_map_execute(setup, path):
     ],
 )
 def test_rechunk_execute(setup, path):
-    xds = from_huggingface(path, split="train")
+    xds = from_huggingface(path, split="train", trust_remote_code=True)
     xds = xds.rechunk(2)
     xds.execute()
     ds = xds.fetch()
@@ -158,7 +158,7 @@ def test_export(setup):
     tmp_dir = Path(tempfile.gettempdir())
     export_dir = tmp_dir.joinpath("test_export")
     shutil.rmtree(export_dir, ignore_errors=True)
-    db = from_huggingface("cifar10", split="train")
+    db = from_huggingface("cifar10", split="train", trust_remote_code=True)
     # Test invalid export dir
     Path(export_dir).touch()
     with pytest.raises(Exception, match="dir"):
@@ -184,7 +184,7 @@ def test_export(setup):
         assert len(data_arrow_files) == data_meta_info["num_files"]
         assert info["num_rows"] == data_meta_info["num_rows"]
 
-        db = from_huggingface("imdb", split="train")
+        db = from_huggingface("imdb", split="train", trust_remote_code=True)
         db.export(
             export_dir,
             column_groups={"my_text": ["text"], "my_label": ["label"]},
