@@ -61,14 +61,14 @@ jobs:
             requires-python: ">=3.12,<3.13"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Add msbuild to PATH
         if: ${{ matrix.os == 'windows-latest'}}
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v2
 
       - name: Set up QEMU
         if: ${{ matrix.arch == 'aarch64' }}
@@ -97,7 +97,7 @@ jobs:
         with:
           package-dir: ./python/
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: wheelhouse/*.whl
 
@@ -105,7 +105,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
@@ -118,7 +118,7 @@ jobs:
       - name: Build sdist
         run: cd python && pipx run build --sdist
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: ./python/dist/*.tar.gz
 
