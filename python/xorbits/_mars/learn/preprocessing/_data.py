@@ -215,7 +215,7 @@ class MinMaxScaler(TransformerMixin, BaseEstimator):
             reset=first_pass,
             estimator=self,
             dtype=FLOAT_DTYPES,
-            force_all_finite="allow-nan",
+            ensure_all_finite="allow-nan",
         )
 
         if np.isnan(X.shape[0]):  # pragma: no cover
@@ -267,7 +267,7 @@ class MinMaxScaler(TransformerMixin, BaseEstimator):
             X,
             copy=self.copy,
             dtype=FLOAT_DTYPES,
-            force_all_finite="allow-nan",
+            ensure_all_finite="allow-nan",
             reset=False,
         )
 
@@ -293,7 +293,7 @@ class MinMaxScaler(TransformerMixin, BaseEstimator):
         check_is_fitted(self)
 
         X = check_array(
-            X, copy=self.copy, dtype=FLOAT_DTYPES, force_all_finite="allow-nan"
+            X, copy=self.copy, dtype=FLOAT_DTYPES, ensure_all_finite="allow-nan"
         )
 
         X -= self.min_
@@ -382,7 +382,11 @@ def minmax_scale(
     # Unlike the scaler object, this function allows 1d input.
     # If copy is required, it will be done inside the scaler object.
     X = check_array(
-        X, copy=False, ensure_2d=False, dtype=FLOAT_DTYPES, force_all_finite="allow-nan"
+        X,
+        copy=False,
+        ensure_2d=False,
+        dtype=FLOAT_DTYPES,
+        ensure_all_finite="allow-nan",
     )
     original_ndim = X.ndim
 
