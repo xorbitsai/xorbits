@@ -99,7 +99,6 @@ class LabelEncoder(TransformerMixin, BaseEstimator):
         self : returns an instance of self.
             Fitted label encoder.
         """
-
         y = column_or_1d(y, warn=True)
         self.classes_ = _unique(y)
         if execute:
@@ -121,7 +120,6 @@ class LabelEncoder(TransformerMixin, BaseEstimator):
         y : array-like of shape (n_samples,)
             Encoded labels.
         """
-
         y = column_or_1d(y, warn=True)
         self.classes_, y = execute_tileable(
             _unique(y, return_inverse=True), session=session, **(run_kwargs or dict())
@@ -142,7 +140,6 @@ class LabelEncoder(TransformerMixin, BaseEstimator):
             Labels as normalized encodings.
         """
         check_is_fitted(self)
-
         y = column_or_1d(y, warn=True)
         # transform of empty array is empty array
         if _num_samples(y) == 0:
@@ -167,7 +164,6 @@ class LabelEncoder(TransformerMixin, BaseEstimator):
             Original encoding.
         """
         check_is_fitted(self)
-
         y = column_or_1d(y, warn=True)
         # inverse transform of empty array is empty array
         if _num_samples(y) == 0:

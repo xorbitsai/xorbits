@@ -40,7 +40,6 @@ import warnings
 import weakref
 import zlib
 from abc import ABC
-from collections import OrderedDict
 from contextlib import contextmanager
 from types import ModuleType, TracebackType
 from typing import (
@@ -775,25 +774,28 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
         for r in chunk_results:
             result.extend(r[1])
         return result
-    elif isinstance(v, (dict, OrderedDict)):
+    elif type(v) is dict:
         # TODO(codingl2k1) : We should register a merge handler for each output type.
-        result = type(v)()
+        result = {}
         chunk_results = [(k, v) for k, v in chunk_results if v]
         if len(chunk_results) == 1:
             return chunk_results[0][1]
         for r in chunk_results:
             d = r[1]
             if not result:
+                if not all(
+                    type(key) is str and type(value) is list for key, value in d.items()
+                ):
+                    raise TypeError(
+                        "only support merge dict with type Dict[str, List]."
+                    )
                 result.update(d)
             else:
                 if d.keys() != result.keys():
                     raise TypeError(f"unsupported merge dict with different keys.")
                 else:
                     for key, value in d.items():
-                        if isinstance(value, list):
-                            result[key].extend(value)
-                        else:
-                            result[key] = value
+                        result[key].extend(value)
         return result
     elif isinstance(v, pa.Table):
         result = [r[1] for r in chunk_results]
