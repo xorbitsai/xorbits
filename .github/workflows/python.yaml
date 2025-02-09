@@ -414,6 +414,24 @@ jobs:
           xorbits
       working-directory: ./python
 
+    - name: Build and Publish
+      if: startsWith(github.ref, 'refs/tags/')
+      environment: pypi-publish
+      run: |
+        pip install build twine
+        python -m build
+        if [[ "$IS_TEST" == "true" ]]; then
+          python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* \
+            --username __token__ \
+            --password ${{ secrets.TEST_PYPI_TOKEN }}
+        else
+          python -m twine upload dist/* \
+            --username __token__ \
+            --password ${{ secrets.PYPI_TOKEN }}
+        fi
+      env:
+        IS_TEST: ${{ contains(github.ref, 'test-') }}
+      working-directory: ./python
 
     - name: Cleanup on slurm
       if: ${{ matrix.module == 'slurm' }}
