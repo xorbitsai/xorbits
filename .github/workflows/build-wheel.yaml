@@ -99,6 +99,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
+          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.requires-python }}
           path: wheelhouse/*.whl
 
   build_sdist:
@@ -120,6 +121,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: ./python/dist/*.tar.gz
 
   upload_pypi:
