@@ -143,11 +143,18 @@ jobs:
     # upload to PyPI on every tag starting with 'v'
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
+      # Download wheel artifacts
       - uses: actions/download-artifact@v4
         with:
           # Download all wheel artifacts using pattern matching
           pattern: wheel-*
           merge-multiple: true
+          path: wheelhouse
+
+      # Download sdist artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
           path: wheelhouse
 
       # if is xorbits repo, upload to pypi
