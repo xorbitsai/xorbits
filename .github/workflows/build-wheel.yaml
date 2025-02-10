@@ -94,8 +94,6 @@ jobs:
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
           CIBW_TEST_REQUIRES: pytest requests
           CIBW_BUILD_VERBOSITY: 1
-          CIBW_MANYLINUX_AARCH64_IMAGE: quay.io/pypa/manylinux2014_aarch64:latest
-          DOCKER_BUILDKIT: 1
         with:
           package-dir: ./python/
 
