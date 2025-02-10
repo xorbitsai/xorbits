@@ -76,6 +76,14 @@ jobs:
         with:
           platforms: all
 
+      - name: Set up Docker
+        if: ${{ matrix.arch == 'aarch64' }}
+        uses: docker/setup-buildx-action@v3
+        with:
+          version: v0.10.5
+        env:
+          DOCKER_BUILDKIT: 0
+
       - name: Build web
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
@@ -94,6 +102,8 @@ jobs:
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
           CIBW_TEST_REQUIRES: pytest requests
           CIBW_BUILD_VERBOSITY: 1
+          DOCKER_BUILDKIT: 0
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
         with:
           package-dir: ./python/
 
