@@ -72,9 +72,14 @@ jobs:
 
       - name: Set up QEMU
         if: ${{ matrix.arch == 'aarch64' }}
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
+          # This should be temporary
+          # xref https://github.com/docker/setup-qemu-action/issues/188
+          # xref https://github.com/tonistiigi/binfmt/issues/215
+          image: tonistiigi/binfmt:qemu-v8.1.5
+          id: qemu
 
       - name: Build web
         if: ${{ matrix.os == 'ubuntu-latest' }}
