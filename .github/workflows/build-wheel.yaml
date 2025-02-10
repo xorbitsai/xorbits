@@ -97,9 +97,16 @@ jobs:
         with:
           package-dir: ./python/
 
+      - name: Set artifact name
+        id: set-name
+        run: |
+          version="${{ matrix.requires-python }}"
+          version=$(echo "$version" | sed 's/>=//g' | sed 's/<//g' | sed 's/\.//g')
+          echo "py_version=$version" >> $GITHUB_OUTPUT
+
       - uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-py${{ matrix.requires-python || 'latest' | replace('>=','') | replace('<','') | replace('.','') }}
+          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-py${{ steps.set-name.outputs.py_version }}
           path: wheelhouse/*.whl
 
   build_sdist:
