@@ -99,6 +99,7 @@ jobs:
 
       - name: Set artifact name
         id: set-name
+        shell: bash
         run: |
           version="${{ matrix.requires-python }}"
           version=$(echo "$version" | sed 's/>=//g' | sed 's/<//g' | sed 's/\.//g')
