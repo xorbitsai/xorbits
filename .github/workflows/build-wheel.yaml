@@ -68,13 +68,13 @@ jobs:
 
       - name: Add msbuild to PATH
         if: ${{ matrix.os == 'windows-latest'}}
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Set up QEMU
         if: ${{ matrix.arch == 'aarch64' }}
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v2
         with:
-          platforms: arm64
+          platforms: all
 
       - name: Build web
         if: ${{ matrix.os == 'ubuntu-latest' }}
