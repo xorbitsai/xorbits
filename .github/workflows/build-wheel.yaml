@@ -164,10 +164,7 @@ jobs:
           CIBW_ENVIRONMENT_PASS_LINUX: NO_WEB_UI
           CIBW_BUILD: ${{ matrix.python_tag }}-*
           CIBW_ARCHS: ${{ matrix.arch }}
-          CIBW_PROJECT_REQUIRES_PYTHON: >-
-            ${{ format('>={0},<{1}', matrix.python,
-            startsWith(matrix.python, '3.') && format('3.{0}', add(parseFloat(substring(matrix.python, 2)), 1))
-            ) }}
+          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9"
           CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
