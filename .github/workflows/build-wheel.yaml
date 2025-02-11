@@ -194,7 +194,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.python_tag }}
+          name: ${{ matrix.python_tag }}-${{ matrix.platform_id }}
           path: wheelhouse/*.whl
 
   build_sdist:
