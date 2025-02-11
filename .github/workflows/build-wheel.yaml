@@ -162,7 +162,7 @@ jobs:
         env:
           CIBW_ENVIRONMENT_LINUX: NO_WEB_UI=1
           CIBW_ENVIRONMENT_PASS_LINUX: NO_WEB_UI
-          CIBW_BUILD: ${{ matrix.python_tag }}-*
+          CIBW_BUILD: cp${{ matrix.python_tag }}*
           CIBW_ARCHS: ${{ matrix.arch }}
           CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9"
           CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
