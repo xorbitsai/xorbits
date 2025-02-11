@@ -21,45 +21,114 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.9", "3.10", "3.11", "3.12"]
         arch: [auto]
-        requires-python: [">=3.9,<3.10", ">=3.10,<3.11", ">=3.11,<3.12", ">=3.12,<3.13"]
         include:
+          # Linux x86_64
           - os: ubuntu-latest
-            arch: aarch64
-            requires-python: ">=3.9,<3.10"
+            python: "3.9"
+            arch: auto
+            platform_id: manylinux_2_28_x86_64
+            python_tag: cp39
           - os: ubuntu-latest
-            arch: aarch64
-            requires-python: ">=3.10,<3.11"
+            python: "3.10"
+            arch: auto
+            platform_id: manylinux_2_28_x86_64
+            python_tag: cp310
           - os: ubuntu-latest
-            arch: aarch64
-            requires-python: ">=3.11,<3.12"
+            python: "3.11"
+            arch: auto
+            platform_id: manylinux_2_28_x86_64
+            python_tag: cp311
           - os: ubuntu-latest
+            python: "3.12"
+            arch: auto
+            platform_id: manylinux_2_28_x86_64
+            python_tag: cp312
+          # Linux aarch64
+          - os: ubuntu-latest
+            python: "3.9"
             arch: aarch64
-            requires-python: ">=3.12,<3.13"
+            platform_id: manylinux_2_28_aarch64
+            python_tag: cp39
+          - os: ubuntu-latest
+            python: "3.10"
+            arch: aarch64
+            platform_id: manylinux_2_28_aarch64
+            python_tag: cp310
+          - os: ubuntu-latest
+            python: "3.11"
+            arch: aarch64
+            platform_id: manylinux_2_28_aarch64
+            python_tag: cp311
+          - os: ubuntu-latest
+            python: "3.12"
+            arch: aarch64
+            platform_id: manylinux_2_28_aarch64
+            python_tag: cp312
+          # macOS x86_64
           - os: macos-13
+            python: "3.9"
             arch: x86_64
-            requires-python: ">=3.9,<3.10"
+            platform_id: macosx_10_9_x86_64
+            python_tag: cp39
           - os: macos-13
+            python: "3.10"
             arch: x86_64
-            requires-python: ">=3.10,<3.11"
+            platform_id: macosx_10_9_x86_64
+            python_tag: cp310
           - os: macos-13
+            python: "3.11"
             arch: x86_64
-            requires-python: ">=3.11,<3.12"
+            platform_id: macosx_10_9_x86_64
+            python_tag: cp311
           - os: macos-13
+            python: "3.12"
             arch: x86_64
-            requires-python: ">=3.12,<3.13"
+            platform_id: macosx_10_9_x86_64
+            python_tag: cp312
+          # macOS universal2
           - os: macos-13
+            python: "3.9"
             arch: universal2
-            requires-python: ">=3.9,<3.10"
+            platform_id: macosx_10_9_universal2
+            python_tag: cp39
           - os: macos-13
+            python: "3.10"
             arch: universal2
-            requires-python: ">=3.10,<3.11"
+            platform_id: macosx_10_9_universal2
+            python_tag: cp310
           - os: macos-13
+            python: "3.11"
             arch: universal2
-            requires-python: ">=3.11,<3.12"
+            platform_id: macosx_10_9_universal2
+            python_tag: cp311
           - os: macos-13
+            python: "3.12"
             arch: universal2
-            requires-python: ">=3.12,<3.13"
+            platform_id: macosx_10_9_universal2
+            python_tag: cp312
+          # Windows
+          - os: windows-latest
+            python: "3.9"
+            arch: auto
+            platform_id: win_amd64
+            python_tag: cp39
+          - os: windows-latest
+            python: "3.10"
+            arch: auto
+            platform_id: win_amd64
+            python_tag: cp310
+          - os: windows-latest
+            python: "3.11"
+            arch: auto
+            platform_id: win_amd64
+            python_tag: cp311
+          - os: windows-latest
+            python: "3.12"
+            arch: auto
+            platform_id: win_amd64
+            python_tag: cp312
 
     steps:
       - uses: actions/checkout@v4
@@ -93,8 +162,12 @@ jobs:
         env:
           CIBW_ENVIRONMENT_LINUX: NO_WEB_UI=1
           CIBW_ENVIRONMENT_PASS_LINUX: NO_WEB_UI
+          CIBW_BUILD: ${{ matrix.python_tag }}-*
           CIBW_ARCHS: ${{ matrix.arch }}
-          CIBW_PROJECT_REQUIRES_PYTHON: ${{ matrix.requires-python }}
+          CIBW_PROJECT_REQUIRES_PYTHON: >-
+            ${{ format('>={0},<{1}', matrix.python,
+            startsWith(matrix.python, '3.') && format('3.{0}', add(parseFloat(substring(matrix.python, 2)), 1))
+            ) }}
           CIBW_BEFORE_BUILD_MACOS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_BEFORE_BUILD_WINDOWS: pip install -r CI/requirements-wheel.txt && cd python && python setup.py build_web && git reset --hard HEAD
           CIBW_TEST_COMMAND: pytest {project}/CI/test_basic_execution.py
@@ -105,7 +178,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-py${{ format('{0}{1}', contains(matrix.requires-python, '3.9') && '39' || contains(matrix.requires-python, '3.10') && '310' || contains(matrix.requires-python, '3.11') && '311' || contains(matrix.requires-python, '3.12') && '312') }}
+          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.python_tag }}
           path: wheelhouse/*.whl
 
   build_sdist:
