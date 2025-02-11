@@ -20,104 +20,115 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [auto]
+        requires-python: [">=3.9,<3.10", ">=3.10,<3.11", ">=3.11,<3.12", ">=3.12,<3.13"]
         include:
           # Linux x86_64
-          - python: cp39
-            os: ubuntu-latest
-            platform_id: manylinux_2_28_x86_64
+          - os: ubuntu-latest
+            arch: auto
             requires-python: ">=3.9,<3.10"
-          - python: cp310
-            os: ubuntu-latest
+            python_tag: cp39
             platform_id: manylinux_2_28_x86_64
+          - os: ubuntu-latest
+            arch: auto
             requires-python: ">=3.10,<3.11"
-          - python: cp311
-            os: ubuntu-latest
+            python_tag: cp310
             platform_id: manylinux_2_28_x86_64
+          - os: ubuntu-latest
+            arch: auto
             requires-python: ">=3.11,<3.12"
-          - python: cp312
-            os: ubuntu-latest
+            python_tag: cp311
             platform_id: manylinux_2_28_x86_64
+          - os: ubuntu-latest
+            arch: auto
             requires-python: ">=3.12,<3.13"
+            python_tag: cp312
+            platform_id: manylinux_2_28_x86_64
           # Linux aarch64
-          - python: cp39
-            os: ubuntu-latest
-            platform_id: manylinux_2_28_aarch64
+          - os: ubuntu-latest
+            arch: aarch64
             requires-python: ">=3.9,<3.10"
-            arch: aarch64
-          - python: cp310
-            os: ubuntu-latest
+            python_tag: cp39
             platform_id: manylinux_2_28_aarch64
+          - os: ubuntu-latest
+            arch: aarch64
             requires-python: ">=3.10,<3.11"
-            arch: aarch64
-          - python: cp311
-            os: ubuntu-latest
+            python_tag: cp310
             platform_id: manylinux_2_28_aarch64
+          - os: ubuntu-latest
+            arch: aarch64
             requires-python: ">=3.11,<3.12"
-            arch: aarch64
-          - python: cp312
-            os: ubuntu-latest
+            python_tag: cp311
             platform_id: manylinux_2_28_aarch64
-            requires-python: ">=3.12,<3.13"
+          - os: ubuntu-latest
             arch: aarch64
+            requires-python: ">=3.12,<3.13"
+            python_tag: cp312
+            platform_id: manylinux_2_28_aarch64
           # macOS x86_64
-          - python: cp39
-            os: macos-latest
-            platform_id: macosx_10_9_x86_64
+          - os: macos-latest
+            arch: x86_64
             requires-python: ">=3.9,<3.10"
-            arch: x86_64
-          - python: cp310
-            os: macos-latest
+            python_tag: cp39
             platform_id: macosx_10_9_x86_64
+          - os: macos-latest
+            arch: x86_64
             requires-python: ">=3.10,<3.11"
-            arch: x86_64
-          - python: cp311
-            os: macos-latest
+            python_tag: cp310
             platform_id: macosx_10_9_x86_64
+          - os: macos-latest
+            arch: x86_64
             requires-python: ">=3.11,<3.12"
-            arch: x86_64
-          - python: cp312
-            os: macos-latest
+            python_tag: cp311
             platform_id: macosx_10_9_x86_64
-            requires-python: ">=3.12,<3.13"
+          - os: macos-latest
             arch: x86_64
+            requires-python: ">=3.12,<3.13"
+            python_tag: cp312
+            platform_id: macosx_10_9_x86_64
           # macOS universal2
-          - python: cp39
-            os: macos-latest
-            platform_id: macosx_10_9_universal2
+          - os: macos-latest
+            arch: universal2
             requires-python: ">=3.9,<3.10"
-            arch: universal2
-          - python: cp310
-            os: macos-latest
+            python_tag: cp39
             platform_id: macosx_10_9_universal2
+          - os: macos-latest
+            arch: universal2
             requires-python: ">=3.10,<3.11"
-            arch: universal2
-          - python: cp311
-            os: macos-latest
+            python_tag: cp310
             platform_id: macosx_10_9_universal2
+          - os: macos-latest
+            arch: universal2
             requires-python: ">=3.11,<3.12"
-            arch: universal2
-          - python: cp312
-            os: macos-latest
+            python_tag: cp311
             platform_id: macosx_10_9_universal2
-            requires-python: ">=3.12,<3.13"
+          - os: macos-latest
             arch: universal2
+            requires-python: ">=3.12,<3.13"
+            python_tag: cp312
+            platform_id: macosx_10_9_universal2
           # Windows
-          - python: cp39
-            os: windows-latest
-            platform_id: win_amd64
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.9,<3.10"
-          - python: cp310
-            os: windows-latest
+            python_tag: cp39
             platform_id: win_amd64
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.10,<3.11"
-          - python: cp311
-            os: windows-latest
+            python_tag: cp310
             platform_id: win_amd64
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.11,<3.12"
-          - python: cp312
-            os: windows-latest
+            python_tag: cp311
             platform_id: win_amd64
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.12,<3.13"
+            python_tag: cp312
+            platform_id: win_amd64
 
     steps:
       - uses: actions/checkout@v4
@@ -160,6 +171,36 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
         with:
           package-dir: ./python/
+
+      - name: Get Python tag
+        id: get_tag
+        shell: bash
+        run: |
+          if [[ "${{ matrix.requires-python }}" == ">=3.9,<3.10" ]]; then
+            echo "python_tag=cp39" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.requires-python }}" == ">=3.10,<3.11" ]]; then
+            echo "python_tag=cp310" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.requires-python }}" == ">=3.11,<3.12" ]]; then
+            echo "python_tag=cp311" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.requires-python }}" == ">=3.12,<3.13" ]]; then
+            echo "python_tag=cp312" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get platform id
+        id: get_platform
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.arch }}" == "auto" ]]; then
+            echo "platform_id=manylinux_2_28_x86_64" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.arch }}" == "aarch64" ]]; then
+            echo "platform_id=manylinux_2_28_aarch64" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.os }}" == "macos-latest" && "${{ matrix.arch }}" == "x86_64" ]]; then
+            echo "platform_id=macosx_10_9_x86_64" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.os }}" == "macos-latest" && "${{ matrix.arch }}" == "universal2" ]]; then
+            echo "platform_id=macosx_10_9_universal2" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            echo "platform_id=win_amd64" >> $GITHUB_OUTPUT
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
