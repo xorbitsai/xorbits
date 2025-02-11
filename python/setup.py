@@ -224,6 +224,7 @@ def build_long_description():
 
 
 setup_options = dict(
+    name="xorbits-test",  # 临时修改用于测试，原为 "xorbits"
     version=versioneer.get_version(),
     ext_modules=extensions,
     cmdclass=versioneer.get_cmdclass(
