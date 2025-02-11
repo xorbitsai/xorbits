@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-13, windows-latest]
+        os: [ubuntu-latest, macos-14, windows-latest]
         arch: [auto]
         requires-python: [">=3.9,<3.10", ">=3.10,<3.11", ">=3.11,<3.12", ">=3.12,<3.13"]
         include:
@@ -67,64 +67,64 @@ jobs:
             python_tag: cp312
             platform_id: manylinux_2_28_aarch64
           # macOS x86_64 (auto)
-          - os: macos-latest
+          - os: macos-14
             arch: auto
             requires-python: ">=3.9,<3.10"
             python_tag: cp39
             platform_id: macosx_10_9_x86_64
-          - os: macos-latest
+          - os: macos-14
             arch: auto
             requires-python: ">=3.10,<3.11"
             python_tag: cp310
             platform_id: macosx_10_9_x86_64
-          - os: macos-latest
+          - os: macos-14
             arch: auto
             requires-python: ">=3.11,<3.12"
             python_tag: cp311
             platform_id: macosx_10_9_x86_64
-          - os: macos-latest
+          - os: macos-14
             arch: auto
             requires-python: ">=3.12,<3.13"
             python_tag: cp312
             platform_id: macosx_10_9_x86_64
           # macOS x86_64
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
             requires-python: ">=3.9,<3.10"
             python_tag: cp39
             platform_id: macosx_10_9_x86_64
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
             requires-python: ">=3.10,<3.11"
             python_tag: cp310
             platform_id: macosx_10_9_x86_64
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
             requires-python: ">=3.11,<3.12"
             python_tag: cp311
             platform_id: macosx_10_9_x86_64
-          - os: macos-13
+          - os: macos-14
             arch: x86_64
             requires-python: ">=3.12,<3.13"
             python_tag: cp312
             platform_id: macosx_10_9_x86_64
           # macOS universal2
-          - os: macos-13
+          - os: macos-14
             arch: universal2
             requires-python: ">=3.9,<3.10"
             python_tag: cp39
             platform_id: macosx_10_9_universal2
-          - os: macos-13
+          - os: macos-14
             arch: universal2
             requires-python: ">=3.10,<3.11"
             python_tag: cp310
             platform_id: macosx_10_9_universal2
-          - os: macos-13
+          - os: macos-14
             arch: universal2
             requires-python: ">=3.11,<3.12"
             python_tag: cp311
             platform_id: macosx_10_9_universal2
-          - os: macos-13
+          - os: macos-14
             arch: universal2
             requires-python: ">=3.12,<3.13"
             python_tag: cp312
