@@ -12,7 +12,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: {}
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }} for ${{ matrix.arch }}
@@ -20,7 +19,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        requires-python: [">=3.9,<3.10", ">=3.10,<3.11", ">=3.11,<3.12", ">=3.12,<3.13"]
         include:
           # Linux x86_64
           - os: ubuntu-latest
@@ -65,43 +63,43 @@ jobs:
             python: 312
             platform_id: manylinux_aarch64
           # macOS arm64
-          - os: macos-13
+          - os: macos-14
             arch: arm64
             requires-python: ">=3.9,<3.10"
             python: 39
             platform_id: macosx_arm64
-          - os: macos-13
+          - os: macos-14
             arch: arm64
             requires-python: ">=3.10,<3.11"
             python: 310
             platform_id: macosx_arm64
-          - os: macos-13
+          - os: macos-14
             arch: arm64
             requires-python: ">=3.11,<3.12"
             python: 311
             platform_id: macosx_arm64
-          - os: macos-13
+          - os: macos-14
             arch: arm64
             requires-python: ">=3.12,<3.13"
             python: 312
             platform_id: macosx_arm64
           # macOS x86_64
-          - os: macos-14
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.9,<3.10"
             python: 39
             platform_id: macosx_x86_64
-          - os: macos-14
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.10,<3.11"
             python: 310
             platform_id: macosx_x86_64
-          - os: macos-14
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.11,<3.12"
             python: 311
             platform_id: macosx_x86_64
-          - os: macos-14
+          - os: macos-13
             arch: x86_64
             requires-python: ">=3.12,<3.13"
             python: 312
