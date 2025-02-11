@@ -151,7 +151,6 @@ jobs:
       # Download wheel artifacts
       - uses: actions/download-artifact@v4
         with:
-          # Download all wheel artifacts using pattern matching
           pattern: wheel-*
           merge-multiple: true
           path: dist
@@ -163,17 +162,22 @@ jobs:
           path: dist
 
       # if is xorbits repo, upload to pypi
-      - name: Publish 🐍📦 to PyPI
+      - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository == 'xorbitsai/xorbits'
-        uses: pypa/gh-action-pypi-publish@release/v1
         with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
+          packages-dir: dist
+          skip-existing: true
           verbose: true
 
       # if is not xorbits repo, upload to test
-      - name: Publish 🐍📦 to Test PyPI
+      - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.repository != 'xorbitsai/xorbits'
-        uses: pypa/gh-action-pypi-publish@release/v1
         with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_PASSWORD }}
           repository-url: https://test.pypi.org/legacy/
-          package-name: xorbits-test
+          packages-dir: dist
+          skip-existing: true
           verbose: true
