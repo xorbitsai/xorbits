@@ -20,134 +20,103 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python: ["3.9", "3.10", "3.11", "3.12"]
-        arch: [auto]
         include:
           # Linux x86_64
-          - os: ubuntu-latest
-            python: "3.9"
-            arch: auto
+          - python: cp39
+            os: ubuntu-latest
             platform_id: manylinux_2_28_x86_64
-            python_tag: cp39
             requires-python: ">=3.9,<3.10"
-          - os: ubuntu-latest
-            python: "3.10"
-            arch: auto
+          - python: cp310
+            os: ubuntu-latest
             platform_id: manylinux_2_28_x86_64
-            python_tag: cp310
             requires-python: ">=3.10,<3.11"
-          - os: ubuntu-latest
-            python: "3.11"
-            arch: auto
+          - python: cp311
+            os: ubuntu-latest
             platform_id: manylinux_2_28_x86_64
-            python_tag: cp311
             requires-python: ">=3.11,<3.12"
-          - os: ubuntu-latest
-            python: "3.12"
-            arch: auto
+          - python: cp312
+            os: ubuntu-latest
             platform_id: manylinux_2_28_x86_64
-            python_tag: cp312
             requires-python: ">=3.12,<3.13"
           # Linux aarch64
-          - os: ubuntu-latest
-            python: "3.9"
-            arch: aarch64
+          - python: cp39
+            os: ubuntu-latest
             platform_id: manylinux_2_28_aarch64
-            python_tag: cp39
             requires-python: ">=3.9,<3.10"
-          - os: ubuntu-latest
-            python: "3.10"
             arch: aarch64
+          - python: cp310
+            os: ubuntu-latest
             platform_id: manylinux_2_28_aarch64
-            python_tag: cp310
             requires-python: ">=3.10,<3.11"
-          - os: ubuntu-latest
-            python: "3.11"
             arch: aarch64
+          - python: cp311
+            os: ubuntu-latest
             platform_id: manylinux_2_28_aarch64
-            python_tag: cp311
             requires-python: ">=3.11,<3.12"
-          - os: ubuntu-latest
-            python: "3.12"
             arch: aarch64
+          - python: cp312
+            os: ubuntu-latest
             platform_id: manylinux_2_28_aarch64
-            python_tag: cp312
             requires-python: ">=3.12,<3.13"
+            arch: aarch64
           # macOS x86_64
-          - os: macos-13
-            python: "3.9"
-            arch: x86_64
+          - python: cp39
+            os: macos-latest
             platform_id: macosx_10_9_x86_64
-            python_tag: cp39
             requires-python: ">=3.9,<3.10"
-          - os: macos-13
-            python: "3.10"
             arch: x86_64
+          - python: cp310
+            os: macos-latest
             platform_id: macosx_10_9_x86_64
-            python_tag: cp310
             requires-python: ">=3.10,<3.11"
-          - os: macos-13
-            python: "3.11"
             arch: x86_64
+          - python: cp311
+            os: macos-latest
             platform_id: macosx_10_9_x86_64
-            python_tag: cp311
             requires-python: ">=3.11,<3.12"
-          - os: macos-13
-            python: "3.12"
             arch: x86_64
+          - python: cp312
+            os: macos-latest
             platform_id: macosx_10_9_x86_64
-            python_tag: cp312
             requires-python: ">=3.12,<3.13"
+            arch: x86_64
           # macOS universal2
-          - os: macos-13
-            python: "3.9"
-            arch: universal2
+          - python: cp39
+            os: macos-latest
             platform_id: macosx_10_9_universal2
-            python_tag: cp39
             requires-python: ">=3.9,<3.10"
-          - os: macos-13
-            python: "3.10"
             arch: universal2
+          - python: cp310
+            os: macos-latest
             platform_id: macosx_10_9_universal2
-            python_tag: cp310
             requires-python: ">=3.10,<3.11"
-          - os: macos-13
-            python: "3.11"
             arch: universal2
+          - python: cp311
+            os: macos-latest
             platform_id: macosx_10_9_universal2
-            python_tag: cp311
             requires-python: ">=3.11,<3.12"
-          - os: macos-13
-            python: "3.12"
             arch: universal2
+          - python: cp312
+            os: macos-latest
             platform_id: macosx_10_9_universal2
-            python_tag: cp312
             requires-python: ">=3.12,<3.13"
+            arch: universal2
           # Windows
-          - os: windows-latest
-            python: "3.9"
-            arch: auto
+          - python: cp39
+            os: windows-latest
             platform_id: win_amd64
-            python_tag: cp39
             requires-python: ">=3.9,<3.10"
-          - os: windows-latest
-            python: "3.10"
-            arch: auto
+          - python: cp310
+            os: windows-latest
             platform_id: win_amd64
-            python_tag: cp310
             requires-python: ">=3.10,<3.11"
-          - os: windows-latest
-            python: "3.11"
-            arch: auto
+          - python: cp311
+            os: windows-latest
             platform_id: win_amd64
-            python_tag: cp311
             requires-python: ">=3.11,<3.12"
-          - os: windows-latest
-            python: "3.12"
-            arch: auto
+          - python: cp312
+            os: windows-latest
             platform_id: win_amd64
-            python_tag: cp312
             requires-python: ">=3.12,<3.13"
 
     steps:
