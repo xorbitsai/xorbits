@@ -66,27 +66,27 @@ jobs:
             requires-python: ">=3.12,<3.13"
             python_tag: cp312
             platform_id: manylinux_2_28_aarch64
-          # macOS x86_64 (auto)
+          # macOS arm64
           - os: macos-13
-            arch: auto
+            arch: arm64
             requires-python: ">=3.9,<3.10"
             python_tag: cp39
-            platform_id: macosx_10_9_x86_64
+            platform_id: macosx_11_0_arm64
           - os: macos-13
-            arch: auto
+            arch: arm64
             requires-python: ">=3.10,<3.11"
             python_tag: cp310
-            platform_id: macosx_10_9_x86_64
+            platform_id: macosx_11_0_arm64
           - os: macos-13
-            arch: auto
+            arch: arm64
             requires-python: ">=3.11,<3.12"
             python_tag: cp311
-            platform_id: macosx_10_9_x86_64
+            platform_id: macosx_11_0_arm64
           - os: macos-13
-            arch: auto
+            arch: arm64
             requires-python: ">=3.12,<3.13"
             python_tag: cp312
-            platform_id: macosx_10_9_x86_64
+            platform_id: macosx_11_0_arm64
           # macOS x86_64
           - os: macos-13
             arch: x86_64
