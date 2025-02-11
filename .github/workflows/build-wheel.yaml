@@ -105,7 +105,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-py${{ format('{0}{1}', matrix.requires-python.split(',')[0] | replace('>=', 'py'), matrix.requires-python.split(',')[1] | replace('<', '_')) }}
+          name: wheel-${{ matrix.os }}-${{ matrix.arch }}-py${{ format('{0}{1}', contains(matrix.requires-python, '3.9') && '39' || contains(matrix.requires-python, '3.10') && '310' || contains(matrix.requires-python, '3.11') && '311' || contains(matrix.requires-python, '3.12') && '312') }}
           path: wheelhouse/*.whl
 
   build_sdist:
