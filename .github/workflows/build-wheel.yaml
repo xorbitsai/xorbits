@@ -19,49 +19,115 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        arch: [auto]
-        requires-python: [">=3.9,<3.10", ">=3.10,<3.11", ">=3.11,<3.12", ">=3.12,<3.13"]
         include:
+          # Linux x86_64
+          - os: ubuntu-latest
+            arch: auto
+            requires-python: ">=3.9,<3.10"
+            python: 39
+            platform_id: manylinux_x86_64
+          - os: ubuntu-latest
+            arch: auto
+            requires-python: ">=3.10,<3.11"
+            python: 310
+            platform_id: manylinux_x86_64
+          - os: ubuntu-latest
+            arch: auto
+            requires-python: ">=3.11,<3.12"
+            python: 311
+            platform_id: manylinux_x86_64
+          - os: ubuntu-latest
+            arch: auto
+            requires-python: ">=3.12,<3.13"
+            python: 312
+            platform_id: manylinux_x86_64
+          # Linux aarch64
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.9,<3.10"
+            python: 39
+            platform_id: manylinux_aarch64
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.10,<3.11"
+            python: 310
+            platform_id: manylinux_aarch64
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.11,<3.12"
+            python: 311
+            platform_id: manylinux_aarch64
           - os: ubuntu-latest
             arch: aarch64
             requires-python: ">=3.12,<3.13"
+            python: 312
+            platform_id: manylinux_aarch64
+          # macOS arm64
+          - os: macos-14
+            arch: arm64
+            requires-python: ">=3.9,<3.10"
+            python: 39
+            platform_id: macosx_arm64
+          - os: macos-14
+            arch: arm64
+            requires-python: ">=3.10,<3.11"
+            python: 310
+            platform_id: macosx_arm64
+          - os: macos-14
+            arch: arm64
+            requires-python: ">=3.11,<3.12"
+            python: 311
+            platform_id: macosx_arm64
+          - os: macos-14
+            arch: arm64
+            requires-python: ">=3.12,<3.13"
+            python: 312
+            platform_id: macosx_arm64
+          # macOS x86_64
           - os: macos-13
             arch: x86_64
             requires-python: ">=3.9,<3.10"
+            python: 39
+            platform_id: macosx_x86_64
           - os: macos-13
             arch: x86_64
             requires-python: ">=3.10,<3.11"
+            python: 310
+            platform_id: macosx_x86_64
           - os: macos-13
             arch: x86_64
             requires-python: ">=3.11,<3.12"
+            python: 311
+            platform_id: macosx_x86_64
           - os: macos-13
             arch: x86_64
             requires-python: ">=3.12,<3.13"
-          - os: macos-13
-            arch: universal2
+            python: 312
+            platform_id: macosx_x86_64
+          # Windows
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.9,<3.10"
-          - os: macos-13
-            arch: universal2
+            python: 39
+            platform_id: win_amd64
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.10,<3.11"
-          - os: macos-13
-            arch: universal2
+            python: 310
+            platform_id: win_amd64
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.11,<3.12"
-          - os: macos-13
-            arch: universal2
+            python: 311
+            platform_id: win_amd64
+          - os: windows-latest
+            arch: auto
             requires-python: ">=3.12,<3.13"
+            python: 312
+            platform_id: win_amd64
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
@@ -72,9 +138,14 @@ jobs:
 
       - name: Set up QEMU
         if: ${{ matrix.arch == 'aarch64' }}
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
+          # This should be temporary
+          # xref https://github.com/docker/setup-qemu-action/issues/188
+          # xref https://github.com/tonistiigi/binfmt/issues/215
+          image: tonistiigi/binfmt:qemu-v8.1.5
+          id: qemu
 
       - name: Build web
         if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -97,15 +168,16 @@ jobs:
         with:
           package-dir: ./python/
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: wheel-${{ matrix.python }}-${{ matrix.platform_id }}
           path: wheelhouse/*.whl
 
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
@@ -118,8 +190,9 @@ jobs:
       - name: Build sdist
         run: cd python && pipx run build --sdist
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: ./python/dist/*.tar.gz
 
   upload_pypi:
@@ -127,12 +200,22 @@ jobs:
     runs-on: ubuntu-latest
     # upload to PyPI on every tag starting with 'v'
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      id-token: write
+      contents: write
+
     steps:
-      - uses: actions/download-artifact@v3
+      # Download wheel artifacts
+      - uses: actions/download-artifact@v4
         with:
-          # unpacks default artifact into dist/
-          # if `name: artifact` is omitted, the action will create extra parent dir
-          name: artifact
+          pattern: wheel-*
+          merge-multiple: true
+          path: dist
+
+      # Download sdist artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
           path: dist
 
       # if is xorbits repo, upload to pypi
@@ -141,7 +224,9 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
+          packages-dir: dist
           skip-existing: true
+          verbose: true
 
       # if is not xorbits repo, upload to test
       - uses: pypa/gh-action-pypi-publish@release/v1
@@ -149,6 +234,7 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_PASSWORD }}
-          verbose: true
           repository-url: https://test.pypi.org/legacy/
+          packages-dir: dist
           skip-existing: true
+          verbose: true
