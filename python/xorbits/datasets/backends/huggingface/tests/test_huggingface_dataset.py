@@ -26,7 +26,9 @@ import pytest
 from ....._mars.tests.core import mock
 from ..from_huggingface import from_huggingface
 
-SAMPLE_DATASET_IDENTIFIER = "lhoestq/test"  # has dataset script. WARNING: now has been deleted
+SAMPLE_DATASET_IDENTIFIER = (
+    "lhoestq/test"  # has dataset script. WARNING: now has been deleted
+)
 SAMPLE_DATASET_IDENTIFIER2 = "lhoestq/test2"  # only has data files
 SAMPLE_DATASET_IDENTIFIER3 = (
     "hf-internal-testing/multi_dir_dataset"  # has multiple data directories
