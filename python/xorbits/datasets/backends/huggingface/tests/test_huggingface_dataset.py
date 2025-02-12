@@ -26,7 +26,9 @@ import pytest
 from ....._mars.tests.core import mock
 from ..from_huggingface import from_huggingface
 
-SAMPLE_DATASET_IDENTIFIER = "lhoestq/test"  # has dataset script
+SAMPLE_DATASET_IDENTIFIER = (
+    "lhoestq/test"  # has dataset script. WARNING: now has been deleted
+)
 SAMPLE_DATASET_IDENTIFIER2 = "lhoestq/test2"  # only has data files
 SAMPLE_DATASET_IDENTIFIER3 = (
     "hf-internal-testing/multi_dir_dataset"  # has multiple data directories
@@ -34,6 +36,7 @@ SAMPLE_DATASET_IDENTIFIER3 = (
 SAMPLE_DATASET_IDENTIFIER4 = "hf-internal-testing/imagefolder_with_metadata"  # imagefolder with a metadata file outside of the train/test directories
 
 
+@pytest.mark.skip(reason="lhoestq/test repository has been deleted")
 def test_split_arg_required():
     with pytest.raises(Exception, match="split"):
         from_huggingface(SAMPLE_DATASET_IDENTIFIER)
@@ -42,7 +45,7 @@ def test_split_arg_required():
 @pytest.mark.parametrize(
     "path",
     [
-        SAMPLE_DATASET_IDENTIFIER,
+        # SAMPLE_DATASET_IDENTIFIER,
         SAMPLE_DATASET_IDENTIFIER2,
         SAMPLE_DATASET_IDENTIFIER3,
         SAMPLE_DATASET_IDENTIFIER4,
@@ -78,7 +81,7 @@ def test_from_huggingface_file_lock(setup):
 @pytest.mark.parametrize(
     "path",
     [
-        SAMPLE_DATASET_IDENTIFIER,
+        # SAMPLE_DATASET_IDENTIFIER,
         SAMPLE_DATASET_IDENTIFIER2,
     ],
 )
@@ -94,7 +97,7 @@ def test_to_dataframe_execute(setup, path):
 @pytest.mark.parametrize(
     "path",
     [
-        SAMPLE_DATASET_IDENTIFIER,
+        # SAMPLE_DATASET_IDENTIFIER,
         SAMPLE_DATASET_IDENTIFIER2,
     ],
 )
@@ -114,7 +117,7 @@ def test_map_execute(setup, path):
 @pytest.mark.parametrize(
     "path",
     [
-        SAMPLE_DATASET_IDENTIFIER,
+        # SAMPLE_DATASET_IDENTIFIER,
         SAMPLE_DATASET_IDENTIFIER2,
     ],
 )

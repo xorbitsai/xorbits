@@ -47,28 +47,6 @@ from ...core.utils.docstring import attach_cls_member_docstring
 def _collect_module_callables() -> Dict[str, Callable]:
     mars_dataframe_callables = dict()
 
-    # install class constructors.
-    mars_dataframe_callables[mars_dataframe.DataFrame.__name__] = wrap_mars_callable(
-        mars_dataframe.DataFrame,
-        attach_docstring=True,
-        is_cls_member=False,
-        docstring_src_module=pandas,
-        docstring_src=pandas.DataFrame,
-    )
-    mars_dataframe_callables[mars_dataframe.Series.__name__] = wrap_mars_callable(
-        mars_dataframe.Series,
-        attach_docstring=True,
-        is_cls_member=False,
-        docstring_src_module=pandas,
-        docstring_src=pandas.Series,
-    )
-    mars_dataframe_callables[mars_dataframe.Index.__name__] = wrap_mars_callable(
-        mars_dataframe.Index,
-        attach_docstring=True,
-        is_cls_member=False,
-        docstring_src_module=pandas,
-        docstring_src=pandas.Index,
-    )
     # install module functions
     for name, func in inspect.getmembers(mars_dataframe, inspect.isfunction):
         mars_dataframe_callables[name] = wrap_mars_callable(
