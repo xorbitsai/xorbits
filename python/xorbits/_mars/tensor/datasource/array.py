@@ -57,7 +57,7 @@ class ArrayDataSource(TensorNoInput):
         _, idx, chunk_size = args
         chunk_op = self.copy().reset_key()
         chunk_op.data = self.data[get_chunk_slices(chunk_size, idx)].astype(
-            chunk_op.dtype, order=self.outputs[0].order.value, copy=False
+            chunk_op.dtype, copy=False
         )
         chunk_op.chunk_size = None
 
