@@ -28,7 +28,7 @@ def percentile(
     axis=None,
     out=None,
     overwrite_input=False,
-    method="linear",
+    interpolation="linear",
     keepdims=False,
 ):
     """
@@ -53,8 +53,8 @@ def percentile(
         but the type (of the output) will be cast if necessary.
     overwrite_input : bool, optional
         Just for compatibility with Numpy, would not take effect.
-    method : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
-        This optional parameter specifies the method method to
+    interpolation : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
+        This optional parameter specifies the interpolation method to
         use when the desired percentile lies between two data points
         ``i < j``:
 
@@ -94,7 +94,7 @@ def percentile(
     Given a vector ``V`` of length ``N``, the q-th percentile of
     ``V`` is the value ``q/100`` of the way from the minimum to the
     maximum in a sorted copy of ``V``. The values and distances of
-    the two nearest neighbors as well as the `method` parameter
+    the two nearest neighbors as well as the `interpolation` parameter
     will determine the percentile if the normalized ranking does not
     match the location of ``q`` exactly. This function is the same as
     the median if ``q=50``, the same as the minimum if ``q=0`` and the
@@ -124,7 +124,7 @@ def percentile(
     >>> m.execute()
     array([6.5, 4.5, 2.5])
 
-    The different types of method can be visualized graphically:
+    The different types of interpolation can be visualized graphically:
 
     .. plot::
 
@@ -142,12 +142,12 @@ def percentile(
             ('nearest', '-.'),
             ('midpoint', '-.'),
         ]
-        for method, style in lines:
+        for interpolation, style in lines:
             ax.plot(
-                np.asarray(p), np.asarray(mt.percentile(a, p, method=method)),
-                label=method, linestyle=style)
+                np.asarray(p), np.asarray(mt.percentile(a, p, interpolation=interpolation)),
+                label=interpolation, linestyle=style)
         ax.set(
-            title='method methods for list: ' + str(a),
+            title='Interpolation methods for list: ' + str(a),
             xlabel='Percentile',
             ylabel='List item returned',
             yticks=np.asarray(a))
@@ -170,7 +170,7 @@ def percentile(
         axis=axis,
         out=out,
         overwrite_input=overwrite_input,
-        method=method,
+        interpolation=interpolation,
         keepdims=keepdims,
         q_error_msg=q_error_msg,
     )
