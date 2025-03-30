@@ -39,7 +39,6 @@ class GroupByWrapper:
         groupby_obj=None,
         keys=None,
         level=None,
-        grouper=None,
         exclusions=None,
         selection=None,
         as_index=True,
@@ -81,7 +80,6 @@ class GroupByWrapper:
             groupby_kw = dict(
                 keys=keys,
                 level=level,
-                grouper=grouper,
                 exclusions=exclusions,
                 as_index=as_index,
                 group_keys=group_keys,
@@ -110,7 +108,6 @@ class GroupByWrapper:
             self.obj,
             keys=self.keys,
             level=self.level,
-            grouper=self.groupby_obj.grouper,
             exclusions=self.exclusions,
             selection=item,
             as_index=self.as_index,

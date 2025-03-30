@@ -755,7 +755,6 @@ def merge_chunks(chunk_results: List[Tuple[Tuple[int], Any]]) -> Any:
             df,
             None,
             keys=keys,
-            axis=v.axis,
             level=v.level,
             exclusions=v.exclusions,
             selection=v.selection,
