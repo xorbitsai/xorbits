@@ -962,7 +962,7 @@ class IndexData(HasShapeTileableData, _ToPandasMixin):
         return np.asarray(data, dtype=dtype, copy=copy)
 
     def __array__(self, dtype=None, copy=None):
-        return self._to_arr(dtype, copy)
+        return self._to_arr(dtype=dtype, copy=copy)
 
     def _to_mars_tensor(self, dtype=None, order="K", extract_multi_index=False):
         tensor = self.to_tensor(extract_multi_index=extract_multi_index)
