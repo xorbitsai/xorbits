@@ -1079,9 +1079,9 @@ class ReductionCompiler:
             if isinstance(t.op, input_op_types):
                 # tileable is an input arg, build a function variable
                 if t.key not in input_key_to_var:  # pragma: no branch
-                    input_key_to_var[t.key] = local_key_to_var[t.key] = (
-                        f"invar{len(input_key_to_var)}"
-                    )
+                    input_key_to_var[t.key] = local_key_to_var[
+                        t.key
+                    ] = f"invar{len(input_key_to_var)}"
             else:
                 keys_to_del = []
                 for inp in t.inputs:
