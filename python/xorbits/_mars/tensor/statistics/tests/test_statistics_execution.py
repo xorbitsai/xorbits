@@ -35,7 +35,7 @@ from .. import (
     ptp,
     quantile,
 )
-from ..quantile import INTERPOLATION_TYPES
+from ..quantile import METHODS
 
 
 def test_average_execution(setup):
@@ -299,19 +299,19 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=20)
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in INTERPOLATION_TYPES:
+        for method in METHODS:
             for keepdims in [True, False]:
-                r = quantile(a, q, method=interpolation, keepdims=keepdims)
+                r = quantile(a, q, method=method, keepdims=keepdims)
 
                 result = r.execute().fetch()
-                expected = np.quantile(raw, q, method=interpolation, keepdims=keepdims)
+                expected = np.quantile(raw, q, method=method, keepdims=keepdims)
 
                 np.testing.assert_array_equal(result, expected)
 
-                r2 = quantile(a2, q, method=interpolation, keepdims=keepdims)
+                r2 = quantile(a2, q, method=method, keepdims=keepdims)
 
                 result = r2.execute().fetch()
-                expected = np.quantile(raw2, q, method=interpolation, keepdims=keepdims)
+                expected = np.quantile(raw2, q, method=method, keepdims=keepdims)
 
                 np.testing.assert_array_equal(result, expected)
 
@@ -324,34 +324,30 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=20)
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in INTERPOLATION_TYPES:
+        for method in METHODS:
             for keepdims in [True, False]:
                 for axis in [None, 0, 1]:
-                    r = quantile(
-                        a, q, axis=axis, method=interpolation, keepdims=keepdims
-                    )
+                    r = quantile(a, q, axis=axis, method=method, keepdims=keepdims)
 
                     result = r.execute().fetch()
                     expected = np.quantile(
                         raw,
                         q,
                         axis=axis,
-                        method=interpolation,
+                        method=method,
                         keepdims=keepdims,
                     )
 
                     np.testing.assert_array_equal(result, expected)
 
-                    r2 = quantile(
-                        a2, q, axis=axis, method=interpolation, keepdims=keepdims
-                    )
+                    r2 = quantile(a2, q, axis=axis, method=method, keepdims=keepdims)
 
                     result = r2.execute().fetch()
                     expected = np.quantile(
                         raw2,
                         q,
                         axis=axis,
-                        method=interpolation,
+                        method=method,
                         keepdims=keepdims,
                     )
 
@@ -366,19 +362,19 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=20)
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in INTERPOLATION_TYPES:
+        for method in METHODS:
             for keepdims in [True, False]:
-                r = quantile(a, q, method=interpolation, keepdims=keepdims)
+                r = quantile(a, q, method=method, keepdims=keepdims)
 
                 result = r.execute().fetch()
-                expected = np.quantile(raw, q, method=interpolation, keepdims=keepdims)
+                expected = np.quantile(raw, q, method=method, keepdims=keepdims)
 
                 np.testing.assert_almost_equal(result, expected)
 
-                r2 = quantile(a2, q, method=interpolation, keepdims=keepdims)
+                r2 = quantile(a2, q, method=method, keepdims=keepdims)
 
                 result = r2.execute().fetch()
-                expected = np.quantile(raw2, q, method=interpolation, keepdims=keepdims)
+                expected = np.quantile(raw2, q, method=method, keepdims=keepdims)
 
                 np.testing.assert_almost_equal(result, expected)
 
@@ -391,34 +387,30 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=(12, 6))
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in INTERPOLATION_TYPES:
+        for method in METHODS:
             for keepdims in [True, False]:
                 for axis in [None, 0, 1]:
-                    r = quantile(
-                        a, q, axis=axis, method=interpolation, keepdims=keepdims
-                    )
+                    r = quantile(a, q, axis=axis, method=method, keepdims=keepdims)
 
                     result = r.execute().fetch()
                     expected = np.quantile(
                         raw,
                         q,
                         axis=axis,
-                        method=interpolation,
+                        method=method,
                         keepdims=keepdims,
                     )
 
                     np.testing.assert_almost_equal(result, expected)
 
-                    r2 = quantile(
-                        a2, q, axis=axis, method=interpolation, keepdims=keepdims
-                    )
+                    r2 = quantile(a2, q, axis=axis, method=method, keepdims=keepdims)
 
                     result = r2.execute().fetch()
                     expected = np.quantile(
                         raw2,
                         q,
                         axis=axis,
-                        method=interpolation,
+                        method=method,
                         keepdims=keepdims,
                     )
 

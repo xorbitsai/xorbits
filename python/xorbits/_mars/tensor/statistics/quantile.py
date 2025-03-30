@@ -372,7 +372,21 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
             )
 
 
-INTERPOLATION_TYPES = {"linear", "lower", "higher", "midpoint", "nearest"}
+METHODS = {
+    "inverted_cdf",
+    "averaged_inverted_cdf",
+    "closest_observation",
+    "interpolated_inverted_cdf",
+    "hazen",
+    "weibull",
+    "linear",
+    "median_unbiased",
+    "normal_unbiased",
+    "lower",
+    "higher",
+    "midpoint",
+    "nearest",
+}
 
 
 def _quantile_unchecked(
@@ -410,7 +424,7 @@ def _quantile_unchecked(
     if out is not None and not isinstance(out, TENSOR_TYPE):
         raise TypeError(f"`out` should be a tensor, got {type(out)}")
 
-    if method not in INTERPOLATION_TYPES:
+    if method not in METHODS:
         raise ValueError(
             "method can only be 'linear', 'lower' " "'higher', 'midpoint', or 'nearest'"
         )
