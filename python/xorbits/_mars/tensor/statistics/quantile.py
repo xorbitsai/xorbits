@@ -412,8 +412,7 @@ def _quantile_unchecked(
 
     if method not in METHOD_TYPES:
         raise ValueError(
-            "method can only be 'linear', 'lower' "
-            "'higher', 'midpoint', or 'nearest'"
+            "method can only be 'linear', 'lower' " "'higher', 'midpoint', or 'nearest'"
         )
 
     # infer dtype
@@ -421,9 +420,7 @@ def _quantile_unchecked(
     if handle_non_numeric and not np.issubdtype(a.dtype, np.number):
         dtype = a.dtype
     else:
-        dtype = np.quantile(
-            np.empty(1, dtype=a.dtype), q_tiny, method=method
-        ).dtype
+        dtype = np.quantile(np.empty(1, dtype=a.dtype), q_tiny, method=method).dtype
     op = TensorQuantile(
         q=q,
         axis=axis,
