@@ -19,7 +19,7 @@ import pytest
 from ....core import tile
 from ...datasource import array, tensor
 from .. import digitize, histogram_bin_edges, percentile, quantile
-from ..quantile import INTERPOLATION_TYPES
+from ..quantile import METHOD_TYPES
 
 
 def test_digitize():
@@ -87,7 +87,7 @@ def test_quantile():
 
     for dtype in [np.float32, np.int64]:
         for axis in (None, 0, 1, [0, 1]):
-            for interpolation in INTERPOLATION_TYPES:
+            for interpolation in METHOD_TYPES:
                 for keepdims in [True, False]:
                     raw2 = raw.astype(dtype)
                     a = tensor(raw2, chunk_size=(8, 6))

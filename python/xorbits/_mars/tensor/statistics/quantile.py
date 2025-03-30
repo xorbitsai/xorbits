@@ -53,7 +53,7 @@ def _quantile_ureduce_func(
     axis=None,
     out=None,
     overwrite_input=False,
-    interpolation="linear",
+    method="linear",
     keepdims=False,
 ):
     a = astensor(a)
@@ -84,17 +84,17 @@ def _quantile_ureduce_func(
     Nx = ap.shape[axis]
     indices = q * (Nx - 1)
 
-    # round fractional indices according to interpolation method
-    if interpolation == "lower":
+    # round fractional indices according to method method
+    if method == "lower":
         indices = np.floor(indices).astype(np.intp)
-    elif interpolation == "higher":
+    elif method == "higher":
         indices = np.ceil(indices).astype(np.intp)
-    elif interpolation == "midpoint":
+    elif method == "midpoint":
         indices = 0.5 * (np.floor(indices) + np.ceil(indices))
-    elif interpolation == "nearest":
+    elif method == "nearest":
         indices = np.around(indices).astype(np.intp)
     else:
-        assert interpolation == "linear"
+        assert method == "linear"
         # keep index as fraction and interpolate
 
     n = np.array(False, dtype=bool)  # check for nan's flag
@@ -200,7 +200,7 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
     _axis = AnyField("axis")
     _out = KeyField("out")
     _overwrite_input = BoolField("overwrite_input")
-    _interpolation = StringField("interpolation")
+    _method = StringField("method")
     _keepdims = BoolField("keepdims")
 
     def __init__(
@@ -209,7 +209,7 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
         axis=None,
         out=None,
         overwrite_input=None,
-        interpolation=None,
+        method=None,
         keepdims=None,
         **kw,
     ):
@@ -217,7 +217,7 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
         super().__init__(
             _q=q,
             _axis=axis,
-            _interpolation=interpolation,
+            _method=method,
             _out=out,
             _overwrite_input=overwrite_input,
             _keepdims=keepdims,
@@ -253,8 +253,8 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
         return self._overwrite_input
 
     @property
-    def interpolation(self):
-        return self._interpolation
+    def method(self):
+        return self._method
 
     @property
     def keepdims(self):
@@ -296,7 +296,7 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
             axis=op.axis,
             out=op.out,
             overwrite_input=op.overwrite_input,
-            interpolation=op.interpolation,
+            method=op.method,
         )
         if op.keepdims:
             return r.reshape(q.shape + k)
@@ -367,12 +367,12 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
                 q=op.q,
                 axis=op.axis,
                 out=out,
-                interpolation=op.interpolation,
+                method=op.method,
                 keepdims=op.keepdims,
             )
 
 
-INTERPOLATION_TYPES = {"linear", "lower", "higher", "midpoint", "nearest"}
+METHOD_TYPES = {"linear", "lower", "higher", "midpoint", "nearest"}
 
 
 def _quantile_unchecked(
@@ -381,7 +381,7 @@ def _quantile_unchecked(
     axis=None,
     out=None,
     overwrite_input=False,
-    interpolation="linear",
+    method="linear",
     keepdims=False,
     q_error_msg=None,
     handle_non_numeric=None,
@@ -410,9 +410,9 @@ def _quantile_unchecked(
     if out is not None and not isinstance(out, TENSOR_TYPE):
         raise TypeError(f"`out` should be a tensor, got {type(out)}")
 
-    if interpolation not in INTERPOLATION_TYPES:
+    if method not in METHOD_TYPES:
         raise ValueError(
-            "interpolation can only be 'linear', 'lower' "
+            "method can only be 'linear', 'lower' "
             "'higher', 'midpoint', or 'nearest'"
         )
 
@@ -422,14 +422,14 @@ def _quantile_unchecked(
         dtype = a.dtype
     else:
         dtype = np.quantile(
-            np.empty(1, dtype=a.dtype), q_tiny, interpolation=interpolation
+            np.empty(1, dtype=a.dtype), q_tiny, method=method
         ).dtype
     op = TensorQuantile(
         q=q,
         axis=axis,
         out=out,
         overwrite_input=overwrite_input,
-        interpolation=interpolation,
+        method=method,
         keepdims=keepdims,
         handle_non_numeric=handle_non_numeric,
         q_error_msg=q_error_msg,
@@ -448,7 +448,7 @@ def quantile(
     axis=None,
     out=None,
     overwrite_input=False,
-    interpolation="linear",
+    method="linear",
     keepdims=False,
     **kw,
 ):
@@ -472,8 +472,8 @@ def quantile(
         but the type (of the output) will be cast if necessary.
     overwrite_input : bool, optional
         Just for compatibility with Numpy, would not take effect.
-    interpolation : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
-        This optional parameter specifies the interpolation method to
+    method : {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
+        This optional parameter specifies the method method to
         use when the desired quantile lies between two data points
         ``i < j``:
 
@@ -513,7 +513,7 @@ def quantile(
     Given a vector ``V`` of length ``N``, the q-th quantile of
     ``V`` is the value ``q`` of the way from the minimum to the
     maximum in a sorted copy of ``V``. The values and distances of
-    the two nearest neighbors as well as the `interpolation` parameter
+    the two nearest neighbors as well as the `method` parameter
     will determine the quantile if the normalized ranking does not
     match the location of ``q`` exactly. This function is the same as
     the median if ``q=0.5``, the same as the minimum if ``q=0.0`` and the
@@ -561,7 +561,7 @@ def quantile(
         axis=axis,
         out=out,
         overwrite_input=overwrite_input,
-        interpolation=interpolation,
+        method=method,
         keepdims=keepdims,
         handle_non_numeric=handle_non_numeric,
     )
