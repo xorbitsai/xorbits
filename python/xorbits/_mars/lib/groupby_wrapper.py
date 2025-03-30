@@ -38,7 +38,6 @@ class GroupByWrapper:
         obj,
         groupby_obj=None,
         keys=None,
-        axis=0,
         level=None,
         grouper=None,
         exclusions=None,
@@ -69,8 +68,6 @@ class GroupByWrapper:
 
         self.obj = obj
         self.keys = fill_value(keys, "keys", "_by")
-        # cudf groupby obj has no attribute ``axis``, same as below
-        self.axis = fill_value(axis, "axis")
         self.level = fill_value(level, "level", "_level")
         self.exclusions = fill_value(exclusions, "exclusions")
         self.selection = selection
@@ -83,7 +80,6 @@ class GroupByWrapper:
         if groupby_obj is None:
             groupby_kw = dict(
                 keys=keys,
-                axis=axis,
                 level=level,
                 grouper=grouper,
                 exclusions=exclusions,
@@ -113,7 +109,6 @@ class GroupByWrapper:
         return GroupByWrapper(
             self.obj,
             keys=self.keys,
-            axis=self.axis,
             level=self.level,
             grouper=self.groupby_obj.grouper,
             exclusions=self.exclusions,
@@ -205,7 +200,6 @@ class GroupByWrapper:
         return (
             obj,
             keys,
-            self.axis,
             self.level,
             self.exclusions,
             self.selection,
@@ -222,7 +216,6 @@ class GroupByWrapper:
         (
             obj,
             keys,
-            axis,
             level,
             exclusions,
             selection,
@@ -240,7 +233,6 @@ class GroupByWrapper:
         return cls(
             obj,
             keys=keys,
-            axis=axis,
             level=level,
             exclusions=exclusions,
             selection=selection,
@@ -256,7 +248,6 @@ class GroupByWrapper:
 def wrapped_groupby(
     obj,
     by=None,
-    axis=0,
     level=None,
     as_index=True,
     sort=True,
@@ -266,7 +257,6 @@ def wrapped_groupby(
 ):
     groupby_kw = dict(
         by=by,
-        axis=axis,
         level=level,
         as_index=as_index,
         sort=sort,
