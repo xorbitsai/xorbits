@@ -35,7 +35,7 @@ from .. import (
     ptp,
     quantile,
 )
-from ..quantile import METHOD_TYPES
+from ..quantile import INTERPOLATION_TYPES
 
 
 def test_average_execution(setup):
@@ -299,7 +299,7 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=20)
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in METHOD_TYPES:
+        for interpolation in INTERPOLATION_TYPES:
             for keepdims in [True, False]:
                 r = quantile(a, q, interpolation=interpolation, keepdims=keepdims)
 
@@ -328,7 +328,7 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=20)
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in METHOD_TYPES:
+        for interpolation in INTERPOLATION_TYPES:
             for keepdims in [True, False]:
                 for axis in [None, 0, 1]:
                     r = quantile(
@@ -370,7 +370,7 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=20)
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in METHOD_TYPES:
+        for interpolation in INTERPOLATION_TYPES:
             for keepdims in [True, False]:
                 r = quantile(a, q, interpolation=interpolation, keepdims=keepdims)
 
@@ -399,7 +399,7 @@ def test_quantile_execution(setup):
     a2 = tensor(raw2, chunk_size=(12, 6))
 
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
-        for interpolation in METHOD_TYPES:
+        for interpolation in INTERPOLATION_TYPES:
             for keepdims in [True, False]:
                 for axis in [None, 0, 1]:
                     r = quantile(
