@@ -19,7 +19,7 @@ import pytest
 from ....core import tile
 from ...datasource import array, tensor
 from .. import digitize, histogram_bin_edges, percentile, quantile
-from ..quantile import METHOD_TYPES
+from ..quantile import INTERPOLATION_TYPES
 
 
 def test_digitize():
@@ -87,19 +87,19 @@ def test_quantile():
 
     for dtype in [np.float32, np.int64]:
         for axis in (None, 0, 1, [0, 1]):
-            for interpolation in METHOD_TYPES:
+            for interpolation in INTERPOLATION_TYPES:
                 for keepdims in [True, False]:
                     raw2 = raw.astype(dtype)
                     a = tensor(raw2, chunk_size=(8, 6))
 
                     b = quantile(
-                        a, q, axis=axis, interpolation=interpolation, keepdims=keepdims
+                        a, q, axis=axis, method=interpolation, keepdims=keepdims
                     )
                     expected = np.quantile(
                         raw2,
                         q,
                         axis=axis,
-                        interpolation=interpolation,
+                        method=interpolation,
                         keepdims=keepdims,
                     )
                     assert b.shape == expected.shape
@@ -145,7 +145,7 @@ def test_quantile():
 
     # wrong interpolation
     with pytest.raises(ValueError):
-        quantile(a, q, interpolation="unknown")
+        quantile(a, q, method="unknown")
 
 
 def test_percentile():

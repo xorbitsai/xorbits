@@ -301,20 +301,20 @@ def test_quantile_execution(setup):
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
         for interpolation in INTERPOLATION_TYPES:
             for keepdims in [True, False]:
-                r = quantile(a, q, interpolation=interpolation, keepdims=keepdims)
+                r = quantile(a, q, method=interpolation, keepdims=keepdims)
 
                 result = r.execute().fetch()
                 expected = np.quantile(
-                    raw, q, interpolation=interpolation, keepdims=keepdims
+                    raw, q, method=interpolation, keepdims=keepdims
                 )
 
                 np.testing.assert_array_equal(result, expected)
 
-                r2 = quantile(a2, q, interpolation=interpolation, keepdims=keepdims)
+                r2 = quantile(a2, q, method=interpolation, keepdims=keepdims)
 
                 result = r2.execute().fetch()
                 expected = np.quantile(
-                    raw2, q, interpolation=interpolation, keepdims=keepdims
+                    raw2, q, method=interpolation, keepdims=keepdims
                 )
 
                 np.testing.assert_array_equal(result, expected)
@@ -332,7 +332,7 @@ def test_quantile_execution(setup):
             for keepdims in [True, False]:
                 for axis in [None, 0, 1]:
                     r = quantile(
-                        a, q, axis=axis, interpolation=interpolation, keepdims=keepdims
+                        a, q, axis=axis, method=interpolation, keepdims=keepdims
                     )
 
                     result = r.execute().fetch()
@@ -340,14 +340,14 @@ def test_quantile_execution(setup):
                         raw,
                         q,
                         axis=axis,
-                        interpolation=interpolation,
+                        method=interpolation,
                         keepdims=keepdims,
                     )
 
                     np.testing.assert_array_equal(result, expected)
 
                     r2 = quantile(
-                        a2, q, axis=axis, interpolation=interpolation, keepdims=keepdims
+                        a2, q, axis=axis, method=interpolation, keepdims=keepdims
                     )
 
                     result = r2.execute().fetch()
@@ -355,7 +355,7 @@ def test_quantile_execution(setup):
                         raw2,
                         q,
                         axis=axis,
-                        interpolation=interpolation,
+                        method=interpolation,
                         keepdims=keepdims,
                     )
 
@@ -372,20 +372,20 @@ def test_quantile_execution(setup):
     for q in [np.random.RandomState(0).rand(), np.random.RandomState(0).rand(5)]:
         for interpolation in INTERPOLATION_TYPES:
             for keepdims in [True, False]:
-                r = quantile(a, q, interpolation=interpolation, keepdims=keepdims)
+                r = quantile(a, q, method=interpolation, keepdims=keepdims)
 
                 result = r.execute().fetch()
                 expected = np.quantile(
-                    raw, q, interpolation=interpolation, keepdims=keepdims
+                    raw, q, method=interpolation, keepdims=keepdims
                 )
 
                 np.testing.assert_almost_equal(result, expected)
 
-                r2 = quantile(a2, q, interpolation=interpolation, keepdims=keepdims)
+                r2 = quantile(a2, q, method=interpolation, keepdims=keepdims)
 
                 result = r2.execute().fetch()
                 expected = np.quantile(
-                    raw2, q, interpolation=interpolation, keepdims=keepdims
+                    raw2, q, method=interpolation, keepdims=keepdims
                 )
 
                 np.testing.assert_almost_equal(result, expected)
@@ -403,7 +403,7 @@ def test_quantile_execution(setup):
             for keepdims in [True, False]:
                 for axis in [None, 0, 1]:
                     r = quantile(
-                        a, q, axis=axis, interpolation=interpolation, keepdims=keepdims
+                        a, q, axis=axis, method=interpolation, keepdims=keepdims
                     )
 
                     result = r.execute().fetch()
@@ -411,14 +411,14 @@ def test_quantile_execution(setup):
                         raw,
                         q,
                         axis=axis,
-                        interpolation=interpolation,
+                        method=interpolation,
                         keepdims=keepdims,
                     )
 
                     np.testing.assert_almost_equal(result, expected)
 
                     r2 = quantile(
-                        a2, q, axis=axis, interpolation=interpolation, keepdims=keepdims
+                        a2, q, axis=axis, method=interpolation, keepdims=keepdims
                     )
 
                     result = r2.execute().fetch()
@@ -426,7 +426,7 @@ def test_quantile_execution(setup):
                         raw2,
                         q,
                         axis=axis,
-                        interpolation=interpolation,
+                        method=interpolation,
                         keepdims=keepdims,
                     )
 

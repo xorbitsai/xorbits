@@ -106,7 +106,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
             dt = tensor_quantile(
                 tensor_from_series(a[name]),
                 self._q,
-                interpolation=self._interpolation,
+                method=self._interpolation,
                 handle_non_numeric=not self._numeric_only,
             ).dtype
             quantile_dtypes.append(dt)
@@ -152,7 +152,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
             dt = tensor_quantile(
                 empty(a.shape[1], dtype=find_common_type(list(dtypes))),
                 self._q,
-                interpolation=self._interpolation,
+                method=self._interpolation,
                 handle_non_numeric=not self._numeric_only,
             ).dtype
             return self.new_series(
@@ -173,7 +173,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
                     tensor_quantile(
                         tensor_from_series(a[name]),
                         self._q,
-                        interpolation=self._interpolation,
+                        method=self._interpolation,
                         handle_non_numeric=not self._numeric_only,
                     ).dtype
                 )
@@ -222,7 +222,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
         self._dtype = dtype = tensor_quantile(
             a_t,
             self._q,
-            interpolation=self._interpolation,
+            method=self._interpolation,
             handle_non_numeric=not self._numeric_only,
         ).dtype
 
@@ -266,7 +266,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
                     t = tensor_quantile(
                         a,
                         op.q,
-                        interpolation=op.interpolation,
+                        method=op.interpolation,
                         handle_non_numeric=not op.numeric_only,
                     )
                     ts.append(t)
@@ -288,7 +288,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
                     t,
                     op.q,
                     axis=1,
-                    interpolation=op.interpolation,
+                    method=op.interpolation,
                     handle_non_numeric=not op.numeric_only,
                 )
                 r = series_from_tensor(tr, index=op.input.index, name=tr.op.q.item())
@@ -301,7 +301,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
                     t = tensor_quantile(
                         a,
                         op.q,
-                        interpolation=op.interpolation,
+                        method=op.interpolation,
                         handle_non_numeric=not op.numeric_only,
                     )
                     d[name] = t
@@ -315,7 +315,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
                     t,
                     op.q,
                     axis=1,
-                    interpolation=op.interpolation,
+                    method=op.interpolation,
                     handle_non_numeric=not op.numeric_only,
                 )
                 if not op.input.index_value.has_value():
@@ -333,7 +333,7 @@ class DataFrameQuantile(DataFrameOperand, DataFrameOperandMixin):
         t = tensor_quantile(
             a,
             op.q,
-            interpolation=op.interpolation,
+            method=op.interpolation,
             handle_non_numeric=not op.numeric_only,
         )
         if isinstance(op.outputs[0], TENSOR_TYPE):
