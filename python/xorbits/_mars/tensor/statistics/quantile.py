@@ -372,16 +372,17 @@ class TensorQuantile(TensorOperand, TensorOperandMixin):
             )
 
 
+# TODO: More methods need be implemented
 METHODS = {
-    "inverted_cdf",
-    "averaged_inverted_cdf",
-    "closest_observation",
-    "interpolated_inverted_cdf",
-    "hazen",
-    "weibull",
+    # "inverted_cdf",
+    # "averaged_inverted_cdf",
+    # "closest_observation",
+    # "interpolated_inverted_cdf",
+    # "hazen",
+    # "weibull",
     "linear",
-    "median_unbiased",
-    "normal_unbiased",
+    # "median_unbiased",
+    # "normal_unbiased",
     "lower",
     "higher",
     "midpoint",
