@@ -70,11 +70,18 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
         self.input = self.inputs[0]
 
     def _infer_attrs_by_call(self, df_or_series):
-        test_obj = (
-            build_df(df_or_series, size=2)
-            if df_or_series.ndim == 2
-            else build_series(df_or_series, size=2, name=df_or_series.name)
-        )
+        if len(df_or_series) == 0:
+            test_obj = (
+                build_empty_df(df_or_series.dtypes)
+                if df_or_series.ndim == 2
+                else (build_empty_series(df_or_series.dtype, name=df_or_series.name))
+            )
+        else:
+            test_obj = (
+                build_df(df_or_series, size=2)
+                if df_or_series.ndim == 2
+                else build_series(df_or_series, size=2, name=df_or_series.name)
+            )
         kwargs = self.kwargs or dict()
         if self.with_chunk_index:
             kwargs["chunk_index"] = (0,) * df_or_series.ndim
@@ -256,14 +263,6 @@ class DataFrameMapChunk(DataFrameOperand, DataFrameOperandMixin):
         func = cloudpickle.loads(op.func)
         inp = ctx[op.input.key]
         out = op.outputs[0]
-        if len(inp) == 0:
-            if op.output_types[0] == OutputType.dataframe:
-                ctx[out.key] = build_empty_df(out.dtypes)
-            elif op.output_types[0] == OutputType.series:
-                ctx[out.key] = build_empty_series(out.dtype, name=out.name)
-            else:
-                raise ValueError(f"Chunk can not be empty except for dataframe/series.")
-            return
 
         kwargs = op.kwargs or dict()
         if op.with_chunk_index:
