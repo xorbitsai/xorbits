@@ -19,6 +19,7 @@ import xoscar as mo
 from xoscar.backends.allocate_strategy import IdleLabel
 
 from .runner import SubtaskRunnerActor
+from .storage import RunnerStorageActor
 
 
 class SubtaskRunnerManagerActor(mo.Actor):
@@ -30,6 +31,7 @@ class SubtaskRunnerManagerActor(mo.Actor):
         self._cluster_api = None
 
         self._band_slot_runner_refs = dict()
+        self._band_slot_runner_storage_refs = dict()
 
     async def __post_create__(self):
         from ...cluster.api import ClusterAPI
@@ -44,8 +46,10 @@ class SubtaskRunnerManagerActor(mo.Actor):
 
     async def _create_band_runner_actors(self, band_name: str, n_slots: int):
         strategy = IdleLabel(band_name, "subtask_runner")
+        storage_strategy = IdleLabel(band_name, "storage_runner")
         band = (self.address, band_name)
         for slot_id in range(n_slots):
+            print("slot id", slot_id)
             self._band_slot_runner_refs[(band_name, slot_id)] = await mo.create_actor(
                 SubtaskRunnerActor,
                 band,
@@ -55,6 +59,14 @@ class SubtaskRunnerManagerActor(mo.Actor):
                 uid=SubtaskRunnerActor.gen_uid(band_name, slot_id),
                 address=self.address,
                 allocate_strategy=strategy,
+            )
+            self._band_slot_runner_storage_refs[(band_name, slot_id)] = await mo.create_actor(
+                RunnerStorageActor,
+                band,
+                slot_id=slot_id,
+                uid=RunnerStorageActor.gen_uid(band_name, slot_id),
+                address=self.address,
+                allocate_strategy=storage_strategy,
             )
 
     async def __pre_destroy__(self):

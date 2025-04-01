@@ -780,7 +780,7 @@ class StorageHandlerActor(mo.Actor):
             else:
                 set_meta_keys.add(data_key)
         append_bands_delays = [
-            meta_api.add_chunk_bands.delay(key, [(self.address, self._band_name)])
+            meta_api.add_chunk_bands.delay(key, [(self.address, self._band_name)], [0]) # TODO: add slot id, but which?
             for key in set_meta_keys
         ]
 

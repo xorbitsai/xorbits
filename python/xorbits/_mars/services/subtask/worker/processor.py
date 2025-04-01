@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Type
 import xoscar as mo
 from xoscar.metrics import Metrics
 from xoscar.serialization import AioSerializer
+from xoscar.backends.allocate_strategy import IdleLabel
 
 from ....core import ChunkGraph, ExecutionError, OperandType, enter_mode
 from ....core.context import get_context
@@ -41,6 +42,7 @@ from ...task import TaskAPI, task_options
 from ...task.task_info_collector import TaskInfoCollector
 from ..core import Subtask, SubtaskResult, SubtaskStatus
 from ..utils import get_mapper_data_keys, iter_input_data_keys, iter_output_data
+from .storage import RunnerStorageActor, RunnerStorageRef
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +65,7 @@ class ProcessorContext(dict):
         return self._current_chunk
 
 
-BASIC_META_FIELDS = ["memory_size", "store_size", "bands", "object_ref"]
+BASIC_META_FIELDS = ["memory_size", "store_size", "bands", "object_ref", "slot_ids"]
 
 
 class SubtaskProcessor:
@@ -146,7 +148,7 @@ class SubtaskProcessor:
         return self.subtask.subtask_id
 
     async def _load_input_data(self):
-        keys, gets, accept_nones = [], [], []
+        keys, gets, get_metas, accept_nones = [], [], [], []
         for key, is_shuffle in iter_input_data_keys(
             self.subtask, self._chunk_graph, self._chunk_key_to_data_keys
         ):
@@ -154,25 +156,68 @@ class SubtaskProcessor:
             accept_nones.append(not is_shuffle)
             gets_params = {"error": "ignore"} if is_shuffle else {}
             gets.append(self._storage_api.get.delay(key, **gets_params))
+            get_metas.append(self._meta_api.get_chunk_meta.delay(key[0] if isinstance(key, tuple) else key))
         if keys:
             logger.debug(
                 "Start getting input data, keys: %.500s, subtask id: %s",
                 keys,
                 self.subtask.subtask_id,
             )
-            inputs = await self._storage_api.get.batch(*gets)
-            self._processor_context.update(
-                {
-                    key: get
-                    for key, get, accept_none in zip(keys, inputs, accept_nones)
-                    if accept_none or get is not None
-                }
-            )
-            logger.debug(
-                "Finish getting input data keys: %.500s, subtask id: %s",
-                keys,
-                self.subtask.subtask_id,
-            )
+            
+            # Old implementation
+            # inputs = await self._storage_api.get.batch(*gets)
+            # self._processor_context.update(
+            #     {
+            #         key: get
+            #         for key, get, accept_none in zip(keys, inputs, accept_nones)
+            #         if accept_none or get is not None
+            #     }
+            # )
+            # logger.debug(
+            #     "Finish getting input data keys: %.500s, subtask id: %s",
+            #     keys,
+            #     self.subtask.subtask_id,
+            # )
+            
+            # Get metas of necessary data keys
+            # TODO: object_id == data_key (?)
+            # chunks = await self._meta_api.get_band_slot_chunks(self._band, self._slot_id)
+            metas = await self._meta_api.get_chunk_meta.batch(*get_metas)
+            try:
+                bands = [meta["bands"][0] for meta in metas]
+                slot_ids = [meta["slot_ids"][0] for meta in metas]
+            except:
+                print(metas)
+                self.result.status = SubtaskStatus.errored
+                raise
+            for key, band, slot_id, accept_none in zip(keys, bands, slot_ids, accept_nones):
+                # Get runner storage actor ref
+                try:
+                    runner_storage: RunnerStorageActor = await mo.actor_ref(
+                        uid=RunnerStorageActor.gen_uid(band[1], slot_id),
+                        address=self._supervisor_address, # 这个supervisor_address是不是actor对应的address？
+                    )
+                except mo.ActorNotExist:
+                    logger.debug(
+                        f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
+                    )
+                    # TODO: really?
+                    self.result.status = SubtaskStatus.errored
+                    raise
+                # Get data from runner storage
+                get = await runner_storage.get_data(key[0] if isinstance(key, tuple) else key)
+                if accept_none or get is not None:
+                    self._processor_context.update(
+                        {
+                            key: get
+                        }
+                    )
+                logger.debug(
+                    "Finish getting input data keys: %.500s, subtask id: %s",
+                    keys,
+                    self.subtask.subtask_id,
+                )
+        
         return keys
 
     @staticmethod
@@ -330,6 +375,8 @@ class SubtaskProcessor:
         data_key_to_store_size = dict()
         data_key_to_memory_size = dict()
         data_key_to_object_id = dict()
+        data_key_to_band = dict()
+        data_key_to_slot_id = dict()
         data_info_fmt = "data keys: %s, subtask id: %s, storage level: %s"
         for storage_level, data_key_to_puts in level_to_data_key_to_puts.items():
             stored_keys.extend(list(data_key_to_puts.keys()))
@@ -341,6 +388,31 @@ class SubtaskProcessor:
                 storage_level,
             )
             if puts:
+                try:
+                    runner_storage: RunnerStorageActor = await mo.actor_ref(
+                        uid=RunnerStorageActor.gen_uid(self._band[1], self._slot_id),
+                        address=self._supervisor_address, # 这个supervisor_address是不是actor对应的address？
+                    )
+                except mo.ActorNotExist:
+                    logger.debug(
+                        f"Can not find runner storage actor with band name `{self._band}` and slot id `{self._slot_id}",
+                    )
+                    self.result.status = SubtaskStatus.errored
+                    raise
+                    # runner_storage: RunnerStorageActor = await mo.create_actor(
+                    #     RunnerStorageActor,
+                    #     band=self._band,
+                    #     slot_id=self._slot_id,
+                    #     uid=RunnerStorageActor.gen_uid(self._band[1], self._slot_id),
+                    #     address=self._band[0],
+                    #     # allocate_strategy=IdleLabel(self._band[1], "storage_runner"),
+                    # )
+                # puts 里每个元素都是 DelayedArgument，可用参数 args 取到内部元组 (key,value)
+                for put in puts:
+                    put_key = put.args[0]
+                    put_data = put.args[1]
+                    await runner_storage.put_data(put_key[0] if isinstance(put_key, tuple) else put_key, put_data)
+                
                 put_infos = asyncio.create_task(self._storage_api.put.batch(*puts))
                 try:
                     store_infos = await put_infos
@@ -348,6 +420,8 @@ class SubtaskProcessor:
                         data_key_to_store_size[store_key] = store_info.store_size
                         data_key_to_memory_size[store_key] = store_info.memory_size
                         data_key_to_object_id[store_key] = store_info.object_id
+                        data_key_to_band[store_key] = self._band
+                        data_key_to_slot_id[store_key] = self._slot_id
                     logger.debug(
                         f"Finish putting {data_info_fmt}",
                         stored_keys,
@@ -460,10 +534,10 @@ class SubtaskProcessor:
         update_meta_chunks: Set[ChunkType],
     ):
         # store meta
-        set_chunk_metas = []
-        set_worker_chunk_metas = []
-        result_data_size = 0
-        set_meta_keys = []
+        set_chunk_metas = []        # 
+        set_worker_chunk_metas = [] # 
+        result_data_size = 0        # 累加所有 normal_chunk 的 memory_size
+        set_meta_keys = []          # 要存哪些 key 对应数据的 meta，但最后好像没用上啊只在 logger 里出现了
         for result_chunk in chunk_graph.result_chunks:
             chunk_key = result_chunk.key
             set_meta_keys.append(chunk_key)
@@ -492,6 +566,7 @@ class SubtaskProcessor:
                         bands=[self._band],
                         chunk_key=chunk_key,
                         exclude_fields=["object_ref"],
+                        slot_ids=[self._slot_id],
                     )
                 )
             # for supervisor, only save basic meta that is small like memory_size etc
@@ -504,6 +579,7 @@ class SubtaskProcessor:
                     chunk_key=chunk_key,
                     object_ref=object_ref,
                     fields=BASIC_META_FIELDS,
+                    slot_ids=[self._slot_id],
                 )
             )
         logger.debug(

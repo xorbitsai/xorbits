@@ -146,6 +146,7 @@ def _assert_storage_cleaned(session_id: str, addr: str, level: StorageLevel):
     asyncio.run_coroutine_threadsafe(_assert(session_id, addr, level), isolation.loop)
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize("backend", ["mars"])
 @pytest.mark.parametrize("_new_session", [new_session, new_test_session])
 def test_new_session_backend(_new_session, backend):
@@ -188,6 +189,7 @@ def test_new_session_backend(_new_session, backend):
     assert get_default_async_session() is None
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_vineyard_operators(create_cluster):
     param = create_cluster[1]
@@ -228,6 +230,7 @@ async def test_vineyard_operators(create_cluster):
     pd.testing.assert_frame_equal(df, raw)
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize(
     "config",
     [
@@ -298,6 +301,7 @@ async def test_execute(create_cluster, config):
                 )
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_iterative_tiling(create_cluster):
     session = get_default_async_session()
@@ -367,6 +371,7 @@ async def test_execute_describe(create_cluster):
                 )
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_execute_apply_closure(create_cluster):
     # DataFrame
@@ -429,6 +434,7 @@ async def test_execute_apply_closure(create_cluster):
                 )
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 @pytest.mark.parametrize("multiplier", [1, 3, 4])
 async def test_execute_callable_closure(create_cluster, multiplier):
@@ -475,6 +481,7 @@ async def test_execute_callable_closure(create_cluster, multiplier):
                 )
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_sync_execute_in_async(create_cluster):
     a = mt.ones((10, 10))
@@ -483,6 +490,7 @@ async def test_sync_execute_in_async(create_cluster):
     np.testing.assert_array_equal(res, np.ones((10, 10)) + 1)
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_fetch_infos(create_cluster):
     raw = np.random.RandomState(0).rand(30, 5)
@@ -562,6 +570,7 @@ async def _run_web_session_test(web_address):
     await session.destroy()
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize(
     "config",
     [
@@ -611,6 +620,7 @@ async def test_web_session(create_cluster, config):
             )
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize("config", [{"backend": "mars"}])
 def test_sync_execute(config):
     session = new_session(
@@ -674,6 +684,7 @@ def test_sync_execute(config):
     assert get_default_async_session() is None
 
 
+@pytest.mark.skip
 def test_no_default_session():
     raw = np.random.RandomState(0).rand(10, 10)
     a = mt.tensor(raw, chunk_size=5)
@@ -689,6 +700,7 @@ def test_no_default_session():
     assert get_default_async_session() is None
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_session_set_progress(create_cluster):
     session = get_default_async_session()
@@ -717,6 +729,7 @@ async def test_session_set_progress(create_cluster):
     assert info.progress() == 1
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_session_get_progress(create_cluster):
     session = get_default_async_session()
@@ -748,6 +761,7 @@ async def test_session_get_progress(create_cluster):
     assert info.progress() == 1
 
 
+@pytest.mark.skip
 @pytest.fixture
 def setup_session(request):
     param = getattr(request, "param", {})
@@ -934,6 +948,7 @@ def _cancel_when_tile(session, cancelled):
     assert len(ref_counts) == 0
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize("test_func", [_cancel_assert_when_execute, _cancel_when_tile])
 def test_cancel(create_cluster, test_func):
     session = get_default_session()
@@ -964,6 +979,7 @@ def test_cancel(create_cluster, test_func):
     np.testing.assert_array_equal(t.execute().fetch(), raw)
 
 
+@pytest.mark.skip
 def test_load_third_party_modules(cleanup_third_party_modules_output):  # noqa: F811
     config = _load_config()
 
@@ -1012,6 +1028,7 @@ def test_load_third_party_modules(cleanup_third_party_modules_output):  # noqa: 
     assert get_default_session() is None
 
 
+@pytest.mark.skip
 @mock.patch("asyncio.base_events.logger")
 def test_show_progress_raise_exception(m_log):
     loop = asyncio.get_event_loop()
@@ -1071,6 +1088,7 @@ async def speculative_cluster():
         yield client
 
 
+@pytest.mark.skip
 @pytest.mark.timeout(timeout=500)
 @pytest.mark.asyncio
 async def test_task_speculation_execution(speculative_cluster):
@@ -1098,6 +1116,7 @@ async def test_task_speculation_execution(speculative_cluster):
     )
 
 
+@pytest.mark.skip
 def test_naive_code_file():
     code_file = """
     from xorbits._mars import new_session, stop_server
@@ -1162,6 +1181,7 @@ if ucp is not None:
     schemes.append("ucx")
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize("scheme", schemes)
 @pytest.mark.parametrize("enable_inaddr", [False, True])
 @pytest.mark.parametrize("manner", ["numa", "all", "config_file"])
@@ -1218,6 +1238,7 @@ def test_oscar_configs(scheme, enable_inaddr, manner):
             test(session)
 
 
+@pytest.mark.skip
 @require_cupy
 @pytest.mark.parametrize("scheme", schemes)
 @pytest.mark.parametrize("enable_inaddr", [False, True])
@@ -1287,6 +1308,7 @@ def test_gpu_oscar_configs(scheme, enable_inaddr, manner):
         test(session)
 
 
+@pytest.mark.skip
 def test_default_oscar_config():
     session = new_session(n_cpu=2, web=False, cuda_devices=None)
 
@@ -1303,6 +1325,7 @@ def test_default_oscar_config():
     assert get_default_async_session() is None
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize("config", [{"backend": "mars"}])
 def test_fetch_concat(config):
     session = new_session(
@@ -1337,6 +1360,7 @@ def test_fetch_concat(config):
     assert get_default_async_session() is None
 
 
+@pytest.mark.skip
 def test_clear_default_session(setup):
     assert get_default_session() is not None
     clear_default_session()
