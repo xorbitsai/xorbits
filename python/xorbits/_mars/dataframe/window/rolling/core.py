@@ -152,16 +152,24 @@ class Rolling(Window):
 
     def aggregate(self, func, *args, **kwargs):
         from .aggregation import DataFrameRollingAgg
+        from .corr import DataFrameRollingCorr
 
         params = self.params
         if func in _PAIRWISE_AGG:
             # for convenience, since pairwise aggregations are axis irrelevant.
             params["axis"] = 0
-
-        op = DataFrameRollingAgg(
-            func=func, func_args=args, func_kwargs=kwargs, **params
-        )
-        return op(self)
+        if func == "corr":
+            op = DataFrameRollingCorr(
+                func=func, func_args=args, func_kwargs=kwargs, **params
+            )
+            df = op(self)
+            # TODO columns
+            return df.sort_index(level=0, sort_remaining=False)
+        else:
+            op = DataFrameRollingAgg(
+                func=func, func_args=args, func_kwargs=kwargs, **params
+            )
+            return op(self)
 
     def agg(self, func, *args, **kwargs):
         return self.aggregate(func, *args, **kwargs)
