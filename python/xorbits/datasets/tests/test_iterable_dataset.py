@@ -22,6 +22,7 @@ from pathlib import Path
 import pytest
 
 from ..._mars.tests.core import mock
+from ..backends.arrow.from_export import from_export
 from ..backends.huggingface.from_huggingface import from_huggingface
 from ..iterable_dataset import IterableDataset, map_retry
 
@@ -243,5 +244,21 @@ def test_iterable_dataset():
             + collections.Counter(labels5)
             == counter1
         )
+    finally:
+        shutil.rmtree(export_dir, ignore_errors=True)
+
+
+def test_from_export(setup):
+    tmp_dir = Path(tempfile.gettempdir())
+    export_dir = tmp_dir.joinpath("test_iterable_dataset")
+    shutil.rmtree(export_dir, ignore_errors=True)
+    db = from_huggingface("cifar10", split="train")
+    db.export(export_dir)
+    try:
+        ds = from_export(export_dir)
+        ds.execute()
+        table = ds.fetch()
+        assert table.shape == db.shape
+        # TODO(codingl2k1): Add more tests
     finally:
         shutil.rmtree(export_dir, ignore_errors=True)
