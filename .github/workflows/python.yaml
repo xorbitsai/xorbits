@@ -156,7 +156,7 @@ jobs:
         else
           pip install -e "git+https://github.com/xorbitsai/xoscar.git@main#subdirectory=python&egg=xoscar"
           # TODO: pandas v2.2.3 now does not support well for numpy v2.2.0 and pyarrow v19.0.0. 
-          pip install -U "numpy<2.2.0" "pyarrow<19.0.0" scipy cython pyftpdlib coverage flaky numexpr openpyxl
+          pip install -U numpy pyarrow scipy cython pyftpdlib coverage flaky numexpr openpyxl
 
           if [[ "$MODULE" == "mars-core" ]]; then
             pip install oss2
@@ -291,7 +291,7 @@ jobs:
       run: |
         source activate ${{ env.CONDA_ENV }}
         pip install --extra-index-url=https://pypi.nvidia.com cudf-cu12==24.10.*
-        pip install ucxx-cu12 cython "numpy>=1.14.0,<2.0.0" cloudpickle scikit-learn \
+        pip install ucxx-cu12 cython numpy cloudpickle scikit-learn \
           pyyaml psutil tornado sqlalchemy defusedxml tqdm uvloop coverage \
           pytest pytest-cov pytest-timeout pytest-forked pytest-asyncio pytest-mock
         pip install -U xoscar

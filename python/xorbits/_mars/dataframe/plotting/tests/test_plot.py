@@ -44,7 +44,7 @@ def assert_is_valid_plot_return_object(objs):  # pragma: no cover
     import matplotlib.pyplot as plt
 
     if isinstance(objs, (pd.Series, np.ndarray)):
-        for el in objs.ravel():
+        for el in objs.to_numpy():
             msg = (
                 "one of 'objs' is not a matplotlib Axes instance, "
                 f"type encountered {type(el).__name__}"

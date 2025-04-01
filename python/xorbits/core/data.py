@@ -133,9 +133,9 @@ class Data:
         else:  # pragma: no cover
             return super().__repr__()
 
-    def __array__(self):
+    def __array__(self, dtype=None, copy=None):
         if self._mars_entity is not None:
-            return self._mars_entity.__array__()
+            return self._mars_entity.__array__(dtype=dtype, copy=copy)
         else:  # pragma: no cover
             raise AttributeError("__array__")
 
@@ -310,14 +310,14 @@ class DataRef(metaclass=DataRefMeta):
             run(self)
             return self.data.__repr__()
 
-    def __array__(self):
+    def __array__(self, dtype=None, copy=None):
         from .execution import run
 
         if self._own_data():
-            return self.data._mars_entity.op.data.__array__()
+            return self.data._mars_entity.op.data.__array__(dtype=dtype, copy=copy)
         else:
             run(self)
-            return self.data.__array__()
+            return self.data.__array__(dtype=dtype, copy=copy)
 
     def _to_int_or_float(self, conversion: AutoConversionType, cast: bool = False):
         from .execution import run

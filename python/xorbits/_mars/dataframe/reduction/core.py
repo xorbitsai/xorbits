@@ -566,7 +566,7 @@ class DataFrameCumReductionMixin(DataFrameOperandMixin):
             kwargs["skipna"] = op.skipna
         partial = getattr(in_data, getattr(cls, "_func_name"))(**kwargs)
         if op.skipna:
-            partial.fillna(method="ffill", axis=op.axis, inplace=True)
+            partial.ffill(axis=op.axis, inplace=True)
         ctx[op.outputs[0].key] = cls._get_last_slice(op, partial, -1)
 
     @classmethod
@@ -583,7 +583,7 @@ class DataFrameCumReductionMixin(DataFrameOperandMixin):
                 pd.concat(ref_datas, axis=op.axis), getattr(cls, "_func_name")
             )(**kwargs)
             if op.skipna:
-                concat_df.fillna(method="ffill", axis=op.axis, inplace=True)
+                concat_df.ffill(axis=op.axis, inplace=True)
 
             in_data = ctx[op.inputs[0].key]
             concat_df = pd.concat(

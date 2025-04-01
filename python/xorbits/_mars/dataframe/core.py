@@ -954,15 +954,15 @@ class IndexData(HasShapeTileableData, _ToPandasMixin):
     def __repr__(self):
         return self._to_str(representation=True)
 
-    def _to_arr(self):
+    def _to_arr(self, dtype=None, copy=None):
         if len(self._executed_sessions) == 0:  # pragma: no cover
             raise NotImplementedError
 
         data = self.fetch(session=self._executed_sessions[-1])
-        return np.asarray(data)
+        return np.asarray(data, dtype=dtype, copy=copy)
 
-    def __array__(self):
-        return self._to_arr()
+    def __array__(self, dtype=None, copy=None):
+        return self._to_arr(dtype=dtype, copy=copy)
 
     def _to_mars_tensor(self, dtype=None, order="K", extract_multi_index=False):
         tensor = self.to_tensor(extract_multi_index=extract_multi_index)
@@ -1455,15 +1455,15 @@ class BaseSeriesData(HasShapeTileableData, _ToPandasMixin):
     def __repr__(self):
         return self._to_str(representation=False)
 
-    def _to_arr(self):
+    def _to_arr(self, dtype=None, copy=None):
         if len(self._executed_sessions) == 0:  # pragma: no cover
             raise NotImplementedError
 
         data = self.fetch(session=self._executed_sessions[-1])
-        return np.asarray(data)
+        return np.asarray(data, dtype=dtype, copy=copy)
 
-    def __array__(self):
-        return self._to_arr()
+    def __array__(self, dtype=None, copy=None):
+        return self._to_arr(dtype=dtype, copy=copy)
 
     @property
     def dtype(self):
@@ -2054,9 +2054,9 @@ class BaseDataFrameData(HasShapeTileableData, _ToPandasMixin):
         "chunks",
         FieldTypes.reference(DataFrameChunkData),
         on_serialize=lambda x: [it.data for it in x] if x is not None else x,
-        on_deserialize=lambda x: [DataFrameChunk(it) for it in x]
-        if x is not None
-        else x,
+        on_deserialize=lambda x: (
+            [DataFrameChunk(it) for it in x] if x is not None else x
+        ),
     )
 
     def __init__(
@@ -2263,15 +2263,15 @@ class DataFrameData(_BatchedFetcher, BaseDataFrameData):
     def __str__(self):
         return self._to_str(representation=False)
 
-    def _to_arr(self):
+    def _to_arr(self, dtype=None, copy=None):
         if len(self._executed_sessions) == 0:
             raise NotImplementedError
 
         data = self.fetch(session=self._executed_sessions[-1])
-        return np.asarray(data)
+        return np.asarray(data, dtype=dtype, copy=copy)
 
-    def __array__(self):
-        return self._to_arr()
+    def __array__(self, dtype=None, copy=None):
+        return self._to_arr(dtype=dtype, copy=copy)
 
     def __repr__(self):
         return self._to_str(representation=True)
@@ -2767,9 +2767,9 @@ class DataFrameGroupByData(BaseDataFrameData):
         "chunks",
         FieldTypes.reference(DataFrameGroupByChunkData),
         on_serialize=lambda x: [it.data for it in x] if x is not None else x,
-        on_deserialize=lambda x: [DataFrameGroupByChunk(it) for it in x]
-        if x is not None
-        else x,
+        on_deserialize=lambda x: (
+            [DataFrameGroupByChunk(it) for it in x] if x is not None else x
+        ),
     )
 
     @property
@@ -2816,9 +2816,9 @@ class SeriesGroupByData(BaseSeriesData):
         "chunks",
         FieldTypes.reference(SeriesGroupByChunkData),
         on_serialize=lambda x: [it.data for it in x] if x is not None else x,
-        on_deserialize=lambda x: [SeriesGroupByChunk(it) for it in x]
-        if x is not None
-        else x,
+        on_deserialize=lambda x: (
+            [SeriesGroupByChunk(it) for it in x] if x is not None else x
+        ),
     )
 
     @property
@@ -2995,9 +2995,9 @@ class CategoricalData(HasShapeTileableData, _ToPandasMixin):
         "chunks",
         FieldTypes.reference(CategoricalChunkData),
         on_serialize=lambda x: [it.data for it in x] if x is not None else x,
-        on_deserialize=lambda x: [CategoricalChunk(it) for it in x]
-        if x is not None
-        else x,
+        on_deserialize=lambda x: (
+            [CategoricalChunk(it) for it in x] if x is not None else x
+        ),
     )
 
     def __init__(
@@ -3195,9 +3195,9 @@ class DataFrameOrSeriesData(HasShapeTileableData, _ToPandasMixin):
         "chunks",
         FieldTypes.reference(DataFrameOrSeriesChunkData),
         on_serialize=lambda x: [it.data for it in x] if x is not None else x,
-        on_deserialize=lambda x: [DataFrameOrSeriesChunk(it) for it in x]
-        if x is not None
-        else x,
+        on_deserialize=lambda x: (
+            [DataFrameOrSeriesChunk(it) for it in x] if x is not None else x
+        ),
     )
 
     _data_type = StringField("data_type")
