@@ -104,7 +104,10 @@ def move_to_device(x, device_id):
         if isinstance(x, np.ndarray):
             return cp.asarray(x)
         else:
-            return cp.asarray(cp.asnumpy(x))  # remove `cp.asnumpy` call to do directly copy
+            return cp.asarray(
+                cp.asnumpy(x)
+            )  # remove `cp.asnumpy` call to do directly copy
+
 
 def convert_order(x, order):
     xp = get_array_module(x)

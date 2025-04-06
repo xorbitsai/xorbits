@@ -686,7 +686,6 @@ def _running_process_matches(handle: _nvmlDevice_t) -> bool:
         Whether the device handle has a CUDA context on the running process.
     """
     current_pid = os.getpid()
-
     try:
         _nvml_check_error(_nvml_lib.nvmlInit_v2())
         procs = get_compute_running_processes(handle)
