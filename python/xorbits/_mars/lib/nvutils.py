@@ -686,6 +686,7 @@ def _running_process_matches(handle: _nvmlDevice_t) -> bool:
         Whether the device handle has a CUDA context on the running process.
     """
     current_pid = os.getpid()
+
     try:
         _nvml_check_error(_nvml_lib.nvmlInit_v2())
         procs = get_compute_running_processes(handle)
@@ -701,6 +702,7 @@ def _running_process_matches(handle: _nvmlDevice_t) -> bool:
 
     try:
         import cupy
+
         cupy.cuda.runtime.deviceSynchronize()
         return True
     except ImportError:
@@ -711,7 +713,8 @@ def _running_process_matches(handle: _nvmlDevice_t) -> bool:
     try:
         out = subprocess.check_output(
             ["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader"],
-            text=True, stderr=subprocess.DEVNULL
+            text=True,
+            stderr=subprocess.DEVNULL,
         )
         return str(current_pid) in out.splitlines()
     except Exception:
