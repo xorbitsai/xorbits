@@ -86,8 +86,12 @@ def _get(x):
 
 
 def move_to_device(x, device_id):
-    if hasattr(x, "device") and x.device.id == device_id:
-        return x
+    if hasattr(x, "device"):
+        if isinstance(x.device, str):
+            if x.device == str(device_id):
+                return x
+        elif x.device.id == device_id:
+            return x
 
     assert device_id >= 0
 
@@ -97,7 +101,12 @@ def move_to_device(x, device_id):
     # for dense array, we currently copy from gpu to memory and then copy back to destination device
     # to avoid kernel panic
     with cp.cuda.Device(device_id):
-        return cp.asarray(cp.asnumpy(x))  # remove `cp.asnumpy` call to do directly copy
+        if isinstance(x, np.ndarray):
+            return cp.asarray(x)
+        else:
+            return cp.asarray(
+                cp.asnumpy(x)
+            )  # remove `cp.asnumpy` call to do directly copy
 
 
 def convert_order(x, order):
