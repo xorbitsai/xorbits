@@ -1144,7 +1144,7 @@ def test_naive_code_file():
             raise
 
 
-ucp = lazy_import("ucp")
+ucp = lazy_import("ucxx")
 _OSCAR_CONF_TEMPLATE = """
 "@inherits": '@default'
 oscar:
