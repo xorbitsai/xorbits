@@ -504,7 +504,11 @@ def calc_data_size(dt: Any, shape: Tuple[int] = None) -> int:
     if hasattr(dt, "shape") and len(dt.shape) == 0:
         return 0
     if hasattr(dt, "dtypes") and shape is not None:
-        size = shape[0] * sum(_get_dtype_itemsize(dtype) for dtype in dt.dtypes)
+        dtypes = dt.dtypes
+        try:
+            size = shape[0] * sum(_get_dtype_itemsize(dtype) for dtype in dtypes)
+        except TypeError:
+            size = shape[0] * _get_dtype_itemsize(dtypes)
         try:
             index_value_value = dt.index_value.value
             if hasattr(index_value_value, "dtype") and not isinstance(
@@ -552,7 +556,10 @@ def estimate_pandas_size(
 
     # handling possible MultiIndex
     if hasattr(index_obj, "dtypes"):
-        dtypes.extend(index_obj.dtypes)
+        try:
+            dtypes.extend(index_obj.dtypes)
+        except TypeError:
+            dtypes.append(index_obj.dtypes)
     else:
         dtypes.append(index_obj.dtype)
 
