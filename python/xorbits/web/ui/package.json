@@ -26,7 +26,7 @@
     "prop-types": "^15.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-router-dom": "^5.0.0",
+    "react-router-dom": "^7.5.2",
     "streamsaver": "^2.0.6",
     "web-streams-polyfill": "^2.1.1"
   },
