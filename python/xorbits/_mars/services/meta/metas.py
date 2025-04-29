@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
+from ....datasets.backends.arrow.core import ArrowDatasetChunk, ArrowDatasetChunkData
 from ....datasets.backends.huggingface.core import (
     HuggingfaceDatasetChunk,
     HuggingfaceDatasetChunkData,
@@ -199,6 +200,13 @@ class ObjectChunkMeta(_ChunkMeta):
 @dataslots
 @dataclass
 class DatasetChunkMeta(_ChunkMeta):
+    shape: Tuple[int] = None
+
+
+@register_meta_type((ArrowDatasetChunk, ArrowDatasetChunkData))
+@dataslots
+@dataclass
+class ArrowChunkMeta(_ChunkMeta):
     shape: Tuple[int] = None
 
 
