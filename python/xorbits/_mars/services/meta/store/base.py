@@ -98,7 +98,7 @@ class AbstractMetaStore(ABC):
         """
 
     @abstractmethod
-    async def add_chunk_bands(self, object_id: str, bands: List[BandType]):
+    async def add_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
         """
         Add band to chunk.
 
@@ -111,7 +111,7 @@ class AbstractMetaStore(ABC):
         """
 
     @abstractmethod
-    async def remove_chunk_bands(self, object_id: str, bands: List[BandType]):
+    async def remove_chunk_bands(self, object_id: str, bands: List[BandType], slot_ids: List[int]):
         """
         Remove bands from chunk.
 
@@ -124,8 +124,8 @@ class AbstractMetaStore(ABC):
         """
 
     @abstractmethod
-    async def get_band_chunks(self, band: BandType) -> List[str]:
-        """Get chunks key of band"""
+    async def get_band_slot_chunks(self, band: BandType, slot_id: int) -> List[str]:
+        """Get chunks key of band and slot_id"""
 
 
 _meta_store_types: Dict[str, Type[AbstractMetaStore]] = dict()
