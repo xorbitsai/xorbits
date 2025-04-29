@@ -15,6 +15,7 @@
 import pandas
 
 from ..core import DataRef, DataType
+from ..core.adapter import MarsGetAttrProxy, MarsGroupByRolling, register_converter
 from ..core.data import register_cls_to_type
 from ..core.utils.docstring import attach_module_callable_docstring
 
@@ -37,3 +38,8 @@ class SeriesGroupBy(DataRef):
 attach_module_callable_docstring(
     SeriesGroupBy, pandas, pandas.core.groupby.SeriesGroupBy
 )
+
+
+@register_converter(from_cls_list=[MarsGroupByRolling])
+class GroupByRolling(MarsGetAttrProxy):
+    pass

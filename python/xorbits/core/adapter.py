@@ -62,6 +62,7 @@ from .._mars.dataframe.datastore.to_sql import (
 from .._mars.dataframe.datastore.to_vineyard import (
     DataFrameToVineyardChunk as MarsDataFrameToVineyardChunk,
 )
+from .._mars.dataframe.groupby.rolling import GroupByRolling as MarsGroupByRolling
 from .._mars.dataframe.indexing.at import DataFrameAt as MarsDataFrameAt
 from .._mars.dataframe.indexing.iat import DataFrameIat as MarsDataFrameIat
 from .._mars.dataframe.indexing.iloc import DataFrameIloc as MarsDataFrameIloc
